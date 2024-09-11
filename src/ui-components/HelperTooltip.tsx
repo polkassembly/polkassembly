@@ -22,7 +22,7 @@ const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overla
 	return (
 		<Tooltip
 			placement={placement}
-			className={classNames(className, usedInPostPage ? '' : '')}
+			className={classNames(className)}
 			color={bgColor}
 			title={text}
 			overlayClassName={classNames(overlayClassName, usedInPostPage ? 'top-fix' : '')}

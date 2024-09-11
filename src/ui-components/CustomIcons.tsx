@@ -50,7 +50,7 @@ import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
-import AuctionAdminSVG from '~assets/sidebar/auction-admin-gov2.svg';
+import AuctionAdminSVG from '~assets/sidebar/auction.svg';
 import FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import GovernanceGroupSVG from '~assets/sidebar/gov2_governance_group.svg';
 import PreimagesSVG from '~assets/sidebar/gov2_preimages.svg';

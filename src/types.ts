@@ -947,3 +947,8 @@ export enum EDelegationSourceFilters {
 	W3F = 'w3f',
 	NA = 'individual'
 }
+
+export interface ICommentsSummary {
+	summary_negative: string;
+	summary_positive: string;
+}

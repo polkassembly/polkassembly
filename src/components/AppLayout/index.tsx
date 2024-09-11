@@ -155,6 +155,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<Sidebar
 								className={`absolute left-0 top-0 z-[150] w-full ${className}`}
 								sidebarCollapsed={false}
+								setSidedrawer={setSidedrawer}
 								setSidebarCollapsed={setSidebarCollapsed}
 								sidedrawer={sidedrawer}
 								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
@@ -173,6 +174,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									sidebarCollapsed={sidebarCollapsed}
 									setSidebarCollapsed={setSidebarCollapsed}
 									sidedrawer={sidedrawer}
+									setSidedrawer={setSidedrawer}
 									setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 									setIdentityMobileModal={setIdentityMobileModal}
 									totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
@@ -442,6 +444,12 @@ export default styled(AppLayout)`
 	.sidebar .ant-menu-item-selected .anticon {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}
+	.sidebar .ant-menu-item-selected span {
+		color: var(--pink_primary) !important;
+
+		font-weight: 500;
+		font-size: 14px;
+	}
 
 	.sidebar .ant-menu-item-selected .opacity {
 		background-color: var(--pink_primary) !important;
@@ -527,6 +535,9 @@ export default styled(AppLayout)`
 	}
 	.ant-menu-vertical > .ant-menu-item > li:first-child {
 		height: 40px !important;
+	}
+	.ant-menu-item {
+		overflow: visible !important;
 	}
 	.sidebar-toggle-button {
 		border: 1px solid #d2d8e0;

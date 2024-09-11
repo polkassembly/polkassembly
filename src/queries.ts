@@ -118,6 +118,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     statusHistory {
       id
     }
+    proposalArguments{
+      section
+      method
+      args
+    }
     tally {
       ayes
       nays
@@ -276,6 +281,10 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     curator
     createdAt
     updatedAt
+    proposalArguments{
+method
+    section
+    args}
     preimage {
       method
       proposer
@@ -484,11 +493,17 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
 `;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE = `
-query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
+
+query ProposalByIndexAndType($index_eq: Int=1103, $hash_eq: String, $type_eq: ProposalType = ReferendumV2, $voter_eq: String = "", $vote_type_eq: VoteType = ReferendumV2) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
     index
     proposer
     status
+    proposalArguments{
+      args
+      section
+      method
+    }
     preimage {
       proposer
       method
@@ -601,7 +616,8 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       }
     }
   }
-}`;
+}
+`;
 
 export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $proposalHashBlock_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, proposalHashBlock_eq: $proposalHashBlock_eq}) {

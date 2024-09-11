@@ -25,6 +25,7 @@ import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
 import ImageComponent from '../ImageComponent';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -57,10 +58,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		});
 		setOpen(true);
 		setAddress(address);
-	};
-
-	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 0) || '';
 	};
 
 	return (
@@ -208,12 +205,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</Button>
 			</div>
 
-			<div className={'mb-4 mt-2 flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+			<div className={'mb-4 mt-3 flex h-10 gap-1 px-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
 				<p className='bio w-4/5'>
 					{delegate?.bio ? (
 						<Markdown
 							className='post-content'
-							md={`${handleDelegationContent(delegate?.bio || '').slice(0, 54)}...`}
+							md={`${removeSymbols(delegate?.bio || '').slice(0, 50)}...`}
 							isPreview={true}
 							imgHidden
 						/>
@@ -221,10 +218,10 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						'No Bio'
 					)}
 				</p>
-				{delegate?.bio?.length > 100 && (
+				{delegate?.bio?.length > 50 && (
 					<span
 						onClick={() => setOpenReadMore(true)}
-						className='mt-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'
+						className='-mt-[22px] ml-auto mr-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'
 					>
 						Read more
 					</span>

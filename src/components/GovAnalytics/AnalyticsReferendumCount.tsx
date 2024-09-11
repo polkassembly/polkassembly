@@ -37,10 +37,31 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const LegendContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 0;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	overflow-x: auto;
+	white-space: nowrap;
+	padding-top: 2px;
+	margin-top: -32px;
+
+	/* Hide scrollbar for all browsers */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+	&::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, and Opera */
+	}
+`;
+
 const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const [categoryInfo, setCategoryInfo] = useState<Record<string, number>>({
 		governance: 0,
 		main: 0,
@@ -88,13 +109,17 @@ const AnalyticsReferendumCount = () => {
 	// Generate the pie chart data dynamically from categoryInfo
 	const data = Object.keys(categoryInfo).map((category) => ({
 		color: colors[Object.keys(categoryInfo).indexOf(category as keyof typeof categoryInfo)],
-		id: category,
+		id: category.charAt(0).toUpperCase() + category.slice(1),
 		label: category.charAt(0).toUpperCase() + category.slice(1),
 		value: categoryInfo[category as keyof typeof categoryInfo]
 	}));
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard
+			className={`mx-auto ${
+				isMobile ? 'max-h-[525px]' : 'max-h-[500px]'
+			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+		>
 			<h2 className='text-base font-semibold sm:text-xl'>Referendum count by Category</h2>
 			<Spin spinning={loading}>
 				<div
@@ -104,16 +129,16 @@ const AnalyticsReferendumCount = () => {
 					<ResponsivePie
 						data={data}
 						margin={{
-							bottom: 8,
+							bottom: isMobile ? 80 : 8,
 							left: 10,
-							right: 260,
+							right: isMobile ? 0 : 260,
 							top: 20
 						}}
 						sortByValue={true}
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -156,13 +181,14 @@ const AnalyticsReferendumCount = () => {
 							axis: {
 								ticks: {
 									text: {
-										fill: theme === 'dark' ? '#fff' : '#333' // Set axis text color based on theme
+										fill: theme === 'dark' ? '#fff' : '#333'
 									}
 								}
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
+									fill: theme === 'dark' ? '#fff' : '#333',
+									fontSize: 14
 								}
 							},
 							tooltip: {
@@ -172,28 +198,51 @@ const AnalyticsReferendumCount = () => {
 								}
 							}
 						}}
-						legends={[
-							{
-								anchor: 'right',
-								data: data.map((item) => ({
-									color: item.color,
-									id: item.id,
-									label: `${item.label} - ${item.value}`
-								})),
-								direction: 'column',
-								itemDirection: 'left-to-right',
-								itemHeight: 52,
-								itemWidth: -60,
-								itemsSpacing: 1,
-								justify: false,
-								symbolShape: 'circle',
-								symbolSize: 16,
-								translateX: 40,
-								translateY: 0
-							}
-						]}
+						legends={
+							isMobile
+								? []
+								: [
+										{
+											anchor: 'right',
+											data: data.map((item) => ({
+												color: item.color,
+												id: item.id,
+												label: `${item.label} - ${item.value}`
+											})),
+											direction: 'column',
+											itemDirection: 'left-to-right',
+											itemHeight: 32,
+											itemWidth: -60,
+											itemsSpacing: 1,
+											justify: false,
+											symbolShape: 'circle',
+											symbolSize: 8,
+											translateX: 40,
+											translateY: 0
+										}
+								  ]
+						}
 					/>
 				</div>
+				{isMobile && (
+					<LegendContainer>
+						{data.map((item) => (
+							<div
+								key={item.id}
+								className='mb-2 mr-4 flex w-[50%] items-center justify-between text-xs text-bodyBlue dark:text-white'
+							>
+								<div className='flex items-center gap-x-1'>
+									<div
+										className='h-2 w-2 rounded-full'
+										style={{ background: item.color }}
+									></div>
+									<p className='m-0 p-0'>{item.label}</p>
+								</div>
+								<p className='m-0 p-0'>{item.value}</p>
+							</div>
+						))}
+					</LegendContainer>
+				)}
 			</Spin>
 		</StyledCard>
 	);

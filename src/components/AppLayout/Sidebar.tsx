@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-	AuctionAdminIcon,
 	BountiesIcon,
 	DemocracyProposalsIcon,
 	DiscussionsIcon,
@@ -31,11 +30,9 @@ import {
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ArchivedIcon,
-	RoundedDollarIcon,
 	SelectedOverview,
 	SelectedRoot,
 	SelectedAll,
-	AllPostIcon,
 	SelectedWishForChange,
 	SelectedAuctionAdmin,
 	SelectedStakingAdmin,
@@ -44,7 +41,6 @@ import {
 	SelectedTreasury,
 	SelectedDiscussions,
 	SelectedPreimages,
-	SelectedBountiesIcon,
 	AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -63,8 +59,14 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
-import getUserDropDown, { MenuItem } from './menuUtils';
+import getUserDropDown, { MenuItem, SidebarFoot1, SidebarFoot2 } from './menuUtils';
 import { trackEvent } from 'analytics';
+import { RightOutlined } from '@ant-design/icons';
+
+import ImageIcon from '~src/ui-components/ImageIcon';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
+import Popover from '~src/basic-components/Popover';
 
 const { Sider } = Layout;
 
@@ -80,6 +82,7 @@ interface SidebarProps {
 	sidedrawer: boolean;
 	setOpenAddressLinkedModal: (open: boolean) => void;
 	setIdentityMobileModal: (open: boolean) => void;
+	setSidedrawer: (open: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -90,6 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	isGood,
 	mainDisplay,
 	isIdentitySet,
+	setSidedrawer,
 	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
@@ -110,9 +114,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
 	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
 	const [whitelistDropdownOpen, setWhitelistDropdownOpen] = useState(false);
+	const [archivedDropdownOpen, setArchivedDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
+	const archivedDropdownRef = useRef<HTMLDivElement>(null);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const isActive = (path: string) => router.pathname === path;
+
 	if (sidedrawer === false) {
 		setSidebarCollapsed(true);
 	}
@@ -122,11 +132,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			if (
 				(dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) ||
 				(treasuryDropdownRef.current && !treasuryDropdownRef.current.contains(event.target as Node)) ||
-				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node))
+				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node)) ||
+				(archivedDropdownRef.current && !archivedDropdownRef.current.contains(event.target as Node))
 			) {
 				setGovernanceDropdownOpen(false);
 				setTreasuryDropdownOpen(false);
 				setWhitelistDropdownOpen(false);
+				setArchivedDropdownOpen(false);
 			}
 		};
 
@@ -135,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen]);
+	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen, archivedDropdownOpen]);
 
 	useEffect(() => {
 		const currentPath = router.pathname;
@@ -150,7 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  `}>{label}</span>;
+		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}  `}>{label}</span>;
 		return {
 			children,
 			icon,
@@ -159,20 +171,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
-	const Menu = styled(AntdMenu)<MenuProps>`
+	/* eslint-disable react/prop-types */
+	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
-			background: ${(props: any) => {
-				/* eslint-disable react/prop-types */
-				return props?.theme === 'dark' ? '#0D0D0D' : '#fff';
-			}} !important;
-		}
-		.ant-menu-item {
-			${sidebarCollapsed && 'width: 50%;'};
-			padding: 1px 22px 1px 18px;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		}
 
 		.ant-menu-item-selected {
-			background: ${(props: any) => (props?.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#520f32' : '#fce5f2')} !important;
+		}
+
+		.ant-menu-item {
+			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '100%')};
+			padding: 1px 22px 1px 18px;
 		}
 	`;
 
@@ -197,6 +208,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
+		setSidebarCollapsed(true);
+		setSidedrawer(false);
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
@@ -469,7 +482,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												<span
 													className={`text-[10px] ${
 														totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
-													} rounded-lg px-2 py-1`}
+													} rounded-lg px-[4px] py-1`}
 												>
 													{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 												</span>
@@ -643,13 +656,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/all-posts',
 				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
-						<SelectedAll className='-ml-[10px] scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedAll className={`${sidebarCollapsed ? '-ml-2 mt-0.5' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					) : (
-						<AllPostIcon className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-3' />
+						<ImageIcon
+							src='/assets/allpost.svg'
+							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px]' : '-top-4 -ml-2'}  h-6  w-6 scale-90 text-2xl font-medium  ${
+								theme === 'dark' ? 'dark-icons' : 'text-lightBlue'
+							}`}
+							alt=''
+						/>
 					)}
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
-							router.pathname.includes('/all-posts') ? 'mt-5' : 'mt-7'
+							router.pathname.includes('/all-posts') ? 'mt-5' : ''
 						} rounded-[9px] px-[2px]  text-[10px] font-semibold text-white md:-right-[6px] md:-top-6`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
@@ -709,11 +728,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
 							<div className='flex  justify-between'>
-								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='pt-1 text-[12px]'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+									} w-5 rounded-lg px-[5px] py-1 text-center text-[#96A4B6] dark:text-[#595959]`}
 								>
 									{activeProposal && activeProposal > 9 ? (
 										<>
@@ -765,43 +784,53 @@ const Sidebar: React.FC<SidebarProps> = ({
 						trackName === 'all' ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className='-ml-1 mt-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<RootIcon className=' mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.ROOT ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-2 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<RootIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<>
 								{router.pathname.includes('/wish-for-change') ? (
-									<SelectedWishForChange className={`-ml-[10px] ${sidebarCollapsed ? 'mt-1' : ''}  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedWishForChange className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-1'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<WishForChangeIcon className='-ml-2 mt-[1px] scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive  ' />
+									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<>
 								{' '}
 								{router.pathname.includes('/auction-admin') ? (
-									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedAuctionAdmin
+										className={`${sidebarCollapsed ? '-ml-[6px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+									<ImageIcon
+										src='/assets/sidebar/auction.svg'
+										alt=''
+										className={`${sidebarCollapsed ? '-ml-[7px]' : ' -ml-1'}  h-6 w-6 scale-90 text-2xl  ${
+											theme == 'dark' ? 'dark-icons' : 'text-lightBlue'
+										} text-2xl font-medium `}
+									/>
 								)}
 							</>
 						) : (
 							<>
 								{' '}
 								{router.pathname.includes('/staking-admin') ? (
-									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedStakingAdmin
+										className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<StakingAdminIcon className=' -ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<StakingAdminIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						);
@@ -814,7 +843,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<span
 										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} w-5 rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
 										{activeProposal && activeProposal > 9 ? (
 											<>
@@ -833,7 +862,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='relative'>
 								{icon}
 								<div
-									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-7'
+									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-8'
 									style={{
 										opacity: sidedrawer ? 0 : 1,
 										transition: 'opacity 0.3s ease-in-out'
@@ -861,34 +890,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 	}
 
-	if (['polkadot'].includes(network)) {
-		gov2TrackItems.mainItems.push(
-			getSiderMenuItem(
-				<div className=' flex items-center '>
-					Bounties
-					<div className={`${poppins.className} ${poppins.variable} ml-2 rounded-[9px] bg-[#407bfe]  px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
-				</div>,
-				'/bounty',
-				<div className={`relative  ${!sidedrawer && 'mt-2'}`}>
-					{router.pathname.includes('/bounty') ? (
-						<SelectedBountiesIcon className='-ml-[10px] scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					) : (
-						<RoundedDollarIcon className=' -ml-2 scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					)}
-					<div
-						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-[4px]'}
-						style={{
-							opacity: sidedrawer ? 0 : 1,
-							transition: 'opacity 0.3s ease-in-out'
-						}}
-					>
-						NEW
-					</div>
-				</div>
-			)
-		);
-	}
-
 	const gov2OverviewItems = [
 		!isMobile ? getSiderMenuItem('', '', null) : null,
 
@@ -899,7 +900,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-3  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+					<OverviewIcon className='-ml-[7px]  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive ' />
 				)}
 			</>
 		),
@@ -910,7 +911,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/discussions' ? (
 					<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<DiscussionsIcon className='-ml-[7px]  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -920,7 +921,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/preimages',
 			<>
 				{router.pathname === '/preimages' ? (
-					<SelectedPreimages className='-ml-[10px] -mt-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedPreimages className={`-ml-[10px] ${sidebarCollapsed && '-mt-3'} scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 				) : (
 					<PreimagesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -948,13 +949,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/gov-analytics',
-				<div className='relative'>
-					<AnalyticsSVGIcon className={`${sidebarCollapsed ? '-ml-3' : '-ml-2'} scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive`} />
+				<div className='relative -ml-2'>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-2 md:-top-0'}
+						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
@@ -979,9 +980,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
-					<SelectedGovernance className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedGovernance className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceIconNew className='-ml-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<GovernanceIconNew className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
 			[...gov2TrackItems.governanceItems]
@@ -991,91 +992,134 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_fellowship_group',
 			<div>
 				{activeWhitelist ? (
-					<SelectedWhitelist className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedWhitelist className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipIconNew className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
 		)
 	];
 
-	const handleGovernanceClick = () => {
-		setGovernanceDropdownOpen(!governanceDropdownOpen);
-		setTreasuryDropdownOpen(false);
-		setWhitelistDropdownOpen(false);
-	};
+	const governanceDropdownContent = (
+		<div className='text-center'>
+			{gov2TrackItems.governanceItems.map((item, index) => {
+				const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
 
-	const handleTreasuryClick = () => {
-		setTreasuryDropdownOpen(!treasuryDropdownOpen);
-		setGovernanceDropdownOpen(false);
-		setWhitelistDropdownOpen(false);
-	};
+				return (
+					<p
+						key={index}
+						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+            			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					>
+						<Link
+							href={item?.key as string}
+							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+						>
+							<span>{formattedLabel}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
 
-	const handleWhitelistClick = () => {
-		setWhitelistDropdownOpen(!whitelistDropdownOpen);
-		setGovernanceDropdownOpen(false);
-		setTreasuryDropdownOpen(false);
-	};
+	// whitelist dropdown
+
+	const whitelistDropdownContent = (
+		<div className='text-left'>
+			{gov2TrackItems.fellowshipItems.map((item, index) => {
+				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+
+				return (
+					<p
+						key={index}
+						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+            ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					>
+						<Link
+							href={item?.key as string}
+							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+						>
+							<span>{formattedLabel}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
 
 	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 
 		getSiderMenuItem(
-			<Tooltip
-				title='Governance'
-				placement='left'
-				className='text-xs'
+			<Popover
+				content={governanceDropdownContent}
+				placement='right'
+				arrow={false}
+				trigger='click'
+				overlayClassName='z-[1100] w-[190px] left-16'
 			>
-				<div
-					className='relative cursor-pointer'
-					style={{ marginRight: '-13px', padding: '10%' }}
-					onClick={handleGovernanceClick}
+				<Tooltip
+					title='Governance'
+					placement='left'
+					className='text-xs'
 				>
-					{activeGovernance ? (
-						<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-					) : (
-						<GovernanceIconNew
-							className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
-								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							}  text-2xl dark:text-icon-dark-inactive`}
-						/>
-					)}
-				</div>
-			</Tooltip>,
+					<div
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px', padding: '10%' }}
+					>
+						{activeGovernance ? (
+							<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
+						) : (
+							<GovernanceIconNew
+								className={`mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[8%]'} scale-90 font-medium ${
+									activeGovernance ? '-ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+								} text-2xl dark:text-icon-dark-inactive`}
+							/>
+						)}
+					</div>
+				</Tooltip>
+			</Popover>,
 			'gov2_governance_group',
 			null,
 			[...gov2TrackItems.governanceItems]
 		),
 
 		getSiderMenuItem(
-			<Tooltip
-				title='Whitelist'
-				placement='left'
-				className='text-xs'
+			<Popover
+				content={whitelistDropdownContent}
+				placement='right'
+				arrow={false}
+				trigger='click' // Popover is triggered on click
+				overlayClassName='z-[1100] w-[180px] '
 			>
-				<div
-					onClick={handleWhitelistClick}
-					className='relative cursor-pointer'
-					style={{ marginRight: '-13px', padding: '10%' }}
+				<Tooltip
+					title='Whitelist'
+					placement='left'
+					className='text-xs'
 				>
-					{activeWhitelist ? (
-						<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-					) : (
-						<FellowshipIconNew
-							className={`-ml-8 mt-1 w-20 scale-90 font-medium ${
-								activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							} text-2xl dark:text-icon-dark-inactive`}
-						/>
-					)}
-				</div>
-			</Tooltip>,
+					<div
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px', padding: '10%' }}
+					>
+						{activeWhitelist ? (
+							<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
+						) : (
+							<FellowshipIconNew
+								className={`-ml-9 mt-1 w-20 scale-90  font-medium ${activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} text-2xl  ${
+									whitelistDropdownOpen && 'bg-black bg-opacity-[8%]'
+								} dark:text-icon-dark-inactive`}
+							/>
+						)}
+					</div>
+				</Tooltip>
+			</Popover>,
 			'gov2_fellowship_group',
 			null,
 			[...gov2TrackItems.fellowshipItems]
 		),
-
 		getSiderMenuItem(
 			<Tooltip
 				title='Parachains'
@@ -1083,19 +1127,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className='-mb-[14px] -ml-10  w-[110px] '
+					className=' -ml-12  h-[44px]  px-1 '
 					style={{
 						borderTop: '2px dotted #ccc',
+						marginBottom: '5px',
 						paddingTop: '12px'
 					}}
 				>
 					<Link href='/parachains'>
 						<div
-							className={`ml-14 flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-3  hover:bg-[#000000] hover:bg-opacity-[4%] ${
-								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+							className={`ml-[50px] flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-1  hover:bg-[#000000] hover:bg-opacity-[4%] ${
+								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A] dark:bg-[#520f32]' : 'text-lightBlue dark:text-icon-dark-inactive'
 							}`}
 						>
-							<ParachainsIcon className=' scale-90 text-xl font-medium ' />
+							<ParachainsIcon className=' mt-2 scale-90 text-xl font-medium ' />
 						</div>
 					</Link>
 				</div>
@@ -1112,18 +1157,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				'Fellowship',
 				'gov2_fellowship_group',
-				<FellowshipIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+				<FellowshipIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
 				[...gov2TrackItems.fellowshipItems]
 			)
 		);
 	}
-
+	let bountiesSubItems: ItemType[] = [];
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
+
 		if (isOpenGovSupported(network)) {
-			items = items.concat(
+			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center  justify-between'>
+					<div className='flex items-center justify-between'>
 						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
@@ -1168,6 +1214,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
+		const bountiesMenuItem = getSiderMenuItem(
+			'Bounties',
+			'gov2_bounties_group',
+			<div>
+				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+			</div>,
+			[...bountiesSubItems]
+		);
+		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
+
+		items = items.concat(bountiesMenuItem);
+
 		gov2Items.splice(
 			-1,
 			0,
@@ -1176,9 +1234,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_treasury_group',
 				<div>
 					{activeTreasury ? (
-						<SelectedTreasury className='-ml-3 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<SelectedTreasury className='-ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]
@@ -1202,28 +1260,119 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 
+	const treasuryDropdownContent = (
+		<div className='text-left'>
+			{gov2TrackItems.treasuryItems.map((item, index) => {
+				const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
+				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+
+				if (item && item.key === 'gov2_bounties_group') {
+					const bountiesPopoverContent = (
+						<div className='w-[150px] pt-2'>
+							{bountiesSubItems.map((subItem, subIndex) => {
+								if (!subItem) return null;
+								const uniqueSubKey = `${subItem.key}-${subIndex}`;
+								const formattedSubLabel = subItem?.key
+									?.toString()
+									.replace(/^\//, '')
+									.split('_')
+									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+									.join(' ');
+
+								return (
+									<p
+										key={uniqueSubKey}
+										className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+											isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+										}`}
+									>
+										<Link href={subItem?.key as string}>
+											<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+												{formattedSubLabel || ''}
+											</span>
+										</Link>
+									</p>
+								);
+							})}
+						</div>
+					);
+
+					return (
+						<div
+							key={uniqueKey}
+							className='relative'
+						>
+							<Popover
+								content={bountiesPopoverContent}
+								placement='right'
+								trigger='hover'
+								overlayClassName='z-[1200]'
+							>
+								<p
+									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+									}`}
+								>
+									<span className='flex items-center gap-2 font-medium'>
+										<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' />
+										<span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
+									</span>
+									<RightOutlined />
+								</p>
+							</Popover>
+						</div>
+					);
+				}
+
+				return (
+					<p
+						key={uniqueKey}
+						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+						}`}
+					>
+						<Link href={item?.key as string}>
+							<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+								{formattedLabel || ''}
+							</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
+
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		gov2CollapsedItems.splice(
 			-1,
 			0,
 			getSiderMenuItem(
-				<Tooltip
-					title='Treasury'
-					placement='left'
-					className='text-xs'
+				<Popover
+					content={treasuryDropdownContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[190px] left-16'
 				>
-					<div
-						className='relative cursor-pointer'
-						style={{ marginRight: '-13px', padding: '10%' }}
-						onClick={handleTreasuryClick}
+					<Tooltip
+						title='Treasury'
+						placement='left'
+						className='text-xs'
 					>
-						{activeTreasury ? (
-							<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-						) : (
-							<TreasuryIconNew className='-ml-8 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-						)}
-					</div>
-				</Tooltip>,
+						<div
+							className='relative cursor-pointer px-1'
+							style={{ marginRight: '-13px', padding: '10%' }}
+						>
+							{activeTreasury ? (
+								<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
+							) : (
+								<TreasuryIconNew
+									className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
+								/>
+							)}
+						</div>
+					</Tooltip>
+				</Popover>,
 				'gov2_treasury_group',
 				null,
 				[...gov2TrackItems.treasuryItems]
@@ -1254,7 +1403,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-2 mt-0.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<OverviewIcon className='-ml-1 mt-0.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -1352,9 +1501,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 						}}
 					>
 						<Link href='/parachains'>
-							<div className='flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] '>
-								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='ml-2  text-xs font-medium  text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
+							<div
+								className={`flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] ${
+									activeParachain ? 'bg-[#FFF2F9] font-medium text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+								}`}
+							>
+								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium ' />
+								<span className='ml-2  text-xs font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,
@@ -1364,9 +1517,144 @@ const Sidebar: React.FC<SidebarProps> = ({
 				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
+
+		// archived dropdown state
+
+		const archivedDropdownContent = (
+			<div className='text-left'>
+				{items.map((item, index) => {
+					const formattedLabel =
+						typeof item?.key === 'string'
+							? item.key
+									.replace('_group', '')
+									.split('_')
+									.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+									.join(' ')
+							: '';
+
+					if (item && typeof item?.key === 'string' && item?.key.includes('_group')) {
+						return (
+							<Popover
+								key={index}
+								content={
+									<div className='w-[210px] '>
+										{'children' in item &&
+											item?.children?.map((subItem, subIndex) => {
+												const formattedKey =
+													typeof subItem?.key === 'string'
+														? subItem.key
+																.replace(/^\//, '')
+																.split('-')
+																.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+																.join(' ')
+														: '';
+
+												return (
+													<div
+														key={subIndex}
+														className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
+													>
+														{subItem?.key && (
+															<Link href={subItem.key.toString()}>
+																<span
+																	className={`font-medium ${
+																		isActive(item?.key?.toString() || '') ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+																	} flex items-center gap-2 px-2 py-1`}
+																>
+																	{'icon' in subItem && <span className='text-xl'>{subItem.icon}</span>} {formattedKey}
+																</span>
+															</Link>
+														)}
+													</div>
+												);
+											})}
+									</div>
+								}
+								trigger='hover'
+								placement='right'
+								overlayClassName='z-[1200]'
+							>
+								<div
+									className={`relative cursor-pointer rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										isActive(item?.key) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+									}`}
+								>
+									<div className='flex items-center justify-between py-2'>
+										<span className={`font-medium ${isActive(item?.key) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedLabel}</span>
+										{'children' in item && item.children && (
+											<span className='ml-2 cursor-pointer text-xs text-gray-500 dark:text-gray-400'>
+												<RightOutlined />
+											</span>
+										)}
+									</div>
+								</div>
+							</Popover>
+						);
+					}
+
+					return (
+						<p
+							key={index}
+							className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+								isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+							}`}
+						>
+							<Link
+								href={item?.key as string}
+								className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+							>
+								<span>{formattedLabel}</span>
+							</Link>
+						</p>
+					);
+				})}
+			</div>
+		);
+		const checkIfAnyItemIsActive = (items: MenuProps['items']): boolean => {
+			return (items ?? []).some((item) => {
+				if (item && item.key && isActive(item.key as string)) {
+					return true;
+				}
+
+				if (item && 'children' in item) {
+					return checkIfAnyItemIsActive(item.children);
+				}
+
+				return false;
+			});
+		};
+
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
-			getSiderMenuItem('Archived', '/archived', <ArchivedIcon className='-ml-2 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			getSiderMenuItem(
+				<Popover
+					content={archivedDropdownContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[180px] '
+				>
+					<Tooltip
+						title='Archived'
+						placement='left'
+						className='text-xs'
+					>
+						<div
+							className='relative cursor-pointer px-1'
+							style={{ marginRight: '-13px', padding: '10%' }}
+						>
+							<ArchivedIcon
+								className={`-ml-9 mt-1 w-20 scale-90 text-2xl ${
+									checkIfAnyItemIsActive(items) ? 'bg-[#FFF2F9] text-[#E5007A] dark:bg-[#520f32]' : 'text-lightBlue dark:text-icon-dark-inactive'
+								} font-medium ${archivedDropdownOpen && 'bg-black bg-opacity-[8%]'} `}
+							/>
+						</div>
+					</Tooltip>
+				</Popover>,
+				'archived_group',
+				null,
+				[...items]
+			)
 		];
 	}
 
@@ -1379,7 +1667,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (isMobile) {
 		sidebarItems = [username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
-	const isActive = (path: string) => router.pathname === path;
 	function toPascalCase(str: string): string {
 		return str.replace(/-/g, ' ').replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
 	}
@@ -1399,91 +1686,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 		>
 			<div className='flex h-full flex-col'>
 				<div className='flex flex-col'>
-					{sidebarCollapsed && governanceDropdownOpen && (
-						<div
-							ref={dropdownRef}
-							className='absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
-						>
-							<div className='text-center'>
-								{gov2TrackItems.governanceItems.map((item, index) => {
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-
-									return (
-										<p
-											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
-										>
-											<Link
-												href={item?.key as string}
-												className='m-0 inline-block w-full p-0 text-left text-[#243A57] dark:text-[#FFFFFF]'
-											>
-												<span>{formattedLabel}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</div>
-						</div>
-					)}
-					{sidebarCollapsed && whitelistDropdownOpen && (
-						<div
-							ref={whitelistDropdownRef}
-							className='absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
-						>
-							<ul className='text-center'>
-								{gov2TrackItems.fellowshipItems.map((item, index) => {
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-
-									return (
-										<p
-											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
-										>
-											<Link
-												href={item?.key as string}
-												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
-											>
-												<span>{formattedLabel}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-
-					{sidebarCollapsed && treasuryDropdownOpen && (
-						<div
-							ref={treasuryDropdownRef}
-							className='absolute left-20 top-[380px] z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
-						>
-							<ul className='text-center'>
-								{gov2TrackItems.treasuryItems.map((item, index) => {
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-
-									return (
-										<p
-											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
-										>
-											<Link
-												href={item?.key as string}
-												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
-											>
-												<span>{formattedLabel}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-
 					<Menu
 						theme={theme as any}
 						mode='inline'
 						selectedKeys={[router.pathname]}
 						items={gov2Items.slice(0, 1)}
+						sidebarCollapsed={sidebarCollapsed}
+						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''}   dark:bg-section-dark-overlay`}
 					/>
 					{!isMobile && (
@@ -1530,14 +1739,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute left-4 top-7 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+								<div className={`activeborderhover  group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/leaderboard'>
 										<img
 											src='/assets/sidebar/head2.svg'
@@ -1551,7 +1760,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/delegation where are you') ? '  activeborder  rounded-lg' : ''}`}>
+								<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/delegation'>
 										<img
 											src='/assets/sidebar/head3.svg'
@@ -1565,18 +1774,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/calendar'>
+								<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+									<div
+										onClick={() => {
+											if (username?.length) {
+												router.push(`/user/${username}`);
+											} else {
+												setLoginOpen(true);
+											}
+										}}
+									>
 										<img
 											src='/assets/sidebar/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -left-2 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Calendar
-											<div className='absolute left-14 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+										<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+											Profile
+											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
-									</Link>
+									</div>
 								</div>
 							</div>
 						</>
@@ -1601,9 +1818,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -bottom-7 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute  right-8 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1614,9 +1831,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Leaderboard
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1627,24 +1844,32 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Delegation
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/calendar'>
+								<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+									<div
+										onClick={() => {
+											if (username?.length) {
+												router.push(`/user/${username}`);
+											} else {
+												setLoginOpen(true);
+											}
+										}}
+									>
 										<img
 											src='/assets/sidebar/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[95px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Calendar
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+										<div className='absolute  bottom-0 left-[82px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+											Profile
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
-									</Link>
+									</div>
 								</div>
 							</div>
 						</>
@@ -1657,131 +1882,35 @@ const Sidebar: React.FC<SidebarProps> = ({
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
+						sidebarCollapsed={sidebarCollapsed}
+						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed && 'ml-2 flex flex-grow flex-col items-center pr-2    '
-						}   overflow-x-hidden  dark:bg-section-dark-overlay`}
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : ''
+						} overflow-x-hidden dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (
 					<>
-						<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
-							<div className='mt-5 flex items-center justify-center gap-2'>
-								<div className='group relative'>
-									<Link href='https://townhallgov.com/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot1.svg' : '/assets/sidebar/foot1.svg'}
-											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Townhall
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://polkasafe.xyz/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot2.svg' : '/assets/sidebar/foot2.svg'}
-											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Polkasafe
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://collectives.polkassembly.io/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot3.svg' : '/assets/sidebar/foot3.svg'}
-											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Fellowship
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://staking.polkadot.cloud/#/overview'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot4.svg' : '/assets/sidebar/foot4.svg'}
-											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Staking
-											<div className='absolute left-12  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-							</div>
-						</div>
+						<SidebarFoot1 />
 					</>
 				) : (
 					<>
-						<div className='fixed bottom-0 left-0 z-[1000]  w-full bg-white py-3 dark:bg-section-dark-overlay'>
-							<div className='mt-5 flex flex-col items-center justify-center gap-2'>
-								<div className='group relative'>
-									<Link href='https://townhallgov.com/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot1.svg' : '/assets/sidebar/foot1.svg'}
-											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Townhall
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://polkasafe.xyz/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot2.svg' : '/assets/sidebar/foot2.svg'}
-											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Polkasafe
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://collectives.polkassembly.io/'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot3.svg' : '/assets/sidebar/foot3.svg'}
-											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Fellowship
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://staking.polkadot.cloud/#/overview'>
-										<img
-											src={theme === 'dark' ? '/assets/sidebar/darkfoot4.svg' : '/assets/sidebar/foot4.svg'}
-											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Staking
-											<div className='absolute left-1/2  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-							</div>
-						</div>
+						<SidebarFoot2 />
 					</>
 				)}
 			</div>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 		</Sider>
 	);
 };

@@ -200,7 +200,7 @@ p > a:hover {
 }
 
 .ant-segmented-item-selected .ant-segmented-item-label {
-  color: var(--pink_primary) !important;
+  color: #E5007A !important;
 }
 
 .ant-modal-header {
@@ -909,13 +909,37 @@ z-index: 105 !important;
 .activeborder{
   border: 1px solid #E5007A;
   border-radius: 10px;
+  
+}
+.activeborderhover{
+  border: 1px solid transparent;
+  border-radius: 10px;
 }
 .activeborderhover:hover{
   border: 1px solid #E5007A;
-  border-radius: 10px;
 }
 
 .castvoteborder{
   border: 1px solid #E5007A;
   border-radius: 8px;
+}
+
+.menu-shadow-top {
+  position: relative;
+}
+
+.menu-shadow-top::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0;
+  right: 0;
+  height: 3px; 
+  box-shadow: 0px -2px 6px 0px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .ant-collapse .ant-collapse-content {
+  border-top: 1px solid #3B444F !important;
 }

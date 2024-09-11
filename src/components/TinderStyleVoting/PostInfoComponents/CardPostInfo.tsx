@@ -80,6 +80,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 		{
 			children: (
 				<CardPostDescription
+					className='max-h-[250px] overflow-y-auto'
 					postContent={post?.content}
 					postId={post?.id}
 				/>
@@ -91,7 +92,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	];
 
 	return (
-		<section className='max-h-[400px] overflow-y-auto'>
+		<section className='max-h-[400px]'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}

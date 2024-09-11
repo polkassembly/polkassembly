@@ -131,4 +131,109 @@ export default styled(VotingFormCard)`
 	.ant-slider .ant-slider-mark {
 		margin-top: 8px !important;
 	}
+	.ant-slider .ant-slider-handle::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+	.ant-slider .ant-slider-handle:hover::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle:hover::before,
+	.ant-slider .ant-slider-handle:active::before,
+	.ant-slider .ant-slider-handle:focus::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle:hover::after,
+	.ant-slider .ant-slider-handle:active::after,
+	.ant-slider .ant-slider-handle:focus::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+	.ant-slider-horizontal .ant-slider-mark {
+		top: 22px;
+	}
 `;

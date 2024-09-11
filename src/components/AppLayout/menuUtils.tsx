@@ -198,6 +198,17 @@ const getUserDropDown = ({
 
 export default getUserDropDown;
 
+export function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
+	label = <span className='w-5 text-xs font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
+	return {
+		children,
+		icon,
+		key,
+		label,
+		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
+	} as MenuItem;
+}
+
 export const SidebarFoot1 = () => {
 	return (
 		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>

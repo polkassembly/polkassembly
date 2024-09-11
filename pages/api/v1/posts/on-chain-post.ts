@@ -870,12 +870,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			if (
 				proposedCall?.args?.assetKind?.assetId?.value?.interior ||
 				proposedCall?.args?.assetKind?.assetId?.interior?.value ||
-				proposedCall?.args?.calls?.map(({ value }: any) => value?.assetKind?.assetId?.interior?.value || value?.assetKind?.assetId?.value?.interior)
+				proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
 			) {
 				const call =
 					proposedCall?.args?.assetKind?.assetId?.value?.interior?.value ||
 					proposedCall?.args?.assetKind?.assetId?.interior?.value ||
-					proposedCall?.args?.calls?.map(({ value }: any) => value?.assetKind?.assetId?.interior?.value || value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
+					proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
 
@@ -883,8 +883,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
 				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
-			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id) {
-				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id, network);
+			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id) {
+				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id, network);
 			}
 
 			if (proposedCall?.args?.amount) {
@@ -896,7 +896,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 								? proposedCall?.args?.beneficiary
 								: (proposedCall?.args?.beneficiary as any)?.value?.length
 								? (proposedCall?.args?.beneficiary as any)?.value
-								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) || (proposedCall?.args?.beneficiary as any)?.value?.interior?.value[0]?.id || '',
+								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) ||
+								  (proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.[0]?.id ||
+								  '',
 						amount: proposedCall?.args?.amount
 					});
 				}
@@ -907,14 +909,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 						calls.forEach((call) => {
 							if (call?.value?.beneficiary?.value?.interior?.value?.id) {
 								call.value.beneficiary.value.interior.value.id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value.id, network);
-							} else if (call?.value?.beneficiary?.value?.interior?.value[0]?.id) {
-								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value[0].id, network);
+							} else if (call?.value?.beneficiary?.value?.interior?.value?.[0]?.id) {
+								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value?.[0].id, network);
 							}
 
 							const beneficiary = {
-								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value[0]?.id || '',
+								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value?.[0]?.id || '',
 								amount: call?.value?.amount
 							};
+							requested += BigInt(call?.value?.amount || 0);
+
 							beneficiaries.push(beneficiary);
 						});
 					} else {

@@ -286,8 +286,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		getData();
 
 		(async () => {
-			const { transferableBalance } = await userProfileBalances({ address: delegationDashboardAddress, api, apiReady, network });
-			setAvailableTransferableBalance(transferableBalance || ZERO_BN);
+			const allBalances = await userProfileBalances({ address: delegationDashboardAddress, api, apiReady, network });
+			setAvailableTransferableBalance(allBalances?.transferableBalance || ZERO_BN);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open, delegationDashboardAddress, api, apiReady]);

@@ -73,12 +73,12 @@ const ProfileBalances = ({ className }: Props) => {
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		(async () => {
-			const balances = await userProfileBalances({ address: defaultAddress || delegationDashboardAddress, api, apiReady, network });
+			const allBalances = await userProfileBalances({ address: defaultAddress || delegationDashboardAddress, api, apiReady, network });
 			setBalances({
-				freeBalance: balances?.freeBalance || ZERO_BN,
-				lockedBalance: balances?.transferableBalance || ZERO_BN,
-				total: balances?.totalBalance || ZERO_BN,
-				transferableBalance: balances?.lockedBalance || ZERO_BN
+				freeBalance: allBalances?.freeBalance || ZERO_BN,
+				lockedBalance: allBalances?.transferableBalance || ZERO_BN,
+				total: allBalances?.totalBalance || ZERO_BN,
+				transferableBalance: allBalances?.lockedBalance || ZERO_BN
 			});
 		})();
 

@@ -283,7 +283,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						{!!delegate?.image?.length && (
 							<ImageComponent
 								src={delegate?.image || ''}
-								alt=''
+								alt='image'
 								className='h-8 w-8'
 							/>
 						)}
@@ -334,7 +334,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className}`}>
-						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv'd Delegation</div>
+						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv&apos;d Delegation</div>
+
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className}`}>

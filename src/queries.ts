@@ -2974,3 +2974,79 @@ export const GET_SUBSCRIBED_POSTS = `query Subscribed_Posts($type_eq: ProposalTy
   }
 }
 `;
+
+export const GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType=ReferendumV2, $status_in: [ProposalStatus!]=[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted]) {
+  proposals(where: {type_eq: $type_eq,, status_in: $status_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    proposalArguments{
+method
+    section
+    args}
+    preimage {
+      method
+      proposer
+      proposedCall {
+        args
+      }
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+    trackNumber
+    group {
+      proposals(limit: 25, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 25, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+    status
+  }
+}`;
+
+export const VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS = `query MyQuery ( $type_eq: VoteType, $indexes_in: [Int!], $voter_in:[String!]  ) {
+  flattenedConvictionVotes(where:{type_eq:$type_eq , proposalIndex_in:$indexes_in, voter_in:$voter_in, removedAtBlock_isNull:true}){
+    proposalIndex
+  }
+}
+`;
+
+export const GET_TOTAL_VOTE_COUNT_ON_PROPOSAL = `query MyQuery ( $type_eq: VoteType!, $index_eq: Int) {
+flattenedConvictionVotesConnection(where:{type_eq:$type_eq , proposalIndex_eq: $index_eq, removedAtBlock_isNull:true}, orderBy: id_ASC){
+    totalCount
+  }
+}`;

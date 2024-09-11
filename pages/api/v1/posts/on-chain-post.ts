@@ -42,6 +42,7 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
+import { getTimeline } from '~src/util/getTimeline';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -54,40 +55,6 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	} catch (error) {
 		return [];
 	}
-};
-
-export const getTimeline = (
-	proposals: any,
-	isStatus?: {
-		swap: boolean;
-	}
-) => {
-	return (
-		proposals?.map((obj: any) => {
-			const statuses = obj?.statusHistory as { status: string }[];
-			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
-				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
-					if (decidingIndex >= 0) {
-						const obj = statuses[index];
-						statuses.splice(index, 1);
-						statuses.splice(decidingIndex, 0, obj);
-						if (isStatus) {
-							isStatus.swap = true;
-						}
-					}
-				}
-			}
-			return {
-				created_at: obj?.createdAt,
-				hash: obj?.hash,
-				index: obj?.index,
-				statuses,
-				type: obj?.type
-			};
-		}) || []
-	);
 };
 
 export interface IReactions {
@@ -867,8 +834,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args?.assetKind?.assetId?.value?.interior || proposedCall?.args?.assetKind?.assetId?.interior?.value) {
-				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value || proposedCall?.args?.assetKind?.assetId?.interior?.value;
+			if (
+				proposedCall?.args?.assetKind?.assetId?.value?.interior ||
+				proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+				proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
+			) {
+				const call =
+					proposedCall?.args?.assetKind?.assetId?.value?.interior?.value ||
+					proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+					proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
 
@@ -876,8 +850,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
 				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
-			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id) {
-				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id, network);
+			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id) {
+				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id, network);
 			}
 
 			if (proposedCall?.args?.amount) {
@@ -889,27 +863,47 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 								? proposedCall?.args?.beneficiary
 								: (proposedCall?.args?.beneficiary as any)?.value?.length
 								? (proposedCall?.args?.beneficiary as any)?.value
-								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) || (proposedCall?.args?.beneficiary as any)?.value?.interior?.value[0]?.id || '',
+								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) ||
+								  (proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.[0]?.id ||
+								  '',
 						amount: proposedCall?.args?.amount
 					});
 				}
 			} else {
 				const calls = proposedCall?.args?.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
-					calls.forEach((call) => {
-						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-							remark += call.remark + '\n';
-						}
-						if (call && call.amount) {
-							requested += BigInt(call.amount);
-							if (call.beneficiary) {
-								beneficiaries.push({
-									address: call.beneficiary as string,
-									amount: call.amount
-								});
+					if (assetId) {
+						calls.forEach((call) => {
+							if (call?.value?.beneficiary?.value?.interior?.value?.id) {
+								call.value.beneficiary.value.interior.value.id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value.id, network);
+							} else if (call?.value?.beneficiary?.value?.interior?.value?.[0]?.id) {
+								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value?.[0].id, network);
 							}
-						}
-					});
+
+							const beneficiary = {
+								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value?.[0]?.id || '',
+								amount: call?.value?.amount
+							};
+							requested += BigInt(call?.value?.amount || 0);
+
+							beneficiaries.push(beneficiary);
+						});
+					} else {
+						calls.forEach((call) => {
+							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+								remark += call.remark + '\n';
+							}
+							if (call && call.amount) {
+								requested += BigInt(call.amount);
+								if (call.beneficiary) {
+									beneficiaries.push({
+										address: call.beneficiary as string,
+										amount: call.amount
+									});
+								}
+							}
+						});
+					}
 				}
 			}
 		}

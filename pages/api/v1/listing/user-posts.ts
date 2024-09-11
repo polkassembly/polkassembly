@@ -19,40 +19,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IReaction } from '../posts/on-chain-post';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
-
-export const getTimeline = (
-	proposals: any,
-	isStatus?: {
-		swap: boolean;
-	}
-) => {
-	return (
-		proposals?.map((obj: any) => {
-			const statuses = obj?.statusHistory as { status: string }[];
-			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
-				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
-					if (decidingIndex >= 0) {
-						const obj = statuses[index];
-						statuses.splice(index, 1);
-						statuses.splice(decidingIndex, 0, obj);
-						if (isStatus) {
-							isStatus.swap = true;
-						}
-					}
-				}
-			}
-			return {
-				created_at: obj?.createdAt,
-				hash: obj?.hash,
-				index: obj?.index,
-				statuses,
-				type: obj?.type
-			};
-		}) || []
-	);
-};
+import { getTimeline } from '~src/util/getTimeline';
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 	return {

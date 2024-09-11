@@ -38,6 +38,7 @@ import Popover from '~src/basic-components/Popover';
 import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 const ZERO_BN = new BN(0);
 
@@ -62,6 +63,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock, setLockValue] = useState<number>(0);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [availableTransferableBalance, setAvailableTransferableBalance] = useState<BN>(ZERO_BN);
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
 	const [indeterminate, setIndeterminate] = useState(false);
 	const [checkAll, setCheckAll] = useState(false);
@@ -142,7 +144,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const txArr = checkedArr?.map((trackName) =>
 			api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, delegateTo, Number(convictionVal), bnBalance.toString())
 		);
-		const delegateTxn = api.tx.utility.batchAll(txArr);
+		const delegateTxn = txArr?.length > 1 ? api.tx.utility.batchAll(txArr) : txArr?.[0];
 
 		(async () => {
 			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
@@ -282,6 +284,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	useEffect(() => {
 		getData();
+
+		(async () => {
+			const allBalances = await userProfileBalances({ address: delegationDashboardAddress, api, apiReady, network });
+			setAvailableTransferableBalance(allBalances?.transferableBalance || ZERO_BN);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open, delegationDashboardAddress, api, apiReady]);
 
@@ -388,6 +395,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
 								)}
+
+								{availableTransferableBalance.lte(txFee) && !txFee.eq(ZERO_BN) && (
+									<Alert
+										type='error'
+										className='mb-4 h-10 rounded-[4px]'
+										showIcon
+										message={<span className='dark:text-blue-dark-high'>Insufficient Transferable Balance for paing Gas Fee</span>}
+									/>
+								)}
+
 								<div className=''>
 									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 									<AddressInput

@@ -198,9 +198,9 @@ const InAppNotification = ({ className }: { className?: string }) => {
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
-				image='/assets/referenda-endorse.png'
+				image='/assets/Gifs/login-endorse.gif'
 				title='Join Polkassembly to start using notifications.'
-				subtitle='Please login to use polkassembly notifications.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</div>
 	);

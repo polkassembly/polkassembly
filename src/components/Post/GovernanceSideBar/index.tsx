@@ -576,7 +576,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								setProgress(progress);
 							}
 						} else {
-							setCurvesError(data?.errors?.[0]?.message || 'Something went wrong.');
+							setCurvesError('Something went wrong in fetching data');
 						}
 					}
 				} else {

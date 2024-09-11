@@ -1,15 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Anchor, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-
+import { AiStarIcon } from '~src/ui-components/CustomIcons';
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
@@ -24,6 +22,8 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import GreenTickIcon from '~assets/icons/green-tick.svg';
+import MinusSignIcon from '~assets/icons/minus-sign.svg';
 import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
 import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
 import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
@@ -34,7 +34,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments } from '~src/types';
+import { ESentiments, ICommentsSummary } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -46,6 +46,9 @@ import Alert from '~src/basic-components/Alert';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import getCommentDisabledMessage from './utils/getCommentDisabledMessage';
 import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import Skeleton from '~src/basic-components/Skeleton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -103,7 +106,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { loginAddress, isUserOnchainVerified } = useUserDetailsSelector();
 	const {
-		postData: { postType, timeline, created_at, allowedCommentors, userId }
+		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
 	} = usePostDataContext();
 	const targetOffset = 10;
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
@@ -119,6 +122,28 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
+	const [aiContentSummary, setAiContentSummary] = useState<ICommentsSummary | null>(null);
+	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
+	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
+	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
+	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
+
+	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
+		let allCommentsContent = '';
+
+		Object.values(comments).forEach((commentArray) => {
+			commentArray.forEach((comment) => {
+				allCommentsContent += ' ' + comment.content;
+				if (comment.replies && comment.replies.length > 0) {
+					comment.replies.forEach((reply) => {
+						allCommentsContent += ' ' + reply.content;
+					});
+				}
+			});
+		});
+		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
+		return wordCount > 200;
+	};
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -164,8 +189,34 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		return filterSentiments === sentiment;
 	};
 
+	const getSummary = async () => {
+		setFetchingAISummary(true);
+		try {
+			const { data, error } = await nextApiClientFetch<ICommentsSummary | null>('api/v1/ai-summary/fetchCommentsSummary', {
+				postId: postIndex,
+				postType
+			});
+
+			if (error || !data) {
+				console.log('Error While fetching AI summary data', error);
+				setFetchingAISummary(false);
+			}
+
+			if (data) {
+				setAiContentSummary(data);
+				setFetchingAISummary(false);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		getOverallSentimentPercentage();
+		if (!Object.keys(comments).length) return;
+		if (network != 'rococo') return;
+		setHasEnoughContent(CommentsContentCheck(comments));
+		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
 
@@ -192,6 +243,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			setTimelines(timelines);
 		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
+
 		if (!commentResponse || Object.keys(commentResponse).length == 0) {
 			setComments(comments);
 		} else {
@@ -271,6 +323,25 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
+	const toggleSummary = (type: 'positive' | 'negative') => {
+		if (type === 'positive') {
+			setShowPositiveSummary(!showPositiveSummary);
+		} else {
+			setShowNegativeSummary(!showNegativeSummary);
+		}
+	};
+
+	const getDisplayText = (text: string, showFull: boolean) => {
+		if (!text) return '';
+		const words = text.split(' ');
+		const isLongText = words.length > 100;
+		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
+	};
+
+	const shouldShowToggleButton = (text: string) => {
+		return text.split(' ').length > 100;
+	};
+
 	return (
 		<div className={className}>
 			{id ? (
@@ -289,7 +360,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						/>
 					) : (
 						<PostCommentForm
-							className='mb-8'
+							className='mb-2'
 							setCurrentState={handleCurrentCommentAndTimeline}
 						/>
 					)}
@@ -319,6 +390,61 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
+			{network == 'rococo' ? (
+				<div className='mt-4'>
+					{fetchingAISummary ? (
+						<Skeleton className='mt-4' />
+					) : aiContentSummary && hasEnoughContent ? (
+						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+								<span
+									className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+								>
+									<span className='mr-1 '>Based on</span>
+									{allComments.length || 0}
+									<span className='ml-1'>Comments</span>
+								</span>
+							</div>
+							<div className='mt-2 flex items-start gap-4'>
+								<span className='mt-2'>
+									<GreenTickIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
+										<span
+											onClick={() => toggleSummary('positive')}
+											className='ml-1 cursor-pointer text-sm text-pink_primary'
+										>
+											{showPositiveSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<MinusSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
+										<span
+											onClick={() => toggleSummary('negative')}
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
+										>
+											{showNegativeSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+							<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+								<AiStarIcon className='text-base' /> AI-generated from comments
+							</h2>
+						</div>
+					) : null}
+				</div>
+			) : null}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'
@@ -425,7 +551,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
-							image='/assets/post-comment.png'
+							image='/assets/Gifs/login-discussion.gif'
 							title='Join Polkassembly to Comment on this proposal.'
 							subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 						/>

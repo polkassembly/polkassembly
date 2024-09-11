@@ -1164,7 +1164,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							/>
 						) : (
 							<Image
-								src='/assets/Gifs/voted.gif'
+								src='/assets/Gifs/vote-success.gif'
 								alt='success delegate icon'
 								width={363}
 								height={347}

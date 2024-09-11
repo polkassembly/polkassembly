@@ -17,6 +17,7 @@ import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { redisGet, redisSet } from '~src/auth/redis';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
@@ -148,11 +149,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props };
 };
 
-const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
+const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const currentUser = useUserDetailsSelector();
 	const { username } = currentUser;
-
+	const { resolvedTheme: theme } = useTheme();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [proposaldata, setProposalData] = useState({ proposals: 0, votes: 0 });
@@ -504,16 +505,20 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				<div className='mt-3 flex w-full items-center justify-between'>
 					<div className='flex h-12 gap-5'>
 						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
-						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px]'>
+						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px] dark:bg-white  dark:bg-opacity-[12%]'>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-md px-4 py-[8px] font-semibold ${
+									activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
+								}`}
 							>
 								Explore
 							</p>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-lg px-4 py-[8px] font-semibold ${
+									activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
+								}`}
 							>
 								Subscribed Post
 							</p>
@@ -525,15 +530,13 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				</div>
 
 				<div className='flex flex-col justify-between gap-5 xl:flex-row  '>
-					<div className=''>
-						{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
-							<div className='mx-1 mt-8'>
-								<BatchVotingBadge />
-							</div>
-						)}
-					</div>
-					<div className='mx-1 mt-8 max-w-[450px]  xl:max-w-[940px]'>
-						<div className='mx-1  max-w-[450px] xl:max-w-[940px]'>
+					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+						<div className='mx-1 mt-8'>
+							<BatchVotingBadge />
+						</div>
+					)}
+					<div className='mx-1 mt-8 '>
+						<div className='mx-1  '>
 							{activeTab === 'explore' ? (
 								<LatestActivityExplore
 									gov2LatestPosts={gov2LatestPosts}
@@ -589,8 +592,8 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 
 									<div className='absolute bottom-[0.3px] left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]'>
 										<img
-											// src={theme === 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
-											src='/assets/rankcard2.svg'
+											src={theme == 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
+											// src='/assets/rankcard2.svg'
 											className='max-h-[100px] w-full '
 											alt='rankcard2'
 										/>
@@ -669,7 +672,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	);
 };
 
-export default styled(Gov2Home)`
+export default styled(ActivityFeed)`
 	.docsbot-wrapper {
 		z-index: 1 !important;
 		margin-left: 250px;

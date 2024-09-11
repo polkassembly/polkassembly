@@ -73,14 +73,6 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 		fetchData();
 	}, [currentTab, network, gov2LatestPosts]);
 
-	if (loading) {
-		return (
-			<div className='flex min-h-[50px] w-full items-center justify-center'>
-				<LoadingOutlined />
-			</div>
-		);
-	}
-
 	if (error) {
 		return <div className='text-red-500'>{error}</div>;
 	}
@@ -93,10 +85,17 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 				gov2LatestPosts={gov2LatestPosts}
 				network={network}
 			/>
-			<PostList
-				postData={postData}
-				currentUserdata={currentUserdata}
-			/>
+
+			{loading ? (
+				<div className='flex min-h-[50px] w-full items-center justify-center'>
+					<LoadingOutlined />
+				</div>
+			) : (
+				<PostList
+					postData={postData}
+					currentUserdata={currentUserdata}
+				/>
+			)}
 		</div>
 	);
 };

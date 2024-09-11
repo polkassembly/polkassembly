@@ -338,7 +338,7 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 						currentTokenPrice={currentTokenPrice}
 					/>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2`}>
+				<div className={`${poppins.className} ${poppins.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>
@@ -382,7 +382,7 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 												{nextBurn.value ? (
 													<div className='m-0 flex items-baseline gap-x-[3px]'>
 														<span className='text-lg font-medium'>{nextBurn.value}</span>
-														<span className='text-base font-medium text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+														<span className='text-base font-medium text-lightBlue dark:text-[#595959]'>{chainProperties[network]?.tokenSymbol}</span>
 													</div>
 												) : null}
 												<span className='text-[12px] font-normal text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>

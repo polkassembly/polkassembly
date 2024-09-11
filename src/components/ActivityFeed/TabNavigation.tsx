@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, StakingAdminIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
 import { TabNavigationProps } from './utils/types';
@@ -9,6 +9,19 @@ import { TabNavigationProps } from './utils/types';
 const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setCurrentCategory(null);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 
 	const tabItems = [
 		{
@@ -74,7 +87,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	};
 
 	return (
-		<div className='activityborder mb-5 flex justify-between rounded-lg bg-white pt-3'>
+		<div className='activityborder mb-5 flex justify-between rounded-lg bg-white pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object.keys(tabCategories).map((category) => (
 				<div
 					key={category}
@@ -82,7 +95,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 				>
 					<p
 						className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-							currentTab === tabCategories[category][0] ? 'rounded-lg bg-[#F2F4F7] p-1 ' : ''
+							currentTab === tabCategories[category][0] ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white ' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 						}`}
 						onClick={() => handleCategoryClick(category)}
 					>
@@ -115,7 +128,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							id='dropdown'
 							className='absolute left-0 top-5 z-50 mt-2 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700'
 						>
-							<ul className='py-2 text-sm text-gray-700 dark:text-gray-200'>
+							<ul className='pt-2 text-sm text-gray-700 dark:text-gray-200'>
 								{tabCategories[category].map((tabKey) => {
 									const tabItem = tabItems.find((item) => item.key === tabKey);
 									return (

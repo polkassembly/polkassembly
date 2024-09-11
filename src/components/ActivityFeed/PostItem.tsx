@@ -51,7 +51,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 	const postContent = isExpanded ? fullContent : truncatedContent;
 
 	return (
-		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md'>
+		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
 				bgColor={bgColor}
 				statusLabel={statusLabel}
@@ -72,6 +72,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 				dislikes={dislikes}
 				post={post}
 			/>
+			<div className='border-t-[0.01px]  border-solid border-[#D2D8E0]'></div>
 			<PostActions />
 			<PostCommentSection currentUserdata={currentUserdata} />
 		</div>
@@ -81,12 +82,12 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 const PostHeader: React.FC<{ bgColor: string; statusLabel: string }> = ({ bgColor, statusLabel }) => (
 	<div className='flex justify-between'>
 		<div className='flex gap-4'>
-			<p className='text-2xl font-bold text-[#485F7D]'>{'2500DOT'}</p>
+			<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>{'2500DOT'}</p>
 			<div>
-				<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D]'>~ {'$36k'}</p>
+				<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>~ {'$36k'}</p>
 			</div>
 			<div>
-				<p className={`rounded-full p-2 text-white ${bgColor}`}>{statusLabel}</p>
+				<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
 			</div>
 		</div>
 		<div>
@@ -109,17 +110,17 @@ const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => str
 			alt='profile'
 			className='h-6 w-6 rounded-full'
 		/>
-		<p className='pt-3 text-sm font-medium text-[#243A57]'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
-		<span className='text-[#485F7D]'>in</span>
-		<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
+		<p className='pt-3 text-sm font-medium text-[#243A57] dark:text-white'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
+		<span className='text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+		<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
 		<p className='pt-3 text-[#485F7D]'>|</p>
 		<div className='flex '>
 			<ImageIcon
 				src='/assets/icons/timer.svg'
 				alt='timer'
-				className='mt-3 h-5 w-5 text-[#485F7D]'
+				className='mt-3 h-5 w-5 text-[#485F7D] dark:text-[#9E9E9E]'
 			/>
-			<p className='pt-3 text-sm text-gray-500'>{formatDate(String(post.created_at))}</p>
+			<p className='pt-3 text-sm text-gray-500 dark:text-[#9E9E9E]'>{formatDate(String(post.created_at))}</p>
 		</div>
 	</div>
 );
@@ -132,7 +133,7 @@ const PostContent: React.FC<{
 	isExpanded: boolean;
 }> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
 	<>
-		<p className='pt-2 font-medium text-[#243A57]'>
+		<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
 			#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 		</p>
 		<Markdown
@@ -156,7 +157,7 @@ const PostReactions: React.FC<{
 	dislikes: { count: number };
 	post: any;
 }> = ({ likes, dislikes, post }) => (
-	<div className='flex items-center justify-between text-sm text-gray-500'>
+	<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 		<div>
 			{likes.usernames.length > 0 && (
 				<div className='flex items-center'>
@@ -170,9 +171,9 @@ const PostReactions: React.FC<{
 			)}
 		</div>
 		<div className='flex gap-3'>
-			<p className='text-sm text-gray-600'>{dislikes.count} dislikes</p>
-			<p className='text-[#485F7D]'>|</p>
-			<p className='text-sm text-gray-600'>{post?.details?.comments_count || 0} Comments</p>
+			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{dislikes.count} dislikes</p>
+			<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
+			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{post?.details?.comments_count || 0} Comments</p>
 		</div>
 	</div>
 );
@@ -239,9 +240,11 @@ const PostCommentSection: React.FC<{ currentUserdata: any }> = ({ currentUserdat
 		<input
 			type='text'
 			placeholder={COMMENT_PLACEHOLDER}
-			className='activityborder2 ml-7 h-10 w-full rounded-l-lg p-2 outline-none'
+			className='activityborder2 ml-7 h-10 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B]'
 		/>
-		<button className='activityborder2 w-28 cursor-pointer rounded-r-lg bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57]'>{POST_LABEL}</button>
+		<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
+			{POST_LABEL}
+		</button>
 	</div>
 );
 

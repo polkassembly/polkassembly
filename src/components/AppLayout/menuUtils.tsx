@@ -210,6 +210,8 @@ export function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: 
 }
 
 export const SidebarFoot1 = () => {
+	const { resolvedTheme: theme } = useTheme();
+
 	return (
 		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
 			<div className='mt-5 flex items-center justify-center gap-2'>
@@ -271,6 +273,8 @@ export const SidebarFoot1 = () => {
 };
 
 export const SidebarFoot2 = () => {
+	const { resolvedTheme: theme } = useTheme();
+
 	return (
 		<div className='menu-shadow-top fixed bottom-0 left-0 z-[1000] w-full bg-white py-3 dark:bg-section-dark-overlay'>
 			{' '}

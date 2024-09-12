@@ -17,10 +17,11 @@ import { useTheme } from 'next-themes';
 interface ISearchBarProps {
 	className?: string;
 	isSmallScreen?: boolean;
+	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
-	const { className, isSmallScreen } = props;
+	const { className, isSmallScreen, setSidedrawer } = props;
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
@@ -59,7 +60,10 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 				<>
 					<div
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
-						onClick={() => setOpen(true)}
+						onClick={() => {
+							setOpen(true);
+							setSidedrawer(false);
+						}}
 					>
 						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'>
 							<SearchOutlined />

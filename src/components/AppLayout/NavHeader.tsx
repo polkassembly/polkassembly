@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -47,6 +47,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import ToggleButton from '~src/ui-components/ToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -206,6 +207,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		});
 	}
+	menudropDownItems.push({
+		className: 'logo-class',
+		key: 'Theme',
+		label: <ToggleButton />
+	});
 
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -258,7 +264,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				key: 'set on-chain identity',
 				label: (
 					<Link
-						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+						className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 						href={''}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -321,18 +327,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		</Dropdown>
 	);
 
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
 	return (
 		<Header
 			className={`${className} shadow-md ${
@@ -345,10 +339,18 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				}}
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='text-2xl' />
+				{!sidedrawer ? (
+					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
+					</div>
+				) : (
+					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
+					</div>
+				)}
 			</div>
-			<div className='ml-[84px] hidden lg:block'></div>
-			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
+			<div className={`${sidedrawer ? 'ml-32' : 'ml-[108px]'} hidden lg:block`}></div>
+			<nav className='mx-auto flex h-[60px]  w-full items-center justify-between xl:pr-6 '>
 				<div className='flex items-center'>
 					<Link
 						className='logo-size flex lg:hidden'
@@ -372,9 +374,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
-					<SearchBar className='searchbar-container' />
-					<InAppNotification />
+				<div className=' flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
+					<SearchBar
+						className='searchbar-container'
+						setSidedrawer={setSidedrawer}
+					/>
+					<InAppNotification setSidedrawer={setSidedrawer} />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
@@ -414,18 +419,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div
-							className='mr-2 lg:mr-0'
-							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
-									userId: id || '',
-									userName: username || ''
-								});
-							}}
-						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
+						<div className='mr-2 lg:mr-0'>
+							<ToggleButton />
 						</div>
 					</Space>
 					{open ? (
@@ -525,20 +520,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						</button>
 					)}
 				</div>
-
-				<SignupPopup
-					setLoginOpen={setLoginOpen}
-					modalOpen={openSignup}
-					setModalOpen={setSignupOpen}
-					isModal={true}
-				/>
-				<LoginPopup
-					setSignupOpen={setSignupOpen}
-					modalOpen={openLogin}
-					setModalOpen={setLoginOpen}
-					isModal={true}
-				/>
 			</nav>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
 					<Identity

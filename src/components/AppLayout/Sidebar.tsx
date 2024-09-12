@@ -160,7 +160,24 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}  `}>{label}</span>;
+		const capitalizeLabel = (label: React.ReactNode): React.ReactNode => {
+			if (typeof label === 'string') {
+				return label.charAt(0).toUpperCase() + label.slice(1);
+			}
+			return label;
+		};
+	
+		const capitalizedLabel = capitalizeLabel(label);
+		label = (
+			<span
+				className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${
+					sidebarCollapsed ? 'text-white ' : 'text-lightBlue'
+				}`}
+			>
+				{capitalizedLabel}
+			</span>
+		);
+		
 		return {
 			children,
 			icon,
@@ -169,6 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
+	
 	/* eslint-disable react/prop-types */
 	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
@@ -181,15 +199,32 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
-			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
-			margin: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '3px 12px 3px 15px' : '3px 10px 3px 15px')};
+			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer  ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
+			margin: ${(props: any) => {
+			if (isMobile) {
+				return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
+			} else {
+				return props.sidebarCollapsed && !props.sidedrawer ? '3px 20px 3px 15px' : '3px 20px 3px 15px';
+			}
+		}};
 		}
 
-		.ant-menu-submenu-title {
-			${(props: any) =>
-				!props.sidebarCollapsed && props.sidedrawer
-					? `
-        padding-left: 16px !important;
+	.ant-menu-submenu-title {
+  ${(props: any) =>
+    !props.sidebarCollapsed && props.sidedrawer
+      ? isMobile
+        ? `
+        padding-left: 18px !important;  /* Adjust mobile-specific values here */
+        border-right-width: 15px;
+        margin-right: 15px;
+        top: 1px;
+		width:205px;
+        padding-right: 15px;
+        margin-left: 15px;
+
+      `
+        : `
+        padding-left: 16px !important; /* Adjust non-mobile values here */
         border-right-width: 20px;
         margin-right: 10px;
         top: 1px;
@@ -198,11 +233,20 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 20px;
         width: 199px;
       `
-					: ''}
-		}
+      : ''}
+}
+
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-			padding-left: 16px !important;
-			margin-left: 20px !important;
+		  ${(props: any) =>{
+			if(isMobile){
+				return  `padding-left: 16px !important;
+			margin-left: 25px !important;`
+			}else{
+				return  `padding-left: 16px !important;
+			margin-left: 20px !important;`	
+			}
+		  }
+			
 		}
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
@@ -1235,7 +1279,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className=' -ml-12  h-[44px] px-1 dark:border-[#4B4B4B] '
+					className=' -ml-12   h-[44px] px-1 dark:border-[#4B4B4B] '
 					style={{
 						borderTop: '2px dotted #ccc',
 						marginBottom: '5px',
@@ -1581,7 +1625,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 flex items-center dark:border-[#4B4B4B]'
+						className='-mb-2  flex items-center dark:border-[#4B4B4B]'
 						style={{
 							borderTop: '4px dotted #ccc',
 							paddingTop: '12px'
@@ -1607,7 +1651,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 w-full  dark:border-[#4B4B4B]'
+						className='-mb-2 md:w-full ml-2 mr-3 w-[200px]  lg:mr-0 lg:ml-0  dark:border-[#4B4B4B]'
 						style={{
 							borderTop: '2px dotted #ccc',
 							paddingTop: '12px'

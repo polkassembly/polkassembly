@@ -83,26 +83,28 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			if (
-				sidebarRef.current &&
+				sidebarRef.current && 
 				!sidebarRef.current.contains(event.target as Node) &&
 				headerRef.current &&
-				!headerRef.current.contains(event.target as Node) // Ensure header clicks don't close sidebar
+				!headerRef.current.contains(event.target as Node)
 			) {
-				setSidebarCollapsed(true); // Close sidebar
+				setSidebarCollapsed(true);
+				setSidedrawer(false); // Close drawer
 			}
 		}
-
-		if (!sidebarCollapsed) {
+	
+		if (!sidebarCollapsed || sidedrawer) {
 			document.addEventListener('mousedown', handleClickOutside);
 		} else {
 			document.removeEventListener('mousedown', handleClickOutside);
 		}
-
+	
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [sidebarCollapsed]);
-
+	}, [sidebarCollapsed, sidedrawer]);
+	
+	
 	useEffect(() => {
 		document.body.classList.remove('light-theme', 'dark-theme');
 		document.body.classList.add(`${theme}-theme`);
@@ -267,7 +269,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px] mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6' : 'pl-[280px] pr-[60px] '} `}>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -306,7 +308,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]  mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6' : 'pl-[280px] pr-[60px]'} `}>
 													<Content>
 														<Component {...pageProps} />
 													</Content>

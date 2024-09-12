@@ -337,7 +337,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
-				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
+				className='ml-2 mr-5 flex items-center justify-center lg:hidden'
 			>
 				{!sidedrawer ? (
 					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
@@ -351,7 +351,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			</div>
 			<div className={`${sidedrawer ? 'ml-32' : 'ml-[108px]'} hidden lg:block`}></div>
 			<nav className='mx-auto flex h-[60px] w-full items-center  justify-between lg:w-[85w] xl:max-w-7xl xl:pr-6 '>
-				<div className='flex items-center'>
+				<div className='flex ml-2 md:ml-0 items-center'>
 					<Link
 						className='logo-size flex lg:hidden'
 						href={'/'}

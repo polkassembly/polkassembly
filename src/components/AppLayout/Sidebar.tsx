@@ -182,7 +182,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
 			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
-			margin: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 12px 1px 18px' : '3px 10px 3px 15px')};
+			margin: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '3px 12px 3px 15px' : '3px 10px 3px 15px')};
 		}
 
 		.ant-menu-submenu-title {
@@ -204,7 +204,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			padding-left: 16px !important;
 			margin-left: 20px !important;
 		}
-
+		.ant-menu-item .ant-menu-item-only-child {
+			margin-left: 10px;
+		}
 		.sidebar-selected-icon {
 			filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 		}
@@ -989,7 +991,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					borderTop: '2px dotted #ccc',
 					paddingTop: '15px'
 				}}
-				className='flex items-center'
+				className='flex items-center dark:border-[#4B4B4B]'
 			>
 				<span className={`${sidebarCollapsed ? '-ml-1' : 'ml-1'} text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Tracks</span>
 			</div>,
@@ -1183,7 +1185,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className=' -ml-12  h-[44px]  px-1 '
+					className=' -ml-12  h-[44px] px-1 dark:border-[#4B4B4B] '
 					style={{
 						borderTop: '2px dotted #ccc',
 						marginBottom: '5px',
@@ -1524,7 +1526,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 flex items-center'
+						className='-mb-2 flex items-center dark:border-[#4B4B4B]'
 						style={{
 							borderTop: '4px dotted #ccc',
 							paddingTop: '12px'
@@ -1550,7 +1552,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 w-full '
+						className='-mb-2 w-full  dark:border-[#4B4B4B]'
 						style={{
 							borderTop: '2px dotted #ccc',
 							paddingTop: '12px'

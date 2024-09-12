@@ -423,8 +423,12 @@ export default styled(AppLayout)`
 		border-right: none !important;
 	}
 	li .ant-menu-item-only-child {
-		padding-left: 58px !important;
-		margin-block: 0px !important;
+		padding-left: 25px !important;
+		margin-left: 20px !important;
+	}
+
+	li .ant-menu-item {
+		margin-left: 20px !important;
 	}
 	.ant-menu .ant-menu-submenu-arrow {
 		color: var(--lightBlue) !important;

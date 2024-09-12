@@ -222,7 +222,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							</>
 						)}
 
-						<div className={`relative w-full ${sidedrawer ? 'overflow-hidden' : 'overflow-auto'}`}>
+						<div className={`relative w-full ${sidedrawer && isMobile ? 'no-scroll' : 'overflow-auto'}`}>
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 								<Layout className='min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
@@ -492,6 +492,10 @@ export default styled(AppLayout)`
 
 	.ant-menu-inline-collapsed-noicon {
 		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
+	}
+	.no-scroll {
+		overflow: hidden; /* This will disable scrolling */
+		height: 90vh; /* Ensure it takes the full viewport height to avoid background scroll */
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {

@@ -213,7 +213,7 @@ export const SidebarFoot1 = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
-		<div className='fixed bottom-0 left-0 z-[100] h-[7vw] w-full bg-white py-3 dark:bg-section-dark-overlay'>
+		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay xl:h-[7vw]'>
 			<div className='mt-5 flex items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>

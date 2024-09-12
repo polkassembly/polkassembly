@@ -2056,7 +2056,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						sidebarCollapsed={sidebarCollapsed}
 						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : 'mt-3 h-[620px] md:mt-0 md:h-auto '
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : 'mt-3  md:mt-0  '
 						} overflow-x-hidden dark:bg-section-dark-overlay`}
 					/>
 				</div>

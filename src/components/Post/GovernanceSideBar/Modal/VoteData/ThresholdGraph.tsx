@@ -59,7 +59,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 	};
 	const labelsLength = data.labels.length;
 	return (
-		<>
+		<div className='overflow-hidden'>
 			<Spin
 				indicator={<LoadingOutlined />}
 				spinning={curvesLoading}
@@ -264,7 +264,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 					</section>
 				)}
 			</Spin>
-		</>
+		</div>
 	);
 };
 

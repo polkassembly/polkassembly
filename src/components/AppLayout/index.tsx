@@ -188,28 +188,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								/>
 								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{sidebarCollapsed ? (
-										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
+										<div
+											onClick={() => {
+												if (sidebarCollapsed) {
+													setSidebarCollapsed(false);
+													setSidedrawer(true);
+												}
+											}}
+											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
+										>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
-												onClick={() => {
-													if (sidebarCollapsed) {
-														setSidebarCollapsed(false);
-														setSidedrawer(true);
-													}
-												}}
 												alt='close nav'
 											/>
 										</div>
 									) : (
-										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
+										<div
+											onClick={() => {
+												if (!sidebarCollapsed) {
+													setSidebarCollapsed(true);
+													setSidedrawer(false);
+												}
+											}}
+											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
+										>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
-												onClick={() => {
-													if (!sidebarCollapsed) {
-														setSidebarCollapsed(true);
-														setSidedrawer(false);
-													}
-												}}
 												alt='open nav'
 											/>
 										</div>
@@ -225,7 +229,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'pl-[120px] pr-[40px]'
+															: 'mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial pl-[280px] pr-[60px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -264,7 +274,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial pl-[120px] pr-[40px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
+															: 'pl-[280px] pr-[60px]'
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>

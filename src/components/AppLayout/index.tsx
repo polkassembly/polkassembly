@@ -27,6 +27,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import Sidebar from './Sidebar';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -63,6 +65,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
 	const [isMobile, setIsMobile] = useState(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
 	const getTotalActiveProposalsCount = async () => {
@@ -199,6 +204,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								mainDisplay={mainDisplay}
 								isIdentitySet={isIdentitySet}
 								isIdentityUnverified={isIdentityUnverified}
+								setLoginOpen={setLoginOpen}
 							/>
 						)}
 						{!isMobile && (
@@ -216,6 +222,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									mainDisplay={mainDisplay}
 									isIdentitySet={isIdentitySet}
 									isIdentityUnverified={isIdentityUnverified}
+									setLoginOpen={setLoginOpen}
 								/>
 								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{sidebarCollapsed ? (
@@ -347,6 +354,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				)}
 			</Layout>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 
 			<Modal
 				zIndex={100}

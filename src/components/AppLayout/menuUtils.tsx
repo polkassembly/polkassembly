@@ -213,7 +213,7 @@ export const SidebarFoot1 = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
-		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
+		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay xl:h-[7vw]'>
 			<div className='mt-5 flex items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>
@@ -276,7 +276,7 @@ export const SidebarFoot2 = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
-		<div className='fixed relative bottom-0 left-0 z-[1000] w-full bg-white py-3 before:pointer-events-none before:absolute before:left-0 before:right-0 before:top-0 before:z-[1] before:h-[3px] before:shadow-[0px_-2px_6px_rgba(0,0,0,0.08)] before:content-[""] dark:bg-section-dark-overlay'>
+		<div className='fixed  bottom-0 left-0 z-[1000] h-[14vw] w-full bg-white py-3 before:pointer-events-none before:absolute before:left-0 before:right-0 before:top-0 before:z-[1] before:h-[3px] before:shadow-[0px_-2px_6px_rgba(0,0,0,0.08)] before:content-[""] dark:bg-section-dark-overlay'>
 			<div className='flex flex-col items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>

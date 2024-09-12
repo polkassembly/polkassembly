@@ -188,28 +188,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								/>
 								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{sidebarCollapsed ? (
-										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
+										<div
+											onClick={() => {
+												if (sidebarCollapsed) {
+													setSidebarCollapsed(false);
+													setSidedrawer(true);
+												}
+											}}
+											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
+										>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
-												onClick={() => {
-													if (sidebarCollapsed) {
-														setSidebarCollapsed(false);
-														setSidedrawer(true);
-													}
-												}}
 												alt='close nav'
 											/>
 										</div>
 									) : (
-										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
+										<div
+											onClick={() => {
+												if (!sidebarCollapsed) {
+													setSidebarCollapsed(true);
+													setSidedrawer(false);
+												}
+											}}
+											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
+										>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
-												onClick={() => {
-													if (!sidebarCollapsed) {
-														setSidebarCollapsed(true);
-														setSidedrawer(false);
-													}
-												}}
 												alt='open nav'
 											/>
 										</div>
@@ -218,7 +222,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							</>
 						)}
 
-						<div className={`relative w-full ${sidedrawer ? 'overflow-hidden' : 'overflow-auto'}`}>
+						<div className={`relative w-full ${sidedrawer && isMobile ? 'no-scroll' : 'overflow-auto'}`}>
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 								<Layout className='min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
@@ -488,6 +492,10 @@ export default styled(AppLayout)`
 
 	.ant-menu-inline-collapsed-noicon {
 		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
+	}
+	.no-scroll {
+		overflow: hidden; /* This will disable scrolling */
+		height: 90vh; /* Ensure it takes the full viewport height to avoid background scroll */
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {

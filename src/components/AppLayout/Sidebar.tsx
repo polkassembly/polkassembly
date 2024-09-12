@@ -65,6 +65,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import Popover from '~src/basic-components/Popover';
+import { onchainIdentitySupportedNetwork } from '.';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const { Sider } = Layout;
 
@@ -1831,164 +1833,175 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</div>
 						</>
 					)}
-					{!sidebarCollapsed ? (
+
+					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
-							<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'}  gap-2 md:mt-7`}>
-								<div className='activeborderhover group  relative'>
-									<Link
-										href='/'
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-												userId: currentUser?.id || '',
-												userName: currentUser?.username || ''
-											});
-											handleIdentityButtonClick();
-										}}
-									>
-										<img
-											src='/assets/head1.svg'
-											alt='Head 1'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
-											On-chain identity
-											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+							{!sidebarCollapsed ? (
+								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-7`}>
+									{onchainIdentitySupportedNetwork.includes(network) && (
+										<div className='activeborderhover group relative'>
+											<Link
+												href='/'
+												onClick={(e) => {
+													e.stopPropagation();
+													e.preventDefault();
+													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+														userId: currentUser?.id || '',
+														userName: currentUser?.username || ''
+													});
+													handleIdentityButtonClick();
+												}}
+											>
+												<img
+													src='/assets/head1.svg'
+													alt='Head 1'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
+													On-chain identity
+													<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover  group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/leaderboard'>
-										<img
-											src='/assets/head2.svg'
-											alt='Head 2'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Leaderboard
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{network === 'polkadot' && (
+										<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/leaderboard'>
+												<img
+													src='/assets/head2.svg'
+													alt='Head 2'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Leaderboard
+													<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/delegation'>
-										<img
-											src='/assets/head3.svg'
-											alt='Head 3'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Delegation
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{delegationSupportedNetworks.includes(network) && (
+										<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/delegation'>
+												<img
+													src='/assets/head3.svg'
+													alt='Head 3'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Delegation
+													<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
-									<div
-										onClick={() => {
-											if (username?.length) {
-												router.push(`/user/${username}`);
-											} else {
-												setLoginOpen(true);
-											}
-										}}
-									>
-										<img
-											src='/assets/head4.svg'
-											alt='Head 4'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Profile
-											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{/* Head 4 (Profile) */}
+									<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+										<div
+											onClick={() => {
+												if (username?.length) {
+													router.push(`/user/${username}`);
+												} else {
+													setLoginOpen(true);
+												}
+											}}
+										>
+											<img
+												src='/assets/head4.svg'
+												alt='Head 4'
+												className='h-10 w-10 cursor-pointer'
+											/>
+											<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+												Profile
+												<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</>
-					) : (
-						<>
-							<div className=' ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
-								<div className='activeborderhover group relative w-10 '>
-									<Link
-										href={''}
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-												userId: currentUser?.id || '',
-												userName: currentUser?.username || ''
-											});
-											handleIdentityButtonClick();
-										}}
-									>
-										<img
-											src='/assets/head1.svg'
-											alt='Head 1'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
-											On-chain identity
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+							) : (
+								<div className='ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
+									{onchainIdentitySupportedNetwork.includes(network) && (
+										<div className='activeborderhover group relative w-10'>
+											<Link href='/'>
+												<img
+													src='/assets/head1.svg'
+													alt='Head 1'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
+													On-chain identity
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/leaderboard'>
-										<img
-											src='/assets/head2.svg'
-											alt='Head 2'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Leaderboard
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{network === 'polkadot' && (
+										<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/leaderboard'>
+												<img
+													src='/assets/head2.svg'
+													alt='Head 2'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Leaderboard
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/delegation'>
-										<img
-											src='/assets/head3.svg'
-											alt='Head 3'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Delegation
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{delegationSupportedNetworks.includes(network) && (
+										<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/delegation'>
+												<img
+													src='/assets/head3.svg'
+													alt='Head 3'
+													className='h-10 w-10 cursor-pointer'
+												/>
+												<div className='absolute bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Delegation
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
-									<div
-										onClick={() => {
-											if (username?.length) {
-												router.push(`/user/${username}`);
-											} else {
-												setLoginOpen(true);
-											}
-										}}
-									>
-										<img
-											src='/assets/head4.svg'
-											alt='Head 4'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[82px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Profile
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{/* Head 4 (Profile) */}
+									<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+										<div
+											onClick={() => {
+												if (username?.length) {
+													router.push(`/user/${username}`);
+												} else {
+													setLoginOpen(true);
+												}
+											}}
+										>
+											<img
+												src='/assets/head4.svg'
+												alt='Head 4'
+												className='h-10 w-10 cursor-pointer'
+											/>
+											<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+												Profile
+												<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							)}
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[104px] ' : 'mt-2  overflow-y-auto  pb-56 '} `}>
+				<div
+					className={`hide-scrollbar ${
+						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'pt-5'
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[104px]' : 'mt-2 overflow-y-auto pb-8'}`}
+				>
 					<Menu
 						theme={theme as any}
 						mode='inline'

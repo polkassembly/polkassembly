@@ -623,7 +623,7 @@ export default styled(AppLayout)`
 	}
 
 	.activeborder {
-		border: 1px solid #e5007a;
+		border: 2px solid #e5007a;
 		border-radius: 10px;
 	}
 	.activeborderhover {

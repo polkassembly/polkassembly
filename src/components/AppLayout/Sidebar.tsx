@@ -824,7 +824,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			const menuItem = getSiderMenuItem(
 				<div className='flex justify-between'>
-					{trackName.split(/(?=[A-Z])/).join(' ')}
+					<span className='pt-[6px]'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -879,7 +879,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='pt-[5px]'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${
@@ -1874,8 +1874,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-7`}>
 									{onchainIdentitySupportedNetwork.includes(network) && (
 										<div className='activeborderhover group relative'>
-											<Link
-												href='/'
+											<div
 												onClick={(e) => {
 													e.stopPropagation();
 													e.preventDefault();
@@ -1895,7 +1894,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													On-chain identity
 													<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 												</div>
-											</Link>
+											</div>
 										</div>
 									)}
 
@@ -1948,9 +1947,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 												alt='Head 4'
 												className='h-10 w-10 cursor-pointer'
 											/>
-											<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+											<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile
-												<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 											</div>
 										</div>
 									</div>
@@ -1958,8 +1957,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 							) : (
 								<div className='ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
 									{onchainIdentitySupportedNetwork.includes(network) && (
-										<div className='activeborderhover group relative w-10'>
-											<Link href='/'>
+										<div
+											onClick={(e) => {
+												e.stopPropagation();
+												e.preventDefault();
+												trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+													userId: currentUser?.id || '',
+													userName: currentUser?.username || ''
+												});
+												handleIdentityButtonClick();
+											}}
+											className='activeborderhover group relative w-10'
+										>
+											<div>
 												<img
 													src='/assets/head1.svg'
 													alt='Head 1'
@@ -1969,7 +1979,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													On-chain identity
 													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 												</div>
-											</Link>
+											</div>
 										</div>
 									)}
 
@@ -2021,7 +2031,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												alt='Head 4'
 												className='h-10 w-10 cursor-pointer'
 											/>
-											<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+											<div className='absolute bottom-0 left-[74px] mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile
 												<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 											</div>
@@ -2035,7 +2045,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'pt-5'
-					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu
 						theme={theme as any}
@@ -2046,7 +2056,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						sidebarCollapsed={sidebarCollapsed}
 						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : ''
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : 'mt-3 h-[480px] md:mt-0 md:h-auto '
 						} overflow-x-hidden dark:bg-section-dark-overlay`}
 					/>
 				</div>

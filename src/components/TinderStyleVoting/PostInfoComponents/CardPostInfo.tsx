@@ -80,7 +80,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 		{
 			children: (
 				<CardPostDescription
-					className='max-h-[250px] overflow-y-auto'
+					className='max-h-[170px] overflow-y-auto'
 					postContent={post?.content}
 					postId={post?.id}
 				/>

@@ -110,7 +110,10 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData className='hidden sm:block' />
-					<TotalDelegationDataSmall className='sm:hidden' />
+					<TotalDelegationDataSmall
+						setOpenLoginModal={setOpenLoginModal}
+						className='sm:hidden'
+					/>
 					<TrendingDelegates theme={theme} />
 				</>
 			)}

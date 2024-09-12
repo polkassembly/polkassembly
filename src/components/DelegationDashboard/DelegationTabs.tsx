@@ -20,6 +20,7 @@ import { useApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
+import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 
 interface Props {
 	className?: string;
@@ -42,6 +43,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	});
 	const [userBio, setUserBio] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
+	const [openBecomeDelegateModal, setOpenBecomeDelegateModal] = useState<boolean>(false);
 
 	const getData = async () => {
 		try {
@@ -92,7 +94,10 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<TotalDelegationData className='hidden sm:block' />
-					<TotalDelegationDataSmall className='sm:hidden' />
+					<TotalDelegationDataSmall
+						setOpenBecomeDelegateModal={setOpenBecomeDelegateModal}
+						className='sm:hidden'
+					/>
 					<TrendingDelegates theme={theme} />
 				</>
 			),
@@ -143,6 +148,15 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 				type='card'
 				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
 				items={tabItems}
+			/>
+			<BecomeDelegateModal
+				isModalOpen={openBecomeDelegateModal as boolean}
+				setIsModalOpen={setOpenBecomeDelegateModal as any}
+				className=''
+				profileDetails={profileDetails as any}
+				userBio={userBio as any}
+				setUserBio={setUserBio as any}
+				onchainUsername={identity?.display || identity?.legal || ''}
 			/>
 		</div>
 	);

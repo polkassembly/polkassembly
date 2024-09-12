@@ -14,11 +14,18 @@ import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats'
 import { MessageType } from '~src/auth/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { poppins } from 'pages/_app';
-import Tooltip from '~src/basic-components/Tooltip';
 
 const ZERO_BN = new BN(0);
 
-const TotalDelegationDataSmall = ({ className }: { className: string }) => {
+const TotalDelegationDataSmall = ({
+	className,
+	setOpenBecomeDelegateModal,
+	setOpenLoginModal
+}: {
+	className: string;
+	setOpenBecomeDelegateModal?: (pre: boolean) => void;
+	setOpenLoginModal?: (pre: boolean) => void;
+}) => {
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -144,13 +151,19 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 					</div>
 				</div>
 				<Button
-					// onClick={showModal}
-					disabled={!currentUser.id || !currentUser.loginAddress}
+					onClick={() => {
+						if (!currentUser.id) {
+							setOpenLoginModal?.(true);
+						} else {
+							setOpenBecomeDelegateModal?.(true);
+						}
+					}}
+					// disabled={!currentUser.id || !currentUser.loginAddress}
 					className={`mt-[14px] w-full border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${
 						(!currentUser.id || !currentUser.loginAddress) && 'opacity-60'
 					}`}
 				>
-					{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
+					Become a Delegate
 				</Button>
 			</Spin>
 		</section>

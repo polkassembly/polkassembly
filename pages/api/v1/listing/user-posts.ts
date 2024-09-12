@@ -20,6 +20,7 @@ import { IReaction } from '../posts/on-chain-post';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { getTimeline } from '~src/util/getTimeline';
+import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 	return {
@@ -85,20 +86,6 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 		},
 		open_gov_total: 0
 	};
-};
-
-const getIsSwapStatus = (statusHistory: string[]) => {
-	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
-	if (index >= 0) {
-		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
-		if (decidingIndex >= 0) {
-			const obj = statusHistory[index];
-			statusHistory.splice(index, 1);
-			statusHistory.splice(decidingIndex, 0, obj);
-			return true;
-		}
-	}
-	return false;
 };
 
 interface IGetPostsByAddressParams {

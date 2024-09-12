@@ -5,96 +5,68 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import messages from '~src/auth/utils/messages';
-import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
+import { firestore_db } from '~src/services/firebaseInit';
+import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import authServiceInstance from '~src/auth/auth';
 import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED, GET_TOTAL_VOTE_COUNT_ON_PROPOSAL, VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS } from '~src/queries';
-import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { ACTIVE_PROPOSALS_FROM_INDEXES } from '~src/queries';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCardAll';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
+import { getTimeline } from '~src/util/getTimeline';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getProposerAddressFromFirestorePostData, IPostListing } from '../listing/on-chain-posts';
-import { getTimeline } from '~src/util/getTimeline';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 
-const updateNonVotedProposals = (proposals: IPostListing[]) => {
-	//sort by votes Count
-	const proposalsByVotesCountSorted = proposals.sort((a, b) => (b?.votesCount || 0) - (a?.votesCount || 0));
-
-	//sort by comments count
-	const proposalsWithoutComments: IPostListing[] = [];
-	const proposalsWithComments: IPostListing[] = [];
-	proposalsByVotesCountSorted.map((proposal) => {
-		if (proposal?.comments_count) {
-			proposalsWithComments.push(proposal);
-		} else {
-			proposalsWithoutComments.push(proposal);
-		}
-	});
-
-	const proposalsByCommentSorted = proposalsWithComments.sort((a, b) => b?.comments_count - a?.comments_count);
-
-	const combineProposals = [...proposalsByCommentSorted, ...proposalsWithoutComments];
-	return combineProposals;
-};
+interface ISubscribedPost {
+	network: string;
+	post_id: number;
+	post_type: ProposalType;
+	created_at?: Date;
+}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-	const { userAddresses } = req.body;
 
-	if (userAddresses?.length && userAddresses?.filter((addr: string) => !getEncodedAddress(addr, network))?.length) {
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_PARAMS });
-	}
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: messages.INVALID_JWT });
 
+	const user = await authServiceInstance.GetUser(token);
+	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	const userId = user?.id;
 	try {
+		const userRef = await firestore_db.collection('users').doc(String(userId)).get();
+		const userData = userRef?.data();
+
+		const allSubscribedPostsAccToNetwork = userData?.subscribed_posts?.length ? userData?.subscribed_posts?.filter((post: ISubscribedPost) => post?.network == network) : [];
+
+		const allOpenGovReferendumIndexes: number[] = [];
+		allSubscribedPostsAccToNetwork.map((post: ISubscribedPost) => {
+			if (post?.post_type == ProposalType.REFERENDUM_V2) {
+				allOpenGovReferendumIndexes.push(post?.post_id);
+			}
+		});
+
 		const subsquidRes = await fetchSubsquid({
 			network,
-			query: GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED,
+			query: ACTIVE_PROPOSALS_FROM_INDEXES,
 			variables: {
+				indexes_in: allOpenGovReferendumIndexes,
 				status_in: getStatusesFromCustomStatus(CustomStatus.Active),
 				type_eq: getSubsquidProposalType(ProposalType.OPEN_GOV)
 			}
 		});
+
 		const subsquidData = subsquidRes?.['data']?.proposals;
-		if (!subsquidData?.length) res.status(400).json({ message: messages.NO_ACTIVE_PROPOSAL_FOUND });
-		const activeProposalIndexes = subsquidData.map((item: any) => item?.index);
-
-		let votedProposalsIndexes: number[] = [];
-		if (userAddresses?.length) {
-			const encodedAddresses = userAddresses.map((addr: string) => getEncodedAddress(addr, network) || addr);
-			const votedProposalsSubsquidRes = await fetchSubsquid({
-				network,
-				query: VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS,
-				variables: {
-					indexes_in: activeProposalIndexes,
-					type_eq: getSubsquidProposalType(ProposalType.OPEN_GOV),
-					voter_in: encodedAddresses
-				}
-			});
-
-			const votedProposalsSubsquidData = votedProposalsSubsquidRes?.['data']?.flattenedConvictionVotes || [];
-			if (votedProposalsSubsquidData?.length) {
-				votedProposalsIndexes = votedProposalsSubsquidData?.map((data: any) => data?.proposalIndex) || [];
-			}
-		}
 
 		const allPromises = subsquidData.map(async (subsquidPost: any) => {
 			const { createdAt, end, hash, index: postId, type, proposer, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } = subsquidPost;
-
-			const totalVotesSubsquidRes = await fetchSubsquid({
-				network,
-				query: GET_TOTAL_VOTE_COUNT_ON_PROPOSAL,
-				variables: {
-					index_eq: postId,
-					type_eq: getSubsquidProposalType(ProposalType.OPEN_GOV)
-				}
-			});
-
-			const totalVotes = totalVotesSubsquidRes?.['data']?.flattenedConvictionVotesConnection?.totalCount || 0;
 
 			if (!subsquidPost?.preimage) {
 				subsquidPost.preimage = {
@@ -258,7 +230,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: topicFromType,
-						totalVotes: totalVotes || 0,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1
@@ -294,7 +265,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				timeline: proposalTimeline,
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
-				totalVotes: totalVotes || 0,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type,
 				user_id: 1
@@ -309,12 +279,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				results.push(promise.value);
 			}
 		});
-		const votedProposals = votedProposalsIndexes?.length ? results.filter((data) => votedProposalsIndexes.includes(Number(data?.post_id))) : [];
-		const nonVotedProposals = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(Number(data?.post_id))) : results;
-		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
 
-		const combineProposals = [...updatedNonVotedProposals, ...votedProposals];
-		return res.status(200).json({ data: combineProposals });
+		return res.status(200).json({ data: results });
 	} catch (err) {
 		console.error('Error fetching subscribed posts:', err);
 		return res.status(500).json({ message: messages.API_FETCH_ERROR });

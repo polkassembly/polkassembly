@@ -23,6 +23,7 @@ import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
 import VoteSummary from '~src/components/BatchVoting/VotingOptions/VoteSummary';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface IReferendumV2CardInfoProps {
 	className?: string;
@@ -385,7 +386,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Amount</p>
-											<span className='item-start text-xs leading-6 text-navBlue'>11.27 KSM</span>
+											<span className='item-start text-xs leading-6 text-navBlue'>11.27 {chainProperties[network]?.tokenSymbol}</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
@@ -406,7 +407,8 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 								</article>
 							</div>
 							<p className='m-0 p-0 text-sm font-normal leading-4 text-sidebarBlue dark:text-white'>
-								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.
+								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 {chainProperties[network]?.tokenSymbol} (amount)*4 (conviction)</span> to get
+								the final vote.
 							</p>
 							<div
 								className='mb-1'

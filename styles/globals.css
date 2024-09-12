@@ -890,3 +890,7 @@ z-index: 105 !important;
 .ant-slider .ant-slider-mark-text {
   color: #777b80 !important;
 }
+
+.dark .ant-collapse .ant-collapse-content {
+  border-top: 1px solid #3B444F !important;
+}

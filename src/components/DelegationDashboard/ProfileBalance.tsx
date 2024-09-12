@@ -87,15 +87,16 @@ const ProfileBalances = ({ className }: Props) => {
 
 		getAllAccounts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady]);
+	}, [delegationDashboardAddress, api, apiReady, defaultAddress]);
 
 	return (
 		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
-			<div className='ml-2 items-center gap-2 sm:hidden'>
+			{/* for small screen */}
+			<div className=' flex items-center space-x-2 sm:hidden'>
 				{balancesArr.slice(0, 1).map((balance) => (
 					<div
 						key={balance?.label}
-						className='flex h-full gap-1'
+						className='ml-[2px] flex h-full gap-1'
 					>
 						<div className='flex flex-col justify-start gap-1'>
 							<div
@@ -115,13 +116,13 @@ const ProfileBalances = ({ className }: Props) => {
 									/>
 								</span>
 							</div>
-							<div className='ml-[1px] flex items-center justify-start gap-2'>
+							<div className='flex items-center justify-start gap-2'>
 								<Image
 									src={'/assets/icons/polkadot-logo.svg'}
 									height={18}
 									width={18}
 									alt=''
-									className={'ml-1 sm:hidden'}
+									className={'sm:hidden'}
 								/>
 								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
 							</div>
@@ -132,8 +133,36 @@ const ProfileBalances = ({ className }: Props) => {
 						/>
 					</div>
 				))}
+				{balancesArr.slice(1, 2).map((balance) => (
+					<div
+						key={balance?.label}
+						className='flex h-full gap-1'
+					>
+						<div className='flex flex-col justify-start gap-1'>
+							<div
+								className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+									poppins.className
+								} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+							>
+								{formatedBalance(balance.value, unit, 2)}
+								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+							</div>
+							<div className=' flex items-center justify-start gap-2'>
+								<Image
+									src={balance.icon}
+									height={18}
+									width={18}
+									alt=''
+									className={'sm:hidden'}
+								/>
+								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+							</div>
+						</div>
+					</div>
+				))}
 			</div>
 
+			{/* for large screen */}
 			<div className={`${className} hidden h-full items-center gap-2 py-4 max-md:px-2.5 sm:flex`}>
 				{balancesArr.map((balance) => (
 					<div
@@ -165,7 +194,7 @@ const ProfileBalances = ({ className }: Props) => {
 					</div>
 				))}
 			</div>
-			<div className='-mt-6 mr-4 w-48 sm:mr-6 sm:w-52'>
+			<div className='-mt-6 mr-4 hidden w-48 sm:mr-6 sm:flex sm:w-52'>
 				{!!accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled
@@ -201,6 +230,11 @@ const ProfileBalances = ({ className }: Props) => {
 				open={openBalanceDetailsModal}
 				setOpen={setOpenBalanceDetailsModal}
 				balancesArr={balancesArr}
+				setOpenModal={setOpenModal}
+				accounts={accounts}
+				delegationDashboardAddress={delegationDashboardAddress}
+				defaultAddress={defaultAddress}
+				setAddress={setAddress}
 			/>
 		</div>
 	);

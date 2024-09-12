@@ -11,6 +11,10 @@ import Image from 'next/image';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
+import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
+import { userDetailsActions } from '~src/redux/userDetails';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import { useDispatch } from 'react-redux';
 
 interface BalanceItem {
 	icon: string;
@@ -18,9 +22,30 @@ interface BalanceItem {
 	value: string;
 }
 
-const ProfileBalanceModal = ({ className, setOpen, open, balancesArr = [] }: { className: string; setOpen: (pre: boolean) => void; open: boolean; balancesArr: BalanceItem[] }) => {
+const ProfileBalanceModal = ({
+	className,
+	setOpen,
+	open,
+	balancesArr = [],
+	setOpenModal,
+	accounts,
+	delegationDashboardAddress,
+	defaultAddress,
+	setAddress
+}: {
+	className: string;
+	delegationDashboardAddress: string;
+	defaultAddress: string;
+	setOpen: (pre: boolean) => void;
+	open: boolean;
+	balancesArr: BalanceItem[];
+	setOpenModal: (pre: boolean) => void;
+	setAddress: (pre: string) => void;
+	accounts: InjectedAccount[];
+}) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const dispatch = useDispatch();
 
 	if (balancesArr.length < 1) return null;
 
@@ -30,28 +55,53 @@ const ProfileBalanceModal = ({ className, setOpen, open, balancesArr = [] }: { c
 			onCancel={() => setOpen(false)}
 			className={classNames('max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
 			footer={
-				<div className='items-center gap-2 sm:hidden'>
-					{balancesArr.slice(1, 3).map((balance: BalanceItem) => (
-						<div
-							key={balance?.label}
-							className='mt-1 flex h-full gap-1'
-						>
-							<div className={`${poppins.variable} ${poppins.className} flex items-center justify-start gap-1`}>
-								<Image
-									className='h-5 w-5 rounded-full object-contain'
-									src={balance.icon}
-									alt='Logo'
-									width={20}
-									height={20}
-								/>
-								<span className='text-sm font-medium tracking-[0.01em] text-blue-light-medium dark:text-blue-dark-high '>{balance.label}</span>
-								<div className={'ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high '}>
-									{formatedBalance(balance.value, unit, 2)}
-									<span className='ml-1 text-sm font-medium tracking-[0.015em] '>{unit}</span>
+				<div>
+					<div className='-mt-4 mb-[14px]'>
+						{!!accounts && accounts?.length > 0 && (
+							<AccountSelectionForm
+								linkAddressTextDisabled
+								addressTextClassName='text-white'
+								accounts={accounts}
+								title='Your Address'
+								address={delegationDashboardAddress || defaultAddress}
+								withBalance={false}
+								className='cursor-pointer text-sm text-[#788698]'
+								onAccountChange={(address) => {
+									setAddress(address);
+									dispatch(userDetailsActions.updateDelegationDashboardAddress(address));
+								}}
+								inputClassName='text-white border-[1.5px] border-section-light-container dark:border-separatorDark bg-transparent text-sm border-solid px-3 rounded-[8px] py-[6px]'
+								isSwitchButton={true}
+								setSwitchModalOpen={setOpenModal}
+								withoutInfo={true}
+								isTruncateUsername
+							/>
+						)}
+					</div>
+
+					<div className='items-center gap-2 sm:hidden'>
+						{balancesArr.slice(1, 3).map((balance: BalanceItem) => (
+							<div
+								key={balance?.label}
+								className='mt-1 flex h-full gap-1'
+							>
+								<div className={`${poppins.variable} ${poppins.className} flex items-center justify-start gap-1`}>
+									<Image
+										className='h-5 w-5 rounded-full object-contain'
+										src={balance.icon}
+										alt='Logo'
+										width={20}
+										height={20}
+									/>
+									<span className='text-sm font-medium tracking-[0.01em] text-blue-light-medium dark:text-blue-dark-high '>{balance.label}</span>
+									<div className={'ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high '}>
+										{formatedBalance(balance.value, unit, 2)}
+										<span className='ml-1 text-sm font-medium tracking-[0.015em] '>{unit}</span>
+									</div>
 								</div>
 							</div>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 			}
 			title={

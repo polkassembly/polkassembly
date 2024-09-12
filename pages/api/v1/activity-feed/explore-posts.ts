@@ -20,6 +20,27 @@ import { getTimeline } from '~src/util/getTimeline';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import console_pretty from '~src/api-utils/console_pretty';
 
+const updateNonVotedProposals = (proposals: any[]) => {
+	//sort by votes Count
+	const proposalsByVotesCountSorted = proposals.sort((a, b) => b?.proposal.votesCount - a?.votesCount);
+
+	//sort by comments count
+	const proposalsWithoutComments: any[] = [];
+	const proposalsWithComments: any[] = [];
+	proposalsByVotesCountSorted.map((proposal) => {
+		if (proposal?.comments_count) {
+			proposalsWithComments.push(proposal);
+		} else {
+			proposalsWithoutComments.push(proposal);
+		}
+	});
+
+	const proposalsByCommentSorted = proposalsWithComments.sort((a, b) => b?.proposal.comments_count - a?.comments_count);
+
+	const combineProposals = [...proposalsByCommentSorted, ...proposalsWithoutComments];
+	return combineProposals;
+};
+
 const getIsSwapStatus = (statusHistory: string[]) => {
 	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
 	if (index >= 0) {
@@ -304,11 +325,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			}
 		});
 		const votedProposals = votedProposalsIndexes?.length ? results.filter((data) => votedProposalsIndexes.includes(data?.post_id)) : [];
-		const nonVotedProposal = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(data?.post_id)) : results;
+		const nonVotedProposals = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(data?.post_id)) : results;
+		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
 
-		const combineProposals = [...nonVotedProposal, ...votedProposals];
-		const updatedResults = combineProposals?.sort((a, b) => b?.totalVotes - a?.totalVotes).sort((a, b) => b.comments_count - a?.comments_count);
-		return res.status(200).json({ data: updatedResults });
+		const combineProposals = [...updatedNonVotedProposals, ...votedProposals];
+		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
 		console.error('Error fetching subscribed posts:', err);
 		return res.status(500).json({ message: messages.API_FETCH_ERROR });

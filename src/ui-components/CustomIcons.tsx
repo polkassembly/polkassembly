@@ -48,6 +48,7 @@ import BountiesSVG from '~assets/sidebar/treasury-bounties-icon.svg';
 import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
 import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
+import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
 import AuctionAdminSVG from '~assets/sidebar/auction-admin-gov2.svg';
@@ -489,6 +490,13 @@ export const ReferendaIcon = (props: Partial<CustomIconComponentProps>) => (
 export const CalendarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={CalendarSVG}
+		{...props}
+	/>
+);
+
+export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BatchVotingSVG}
 		{...props}
 	/>
 );

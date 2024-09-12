@@ -42,7 +42,8 @@ import {
 	ApplayoutIdentityIcon,
 	ArchivedIcon,
 	ClearIdentityOutlinedIcon,
-	RoundedDollarIcon
+	RoundedDollarIcon,
+	BatchVotingIcon
 } from 'src/ui-components/CustomIcons';
 // import {
 // AuctionAdminIcon,
@@ -942,6 +943,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	// )
 	// );
 	// }
+	if (isOpenGovSupported(network)) {
+		gov2OverviewItems.splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Batch Voting</span>
+				</div>,
+				'/batch-voting',
+				<div className={`relative ${!sidedrawer && 'mt-0'}`}>
+					<BatchVotingIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				</div>
+			)
+		);
+	}
 
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));

@@ -142,7 +142,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				</div>
 			</div>
 			{isOpenGovSupported(network) && !isMobile && (
-				<div className='mx-1 mt-8'>
+				<div className='mx-1 -mb-[68px] mt-4 w-full'>
 					<BatchVotingWebView />
 				</div>
 			)}

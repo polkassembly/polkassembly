@@ -1834,7 +1834,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{!sidebarCollapsed ? (
 						<>
 							<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'}  gap-2 md:mt-7`}>
-								<div className='activeborderhover group relative'>
+								<div className='activeborderhover group  relative'>
 									<Link
 										href='/'
 										onClick={(e) => {

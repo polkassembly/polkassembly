@@ -891,52 +891,9 @@ z-index: 105 !important;
   color: #777b80 !important;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-}
-
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-  scrollbar-width: none;  /* For Firefox */
-  overflow: hidden;  /* Ensures no scrollbars for other browsers */
-}
 
 
-.toggleborder{
-  border: 1px solid;
-  border-radius: 4px;
-}
 
-
-.activeborder{
-  border: 1px solid #E5007A;
-  border-radius: 10px;
-  
-}
-.activeborderhover{
-  border: 1px solid transparent;
-  border-radius: 10px;
-}
-.activeborderhover:hover{
-  border: 1px solid #E5007A;
-}
-
-.menu-shadow-top {
-  position: relative;
-}
-
-.menu-shadow-top::before {
-  content: '';
-  position: absolute;
-  top: 0px;
-  left: 0;
-  right: 0;
-  height: 3px; 
-  box-shadow: 0px -2px 6px 0px rgba(0, 0, 0, 0.08);
-  pointer-events: none;
-  z-index: 1;
-}
 
 .dark .ant-collapse .ant-collapse-content {
   border-top: 1px solid #3B444F !important;

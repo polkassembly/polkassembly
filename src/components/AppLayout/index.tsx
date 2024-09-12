@@ -559,4 +559,26 @@ export default styled(AppLayout)`
 		font-size: 16px;
 		color: #485f7d;
 	}
+
+	.activeborder {
+		border: 1px solid #e5007a;
+		border-radius: 10px;
+	}
+	.activeborderhover {
+		border: 1px solid transparent;
+		border-radius: 10px;
+	}
+	.activeborderhover:hover {
+		border: 1px solid #e5007a;
+	}
+	.hide-scrollbar::-webkit-scrollbar {
+		width: 0px;
+		height: 0px;
+	}
+
+	.hide-scrollbar {
+		-ms-overflow-style: none; /* For Internet Explorer and Edge */
+		scrollbar-width: none; /* For Firefox */
+		overflow: hidden; /* Ensures no scrollbars for other browsers */
+	}
 `;

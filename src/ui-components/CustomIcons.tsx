@@ -178,15 +178,12 @@ import CapitalIconSVG from '~assets/icons/capital-small-icom.svg';
 import EmailIconSVG from '~assets/icons/email_icon.svg';
 import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
 import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
-import SelectedAllIcon from '~assets/selected-icons/All.svg';
-import SelectedArchivedIcon from '~assets/selected-icons/Archived.svg';
-import SelectedAuctionAdminIcon from '~assets/selected-icons/Auction Admin.svg';
+
 import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
 import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
 import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
 import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
 import SelectedRootIcon from '~assets/selected-icons/Root.svg';
-import SelectedStakingAdminIcon from '~assets/selected-icons/Staking Admin.svg';
 import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
@@ -194,7 +191,6 @@ import AllpostIcon from '~assets/allpost.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
-import SelectedBounties from '~assets/selected-icons/Bounties.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1343,27 +1339,6 @@ export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => 
 	/>
 );
 
-export const SelectedAll = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={SelectedAllIcon}
-		{...props}
-	/>
-);
-
-export const SelectedArchived = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={SelectedArchivedIcon}
-		{...props}
-	/>
-);
-
-export const SelectedAuctionAdmin = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={SelectedAuctionAdminIcon}
-		{...props}
-	/>
-);
-
 export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={SelectedDiscussionsIcon}
@@ -1395,13 +1370,6 @@ export const SelectedPreimages = (props: Partial<CustomIconComponentProps>) => (
 export const SelectedRoot = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={SelectedRootIcon}
-		{...props}
-	/>
-);
-
-export const SelectedStakingAdmin = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={SelectedStakingAdminIcon}
 		{...props}
 	/>
 );
@@ -1451,13 +1419,6 @@ export const FellowshipIconNew = (props: Partial<CustomIconComponentProps>) => (
 export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={TreasuryIcon}
-		{...props}
-	/>
-);
-
-export const SelectedBountiesIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={SelectedBounties}
 		{...props}
 	/>
 );

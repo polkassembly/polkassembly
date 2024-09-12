@@ -49,10 +49,10 @@ const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	ssr: false
 });
 
-const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+// const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+// loading: () => <Skeleton active />,
+// ssr: false
+// });
 
 const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,

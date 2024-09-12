@@ -209,6 +209,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								variant='primary'
 								text='Save'
 								buttonsize='sm'
+								className={`${!is_field_edited ? 'opacity-50' : ''}`}
 								disabled={!is_field_edited}
 								onClick={() => {
 									dispatch(

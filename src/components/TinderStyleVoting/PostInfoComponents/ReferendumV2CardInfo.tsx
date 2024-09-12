@@ -185,7 +185,9 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 				isUsedInTinderWebView={true}
 			>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className={`m-0 p-0 ${isUsedInTinderWebView ? 'text-base' : 'text-xl'} font-medium leading-6 text-bodyBlue dark:text-blue-dark-high`}>Summary</h6>
+					<h6 className={`m-0 p-0 ${isUsedInTinderWebView ? '-ml-6 -mt-3 text-base' : 'text-xl'} font-medium leading-6 text-bodyBlue dark:text-blue-dark-high`}>
+						{isUsedInTinderWebView ? 'Vote History' : 'Summary'}
+					</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag

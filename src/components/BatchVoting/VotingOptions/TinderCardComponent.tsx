@@ -22,8 +22,8 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	};
 
 	return (
-		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
-			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-inner dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+		<section className='flex overflow-x-hidden'>
+			<div className='overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}
@@ -42,7 +42,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</div>
 				<Divider
 					type='horizontal'
-					className='border-l-1 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+					className='border-l-1 -mt-4 mb-4 border-[#D2D8E0] dark:border-icon-dark-inactive'
 				/>
 				<div className='max-h-[246px] overflow-y-auto'>
 					<div className='flex w-full justify-start overflow-hidden text-ellipsis'>

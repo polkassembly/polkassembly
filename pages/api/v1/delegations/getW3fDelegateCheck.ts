@@ -18,9 +18,8 @@ export const getW3fDelegateCheck = async (network: string, addresses: string[]) 
 		const w3fDelegates = network === 'polkadot' ? w3fDelegatesPolkadot : w3fDelegatesKusama;
 
 		const delegate = w3fDelegates?.filter((delegate) => encodedAddresses.includes(getEncodedAddress(delegate?.address, network) || delegate.address));
-		return { data: { isW3fDelegate: !!delegate.length }, error: null };
+		return { data: { isW3fDelegate: !!delegate.length } || false, error: null };
 	} catch (err) {
-		console.error('Error in getW3fDelegateCheck:', err);
 		return { data: null, error: err || messages.API_FETCH_ERROR };
 	}
 };

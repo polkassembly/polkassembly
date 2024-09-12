@@ -176,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 
 		.ant-menu-item-selected {
-			background: ${(props: any) => (props?.theme === 'dark' ? '#520f32' : '#fce5f2')} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#530d32' : '#fce5f2')} !important;
 		}
 
 		.ant-menu-item {

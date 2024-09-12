@@ -312,9 +312,9 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className }: { className?: string }) => {
 		return (
 			<div className={`${className} flex w-full flex-col xl:col-span-4`}>
-				<StickyBox
-					offsetTop={65}
-					offsetBottom={65}
+				<div
+					// offsetTop={65}
+					// offsetBottom={65}
 					className='md:mb-6'
 				>
 					<GovernanceSideBar
@@ -332,7 +332,7 @@ const Post: FC<IPostProps> = (props) => {
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
 					/>
-				</StickyBox>
+				</div>
 
 				{isOffchainPost && (
 					<div className={'sticky top-[65px] mb-6 '}>

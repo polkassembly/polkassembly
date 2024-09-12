@@ -315,7 +315,7 @@ const Post: FC<IPostProps> = (props) => {
 				<div
 					// offsetTop={65}
 					// offsetBottom={65}
-					className='md:mb-6'
+					className={`${isOffchainPost ? '' : 'md:mb-6'}`}
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}

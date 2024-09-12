@@ -1988,7 +1988,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[104px] ' : 'mt-2  overflow-y-auto  pb-56 '} `}>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[104px] ' : 'mt-2  overflow-y-auto  pb-10  '} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'

@@ -39,7 +39,8 @@ import {
 	SelectedDiscussions,
 	SelectedPreimages,
 	AnalyticsSVGIcon,
-	AllPostIcon
+	AllPostIcon,
+	RoundedDollarIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -121,10 +122,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const archivedDropdownRef = useRef<HTMLDivElement>(null);
 	const isActive = (path: string) => router.pathname === path;
 
-	if (sidedrawer === false) {
-		setSidebarCollapsed(true);
-	}
-
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -166,18 +163,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}
 			return label;
 		};
-	
+
 		const capitalizedLabel = capitalizeLabel(label);
-		label = (
-			<span
-				className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${
-					sidebarCollapsed ? 'text-white ' : 'text-lightBlue'
-				}`}
-			>
-				{capitalizedLabel}
-			</span>
-		);
-		
+		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
+
 		return {
 			children,
 			icon,
@@ -186,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
-	
+
 	/* eslint-disable react/prop-types */
 	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
@@ -199,21 +188,21 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
-			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer  ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
+			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
 			margin: ${(props: any) => {
-			if (isMobile) {
-				return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
-			} else {
-				return props.sidebarCollapsed && !props.sidedrawer ? '3px 20px 3px 15px' : '3px 20px 3px 15px';
-			}
-		}};
+				if (isMobile) {
+					return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
+				} else {
+					return props.sidebarCollapsed && !props.sidedrawer ? '3px 13px 3px 15px' : '3px 20px 3px 15px';
+				}
+			}};
 		}
 
 	.ant-menu-submenu-title {
   ${(props: any) =>
-    !props.sidebarCollapsed && props.sidedrawer
-      ? isMobile
-        ? `
+		!props.sidebarCollapsed && props.sidedrawer
+			? isMobile
+				? `
         padding-left: 18px !important;  /* Adjust mobile-specific values here */
         border-right-width: 15px;
         margin-right: 15px;
@@ -223,7 +212,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 15px;
 
       `
-        : `
+				: `
         padding-left: 16px !important; /* Adjust non-mobile values here */
         border-right-width: 20px;
         margin-right: 10px;
@@ -233,21 +222,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 20px;
         width: 199px;
       `
-      : ''}
+			: ''}
 }
 
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-		  ${(props: any) =>{
-			if(isMobile){
-				return  `padding-left: 16px !important;
-			margin-left: 25px !important;`
-			}else{
-				return  `padding-left: 16px !important;
-			margin-left: 20px !important;`	
-			}
-		  }
-			
-		}
+		  ${() => {
+				if (isMobile) {
+					return `padding-left: 16px !important;
+			margin-left: 25px !important;`;
+				} else {
+					return `padding-left: 16px !important;
+			margin-left: 20px !important;`;
+				}
+			}}
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
@@ -1041,6 +1028,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}
 		}
 	}
+	if (['polkadot'].includes(network)) {
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				<div className='ml-[2px] flex items-center gap-1.5'>Bounties</div>,
+				'/bounty',
+				<div className='relative '>
+					<RoundedDollarIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				</div>
+			)
+		);
+	}
 
 	const gov2OverviewItems = [
 		!isMobile ? getSiderMenuItem('', '', null) : null,
@@ -1366,20 +1364,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
-		const bountiesMenuItem = getSiderMenuItem(
-			'Bounties',
-			'gov2_bounties_group',
-			<div>
-				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-			</div>,
-			[...bountiesSubItems]
-		);
-		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
+		gov2TrackItems.treasuryItems.push(...bountiesSubItems);
 
-		items = items.concat(bountiesMenuItem);
+		items = items.concat(...bountiesSubItems);
 
 		gov2Items.splice(
-			-1,
+			8,
 			0,
 			getSiderMenuItem(
 				'Treasury',
@@ -1496,7 +1486,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		gov2CollapsedItems.splice(
-			-1,
+			8,
 			0,
 			getSiderMenuItem(
 				<Popover
@@ -1598,14 +1588,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
-		gov2Items = gov2Items.concat(
+		// Insert 'Treasury' in the 3rd position (index 2)
+		gov2Items.concat(
 			getSiderMenuItem(
 				'Treasury',
 				'gov1_treasury_group',
-				<TreasuryIconNew className='-ml-2 -mt-1  text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+				<TreasuryIconNew className='-ml-2 -mt-1 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 				gov1Items.treasuryItems
 			)
 		);
+
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
 			getSiderMenuItem(
@@ -1642,7 +1634,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						'Treasury',
 						'treasury_group',
 						<TreasuryIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
-						gov1Items.treasuryItems.slice(0, 1)
+						gov1Items.treasuryItems.slice(2, 0)
 					)
 				])
 			];
@@ -1651,7 +1643,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 md:w-full ml-2 mr-3 w-[200px]  lg:mr-0 lg:ml-0  dark:border-[#4B4B4B]'
+						className='-mb-2 ml-2 mr-3 w-[200px] dark:border-[#4B4B4B]  md:w-full lg:ml-0  lg:mr-0'
 						style={{
 							borderTop: '2px dotted #ccc',
 							paddingTop: '12px'

@@ -50,10 +50,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
-	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -64,7 +65,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	const [isMobile, setIsMobile] = useState(false);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
@@ -81,30 +82,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (
-				sidebarRef.current && 
-				!sidebarRef.current.contains(event.target as Node) &&
-				headerRef.current &&
-				!headerRef.current.contains(event.target as Node)
-			) {
+		const handleResize = () => {
+			const isMobile = window.innerWidth < 1024;
+
+			if (!isMobile) {
+				setSidedrawer(true);
+				setSidebarCollapsed(false);
+			} else {
+				setSidedrawer(false);
 				setSidebarCollapsed(true);
-				setSidedrawer(false); // Close drawer
 			}
-		}
-	
-		if (!sidebarCollapsed || sidedrawer) {
-			document.addEventListener('mousedown', handleClickOutside);
-		} else {
-			document.removeEventListener('mousedown', handleClickOutside);
-		}
-	
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [sidebarCollapsed, sidedrawer]);
-	
-	
+
+		handleResize();
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+
 	useEffect(() => {
 		document.body.classList.remove('light-theme', 'dark-theme');
 		document.body.classList.add(`${theme}-theme`);
@@ -130,18 +127,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			};
 		}
 	}, [router, isMobile]);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.screen.width < 1024);
-		};
-
-		handleResize();
-		window.addEventListener('resize', handleResize);
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
 
 	useEffect(() => {
 		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
@@ -269,7 +254,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px] mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6' : 'pl-[280px] pr-[60px] '} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial pl-[120px] pr-[40px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
+															: 'pl-[280px] pr-[60px] '
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -308,7 +299,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]  mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6' : 'pl-[280px] pr-[60px]'} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'mx-auto my-6  min-h-[90vh] w-[94w] max-w-7xl flex-initial pl-[120px] pr-[40px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
+															: 'pl-[280px] pr-[60px]'
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -319,7 +316,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												/>
 											</div>
 										) : (
-											<div className='relative mx-auto w-full'>
+											<div
+												onClick={() => {
+													setSidedrawer(false);
+												}}
+												className='relative mx-auto w-full'
+											>
 												<div>
 													<div className='my-6 px-3'>
 														<Content>

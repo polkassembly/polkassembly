@@ -72,6 +72,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+	useEffect(() => {
+		document.body.classList.remove('light-theme', 'dark-theme');
+		document.body.classList.add(`${theme}-theme`);
+	}, [theme]);
 
 	useEffect(() => {
 		if (isMobile) {
@@ -152,7 +156,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<div className='relative flex w-full gap-2'>
 						{isMobile && sidedrawer && (
 							<Sidebar
-								className={`absolute left-0 top-0 z-[150] w-full ${className}`}
+								className={`absolute left-0 top-0 z-[150]  w-full  ${className}`}
 								sidebarCollapsed={false}
 								setSidedrawer={setSidedrawer}
 								setSidebarCollapsed={setSidebarCollapsed}
@@ -184,7 +188,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								/>
 								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{sidebarCollapsed ? (
-										<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
+										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 												onClick={() => {
@@ -197,7 +201,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											/>
 										</div>
 									) : (
-										<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
+										<div className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'>
 											<img
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 												onClick={() => {
@@ -447,9 +451,7 @@ export default styled(AppLayout)`
 	}
 	.sidebar .ant-menu-item-selected span {
 		color: var(--pink_primary) !important;
-
 		font-weight: 500;
-		font-size: 14px;
 	}
 
 	.sidebar .ant-menu-item-selected .opacity {
@@ -478,9 +480,6 @@ export default styled(AppLayout)`
 	}
 	.menu-container {
 		top: 0px;
-	}
-	.ant-menu-submenu-title {
-		margin-block: 2px !important;
 	}
 
 	.ant-menu-inline-collapsed-noicon {
@@ -541,7 +540,6 @@ export default styled(AppLayout)`
 		overflow: visible !important;
 	}
 	.sidebar-toggle-button {
-		border: 1px solid #d2d8e0;
 		cursor: pointer;
 		border-radius: 0.375rem;
 		background-color: #ffffff;

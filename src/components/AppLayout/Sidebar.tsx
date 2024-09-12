@@ -32,16 +32,14 @@ import {
 	ArchivedIcon,
 	SelectedOverview,
 	SelectedRoot,
-	SelectedAll,
 	SelectedWishForChange,
-	SelectedAuctionAdmin,
-	SelectedStakingAdmin,
 	SelectedGovernance,
 	SelectedWhitelist,
 	SelectedTreasury,
 	SelectedDiscussions,
 	SelectedPreimages,
-	AnalyticsSVGIcon
+	AnalyticsSVGIcon,
+	AllPostIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -182,8 +180,48 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 
 		.ant-menu-item {
-			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '100%')};
-			padding: 1px 22px 1px 18px;
+			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
+			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
+			margin: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 12px 1px 18px' : '3px 10px 3px 15px')};
+		}
+
+		.ant-menu-submenu-title {
+			${(props: any) =>
+				!props.sidebarCollapsed && props.sidedrawer
+					? `
+        padding-left: 16px !important;
+        border-right-width: 20px;
+        margin-right: 10px;
+        top: 1px;
+        right: 5px;
+        padding-right: 20px;
+        margin-left: 20px;
+        width: 199px;
+      `
+					: ''}
+		}
+		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
+			padding-left: 16px !important;
+			margin-left: 20px !important;
+		}
+
+		.sidebar-selected-icon {
+			filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+		}
+		.ant-menu-inline .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+			${(props: any) =>
+				!props.sidebarCollapsed && props.sidedrawer
+					? `
+        padding-left: 6px !important;
+        border-right-width: 20px;
+        margin-right: 10px;
+        top: 1px;
+        right: 5px;
+        padding-right: 20px;
+        margin-left: 20px;
+        width: 199px;
+      `
+					: ''}
 		}
 	`;
 
@@ -656,11 +694,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/all-posts',
 				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
-						<SelectedAll className={`${sidebarCollapsed ? '-ml-2 mt-0.5' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+						<AllPostIcon
+							className={`${
+								sidebarCollapsed ? '  -ml-[10px] ' : '-ml-[8px] mt-1 '
+							} sidebar-selected-icon scale-90  text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+						/>
 					) : (
 						<ImageIcon
 							src='/assets/allpost.svg'
-							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px]' : '-top-4 -ml-2'}  h-6  w-6 scale-90 text-2xl font-medium  ${
+							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px] mt-[3px]' : '-top-4 -ml-[10px] mt-[1px]'}  h-6  w-6 scale-90 text-2xl font-medium  ${
 								theme === 'dark' ? 'dark-icons' : 'text-lightBlue'
 							}`}
 							alt=''
@@ -792,31 +834,39 @@ const Sidebar: React.FC<SidebarProps> = ({
 						) : trackName === PostOrigin.ROOT ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-2 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedRoot
+										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-[10px] -mt-0.5 '} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<RootIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<RootIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-[8px] mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<>
 								{router.pathname.includes('/wish-for-change') ? (
-									<SelectedWishForChange className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-1'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedWishForChange
+										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-[10px] -mt-1'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-[8px] mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<>
 								{' '}
 								{router.pathname.includes('/auction-admin') ? (
-									<SelectedAuctionAdmin
-										className={`${sidebarCollapsed ? '-ml-[6px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									<ImageIcon
+										src='/assets/selected-icons/Auction Admin.svg'
+										alt=''
+										className={`${
+											sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '
+										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
 									<ImageIcon
 										src='/assets/sidebar/auction.svg'
 										alt=''
-										className={`${sidebarCollapsed ? '-ml-[7px]' : ' -ml-1'}  h-6 w-6 scale-90 text-2xl  ${
+										className={`${sidebarCollapsed ? ' absolute -top-[28px]  -ml-[7px]' : ' -ml-[8px] -mt-2'}   h-6 w-6 scale-90 text-2xl  ${
 											theme == 'dark' ? 'dark-icons' : 'text-lightBlue'
 										} text-2xl font-medium `}
 									/>
@@ -826,11 +876,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<>
 								{' '}
 								{router.pathname.includes('/staking-admin') ? (
-									<SelectedStakingAdmin
-										className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									<ImageIcon
+										src='/assets/selected-icons/Staking Admin.svg'
+										alt=''
+										className={`${
+											sidebarCollapsed ? 'absolute -top-[29px] -ml-[10px] mt-0.5' : '-ml-[10px] '
+										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
-									<StakingAdminIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<StakingAdminIcon
+										className={`${sidebarCollapsed ? '-ml-[8px] text-2xl' : ' -ml-[8px]'} mt-1 scale-90   font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								)}
 							</>
 						);
@@ -898,9 +954,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
-					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedOverview className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-[7px]  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive ' />
+					<OverviewIcon className='-ml-[7px]  mt-0.5   scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive ' />
 				)}
 			</>
 		),
@@ -921,7 +977,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/preimages',
 			<>
 				{router.pathname === '/preimages' ? (
-					<SelectedPreimages className={`-ml-[10px] ${sidebarCollapsed && '-mt-3'} scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+					<SelectedPreimages className={`-ml-[10px] ${sidebarCollapsed ? '-mt-1' : '-mt-1'} scale-90 text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 				) : (
 					<PreimagesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -980,9 +1036,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
-					<SelectedGovernance className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedGovernance className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceIconNew className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<GovernanceIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
 			[...gov2TrackItems.governanceItems]
@@ -992,9 +1048,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_fellowship_group',
 			<div>
 				{activeWhitelist ? (
-					<SelectedWhitelist className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedWhitelist className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
@@ -1234,9 +1290,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_treasury_group',
 				<div>
 					{activeTreasury ? (
-						<SelectedTreasury className='-ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<SelectedTreasury className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]
@@ -1502,11 +1558,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 					>
 						<Link href='/parachains'>
 							<div
-								className={`flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] ${
+								className={`flex cursor-pointer items-center rounded-lg pl-3 hover:bg-[#000000] hover:bg-opacity-[4%] ${
 									activeParachain ? 'bg-[#FFF2F9] font-medium text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
 								}`}
 							>
-								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium ' />
+								<ParachainsIcon className='-ml-1 mt-3 scale-90 text-xl font-medium ' />
 								<span className='ml-2  text-xs font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
@@ -1514,7 +1570,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
 

@@ -9,6 +9,8 @@ import { useBatchVotesSelector } from '~src/redux/selectors';
 import VotingOptions from './VotingOptions/VotingOptions';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
+import { batchVotesActions } from '~src/redux/batchVoting';
+import { useAppDispatch } from '~src/redux/store';
 const DefaultOptions = dynamic(() => import('./DefaultOptions/DefaultOptions'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -16,13 +18,12 @@ const DefaultOptions = dynamic(() => import('./DefaultOptions/DefaultOptions'), 
 
 const BatchVotingWeb = () => {
 	const { resolvedTheme: theme } = useTheme();
+	const dispatch = useAppDispatch();
 	const { is_default_selected } = useBatchVotesSelector();
 
-	console.log('am i default: ', is_default_selected);
-
 	return (
-		<section className='flex flex-col gap-y-8'>
-			<header className='flex items-center justify-start gap-x-2'>
+		<section className='flex flex-col gap-y-6'>
+			<header className='mt-4 flex items-center justify-start gap-x-2'>
 				<ImageIcon
 					src={theme === 'dark' ? '/assets/icons/star-icon-white.svg' : '/assets/icons/star-icon.svg'}
 					alt='batch-voting'
@@ -30,7 +31,12 @@ const BatchVotingWeb = () => {
 				<h1 className='m-0 p-0 text-[28px] text-bodyBlue dark:text-white'>Batch Voting</h1>
 			</header>
 			<article className='flex h-[64px] w-full items-center justify-start gap-x-3  rounded-xl bg-white px-6 dark:bg-black'>
-				<div className='flex items-center justify-start gap-x-2'>
+				<div
+					className='flex cursor-pointer items-center justify-start gap-x-2'
+					onClick={() => {
+						dispatch(batchVotesActions.setIsDefaultSelected(true));
+					}}
+				>
 					{is_default_selected ? (
 						<span className={'flex h-[20px] w-[20px] items-center justify-center rounded-full bg-pink_primary text-sm text-white'}>1</span>
 					) : (
@@ -42,7 +48,12 @@ const BatchVotingWeb = () => {
 					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-semibold text-[#2ED47A]'} `}>Set Defaults</p>
 				</div>
 				<RightOutlined className={`${is_default_selected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-[#2ED47A]'}`} />
-				<div className='flex items-center justify-start gap-x-2'>
+				<div
+					className='flex cursor-pointer items-center justify-start gap-x-2'
+					onClick={() => {
+						dispatch(batchVotesActions.setIsDefaultSelected(false));
+					}}
+				>
 					<span
 						className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${
 							!is_default_selected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'

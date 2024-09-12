@@ -30,6 +30,7 @@ import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoCo
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
+import { batchVotesActions } from '~src/redux/batchVoting';
 
 interface Props {
 	className?: string;
@@ -225,6 +226,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				value={vote}
 				onChange={(value) => {
 					handleOnVoteChange(value);
+					dispatch(batchVotesActions.setIsFieldEdited(true));
 				}}
 				options={decisionOptions}
 				disabled={!api || !apiReady}
@@ -251,6 +253,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -279,6 +282,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -308,6 +312,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAyeValueChange={(balance: BN) => {
@@ -327,6 +332,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onNayValueChange={(balance: BN) => {
@@ -346,6 +352,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAbstainValueChange={(balance: BN) => {
@@ -365,6 +372,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}

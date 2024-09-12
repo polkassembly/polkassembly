@@ -26,6 +26,7 @@ const initialState: IBatchVoteStore = {
 		voteOption: 'aye'
 	},
 	is_default_selected: true,
+	is_field_edited: false,
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
@@ -79,6 +80,7 @@ export const batchVoteStore = createSlice({
 				batch_vote_details: {},
 				edit_vote_details: {},
 				is_default_selected: true,
+				is_field_edited: false,
 				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
@@ -159,6 +161,9 @@ export const batchVoteStore = createSlice({
 		},
 		setIsDefaultSelected: (state, action: PayloadAction<boolean>) => {
 			state.is_default_selected = action.payload;
+		},
+		setIsFieldEdited: (state, action: PayloadAction<boolean>) => {
+			state.is_field_edited = action.payload;
 		},
 		setRemoveCartItems: (state, action: PayloadAction<any>) => {
 			state.vote_cart_data = action.payload;

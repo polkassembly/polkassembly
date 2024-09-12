@@ -38,7 +38,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
-	const { edit_vote_details, batch_vote_details, vote_cart_data } = useBatchVotesSelector();
+	const { edit_vote_details, batch_vote_details, vote_cart_data, is_field_edited } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 	const [deletedPostId, setDeletedPostId] = useState<number>(0);
@@ -209,6 +209,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								variant='primary'
 								text='Save'
 								buttonsize='sm'
+								disabled={!is_field_edited}
 								onClick={() => {
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
@@ -226,6 +227,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);
+									// dispatch(batchVotesActions.setIsFieldEdited(true));
 									setOpenEditModal(false);
 									editPostVoteDetails();
 								}}
@@ -238,7 +240,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						setOpenEditModal(false);
 					}}
 					title={
-						<div className='-mx-6 flex items-center gap-x-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+						<div className='-mx-6 flex items-center gap-x-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 							<ImageIcon
 								src='/assets/icons/edit-option-icon.svg'
 								alt='edit-icon'

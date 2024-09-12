@@ -491,6 +491,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						<span className='flex items-center'>Set Conviction</span>
 						<Slider
 							marks={marks}
+							tooltip={{ open: false }}
 							step={null}
 							className='dark:text-white'
 							rootClassName='dark:text-white'
@@ -618,9 +619,10 @@ export default styled(OptionWrapper)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -637,9 +639,10 @@ export default styled(OptionWrapper)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -659,9 +662,10 @@ export default styled(OptionWrapper)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -679,9 +683,10 @@ export default styled(OptionWrapper)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -701,9 +706,10 @@ export default styled(OptionWrapper)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -717,5 +723,11 @@ export default styled(OptionWrapper)`
 	}
 	.ant-slider-horizontal .ant-slider-mark {
 		top: 22px;
+	}
+	.ant-slider .ant-slider-dot {
+		width: 3px !important;
+		height: 12px !important;
+		margin-top: -2px !important;
+		border-radius: 0 !important;
 	}
 `;

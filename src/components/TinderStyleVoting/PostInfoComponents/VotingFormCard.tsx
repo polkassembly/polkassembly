@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
+import { batchVotesActions } from '~src/redux/batchVoting';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -116,6 +117,7 @@ const VotingFormCard = ({
 											}
 										})
 									);
+									dispatch(batchVotesActions.setIsFieldEdited(true));
 								}
 							}}
 							defaultValue={0}
@@ -136,9 +138,10 @@ export default styled(VotingFormCard)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -155,9 +158,10 @@ export default styled(VotingFormCard)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -177,9 +181,10 @@ export default styled(VotingFormCard)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -197,9 +202,10 @@ export default styled(VotingFormCard)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -219,9 +225,10 @@ export default styled(VotingFormCard)`
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 0;
-		top: -8px;
-		width: 18px;
-		height: 25px;
+		top: -5px;
+		width: 15px;
+		height: 20px;
+		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 		background-color: #e5007a !important;
 		box-shadow: 0 0 0 2px #e5007a !important;
 		border-radius: 8px;
@@ -235,5 +242,11 @@ export default styled(VotingFormCard)`
 	}
 	.ant-slider-horizontal .ant-slider-mark {
 		top: 22px;
+	}
+	.ant-slider .ant-slider-dot {
+		width: 3px !important;
+		height: 12px !important;
+		margin-top: -2px !important;
+		border-radius: 0 !important;
 	}
 `;

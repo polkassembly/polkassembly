@@ -11,8 +11,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IAddBatchVotes } from '~src/components/TinderStyleVoting/types';
-import TinderCardsComponent from '~src/components/TinderStyleVoting/CardComponents/TinderCardsComponent';
 import SwipeBtns from './SwipeBtns';
+import TinderCardsComponent from './TinderCardComponent';
 
 const SwipableVotingCards = () => {
 	const { total_proposals_added_in_Cart, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
@@ -212,7 +212,7 @@ const SwipableVotingCards = () => {
 								onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 								preventSwipe={['down']}
 							>
-								<div className='h-full overflow-y-auto bg-[#ffffff] dark:bg-black'>
+								<div className='h-full bg-[#ffffff] dark:bg-black'>
 									<TinderCardsComponent
 										proposal={proposal}
 										isUsedInWebView={true}

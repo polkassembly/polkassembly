@@ -772,14 +772,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							}  rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							}   rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount > 9 ? (
 								<>
 									9<span className='text-[8px]'>+</span>
 								</>
 							) : (
-								totalActiveProposalsCount?.allCount || ''
+								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span> || ''
 							)}
 						</span>
 					</div>

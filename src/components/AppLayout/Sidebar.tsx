@@ -62,8 +62,6 @@ import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
 
 import ImageIcon from '~src/ui-components/ImageIcon';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
 import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
@@ -83,6 +81,7 @@ interface SidebarProps {
 	setOpenAddressLinkedModal: (open: boolean) => void;
 	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
+	setLoginOpen: (open: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -97,7 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
-	setOpenAddressLinkedModal
+	setOpenAddressLinkedModal,
+	setLoginOpen
 }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -119,8 +119,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
 	const archivedDropdownRef = useRef<HTMLDivElement>(null);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isActive = (path: string) => router.pathname === path;
 
 	if (sidedrawer === false) {
@@ -178,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 
 		.ant-menu-item-selected {
-			background: ${(props: any) => (props?.theme === 'dark' ? '#520f32' : '#fce5f2')} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#530d32' : '#fce5f2')} !important;
 		}
 
 		.ant-menu-item {
@@ -1904,6 +1902,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												if (username?.length) {
 													router.push(`/user/${username}`);
 												} else {
+													setSidedrawer(false);
 													setLoginOpen(true);
 												}
 											}}
@@ -2000,7 +1999,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'pt-5'
-					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[104px]' : 'mt-2 overflow-y-auto pb-8'}`}
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu
 						theme={theme as any}
@@ -2025,18 +2024,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</>
 				)}
 			</div>
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
-			/>
 		</Sider>
 	);
 };

@@ -8,7 +8,7 @@
 import { Layout, Menu as AntdMenu, Modal } from 'antd';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApiContext, usePeopleChainApiContext } from 'src/context';
 import styled from 'styled-components';
 import { IActiveProposalCount } from '~src/types';
@@ -27,6 +27,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import Sidebar from './Sidebar';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -55,6 +57,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const sidebarRef = useRef<HTMLDivElement>(null);
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
@@ -62,6 +65,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
 	const [isMobile, setIsMobile] = useState(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
+	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
+
 	const getTotalActiveProposalsCount = async () => {
 		if (!network) return;
 
@@ -72,6 +80,29 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (
+				sidebarRef.current &&
+				!sidebarRef.current.contains(event.target as Node) &&
+				headerRef.current &&
+				!headerRef.current.contains(event.target as Node) // Ensure header clicks don't close sidebar
+			) {
+				setSidebarCollapsed(true); // Close sidebar
+			}
+		}
+
+		if (!sidebarCollapsed) {
+			document.addEventListener('mousedown', handleClickOutside);
+		} else {
+			document.removeEventListener('mousedown', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [sidebarCollapsed]);
+
 	useEffect(() => {
 		document.body.classList.remove('light-theme', 'dark-theme');
 		document.body.classList.add(`${theme}-theme`);
@@ -142,18 +173,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<div>
 			<Layout className={`${className} relative`}>
-				<NavHeader
-					theme={theme as any}
-					sidedrawer={sidedrawer}
-					className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
-					setSidedrawer={setSidedrawer}
-					previousRoute={previousRoute}
-					displayName={mainDisplay}
-					isVerified={isGood && !isIdentityUnverified}
-					isIdentityExists={isIdentitySet}
-				/>
+				<div ref={headerRef}>
+					<NavHeader
+						theme={theme as any}
+						sidedrawer={sidedrawer}
+						className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
+						setSidedrawer={setSidedrawer}
+						previousRoute={previousRoute}
+						displayName={mainDisplay}
+						isVerified={isGood && !isIdentityUnverified}
+						isIdentityExists={isIdentitySet}
+					/>
+				</div>
 				<Layout hasSider>
-					<div className='relative flex w-full gap-2'>
+					<div
+						ref={sidebarRef}
+						className='relative flex w-full gap-2'
+					>
 						{isMobile && sidedrawer && (
 							<Sidebar
 								className={`absolute left-0 top-0 z-[150]  w-full  ${className}`}
@@ -168,6 +204,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								mainDisplay={mainDisplay}
 								isIdentitySet={isIdentitySet}
 								isIdentityUnverified={isIdentityUnverified}
+								setLoginOpen={setLoginOpen}
 							/>
 						)}
 						{!isMobile && (
@@ -185,6 +222,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									mainDisplay={mainDisplay}
 									isIdentitySet={isIdentitySet}
 									isIdentityUnverified={isIdentityUnverified}
+									setLoginOpen={setLoginOpen}
 								/>
 								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{sidebarCollapsed ? (
@@ -316,6 +354,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				)}
 			</Layout>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 
 			<Modal
 				zIndex={100}

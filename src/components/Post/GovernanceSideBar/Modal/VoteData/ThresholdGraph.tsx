@@ -70,7 +70,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 					<section className={`${forGovSidebar ? 'scroll-hidden ml-[-6px] h-full w-[270px] min-[410px]:w-[340px]' : 'ml-0 w-[400px]'}`}>
 						<article>
 							<Chart.Line
-								className='h-fit w-fit'
+								className='h-full w-full'
 								data={data}
 								plugins={[hoverLinePlugin]}
 								options={{

@@ -242,7 +242,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						)}
 					</div>
 					{/* // current Price */}
-					{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
+					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
 						<div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 								<div className='flex flex-col justify-between gap-2 xl:flex-row'>

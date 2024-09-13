@@ -137,7 +137,7 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!postId || typeof postId !== 'string' || isNaN(Number(postId)) || !postType) {
+	if (!postId || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

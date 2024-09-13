@@ -19,7 +19,7 @@ import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
@@ -29,6 +29,7 @@ import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import Sidebar from './Sidebar';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { GlobalActions } from '~src/redux/global';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -47,6 +48,9 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	// replace sidebarCollapsed with is_sidebar_collapsed
+	// and setSidebarCollapsed(true/false) and dispatch(GlobalActions.setIsSidebarCollapsed(true/false))
+	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -156,11 +160,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
+	console.log('testing redux --> ', is_sidebar_collapsed);
 
 	return (
 		<div>
 			<Layout className={`${className} relative`}>
-				<div ref={headerRef}>
+				<div
+					ref={headerRef}
+					onClick={() => {
+						dispatch(GlobalActions.setIsSidebarCollapsed(true));
+					}}
+				>
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}

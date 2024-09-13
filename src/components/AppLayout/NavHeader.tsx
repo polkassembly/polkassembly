@@ -357,8 +357,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				)}
 			</div>
-			<div className={`${sidedrawer ? 'ml-32 2xl:ml-0' : 'ml-[108px] 2xl:ml-0'} hidden lg:block`}></div>
-			<nav className='mx-auto flex h-[60px] w-full items-center  justify-between lg:w-[85w] xl:max-w-7xl xl:pr-6 '>
+			<div className='ml-[84px] hidden lg:block'></div>
+			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
 				<div className='ml-2 flex items-center md:ml-0'>
 					<Link
 						className='logo-size flex lg:hidden'
@@ -374,8 +374,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className='type-container hidden items-center gap-1 sm:flex'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+					<div className={`type-container ${sidedrawer && 'pl-28 2xl:pl-0'} hidden items-center gap-1 sm:flex`}>
+						<span className='line-container ml-4 mr-2  h-5 w-[1.5px] bg-pink_primary  dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>

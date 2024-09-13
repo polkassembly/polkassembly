@@ -164,7 +164,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}
-						className={` ${sidebarCollapsed ? '' : '2xl:-pl-0 pl-[160px]'} `}
+						// className={` ${sidebarCollapsed ? '' : 'pl-[160px] 2xl:pl-0'} `}
 						setSidedrawer={setSidedrawer}
 						setSidebarCollapsed={setSidebarCollapsed}
 						previousRoute={previousRoute}
@@ -255,14 +255,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div
-													className={`my-6 ${
-														sidebarCollapsed
-															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
-															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-5/6 2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
-													} `}
-												>
-													<Content>
+												<div className='flex flex-row'>
+													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
+													<Content
+														className={`${!sidebarCollapsed && 'pl-28 2xl:pl-0'} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
+													>
 														<Component {...pageProps} />
 													</Content>
 												</div>
@@ -299,18 +296,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<div className='relative w-full'>
 										{!isMobile ? (
-											<div>
-												<div
-													className={`my-6 ${
-														sidebarCollapsed
-															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0 '
-															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-[83rem] 2xl:max-w-[83rem] 2xl:pl-24 2xl:pr-0'
-													} `}
-												>
-													<Content>
+											<div className={`${!sidebarCollapsed && ''}`}>
+												<div className='flex flex-row'>
+													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
+													<Content
+														className={`${!sidebarCollapsed && 'pl-28 2xl:pl-0'} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
+													>
 														<Component {...pageProps} />
 													</Content>
 												</div>
+
 												<Footer
 													className={` ${!sidebarCollapsed && 'pl-[210px] pr-20'} `}
 													theme={theme as any}

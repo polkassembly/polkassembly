@@ -1832,7 +1832,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 			onCollapse={(collapsed) => {
 				setSidebarCollapsed(collapsed);
 			}}
-			style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
+			style={{
+				transform: 'translateX(0px)',
+				transition: 'width 0.3s ease, transform 0.3s ease'
+			}}
 			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
 				sidedrawer && isMobile ? ' min-w-[250px]' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 			} bg-white dark:bg-section-dark-overlay`}

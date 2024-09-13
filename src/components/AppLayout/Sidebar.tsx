@@ -1937,6 +1937,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												if (username?.length) {
 													router.push(`/user/${username}`);
 												} else {
+													setSidebarCollapsed(true);
 													setSidedrawer(false);
 													setLoginOpen(true);
 												}

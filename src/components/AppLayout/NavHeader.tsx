@@ -72,9 +72,10 @@ interface Props {
 	displayName?: string;
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
+	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists, setSidebarCollapsed }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
@@ -378,10 +379,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<SearchBar
 						className='searchbar-container'
 						setSidedrawer={setSidedrawer}
+						setSidebarCollapsed={setSidebarCollapsed}
 					/>
-					<InAppNotification setSidedrawer={setSidedrawer} />
+					<InAppNotification
+						setSidedrawer={setSidedrawer}
+						setSidebarCollapsed={setSidebarCollapsed}
+					/>
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
-						<NetworkDropdown setSidedrawer={setSidedrawer} />
+						<NetworkDropdown
+							setSidedrawer={setSidedrawer}
+							setSidebarCollapsed={setSidebarCollapsed}
+						/>
 
 						{chainProperties[network]?.rpcEndpoints && chainProperties[network]?.rpcEndpoints?.length > 0 && <RPCDropdown />}
 						{!id ? (
@@ -393,6 +401,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									text='Login'
 									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
+										setSidebarCollapsed(true);
 										setSidedrawer(false);
 										setLoginOpen(true);
 									}}
@@ -450,6 +459,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 										<div>
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
 											<NetworkDropdown
+												setSidebarCollapsed={() => {}}
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>

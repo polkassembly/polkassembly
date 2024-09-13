@@ -166,6 +166,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						sidedrawer={sidedrawer}
 						className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
 						setSidedrawer={setSidedrawer}
+						setSidebarCollapsed={setSidebarCollapsed}
 						previousRoute={previousRoute}
 						displayName={mainDisplay}
 						isVerified={isGood && !isIdentityUnverified}

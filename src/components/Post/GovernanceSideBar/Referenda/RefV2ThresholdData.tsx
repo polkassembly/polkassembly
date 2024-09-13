@@ -62,7 +62,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 						</button>
 					</div>
 				</div>
-				<div className='mt-7'>
+				<div className='scroll-hidden mt-7 overflow-hidden'>
 					{thresholdData && (
 						<div>
 							<div className='relative flex justify-center border-section-light-container dark:border-[#3B444F]'>

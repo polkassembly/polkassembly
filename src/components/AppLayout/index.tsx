@@ -304,7 +304,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													className={`my-6 ${
 														sidebarCollapsed
 															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0 '
-															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-5/6 2xl:max-w-7xl 2xl:pl-20 2xl:pr-0'
+															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-[83rem] 2xl:max-w-[83rem] 2xl:pl-24 2xl:pr-0'
 													} `}
 												>
 													<Content>

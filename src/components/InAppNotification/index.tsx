@@ -22,15 +22,15 @@ import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { GlobalActions } from '~src/redux/global';
 
 interface INotificationProps {
 	className?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
-	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const InAppNotification: FC<INotificationProps> = (props) => {
-	const { className, setSidedrawer, setSidebarCollapsed } = props;
+	const { className, setSidedrawer } = props;
 
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
@@ -161,7 +161,7 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			{userId ? (
 				<Popover
 					onOpenChange={(open: boolean) => {
-						setSidebarCollapsed(true);
+						dispatch(GlobalActions.setIsSidebarCollapsed(true));
 						setSidedrawer(false);
 						setOpen(open);
 					}}
@@ -169,7 +169,7 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 					content={
 						<NotificationsContent
 							closePopover={(open: boolean) => {
-								setSidebarCollapsed(true);
+								dispatch(GlobalActions.setIsSidebarCollapsed(true));
 								setSidedrawer(false);
 								setOpen(!open);
 							}}
@@ -200,7 +200,7 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 				<div
 					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
 					onClick={() => {
-						setSidebarCollapsed(true);
+						dispatch(GlobalActions.setIsSidebarCollapsed(true));
 						setSidedrawer(false);
 						setOpenLoginPrompt(!openLoginPrompt);
 					}}
@@ -222,9 +222,9 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
-				image='/assets/referenda-endorse.png'
+				image='/assets/Gifs/login-endorse.gif'
 				title='Join Polkassembly to start using notifications.'
-				subtitle='Please login to use polkassembly notifications.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</div>
 	);

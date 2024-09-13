@@ -3,18 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useCommentDataContext } from '~src/context';
-import Address from '~src/ui-components/Address';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
-import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
@@ -27,6 +23,9 @@ import { getSortedComments } from '~src/components/Post/Comment/CommentsContaine
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import Address from '~src/ui-components/Address';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -52,13 +51,11 @@ const VoteInitiatedModal = ({
 	className,
 	open,
 	setOpen,
-	address,
 	multisig,
+	address,
 	balance,
 	conviction,
-	title,
 	vote,
-	votedAt,
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
@@ -69,6 +66,8 @@ const VoteInitiatedModal = ({
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [posted, setPosted] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
+	const { postData } = usePostDataContext();
 
 	useEffect(() => {
 		if (!network) return;
@@ -90,12 +89,35 @@ const VoteInitiatedModal = ({
 		setTimelines(timelinePayload);
 	};
 
-	title = 'Voted Successfully';
+	const handleCopyClicked = () => {
+		navigator.clipboard.writeText(window.location.href);
+		message.success('Post link copied');
+	};
+
+	const onShareTwitter = () => {
+		const text = `${encodeURIComponent(`I've just cast my vote for the "${postData?.title}"`)}%0A%0A${encodeURIComponent(
+			`Check out the proposal and own the decision by casting your vote too! ${window.location.href || ''}`
+		)}%0A%0A`;
+
+		const url = `https://twitter.com/intent/tweet?text=${text}`;
+		window.open(url, '_blank')?.focus();
+	};
+
+	const onShareDiscord = () => {
+		const text = `${encodeURIComponent(`I've just cast my vote for the "${postData?.title}"`)}%0A%0A${encodeURIComponent(
+			`Check out the proposal and own the decision by casting your vote too! ${window.location.href || ''}`
+		)}%0A%0A`;
+		navigator.clipboard.writeText(decodeURIComponent(text));
+		message.success('Vote details copied to clipboard. You can paste it in Discord.');
+		setTimeout(() => {
+			window.open('https://discord.com/channels/@me', '_blank')?.focus();
+		}, 3000);
+	};
 
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate mt-[5vh] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.variable} ${poppins.className} delegate mt-[100px] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
@@ -107,13 +129,46 @@ const VoteInitiatedModal = ({
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}
-				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{title}</h2>
-				<div className='flex flex-col items-center justify-center gap-[14px]'>
-					<div className='text-[24px] font-semibold text-pink_primary'>
-						{conviction
-							? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
-							: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
+				<div className='flex items-center justify-center gap-x-2'>
+					<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>
+						Voted{' '}
+						<span
+							className={`${
+								vote === EVoteDecisionType.AYE ? 'text-[green]' : `${vote === EVoteDecisionType.NAY ? 'text-[red]' : 'text-bodyBlue dark:text-blue-dark-high'}`
+							} capitalize`}
+						>
+							{vote}
+						</span>{' '}
+						successfully
+					</h2>
+					<span className='m-0 p-0 text-sm dark:text-blue-dark-high'>with</span>
+					<span className='font-medium'>
+						<Address
+							isTruncateUsername={false}
+							address={address}
+							className='address text-base'
+							displayInline
+						/>{' '}
+					</span>
+				</div>
+				<div className='-mt-1 flex flex-col items-center justify-center gap-[14px]'>
+					<div className='flex items-center justify-center gap-x-2'>
+						<div className='flex gap-x-2 font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x Conviction</span>
+							<span className='m-0 mt-0.5 p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>with</span>
+						</div>
+						<div className='text-[20px] font-semibold text-pink_primary'>
+							{conviction
+								? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
+								: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
+						</div>
 					</div>
+					{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
+						<div className='-mt-4 flex gap-2 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Delegated Power:</span>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
+						</div>
+					)}
 					{vote === EVoteDecisionType.SPLIT && (
 						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 							{' '}
@@ -161,91 +216,34 @@ const VoteInitiatedModal = ({
 							</span>
 						</div>
 					)}
-
-					<div className='flex flex-col items-start justify-center gap-[10px]'>
+					{multisig && (
 						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>With address:</span>
+							<span className='min-w-[120px]'>With Multisig:</span>
 							<span className='font-medium'>
 								<Address
 									isTruncateUsername={false}
-									address={address}
+									address={multisig}
 									className='address'
 									displayInline
 								/>{' '}
 							</span>
 						</div>
-
-						{multisig && (
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>With Multisig:</span>
-								<span className='font-medium'>
-									<Address
-										isTruncateUsername={false}
-										address={multisig}
-										className='address'
-										displayInline
-									/>{' '}
-								</span>
-							</div>
-						)}
-
-						{
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Vote Amount:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{formatedBalance(balance.toString(), unit)} {unit}
-								</span>
-							</div>
-						}
+					)}
+					{multisig && (
 						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Vote :</span>
-							{vote === EVoteDecisionType.AYE ? (
-								<p>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : vote === EVoteDecisionType.NAY ? (
-								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</div>
-							) : vote === EVoteDecisionType.SPLIT ? (
-								<p>
-									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : vote === EVoteDecisionType.ABSTAIN ? (
-								<p className='flex align-middle'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : null}
+							<span className='min-w-[120px]'>Vote Link:</span>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<a
+									className='text-pink_primary'
+									href='https://app.polkasafe.xyz/transactions'
+									target='_blank'
+									rel='noreferrer'
+								>
+									Polkasafe
+								</a>
+							</span>
 						</div>
-						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Conviction:</span>
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
-						</div>
-						{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Delegated Power:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
-							</div>
-						)}
-						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Time of Vote :</span> <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
-						</div>
-						{multisig && (
-							<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Vote Link:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<a
-										className='text-pink_primary'
-										href='https://app.polkasafe.xyz/transactions'
-										target='_blank'
-										rel='noreferrer'
-									>
-										Polkasafe
-									</a>
-								</span>
-							</div>
-						)}
-					</div>
+					)}
 				</div>
 			</div>
 			<div className='relative mt-3 w-full'>
@@ -273,6 +271,48 @@ const VoteInitiatedModal = ({
 				<span className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] rounded-bl-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<RightQuote />
 				</span>
+			</div>
+			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Share your vote on:</p>
+			<div className='mb-1 mt-2 flex items-center justify-center gap-x-2'>
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					onClick={() => {
+						onShareTwitter();
+					}}
+				>
+					<ImageIcon
+						src={theme === 'dark' ? '/assets/icons/x-icon-pink-dark.svg' : '/assets/icons/x-icon-pink.svg'}
+						alt='twitter-icon'
+					/>
+				</Button>
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					onClick={() => {
+						onShareDiscord();
+					}}
+				>
+					<ImageIcon
+						src={theme === 'dark' ? '/assets/icons/discord-pink-dark.svg' : '/assets/icons/discord-pink.svg'}
+						alt='discord-icon'
+					/>
+				</Button>
+				{/* <Button className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'>
+					<ImageIcon
+						src='/assets/icons/riot-pink.svg'
+						alt='riot-icon'
+					/>
+				</Button> */}
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					onClick={() => {
+						handleCopyClicked();
+					}}
+				>
+					<ImageIcon
+						src={theme === 'dark' ? '/assets/icons/copy-pink-dark.svg' : '/assets/icons/copy-pink.svg'}
+						alt='copy-icon'
+					/>
+				</Button>
 			</div>
 		</Modal>
 	);

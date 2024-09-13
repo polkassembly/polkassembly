@@ -319,7 +319,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
+	console.log(dataSource, currentUserDataSource);
+
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
+	console.log('combined: ', combinedDataSource);
 
 	return (
 		<Spin spinning={loading || loadingCurrentUser}>
@@ -347,7 +350,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					columns={columns}
 					className={`${className} w-full overflow-x-auto`}
 					dataSource={combinedDataSource}
-					pagination={{ pageSize: searchedUsername ? 1 : 10, total: searchedUsername ? tableData.length : totalData }}
+					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
 					onChange={handleTableChange}
 					theme={theme}
 					rowClassName={(record) => {

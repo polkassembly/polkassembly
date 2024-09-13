@@ -328,7 +328,7 @@ const Address = (props: Props) => {
 					setOpen(e);
 				}}
 			>
-				<div className={`${className} flex gap-1`}>
+				<div className={`${className} flex items-center gap-1`}>
 					{!disableIdenticon &&
 						(encodedAddr.startsWith('0x') ? (
 							<EthIdenticon
@@ -347,14 +347,14 @@ const Address = (props: Props) => {
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
-								<div className='inline-address flex items-start'>
+								<div className='inline-address flex items-center'>
 									{!!kiltName ||
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												theme={theme}
 												identity={identity}
 												flags={flags}
-												className='mt-[2.5px] text-navBlue'
+												className='text-navBlue'
 											/>
 										))}
 
@@ -362,7 +362,7 @@ const Address = (props: Props) => {
 										<div
 											onClick={(e) => handleClick(e)}
 											title={mainDisplay || encodedAddr}
-											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex gap-x-1 ${
+											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
 											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 										>
@@ -390,7 +390,7 @@ const Address = (props: Props) => {
 												<Space className={'header'}>
 													<div
 														onClick={(e) => handleClick(e)}
-														className={`flex flex-col font-semibold text-bodyBlue  ${
+														className={`flex flex-col items-center font-semibold text-bodyBlue ${
 															!disableAddressClick && 'cursor-pointer hover:underline'
 														} hover:text-bodyBlue dark:text-blue-dark-high`}
 													>
@@ -406,7 +406,7 @@ const Address = (props: Props) => {
 									<div
 										className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} ${
 											!disableAddressClick && 'cursor-pointer hover:underline'
-										} flex font-normal `}
+										} flex items-center font-normal `}
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
@@ -428,7 +428,7 @@ const Address = (props: Props) => {
 									</div>
 								</div>
 							) : (
-								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex gap-0.5 font-semibold`}>
+								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex items-center gap-0.5 font-semibold`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 									{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
@@ -456,7 +456,7 @@ const Address = (props: Props) => {
 										<Space className={'header'}>
 											<div
 												onClick={(e) => handleClick(e)}
-												className={`flex font-semibold text-bodyBlue  ${
+												className={`flex items-center font-semibold text-bodyBlue ${
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
@@ -474,7 +474,7 @@ const Address = (props: Props) => {
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
 							</div>
-							<div className='flex gap-1.5'>
+							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
 									<Tooltip

@@ -13,20 +13,22 @@ import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
+import { GlobalActions } from '~src/redux/global';
+import { useDispatch } from 'react-redux';
 
 interface ISearchBarProps {
 	className?: string;
 	isSmallScreen?: boolean;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
-	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
-	const { className, isSmallScreen, setSidedrawer, setSidebarCollapsed } = props;
+	const { className, isSmallScreen, setSidedrawer } = props;
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -63,7 +65,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => {
 							setOpen(true);
-							setSidebarCollapsed(true);
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
 							setSidedrawer(false);
 						}}
 					>

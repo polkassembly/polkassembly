@@ -49,6 +49,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { GlobalActions } from '~src/redux/global';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -73,14 +74,14 @@ interface Props {
 	displayName?: string;
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
-	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists, setSidebarCollapsed }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
+
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
@@ -386,17 +387,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<SearchBar
 						className='searchbar-container'
 						setSidedrawer={setSidedrawer}
-						setSidebarCollapsed={setSidebarCollapsed}
 					/>
-					<InAppNotification
-						setSidedrawer={setSidedrawer}
-						setSidebarCollapsed={setSidebarCollapsed}
-					/>
+					<InAppNotification setSidedrawer={setSidedrawer} />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
-						<NetworkDropdown
-							setSidedrawer={setSidedrawer}
-							setSidebarCollapsed={setSidebarCollapsed}
-						/>
+						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
 						{chainProperties[network]?.rpcEndpoints && chainProperties[network]?.rpcEndpoints?.length > 0 && <RPCDropdown />}
 						{!id ? (
@@ -408,7 +402,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									text='Login'
 									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
-										setSidebarCollapsed(true);
+										dispatch(GlobalActions.setIsSidebarCollapsed(true));
 										setSidedrawer(false);
 										setLoginOpen(true);
 									}}
@@ -466,7 +460,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 										<div>
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
 											<NetworkDropdown
-												setSidebarCollapsed={() => {}}
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>

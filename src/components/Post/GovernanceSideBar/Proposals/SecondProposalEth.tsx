@@ -323,7 +323,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 				<ReferendaLoginPrompts
 					modalOpen={modalOpen}
 					setModalOpen={setModalOpen}
-					image='/assets/referenda-endorse.png'
+					image='/assets/Gifs/login-endorse.gif'
 					title='Join Polkassembly to Endorse this proposal.'
 					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 				/>

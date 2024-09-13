@@ -66,12 +66,12 @@ import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
+import { GlobalActions } from '~src/redux/global';
 
 const { Sider } = Layout;
 
 interface SidebarProps {
 	sidebarCollapsed: boolean;
-	setSidebarCollapsed: (collapsed: boolean) => void;
 	className?: string;
 	totalActiveProposalsCount: IActiveProposalCount;
 	isGood: boolean;
@@ -88,7 +88,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
 	className,
 	sidebarCollapsed,
-	setSidebarCollapsed,
 	totalActiveProposalsCount,
 	isGood,
 	mainDisplay,
@@ -279,7 +278,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
-		setSidebarCollapsed(true);
+		dispatch(GlobalActions.setIsSidebarCollapsed(true));
 		setSidedrawer(false);
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
@@ -1854,7 +1853,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			collapsible
 			collapsed={sidebarCollapsed}
 			onCollapse={(collapsed) => {
-				setSidebarCollapsed(collapsed);
+				dispatch(GlobalActions.setIsSidebarCollapsed(collapsed));
 			}}
 			style={{
 				transform: 'translateX(0px)',
@@ -1979,7 +1978,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												if (username?.length) {
 													router.push(`/user/${username}`);
 												} else {
-													setSidebarCollapsed(true);
+													dispatch(GlobalActions.setIsSidebarCollapsed(true));
 													setSidedrawer(false);
 													setLoginOpen(true);
 												}

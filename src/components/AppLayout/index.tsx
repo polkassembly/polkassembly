@@ -164,7 +164,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}
-						className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
+						className={` ${sidebarCollapsed ? '' : 'pl-[160px] 2xl:pl-0'} `}
 						setSidedrawer={setSidedrawer}
 						setSidebarCollapsed={setSidebarCollapsed}
 						previousRoute={previousRoute}
@@ -223,7 +223,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 												alt='close nav'
 											/>
@@ -238,7 +238,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 												alt='open nav'
 											/>
@@ -258,8 +258,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												<div
 													className={`my-6 ${
 														sidebarCollapsed
-															? 'mx-auto my-6 min-h-[90vh] w-[94w] max-w-7xl flex-initial pl-[120px] pr-[40px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
-															: 'pl-[280px] pr-[60px] '
+															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
+															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-5/6 2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
 													} `}
 												>
 													<Content>
@@ -303,8 +303,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												<div
 													className={`my-6 ${
 														sidebarCollapsed
-															? 'mx-auto my-6  min-h-[90vh] w-[94w] max-w-7xl flex-initial pl-[120px] pr-[40px] lg:w-[85vw] lg:opacity-100 2xl:w-5/6'
-															: 'pl-[280px] pr-[60px]'
+															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0 '
+															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-5/6 2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
 													} `}
 												>
 													<Content>

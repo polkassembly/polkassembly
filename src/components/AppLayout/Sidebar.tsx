@@ -39,8 +39,7 @@ import {
 	SelectedDiscussions,
 	SelectedPreimages,
 	AnalyticsSVGIcon,
-	AllPostIcon,
-	RoundedDollarIcon
+	AllPostIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -66,6 +65,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import Image from 'next/image';
 
 const { Sider } = Layout;
 
@@ -1028,17 +1028,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}
 		}
 	}
-	if (['polkadot'].includes(network)) {
-		gov2TrackItems.mainItems.push(
-			getSiderMenuItem(
-				<div className='ml-[2px] flex items-center gap-1.5'>Bounties</div>,
-				'/bounty',
-				<div className='relative '>
-					<RoundedDollarIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-				</div>
-			)
-		);
-	}
 
 	const gov2OverviewItems = [
 		!isMobile ? getSiderMenuItem('', '', null) : null,
@@ -1316,6 +1305,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 
+		if (['polkadot'].includes(network)) {
+			bountiesSubItems.push(getSiderMenuItem(<div className='ml-[2px] flex items-center gap-1.5'>Dashboard</div>, '/bounty', null));
+		}
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
@@ -1364,9 +1356,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
-		gov2TrackItems.treasuryItems.push(...bountiesSubItems);
 
-		items = items.concat(...bountiesSubItems);
+		const bountiesMenuItem = getSiderMenuItem(
+			'Bounties',
+			'gov2_bounties_group',
+			<div>
+				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+			</div>,
+			[...bountiesSubItems]
+		);
+
+		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
+
+		items = items.concat(bountiesMenuItem);
 
 		gov2Items.splice(
 			8,
@@ -1854,9 +1856,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div>
 									<div className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
 										{sidedrawer ? (
-											<img
+											<Image
 												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 												alt='polkassembly logo'
+												width={150}
+												height={50}
 											/>
 										) : (
 											<PaLogo sidedrawer={sidedrawer} />
@@ -1885,10 +1889,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 													handleIdentityButtonClick();
 												}}
 											>
-												<img
+												<Image
 													src='/assets/head1.svg'
 													alt='Head 1'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
 												/>
 												<div className='absolute bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
 													On-chain identity
@@ -1901,10 +1907,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 									{network === 'polkadot' && (
 										<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 											<Link href='/leaderboard'>
-												<img
+												<Image
 													src='/assets/head2.svg'
 													alt='Head 2'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
 												/>
 												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Leaderboard
@@ -1917,10 +1925,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 									{delegationSupportedNetworks.includes(network) && (
 										<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
 											<Link href='/delegation'>
-												<img
+												<Image
 													src='/assets/head3.svg'
 													alt='Head 3'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
 												/>
 												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Delegation
@@ -1943,10 +1953,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 												}
 											}}
 										>
-											<img
+											<Image
 												src='/assets/head4.svg'
 												alt='Head 4'
-												className='h-10 w-10 cursor-pointer'
+												width={40}
+												height={40}
+												className=' cursor-pointer'
 											/>
 											<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile
@@ -1971,10 +1983,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 											className='activeborderhover group relative w-10'
 										>
 											<div>
-												<img
+												<Image
 													src='/assets/head1.svg'
 													alt='Head 1'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className='cursor-pointer'
 												/>
 												<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
 													On-chain identity
@@ -1987,10 +2001,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 									{network === 'polkadot' && (
 										<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 											<Link href='/leaderboard'>
-												<img
+												<Image
 													src='/assets/head2.svg'
 													alt='Head 2'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
 												/>
 												<div className='absolute bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Leaderboard
@@ -2003,10 +2019,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 									{delegationSupportedNetworks.includes(network) && (
 										<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
 											<Link href='/delegation'>
-												<img
+												<Image
 													src='/assets/head3.svg'
 													alt='Head 3'
-													className='h-10 w-10 cursor-pointer'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
 												/>
 												<div className='absolute bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Delegation
@@ -2027,10 +2045,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 												}
 											}}
 										>
-											<img
+											<Image
 												src='/assets/head4.svg'
 												alt='Head 4'
-												className='h-10 w-10 cursor-pointer'
+												width={40}
+												height={40}
+												className=' cursor-pointer'
 											/>
 											<div className='absolute bottom-0 left-[74px] mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile

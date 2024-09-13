@@ -48,6 +48,7 @@ import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import ToggleButton from '~src/ui-components/ToggleButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -342,11 +343,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			>
 				{!sidedrawer ? (
 					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
-						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
+							alt=''
+						/>
 					</div>
 				) : (
 					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
-						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
+							alt=''
+						/>
 					</div>
 				)}
 			</div>

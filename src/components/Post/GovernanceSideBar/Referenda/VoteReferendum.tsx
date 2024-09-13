@@ -63,6 +63,7 @@ import Input from '~src/basic-components/Input';
 import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
+import useImagePreloader from '~src/hooks/useImagePreloader';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -170,6 +171,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
+
+	const isGifLoaded = useImagePreloader('/assets/Gifs/voted.gif');
 
 	const getDelegateData = async () => {
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
@@ -1163,13 +1166,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								height={220}
 							/>
 						) : (
-							<Image
-								src='/assets/Gifs/voted.gif'
-								alt='success delegate icon'
-								width={363}
-								height={347}
-								className='-mt-[120px]'
-							/>
+							<div className='-mt-[116px]'>
+								<Image
+									src={!isGifLoaded ? '/assets/Gifs/voted.svg' : '/assets/Gifs/voted.gif'}
+									alt='Voted-successfully'
+									width={363}
+									height={347}
+									priority={true}
+								/>
+							</div>
 						)
 					}
 				/>

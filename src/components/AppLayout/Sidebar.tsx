@@ -941,9 +941,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<ImageIcon
 										src='/assets/selected-icons/Auction Admin.svg'
 										alt=''
-										className={`${
-											sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '
-										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+										className={`${sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
 									<ImageIcon
@@ -964,7 +962,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										alt=''
 										className={`${
 											sidebarCollapsed ? 'absolute -top-[29px] -ml-[10px] mt-0.5' : '-ml-[10px] '
-										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+										}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
 									<StakingAdminIcon

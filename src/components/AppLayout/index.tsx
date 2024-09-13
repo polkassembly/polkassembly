@@ -165,12 +165,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<div>
 			<Layout className={`${className} relative`}>
-				<div
-					ref={headerRef}
-					onClick={() => {
-						dispatch(GlobalActions.setIsSidebarCollapsed(true));
-					}}
-				>
+				<div ref={headerRef}>
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}

@@ -612,6 +612,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<div className='flex gap-3.5 text-xs font-medium tracking-[0.02em] text-separatorDark max-md:gap-1.5 max-md:px-0'>
 							{isSuperSearch && (
 								<NetworkDropdown
+									setSidebarCollapsed={() => {}}
 									setSidedrawer={() => {}}
 									isSmallScreen={true}
 									isSearch={true}

@@ -357,7 +357,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				)}
 			</div>
-			<div className={`${sidedrawer ? 'ml-32' : 'ml-[108px]'} hidden lg:block`}></div>
+			<div className={`${sidedrawer ? 'ml-32 2xl:ml-0' : 'ml-[108px] 2xl:ml-0'} hidden lg:block`}></div>
 			<nav className='mx-auto flex h-[60px] w-full items-center  justify-between lg:w-[85w] xl:max-w-7xl xl:pr-6 '>
 				<div className='ml-2 flex items-center md:ml-0'>
 					<Link

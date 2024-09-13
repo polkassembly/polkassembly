@@ -258,7 +258,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												<div className='flex flex-row'>
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
-														className={`${!sidebarCollapsed && 'pl-28 2xl:pl-0'} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
+														className={`${!sidebarCollapsed && 'pl-32 2xl:pl-0'} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
 														<Component {...pageProps} />
 													</Content>

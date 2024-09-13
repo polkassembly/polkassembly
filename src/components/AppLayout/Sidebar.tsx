@@ -2065,7 +2065,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>
 				<div
 					className={`hide-scrollbar ${
-						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-8'
+						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'
 					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu

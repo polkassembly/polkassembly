@@ -5,13 +5,18 @@
 import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import DelegationDashboard from '~src/components/DelegationDashboard';
-// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import SEOHead from '~src/global/SEOHead';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
+import dynamic from 'next/dynamic';
+import Skeleton from '~src/basic-components/Skeleton';
+
+const DelegationDashboard = dynamic(() => import('src/components/DelegationDashboard'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

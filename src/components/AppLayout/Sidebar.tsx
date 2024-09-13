@@ -810,7 +810,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									9<span className='text-[8px]'>+</span>
 								</>
 							) : (
-								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span> || ''
+								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>
 							)}
 						</span>
 					</div>

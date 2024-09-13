@@ -134,15 +134,15 @@ const ReferendumCount = () => {
 			<h2 className='text-base font-semibold sm:text-xl'>Referendum Count</h2>
 			<Spin spinning={loading}>
 				<div
-					className='flex justify-start'
-					style={{ height: '300px', width: '100%' }}
+					className='flex justify-center'
+					style={{ height: '250px', width: '100%' }}
 				>
 					<ResponsivePie
 						data={data}
 						margin={{
 							bottom: isMobile ? 80 : 8,
 							left: isMobile ? 10 : -520,
-							right: isMobile ? 0 : 260,
+							right: isMobile ? 0 : 200,
 							top: 20
 						}}
 						colors={{ datum: 'data.color' }}
@@ -239,13 +239,13 @@ const ReferendumCount = () => {
 											data: lastFilteredLegends,
 											direction: 'column',
 											itemDirection: 'left-to-right',
-											itemHeight: 40,
-											itemWidth: -60,
+											itemHeight: 30,
+											itemWidth: -100,
 											itemsSpacing: 1,
 											justify: false,
 											symbolShape: 'circle',
 											symbolSize: 8,
-											translateX: -540,
+											translateX: -560,
 											translateY: 0
 										},
 										{
@@ -253,13 +253,13 @@ const ReferendumCount = () => {
 											data: middleFilteredLegends,
 											direction: 'column',
 											itemDirection: 'left-to-right',
-											itemHeight: 40,
-											itemWidth: -60,
+											itemHeight: 30,
+											itemWidth: -100,
 											itemsSpacing: 1,
 											justify: false,
 											symbolShape: 'circle',
 											symbolSize: 8,
-											translateX: -300,
+											translateX: -335,
 											translateY: 0
 										},
 										{
@@ -267,13 +267,13 @@ const ReferendumCount = () => {
 											data: filteredLegends,
 											direction: 'column',
 											itemDirection: 'left-to-right',
-											itemHeight: 40,
-											itemWidth: -60,
+											itemHeight: 30,
+											itemWidth: -100,
 											itemsSpacing: 1,
 											justify: false,
 											symbolShape: 'circle',
 											symbolSize: 8,
-											translateX: -30,
+											translateX: -100,
 											translateY: 0
 										}
 								  ]

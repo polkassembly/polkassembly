@@ -12,6 +12,7 @@ import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-compon
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import Image from 'next/image';
 
 export type MenuItem = Required<MenuProps>['items'][number];
 
@@ -213,14 +214,16 @@ export const SidebarFoot1 = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
-		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay xl:h-[7vw]'>
+		<div className='fixed bottom-0 left-0 z-[100] w-full  bg-white py-3 pb-24 dark:bg-section-dark-overlay md:pb-0 xl:h-[7vw]'>
 			<div className='mt-5 flex items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
 							alt='Foot1'
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+							width={40}
+							height={40}
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 							Townhall
@@ -230,9 +233,11 @@ export const SidebarFoot1 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://polkasafe.xyz/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
 							alt='Foot2'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -243,9 +248,11 @@ export const SidebarFoot1 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://collectives.polkassembly.io/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
 							alt='Foot3'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -256,9 +263,11 @@ export const SidebarFoot1 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://staking.polkadot.cloud/#/overview'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
 							alt='Foot4'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -280,9 +289,11 @@ export const SidebarFoot2 = () => {
 			<div className='flex flex-col items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
 							alt='Foot1'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -293,9 +304,11 @@ export const SidebarFoot2 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://polkasafe.xyz/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
 							alt='Foot2'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -306,9 +319,11 @@ export const SidebarFoot2 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://collectives.polkassembly.io/'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
 							alt='Foot3'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
@@ -319,9 +334,11 @@ export const SidebarFoot2 = () => {
 				</div>
 				<div className='group relative'>
 					<Link href='https://staking.polkadot.cloud/#/overview'>
-						<img
+						<Image
 							src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
 							alt='Foot4'
+							width={40}
+							height={40}
 							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 						/>
 						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>

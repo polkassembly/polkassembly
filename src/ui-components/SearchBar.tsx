@@ -18,10 +18,11 @@ interface ISearchBarProps {
 	className?: string;
 	isSmallScreen?: boolean;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
+	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
-	const { className, isSmallScreen, setSidedrawer } = props;
+	const { className, isSmallScreen, setSidedrawer, setSidebarCollapsed } = props;
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
@@ -62,6 +63,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => {
 							setOpen(true);
+							setSidebarCollapsed(true);
 							setSidedrawer(false);
 						}}
 					>

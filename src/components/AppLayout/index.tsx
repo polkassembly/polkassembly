@@ -50,10 +50,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
-	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -64,7 +65,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	const [isMobile, setIsMobile] = useState(false);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
@@ -81,27 +82,25 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (
-				sidebarRef.current &&
-				!sidebarRef.current.contains(event.target as Node) &&
-				headerRef.current &&
-				!headerRef.current.contains(event.target as Node) // Ensure header clicks don't close sidebar
-			) {
-				setSidebarCollapsed(true); // Close sidebar
-			}
-		}
+		const handleResize = () => {
+			const isMobile = window.innerWidth < 1024;
 
-		if (!sidebarCollapsed) {
-			document.addEventListener('mousedown', handleClickOutside);
-		} else {
-			document.removeEventListener('mousedown', handleClickOutside);
-		}
+			if (!isMobile) {
+				setSidedrawer(true);
+				setSidebarCollapsed(false);
+			} else {
+				setSidedrawer(false);
+				setSidebarCollapsed(true);
+			}
+		};
+
+		handleResize();
+		window.addEventListener('resize', handleResize);
 
 		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
+			window.removeEventListener('resize', handleResize);
 		};
-	}, [sidebarCollapsed]);
+	}, []);
 
 	useEffect(() => {
 		document.body.classList.remove('light-theme', 'dark-theme');
@@ -128,18 +127,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			};
 		}
 	}, [router, isMobile]);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.screen.width < 1024);
-		};
-
-		handleResize();
-		window.addEventListener('resize', handleResize);
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
 
 	useEffect(() => {
 		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
@@ -177,8 +164,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}
-						className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
+						className={` ${sidebarCollapsed ? '' : '2xl:-pl-0 pl-[160px]'} `}
 						setSidedrawer={setSidedrawer}
+						setSidebarCollapsed={setSidebarCollapsed}
 						previousRoute={previousRoute}
 						displayName={mainDisplay}
 						isVerified={isGood && !isIdentityUnverified}
@@ -235,7 +223,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 												alt='close nav'
 											/>
@@ -250,7 +238,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 												alt='open nav'
 											/>
@@ -267,7 +255,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
+															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-5/6 2xl:max-w-7xl 2xl:pl-0 2xl:pr-0'
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -306,7 +300,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
+												<div
+													className={`my-6 ${
+														sidebarCollapsed
+															? 'mx-auto  my-6  min-h-[90vh] w-[94w]  pl-[120px] pr-[40px] lg:opacity-100 2xl:w-5/6  2xl:max-w-7xl 2xl:pl-0 2xl:pr-0 '
+															: 'mx-auto flex-initial pl-[280px] pr-[60px] 2xl:w-[83rem] 2xl:max-w-[83rem] 2xl:pl-24 2xl:pr-0'
+													} `}
+												>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -317,7 +317,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												/>
 											</div>
 										) : (
-											<div className='relative mx-auto w-full'>
+											<div
+												onClick={() => {
+													setSidedrawer(false);
+												}}
+												className='relative mx-auto w-full'
+											>
 												<div>
 													<div className='my-6 px-3'>
 														<Content>
@@ -477,7 +482,7 @@ export default styled(AppLayout)`
 		border-right: none !important;
 	}
 	li .ant-menu-item-only-child {
-		padding-left: 25px !important;
+		padding-left: 35px !important;
 		margin-left: 20px !important;
 	}
 
@@ -619,7 +624,7 @@ export default styled(AppLayout)`
 	}
 
 	.activeborder {
-		border: 1px solid #e5007a;
+		border: 2px solid #e5007a;
 		border-radius: 10px;
 	}
 	.activeborderhover {

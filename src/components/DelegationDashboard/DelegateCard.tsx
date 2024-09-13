@@ -194,7 +194,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								alt=''
 								className={'hidden sm:block'}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>W3F Delegate</span>
+							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-blue-dark-high sm:text-xs`}>W3F Delegate</span>
 						</div>
 					)}
 					{!!delegate?.dataSource?.includes(EDelegateSource.NOVA) && (

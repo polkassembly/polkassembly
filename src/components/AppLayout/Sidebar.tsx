@@ -1656,7 +1656,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								}`}
 							>
 								<ParachainsIcon className='-ml-1 mt-3 scale-90 text-xl font-medium ' />
-								<span className='ml-2  text-xs font-medium lg:block'>Parachains</span>
+								<span className='ml-2 pl-1 text-xs font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,

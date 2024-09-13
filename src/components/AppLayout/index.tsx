@@ -482,7 +482,7 @@ export default styled(AppLayout)`
 		border-right: none !important;
 	}
 	li .ant-menu-item-only-child {
-		padding-left: 25px !important;
+		padding-left: 35px !important;
 		margin-left: 20px !important;
 	}
 

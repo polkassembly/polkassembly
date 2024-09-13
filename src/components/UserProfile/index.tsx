@@ -20,6 +20,7 @@ export interface IActivitiesCounts {
 	totalActivitiesCount: number;
 	totalMentionsCount: number;
 	totalReactionsCount: number;
+	totalSubscriptionsCount: number;
 }
 interface Props {
 	className?: string;

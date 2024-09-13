@@ -12,13 +12,14 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IActivitiesCounts, IStats } from '.';
-import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon, SubscriptionsIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from '~src/types';
+import ProfileSubscriptions from './ProfileSubscriptions';
 
 interface Props {
 	className?: string;
@@ -182,6 +183,19 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
 					Votes<span className='ml-[2px]'>({totals?.votes})</span>
+				</div>
+			)
+		});
+	}
+	if (userProfile.user_id == userId) {
+		tabItems.push({
+			children: <ProfileSubscriptions />,
+			key: 'Subscriptions',
+			label: (
+				<div className='flex items-center'>
+					<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
+					Subscriptions
+					<span className='ml-[2px]'>({activitiesCounts?.totalSubscriptionsCount || 0})</span>
 				</div>
 			)
 		});

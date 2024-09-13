@@ -12,6 +12,8 @@ import authServiceInstance from '~src/auth/auth';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -21,19 +23,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { post_id = null, proposalType } = req.body;
-
-	const strProposalType = String(proposalType);
-	if (!isFirestoreProposalTypeValid(strProposalType)) {
-		return res.status(400).json({ message: `The proposal type "${proposalType}" is invalid.` });
-	}
-	if (post_id === null) return res.status(400).json({ message: 'Missing parameters in request body' });
-
 	// get user
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+
+	const { post_id = null, proposalType } = req.body;
+
+	const strProposalType = proposalType && String(proposalType);
+	if (!isFirestoreProposalTypeValid(strProposalType)) {
+		return res.status(400).json({ message: `The proposal type "${proposalType}" is invalid.` });
+	}
+	if (post_id === null) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	// get post author
 	const postRef = networkDocRef(network).collection('post_types').doc(strProposalType).collection('posts').doc(String(post_id));
@@ -52,7 +54,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		console.error(e);
 		return res.status(500).json({ message: messages.INTERNAL });
 	});
-
+	try {
+		if (typeof postAuthorId == 'number' && Number(post_id) && strProposalType !== 'undefined') {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				network,
+				postAuthorId,
+				postId: post_id,
+				postType: strProposalType,
+				type: EUserActivityType.SUBSCRIBED,
+				userId: user.id
+			});
+			return res.status(200).json({ message: messages.SUCCESS });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(200).json({ message: err || messages.SUBSCRIPTION_SUCCESSFUL });
+	}
 	return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
 }
 

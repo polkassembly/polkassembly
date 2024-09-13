@@ -144,6 +144,7 @@ import DollarSVG from '~assets/profile/dollar.svg';
 import RemoveVoteSVG from '~assets/profile/remove-vote.svg';
 import ClipboardSVG from '~assets/profile/profile-clipboard.svg';
 import VotesSVG from '~assets/profile/profile-votes.svg';
+import SubscriptionsSVG from '~assets/profile/subscriptions.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
@@ -1127,6 +1128,12 @@ export const ClipboardIcon = (props: Partial<CustomIconComponentProps>) => (
 export const VotesIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={VotesSVG}
+		{...props}
+	/>
+);
+export const SubscriptionsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SubscriptionsSVG}
 		{...props}
 	/>
 );

@@ -1414,12 +1414,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 							{bountiesSubItems.map((subItem, subIndex) => {
 								if (!subItem) return null;
 								const uniqueSubKey = `${subItem.key}-${subIndex}`;
-								const formattedSubLabel = subItem?.key
+								let formattedSubLabel = subItem?.key
 									?.toString()
 									.replace(/^\//, '')
 									.split('_')
 									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 									.join(' ');
+
+								if (formattedSubLabel === 'Bounty') {
+									formattedSubLabel = 'Dashboard';
+								}
 
 								return (
 									<p

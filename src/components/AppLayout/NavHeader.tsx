@@ -31,7 +31,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { EGovType } from '~src/global/proposalType';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
+import { IconLogout, IconProfile, IconSettings, ProxyIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -64,6 +64,12 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 const Identity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
+const CreateProxyModal = dynamic(() => import('~src/components/createProxy/CreateProxyModal'), {
+	ssr: false
+});
+const CreateProxyMainModal = dynamic(() => import('~src/components/createProxy/CreateProxyMainModal'), {
+	ssr: false
+});
 
 interface Props {
 	className?: string;
@@ -85,6 +91,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openProxyModal, setOpenProxyModal] = useState<boolean>(false);
+	const [openProxyMainModal, setOpenProxyMainModal] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
@@ -226,6 +234,18 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<IconProfile className='userdropdown-icon text-2xl' />
 					<span>View Profile</span>
 				</Link>
+			)
+		},
+		{
+			key: 'create proxy',
+			label: (
+				<span
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					onClick={() => setOpenProxyModal(true)}
+				>
+					<ProxyIcon className='userdropdown-icon text-2xl' />
+					<span>Create Proxy</span>
+				</span>
 			)
 		},
 		{
@@ -561,6 +581,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<RemoveIdentity />
 				</>
 			)}
+			<CreateProxyModal
+				openModal={openProxyModal}
+				setOpenModal={setOpenProxyModal}
+				className=''
+				setOpenProxyMainModal={setOpenProxyMainModal}
+			/>
+			<CreateProxyMainModal
+				openModal={openProxyMainModal}
+				setOpenModal={setOpenProxyMainModal}
+				className=''
+			/>
 		</Header>
 	);
 };

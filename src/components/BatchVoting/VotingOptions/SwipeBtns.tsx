@@ -8,12 +8,13 @@ import { ISwipeActionButtons } from '~src/components/TinderStyleVoting/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
-	const { currentIndex, trackPosts, childRefs, className } = props;
+	const { currentIndex, trackPosts, onSwipeAction, className } = props;
 	const canSwipe = currentIndex >= 0;
 
-	const swipe = async (dir: any) => {
+	// Trigger the swipe action (without animation)
+	const handleAction = (direction: string) => {
 		if (canSwipe && currentIndex < trackPosts?.length) {
-			await childRefs[currentIndex].current.swipe(dir);
+			onSwipeAction(direction, currentIndex); // Call the action handler with the current index and direction
 		}
 	};
 
@@ -22,7 +23,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 			<div className='flex items-center justify-center gap-x-6 p-4'>
 				<button
 					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent'
-					onClick={() => swipe('left')}
+					onClick={() => handleAction('left')}
 				>
 					<ImageIcon
 						src='/assets/icons/red-dislike-icon.svg'
@@ -32,14 +33,14 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				</button>
 				<button
 					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent'
-					onClick={() => swipe('up')}
+					onClick={() => handleAction('up')}
 				>
 					<StopOutlined className={'text-base text-[#407BFF]'} />
 					<p className='m-0 p-0 text-[#407BFF]'>Abstain</p>
 				</button>
 				<button
 					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent'
-					onClick={() => swipe('right')}
+					onClick={() => handleAction('right')}
 				>
 					<ImageIcon
 						src='/assets/icons/green-like-icon.svg'

@@ -1,16 +1,15 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import TinderCard from 'react-tinder-card';
-import { batchVotesActions } from '~src/redux/batchVoting';
+import React, { useEffect, useState } from 'react';
+// import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
-import { IAddBatchVotes } from '~src/components/TinderStyleVoting/types';
+import { batchVotesActions } from '~src/redux/batchVoting';
 import SwipeBtns from './SwipeBtns';
 import TinderCardsComponent from './TinderCardComponent';
 
@@ -22,24 +21,15 @@ const SwipableVotingCards = () => {
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
-	const currentIndexRef = useRef(currentIndex);
+	// const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
 
-	const childRefs: any = useMemo(
-		() =>
-			Array(activeProposal?.length)
-				.fill(0)
-				.map(() => React.createRef()),
-		[activeProposal?.length]
-	);
+	// const updateCurrentIndex = (val: any) => {
+	// setCurrentIndex(val);
+	// currentIndexRef.current = val;
+	// };
 
-	const updateCurrentIndex = (val: any) => {
-		setCurrentIndex(val);
-		currentIndexRef.current = val;
-	};
-
-	// const canGoBack = currentIndex < activeProposal?.length - 1;
 	const getVoteCartData = async () => {
 		setIsLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
@@ -59,7 +49,7 @@ const SwipableVotingCards = () => {
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
 		console.log('postId: ', postId);
-		const { error } = await nextApiClientFetch<IAddBatchVotes>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
 				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
@@ -122,13 +112,10 @@ const SwipableVotingCards = () => {
 		setSkippedProposals([...skippedProposals, id]);
 	};
 
-	useEffect(() => {
-		if (!network || !user?.loginAddress?.length) return;
-		getActiveProposals(true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, user?.loginAddress]);
+	const handleSwipeAction = async (direction: string, index: number) => {
+		const postId = activeProposal[index]?.id;
+		const postTitle = activeProposal[index]?.title;
 
-	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
@@ -145,34 +132,21 @@ const SwipableVotingCards = () => {
 				voteConviction: batch_vote_details?.conviction || 0
 			})
 		);
-		updateCurrentIndex(index - 1);
-		addVotedPostToDB(postId, direction);
-		if (total_active_posts > 5) {
-			getActiveProposals();
-		}
-		if (total_active_posts === 9) {
-			dispatch(batchVotesActions.setTotalActivePosts(0));
-			setActiveProposals([...activeProposal, ...tempActiveProposals]);
-		}
+
+		// Call the DB update function
+		await addVotedPostToDB(postId, direction);
+
+		// Remove the current proposal from the list
+		const updatedProposals = activeProposal.filter((_, i) => i !== index);
+		setActiveProposals(updatedProposals);
+		setCurrentIndex(updatedProposals.length - 1); // Update the current index
 	};
 
-	const outOfFrame = (name: string, idx: number) => {
-		currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
-	};
-
-	// const goBack = async () => {
-	// if (!canGoBack) return;
-	// const newIndex = currentIndex + 1;
-	// updateCurrentIndex(newIndex);
-	// await childRefs[newIndex].current.restoreCard();
-	// };
-
-	// Swipe the card programmatically
-	// const handleSwipe = (dir: string) => {
-	// if (currentIndexRef.current >= 0 && currentIndexRef.current < childRefs.length) {
-	// childRefs[currentIndexRef.current].current.swipe(dir);
-	// }
-	// };
+	useEffect(() => {
+		if (!network || !user?.loginAddress?.length) return;
+		getActiveProposals(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, user?.loginAddress]);
 
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
@@ -201,35 +175,30 @@ const SwipableVotingCards = () => {
 
 				{!isLoading && (
 					<div className={'relative h-full w-full'}>
-						{activeProposal?.map((proposal: any, index: number) => (
-							<TinderCard
-								ref={childRefs[index]}
+						{activeProposal?.map((proposal: any) => (
+							<div
 								className='absolute h-full w-full'
 								key={proposal.name}
-								onSwipe={(dir) => {
-									swiped(dir, index, proposal?.id, proposal?.title);
-								}}
-								onCardLeftScreen={() => outOfFrame(proposal.title, index)}
-								preventSwipe={['down']}
 							>
-								<div className='h-full bg-[#ffffff] dark:bg-black'>
-									<TinderCardsComponent
-										proposal={proposal}
-										isUsedInWebView={true}
-										onSkip={handleSkipProposalCard}
-									/>
-								</div>
-							</TinderCard>
+								{/* Render TinderCardComponent */}
+								<TinderCardsComponent
+									onSkip={handleSkipProposalCard}
+									proposal={proposal}
+									isUsedInWebView={true}
+								/>
+							</div>
 						))}
 					</div>
 				)}
 			</div>
 
+			{/* Swipe buttons */}
 			<SwipeBtns
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}
-				childRefs={childRefs}
+				childRefs={null} // No need for child refs now
 				className={'bottom-1 mt-8'}
+				onSwipeAction={handleSwipeAction} // Pass the handler to swipe buttons
 			/>
 		</div>
 	);

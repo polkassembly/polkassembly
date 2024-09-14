@@ -39,6 +39,7 @@ export interface ISwipeActionButtons {
 	trackPosts: any;
 	childRefs: any;
 	className?: string;
+	onSwipeAction?: any;
 }
 
 export interface ITinderCardsComponent {

@@ -50,6 +50,7 @@ import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constan
 import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
+import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -430,7 +431,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							</AuthDropdown>
 						)}
 					</Space>
-					<div className='mr-2 lg:mr-0'>
+					<div className='mr-2 hidden md:block lg:mr-0'>
 						<ToggleButton />
 					</div>
 					{open ? (
@@ -468,9 +469,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
+										<div className='mt-6 w-full'>
+											<BigToggleButton />
+										</div>
 										{username ? (
 											<div>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={(e) => {
@@ -487,7 +491,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											</div>
 										) : (
 											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {

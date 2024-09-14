@@ -65,7 +65,7 @@ const ReferendumCount = () => {
 	const [totalPosts, setTotalPosts] = useState(0);
 	const { network } = useNetworkSelector();
 	const [showMore, setShowMore] = useState(false);
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1415;
 
 	const getData = async () => {
 		setLoading(true);
@@ -142,7 +142,7 @@ const ReferendumCount = () => {
 						data={data}
 						margin={{
 							bottom: isMobile ? 80 : 8,
-							left: isMobile ? 10 : -520,
+							left: isMobile ? 140 : -520,
 							right: isMobile ? 0 : 200,
 							top: 20
 						}}
@@ -286,7 +286,7 @@ const ReferendumCount = () => {
 						{visibleData.map((item: any) => (
 							<div
 								key={item.id}
-								className='mb-2 mr-4 flex w-[80%] items-center justify-between text-xs text-bodyBlue dark:text-white'
+								className='mb-2 mr-4 flex w-[240px] items-center justify-between text-xs text-bodyBlue dark:text-white'
 							>
 								<div className='flex items-center gap-x-1'>
 									<div

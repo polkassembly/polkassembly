@@ -969,7 +969,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								<span className='pt-1'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1'>
+									{trackName
+										.split(/(?=[A-Z])/)
+										.join(' ')
+										.replace(/\b\w/g, (char) => char.toUpperCase())}
+								</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${

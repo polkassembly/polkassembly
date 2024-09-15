@@ -161,16 +161,20 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			{userId ? (
 				<Popover
 					onOpenChange={(open: boolean) => {
-						dispatch(GlobalActions.setIsSidebarCollapsed(true));
-						setSidedrawer(false);
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpen(open);
 					}}
 					open={open}
 					content={
 						<NotificationsContent
 							closePopover={(open: boolean) => {
-								dispatch(GlobalActions.setIsSidebarCollapsed(true));
-								setSidedrawer(false);
+								if (isMobile) {
+									dispatch(GlobalActions.setIsSidebarCollapsed(true));
+									setSidedrawer(false);
+								}
 								setOpen(!open);
 							}}
 						/>
@@ -200,8 +204,10 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 				<div
 					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
 					onClick={() => {
-						dispatch(GlobalActions.setIsSidebarCollapsed(true));
-						setSidedrawer(false);
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpenLoginPrompt(!openLoginPrompt);
 					}}
 				>

@@ -278,8 +278,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
-		dispatch(GlobalActions.setIsSidebarCollapsed(true));
-		setSidedrawer(false);
+		if (isMobile) {
+			dispatch(GlobalActions.setIsSidebarCollapsed(true));
+			setSidedrawer(false);
+		}
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);

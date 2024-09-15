@@ -36,7 +36,7 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 					<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 				</div>
 			}
-			open={true}
+			open={openModal}
 			footer={
 				<div className=''>
 					<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />

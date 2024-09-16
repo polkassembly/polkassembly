@@ -67,7 +67,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	// const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
@@ -86,6 +87,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	useEffect(() => {
 		const handleResize = () => {
 			const isMobile = window.innerWidth < 1024;
+			setIsMobile(isMobile);
 
 			if (!isMobile) {
 				setSidedrawer(true);

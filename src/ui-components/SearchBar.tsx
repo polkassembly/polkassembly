@@ -29,6 +29,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -65,8 +66,10 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => {
 							setOpen(true);
-							dispatch(GlobalActions.setIsSidebarCollapsed(true));
-							setSidedrawer(false);
+							if (isMobile) {
+								dispatch(GlobalActions.setIsSidebarCollapsed(true));
+								setSidedrawer(false);
+							}
 						}}
 					>
 						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'>

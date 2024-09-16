@@ -278,8 +278,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
-		dispatch(GlobalActions.setIsSidebarCollapsed(true));
-		setSidedrawer(false);
+		if (isMobile) {
+			dispatch(GlobalActions.setIsSidebarCollapsed(true));
+			setSidedrawer(false);
+		}
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
@@ -969,7 +971,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								<span className='pt-1'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1'>
+									{trackName
+										.split(/(?=[A-Z])/)
+										.join(' ')
+										.replace(/\b\w/g, (char) => char.toUpperCase())}
+								</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${

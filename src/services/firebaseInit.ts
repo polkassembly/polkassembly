@@ -16,11 +16,12 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACC_CONFIG) as fi
 
 try {
 	firebaseAdmin.initializeApp({
-		credential: firebaseAdmin.credential.cert(serviceAccount),
-		storageBucket: process.env.FIREBASE_STORAGE_BUCKET // Specify your storage bucket name here
+		credential: firebaseAdmin.credential.cert(serviceAccount)
+		// storageBucket: process.env.FIREBASE_STORAGE_BUCKET // Specify your storage bucket name here
 	});
 	console.log('Firebase admin Initialized.');
 } catch (error) {
+	// Skipping the "already exists" message which is not an actual error when we're hot-reloading.
 	if (!/already exists/u.test(error.message)) {
 		console.error('Firebase admin initialization error : ', error);
 	}

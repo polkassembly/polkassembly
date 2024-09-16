@@ -101,7 +101,7 @@ const useClaimPayoutSelector = () => {
 	return useSelector<TAppState, IClaimPayoutStore>((state) => state.claimPayout);
 };
 
-const useAssetsCurrentPriceSelectior = () => {
+const useAssetsCurrentPriceSelector = () => {
 	return useSelector<TAppState, IAssetsCurrentPriceStore>((state) => state.assetsCurrentPrice);
 };
 
@@ -125,6 +125,6 @@ export {
 	useAmbassadorRemovalSelector,
 	useAmbassadorReplacementSelector,
 	useClaimPayoutSelector,
-	useAssetsCurrentPriceSelectior,
+	useAssetsCurrentPriceSelector,
 	useProgressReportSelector
 };

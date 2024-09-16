@@ -42,10 +42,11 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 				return res.status(400).json({ message: 'File size exceeds the limit' });
 			}
 
-			// const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-			// if (!allowedTypes.includes(file.type)) {
-			// return res.status(400).json({ message: 'Unsupported file type' });
-			// }
+			// Allow only PDF files
+			const allowedTypes = ['application/pdf'];
+			if (!allowedTypes.includes(file.mimetype || '')) {
+				return res.status(400).json({ message: 'Unsupported file type. Only PDF files are allowed.' });
+			}
 
 			const token = getTokenFromReq(req);
 			if (!token) return res.status(400).json({ message: 'Invalid token' });

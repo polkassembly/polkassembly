@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
@@ -28,6 +28,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!postId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
+	if (isNaN(postId) || !isProposalTypeValid(proposalType)) {
+		return res.status(500).json({ message: messages.INVALID_PARAMS });
+	}
+
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
@@ -39,7 +43,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
 	const updatedPost: Partial<Post> = {
-		id: Number(postId),
 		progress_report
 	};
 

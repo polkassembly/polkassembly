@@ -4,7 +4,7 @@
 
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
@@ -25,6 +25,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!postId || !proposalType || !user_id || rating === undefined) {
 		return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
+
+	if (isNaN(postId) || !isProposalTypeValid(proposalType)) {
+		return res.status(500).json({ message: messages.INVALID_PARAMS });
 	}
 
 	const token = getTokenFromReq(req);

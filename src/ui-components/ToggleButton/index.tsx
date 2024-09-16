@@ -18,7 +18,7 @@ const ToggleButton = () => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('toggleborder flex w-full cursor-pointer items-center  gap-2 rounded-full  bg-transparent px-2 py-2 pt-[6px]   ', {
+				className={classNames('flex w-full cursor-pointer items-center gap-2 rounded-full  border border-solid  bg-transparent px-2 py-2 pt-[6px]   ', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
 				})}

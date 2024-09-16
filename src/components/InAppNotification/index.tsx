@@ -22,6 +22,7 @@ import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { GlobalActions } from '~src/redux/global';
 
 interface INotificationProps {
 	className?: string;
@@ -160,11 +161,24 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			{userId ? (
 				<Popover
 					onOpenChange={(open: boolean) => {
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpen(open);
-						setSidedrawer(false);
 					}}
 					open={open}
-					content={<NotificationsContent closePopover={(open: boolean) => setOpen(!open)} />}
+					content={
+						<NotificationsContent
+							closePopover={(open: boolean) => {
+								if (isMobile) {
+									dispatch(GlobalActions.setIsSidebarCollapsed(true));
+									setSidedrawer(false);
+								}
+								setOpen(!open);
+							}}
+						/>
+					}
 					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}
 					trigger={'click'}
 					className={classNames(className, '')}
@@ -190,6 +204,10 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 				<div
 					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
 					onClick={() => {
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpenLoginPrompt(!openLoginPrompt);
 					}}
 				>

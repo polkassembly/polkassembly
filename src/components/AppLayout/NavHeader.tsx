@@ -48,6 +48,9 @@ import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import ToggleButton from '~src/ui-components/ToggleButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import { GlobalActions } from '~src/redux/global';
+import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -79,6 +82,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
+
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
@@ -342,21 +346,27 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
-				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
+				className='ml-3 mr-5 flex items-center justify-center lg:hidden'
 			>
 				{!sidedrawer ? (
 					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
-						<img src={`${theme == 'dark' ? '/assets/sidebar/darkclosenav.svg' : '/assets/sidebar/closenav.svg'}`} />
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
+							alt=''
+						/>
 					</div>
 				) : (
 					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
-						<img src={`${theme == 'dark' ? '/assets/sidebar/darkopennav.svg' : '/assets/sidebar/opennav.svg'}`} />
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
+							alt=''
+						/>
 					</div>
 				)}
 			</div>
-			<div className={`${sidedrawer ? 'ml-32' : 'ml-[108px]'} hidden lg:block`}></div>
-			<nav className='mx-auto flex h-[60px]  w-full items-center justify-between xl:pr-6 '>
-				<div className='flex items-center'>
+			<div className='ml-[84px] hidden lg:block'></div>
+			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
+				<div className='ml-2 flex items-center md:ml-0'>
 					<Link
 						className='logo-size flex lg:hidden'
 						href={'/'}
@@ -371,8 +381,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className='type-container hidden items-center gap-1 sm:flex'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+					<div className={`type-container ${sidedrawer && 'pl-32 2xl:pl-0'} hidden items-center gap-1 sm:flex`}>
+						<span className='line-container ml-4 mr-2  h-5 w-[1.5px] bg-pink_primary  dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
@@ -398,7 +408,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									text='Login'
 									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
-										setSidedrawer(false);
+										if (isMobile) {
+											dispatch(GlobalActions.setIsSidebarCollapsed(true));
+											setSidedrawer(false);
+										}
 										setLoginOpen(true);
 									}}
 								/>
@@ -424,10 +437,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div className='mr-2 mt-3 lg:mr-0'>
-							<ToggleButton />
-						</div>
 					</Space>
+					<div className='mr-2 hidden md:block lg:mr-0'>
+						<ToggleButton />
+					</div>
 					{open ? (
 						<button
 							onBlur={() => {
@@ -463,9 +476,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
+										<div className='mt-6 w-full'>
+											<BigToggleButton />
+										</div>
 										{username ? (
 											<div>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={(e) => {
@@ -482,7 +498,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											</div>
 										) : (
 											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {

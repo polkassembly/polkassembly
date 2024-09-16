@@ -62,15 +62,16 @@ import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
 
 import ImageIcon from '~src/ui-components/ImageIcon';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
 import Popover from '~src/basic-components/Popover';
+import { onchainIdentitySupportedNetwork } from '.';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import Image from 'next/image';
+import { GlobalActions } from '~src/redux/global';
 
 const { Sider } = Layout;
 
 interface SidebarProps {
 	sidebarCollapsed: boolean;
-	setSidebarCollapsed: (collapsed: boolean) => void;
 	className?: string;
 	totalActiveProposalsCount: IActiveProposalCount;
 	isGood: boolean;
@@ -81,12 +82,12 @@ interface SidebarProps {
 	setOpenAddressLinkedModal: (open: boolean) => void;
 	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
+	setLoginOpen: (open: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
 	className,
 	sidebarCollapsed,
-	setSidebarCollapsed,
 	totalActiveProposalsCount,
 	isGood,
 	mainDisplay,
@@ -95,7 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
-	setOpenAddressLinkedModal
+	setOpenAddressLinkedModal,
+	setLoginOpen
 }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -117,13 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
 	const archivedDropdownRef = useRef<HTMLDivElement>(null);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isActive = (path: string) => router.pathname === path;
-
-	if (sidedrawer === false) {
-		setSidebarCollapsed(true);
-	}
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -157,10 +153,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
 		setActiveParachain(isParachainActive);
-	}, [router.pathname]);
+	}, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}  `}>{label}</span>;
+		const capitalizeLabel = (label: React.ReactNode): React.ReactNode => {
+			if (typeof label === 'string') {
+				return label.charAt(0).toUpperCase() + label.slice(1);
+			}
+			return label;
+		};
+
+		const capitalizedLabel = capitalizeLabel(label);
+		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
+
 		return {
 			children,
 			icon,
@@ -169,6 +174,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
+
 	/* eslint-disable react/prop-types */
 	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
@@ -176,20 +182,37 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 
 		.ant-menu-item-selected {
-			background: ${(props: any) => (props?.theme === 'dark' ? '#520f32' : '#fce5f2')} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#530d32' : '#fce5f2')} !important;
 		}
 
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
 			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
-			margin: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '3px 12px 3px 15px' : '3px 10px 3px 15px')};
+			margin: ${(props: any) => {
+				if (isMobile) {
+					return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
+				} else {
+					return props.sidebarCollapsed && !props.sidedrawer ? '3px 13px 3px 15px' : '3px 20px 3px 15px';
+				}
+			}};
 		}
 
-		.ant-menu-submenu-title {
-			${(props: any) =>
-				!props.sidebarCollapsed && props.sidedrawer
-					? `
-        padding-left: 16px !important;
+	.ant-menu-submenu-title {
+  ${(props: any) =>
+		!props.sidebarCollapsed && props.sidedrawer
+			? isMobile
+				? `
+        padding-left: 18px !important;  /* Adjust mobile-specific values here */
+        border-right-width: 15px;
+        margin-right: 15px;
+        top: 1px;
+		width:205px;
+        padding-right: 15px;
+        margin-left: 15px;
+
+      `
+				: `
+        padding-left: 16px !important; /* Adjust non-mobile values here */
         border-right-width: 20px;
         margin-right: 10px;
         top: 1px;
@@ -198,12 +221,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 20px;
         width: 199px;
       `
-					: ''}
-		}
+			: ''}
+}
+
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-			padding-left: 16px !important;
-			margin-left: 20px !important;
-		}
+		  ${() => {
+				if (isMobile) {
+					return `padding-left: 16px !important;
+			margin-left: 25px !important;`;
+				} else {
+					return `padding-left: 16px !important;
+			margin-left: 20px !important;`;
+				}
+			}}
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
@@ -248,8 +278,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
-		setSidebarCollapsed(true);
-		setSidedrawer(false);
+		if (isMobile) {
+			dispatch(GlobalActions.setIsSidebarCollapsed(true));
+			setSidedrawer(false);
+		}
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
@@ -266,8 +298,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
 						getSiderMenuItem(
-							<div className='flex items-center justify-between'>
-								Motions
+							<div className=' flex items-center justify-between'>
+								Advisory Motions
 								<span
 									className={`text-[10px] ${
 										totalActiveProposalsCount?.advisoryCommitteeMotionsCount
@@ -279,7 +311,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								</span>
 							</div>,
 							'/advisory-committee/motions',
-							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 				  ]
@@ -288,12 +320,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
 						getSiderMenuItem(
-							<div className='flex items-center justify-between'>
-								Technical Committee
+							<div className='flex  items-center justify-between'>
+								<span className='mr-10'>Technical Comm..</span>
 								<span
 									className={`text-[10px] ${
 										totalActiveProposalsCount?.technicalPipsCount ? getSpanStyle('TechnicalCommittee', totalActiveProposalsCount['technicalPipsCount']) : ''
-									} absolute right-2 top-1 rounded-lg px-2 py-1`}
+									} absolute right-4 top-1   rounded-lg px-2 py-1`}
 								>
 									{totalActiveProposalsCount?.technicalPipsCount ? `${totalActiveProposalsCount['technicalPipsCount']}` : ''}
 								</span>
@@ -309,7 +341,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						),
 						getSiderMenuItem(
 							<div className='flex items-center justify-between'>
-								Upgrade Committee
+								Upgrade Comm..
 								<span
 									className={`text-[10px] ${
 										totalActiveProposalsCount?.upgradePipsCount ? getSpanStyle('UpgradeCommittee', totalActiveProposalsCount['upgradePipsCount']) : ''
@@ -442,7 +474,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			? [
 					getSiderMenuItem(
 						<div className='flex items-center justify-between'>
-							Proposals
+							Tech Comm Proposals
 							<span
 								className={`text-[10px] ${
 									totalActiveProposalsCount?.techCommetteeProposalsCount ? getSpanStyle('Technical', totalActiveProposalsCount['techCommetteeProposalsCount']) : ''
@@ -461,7 +493,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			? [
 					getSiderMenuItem(
 						<div className='flex items-center justify-between'>
-							Proposals
+							Treasury Proposals
 							<span
 								className={`text-[10px] ${
 									totalActiveProposalsCount?.treasuryProposalsCount ? getSpanStyle('Treasury', totalActiveProposalsCount['treasuryProposalsCount']) : ''
@@ -549,7 +581,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem(
-										<div className='flex items-center justify-between'>
+										<div className='flex items-center justify-between text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 											Bounties
 											<span
 												className={`text-[10px] ${
@@ -563,7 +595,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									),
 									getSiderMenuItem(
-										<div className='flex items-center justify-center'>
+										<div className='flex items-center justify-center text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 											Child Bounties
 											<span
 												className={`text-[10px] ${
@@ -593,7 +625,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										</span>
 									</div>,
 									'/bounties',
-									<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								),
 								getSiderMenuItem(
 									<div className='flex items-center justify-between'>
@@ -607,7 +639,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										</span>
 									</div>,
 									'/child_bounties',
-									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<ChildBountiesIcon className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)
 						  ]
 				),
@@ -635,13 +667,58 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
 	}
+
+	const advisorycommitteDropdownContent = (
+		<div className='text-center'>
+			{gov1Items.AdvisoryCommittee.map((item, index) => {
+				console.log('item', item);
+				const formattedLabel =
+					item && 'label' in item && typeof item.key === 'string' && item.key.includes('/') ? item.key.split('/')[2] || '' : item && 'label' in item ? item.label : '';
+
+				return (
+					<p
+						key={index}
+						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+            			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					>
+						<Link
+							href={item?.key as string}
+							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+						>
+							<span>{formattedLabel}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
+
 	if (network === AllNetworks.ZEITGEIST) {
 		items = [...items, getSiderMenuItem('Advisory Committee', 'advisory-committee', null, [...gov1Items.AdvisoryCommittee])];
 		collapsedItems = [
 			...collapsedItems,
-			getSiderMenuItem('Advisory Committee', 'advisory-committee', <CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-				...gov1Items.AdvisoryCommittee
-			])
+			getSiderMenuItem(
+				<Popover
+					content={advisorycommitteDropdownContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[190px] left-16'
+				>
+					<Tooltip
+						title='Advisory Committee'
+						placement='left'
+						className='text-xs'
+					>
+						<div className='relative w-10 cursor-pointer px-1'>
+							<CommunityPIPsIcon className='-ml-1 mt-1.5 scale-90  text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						</div>
+					</Tooltip>
+				</Popover>,
+				'advisory-committee',
+				null,
+				[...gov1Items.AdvisoryCommittee]
+			)
 		];
 	}
 	if (network === AllNetworks.COLLECTIVES) {
@@ -681,7 +758,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							}  rounded-lg px-[5px] py-1 font-poppins text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
+							}  w-5 rounded-lg px-[5px] py-1 text-center font-poppins text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount > 9 ? (
 								<>
@@ -722,14 +799,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							}  rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							}   rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount > 9 ? (
 								<>
 									9<span className='text-[8px]'>+</span>
 								</>
 							) : (
-								totalActiveProposalsCount?.allCount || ''
+								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>
 							)}
 						</span>
 					</div>
@@ -743,7 +820,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			const menuItem = getSiderMenuItem(
 				<div className='flex justify-between'>
-					{trackName.split(/(?=[A-Z])/).join(' ')}
+					<span className='pt-[6px] text-lightBlue dark:text-icon-dark-inactive'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -772,7 +849,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
 							<div className='flex  justify-between'>
-								<span className='pt-1 text-[12px]'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1 text-[12px] text-lightBlue dark:text-icon-dark-inactive'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -797,8 +874,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							<div className='flex justify-between'>
-								{trackName.split(/(?=[A-Z])/).join(' ')}
+							<div className='flex justify-between text-lightBlue dark:text-icon-dark-inactive'>
+								<span className='pt-[5px]'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${
@@ -860,9 +937,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<ImageIcon
 										src='/assets/selected-icons/Auction Admin.svg'
 										alt=''
-										className={`${
-											sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '
-										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+										className={`${sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
 									<ImageIcon
@@ -883,7 +958,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										alt=''
 										className={`${
 											sidebarCollapsed ? 'absolute -top-[29px] -ml-[10px] mt-0.5' : '-ml-[10px] '
-										} sidebar-selected-icon scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+										}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
 									<StakingAdminIcon
@@ -896,7 +971,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								<span className='pt-1'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1'>
+									{trackName
+										.split(/(?=[A-Z])/)
+										.join(' ')
+										.replace(/\b\w/g, (char) => char.toUpperCase())}
+								</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${
@@ -1061,17 +1141,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	const governanceDropdownContent = (
 		<div className='text-center'>
-			{gov2TrackItems.governanceItems.map((item, index) => {
-				const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
+			{gov2TrackItems?.governanceItems.map((item, index) => {
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item.label === 'string') {
+						formattedLabel = toPascalCase(item?.label);
+					} else if (React.isValidElement(item?.label)) {
+						if (item.label) {
+							formattedLabel = item.label;
+						}
+					}
+				}
 
 				return (
 					<p
 						key={index}
 						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-            			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					${item && 'label' in item ? (isActive(item.key as any) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive') : ''} `}
 					>
 						<Link
-							href={item?.key as string}
+							href={typeof item?.key === 'string' ? item.key : ''}
 							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 						>
 							<span>{formattedLabel}</span>
@@ -1083,17 +1172,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 	);
 
 	// whitelist dropdown
-
 	const whitelistDropdownContent = (
 		<div className='text-left'>
-			{gov2TrackItems.fellowshipItems.map((item, index) => {
-				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+			{gov2TrackItems?.fellowshipItems.map((item, index) => {
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item?.label === 'string') {
+						formattedLabel = toPascalCase(item.label);
+					} else if (React.isValidElement(item.label)) {
+						formattedLabel = item?.label;
+					}
+				}
 
 				return (
 					<p
 						key={index}
 						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-            ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+            		${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
 							href={item?.key as string}
@@ -1150,7 +1245,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				content={whitelistDropdownContent}
 				placement='right'
 				arrow={false}
-				trigger='click' // Popover is triggered on click
+				trigger='click'
 				overlayClassName='z-[1100] w-[180px] '
 			>
 				<Tooltip
@@ -1185,7 +1280,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className=' -ml-12  h-[44px] px-1 dark:border-[#4B4B4B] '
+					className=' -ml-12   h-[44px] px-1 dark:border-[#4B4B4B] '
 					style={{
 						borderTop: '2px dotted #ccc',
 						marginBottom: '5px',
@@ -1224,10 +1319,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 
+		if (['polkadot'].includes(network)) {
+			bountiesSubItems.push(
+				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+			);
+		}
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center justify-between'>
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
@@ -1249,7 +1349,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					null
 				),
 				getSiderMenuItem(
-					<div className='flex items-center justify-between'>
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Child Bounties
 						<span
 							className={`text-[10px] ${
@@ -1272,6 +1372,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
+
 		const bountiesMenuItem = getSiderMenuItem(
 			'Bounties',
 			'gov2_bounties_group',
@@ -1280,12 +1381,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			</div>,
 			[...bountiesSubItems]
 		);
+
 		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
 
 		items = items.concat(bountiesMenuItem);
 
 		gov2Items.splice(
-			-1,
+			8,
 			0,
 			getSiderMenuItem(
 				'Treasury',
@@ -1321,21 +1423,40 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const treasuryDropdownContent = (
 		<div className='text-left'>
 			{gov2TrackItems.treasuryItems.map((item, index) => {
-				const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
-				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+				const uniqueKey = item && 'label' in item ? `${item.label}-${index}` : `null-${index}`;
 
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item.label === 'string') {
+						formattedLabel = toPascalCase(item.label);
+					} else if (React.isValidElement(item.label)) {
+						formattedLabel = item.label;
+					}
+				}
 				if (item && item.key === 'gov2_bounties_group') {
 					const bountiesPopoverContent = (
 						<div className='w-[150px] pt-2'>
 							{bountiesSubItems.map((subItem, subIndex) => {
 								if (!subItem) return null;
-								const uniqueSubKey = `${subItem.key}-${subIndex}`;
-								const formattedSubLabel = subItem?.key
-									?.toString()
-									.replace(/^\//, '')
-									.split('_')
-									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-									.join(' ');
+								const uniqueSubKey = `${subItem?.key}-${subIndex}`;
+
+								let formattedSubLabel;
+								if (subItem && 'label' in subItem) {
+									if (typeof subItem.label === 'string') {
+										formattedSubLabel = subItem.label
+											?.toString()
+											.replace(/^\//, '')
+											.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ');
+									} else if (React.isValidElement(subItem.label)) {
+										formattedSubLabel = subItem.label;
+									}
+								}
+
+								if (formattedSubLabel === 'Bounty') {
+									formattedSubLabel = 'Dashboard';
+								}
 
 								return (
 									<p
@@ -1368,7 +1489,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							>
 								<p
 									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
 									}`}
 								>
 									<span className='flex items-center gap-2 font-medium'>
@@ -1385,8 +1506,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={uniqueKey}
-						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
+							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>
 						<Link href={item?.key as string}>
@@ -1402,7 +1523,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		gov2CollapsedItems.splice(
-			-1,
+			8,
 			0,
 			getSiderMenuItem(
 				<Popover
@@ -1504,9 +1625,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
-		gov2Items = gov2Items.concat(
-			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryIconNew className=' font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+		gov2Items.concat(
+			getSiderMenuItem(
+				'Treasury',
+				'gov1_treasury_group',
+				<TreasuryIconNew className='-ml-2 -mt-1 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+				gov1Items.treasuryItems
+			)
 		);
+
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
 			getSiderMenuItem(
@@ -1526,7 +1653,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 flex items-center dark:border-[#4B4B4B]'
+						className='-mb-2  flex items-center dark:border-[#4B4B4B]'
 						style={{
 							borderTop: '4px dotted #ccc',
 							paddingTop: '12px'
@@ -1543,7 +1670,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						'Treasury',
 						'treasury_group',
 						<TreasuryIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
-						gov1Items.treasuryItems.slice(0, 1)
+						gov1Items.treasuryItems.slice(2, 0)
 					)
 				])
 			];
@@ -1552,7 +1679,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				...gov2Items,
 				getSiderMenuItem(
 					<div
-						className='-mb-2 w-full  dark:border-[#4B4B4B]'
+						className='-mb-2 ml-2 mr-3 w-[200px] dark:border-[#4B4B4B]  md:w-full lg:ml-0  lg:mr-0'
 						style={{
 							borderTop: '2px dotted #ccc',
 							paddingTop: '12px'
@@ -1565,7 +1692,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								}`}
 							>
 								<ParachainsIcon className='-ml-1 mt-3 scale-90 text-xl font-medium ' />
-								<span className='ml-2  text-xs font-medium lg:block'>Parachains</span>
+								<span className='ml-2 pl-1 text-xs font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,
@@ -1575,8 +1702,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
-
-		// archived dropdown state
 
 		const archivedDropdownContent = (
 			<div className='text-left'>
@@ -1735,9 +1860,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 			collapsible
 			collapsed={sidebarCollapsed}
 			onCollapse={(collapsed) => {
-				setSidebarCollapsed(collapsed);
+				dispatch(GlobalActions.setIsSidebarCollapsed(collapsed));
 			}}
-			style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
+			style={{
+				transform: 'translateX(0px)',
+				transition: 'width 0.3s ease, transform 0.3s ease'
+			}}
 			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
 				sidedrawer && isMobile ? ' min-w-[250px]' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 			} bg-white dark:bg-section-dark-overlay`}
@@ -1761,179 +1889,223 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<div className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
+									<Link
+										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
+										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
+									>
 										{sidedrawer ? (
-											<img
+											<Image
 												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 												alt='polkassembly logo'
+												width={150}
+												height={50}
 											/>
 										) : (
 											<PaLogo sidedrawer={sidedrawer} />
 										)}
-									</div>
+									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 								</div>
 							</div>
 						</>
 					)}
-					{!sidebarCollapsed ? (
+
+					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
-							<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'}  gap-2 md:mt-7`}>
-								<div className='activeborderhover group relative'>
-									<Link
-										href='/'
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-												userId: currentUser?.id || '',
-												userName: currentUser?.username || ''
-											});
-											handleIdentityButtonClick();
-										}}
-									>
-										<img
-											src='/assets/sidebar/head1.svg'
-											alt='Head 1'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
-											On-chain identity
-											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+							{!sidebarCollapsed ? (
+								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-7`}>
+									{onchainIdentitySupportedNetwork.includes(network) && (
+										<div className='activeborderhover group relative'>
+											<div
+												onClick={(e) => {
+													e.stopPropagation();
+													e.preventDefault();
+													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+														userId: currentUser?.id || '',
+														userName: currentUser?.username || ''
+													});
+													handleIdentityButtonClick();
+												}}
+											>
+												<Image
+													src='/assets/head1.svg'
+													alt='Head 1'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
+												/>
+												<div className='absolute bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
+													On-chain identity
+													<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</div>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover  group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/leaderboard'>
-										<img
-											src='/assets/sidebar/head2.svg'
-											alt='Head 2'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Leaderboard
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{network === 'polkadot' && (
+										<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/leaderboard'>
+												<Image
+													src='/assets/head2.svg'
+													alt='Head 2'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
+												/>
+												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Leaderboard
+													<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/delegation'>
-										<img
-											src='/assets/sidebar/head3.svg'
-											alt='Head 3'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Delegation
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{delegationSupportedNetworks.includes(network) && (
+										<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/delegation'>
+												<Image
+													src='/assets/head3.svg'
+													alt='Head 3'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
+												/>
+												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Delegation
+													<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
+									)}
 
-								<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
-									<div
-										onClick={() => {
-											if (username?.length) {
-												router.push(`/user/${username}`);
-											} else {
-												setLoginOpen(true);
-											}
-										}}
-									>
-										<img
-											src='/assets/sidebar/head4.svg'
-											alt='Head 4'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Profile
-											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									{/* Head 4 (Profile) */}
+									<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+										<div
+											onClick={() => {
+												if (username?.length) {
+													router.push(`/user/${username}`);
+												} else {
+													dispatch(GlobalActions.setIsSidebarCollapsed(true));
+													setSidedrawer(false);
+													setLoginOpen(true);
+												}
+											}}
+										>
+											<Image
+												src='/assets/head4.svg'
+												alt='Head 4'
+												width={40}
+												height={40}
+												className=' cursor-pointer'
+											/>
+											<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+												Profile
+												<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</>
-					) : (
-						<>
-							<div className=' ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
-								<div className='activeborderhover group relative w-10 '>
-									<Link
-										href={''}
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-												userId: currentUser?.id || '',
-												userName: currentUser?.username || ''
-											});
-											handleIdentityButtonClick();
-										}}
-									>
-										<img
-											src='/assets/sidebar/head1.svg'
-											alt='Head 1'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
-											On-chain identity
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+							) : (
+								<div className='ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
+									{onchainIdentitySupportedNetwork.includes(network) && (
+										<div
+											onClick={(e) => {
+												e.stopPropagation();
+												e.preventDefault();
+												trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+													userId: currentUser?.id || '',
+													userName: currentUser?.username || ''
+												});
+												handleIdentityButtonClick();
+											}}
+											className='activeborderhover group relative w-10'
+										>
+											<div>
+												<Image
+													src='/assets/head1.svg'
+													alt='Head 1'
+													width={40}
+													height={40}
+													className='cursor-pointer'
+												/>
+												<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
+													On-chain identity
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</div>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/leaderboard'>
-										<img
-											src='/assets/sidebar/head2.svg'
-											alt='Head 2'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Leaderboard
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{network === 'polkadot' && (
+										<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/leaderboard'>
+												<Image
+													src='/assets/head2.svg'
+													alt='Head 2'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
+												/>
+												<div className='absolute bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Leaderboard
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/delegation'>
-										<img
-											src='/assets/sidebar/head3.svg'
-											alt='Head 3'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Delegation
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{delegationSupportedNetworks.includes(network) && (
+										<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
+											<Link href='/delegation'>
+												<Image
+													src='/assets/head3.svg'
+													alt='Head 3'
+													width={40}
+													height={40}
+													className=' cursor-pointer'
+												/>
+												<div className='absolute bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+													Delegation
+													<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+												</div>
+											</Link>
 										</div>
-									</Link>
-								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
-									<div
-										onClick={() => {
-											if (username?.length) {
-												router.push(`/user/${username}`);
-											} else {
-												setLoginOpen(true);
-											}
-										}}
-									>
-										<img
-											src='/assets/sidebar/head4.svg'
-											alt='Head 4'
-											className='h-10 w-10 cursor-pointer'
-										/>
-										<div className='absolute  bottom-0 left-[82px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Profile
-											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+									)}
+
+									{/* Head 4 (Profile) */}
+									<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+										<div
+											onClick={() => {
+												if (username?.length) {
+													router.push(`/user/${username}`);
+												} else {
+													setLoginOpen(true);
+												}
+											}}
+										>
+											<Image
+												src='/assets/head4.svg'
+												alt='Head 4'
+												width={40}
+												height={40}
+												className=' cursor-pointer'
+											/>
+											<div className='absolute bottom-0 left-[74px] mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+												Profile
+												<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							)}
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[104px] ' : 'mt-2  overflow-y-auto  pb-56 '} `}>
+				<div
+					className={`hide-scrollbar ${
+						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
+				>
 					<Menu
 						theme={theme as any}
 						mode='inline'
@@ -1943,7 +2115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						sidebarCollapsed={sidebarCollapsed}
 						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : ''
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : 'mt-3  md:mt-0  '
 						} overflow-x-hidden dark:bg-section-dark-overlay`}
 					/>
 				</div>
@@ -1957,18 +2129,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</>
 				)}
 			</div>
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
-			/>
 		</Sider>
 	);
 };

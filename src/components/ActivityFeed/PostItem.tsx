@@ -44,7 +44,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
 
 	const { '👍': likes = { count: 0, usernames: [] }, '👎': dislikes = { count: 0 } } = post?.details?.post_reactions || {};
-
+	console.log('post details', post?.details);
 	const fullContent = post?.details?.content || NO_CONTENT_FALLBACK;
 	const truncatedContent = truncateContent(fullContent, 50);
 	const shouldShowReadMore = fullContent.length > truncatedContent.length;
@@ -131,26 +131,29 @@ const PostContent: React.FC<{
 	shouldShowReadMore: boolean;
 	toggleExpandPost: () => void;
 	isExpanded: boolean;
-}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
-	<>
-		<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
-			#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
-		</p>
-		<Markdown
-			className='text-[#243A57]'
-			md={content}
-			isPreview={!isExpanded}
-		/>
-		{shouldShowReadMore && (
-			<p
-				className='cursor-pointer font-medium text-[#1B61FF]'
-				onClick={toggleExpandPost}
-			>
-				{isExpanded ? 'Show Less' : 'Read More'}
+}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => {
+	console.log('post content', post);
+	return (
+		<>
+			<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
+				#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 			</p>
-		)}
-	</>
-);
+			<Markdown
+				className='text-[#243A57]'
+				md={content}
+				isPreview={!isExpanded}
+			/>
+			{shouldShowReadMore && (
+				<p
+					className='cursor-pointer font-medium text-[#1B61FF]'
+					onClick={toggleExpandPost}
+				>
+					{isExpanded ? 'Show Less' : 'Read More'}
+				</p>
+			)}
+		</>
+	);
+};
 
 const PostReactions: React.FC<{
 	likes: { count: number; usernames: string[] };

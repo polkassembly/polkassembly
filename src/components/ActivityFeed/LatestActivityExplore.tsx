@@ -6,7 +6,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import TabNavigation from './TabNavigation';
 import PostList from './PostList';
-import { fetchVoterProfileImage, toPascalCase, getProposalType, fetchUserProfile } from './utils/utils';
+import { fetchVoterProfileImage, toPascalCase, fetchUserProfile } from './utils/utils';
 import { IPostResponse } from './utils/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostData } from './utils/types';
@@ -34,14 +34,9 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 					try {
 						const postId = post?.post_id ? post.post_id.toString() : '';
 						// eslint-disable-next-line prefer-const
-						let { data: postDetails, error: postError } = await nextApiClientFetch<IPostResponse>(`/api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
+						let { data: postDetails } = await nextApiClientFetch<IPostResponse>(`/api/v1/activity-feed/explore-posts?postId=${postId}&network=${network}`);
 
-						if (!postDetails?.post_id || postError) {
-							const response = await fetch(`/api/v1/posts/activityposts?postId=${postId}&network=${network}&proposalType=${getProposalType(currentTab || 'all')}`);
-							const onChainPostDetails = await response.json();
-							postDetails = onChainPostDetails.data;
-						}
-
+						// Fetch profile images and user details for posts
 						let firstVoterProfileImg = null;
 						if (postDetails?.post_reactions?.['👍']?.usernames?.[0]) {
 							const username = postDetails.post_reactions['👍'].usernames[0];

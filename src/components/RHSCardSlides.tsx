@@ -180,7 +180,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 		}
 
 		// remove !(not) check from (postData?.userId === id)
-		if (postData?.userId === id && status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
+		if (!(postData?.userId === id) && status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({

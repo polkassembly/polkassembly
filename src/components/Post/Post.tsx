@@ -137,7 +137,6 @@ const Post: FC<IPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.query]);
 
-	// Handle tab change and update query param
 	const handleTabChange = (key: string) => {
 		setSelectedTabKey(key);
 		router.push(

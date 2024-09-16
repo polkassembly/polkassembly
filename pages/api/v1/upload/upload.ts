@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import { IncomingForm, File } from 'formidable'; // Import only the necessary parts
+import { IncomingForm, File } from 'formidable';
 import fs from 'fs';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
@@ -13,7 +13,7 @@ import { firebaseStorageBucket } from '~src/services/firebaseInit';
 // Disable default body parser
 export const config = {
 	api: {
-		bodyParser: false // Disables Next.js's default body parsing
+		bodyParser: false
 	}
 };
 
@@ -28,16 +28,24 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 		try {
 			let file: File | undefined;
 			if (Array.isArray(files.media)) {
-				// If `files.media` is an array, select the first file (or handle multiple files here)
 				file = files.media[0];
 			} else {
-				// Otherwise, it's a single file or undefined
 				file = files.media;
 			}
 
 			if (!file) {
 				return res.status(400).json({ message: 'No file uploaded' });
 			}
+
+			const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+			if (file.size > MAX_FILE_SIZE) {
+				return res.status(400).json({ message: 'File size exceeds the limit' });
+			}
+
+			// const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+			// if (!allowedTypes.includes(file.type)) {
+			// return res.status(400).json({ message: 'Unsupported file type' });
+			// }
 
 			const token = getTokenFromReq(req);
 			if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -48,7 +56,7 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 			const filePath = `user-uploads/${user?.id}/${fileName}`;
 			const bucketFile = firebaseStorageBucket.file(filePath);
 
-			const fileBuffer = await fs.promises.readFile(file.filepath); // Read the file into a buffer
+			const fileBuffer = await fs.promises.readFile(file.filepath);
 
 			await bucketFile
 				.save(fileBuffer, {
@@ -57,8 +65,9 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 					},
 					public: true
 				})
-				.catch((e) => {
-					return res.status(500).json({ error: e.message, message: 'Error uploading data' });
+				.catch((error) => {
+					console.error('Error uploading file:', error);
+					return res.status(500).json({ error: error.message, message: 'Error uploading data' });
 				});
 
 			return res.status(200).json({ displayUrl: bucketFile.publicUrl() });

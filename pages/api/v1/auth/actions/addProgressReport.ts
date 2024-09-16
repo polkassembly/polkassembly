@@ -11,8 +11,6 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
-import fetchSubsquid from '~src/util/fetchSubsquid';
-import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -39,32 +37,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 	const postDoc = await postDocRef.get();
 
-	const TreasuryRes = await fetchSubsquid({
-		network: network,
-		query: CHECK_IF_OPENGOV_PROPOSAL_EXISTS,
-		variables: {
-			proposalIndex: Number(postId),
-			type_eq: proposalType
-		}
-	});
-
-	console.log('inside api call ', TreasuryRes, user);
-
 	if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
-
-	//uncomment above part
-	// const isAuthor = TreasuryRes?.proposer === user.id;
-
-	// const isAuthor = post?.user_id === user.id;
-	// if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
-
-	// Update the post object with the progress_report field
 	const updatedPost: Partial<Post> = {
-		id: Number(postId), // Add the progress_report field
+		id: Number(postId),
 		progress_report
 	};
 
-	// Update the Firestore document with the new progress_report
 	await postDocRef.update(updatedPost);
 
 	return res.status(200).json({ message: 'Progress report added and post updated successfully.' });

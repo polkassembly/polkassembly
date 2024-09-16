@@ -3049,4 +3049,68 @@ export const GET_TOTAL_VOTE_COUNT_ON_PROPOSAL = `query MyQuery ( $type_eq: VoteT
 flattenedConvictionVotesConnection(where:{type_eq:$type_eq , proposalIndex_eq: $index_eq, removedAtBlock_isNull:true}, orderBy: id_ASC){
     totalCount
   }
+}
+`;
+
+export const ACTIVE_PROPOSALS_FROM_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType=ReferendumV2, $status_in: [ProposalStatus!]=[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted], $indexes_in:[Int!]) {
+  proposals(where: {type_eq: $type_eq,, status_in: $status_in, index_in: $indexes_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    proposalArguments{
+method
+    section
+    args}
+    preimage {
+      method
+      proposer
+      proposedCall {
+        args
+      }
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+    trackNumber
+    group {
+      proposals(limit: 25, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 25, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+    status
+  }
 }`;

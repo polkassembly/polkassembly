@@ -67,6 +67,7 @@ export interface IPostListing {
 	hash?: string;
 	post_id: string | number;
 	description?: string;
+	votesCount?: number;
 	post_reactions: {
 		'👍': number;
 		'👎': number;

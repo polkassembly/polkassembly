@@ -1956,7 +1956,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: laossigmaLogo,
 		rpcEndpoint: 'wss://rpc.laossigma.laosfoundation.io',
 		ss58Format: 42,
-		subsquidUrl: '',
+		subsquidUrl: 'https://polkassembly.squids.live/laos-polkassembly/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.SIGMA,
 		treasuryProposalBondPercent: null,

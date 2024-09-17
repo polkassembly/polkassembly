@@ -18,6 +18,9 @@ import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
+import { usePostDataContext } from '~src/context';
 
 const { Dragger } = Upload;
 
@@ -25,7 +28,50 @@ const UploadModalContent = () => {
 	const dispatch = useDispatch();
 	const [fileLink, setFileLink] = useState<string>('');
 	const [fileName, setFileName] = useState<string>('');
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
+	const {
+		postData: { postType: proposalType, postIndex },
+		setPostData
+	} = usePostDataContext();
+
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, progress_report_link, summary_content } = useProgressReportSelector();
+
+	const addProgressReport = async (file_name: string) => {
+		console.log('file link: ', progress_report_link, fileLink);
+		const progress_report = {
+			progress_addedOn: new Date(),
+			progress_file: progress_report_link,
+			progress_name: `${Date.now()}-${file_name}`,
+			progress_summary: summary_content,
+			ratings: []
+		};
+
+		console.log('progress_report: ', progress_report);
+
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addProgressReport', {
+			postId: postIndex,
+			progress_report,
+			proposalType
+		});
+
+		if (editError || !data) {
+			console.error('Error saving post', editError);
+			queueNotification({
+				header: 'Error!',
+				message: 'Error in saving your post.',
+				status: NotificationStatus.ERROR
+			});
+		}
+
+		if (data) {
+			const { progress_report } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report
+			}));
+		} else {
+			console.error('failed to save report');
+		}
+	};
 
 	const handleUpload = async (file: File) => {
 		dispatch(progressReportActions.setFileName(file.name));
@@ -73,6 +119,7 @@ const UploadModalContent = () => {
 			if (status === 'done') {
 				setFileName(info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
+				addProgressReport(info.file.name);
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
 				message.error(`${info.file.name} file upload failed.`);

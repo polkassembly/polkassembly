@@ -51,10 +51,10 @@ const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	ssr: false
 });
 
-const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+// const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+// loading: () => <Skeleton active />,
+// ssr: false
+// });
 
 const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
@@ -336,10 +336,10 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className }: { className?: string }) => {
 		return (
 			<div className={`${className} flex w-full flex-col xl:col-span-4`}>
-				<StickyBox
-					offsetTop={65}
-					offsetBottom={65}
-					className='md:mb-6'
+				<div
+					// offsetTop={65}
+					// offsetBottom={65}
+					className={`${isOffchainPost ? '' : 'md:mb-6'}`}
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
@@ -356,7 +356,7 @@ const Post: FC<IPostProps> = (props) => {
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
 					/>
-				</StickyBox>
+				</div>
 
 				{isOffchainPost && (
 					<div className={'sticky top-[65px] mb-6 '}>

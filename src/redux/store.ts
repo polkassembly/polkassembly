@@ -31,6 +31,7 @@ import { ambassadorReplacementStore } from './replaceAmbassador';
 import { claimPayoutStore } from './claimProposalPayout';
 import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 import { progressReportStore } from './progressReport';
+import { globalStore } from './global';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -108,6 +109,7 @@ export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
 
 	const rootReducer = combineReducers({
+		[globalStore.name]: globalStore.reducer,
 		[networkStore.name]: networkStore.reducer,
 		[userDetailsStore.name]: userDetailsStore.reducer,
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,

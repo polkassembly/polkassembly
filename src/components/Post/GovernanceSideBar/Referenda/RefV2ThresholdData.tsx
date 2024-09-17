@@ -62,7 +62,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 						</button>
 					</div>
 				</div>
-				<div className='mt-7'>
+				<div className='scroll-hidden mt-7 overflow-hidden'>
 					{thresholdData && (
 						<div>
 							<div className='relative flex justify-center border-section-light-container dark:border-[#3B444F]'>
@@ -84,14 +84,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 											<AyeApprovalIcon />
 											Approval
 										</span>
-										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
+										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<AyeThresholdIcon />
 											Threshold
 										</span>
-										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
+										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
 									</span>
 								</div>
 								<div className='col-span-1 flex flex-col gap-x-0'>
@@ -100,14 +100,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 											<NayApprovalIcon />
 											Support
 										</span>
-										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
+										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<NayThresholdIcon />
 											Threshold
 										</span>
-										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(supportThreshold)?.toFixed(2)}%</span>
+										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(supportThreshold)?.toFixed(2)}%</span>
 									</span>
 								</div>
 							</div>

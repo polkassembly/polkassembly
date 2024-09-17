@@ -124,13 +124,13 @@ const CreateProposal = ({
 		if (!api || !apiReady) return;
 
 		(async () => {
-			const balances = await userProfileBalances({
+			const { transferableBalance } = await userProfileBalances({
 				address: getEncodedAddress(proposerAddress || loginAddress, network) || proposerAddress || loginAddress,
 				api,
 				apiReady,
 				network
 			});
-			setAvailableBalance(balances?.transferableBalance || ZERO_BN);
+			setAvailableBalance(transferableBalance || ZERO_BN);
 		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps

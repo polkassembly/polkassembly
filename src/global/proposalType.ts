@@ -57,6 +57,30 @@ export type TSubsquidProposalType =
 	| 'UpgradeCommittee'
 	| 'AdvisoryCommittee';
 
+const validSubsquidProposalTypes: TSubsquidProposalType[] = [
+	'AllianceMotion',
+	'Announcement',
+	'DemocracyProposal',
+	'TechCommitteeProposal',
+	'TreasuryProposal',
+	'Referendum',
+	'FellowshipReferendum',
+	'CouncilMotion',
+	'Bounty',
+	'Tip',
+	'ChildBounty',
+	'ReferendumV2',
+	'FellowshipReferendum',
+	'TechnicalCommittee',
+	'Community',
+	'UpgradeCommittee',
+	'AdvisoryCommittee'
+];
+
+export function isValidSubsquidProposalType(type: string) {
+	return validSubsquidProposalTypes.includes(type as TSubsquidProposalType);
+}
+
 export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType {
 	switch (proposalType) {
 		case ProposalType.DEMOCRACY_PROPOSALS:

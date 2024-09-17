@@ -124,7 +124,7 @@ export const network = {
 	ZEITGEIST: 'zeitgeist',
 	MANDALA: 'mandala',
 	CURIO: 'curio',
-	LAOSSIGMA: 'laos-sigma'
+	LAOSSIGMA: 'laossigma'
 };
 
 export const tokenSymbol = {

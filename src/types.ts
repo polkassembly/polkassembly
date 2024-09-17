@@ -590,7 +590,7 @@ export interface IProgressReport {
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;
-	ratings?: IRating;
+	ratings?: IRating[];
 }
 
 export interface IVotesCount {

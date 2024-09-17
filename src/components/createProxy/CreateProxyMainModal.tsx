@@ -6,28 +6,25 @@ import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import DownArrow from '~assets/icons/down-icon.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import AddressInput from '~src/ui-components/AddressInput';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { EEnactment, IEnactment } from '../OpenGovTreasuryProposal';
-import { Signer } from '@polkadot/api/types';
 import { IAdvancedDetails } from '../OpenGovTreasuryProposal/CreatePreimage';
-import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, isHex } from '@polkadot/util';
+import { BN_HUNDRED, BN_ONE } from '@polkadot/util';
 import { useCurrentBlock } from '~src/hooks';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
 import { chainProperties } from '~src/global/networkConstants';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useApiContext } from '~src/context';
-import { APPNAME } from 'src/global/appName';
-import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
-import { LoadingStatusType, Wallet } from '~src/types';
+import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useTheme } from 'next-themes';
 import Select from '~src/basic-components/Select';
+import queueNotification from '~src/ui-components/QueueNotification';
+import executeTx from '~src/util/executeTx';
 
 interface Props {
 	openModal: boolean;
@@ -42,44 +39,29 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 	const userDetails = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
-	const { id, loginAddress, loginWallet } = userDetails;
+	const { availableBalance } = useInitialConnectAddress();
+	const availableBalanceBN = new BN(availableBalance || '0');
+	const { loginAddress, loginWallet } = userDetails;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [form] = Form.useForm();
-	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [createPureProxy, setCreatePureProxy] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState(ZERO_BN);
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [proxyAddress, setProxyAddress] = useState<string>('');
-	const [proxyType, setProxyType] = useState<string>('Any');
+	const [proxyType, setProxyType] = useState<any>('Any');
 	const [address, setAddress] = useState<string>('');
-	const [accountsMap, setAccountsMap] = useState<{ [key: string]: string }>({});
 	const onAccountChange = (address: string) => setAddress(address);
-	const currentBlock = useCurrentBlock(); // Check if it is needed or not
-
-	const getWallet = () => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-	};
+	const currentBlock = useCurrentBlock();
 
 	useEffect(() => {
-		getWallet();
 		if (!api || !apiReady) return;
 		if (loginWallet) {
 			setWallet(loginWallet);
-			const injectedWindow = window as Window & InjectedWindow;
-			const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-			if (!extensionAvailable) {
-				setExtensionNotFound(true);
-			} else {
-				setExtensionNotFound(false);
-			}
 			(async () => {
 				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
@@ -92,13 +74,6 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 			const loginWallet = localStorage.getItem('loginWallet');
 			if (loginWallet) {
 				setWallet(loginWallet as Wallet);
-				const injectedWindow = window as Window & InjectedWindow;
-				const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-				if (!extensionAvailable) {
-					setExtensionNotFound(true);
-				} else {
-					setExtensionNotFound(false);
-				}
 				(async () => {
 					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 					setAccounts(accountsData?.accounts || []);
@@ -128,6 +103,54 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 		}
 	};
 
+	const handleSubmit = async () => {
+		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
+		if (!api || !apiReady || !proxyType) {
+			return;
+		}
+		let txn;
+		if (createPureProxy) {
+			txn = api.tx.proxy.createPure(proxyType as any, 100, 12);
+		}
+		if (proxyAddress && !createPureProxy) {
+			txn = api.tx.proxy.addProxy(proxyAddress, proxyType as any, 100);
+		}
+		if (!txn) return;
+		const { partialFee: txGasFee } = (await txn.paymentInfo(loginAddress)).toJSON();
+		setGasFee(new BN(String(txGasFee)));
+
+		const onFailed = (message: string) => {
+			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+		};
+
+		const onSuccess = async () => {
+			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
+			queueNotification({
+				header: 'Success!',
+				message: 'Proposal created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+			setOpenModal(false);
+		};
+
+		await executeTx({
+			address: loginAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onBroadcast: () => setLoadingStatus({ isLoading: true, message: '' }),
+			onFailed,
+			onSuccess,
+			tx: txn
+		});
+	};
+
 	return (
 		<Modal
 			title={
@@ -154,7 +177,8 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 						variant='default'
 					/>
 					<CustomButton
-						onClick={() => {}}
+						onClick={handleSubmit}
+						disabled={getSubstrateAddress(loginAddress) == getSubstrateAddress(proxyAddress) || availableBalanceBN.lt(gasFee)}
 						height={40}
 						width={145}
 						text='Create Proxy'
@@ -173,6 +197,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 					form={form}
 					disabled={loadingStatus.isLoading}
 					initialValues={{ loginAddress: loginAddress }}
+					onFinish={handleSubmit}
 				>
 					<div className=''>
 						<AccountSelectionForm
@@ -197,7 +222,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 							accounts={accounts}
 							address={proxyAddress || loginAddress}
 							withBalance={false}
-							onAccountChange={onAccountChange}
+							onAccountChange={(address) => setProxyAddress(address)}
 							className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 							inputClassName='rounded-[4px] px-3 py-1'
 							withoutInfo={true}
@@ -223,7 +248,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 							style={{ width: '100%' }}
 							value={proxyType}
 							size='large'
-							suffixIcon={<DownArrow className='down-icon absolute right-2 top-[10px]' />}
+							suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
 							onChange={(value) => setProxyType(value)}
 							defaultValue={'Any'}
 							options={[
@@ -238,15 +263,15 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 							]}
 						/>
 					</div>
-					{/* {isPreimage !== null && ( */}
-					<div
-						className='mt-6 flex cursor-pointer items-center gap-2'
-						onClick={() => setOpenAdvanced(!openAdvanced)}
-					>
-						<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
-						<DownArrow className='down-icon' />
-					</div>
-					{/* )} */}
+					{proxyType && (
+						<div
+							className='mt-6 flex cursor-pointer items-center gap-2'
+							onClick={() => setOpenAdvanced(!openAdvanced)}
+						>
+							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<DownArrow className='down-icon' />
+						</div>
+					)}
 					{openAdvanced && (
 						<div className='preimage mt-3 flex flex-col'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
@@ -357,7 +382,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 							showIcon
 							description={
 								<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
-									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
 								</div>
 							}
 						/>

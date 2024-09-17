@@ -21,6 +21,7 @@ import { getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getProposerAddressFromFirestorePostData, IPostListing } from '../listing/on-chain-posts';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
+import { getOffChainPost } from '../posts/off-chain-post';
 
 interface ISubscribedPost {
 	network: string;
@@ -43,15 +44,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	try {
 		const userRef = await firestore_db.collection('users').doc(String(userId)).get();
 		const userData = userRef?.data();
-
-		const allSubscribedPostsAccToNetwork = userData?.subscribed_posts?.length ? userData?.subscribed_posts?.filter((post: ISubscribedPost) => post?.network == network) : [];
-
+		const allSubscribedPostsAccToNetwork = userData?.subscribed_posts?.length ? userData?.subscribed_posts?.filter((post: ISubscribedPost) => post?.network === network) : [];
 		const allOpenGovReferendumIndexes: number[] = [];
-		allSubscribedPostsAccToNetwork.map((post: ISubscribedPost) => {
-			if (post?.post_type == ProposalType.REFERENDUM_V2) {
+		const allOffChainPosts: IPostListing[] = [];
+
+		for (const post of allSubscribedPostsAccToNetwork) {
+			if (post?.post_type === ProposalType.REFERENDUM_V2) {
 				allOpenGovReferendumIndexes.push(post?.post_id);
+			} else if (post?.post_type === ProposalType.DISCUSSIONS) {
+				const offChainPostsRes = await getOffChainPost({
+					network,
+					postId: post.post_id,
+					proposalType: post?.post_type as ProposalType
+				});
+
+				const offChainPosts = offChainPostsRes?.data ? [offChainPostsRes.data] : [];
+				const processedOffChainPosts = offChainPosts.map((offChainPost: any) => ({
+					...offChainPost,
+					trackName: 'Discussions'
+				}));
+				allOffChainPosts.push(...processedOffChainPosts);
 			}
-		});
+		}
 
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -273,12 +287,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		const resolvedPromises = await Promise.allSettled(allPromises);
 
-		const results: IPostListing[] = [];
+		const onChainResults: IPostListing[] = [];
 		resolvedPromises?.map((promise) => {
 			if (promise.status == 'fulfilled') {
-				results.push(promise.value);
+				onChainResults.push(promise.value);
 			}
 		});
+		const results = [...onChainResults, ...allOffChainPosts];
 
 		return res.status(200).json({ data: results });
 	} catch (err) {

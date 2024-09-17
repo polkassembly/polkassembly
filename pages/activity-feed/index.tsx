@@ -42,7 +42,7 @@ import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { BN } from 'bn.js';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -53,6 +53,7 @@ import LatestActivityExplore from '~src/components/ActivityFeed/LatestActivityEx
 import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import Image from 'next/image';
 
 const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
 	loading: () => <Skeleton active />,
@@ -149,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props };
 };
 
-const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
+const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const currentUser = useUserDetailsSelector();
 	const { username } = currentUser;
@@ -320,6 +321,7 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 		if (currentTokenPrice?.value !== 'N/A') {
 			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
 	useEffect(() => {
@@ -385,6 +387,7 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 	}, [currentTokenPrice, network]);
 	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
 	const [userRank, setUserRank] = useState<number | 0>(0);
+	const { is_sidebar_collapsed } = useGlobalSelector();
 
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
@@ -484,6 +487,7 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 		if (currentUserdata) {
 			getProposalData();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, selectedGov, network]);
 
 	useEffect(() => {
@@ -537,14 +541,7 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 					)}
 					<div className='mx-1 mt-8 '>
 						<div className='mx-1  '>
-							{activeTab === 'explore' ? (
-								<LatestActivityExplore
-									gov2LatestPosts={gov2LatestPosts}
-									currentUserdata={currentUserdata}
-								/>
-							) : (
-								<LatestActivityFollowing gov2LatestPosts={gov2LatestPosts} />
-							)}
+							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
 						</div>
 					</div>
 					<div className=' w-[340px]  '>
@@ -562,10 +559,12 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 									<div className='flex items-center justify-between gap-2'>
 										<div className='flex items-center '>
 											<p className='pt-3 font-semibold'>Voted Proposals</p>
-											<img
+											<Image
 												src='/assets/icons/arrow.svg'
 												alt=''
 												className='h-5 w-5 -rotate-90 p-0'
+												width={20}
+												height={20}
 											/>
 										</div>
 										<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
@@ -584,28 +583,33 @@ const ActivityFeed = ({ error, gov2LatestPosts, network, networkSocialsData }: P
 							<div className='relative mt-5 rounded-xxl  text-[13px] drop-shadow-md dark:bg-section-dark-overlay '>
 								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : '#00'}</p>
 								<div className='relative h-full w-full'>
-									<img
+									<Image
 										src='/assets/rankcard1.svg'
 										className='h-full w-full'
 										alt='rankcard1'
+										width={340}
+										height={340}
 									/>
 
-									<div className='absolute bottom-[0.3px] left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]'>
-										<img
+									<div className={`absolute ${is_sidebar_collapsed ? '-bottom-2' : '-bottom-4'} left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]`}>
+										<Image
 											src={theme == 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
-											// src='/assets/rankcard2.svg'
 											className='max-h-[100px] w-full '
 											alt='rankcard2'
+											width={340}
+											height={340}
 										/>
 
 										{currentUser?.username && currentUser?.id ? (
 											<>
-												<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
+												<div className='absolute bottom-1 left-0 right-0 flex items-center justify-between p-3'>
 													<div className='flex items-center gap-2'>
-														<img
+														<Image
 															src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
 															className='h-10 w-10 rounded-full '
 															alt='rankcard3'
+															width={40}
+															height={40}
 														/>
 														<p className='mt-2 font-semibold text-black'>{username}</p>
 													</div>

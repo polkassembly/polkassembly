@@ -6,17 +6,15 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import TabNavigation from './TabNavigation';
 import PostList from './PostList';
-import { fetchVoterProfileImage, toPascalCase, fetchUserProfile } from './utils/utils';
-import { IPostResponse } from './utils/types';
+import { fetchVoterProfileImage, fetchUserProfile } from './utils/utils';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostData } from './utils/types';
 
 interface LatestActivityExploreProps {
-	gov2LatestPosts: any;
 	currentUserdata?: any;
 }
 
-const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2LatestPosts, currentUserdata }) => {
+const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUserdata }) => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [postData, setPostData] = useState<IPostData[]>([]);
 	const { network } = useNetworkSelector();
@@ -26,31 +24,32 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-			const pascalCaseTab = toPascalCase(currentTab || 'all');
-			const posts = gov2LatestPosts[pascalCaseTab]?.data?.posts || [];
 
+			// Fetch the post details from the API
+			const { data: responseData } = await nextApiClientFetch<any>(`/api/v1/activity-feed/explore-posts?network=${network}`);
+
+			// Ensure the response contains an array of posts
+			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
+
+			// Process each post in parallel
 			const detailedPosts = await Promise.all(
-				posts.map(async (post: IPostData) => {
+				posts.map(async (post: any) => {
 					try {
-						const postId = post?.post_id ? post.post_id.toString() : '';
-						// eslint-disable-next-line prefer-const
-						let { data: postDetails } = await nextApiClientFetch<IPostResponse>(`/api/v1/activity-feed/explore-posts?postId=${postId}&network=${network}`);
-
-						// Fetch profile images and user details for posts
 						let firstVoterProfileImg = null;
-						if (postDetails?.post_reactions?.['👍']?.usernames?.[0]) {
-							const username = postDetails.post_reactions['👍'].usernames[0];
+						if (post?.post_reactions?.['👍']?.usernames?.[0]) {
+							const username = post.post_reactions['👍'].usernames[0];
 							firstVoterProfileImg = await fetchVoterProfileImage(username);
 						}
 
+						const proposerProfile = await fetchUserProfile(post.proposer || '');
+
 						return {
 							...post,
-							details: postDetails,
 							firstVoterProfileImg,
-							proposerProfile: await fetchUserProfile(post.proposer || '')
+							proposerProfile
 						};
 					} catch (error) {
-						console.error(`Error processing post ID ${post.post_id}:`, error);
+						console.error('Error processing post', error);
 						return { ...post, error: true };
 					}
 				})
@@ -58,15 +57,29 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 
 			setPostData(detailedPosts.filter((post) => !post.error));
 		} catch (err) {
+			console.error('Failed to fetch posts:', err);
 			setError('Failed to fetch posts. Please try again later.');
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	useEffect(() => {
-		fetchData();
-	}, [currentTab, network, gov2LatestPosts]);
+	// useEffect(() => {
+	// 	fetchData();
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [currentTab, network]);
+
+	const filteredPosts =
+		currentTab === 'all'
+			? postData
+			: postData.filter((post) => {
+					const formattedTrackName = post.trackName
+						?.replace(/([a-z])([A-Z])/g, '$1-$2') // Convert camelCase to hyphen-separated
+						.replace(/_/g, '-') // Replace underscores with hyphens if any
+						.toLowerCase(); // Ensure it's lowercase
+
+					return formattedTrackName === currentTab;
+			  });
 
 	if (error) {
 		return <div className='text-red-500'>{error}</div>;
@@ -77,7 +90,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 			<TabNavigation
 				currentTab={currentTab}
 				setCurrentTab={setCurrentTab}
-				gov2LatestPosts={gov2LatestPosts}
+				gov2LatestPosts={postData}
 				network={network}
 			/>
 
@@ -87,7 +100,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 				</div>
 			) : (
 				<PostList
-					postData={postData}
+					postData={filteredPosts}
 					currentUserdata={currentUserdata}
 				/>
 			)}

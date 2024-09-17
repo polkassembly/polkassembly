@@ -7,7 +7,7 @@ import { PostListProps } from './utils/types';
 
 const PostList: React.FC<PostListProps> = ({ postData, currentUserdata }) => {
 	return (
-		<div className='w-[930px] space-y-4'>
+		<div className='w-[915px] space-y-4'>
 			{postData.length === 0 ? (
 				<p>No posts available</p>
 			) : (

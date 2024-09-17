@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import Markdown from '~src/ui-components/Markdown';
-import { formatDate as formatDateUtil, truncateContent } from './utils/utils';
-import { PostItemProps } from './utils/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Link from 'next/link';
+import Image from 'next/image';
 
 // Constants
 const ANONYMOUS_FALLBACK = 'Anonymous';
@@ -30,11 +30,13 @@ const getStatusStyle = (status: string) => {
 };
 
 const formatDate = (dateString: string) => {
-	return formatDateUtil(dateString);
+	// Use a utility function to format the date
+	return new Date(dateString).toLocaleDateString();
 };
 
-const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
+const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
+
 	const isExpanded = expandedPostId === post.post_id;
 
 	const toggleExpandPost = (postId: number) => {
@@ -43,16 +45,19 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
 
-	const { '👍': likes = { count: 0, usernames: [] }, '👎': dislikes = { count: 0 } } = post?.details?.post_reactions || {};
-	console.log('post details', post?.details);
-	const fullContent = post?.details?.content || NO_CONTENT_FALLBACK;
-	const truncatedContent = truncateContent(fullContent, 50);
+	// Extract post reactions
+	const { '👍': likes = { count: 0, usernames: [] }, '👎': dislikes = { count: 0 } } = post?.post_reactions || {};
+
+	// Post content and its state
+	const fullContent = post?.content || NO_CONTENT_FALLBACK;
+	const truncatedContent = fullContent.substring(0, 200); // Adjust the truncate logic as needed
 	const shouldShowReadMore = fullContent.length > truncatedContent.length;
 	const postContent = isExpanded ? fullContent : truncatedContent;
 
 	return (
 		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
+				post_id={post.post_id}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
 			/>
@@ -79,7 +84,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string }> = ({ bgColor, statusLabel }) => (
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post_id: number }> = ({ bgColor, statusLabel, post_id }) => (
 	<div className='flex justify-between'>
 		<div className='flex gap-4'>
 			<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>{'2500DOT'}</p>
@@ -91,24 +96,28 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string }> = ({ bgColo
 			</div>
 		</div>
 		<div>
-			<div className='castvoteborder m-0 flex cursor-pointer items-center gap-1 p-0 px-3 text-[#E5007A]'>
-				<ImageIcon
-					src='/assets/Vote.svg'
-					alt=''
-					className='m-0 h-6 w-6 p-0'
-				/>
-				<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
-			</div>
+			<Link href={`/referenda/${post_id}`}>
+				<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
+					<ImageIcon
+						src='/assets/Vote.svg'
+						alt=''
+						className='m-0 h-6 w-6 p-0'
+					/>
+					<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+				</div>
+			</Link>
 		</div>
 	</div>
 );
 
 const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => string }> = ({ post, formatDate }) => (
 	<div className='flex items-center gap-2 pt-2'>
-		<img
+		<Image
 			src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 			alt='profile'
 			className='h-6 w-6 rounded-full'
+			width={24}
+			height={24}
 		/>
 		<p className='pt-3 text-sm font-medium text-[#243A57] dark:text-white'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
 		<span className='text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
@@ -131,29 +140,26 @@ const PostContent: React.FC<{
 	shouldShowReadMore: boolean;
 	toggleExpandPost: () => void;
 	isExpanded: boolean;
-}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => {
-	console.log('post content', post);
-	return (
-		<>
-			<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
-				#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
+	<>
+		<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
+			#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+		</p>
+		<Markdown
+			className='text-[#243A57]'
+			md={content}
+			isPreview={!isExpanded}
+		/>
+		{shouldShowReadMore && (
+			<p
+				className='cursor-pointer font-medium text-[#1B61FF]'
+				onClick={toggleExpandPost}
+			>
+				{isExpanded ? 'Show Less' : 'Read More'}
 			</p>
-			<Markdown
-				className='text-[#243A57]'
-				md={content}
-				isPreview={!isExpanded}
-			/>
-			{shouldShowReadMore && (
-				<p
-					className='cursor-pointer font-medium text-[#1B61FF]'
-					onClick={toggleExpandPost}
-				>
-					{isExpanded ? 'Show Less' : 'Read More'}
-				</p>
-			)}
-		</>
-	);
-};
+		)}
+	</>
+);
 
 const PostReactions: React.FC<{
 	likes: { count: number; usernames: string[] };
@@ -162,21 +168,23 @@ const PostReactions: React.FC<{
 }> = ({ likes, dislikes, post }) => (
 	<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 		<div>
-			{likes.usernames.length > 0 && (
+			{likes?.usernames?.length > 0 && (
 				<div className='flex items-center'>
-					<img
+					<Image
 						src={post.firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 						alt='Voter Profile'
 						className='h-5 w-5 rounded-full'
+						width={20}
+						height={20}
 					/>
-					<p className='ml-2 pt-3'>{likes.count === 1 ? `${likes.usernames[0]} has liked this post` : `${likes.usernames[0]} & ${likes.count - 1} others liked this post`}</p>
+					<p className='ml-2 pt-3'>{likes?.count === 1 ? `${likes.usernames[0]} has liked this post` : `${likes?.usernames[0]} & ${likes.count - 1} others liked this post`}</p>
 				</div>
 			)}
 		</div>
 		<div className='flex gap-3'>
 			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{dislikes.count} dislikes</p>
 			<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{post?.details?.comments_count || 0} Comments</p>
+			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{post?.comments_count || 0} Comments</p>
 		</div>
 	</div>
 );
@@ -235,10 +243,12 @@ const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, labe
 
 const PostCommentSection: React.FC<{ currentUserdata: any }> = ({ currentUserdata }) => (
 	<div className='mt-3 flex'>
-		<img
+		<Image
 			src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 			alt=''
 			className='h-10 w-10 rounded-full'
+			width={40}
+			height={40}
 		/>
 		<input
 			type='text'

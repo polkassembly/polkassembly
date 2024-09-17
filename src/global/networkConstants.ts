@@ -53,10 +53,11 @@ import turingLogo from '~assets/parachain-logos/turing-logo.png';
 import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
-import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
+import zeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
 import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
+import laossigmaLogo from '~assets/parachain-logos/laossigma-logo.png';
 
 import * as types from '../types';
 import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
@@ -122,7 +123,8 @@ export const network = {
 	XX: 'xx',
 	ZEITGEIST: 'zeitgeist',
 	MANDALA: 'mandala',
-	CURIO: 'curio'
+	CURIO: 'curio',
+	LAOSSIGMA: 'laos-sigma'
 };
 
 export const tokenSymbol = {
@@ -180,7 +182,8 @@ export const tokenSymbol = {
 	XX: 'XX',
 	ZTG: 'ZTG',
 	KPGT: 'KPGT',
-	CGT: 'CGT'
+	CGT: 'CGT',
+	SIGMA: 'SIGMA'
 };
 
 export const treasuryAssets = {
@@ -1920,7 +1923,7 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 12000,
 		category: 'polkadot',
 		chainId: 0,
-		logo: ZeitgeistLogo,
+		logo: zeitgeistLogo,
 		rpcEndpoint: 'wss://zeitgeist.api.onfinality.io/public-ws',
 		ss58Format: 73,
 		subsquidUrl: 'https://squid.subsquid.io/zeitgeist-polkassembly/graphql',
@@ -1943,6 +1946,28 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via ZeitgeistPM',
 				key: 'wss://main.rpc.zeitgeist.pm/ws'
+			}
+		]
+	},
+	[network.LAOSSIGMA]: {
+		blockTime: 13000,
+		category: 'test',
+		chainId: 0,
+		logo: laossigmaLogo,
+		rpcEndpoint: 'wss://rpc.laossigma.laosfoundation.io',
+		ss58Format: 42,
+		subsquidUrl: 'https://polkassembly.squids.live/laos-polkassembly/graphql',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.SIGMA,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://sigma.explorer.laosnetwork.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://rpc.laossigma.laosfoundation.io'
 			}
 		]
 	}

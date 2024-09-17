@@ -64,10 +64,10 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 		}
 	};
 
-	// useEffect(() => {
-	// 	fetchData();
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [currentTab, network]);
+	useEffect(() => {
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentTab, network]);
 
 	const filteredPosts =
 		currentTab === 'all'

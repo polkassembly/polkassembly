@@ -230,7 +230,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -238,18 +238,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		{
-			key: 'create proxy',
-			label: (
-				<span
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					onClick={() => setOpenProxyModal(true)}
-				>
-					<ProxyIcon className='userdropdown-icon text-2xl' />
-					<span>Create Proxy</span>
-				</span>
-			)
-		},
+		...(isOpenGovSupported(network)
+			? [
+					{
+						key: 'create proxy',
+						label: (
+							<span
+								className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+								onClick={() => setOpenProxyModal(true)}
+							>
+								<ProxyIcon className='userdropdown-icon text-2xl' />
+								<span>Create Proxy</span>
+							</span>
+						)
+					}
+			  ]
+			: []),
 		{
 			key: 'settings',
 			label: (
@@ -267,7 +271,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+					className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -288,7 +292,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				key: 'set on-chain identity',
 				label: (
 					<Link
-						className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+						className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 						href={''}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -301,12 +305,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							handleIdentityButtonClick();
 						}}
 					>
-						<span className='text-2xl'>
+						<div className='my-0 text-[24px]'>
 							<ApplayoutIdentityIcon />
-						</span>
+						</div>
 						<span>Set on-chain identity</span>
 						{!isIdentityExists && (
-							<span className='flex items-center'>
+							<span className='flex items-center text-[22px]'>
 								<IdentityCaution />
 							</span>
 						)}

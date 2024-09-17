@@ -35,7 +35,7 @@ const UploadModalContent = () => {
 		try {
 			const formData = new FormData();
 			formData.append('media', file);
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/upload/upload', formData);
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/upload/uploadReport', formData);
 			if (data) {
 				setFileLink(data?.displayUrl);
 				sharableLink = data.displayUrl;

@@ -1,3 +1,6 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import React from 'react';
@@ -5,7 +8,6 @@ import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { Collapse } from '../Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 

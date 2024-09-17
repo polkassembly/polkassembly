@@ -49,6 +49,8 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { GlobalActions } from '~src/redux/global';
+import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -79,14 +81,14 @@ interface Props {
 	displayName?: string;
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
-	setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists, setSidebarCollapsed }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
+
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
@@ -377,8 +379,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				)}
 			</div>
-			<div className={`${sidedrawer ? 'ml-32 2xl:ml-0' : 'ml-[108px] 2xl:ml-0'} hidden lg:block`}></div>
-			<nav className='mx-auto flex h-[60px] w-full items-center  justify-between lg:w-[85w] xl:max-w-7xl xl:pr-6 '>
+			<div className='ml-[84px] hidden lg:block'></div>
+			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
 				<div className='ml-2 flex items-center md:ml-0'>
 					<Link
 						className='logo-size flex lg:hidden'
@@ -394,8 +396,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className='type-container hidden items-center gap-1 sm:flex'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+					<div className={`type-container ${sidedrawer && 'pl-32 2xl:pl-0'} hidden items-center gap-1 sm:flex`}>
+						<span className='line-container ml-4 mr-2  h-5 w-[1.5px] bg-pink_primary  dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
@@ -406,17 +408,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<SearchBar
 						className='searchbar-container'
 						setSidedrawer={setSidedrawer}
-						setSidebarCollapsed={setSidebarCollapsed}
 					/>
-					<InAppNotification
-						setSidedrawer={setSidedrawer}
-						setSidebarCollapsed={setSidebarCollapsed}
-					/>
+					<InAppNotification setSidedrawer={setSidedrawer} />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
-						<NetworkDropdown
-							setSidedrawer={setSidedrawer}
-							setSidebarCollapsed={setSidebarCollapsed}
-						/>
+						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
 						{chainProperties[network]?.rpcEndpoints && chainProperties[network]?.rpcEndpoints?.length > 0 && <RPCDropdown />}
 						{!id ? (
@@ -428,8 +423,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									text='Login'
 									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
-										setSidebarCollapsed(true);
-										setSidedrawer(false);
+										if (isMobile) {
+											dispatch(GlobalActions.setIsSidebarCollapsed(true));
+											setSidedrawer(false);
+										}
 										setLoginOpen(true);
 									}}
 								/>
@@ -456,7 +453,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							</AuthDropdown>
 						)}
 					</Space>
-					<div className='mr-2 lg:mr-0'>
+					<div className='mr-2 hidden md:block lg:mr-0'>
 						<ToggleButton />
 					</div>
 					{open ? (
@@ -486,7 +483,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 										<div>
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
 											<NetworkDropdown
-												setSidebarCollapsed={() => {}}
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>
@@ -495,9 +491,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
+										<div className='mt-6 w-full'>
+											<BigToggleButton />
+										</div>
 										{username ? (
 											<div>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={(e) => {
@@ -514,7 +513,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											</div>
 										) : (
 											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {

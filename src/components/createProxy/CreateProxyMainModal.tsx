@@ -1,3 +1,6 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Modal, Checkbox, Input, Radio, Form } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
@@ -50,7 +53,6 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 	const [gasFee, setGasFee] = useState(ZERO_BN);
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [wallet, setWallet] = useState<Wallet>();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [proxyAddress, setProxyAddress] = useState<string>('');
 	const [proxyType, setProxyType] = useState<any>('Any');
@@ -61,7 +63,6 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		if (loginWallet) {
-			setWallet(loginWallet);
 			(async () => {
 				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
@@ -73,7 +74,6 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 			if (!window) return;
 			const loginWallet = localStorage.getItem('loginWallet');
 			if (loginWallet) {
-				setWallet(loginWallet as Wallet);
 				(async () => {
 					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 					setAccounts(accountsData?.accounts || []);
@@ -116,7 +116,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 			txn = api.tx.proxy.addProxy(proxyAddress, proxyType as any, 100);
 		}
 		if (!txn) return;
-		const { partialFee: txGasFee } = (await txn.paymentInfo(loginAddress)).toJSON();
+		const { partialFee: txGasFee } = (await txn.paymentInfo(address || loginAddress)).toJSON();
 		setGasFee(new BN(String(txGasFee)));
 
 		const onFailed = (message: string) => {
@@ -139,7 +139,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 		};
 
 		await executeTx({
-			address: loginAddress,
+			address: address || loginAddress,
 			api,
 			apiReady,
 			errorMessageFallback: 'Transaction failed.',
@@ -178,7 +178,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={getSubstrateAddress(loginAddress) == getSubstrateAddress(proxyAddress) || availableBalanceBN.lt(gasFee)}
+						disabled={getSubstrateAddress(address || loginAddress) == getSubstrateAddress(proxyAddress) || availableBalanceBN.lt(gasFee)}
 						height={40}
 						width={145}
 						text='Create Proxy'
@@ -252,14 +252,14 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 							onChange={(value) => setProxyType(value)}
 							defaultValue={'Any'}
 							options={[
-								{ value: 'Any', label: 'Any' },
-								{ value: 'NonTransfer', label: 'Non Transfer' },
-								{ value: 'Governance', label: 'Governance' },
-								{ value: 'IdentityJudgement', label: 'Identity Judgment' },
-								{ value: 'CancelProxy', label: 'Cancel Proxy' },
-								{ value: 'Auction', label: 'Auction' },
-								{ value: 'Society', label: 'Society' },
-								{ value: 'OnDemandOrdering', label: 'On Demand Ordering' }
+								{ label: 'Any', value: 'Any' },
+								{ label: 'Auction', value: 'Auction' },
+								{ label: 'Cancel Proxy', value: 'CancelProxy' },
+								{ label: 'Governance', value: 'Governance' },
+								{ label: 'Identity Judgment', value: 'IdentityJudgement' },
+								{ label: 'Non Transfer', value: 'NonTransfer' },
+								{ label: 'On Demand Ordering', value: 'OnDemandOrdering' },
+								{ label: 'Society', value: 'Society' }
 							]}
 						/>
 					</div>

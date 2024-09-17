@@ -66,12 +66,12 @@ import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
+import { GlobalActions } from '~src/redux/global';
 
 const { Sider } = Layout;
 
 interface SidebarProps {
 	sidebarCollapsed: boolean;
-	setSidebarCollapsed: (collapsed: boolean) => void;
 	className?: string;
 	totalActiveProposalsCount: IActiveProposalCount;
 	isGood: boolean;
@@ -88,7 +88,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
 	className,
 	sidebarCollapsed,
-	setSidebarCollapsed,
 	totalActiveProposalsCount,
 	isGood,
 	mainDisplay,
@@ -154,7 +153,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
 		setActiveParachain(isParachainActive);
-	}, [router.pathname]);
+	}, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
 		const capitalizeLabel = (label: React.ReactNode): React.ReactNode => {
@@ -279,8 +278,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const handleIdentityButtonClick = () => {
-		setSidebarCollapsed(true);
-		setSidedrawer(false);
+		if (isMobile) {
+			dispatch(GlobalActions.setIsSidebarCollapsed(true));
+			setSidedrawer(false);
+		}
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
@@ -580,7 +581,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem(
-										<div className='flex items-center justify-between'>
+										<div className='flex items-center justify-between text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 											Bounties
 											<span
 												className={`text-[10px] ${
@@ -594,7 +595,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									),
 									getSiderMenuItem(
-										<div className='flex items-center justify-center'>
+										<div className='flex items-center justify-center text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 											Child Bounties
 											<span
 												className={`text-[10px] ${
@@ -670,14 +671,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const advisorycommitteDropdownContent = (
 		<div className='text-center'>
 			{gov1Items.AdvisoryCommittee.map((item, index) => {
-				// Check if the label contains a '/' and split it, otherwise use the full label
 				console.log('item', item);
 				const formattedLabel =
-					item && 'label' in item && typeof item.key === 'string' && item.key.includes('/')
-						? item.key.split('/')[2] || '' // Use the part after the second '/'
-						: item && 'label' in item
-						? item.label
-						: '';
+					item && 'label' in item && typeof item.key === 'string' && item.key.includes('/') ? item.key.split('/')[2] || '' : item && 'label' in item ? item.label : '';
 
 				return (
 					<p
@@ -810,7 +806,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									9<span className='text-[8px]'>+</span>
 								</>
 							) : (
-								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span> || ''
+								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>
 							)}
 						</span>
 					</div>
@@ -824,7 +820,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			const menuItem = getSiderMenuItem(
 				<div className='flex justify-between'>
-					<span className='pt-[6px]'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
+					<span className='pt-[6px] text-lightBlue dark:text-icon-dark-inactive'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -853,7 +849,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
 							<div className='flex  justify-between'>
-								<span className='pt-1 text-[12px]'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1 text-[12px] text-lightBlue dark:text-icon-dark-inactive'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -878,7 +874,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							<div className='flex justify-between'>
+							<div className='flex justify-between text-lightBlue dark:text-icon-dark-inactive'>
 								<span className='pt-[5px]'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								{!sidebarCollapsed && (
 									<span
@@ -975,7 +971,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								<span className='pt-1'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='pt-1'>
+									{trackName
+										.split(/(?=[A-Z])/)
+										.join(' ')
+										.replace(/\b\w/g, (char) => char.toUpperCase())}
+								</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${
@@ -1140,17 +1141,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	const governanceDropdownContent = (
 		<div className='text-center'>
-			{gov2TrackItems.governanceItems.map((item, index) => {
-				const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
+			{gov2TrackItems?.governanceItems.map((item, index) => {
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item.label === 'string') {
+						formattedLabel = toPascalCase(item?.label);
+					} else if (React.isValidElement(item?.label)) {
+						if (item.label) {
+							formattedLabel = item.label;
+						}
+					}
+				}
 
 				return (
 					<p
 						key={index}
 						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-            			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					${item && 'label' in item ? (isActive(item.key as any) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive') : ''} `}
 					>
 						<Link
-							href={item?.key as string}
+							href={typeof item?.key === 'string' ? item.key : ''}
 							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 						>
 							<span>{formattedLabel}</span>
@@ -1162,17 +1172,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 	);
 
 	// whitelist dropdown
-
 	const whitelistDropdownContent = (
 		<div className='text-left'>
-			{gov2TrackItems.fellowshipItems.map((item, index) => {
-				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+			{gov2TrackItems?.fellowshipItems.map((item, index) => {
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item?.label === 'string') {
+						formattedLabel = toPascalCase(item.label);
+					} else if (React.isValidElement(item.label)) {
+						formattedLabel = item?.label;
+					}
+				}
 
 				return (
 					<p
 						key={index}
 						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-            ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+            		${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
 							href={item?.key as string}
@@ -1229,7 +1245,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				content={whitelistDropdownContent}
 				placement='right'
 				arrow={false}
-				trigger='click' // Popover is triggered on click
+				trigger='click'
 				overlayClassName='z-[1100] w-[180px] '
 			>
 				<Tooltip
@@ -1304,12 +1320,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 		let items = [...gov2TrackItems.treasuryItems];
 
 		if (['polkadot'].includes(network)) {
-			bountiesSubItems.push(getSiderMenuItem(<div className='ml-[2px] flex items-center gap-1.5'>Dashboard</div>, '/bounty', null));
+			bountiesSubItems.push(
+				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+			);
 		}
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center justify-between'>
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
@@ -1331,7 +1349,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					null
 				),
 				getSiderMenuItem(
-					<div className='flex items-center justify-between'>
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Child Bounties
 						<span
 							className={`text-[10px] ${
@@ -1405,21 +1423,36 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const treasuryDropdownContent = (
 		<div className='text-left'>
 			{gov2TrackItems.treasuryItems.map((item, index) => {
-				const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
-				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+				const uniqueKey = item && 'label' in item ? `${item.label}-${index}` : `null-${index}`;
 
+				let formattedLabel;
+				if (item && 'label' in item) {
+					if (typeof item.label === 'string') {
+						formattedLabel = toPascalCase(item.label);
+					} else if (React.isValidElement(item.label)) {
+						formattedLabel = item.label;
+					}
+				}
 				if (item && item.key === 'gov2_bounties_group') {
 					const bountiesPopoverContent = (
 						<div className='w-[150px] pt-2'>
 							{bountiesSubItems.map((subItem, subIndex) => {
 								if (!subItem) return null;
-								const uniqueSubKey = `${subItem.key}-${subIndex}`;
-								let formattedSubLabel = subItem?.key
-									?.toString()
-									.replace(/^\//, '')
-									.split('_')
-									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-									.join(' ');
+								const uniqueSubKey = `${subItem?.key}-${subIndex}`;
+
+								let formattedSubLabel;
+								if (subItem && 'label' in subItem) {
+									if (typeof subItem.label === 'string') {
+										formattedSubLabel = subItem.label
+											?.toString()
+											.replace(/^\//, '')
+											.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ');
+									} else if (React.isValidElement(subItem.label)) {
+										formattedSubLabel = subItem.label;
+									}
+								}
 
 								if (formattedSubLabel === 'Bounty') {
 									formattedSubLabel = 'Dashboard';
@@ -1456,7 +1489,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							>
 								<p
 									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
 									}`}
 								>
 									<span className='flex items-center gap-2 font-medium'>
@@ -1473,8 +1506,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={uniqueKey}
-						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
+							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>
 						<Link href={item?.key as string}>
@@ -1592,7 +1625,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
-		// Insert 'Treasury' in the 3rd position (index 2)
 		gov2Items.concat(
 			getSiderMenuItem(
 				'Treasury',
@@ -1670,8 +1702,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
-
-		// archived dropdown state
 
 		const archivedDropdownContent = (
 			<div className='text-left'>
@@ -1830,9 +1860,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 			collapsible
 			collapsed={sidebarCollapsed}
 			onCollapse={(collapsed) => {
-				setSidebarCollapsed(collapsed);
+				dispatch(GlobalActions.setIsSidebarCollapsed(collapsed));
 			}}
-			style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
+			style={{
+				transform: 'translateX(0px)',
+				transition: 'width 0.3s ease, transform 0.3s ease'
+			}}
 			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
 				sidedrawer && isMobile ? ' min-w-[250px]' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 			} bg-white dark:bg-section-dark-overlay`}
@@ -1856,7 +1889,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<div className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
+									<Link
+										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
+										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
+									>
 										{sidedrawer ? (
 											<Image
 												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
@@ -1867,7 +1903,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										) : (
 											<PaLogo sidedrawer={sidedrawer} />
 										)}
-									</div>
+									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 								</div>
 							</div>
@@ -1949,7 +1985,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												if (username?.length) {
 													router.push(`/user/${username}`);
 												} else {
-													setSidebarCollapsed(true);
+													dispatch(GlobalActions.setIsSidebarCollapsed(true));
 													setSidedrawer(false);
 													setLoginOpen(true);
 												}

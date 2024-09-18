@@ -147,7 +147,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const onOpenChange = (keys: string[]) => {
 		const filteredKeys = keys.filter((key) => key !== '');
 		setOpenKeys(filteredKeys);
-		localStorage.setItem('openKeys', JSON.stringify(filteredKeys));
+
+		if (!sidebarCollapsed) {
+			localStorage.setItem('openKeys', JSON.stringify(filteredKeys));
+		}
 	};
 
 	useEffect(() => {

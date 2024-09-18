@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
-import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, StakingAdminIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
+import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, StakingAdminIcon, TreasuryGroupIcon, WishForChangeIcon } from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import { TabNavigationProps } from './utils/types';
 import Popover from '~src/basic-components/Popover';
@@ -28,6 +28,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		};
 	}, []);
 
+	console.log('Gov2LatestPosts', gov2LatestPosts);
 	const tabItems = [
 		{
 			key: 'all',
@@ -35,9 +36,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 			posts: gov2LatestPosts.length
 		},
 		{
-			key: 'discussions',
-			label: 'Discussions',
-			posts: gov2LatestPosts.filter((post: any) => post.track_no === 'Discussions').length
+			key: 'wish-for-change',
+			label: 'Wish For Change',
+			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length
 		}
 	];
 
@@ -59,7 +60,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 
 	const tabIcons: { [key: string]: JSX.Element } = {
 		all: <OverviewIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		discussion: <DiscussionsIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		'wish-for-change': <WishForChangeIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		// eslint-disable-next-line sort-keys
 		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		governance: <GovernanceGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
@@ -69,7 +70,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 
 	const tabCategories: { [key: string]: string[] } = {
 		All: ['all'],
-		Discussion: ['discussions'],
+		['Wish For Change']: ['wish-for-change'],
 		// eslint-disable-next-line sort-keys
 		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
 		Governance: tabItems.filter((item) => ['lease-admin', 'general-admin', 'referendum-canceller', 'referendum-killer'].includes(item.key)).map((item) => item.key),
@@ -100,7 +101,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 
 	const popoverContent = (
 		<div className='left-2 w-40 pt-1 text-sm text-gray-700 dark:text-gray-200'>
-			<li className='block pb-2 text-lg font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>Tracks</li>
+			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>
 			{['Treasury', 'Whitelist'].map((category) => (
 				<>
 					<Popover
@@ -181,7 +182,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							}`}
 						>
 							<span className='flex items-center'>
-								{tabIcons[category.toLowerCase()]}
+								{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 								<span
 									onClick={() => handleCategoryClick(category)}
 									className='ml-2 whitespace-nowrap'

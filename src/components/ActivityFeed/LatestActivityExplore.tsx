@@ -9,6 +9,7 @@ import { fetchVoterProfileImage, fetchUserProfile } from './utils/utils';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostData } from './utils/types';
 import TabNavigation from './TabNavigation';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 interface LatestActivityExploreProps {
 	currentUserdata?: any;
@@ -16,7 +17,7 @@ interface LatestActivityExploreProps {
 
 const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUserdata }) => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
-	const [postData, setPostData] = useState<IPostData[]>([]);
+	const [postData, setPostData] = useState<any[]>([]);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
@@ -24,14 +25,9 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-
-			// Fetch the post details from the API
 			const { data: responseData } = await nextApiClientFetch<any>(`/api/v1/activity-feed/explore-posts?network=${network}`);
 
-			// Ensure the response contains an array of posts
 			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-
-			// Process each post in parallel
 			const detailedPosts = await Promise.all(
 				posts.map(async (post: any) => {
 					try {
@@ -73,16 +69,22 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 		currentTab === 'all'
 			? postData
 			: postData.filter((post) => {
-					const formattedTrackName = post.trackName
-						?.replace(/([a-z])([A-Z])/g, '$1-$2') // Convert camelCase to hyphen-separated
-						.replace(/_/g, '-') // Replace underscores with hyphens if any
-						.toLowerCase(); // Ensure it's lowercase
+					const trackName = Object.keys(networkTrackInfo[network] || {}).find((key) => networkTrackInfo[network][key].trackId === post?.track_no);
+
+					const formattedTrackName = trackName
+						?.replace(/([a-z])([A-Z])/g, '$1-$2')
+						.replace(/_/g, '-')
+						.toLowerCase();
 
 					return formattedTrackName === currentTab;
 			  });
 
 	if (error) {
-		return <div className='text-red-500'>{error}</div>;
+		return (
+			<div className='flex items-center justify-center py-4'>
+				<div className='text-lg text-red-500'>⚠️ An error occurred: {error}. Please try again later.</div>
+			</div>
+		);
 	}
 
 	return (

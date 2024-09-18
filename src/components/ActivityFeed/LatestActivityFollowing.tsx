@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -14,7 +14,6 @@ import PostList from './PostList';
 import { IPostData } from './utils/types';
 import Image from 'next/image';
 
-// Login button component
 const LoginButton = ({ onClick }: { onClick: () => void }) => (
 	<p
 		onClick={onClick}
@@ -24,7 +23,6 @@ const LoginButton = ({ onClick }: { onClick: () => void }) => (
 	</p>
 );
 
-// Signup button component
 const SignupButton = ({ onClick }: { onClick: () => void }) => (
 	<p
 		onClick={onClick}
@@ -46,6 +44,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [loading, setLoading] = useState<boolean>(false); // Loading state
 	const { network } = useNetworkSelector();
+	const { is_sidebar_collapsed } = useGlobalSelector();
 
 	useEffect(() => {
 		const fetchPostUpdates = async () => {
@@ -106,14 +105,14 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					<LoadingOutlined style={{ color: '#E5007A', fontSize: '18px' }} />
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
-				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl '>
+				<div>
 					<TabNavigation
 						currentTab={currentTab}
 						setCurrentTab={setCurrentTab}
 						gov2LatestPosts={subscribedPosts}
 						network={network}
 					/>
-					<div className='px-2'>
+					<div>
 						<PostList
 							postData={filteredPosts}
 							currentUserdata={currentuser}
@@ -121,7 +120,11 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					</div>
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (
-				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white'>
+				<div
+					className={`flex h-[900px]  ${
+						is_sidebar_collapsed ? 'w-[900px]' : 'w-[790px]'
+					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
+				>
 					<Image
 						src='/assets/icons/noactivity.svg'
 						alt='empty state'
@@ -130,13 +133,20 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						height={320}
 					/>
 					<p className='p-0 text-xl font-bold'>No Activity Found</p>
-					<p className='p-0 text-center text-[#243A57]'>
+					<p
+						className='p-0 text-center text-[#243A57] dark:text-white'
+						style={{ lineHeight: '1.8' }}
+					>
 						Follow or Subscribe to people and posts to view personalized <br />
-						content on your feed!
+						content on your <span className='rounded-md bg-[#fee814] p-1 text-black shadow'>feed</span>!
 					</p>
 				</div>
 			) : (
-				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white text-[#243A57]'>
+				<div
+					className={`flex h-[900px]  ${
+						is_sidebar_collapsed ? 'w-[900px]' : 'w-[790px]'
+					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
+				>
 					<Image
 						src='/assets/icons/nologin.svg'
 						alt='empty state'
@@ -144,8 +154,8 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						width={320}
 						height={320}
 					/>
-					<p className='p-0 text-xl font-bold'>Join Polkassembly to see your Following tab!</p>
-					<p className='p-0 text-center text-[#243A57]'>Discuss, contribute and get regular updates from Polkassembly.</p>
+					<p className='p-0 text-xl font-bold  dark:text-white'>Join Polkassembly to see your Following tab!</p>
+					<p className='p-0 text-center text-[#243A57]  dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
 					<LoginButton onClick={() => setLoginOpen(true)} />
 					<SignupButton onClick={() => setSignupOpen(true)} />
 				</div>

@@ -42,7 +42,7 @@ import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { BN } from 'bn.js';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { useGlobalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -387,7 +387,6 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	}, [currentTokenPrice, network]);
 	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
 	const [userRank, setUserRank] = useState<number | 0>(0);
-	const { is_sidebar_collapsed } = useGlobalSelector();
 
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
@@ -508,7 +507,9 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 			<div className=' w-full font-poppins  '>
 				<div className='mt-3 flex w-full items-center justify-between'>
 					<div className='flex h-12 gap-5'>
-						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
+						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+							Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
+						</h1>
 						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px] dark:bg-white  dark:bg-opacity-[12%]'>
 							<p
 								onClick={() => setActiveTab('explore')}
@@ -591,7 +592,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 										height={340}
 									/>
 
-									<div className={`absolute ${is_sidebar_collapsed ? '-bottom-2' : '-bottom-4'} left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]`}>
+									<div className='absolute -bottom-2 left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]'>
 										<Image
 											src={theme == 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
 											className='max-h-[100px] w-full '

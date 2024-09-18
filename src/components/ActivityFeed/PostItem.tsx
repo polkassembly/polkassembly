@@ -6,8 +6,9 @@ import Markdown from '~src/ui-components/Markdown';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
 import Image from 'next/image';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { MessageType } from '~src/auth/types';
 
-// Constants
 const ANONYMOUS_FALLBACK = 'Anonymous';
 const GENERAL_TOPIC_FALLBACK = 'General';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
@@ -30,13 +31,11 @@ const getStatusStyle = (status: string) => {
 };
 
 const formatDate = (dateString: string) => {
-	// Use a utility function to format the date
 	return new Date(dateString).toLocaleDateString();
 };
 
 const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
-
 	const isExpanded = expandedPostId === post.post_id;
 
 	const toggleExpandPost = (postId: number) => {
@@ -45,12 +44,10 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
 
-	// Extract post reactions
-	const { '👍': likes = { count: 0, usernames: [] }, '👎': dislikes = { count: 0 } } = post?.post_reactions || {};
+	const { '👍': likes = { count: 0, userIds: [], usernames: [] }, '👎': dislikes = { count: 0, userIds: [], usernames: [] } } = post?.post_reactions || {};
 
-	// Post content and its state
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
-	const truncatedContent = fullContent.substring(0, 200); // Adjust the truncate logic as needed
+	const truncatedContent = fullContent.substring(0, 200);
 	const shouldShowReadMore = fullContent.length > truncatedContent.length;
 	const postContent = isExpanded ? fullContent : truncatedContent;
 
@@ -72,13 +69,17 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				toggleExpandPost={() => toggleExpandPost(post.post_id)}
 				isExpanded={isExpanded}
 			/>
+
 			<PostReactions
 				likes={likes}
 				dislikes={dislikes}
 				post={post}
 			/>
 			<div className='border-t-[0.01px]  border-solid border-[#D2D8E0]'></div>
-			<PostActions />
+			<PostActions
+				post={post}
+				currentUserdata={currentUserdata}
+			/>
 			<PostCommentSection currentUserdata={currentUserdata} />
 		</div>
 	);
@@ -163,76 +164,162 @@ const PostContent: React.FC<{
 
 const PostReactions: React.FC<{
 	likes: { count: number; usernames: string[] };
-	dislikes: { count: number };
+	dislikes: { count: number; usernames: string[] };
 	post: any;
-}> = ({ likes, dislikes, post }) => (
-	<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
-		<div>
-			{likes?.usernames?.length > 0 && (
-				<div className='flex items-center'>
-					<Image
-						src={post.firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-						alt='Voter Profile'
-						className='h-5 w-5 rounded-full'
-						width={20}
-						height={20}
-					/>
-					<p className='ml-2 pt-3'>{likes?.count === 1 ? `${likes.usernames[0]} has liked this post` : `${likes?.usernames[0]} & ${likes.count - 1} others liked this post`}</p>
-				</div>
-			)}
-		</div>
-		<div className='flex gap-3'>
-			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{dislikes.count} dislikes</p>
-			<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-			<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{post?.comments_count || 0} Comments</p>
-		</div>
-	</div>
-);
+}> = ({ likes, dislikes, post }) => {
+	const { firstVoterProfileImg, comments_count } = post;
 
-const PostActions: React.FC = () => (
-	<div className='mt-1 flex items-center space-x-4'>
-		<PostAction
-			icon={
-				<ImageIcon
-					src='/assets/icons/like-pink.svg'
-					alt='like icon'
-					className='h-5 w-5'
-				/>
+	return (
+		<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
+			{/* Likes Section */}
+			<div>
+				{likes.count > 0 && likes?.usernames?.length > 0 && (
+					<div className='flex items-center'>
+						{/* Profile Image of the first user who liked */}
+						<Image
+							src={firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							alt='Voter Profile'
+							className='h-5 w-5 rounded-full'
+							width={20}
+							height={20}
+						/>
+						<p className='ml-2 pt-3'>
+							{likes?.count === 1 ? `${likes?.usernames?.[0]} has liked this post` : `${likes?.usernames?.[0]} & ${likes?.count - 1} others liked this post`}
+						</p>
+					</div>
+				)}
+			</div>
+
+			<div className='flex items-center gap-3'>
+				<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{dislikes.count} dislikes</p>
+				<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
+				<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{comments_count || 0} Comments</p>
+			</div>
+		</div>
+	);
+};
+
+const PostActions: React.FC<{
+	post: any;
+	currentUserdata: any;
+}> = ({ post, currentUserdata }) => {
+	const { post_id, type, track_no } = post;
+	const userid = currentUserdata?.user_id;
+	const [reactionState, setReactionState] = useState({
+		dislikesCount: post?.dislikes?.count || 0,
+		likesCount: post?.likes?.count || 0,
+		userDisliked: post?.dislikes?.usernames?.includes(currentUserdata?.username) || false,
+		userLiked: post?.likes?.usernames?.includes(currentUserdata?.username) || false
+	});
+
+	const handleReactionClick = async (reaction: '👍' | '👎') => {
+		if (!userid) {
+			console.log('User is not logged in');
+			return;
+		}
+
+		const isLiked = reaction === '👍' && reactionState.userLiked;
+		const isDisliked = reaction === '👎' && reactionState.userDisliked;
+		const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
+		const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+			postId: post_id,
+			postType: type,
+			reaction,
+			replyId: null,
+			setReplyReaction: false,
+			trackNumber: track_no,
+			userId: userid
+		});
+
+		if (error || !data) {
+			console.error('Error updating reaction', error);
+			return;
+		}
+		setReactionState((prevState) => {
+			if (reaction === '👍') {
+				return {
+					...prevState,
+					dislikesCount: isLiked ? prevState.dislikesCount : prevState.dislikesCount - (prevState.userDisliked ? 1 : 0),
+					likesCount: isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1,
+					userDisliked: isLiked ? prevState.userDisliked : false,
+					userLiked: !isLiked
+				};
+			} else if (reaction === '👎') {
+				return {
+					...prevState,
+					dislikesCount: isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1,
+					likesCount: isDisliked ? prevState.likesCount : prevState.likesCount - (prevState.userLiked ? 1 : 0),
+					userDisliked: !isDisliked,
+					userLiked: isDisliked ? prevState.userLiked : false
+				};
 			}
-			label={LIKE_LABEL}
-		/>
-		<PostAction
-			icon={
-				<ImageIcon
-					src='/assets/icons/dislike-pink.svg'
-					alt='like icon'
-					className='h-5 w-5'
+			return prevState;
+		});
+	};
+
+	return (
+		<div className='mt-1 flex items-center space-x-4'>
+			<div
+				className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userLiked && 'bg-pink-50'} gap-2`}
+				onClick={() => handleReactionClick('👍')}
+			>
+				<PostAction
+					icon={
+						<ImageIcon
+							src='/assets/icons/like-pink.svg'
+							alt='like icon'
+							className='h-5 w-5'
+						/>
+					}
+					label={reactionState.userLiked ? 'Liked' : LIKE_LABEL}
 				/>
-			}
-			label={DISLIKE_LABEL}
-		/>
-		<PostAction
-			icon={
-				<ImageIcon
-					src='/assets/icons/share-pink.svg'
-					alt='like icon'
-					className='h-5 w-5'
+			</div>
+
+			<div
+				className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userDisliked && 'bg-pink-50'} gap-2`}
+				onClick={() => handleReactionClick('👎')}
+			>
+				<PostAction
+					icon={
+						<ImageIcon
+							src='/assets/icons/dislike-pink.svg'
+							alt='dislike icon'
+							className={'h-5 w-5'}
+						/>
+					}
+					label={reactionState.userDisliked ? 'Disliked' : DISLIKE_LABEL}
 				/>
-			}
-			label='Share'
-		/>
-		<PostAction
-			icon={
-				<ImageIcon
-					src='/assets/icons/comment-pink.svg'
-					alt='like icon'
-					className='h-5 w-5'
+			</div>
+
+			<Link
+				target='_blank'
+				href={'https://twitter.com/'}
+			>
+				<PostAction
+					icon={
+						<ImageIcon
+							src='/assets/icons/share-pink.svg'
+							alt='share icon'
+							className='h-5 w-5'
+						/>
+					}
+					label='Share'
 				/>
-			}
-			label={COMMENT_LABEL}
-		/>
-	</div>
-);
+			</Link>
+
+			<PostAction
+				icon={
+					<ImageIcon
+						src='/assets/icons/comment-pink.svg'
+						alt='comment icon'
+						className='h-5 w-5'
+					/>
+				}
+				label={COMMENT_LABEL}
+			/>
+		</div>
+	);
+};
 
 const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, label }) => (
 	<div className='flex items-center gap-2'>

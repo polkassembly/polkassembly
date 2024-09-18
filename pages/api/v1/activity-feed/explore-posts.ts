@@ -19,7 +19,6 @@ import { getProposerAddressFromFirestorePostData, IPostListing } from '../listin
 import { getTimeline } from '~src/util/getTimeline';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const updateNonVotedProposals = (proposals: IPostListing[]) => {
 	//sort by votes Count
@@ -85,12 +84,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		const allPromises = subsquidData.map(async (subsquidPost: any) => {
 			const { createdAt, end, hash, index: postId, type, proposer, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } = subsquidPost;
-			let trackName = '';
-			for (const key of Object.keys(networkTrackInfo[network])) {
-				if (networkTrackInfo[network][key].trackId == trackNumber && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
-					trackName = key;
-				}
-			}
+
 			const totalVotesSubsquidRes = await fetchSubsquid({
 				network,
 				query: GET_TOTAL_VOTE_COUNT_ON_PROPOSAL,
@@ -197,11 +191,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(postId));
 			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 			const reactions = getReactions(post_reactionsQuerySnapshot);
-			const post_reactions = {
-				'👍': reactions['👍']?.count || 0,
-				'👎': reactions['👎']?.count || 0
-			};
-
+			const post_reactions = reactions;
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 			const postDoc = await postDocRef.get();
@@ -221,10 +211,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 					const reactions = getReactions(post_reactionsQuerySnapshot);
-					const post_reactions = {
-						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0
-					};
+					const post_reactions = reactions;
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
@@ -265,10 +252,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							  }
 							: topicFromType,
 						totalVotes: totalVotes || 0,
-						trackName: trackName,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
-						type: type || ProposalType.REFERENDUM_V2,
-						user_id: data?.user_id || 1
+						type: type || ProposalType.REFERENDUM_V2
 					};
 				}
 			}
@@ -302,10 +287,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
 				totalVotes: totalVotes || 0,
-				trackName: trackName,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
-				type: type,
-				user_id: 1
+				type: type
 			};
 		});
 

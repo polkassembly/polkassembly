@@ -32,24 +32,27 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		{
 			key: 'all',
 			label: 'All',
-			posts: gov2LatestPosts.filter((post: any) => post.trackName).length
+			posts: gov2LatestPosts.length
 		},
 		{
 			key: 'discussions',
 			label: 'Discussions',
-			posts: gov2LatestPosts.filter((post: any) => post.trackName === 'Discussions').length
+			posts: gov2LatestPosts.filter((post: any) => post.track_no === 'Discussions').length
 		}
 	];
 
 	if (network && networkTrackInfo[network]) {
 		Object.keys(networkTrackInfo[network]).forEach((trackName) => {
+			const trackId = networkTrackInfo[network][trackName].trackId;
+			const postsCount = gov2LatestPosts.filter((post: any) => post.track_no === trackId).length;
+
 			tabItems.push({
 				key: trackName
 					.split(/(?=[A-Z])/)
 					.join('-')
 					.toLowerCase(),
 				label: trackName.split(/(?=[A-Z])/).join(' '),
-				posts: gov2LatestPosts.filter((post: any) => post.trackName === trackName).length
+				posts: postsCount
 			});
 		});
 	}
@@ -138,8 +141,19 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						>
 							<span className='flex items-center'>
 								{tabIcons[category.toLowerCase()]}
-								<span className='ml-2'>
-									{category} ({tabItems.find((item) => tabCategories[category].includes(item.key))?.posts || 0})
+								<span
+									onClick={() => handleCategoryClick(category)}
+									className='ml-2 whitespace-nowrap'
+								>
+									{category}
+									<span className='ml-1'>
+										(
+										{tabCategories[category].reduce((totalPosts, currentKey) => {
+											const item = tabItems.find((item) => item.key === currentKey);
+											return totalPosts + (item?.posts || 0);
+										}, 0)}
+										)
+									</span>
 								</span>
 							</span>
 						</p>
@@ -172,7 +186,15 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 									onClick={() => handleCategoryClick(category)}
 									className='ml-2 whitespace-nowrap'
 								>
-									{category} <span className='ml-1'>({tabItems.find((item) => tabCategories[category].includes(item.key))?.posts || 0})</span>
+									{category}
+									<span className='ml-1'>
+										(
+										{tabCategories[category].reduce((totalPosts, currentKey) => {
+											const item = tabItems.find((item) => item.key === currentKey);
+											return totalPosts + (item?.posts || 0);
+										}, 0)}
+										)
+									</span>
 								</span>
 							</span>
 						</p>
@@ -277,8 +299,19 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							>
 								<span className='flex items-center'>
 									{tabIcons[category.toLowerCase()]}
-									<span className='ml-2 whitespace-nowrap'>
-										{category} <span className='ml-1'>({tabItems.find((item) => tabCategories[category].includes(item.key))?.posts || 0})</span>
+									<span
+										onClick={() => handleCategoryClick(category)}
+										className='ml-2 whitespace-nowrap'
+									>
+										{category}
+										<span className='ml-1'>
+											(
+											{tabCategories[category].reduce((totalPosts, currentKey) => {
+												const item = tabItems.find((item) => item.key === currentKey);
+												return totalPosts + (item?.posts || 0);
+											}, 0)}
+											)
+										</span>
 									</span>
 								</span>
 							</p>

@@ -21,7 +21,6 @@ import { getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getProposerAddressFromFirestorePostData, IPostListing } from '../listing/on-chain-posts';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
-import { getOffChainPost } from '../posts/off-chain-post';
 
 interface ISubscribedPost {
 	network: string;
@@ -44,28 +43,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	try {
 		const userRef = await firestore_db.collection('users').doc(String(userId)).get();
 		const userData = userRef?.data();
-		const allSubscribedPostsAccToNetwork = userData?.subscribed_posts?.length ? userData?.subscribed_posts?.filter((post: ISubscribedPost) => post?.network === network) : [];
+
+		const allSubscribedPostsAccToNetwork = userData?.subscribed_posts?.length ? userData?.subscribed_posts?.filter((post: ISubscribedPost) => post?.network == network) : [];
+
 		const allOpenGovReferendumIndexes: number[] = [];
-		const allOffChainPosts: IPostListing[] = [];
-
-		for (const post of allSubscribedPostsAccToNetwork) {
-			if (post?.post_type === ProposalType.REFERENDUM_V2) {
+		allSubscribedPostsAccToNetwork.map((post: ISubscribedPost) => {
+			if (post?.post_type == ProposalType.REFERENDUM_V2) {
 				allOpenGovReferendumIndexes.push(post?.post_id);
-			} else if (post?.post_type === ProposalType.DISCUSSIONS) {
-				const offChainPostsRes = await getOffChainPost({
-					network,
-					postId: post.post_id,
-					proposalType: post?.post_type as ProposalType
-				});
-
-				const offChainPosts = offChainPostsRes?.data ? [offChainPostsRes.data] : [];
-				const processedOffChainPosts = offChainPosts.map((offChainPost: any) => ({
-					...offChainPost,
-					trackName: 'Discussions'
-				}));
-				allOffChainPosts.push(...processedOffChainPosts);
 			}
-		}
+		});
 
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -177,10 +163,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(postId));
 			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 			const reactions = getReactions(post_reactionsQuerySnapshot);
-			const post_reactions = {
-				'👍': reactions['👍']?.count || 0,
-				'👎': reactions['👎']?.count || 0
-			};
+			const post_reactions = reactions;
 
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
@@ -201,10 +184,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 					const reactions = getReactions(post_reactionsQuerySnapshot);
-					const post_reactions = {
-						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0
-					};
+					const post_reactions = reactions;
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
@@ -245,8 +225,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							  }
 							: topicFromType,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
-						type: type || ProposalType.REFERENDUM_V2,
-						user_id: data?.user_id || 1
+						type: type || ProposalType.REFERENDUM_V2
 					};
 				}
 			}
@@ -280,20 +259,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
-				type: type,
-				user_id: 1
+				type: type
 			};
 		});
 
 		const resolvedPromises = await Promise.allSettled(allPromises);
 
-		const onChainResults: IPostListing[] = [];
+		const results: IPostListing[] = [];
 		resolvedPromises?.map((promise) => {
 			if (promise.status == 'fulfilled') {
-				onChainResults.push(promise.value);
+				results.push(promise.value);
 			}
 		});
-		const results = [...onChainResults, ...allOffChainPosts];
 
 		return res.status(200).json({ data: results });
 	} catch (err) {

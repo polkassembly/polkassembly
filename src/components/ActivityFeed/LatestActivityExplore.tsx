@@ -4,11 +4,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
-import TabNavigation from './TabNavigation';
 import PostList from './PostList';
 import { fetchVoterProfileImage, fetchUserProfile } from './utils/utils';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostData } from './utils/types';
+import TabNavigation from './TabNavigation';
 
 interface LatestActivityExploreProps {
 	currentUserdata?: any;

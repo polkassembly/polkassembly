@@ -4,10 +4,13 @@
 import React from 'react';
 import PostItem from './PostItem';
 import { PostListProps } from './utils/types';
+import { useGlobalSelector } from '~src/redux/selectors';
 
 const PostList: React.FC<PostListProps> = ({ postData, currentUserdata }) => {
+	const { is_sidebar_collapsed } = useGlobalSelector();
+
 	return (
-		<div className='w-[915px] space-y-4'>
+		<div className={` ${is_sidebar_collapsed ? 'w-[915px]' : 'w-[800px]'} space-y-4`}>
 			{postData.length === 0 ? (
 				<p>No posts available</p>
 			) : (

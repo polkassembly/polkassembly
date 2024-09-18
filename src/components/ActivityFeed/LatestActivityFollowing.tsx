@@ -33,6 +33,7 @@ const SignupButton = ({ onClick }: { onClick: () => void }) => (
 		Sign Up
 	</p>
 );
+
 interface LatestActivityFollowingProps {
 	currentUserdata?: any;
 }
@@ -43,13 +44,13 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const [subscribedPosts, setSubscribedPosts] = useState<IPostData[]>([]);
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false); // Loading state
 	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		const fetchPostUpdates = async () => {
 			try {
-				setLoading(true);
+				setLoading(true); // Start loading
 				const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
 				const posts = Array.isArray(responseData?.data) ? responseData.data : [];
 				const detailedPosts = await Promise.all(
@@ -97,10 +98,14 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 			  });
 
 	console.log('subscribedPosts', subscribedPosts);
+
 	return (
 		<div className=''>
-			{currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
-				// Condition 1: User is logged in and there are filtered posts
+			{loading ? (
+				<div className='flex h-[10px] w-[900px] items-center justify-center'>
+					<LoadingOutlined style={{ color: '#E5007A', fontSize: '18px' }} />
+				</div>
+			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
 				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl '>
 					<TabNavigation
 						currentTab={currentTab}
@@ -108,22 +113,14 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						gov2LatestPosts={subscribedPosts}
 						network={network}
 					/>
-
-					{loading ? (
-						<div className='flex min-h-[50px] w-full items-center justify-center'>
-							<LoadingOutlined />
-						</div>
-					) : (
-						<div className='px-2'>
-							<PostList
-								postData={filteredPosts}
-								currentUserdata={currentuser}
-							/>
-						</div>
-					)}
+					<div className='px-2'>
+						<PostList
+							postData={filteredPosts}
+							currentUserdata={currentuser}
+						/>
+					</div>
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (
-				// Condition 2: User is logged in but no filtered posts
 				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white'>
 					<Image
 						src='/assets/icons/noactivity.svg'
@@ -134,12 +131,11 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					/>
 					<p className='p-0 text-xl font-bold'>No Activity Found</p>
 					<p className='p-0 text-center text-[#243A57]'>
-						Follow or Subscribe, to people and posts to view personalised <br />
+						Follow or Subscribe to people and posts to view personalized <br />
 						content on your feed!
 					</p>
 				</div>
 			) : (
-				// Condition 3: User is not logged in
 				<div className='flex h-[900px] w-[900px] flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white text-[#243A57]'>
 					<Image
 						src='/assets/icons/nologin.svg'

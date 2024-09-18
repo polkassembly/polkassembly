@@ -7,7 +7,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import PostList from './PostList';
 import { fetchVoterProfileImage, fetchUserProfile } from './utils/utils';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IPostData } from './utils/types';
 import TabNavigation from './TabNavigation';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 

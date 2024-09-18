@@ -92,6 +92,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		(checkedTrack == null && !checkedList?.length);
 
 	useEffect(() => {
+		console.log('heee');
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,

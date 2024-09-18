@@ -42,7 +42,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	return (
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
-				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</span>
+				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Dashboard</span>
 				<BountyProposalActionButton className='hidden md:block' />
 			</div>
 			<BountiesHeader />

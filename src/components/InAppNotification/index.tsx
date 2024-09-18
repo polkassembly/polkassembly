@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -22,8 +22,16 @@ import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { GlobalActions } from '~src/redux/global';
 
-const InAppNotification = ({ className }: { className?: string }) => {
+interface INotificationProps {
+	className?: string;
+	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const InAppNotification: FC<INotificationProps> = (props) => {
+	const { className, setSidedrawer } = props;
+
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
@@ -152,9 +160,25 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		<div className='mr-1'>
 			{userId ? (
 				<Popover
-					onOpenChange={(open: boolean) => setOpen(open)}
+					onOpenChange={(open: boolean) => {
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
+						setOpen(open);
+					}}
 					open={open}
-					content={<NotificationsContent closePopover={(open: boolean) => setOpen(!open)} />}
+					content={
+						<NotificationsContent
+							closePopover={(open: boolean) => {
+								if (isMobile) {
+									dispatch(GlobalActions.setIsSidebarCollapsed(true));
+									setSidedrawer(false);
+								}
+								setOpen(!open);
+							}}
+						/>
+					}
 					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}
 					trigger={'click'}
 					className={classNames(className, '')}
@@ -179,7 +203,13 @@ const InAppNotification = ({ className }: { className?: string }) => {
 			) : (
 				<div
 					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
-					onClick={() => setOpenLoginPrompt(!openLoginPrompt)}
+					onClick={() => {
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
+						setOpenLoginPrompt(!openLoginPrompt);
+					}}
 				>
 					<Image
 						src={'/assets/icons/notification-bell-default.svg'}
@@ -198,9 +228,9 @@ const InAppNotification = ({ className }: { className?: string }) => {
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
-				image='/assets/referenda-endorse.png'
+				image='/assets/Gifs/login-endorse.gif'
 				title='Join Polkassembly to start using notifications.'
-				subtitle='Please login to use polkassembly notifications.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</div>
 	);

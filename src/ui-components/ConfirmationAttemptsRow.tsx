@@ -5,10 +5,8 @@
 import { Space } from 'antd';
 import { ITimelineData } from '~src/context/PostDataContext';
 import HelperTooltip from './HelperTooltip';
-import { useTheme } from 'next-themes';
 
 const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] }) => {
-	const { resolvedTheme: theme } = useTheme();
 	const confirmationAttempts: number =
 		timeline?.filter((timelineObj) => timelineObj.type === 'ReferendumV2')?.[0]?.statuses?.filter((statusObj: any) => statusObj.status === 'ConfirmStarted')?.length || 0;
 
@@ -23,7 +21,6 @@ const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] 
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{confirmationAttempts}</span>
 							<HelperTooltip
 								placement={'topLeft'}
-								className={`${theme == 'dark' ? 'dark-icons' : 'text-lightBlue'} text-xs`}
 								text={<span className='text-xs'>Number of times proposal entered confirmation period as both support & approval were greater than threshold</span>}
 							/>
 						</Space>

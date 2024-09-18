@@ -341,8 +341,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				let args = subsquidPost?.preimage?.proposedCall?.args;
 
 				if (args) {
-					if (args?.assetKind?.assetId?.value?.interior || args?.assetKind?.assetId?.interior?.value) {
-						const call = args?.assetKind?.assetId?.value?.interior?.value || args?.assetKind?.assetId?.interior?.value;
+					if (
+						args?.assetKind?.assetId?.value?.interior ||
+						args?.assetKind?.assetId?.interior?.value ||
+						args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
+					) {
+						const call =
+							args?.assetKind?.assetId?.value?.interior?.value ||
+							args?.assetKind?.assetId?.interior?.value ||
+							args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 					}
 
@@ -351,10 +358,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						requested = args.amount;
 					} else {
 						const calls = args.calls;
+
 						if (calls && Array.isArray(calls) && calls.length > 0) {
 							calls.forEach((call) => {
 								if (call && call.amount) {
 									requested += BigInt(call.amount);
+								}
+								if (call && call?.value?.amount) {
+									requested += BigInt(call?.value?.amount);
 								}
 							});
 						}
@@ -938,8 +949,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					let assetId: null | string = null;
 
 					if (args) {
-						if (args?.assetKind?.assetId?.value?.interior || args?.assetKind?.assetId?.interior?.value) {
-							const call = args?.assetKind?.assetId?.value?.interior?.value || args?.assetKind?.assetId?.interior?.value;
+						if (
+							args?.assetKind?.assetId?.value?.interior ||
+							args?.assetKind?.assetId?.interior?.value ||
+							args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
+						) {
+							const call =
+								args?.assetKind?.assetId?.value?.interior?.value ||
+								args?.assetKind?.assetId?.interior?.value ||
+								args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 						}
 
@@ -957,6 +975,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 										requested += BigInt(call.amount);
 										if (call.beneficiary && !beneficiaries.includes(call.beneficiary)) {
 											beneficiaries.push(call.beneficiary);
+										}
+										if (call && call?.value?.amount) {
+											requested += BigInt(call?.value?.amount);
 										}
 									}
 								});

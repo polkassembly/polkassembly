@@ -147,20 +147,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const onOpenChange = (keys: string[]) => {
 		const filteredKeys = keys.filter((key) => key !== '');
 		setOpenKeys(filteredKeys);
-		sessionStorage.setItem('openKeys', JSON.stringify(filteredKeys));
+		localStorage.setItem('openKeys', JSON.stringify(filteredKeys));
 	};
 
 	useEffect(() => {
 		if (sidebarCollapsed) {
 			setOpenKeys([]);
 		} else {
-			const storedKeys = JSON.parse(sessionStorage.getItem('openKeys') || '[]');
+			const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
 			setOpenKeys(storedKeys);
 		}
 	}, [sidebarCollapsed]);
 
 	useEffect(() => {
-		const storedKeys = JSON.parse(sessionStorage.getItem('openKeys') || '[]');
+		const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
 		setOpenKeys(storedKeys);
 	}, []);
 

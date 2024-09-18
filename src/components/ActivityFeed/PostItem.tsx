@@ -8,6 +8,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
 const GENERAL_TOPIC_FALLBACK = 'General';
@@ -211,10 +213,12 @@ const PostActions: React.FC<{
 		userDisliked: post?.dislikes?.usernames?.includes(currentUserdata?.username) || false,
 		userLiked: post?.likes?.usernames?.includes(currentUserdata?.username) || false
 	});
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
 	const handleReactionClick = async (reaction: '👍' | '👎') => {
-		if (!userid) {
-			console.log('User is not logged in');
+		if (!currentUserdata && !userid) {
+			setLoginOpen(true);
 			return;
 		}
 
@@ -316,6 +320,18 @@ const PostActions: React.FC<{
 					/>
 				}
 				label={COMMENT_LABEL}
+			/>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
 			/>
 		</div>
 	);

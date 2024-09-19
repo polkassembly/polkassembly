@@ -87,16 +87,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const handleStatusCounts = (data: ITrackDataType[]) => {
 		let receivedDelegationStatusCount = 0;
 		let undelegatedStatusCount = 0;
+		let delegated = 0;
 		for (const item of data) {
 			if (item.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
 				receivedDelegationStatusCount += 1;
 			} else if (item.status?.includes(ETrackDelegationStatus.UNDELEGATED)) {
 				undelegatedStatusCount += 1;
+			} else if (item.status?.includes(ETrackDelegationStatus.DELEGATED)) {
+				delegated += 1;
 			}
 		}
 		setStatusCounts({
 			all: data?.length || 0,
-			delegated: data?.length - (receivedDelegationStatusCount + undelegatedStatusCount),
+			delegated: delegated,
 			received_delegation: receivedDelegationStatusCount,
 			undelegated: undelegatedStatusCount
 		});
@@ -129,6 +132,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					trackNo: track?.track
 				};
 			});
+			console.log('rows', rows);
 
 			setData(rows);
 			setRowsData(rows);

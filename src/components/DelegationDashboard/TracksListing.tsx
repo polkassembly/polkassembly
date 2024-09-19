@@ -132,8 +132,6 @@ const DashboardTrackListing = ({ className }: Props) => {
 					trackNo: track?.track
 				};
 			});
-			console.log('rows', rows);
-
 			setData(rows);
 			setRowsData(rows);
 			handleStatusCounts(rows);

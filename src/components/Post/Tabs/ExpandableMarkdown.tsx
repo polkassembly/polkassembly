@@ -11,21 +11,21 @@ interface ExpandableMarkdownProps {
 }
 
 const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) => {
-	const [visibleEnd, setVisibleEnd] = useState(3200); // Show first 1000 characters initially
+	const [visibleEnd, setVisibleEnd] = useState(1000); // Show first 1000 characters initially
 	const [isExpanded, setIsExpanded] = useState(false); // To track if content is expanded
-	const chunkSize = 3200;
+	const chunkSize = 1000;
 
 	const handleShowMore = () => {
 		const newVisibleEnd = Math.min(visibleEnd + chunkSize, md.length);
 		setVisibleEnd(newVisibleEnd);
 		if (newVisibleEnd === md.length) {
-			setIsExpanded(true); // Content is fully expanded
+			setIsExpanded(true);
 		}
 	};
 
 	const handleShowLess = () => {
-		setVisibleEnd(chunkSize); // Reset to initial 1000 characters
-		setIsExpanded(false); // Content is collapsed
+		setVisibleEnd(chunkSize);
+		setIsExpanded(false);
 		// Scroll to top
 		window.scrollTo({
 			behavior: 'smooth',
@@ -42,20 +42,20 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 				theme={theme}
 			/>
 			{visibleEnd < md.length && !isExpanded && (
-				<div className='flex w-full justify-center'>
+				<div className='flex w-full justify-start'>
 					<Button
 						onClick={handleShowMore}
-						className='mt-2 flex h-[30px] w-[120px] items-center justify-center rounded-2xl border-none bg-transparent text-center text-xs text-pink_primary shadow-lg'
+						className='my-1 flex h-[30px] w-[120px] items-center justify-start border-none bg-transparent p-0 text-center text-xs text-pink_primary'
 					>
 						Show More
 					</Button>
 				</div>
 			)}
 			{isExpanded && (
-				<div className='flex w-full justify-center'>
+				<div className='flex w-full justify-start'>
 					<button
 						onClick={handleShowLess}
-						className='mb-2 flex h-[30px] w-[120px] items-center justify-center rounded-2xl border-none bg-transparent text-center text-xs text-pink_primary shadow-lg'
+						className='mb-2 flex h-[30px] w-[120px] items-center justify-start border-none bg-transparent p-0 text-center text-xs text-pink_primary'
 					>
 						Show Less
 					</button>

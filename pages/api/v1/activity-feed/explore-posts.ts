@@ -296,8 +296,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				topic: topicFromType,
 				totalVotes: totalVotes || 0,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
-				type: type,
-				user_id: 1
+				type: type
 			};
 		});
 
@@ -313,7 +312,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const nonVotedProposals = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(Number(data?.post_id))) : results;
 		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
 
-		const combineProposals = [...updatedNonVotedProposals, ...votedProposals];
+		const combineProposals = [
+			...updatedNonVotedProposals,
+			...(votedProposals || []).map((proposal) => {
+				return { ...proposal, isVoted: true };
+			})
+		];
 		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
 		console.error('Error fetching subscribed posts:', err);

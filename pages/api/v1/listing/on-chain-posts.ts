@@ -110,6 +110,7 @@ export interface IPostListing {
 	reward?: string;
 	content?: string;
 	includeContent?: boolean;
+	isVoted?: boolean;
 }
 
 export interface IPostsListingResponse {

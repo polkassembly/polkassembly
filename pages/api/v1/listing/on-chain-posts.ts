@@ -21,7 +21,7 @@ import {
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST
 } from '~src/queries';
-import { IApiResponse } from '~src/types';
+import { ESentiments, IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -111,6 +111,7 @@ export interface IPostListing {
 	content?: string;
 	includeContent?: boolean;
 	isVoted?: boolean;
+	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }
 
 export interface IPostsListingResponse {

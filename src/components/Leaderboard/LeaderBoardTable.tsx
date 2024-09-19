@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
 import { poppins } from 'pages/_app';
-import { debounce } from 'lodash';
+import _ from 'lodash';
 
 const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -17,7 +17,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 
 	// eslint-disable-next-line
 	const debouncedSearch = useCallback(
-		debounce((value: string) => {
+		_.debounce((value: string) => {
 			handleSearch(value);
 		}, 300),
 		[]

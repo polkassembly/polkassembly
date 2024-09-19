@@ -25,7 +25,7 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
-import { debounce } from 'lodash';
+import _ from 'lodash';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -59,7 +59,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 
 	// eslint-disable-next-line
 	const debouncedFetchData = useCallback(
-		debounce(() => {
+		_.debounce(() => {
 			fetchData();
 		}, 300),
 		[router.isReady, currentPage, searchedUsername, username]

@@ -1,18 +1,27 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
 import { poppins } from 'pages/_app';
+import { debounce } from 'lodash';
 
 const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 	const [inputValue, setInputValue] = useState<string>('');
+
+	// eslint-disable-next-line
+	const debouncedSearch = useCallback(
+		debounce((value: string) => {
+			handleSearch(value);
+		}, 300),
+		[]
+	);
 
 	const handleSearch = (value: string) => {
 		if (value.length >= 3) {
@@ -22,13 +31,11 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 		}
 	};
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			handleSearch(inputValue);
-		}, 300);
-
-		return () => clearTimeout(timer);
-	}, [inputValue]);
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setInputValue(value);
+		debouncedSearch(value);
+	};
 
 	return (
 		<section className={`${className}`}>
@@ -40,7 +47,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 							placeholder='Enter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							onSearch={handleSearch}
-							onChange={(e) => setInputValue(e.target.value)}
+							onChange={handleInputChange}
 							value={inputValue}
 							allowClear
 						/>

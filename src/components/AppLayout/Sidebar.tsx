@@ -153,19 +153,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 	};
 
-	useEffect(() => {
+	const handleSidebarToggle = () => {
 		if (sidebarCollapsed) {
 			setOpenKeys([]);
 		} else {
 			const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
 			setOpenKeys(storedKeys);
 		}
-	}, [sidebarCollapsed]);
-
+	};
 	useEffect(() => {
-		const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
-		setOpenKeys(storedKeys);
-	}, []);
+		handleSidebarToggle();
+	}, [sidebarCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		const currentPath = router.pathname;

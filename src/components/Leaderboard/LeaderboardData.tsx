@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -25,6 +25,7 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
+import { debounce } from 'lodash';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -44,27 +45,35 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
+	const fetchData = async () => {
+		if (router.isReady) {
+			setLoading(true);
+			await getLeaderboardData();
+			setLoading(false);
+
+			setLoadingCurrentUser(true);
+			await getCurrentuserData();
+			setLoadingCurrentUser(false);
+		}
+	};
+
+	// eslint-disable-next-line
+	const debouncedFetchData = useCallback(
+		debounce(() => {
+			fetchData();
+		}, 300),
+		[router.isReady, currentPage, searchedUsername, username]
+	);
 
 	useEffect(() => {
-		const fetchData = async () => {
-			if (router.isReady) {
-				setLoading(true);
-				await getLeaderboardData();
-				setLoading(false);
+		if (router.isReady) {
+			debouncedFetchData();
+		}
 
-				setLoadingCurrentUser(true);
-				await getCurrentuserData();
-				setLoadingCurrentUser(false);
-			}
+		return () => {
+			debouncedFetchData.cancel();
 		};
-
-		const debounceSearch = setTimeout(() => {
-			fetchData();
-		}, 300);
-
-		return () => clearTimeout(debounceSearch);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, router.isReady, searchedUsername, username]);
+	}, [debouncedFetchData, router.isReady]);
 
 	const getCurrentuserData = async () => {
 		if (username) {

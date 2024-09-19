@@ -220,11 +220,36 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
+					const sentiments: { [key: number]: number } = {};
+					const commentsQueryDocs = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+
+					commentsQueryDocs.docs.map((doc) => {
+						if (doc.exists) {
+							const data = doc.data();
+							if (!isNaN(data?.sentiment)) {
+								if (sentiments[data?.sentiment]) {
+									sentiments[data?.sentiment] += 1;
+								} else {
+									sentiments[data?.sentiment] = 1;
+								}
+							}
+						}
+					});
+					let maxSentiment = null;
+					let maxSentimentCount = 0;
+					Object.entries(sentiments).map(([key, value]) => {
+						if (maxSentimentCount < value) {
+							maxSentimentCount = value;
+							maxSentiment = key;
+						}
+					});
+					const commentsCountQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
+
+					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
 
 					return {
 						assetId: assetId || null,
-						comments_count: commentsQuerySnapshot.data()?.count || 0,
+						comments_count: commentsCount || 0,
 						content: data.content || subsquareContent || '',
 						created_at: createdAt,
 						curator,
@@ -232,6 +257,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						end,
 						gov_type: data.gov_type,
 						hash,
+						higestSentiment: maxSentiment ? { percentage: (maxSentimentCount * 100) / commentsCount, sentiment: maxSentiment } : null,
 						identity,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,
@@ -280,6 +306,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				description: description || '',
 				end: end,
 				hash: hash || null,
+				higestSentiment: null,
 				identity,
 				method: subsquidPost?.preimage?.method,
 				parent_bounty_index: parentBountyIndex || null,

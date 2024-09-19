@@ -253,7 +253,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							: topicFromType,
 						totalVotes: totalVotes || 0,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
-						type: type || ProposalType.REFERENDUM_V2
+						type: type || ProposalType.REFERENDUM_V2,
+						user_id: data?.user_id || 1
 					};
 				}
 			}
@@ -303,8 +304,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const votedProposals = votedProposalsIndexes?.length ? results.filter((data) => votedProposalsIndexes.includes(Number(data?.post_id))) : [];
 		const nonVotedProposals = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(Number(data?.post_id))) : results;
 		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
+		const combineProposals = [
+			...updatedNonVotedProposals.map((proposal) => ({ ...proposal, isVoted: false })),
+			...votedProposals.map((proposal) => ({ ...proposal, isVoted: true }))
+		];
 
-		const combineProposals = [...updatedNonVotedProposals, ...votedProposals];
 		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
 		console.error('Error fetching subscribed posts:', err);

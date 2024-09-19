@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
@@ -16,6 +16,18 @@ import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/sele
 import { BN } from 'bn.js';
 import getBeneficiaryAmountAndAsset from '../OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { PieChart } from 'react-minimal-pie-chart';
+import { useTheme } from 'next-themes';
+import { getStatusBlock } from '~src/util/getStatusBlock';
+import { Divider, Tooltip } from 'antd';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
+import { IPeriod } from '~src/types';
+import getQueryToTrack from '~src/util/getQueryToTrack';
+import { useRouter } from 'next/router';
+import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
+import { getPeriodData } from '~src/util/getPeriodData';
+import dayjs from 'dayjs';
+import { poppins } from 'pages/_app';
 const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
@@ -66,11 +78,9 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				post={post}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
-			/>
-			<PostDetails
-				post={post}
 				formatDate={formatDate}
 			/>
+
 			<PostContent
 				post={post}
 				content={postContent}
@@ -94,82 +104,195 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> = ({ bgColor, statusLabel, post }) => {
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; formatDate: (dateString: string) => string }> = ({ bgColor, statusLabel, post, formatDate }) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
+	const ayes = String(post?.tally?.ayes).startsWith('0x') ? new BN(post?.tally?.ayes.slice(2), 'hex') : new BN(post?.tally?.ayes || 0);
+
+	const nays = String(post?.tally?.nays).startsWith('0x') ? new BN(post?.tally?.nays.slice(2), 'hex') : new BN(post?.tally?.nays || 0);
+	const [decision, setDecision] = useState<IPeriod>();
+	const router = useRouter();
+	const ayesNumber = Number(ayes.toString());
+	const naysNumber = Number(nays.toString());
+	const convertRemainingTime = (preiodEndsAt: any) => {
+		const diffMilliseconds = preiodEndsAt.diff();
+
+		const diffDuration = dayjs.duration(diffMilliseconds);
+		const diffDays = diffDuration.days();
+		const diffHours = diffDuration.hours();
+		const diffMinutes = diffDuration.minutes();
+		if (!diffDays) {
+			return `${diffHours}hrs : ${diffMinutes}mins `;
+		}
+		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
+	};
+	const [remainingTime, setRemainingTime] = useState<string>('');
+
+	useEffect(() => {
+		if (!window || post?.track_no === null) return;
+		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
+		if (!trackDetails) {
+			trackDetails = getTrackData(network, '', post?.track_no);
+		}
+		if (!post?.created_at || !trackDetails) return;
+
+		const prepare = getPeriodData(network, dayjs(post?.created_at), trackDetails, 'preparePeriod');
+
+		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
+		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
+		setDecision(decision);
+		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+	const totalVotes = ayesNumber + naysNumber;
+	const { resolvedTheme: theme } = useTheme();
+	const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
+	const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
+	const isAyeNaN = isNaN(ayesPercentage);
+	const isNayNaN = isNaN(naysPercentage);
+	const ayeColor = theme === 'dark' ? '#64A057' : '#2ED47A';
+	const nayColor = theme === 'dark' ? '#BD2020' : '#E84865';
+	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
+	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
+	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(post?.status || '');
+	const decidingBlock = post?.statusHistory?.filter((status: any) => status.status === 'Deciding')?.[0]?.block || 0;
 
 	return (
-		<div className='flex justify-between'>
-			<div className='flex gap-4'>
-				<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>
-					{post?.requestedAmount ? (
-						post?.assetId ? (
-							getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
-						) : (
-							<>
-								{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-							</>
-						)
-					) : (
-						'$0'
-					)}
-				</p>
+		<>
+			<div className='flex justify-between'>
 				<div>
-					<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
-						~{' '}
-						{parseBalance(
-							requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() || '0',
-							0,
-							false,
-							network
-						)}{' '}
-					</p>
-				</div>
-				<div>
-					<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
-				</div>
-			</div>
-			<div>
-				<Link href={`/referenda/${post?.post_id}`}>
-					<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
-						<ImageIcon
-							src='/assets/Vote.svg'
-							alt=''
-							className='m-0 h-6 w-6 p-0'
-						/>
-						<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+					<div className='flex gap-4'>
+						<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>
+							{post?.requestedAmount ? (
+								post?.assetId ? (
+									getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+								) : (
+									<>
+										{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+									</>
+								)
+							) : (
+								'$0'
+							)}
+						</p>
+						<div>
+							<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+								~{' '}
+								{parseBalance(
+									requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() ||
+										'0',
+									0,
+									false,
+									network
+								)}{' '}
+							</p>
+						</div>
+						<div>
+							<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
+						</div>
 					</div>
-				</Link>
+					<div className='flex items-center gap-2 '>
+						<Image
+							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							alt='profile'
+							className='h-6 w-6 rounded-full'
+							width={24}
+							height={24}
+						/>
+						<p className='pt-3 text-sm font-medium text-[#243A57] dark:text-white'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
+						<span className='text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+						<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
+						<p className='pt-3 text-[#485F7D]'>|</p>
+						<div className='flex '>
+							<ImageIcon
+								src='/assets/icons/timer.svg'
+								alt='timer'
+								className='mt-3 h-5 w-5 text-[#485F7D] dark:text-[#9E9E9E]'
+							/>
+							<p className='pt-3 text-sm text-gray-500 dark:text-[#9E9E9E]'>{formatDate(String(post.created_at))}</p>
+						</div>
+					</div>
+				</div>
+				<div>
+					{post?.isVoted ? (
+						<div className='flex items-center gap-5'>
+							<div className='flex flex-col justify-center'>
+								<span className='text-[20px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayesPercentage.toFixed(1)}%</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
+							</div>
+							<div className='h-10 border-l-[0.01px]  border-solid border-[#D2D8E0]'></div>
+
+							<div className=' flex flex-col justify-center'>
+								<span className='text-[20px] font-semibold leading-6 text-[#E84865] dark:text-[#BD2020]'>{isNayNaN ? 50 : naysPercentage.toFixed(1)}%</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
+							</div>
+						</div>
+					) : (
+						<div className='flex flex-col items-end '>
+							<Link href={`/referenda/${post?.post_id}`}>
+								<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
+									<ImageIcon
+										src='/assets/Vote.svg'
+										alt=''
+										className='m-0 h-6 w-6 p-0'
+									/>
+									<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+								</div>
+							</Link>
+							<div className='flex items-center gap-2'>
+								{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
+									<div className='flex items-center gap-2'>
+										<div className='mt-2 min-w-[30px]'>
+											<Tooltip
+												overlayClassName='max-w-none'
+												title={
+													<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+														decidingBlock !== 0 ? `#${decidingBlock}` : ''
+													}`}</div>
+												}
+												color='#575255'
+											>
+												<div className='mt-2 min-w-[30px]'>
+													<ProgressBar
+														strokeWidth={5}
+														percent={decision.periodPercent || 0}
+														strokeColor='#407AFC'
+														trailColor='#D4E0FC'
+														showInfo={false}
+													/>
+												</div>
+											</Tooltip>
+										</div>
+										<Divider
+											type='vertical'
+											className='border-l-1 border-[#485F7D] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+										/>
+									</div>
+								)}
+
+								<PieChart
+									className='w-10'
+									center={[50, 75]}
+									startAngle={-180}
+									lengthAngle={180}
+									rounded={true}
+									lineWidth={20}
+									data={[
+										{ color: ayeColor, title: 'Aye', value: isAyeNaN ? 50 : ayesPercentage },
+										{ color: nayColor, title: 'Nay', value: isNayNaN ? 50 : naysPercentage }
+									]}
+								/>
+							</div>
+						</div>
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
-
-const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => string }> = ({ post, formatDate }) => (
-	<div className='flex items-center gap-2 pt-2'>
-		<Image
-			src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-			alt='profile'
-			className='h-6 w-6 rounded-full'
-			width={24}
-			height={24}
-		/>
-		<p className='pt-3 text-sm font-medium text-[#243A57] dark:text-white'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
-		<span className='text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-		<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
-		<p className='pt-3 text-[#485F7D]'>|</p>
-		<div className='flex '>
-			<ImageIcon
-				src='/assets/icons/timer.svg'
-				alt='timer'
-				className='mt-3 h-5 w-5 text-[#485F7D] dark:text-[#9E9E9E]'
-			/>
-			<p className='pt-3 text-sm text-gray-500 dark:text-[#9E9E9E]'>{formatDate(String(post.created_at))}</p>
-		</div>
-	</div>
-);
 
 const PostContent: React.FC<{
 	post: any;

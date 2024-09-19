@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -25,7 +25,6 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
-import _ from 'lodash';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -45,35 +44,21 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
-	const fetchData = async () => {
-		if (router.isReady) {
-			setLoading(true);
-			await getLeaderboardData();
-			setLoading(false);
-
-			setLoadingCurrentUser(true);
-			await getCurrentuserData();
-			setLoadingCurrentUser(false);
-		}
-	};
-
-	// eslint-disable-next-line
-	const debouncedFetchData = useCallback(
-		_.debounce(() => {
-			fetchData();
-		}, 300),
-		[router.isReady, currentPage, searchedUsername, username]
-	);
-
 	useEffect(() => {
-		if (router.isReady) {
-			debouncedFetchData();
-		}
+		const fetchData = async () => {
+			if (router.isReady) {
+				setLoading(true);
+				await getLeaderboardData();
+				setLoading(false);
 
-		return () => {
-			debouncedFetchData.cancel();
+				setLoadingCurrentUser(true);
+				await getCurrentuserData();
+				setLoadingCurrentUser(false);
+			}
 		};
-	}, [debouncedFetchData, router.isReady]);
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage, router.isReady, searchedUsername, username]);
 
 	const getCurrentuserData = async () => {
 		if (username) {

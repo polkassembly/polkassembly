@@ -24,7 +24,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	);
 
 	const handleSearch = (value: string) => {
-		if (value.length >= 3) {
+		if (value.length >= 1) {
 			setSearchedUsername(value.trim().toLowerCase());
 		} else {
 			setSearchedUsername(undefined);

@@ -111,7 +111,7 @@ export interface IPostListing {
 	content?: string;
 	includeContent?: boolean;
 	isVoted?: boolean;
-	higestSentiment?: { sentiment: ESentiments; percentage: number } | null;
+	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }
 
 export interface IPostsListingResponse {

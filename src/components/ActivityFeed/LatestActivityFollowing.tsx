@@ -96,8 +96,6 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					return formattedTrackName === currentTab;
 			  });
 
-	console.log('subscribedPosts', subscribedPosts);
-
 	return (
 		<div className=''>
 			{loading ? (

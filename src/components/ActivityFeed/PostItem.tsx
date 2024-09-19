@@ -10,6 +10,13 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
+import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { BN } from 'bn.js';
+import getBeneficiaryAmountAndAsset from '../OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
+import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
 const GENERAL_TOPIC_FALLBACK = 'General';
@@ -56,7 +63,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	return (
 		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
-				post_id={post.post_id}
+				post={post}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
 			/>
@@ -87,31 +94,58 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post_id: number }> = ({ bgColor, statusLabel, post_id }) => (
-	<div className='flex justify-between'>
-		<div className='flex gap-4'>
-			<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>{'2500DOT'}</p>
-			<div>
-				<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>~ {'$36k'}</p>
-			</div>
-			<div>
-				<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
-			</div>
-		</div>
-		<div>
-			<Link href={`/referenda/${post_id}`}>
-				<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
-					<ImageIcon
-						src='/assets/Vote.svg'
-						alt=''
-						className='m-0 h-6 w-6 p-0'
-					/>
-					<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> = ({ bgColor, statusLabel, post }) => {
+	const { network } = useNetworkSelector();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const unit = chainProperties?.[network]?.tokenSymbol;
+	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
+
+	return (
+		<div className='flex justify-between'>
+			<div className='flex gap-4'>
+				<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>
+					{post?.requestedAmount ? (
+						post?.assetId ? (
+							getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+						) : (
+							<>
+								{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+							</>
+						)
+					) : (
+						'$0'
+					)}
+				</p>
+				<div>
+					<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+						~{' '}
+						{parseBalance(
+							requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() || '0',
+							0,
+							false,
+							network
+						)}{' '}
+					</p>
 				</div>
-			</Link>
+				<div>
+					<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
+				</div>
+			</div>
+			<div>
+				<Link href={`/referenda/${post?.post_id}`}>
+					<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
+						<ImageIcon
+							src='/assets/Vote.svg'
+							alt=''
+							className='m-0 h-6 w-6 p-0'
+						/>
+						<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+					</div>
+				</Link>
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => string }> = ({ post, formatDate }) => (
 	<div className='flex items-center gap-2 pt-2'>
@@ -146,7 +180,7 @@ const PostContent: React.FC<{
 }> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
 	<>
 		<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
-			#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+			#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 		</p>
 		<Markdown
 			className='text-[#243A57]'
@@ -173,11 +207,9 @@ const PostReactions: React.FC<{
 
 	return (
 		<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
-			{/* Likes Section */}
 			<div>
 				{likes.count > 0 && likes?.usernames?.length > 0 && (
 					<div className='flex items-center'>
-						{/* Profile Image of the first user who liked */}
 						<Image
 							src={firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 							alt='Voter Profile'

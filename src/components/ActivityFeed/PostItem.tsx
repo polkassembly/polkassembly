@@ -28,6 +28,16 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { getPeriodData } from '~src/util/getPeriodData';
 import dayjs from 'dayjs';
 import { poppins } from 'pages/_app';
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
+import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
+import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
+import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
+import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
+import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
@@ -39,6 +49,18 @@ const DISLIKE_LABEL = 'Dislike';
 const COMMENT_LABEL = 'Comment';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
+
+const EmojiOption = ({ icon, title }: { icon: React.ReactNode; title: string }) => {
+	return (
+		<Tooltip
+			color='#363636'
+			title={title}
+			placement='top'
+		>
+			<div className={'  h-10 w-10 rounded-full border-none bg-transparent pl-3 pt-2  text-2xl '}>{icon}</div>
+		</Tooltip>
+	);
+};
 
 const getStatusStyle = (status: string) => {
 	const statusStyles: Record<string, { bgColor: string; label: string }> = {
@@ -110,7 +132,6 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const ayes = String(post?.tally?.ayes).startsWith('0x') ? new BN(post?.tally?.ayes.slice(2), 'hex') : new BN(post?.tally?.ayes || 0);
-
 	const nays = String(post?.tally?.nays).startsWith('0x') ? new BN(post?.tally?.nays.slice(2), 'hex') : new BN(post?.tally?.nays || 0);
 	const [decision, setDecision] = useState<IPeriod>();
 	const router = useRouter();
@@ -128,6 +149,8 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
+	const { resolvedTheme: theme } = useTheme();
+
 	const [remainingTime, setRemainingTime] = useState<string>('');
 
 	useEffect(() => {
@@ -148,7 +171,6 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const totalVotes = ayesNumber + naysNumber;
-	const { resolvedTheme: theme } = useTheme();
 	const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
 	const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
 	const isAyeNaN = isNaN(ayesPercentage);
@@ -415,67 +437,107 @@ const PostActions: React.FC<{
 			return prevState;
 		});
 	};
-
+	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className='mt-1 flex items-center space-x-4'>
-			<div
-				className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userLiked && 'bg-pink-50'} gap-2`}
-				onClick={() => handleReactionClick('👍')}
-			>
-				<PostAction
-					icon={
-						<ImageIcon
-							src='/assets/icons/like-pink.svg'
-							alt='like icon'
-							className='h-5 w-5'
+		<>
+			<div className='flex justify-between'>
+				<div className='mt-1 flex items-center space-x-4'>
+					<div
+						className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userLiked && 'bg-pink-50'} gap-2`}
+						onClick={() => handleReactionClick('👍')}
+					>
+						<PostAction
+							icon={
+								<ImageIcon
+									src='/assets/icons/like-pink.svg'
+									alt='like icon'
+									className='h-5 w-5'
+								/>
+							}
+							label={reactionState.userLiked ? 'Liked' : LIKE_LABEL}
 						/>
-					}
-					label={reactionState.userLiked ? 'Liked' : LIKE_LABEL}
-				/>
-			</div>
+					</div>
 
-			<div
-				className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userDisliked && 'bg-pink-50'} gap-2`}
-				onClick={() => handleReactionClick('👎')}
-			>
-				<PostAction
-					icon={
-						<ImageIcon
-							src='/assets/icons/dislike-pink.svg'
-							alt='dislike icon'
-							className={'h-5 w-5'}
+					<div
+						className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userDisliked && 'bg-pink-50'} gap-2`}
+						onClick={() => handleReactionClick('👎')}
+					>
+						<PostAction
+							icon={
+								<ImageIcon
+									src='/assets/icons/dislike-pink.svg'
+									alt='dislike icon'
+									className={'h-5 w-5'}
+								/>
+							}
+							label={reactionState.userDisliked ? 'Disliked' : DISLIKE_LABEL}
 						/>
-					}
-					label={reactionState.userDisliked ? 'Disliked' : DISLIKE_LABEL}
-				/>
-			</div>
+					</div>
 
-			<Link
-				target='_blank'
-				href={'https://twitter.com/'}
-			>
-				<PostAction
-					icon={
-						<ImageIcon
-							src='/assets/icons/share-pink.svg'
-							alt='share icon'
-							className='h-5 w-5'
+					<Link
+						target='_blank'
+						href={'https://twitter.com/'}
+					>
+						<PostAction
+							icon={
+								<ImageIcon
+									src='/assets/icons/share-pink.svg'
+									alt='share icon'
+									className='h-5 w-5'
+								/>
+							}
+							label='Share'
 						/>
-					}
-					label='Share'
-				/>
-			</Link>
+					</Link>
 
-			<PostAction
-				icon={
-					<ImageIcon
-						src='/assets/icons/comment-pink.svg'
-						alt='comment icon'
-						className='h-5 w-5'
+					<PostAction
+						icon={
+							<ImageIcon
+								src='/assets/icons/comment-pink.svg'
+								alt='comment icon'
+								className='h-5 w-5'
+							/>
+						}
+						label={COMMENT_LABEL}
 					/>
-				}
-				label={COMMENT_LABEL}
-			/>
+				</div>
+				<div>
+					{post?.highestSentiment?.sentiment == 1 && (
+						<EmojiOption
+							icon={
+								theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+							}
+							title={'Completely Against'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 2 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Slightly Against'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 3 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Neutral'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 4 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Slightly For'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 5 && (
+						<EmojiOption
+							icon={
+								theme === 'dark' ? <DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+							}
+							title={'Completely For'}
+						/>
+					)}
+				</div>
+			</div>
 			<SignupPopup
 				setLoginOpen={setLoginOpen}
 				modalOpen={openSignup}
@@ -488,7 +550,7 @@ const PostActions: React.FC<{
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-		</div>
+		</>
 	);
 };
 

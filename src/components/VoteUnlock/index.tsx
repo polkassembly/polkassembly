@@ -251,12 +251,25 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 			});
 		return api.tx.utility.batch(variables);
 	};
-	const onSuccess = () => {
+	const onSuccess = async () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Tokens Unlock successfully.',
 			status: NotificationStatus.SUCCESS
 		});
+
+		if (api) {
+			const data = await getAccountsFromWallet({
+				api,
+				apiReady,
+				chosenWallet: loginWallet as Wallet,
+				loginAddress,
+				network
+			});
+			setAddress(data?.account || '');
+			getLockData(address);
+		}
+
 		setOpenSuccessState(true);
 		setTotalUnlockableBalance(ZERO_BN);
 		setIsReferesh(true);

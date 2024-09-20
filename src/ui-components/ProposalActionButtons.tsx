@@ -16,6 +16,7 @@ import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -46,7 +47,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
-
+	const router = useRouter();
 	const handleClick = (num: number) => {
 		if (id) {
 			if (proposerAddress.length > 0) {
@@ -130,12 +131,13 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 					className=' '
 				>
-					<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF]  px-3 py-2 font-poppins text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white'>
+					<button className='lg:text-md flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-1  font-poppins  text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white xl:mr-5 xl:px-3 xl:py-2'>
 						Switch to <span className='font-semibold'>{buttonText}</span>
 						<span>
 							<ImageIcon
 								src='/assets/icons/loop.svg'
 								alt='loop'
+								className='h-4 w-4 lg:h-5 lg:w-5'
 							/>
 						</span>
 					</button>
@@ -143,17 +145,19 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			) : null}
 			{isUsedInHomePage && (
 				<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
-					<CustomButton
-						// htmlType='submit'
-						className='w-min max-sm:p-1.5'
-						height={32}
-						variant='primary'
-					>
-						<OpenGovTreasuryProposal
-							theme={theme}
-							isUsedInReferedumComponent={true}
-						/>
-					</CustomButton>
+					{router.pathname === '/activity-feed' && (
+						<CustomButton
+							className='hidden w-min max-sm:p-1.5 xl:block'
+							height={32}
+							variant='primary'
+						>
+							<OpenGovTreasuryProposal
+								theme={theme}
+								isUsedInReferedumComponent={true}
+							/>
+						</CustomButton>
+					)}
+
 					<div className='-mt-1'>
 						<Dropdown
 							theme={theme}

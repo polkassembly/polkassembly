@@ -38,14 +38,13 @@ import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
+
 const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
 const GENERAL_TOPIC_FALLBACK = 'General';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
-const LIKE_LABEL = 'Like';
-const DISLIKE_LABEL = 'Dislike';
 const COMMENT_LABEL = 'Comment';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
@@ -186,8 +185,8 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 		<>
 			<div className='flex justify-between'>
 				<div>
-					<div className='flex gap-4'>
-						<p className='text-2xl font-bold text-[#485F7D] dark:text-[#9E9E9E]'>
+					<div className='flex items-center gap-4'>
+						<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
 							{post?.requestedAmount ? (
 								post?.assetId ? (
 									getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
@@ -201,7 +200,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 							)}
 						</p>
 						<div>
-							<p className='rounded-lg bg-[#F3F4F6] p-2 text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+							<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
 								~{' '}
 								{parseBalance(
 									requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() ||
@@ -220,25 +219,33 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 						<Image
 							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 							alt='profile'
-							className='h-6 w-6 rounded-full'
+							className='h-4 w-4 rounded-full xl:h-6 xl:w-6'
 							width={24}
 							height={24}
 						/>
-						<p className='pt-3 text-sm font-medium text-[#243A57] dark:text-white'>{post.proposerProfile?.username || ANONYMOUS_FALLBACK}</p>
-						<span className='text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-						<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
+						<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
+							{post.proposerProfile?.username
+								? post.proposerProfile.username.length > 10
+									? `${post.proposerProfile.username.substring(0, 10)}...`
+									: post.proposerProfile.username
+								: ANONYMOUS_FALLBACK}
+						</p>
+						<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+						<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
+							{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
+						</span>
 						<p className='pt-3 text-[#485F7D]'>|</p>
 						<div className='flex '>
 							<ImageIcon
 								src='/assets/icons/timer.svg'
 								alt='timer'
-								className='mt-3 h-5 w-5 text-[#485F7D] dark:text-[#9E9E9E]'
+								className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
 							/>
-							<p className='pt-3 text-sm text-gray-500 dark:text-[#9E9E9E]'>{formatDate(String(post.created_at))}</p>
+							<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{formatDate(String(post.created_at))}</p>
 						</div>
 					</div>
 				</div>
-				<div>
+				<div className='hidden lg:block'>
 					{post?.isVoted ? (
 						<div className='flex items-center gap-5'>
 							<div className='flex flex-col justify-center'>
@@ -324,11 +331,11 @@ const PostContent: React.FC<{
 	isExpanded: boolean;
 }> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
 	<>
-		<p className='pt-2 font-medium text-[#243A57] dark:text-white'>
+		<p className='xl:text-md pt-2 text-[12px] font-medium text-[#243A57] dark:text-white'>
 			#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 		</p>
 		<Markdown
-			className='text-[#243A57]'
+			className='xl:text-md text-[12px] text-[#243A57]'
 			md={content}
 			isPreview={!isExpanded}
 		/>
@@ -392,6 +399,9 @@ const PostActions: React.FC<{
 	});
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [showGif, setShowGif] = useState<string | null>(null); // To track if GIF is being shown
+
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleReactionClick = async (reaction: '👍' | '👎') => {
 		if (!currentUserdata && !userid) {
@@ -402,78 +412,121 @@ const PostActions: React.FC<{
 		const isLiked = reaction === '👍' && reactionState.userLiked;
 		const isDisliked = reaction === '👎' && reactionState.userDisliked;
 		const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
-		const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-			postId: post_id,
-			postType: type,
-			reaction,
-			replyId: null,
-			setReplyReaction: false,
-			trackNumber: track_no,
-			userId: userid
-		});
 
-		if (error || !data) {
-			console.error('Error updating reaction', error);
-			return;
-		}
-		setReactionState((prevState) => {
-			if (reaction === '👍') {
-				return {
-					...prevState,
-					dislikesCount: isLiked ? prevState.dislikesCount : prevState.dislikesCount - (prevState.userDisliked ? 1 : 0),
-					likesCount: isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1,
-					userDisliked: isLiked ? prevState.userDisliked : false,
-					userLiked: !isLiked
-				};
-			} else if (reaction === '👎') {
-				return {
-					...prevState,
-					dislikesCount: isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1,
-					likesCount: isDisliked ? prevState.likesCount : prevState.likesCount - (prevState.userLiked ? 1 : 0),
-					userDisliked: !isDisliked,
-					userLiked: isDisliked ? prevState.userLiked : false
-				};
+		// Simulate the GIF display for 3 seconds
+		setShowGif(reaction);
+
+		setTimeout(async () => {
+			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+				postId: post_id,
+				postType: type,
+				reaction,
+				replyId: null,
+				setReplyReaction: false,
+				trackNumber: track_no,
+				userId: userid
+			});
+
+			if (error || !data) {
+				console.error('Error updating reaction', error);
+				return;
 			}
-			return prevState;
-		});
+
+			setReactionState((prevState) => {
+				if (reaction === '👍') {
+					return {
+						...prevState,
+						dislikesCount: isLiked ? prevState.dislikesCount : prevState.dislikesCount - (prevState.userDisliked ? 1 : 0),
+						likesCount: isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1,
+						userDisliked: isLiked ? prevState.userDisliked : false,
+						userLiked: !isLiked
+					};
+				} else if (reaction === '👎') {
+					return {
+						...prevState,
+						dislikesCount: isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1,
+						likesCount: isDisliked ? prevState.likesCount : prevState.likesCount - (prevState.userLiked ? 1 : 0),
+						userDisliked: !isDisliked,
+						userLiked: isDisliked ? prevState.userLiked : false
+					};
+				}
+				return prevState;
+			});
+
+			setShowGif(null);
+		}, 1000);
 	};
-	const { resolvedTheme: theme } = useTheme();
 	return (
 		<>
 			<div className='flex justify-between'>
 				<div className='mt-1 flex items-center space-x-4'>
 					<div
-						className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userLiked && 'bg-pink-50'} gap-2`}
+						className='flex cursor-pointer items-center gap-2 rounded-lg px-2'
 						onClick={() => handleReactionClick('👍')}
 					>
 						<PostAction
 							icon={
-								<ImageIcon
-									src='/assets/icons/like-pink.svg'
-									alt='like icon'
-									className='h-5 w-5'
-								/>
+								showGif === '👍' ? (
+									<Image
+										src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
+										alt='liked gif'
+										className='h-10 w-10'
+										width={50}
+										height={50}
+									/>
+								) : (
+									<Image
+										src={
+											reactionState.userLiked
+												? theme === 'dark'
+													? '/assets/icons/reactions/Liked-Colored-Dark.gif'
+													: '/assets/icons/reactions/LikeIconfilled.svg'
+												: theme === 'dark'
+												? '/assets/icons/reactions/LikeOutlinedDark.svg'
+												: '/assets/icons/like-pink.svg'
+										}
+										alt='like icon'
+										className='h-5 w-5'
+										width={50}
+										height={50}
+									/>
+								)
 							}
-							label={reactionState.userLiked ? 'Liked' : LIKE_LABEL}
+							label={reactionState.userLiked ? 'Liked' : 'Like'}
 						/>
 					</div>
 
 					<div
-						className={`flex cursor-pointer items-center rounded-lg px-2 ${reactionState.userDisliked && 'bg-pink-50'} gap-2`}
+						className='flex cursor-pointer items-center gap-2 rounded-lg  px-2'
 						onClick={() => handleReactionClick('👎')}
 					>
 						<PostAction
 							icon={
-								<ImageIcon
-									src='/assets/icons/dislike-pink.svg'
-									alt='dislike icon'
-									className={'h-5 w-5'}
-								/>
+								showGif === '👎' ? (
+									<ImageIcon
+										src={theme === 'dark' ? 'assets/icons/reactions/DislikeFilledDark.svg' : 'assets/icons/reactions/DislikeFilled.svg'}
+										alt='dislike gif'
+										className='h-5 w-5'
+									/>
+								) : (
+									<ImageIcon
+										src={
+											reactionState.userDisliked
+												? theme === 'dark'
+													? 'assets/icons/reactions/DislikeFilledDark.svg'
+													: 'assets/icons/reactions/DislikeFilled.svg'
+												: theme === 'dark'
+												? 'assets/icons/reactions/DislikeOutlinedDark.svg'
+												: 'assets/icons/dislike-pink.svg'
+										}
+										alt='dislike icon'
+										className='h-5 w-5'
+									/>
+								)
 							}
-							label={reactionState.userDisliked ? 'Disliked' : DISLIKE_LABEL}
+							label={reactionState.userDisliked ? 'Disliked' : 'Dislike'}
 						/>
 					</div>
-
 					<Link
 						target='_blank'
 						href={'https://twitter.com/'}
@@ -557,23 +610,23 @@ const PostActions: React.FC<{
 const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, label }) => (
 	<div className='flex items-center gap-2'>
 		{icon}
-		<p className='cursor-pointer pt-4 text-[#E5007A]'>{label}</p>
+		<p className='hidden cursor-pointer pt-4 text-[#E5007A] xl:block'>{label}</p>
 	</div>
 );
 
 const PostCommentSection: React.FC<{ currentUserdata: any }> = ({ currentUserdata }) => (
-	<div className='mt-3 flex'>
+	<div className='mt-3 flex items-center'>
 		<Image
 			src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 			alt=''
-			className='h-10 w-10 rounded-full'
+			className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
 			width={40}
 			height={40}
 		/>
 		<input
 			type='text'
 			placeholder={COMMENT_PLACEHOLDER}
-			className='activityborder2 ml-7 h-10 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B]'
+			className='activityborder2 ml-7 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] xl:h-10'
 		/>
 		<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
 			{POST_LABEL}

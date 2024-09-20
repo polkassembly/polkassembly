@@ -104,12 +104,14 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
 				<div>
-					<TabNavigation
-						currentTab={currentTab}
-						setCurrentTab={setCurrentTab}
-						gov2LatestPosts={subscribedPosts}
-						network={network}
-					/>
+					<div className='hidden xl:block'>
+						<TabNavigation
+							currentTab={currentTab}
+							setCurrentTab={setCurrentTab}
+							gov2LatestPosts={subscribedPosts}
+							network={network}
+						/>
+					</div>
 					<div>
 						<PostList
 							postData={filteredPosts}

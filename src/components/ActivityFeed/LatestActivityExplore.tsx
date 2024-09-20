@@ -88,12 +88,14 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 
 	return (
 		<div className=''>
-			<TabNavigation
-				currentTab={currentTab}
-				setCurrentTab={setCurrentTab}
-				gov2LatestPosts={postData}
-				network={network}
-			/>
+			<div className='hidden xl:block '>
+				<TabNavigation
+					currentTab={currentTab}
+					setCurrentTab={setCurrentTab}
+					gov2LatestPosts={postData}
+					network={network}
+				/>
+			</div>
 
 			{loading ? (
 				<div className='flex min-h-[50px] w-full items-center justify-center'>

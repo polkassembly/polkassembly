@@ -505,15 +505,17 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				network={network}
 			/>
 			<div className=' w-full font-poppins  '>
-				<div className='mt-3 flex w-full items-center justify-between'>
-					<div className='flex h-12 gap-5'>
-						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
-							Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
-						</h1>
-						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px] dark:bg-white  dark:bg-opacity-[12%]'>
+				<div className='flex w-full justify-between xl:mt-3 xl:items-center'>
+					<div className='flex flex-col xl:h-12 xl:flex-row xl:gap-5'>
+						<div>
+							<h1 className='mx-2 font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:text-2xl xl:mt-2'>
+								Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
+							</h1>
+						</div>
+						<div className='mt-2 flex items-center rounded-lg bg-[#ECECEC] text-[14px] dark:bg-white dark:bg-opacity-[12%] lg:p-2 xl:gap-2  xl:pt-5'>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`cursor-pointer rounded-md px-4 py-[8px] font-semibold ${
+								className={`lg:text-md cursor-pointer rounded-md px-1 text-[12px] font-semibold xl:px-4 xl:py-[8px] ${
 									activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>
@@ -521,7 +523,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							</p>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`cursor-pointer rounded-lg px-4 py-[8px] font-semibold ${
+								className={`lg:text-md cursor-pointer rounded-lg px-1 text-[12px] font-semibold xl:px-4 xl:py-[8px] ${
 									activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>
@@ -529,7 +531,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							</p>
 						</div>
 					</div>
-					<div className='mr-[6px] flex justify-between'>
+					<div className='flex flex-col gap-2 lg:flex-row xl:mr-[6px] xl:justify-between'>
 						<ProposalActionButtons isUsedInHomePage={true} />
 					</div>
 				</div>
@@ -545,7 +547,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
 						</div>
 					</div>
-					<div className=' w-[340px]  '>
+					<div className=' hidden w-[340px] xl:block  '>
 						<div className='mx-1 mt-2 md:mt-6'>
 							{networkSocialsData && (
 								<AboutActivity

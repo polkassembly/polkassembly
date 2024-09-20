@@ -11,8 +11,8 @@ interface ExpandableMarkdownProps {
 }
 
 const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) => {
-	const [visibleEnd, setVisibleEnd] = useState(1000); // Show first 1000 characters initially
-	const [isExpanded, setIsExpanded] = useState(false); // To track if content is expanded
+	const [visibleEnd, setVisibleEnd] = useState(1000);
+	const [isExpanded, setIsExpanded] = useState(false);
 	const chunkSize = 1000;
 
 	const handleShowMore = () => {

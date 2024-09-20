@@ -13,7 +13,7 @@ import { poppins } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import RatingModal from '../RatingModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useProgressReportSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
@@ -23,18 +23,16 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id } = useUserDetailsSelector();
 	const { postData, setPostData } = usePostDataContext();
 	const dispatch = useDispatch();
 	const { report_rating, open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
 
 	const addUserRating = async () => {
 		setLoading(true);
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addReportRating', {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addReportRating', {
 			postId: postData?.postIndex,
 			proposalType: postData?.postType,
-			rating: report_rating,
-			user_id: id
+			rating: report_rating
 		});
 		if (editError || !data) {
 			setLoading(false);

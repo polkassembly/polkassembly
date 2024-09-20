@@ -288,7 +288,7 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.created_at && !newData.created_at) {
 								newData.created_at = data.created_at;
 							}
-							if (data.progress_report && !newData.progress_report) {
+							if (data.progress_report) {
 								newData.progress_report = data.progress_report;
 							}
 							if (!newData.topic_id) {

@@ -47,7 +47,7 @@ const UploadModalContent = () => {
 
 		console.log('progress_report: ', progress_report);
 
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addProgressReport', {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addProgressReport', {
 			postId: postIndex,
 			progress_report,
 			proposalType
@@ -81,7 +81,7 @@ const UploadModalContent = () => {
 		try {
 			const formData = new FormData();
 			formData.append('media', file);
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/upload/uploadReport', formData);
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/progressReport/uploadReport', formData);
 			if (data) {
 				setFileLink(data?.displayUrl);
 				sharableLink = data.displayUrl;

@@ -8,9 +8,11 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import messages from '~src/auth/utils/messages';
 import { firebaseStorageBucket } from '~src/services/firebaseInit';
+import { isValidNetwork } from '~src/api-utils';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
-// Disable default body parser
 export const config = {
 	api: {
 		bodyParser: false
@@ -18,7 +20,9 @@ export const config = {
 };
 
 const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, res: NextApiResponse) => {
-	const form = new IncomingForm(); // Use IncomingForm directly
+	storeApiKeyUsage(req);
+	const form = new IncomingForm();
+	const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 	form.parse(req, async (err, fields, files) => {
 		if (err) {
@@ -26,6 +30,21 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 		}
 
 		try {
+			const network = String(req.headers['x-network']);
+			if (!network || !isValidNetwork(network)) {
+				return res.status(400).json({ message: messages.INVALID_NETWORK });
+			}
+
+			const token = getTokenFromReq(req);
+			if (!token) {
+				return res.status(400).json({ message: 'Invalid token' });
+			}
+
+			const user = await authServiceInstance.GetUser(token);
+			if (!user) {
+				return res.status(403).json({ message: messages.UNAUTHORISED });
+			}
+
 			let file: File | undefined;
 			if (Array.isArray(files.media)) {
 				file = files.media[0];
@@ -37,21 +56,14 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 				return res.status(400).json({ message: 'No file uploaded' });
 			}
 
-			const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 			if (file.size > MAX_FILE_SIZE) {
 				return res.status(400).json({ message: 'File size exceeds the limit' });
 			}
 
-			// Allow only PDF files
 			const allowedTypes = ['application/pdf'];
 			if (!allowedTypes.includes(file.mimetype || '')) {
 				return res.status(400).json({ message: 'Unsupported file type. Only PDF files are allowed.' });
 			}
-
-			const token = getTokenFromReq(req);
-			if (!token) return res.status(400).json({ message: 'Invalid token' });
-
-			const user = await authServiceInstance.GetUser(token);
 
 			const fileName = `${Date.now()}-${file.originalFilename}`;
 			const filePath = `user-uploads/${user?.id}/${fileName}`;
@@ -73,6 +85,7 @@ const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, r
 
 			return res.status(200).json({ displayUrl: bucketFile.publicUrl() });
 		} catch (error) {
+			console.error('Error processing request:', error);
 			return res.status(500).json({ error: error.message, message: 'Error processing request' });
 		}
 	});

@@ -43,7 +43,7 @@ const UploadReport = () => {
 			ratings: []
 		};
 
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addProgressReport', {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addProgressReport', {
 			postId: postIndex,
 			progress_report,
 			proposalType

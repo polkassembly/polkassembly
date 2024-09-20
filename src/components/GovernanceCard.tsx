@@ -237,11 +237,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const isAllRefPage = router.pathname.includes('all-posts');
 	const addUserRating = async () => {
 		setLoading(true);
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addReportRating', {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addReportRating', {
 			postId: index,
 			proposalType: proposalType,
-			rating: report_rating,
-			user_id: currentUser?.id
+			rating: report_rating
 		});
 		if (editError || !data) {
 			setLoading(false);

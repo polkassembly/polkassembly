@@ -37,6 +37,8 @@ interface Props {
 	addresses: string[];
 	isReferendaPage?: boolean;
 	referendumIndex?: number;
+	refreshKey?: boolean;
+	setRefreshKey?: (pre: boolean) => void;
 }
 export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -56,7 +58,7 @@ export const handlePrevData = (data: IUnlockTokenskData[]) => {
 	});
 	return newData;
 };
-const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: Props) => {
+const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, setRefreshKey, refreshKey }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -251,30 +253,18 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 			});
 		return api.tx.utility.batch(variables);
 	};
-	const onSuccess = async () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Tokens Unlock successfully.',
 			status: NotificationStatus.SUCCESS
 		});
-
-		if (api) {
-			const data = await getAccountsFromWallet({
-				api,
-				apiReady,
-				chosenWallet: loginWallet as Wallet,
-				loginAddress,
-				network
-			});
-			setAddress(data?.account || '');
-			getLockData(address);
-		}
-
 		setOpenSuccessState(true);
 		setTotalUnlockableBalance(ZERO_BN);
 		setIsReferesh(true);
 		setLoadingStatus({ isLoading: false, message: 'Success!' });
 		setOpen(false);
+		setRefreshKey?.(!refreshKey);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({

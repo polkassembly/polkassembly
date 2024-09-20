@@ -58,15 +58,13 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 		if (subsquireRes.content) {
 			contentToSummarize = subsquireRes.content;
 
-			await postRef.set({ content: contentToSummarize }, { merge: true });
-
 			const max_150_char_summary = await fetchContentSummary(
 				contentToSummarize as string,
 				proposalType as any,
 				process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
 			);
 
-			await postRef.set({ max_150_char_summary }, { merge: true });
+			await postRef.set({ content: contentToSummarize, max_150_char_summary }, { merge: true });
 			return res.status(200).json({ summary: max_150_char_summary });
 		} else {
 			const noSummary = 'No contextual information available for this post.';

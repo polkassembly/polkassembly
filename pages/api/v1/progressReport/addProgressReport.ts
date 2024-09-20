@@ -11,6 +11,10 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
+import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { getSubsquidProposalType } from '~src/global/proposalType';
+import console_pretty from '~src/api-utils/console_pretty';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
@@ -45,18 +49,39 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(500).json({ message: messages.INVALID_PARAMS });
 		}
 
+		console.log('here: ', Number(postId), getSubsquidProposalType(proposalType));
+
+		const TreasuryRes = await fetchSubsquid({
+			network: network,
+			query: CHECK_IF_OPENGOV_PROPOSAL_EXISTS,
+			variables: {
+				proposalIndex: Number(postId),
+				type_eq: getSubsquidProposalType(proposalType)
+			}
+		});
+
+		console_pretty(TreasuryRes);
+		const post = TreasuryRes?.data?.proposals?.[0];
+
 		const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 		const postDoc = await postDocRef.get();
 
-		if (!postDoc.exists) {
+		if (post?.index !== Number(postId) && !postDoc.exists) {
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
 		const updatedPost: Partial<Post> = {
-			progress_report
+			created_at: post?.createdAt,
+			id: post?.index,
+			last_edited_at: post?.updatedAt,
+			progress_report,
+			proposer_address: post?.proposer,
+			typeOfReferendum: post?.type
 		};
 
-		await postDocRef.update(updatedPost);
+		console.log('updated: ', updatedPost);
+
+		// await postDocRef.update(updatedPost);
 
 		return res.status(200).json({ message: 'Progress report added and post updated successfully.' });
 	} catch (error) {

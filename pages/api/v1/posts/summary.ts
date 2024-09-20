@@ -46,7 +46,9 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	const contentToSummarize = postData?.content || postData?.summary;
 
 	if (!contentToSummarize) {
-		return res.status(200).json({ summary: '' });
+		const noSummary = 'No summary available';
+		await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
+		return res.status(200).json({ summary: noSummary });
 	}
 
 	const max_150_char_summary = await fetchContentSummary(
@@ -56,7 +58,9 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	);
 
 	if (!max_150_char_summary) {
-		return res.status(200).json({ summary: '' });
+		const noSummary = 'No summary available';
+		await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
+		return res.status(200).json({ summary: noSummary });
 	}
 	await postRef.set({ max_150_char_summary }, { merge: true });
 

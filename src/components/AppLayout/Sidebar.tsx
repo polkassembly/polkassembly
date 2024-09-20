@@ -1721,7 +1721,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', 'group', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
 

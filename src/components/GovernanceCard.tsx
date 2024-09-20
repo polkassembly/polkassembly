@@ -378,7 +378,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{(status === 'Passed' || status === 'Confirmed' || status === 'Approved') && (
+							{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && (
 								<div className='flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFBF60]'>
 									<StarFilled className='text-[14px] text-[#FFBF60]' />
 								</div>

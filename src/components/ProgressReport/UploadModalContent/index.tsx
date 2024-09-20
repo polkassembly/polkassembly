@@ -129,6 +129,7 @@ const UploadModalContent = () => {
 			console.log('Dropped files:', e.dataTransfer.files);
 		}
 	};
+	console.log(fileLink);
 	return (
 		<article className='mt-2 flex flex-col gap-y-1'>
 			{!report_uploaded && (

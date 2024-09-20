@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const { postData, setPostData } = usePostDataContext();
+	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const dispatch = useDispatch();
 	const { report_rating, open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
@@ -47,19 +47,13 @@ const ProgressReportInfo = () => {
 
 		if (data) {
 			setLoading(false);
-			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
 			queueNotification({
 				header: 'Success!',
 				message: 'Your rating is now added',
 				status: NotificationStatus.SUCCESS
 			});
 			dispatch(progressReportActions.setOpenRatingModal(false));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
+			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
 		} else {
 			console.log('failed to save rating');
 		}

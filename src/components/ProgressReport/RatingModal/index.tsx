@@ -27,7 +27,7 @@ const ProgressReportRatingModal = () => {
 					/>
 				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal text-lg text-bodyBlue dark:text-section-dark-overlay'>Rate Delievery</h1>
+					<h1 className='text-normal text-lg text-bodyBlue dark:text-white'>Rate Delievery</h1>
 					<>
 						<Rate
 							tooltips={desc}
@@ -38,9 +38,7 @@ const ProgressReportRatingModal = () => {
 							className='-mt-3 scale-[3]'
 						/>
 						{postData?.progress_report?.ratings.length > 0 && (
-							<p className='mt-4 text-xs text-sidebarBlue dark:text-section-light-overlay'>
-								{postData?.progress_report?.ratings.length} users have already rated the progress report.
-							</p>
+							<p className='mt-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings.length} users have already rated the progress report.</p>
 						)}
 					</>
 				</div>

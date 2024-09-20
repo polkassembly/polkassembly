@@ -113,7 +113,7 @@ const ProgressReportTab = ({ className }: Props) => {
 										alt='info-icon'
 										imgClassName='scale-90'
 									/>
-									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-section-dark-overlay'>Progress Report not added</p>
+									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>Progress Report not added</p>
 								</div>
 							)}
 						</div>

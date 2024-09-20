@@ -1,6 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
@@ -9,6 +12,7 @@ import { isOffChainProposalTypeValid, isValidNetwork, isProposalTypeValid } from
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export interface IPostSummaryResponse {
 	summary: string;
@@ -38,33 +42,43 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const postData = doc.data();
+	let contentToSummarize = postData?.content;
 
-	if (postData?.max_150_char_summary) {
-		return res.status(200).json({ summary: postData.max_150_char_summary });
+	if (!postData?.max_150_char_summary) {
+		if (contentToSummarize) {
+			const max_150_char_summary = await fetchContentSummary(
+				contentToSummarize as string,
+				proposalType as any,
+				process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+			);
+
+			await postRef.set({ max_150_char_summary }, { merge: true });
+			return res.status(200).json({ summary: max_150_char_summary });
+		}
+
+		const subsquireRes = await getSubSquareContentAndTitle(proposalType as any, network, postId as any);
+
+		if (subsquireRes.content) {
+			contentToSummarize = subsquireRes.content;
+
+			await postRef.set({ content: contentToSummarize }, { merge: true });
+
+			const max_150_char_summary = await fetchContentSummary(
+				contentToSummarize as string,
+				proposalType as any,
+				process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+			);
+
+			await postRef.set({ max_150_char_summary }, { merge: true });
+			return res.status(200).json({ summary: max_150_char_summary });
+		} else {
+			const noSummary = 'No contextual information available for this post.';
+			await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
+			return res.status(200).json({ summary: noSummary });
+		}
 	}
 
-	const contentToSummarize = postData?.content || postData?.summary;
-
-	if (!contentToSummarize) {
-		const noSummary = 'No summary available';
-		await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
-		return res.status(200).json({ summary: noSummary });
-	}
-
-	const max_150_char_summary = await fetchContentSummary(
-		contentToSummarize as string,
-		proposalType as any,
-		process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
-	);
-
-	if (!max_150_char_summary) {
-		const noSummary = 'No summary available';
-		await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
-		return res.status(200).json({ summary: noSummary });
-	}
-	await postRef.set({ max_150_char_summary }, { merge: true });
-
-	return res.status(200).json({ summary: max_150_char_summary });
+	return res.status(200).json({ summary: postData.max_150_char_summary });
 };
 
 export default withErrorHandling(handler);

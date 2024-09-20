@@ -474,10 +474,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${
-							(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading || availableBalance.lte(new BN(fundingAmount || '0'))) && 'opacity-50'
-						} `}
-						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || availableBalance.lte(new BN(fundingAmount || '0')) || loading.isLoading}
+						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading) && 'opacity-50'} `}
+						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading.isLoading}
 					/>
 				</div>
 			</div>

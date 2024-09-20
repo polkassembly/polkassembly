@@ -11,7 +11,8 @@ import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import dynamic from 'next/dynamic';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { gov2ReferendumStatus } from '~src/global/statuses';
-import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+// import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
@@ -20,6 +21,7 @@ import { trackEvent } from 'analytics';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import UploadReport from './ProgressReport/UploadReport';
+import { showProgressReportUploadFlow } from './ProgressReport/utils';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -44,7 +46,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress, id, username } = useUserDetailsSelector();
-	const { show_nudge } = useProgressReportSelector();
+	// const { show_nudge } = useProgressReportSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
@@ -56,6 +58,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 		show: false,
 		submissionDeposit: false
 	});
+	console.log('track name: ', postData);
 
 	const {
 		postData: { post_link, tags, postType, content, statusHistory, postIndex }
@@ -88,6 +91,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 		} else if (showRefundDeposit.submissionDeposit && !showRefundDeposit?.decisionDeposit) {
 			refundTx = refundSubmissionDepositTx;
 		}
+
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
@@ -181,7 +185,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 
 		// remove !(not) check from (postData?.userId === id)
 		// if (!(postData?.userId === id) && status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
-		if ((status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && !postData?.progress_report?.progress_file && show_nudge) {
+		if (showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData)) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -377,7 +381,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 					</div>
 				</div>
 			</div>
-			{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && <UploadReport />}
+			{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && <UploadReport />}
 		</>
 	);
 };

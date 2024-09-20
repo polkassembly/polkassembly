@@ -1,12 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Modal } from 'antd';
-import React, { useState } from 'react';
+import { Button, Modal, message, Upload } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import ImageIcon from '~src/ui-components/ImageIcon';
-import type { UploadProps } from 'antd';
-import { message, Upload } from 'antd';
 import { PlusCircleOutlined, ExportOutlined } from '@ant-design/icons';
 import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
@@ -18,9 +15,10 @@ import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
 import { usePostDataContext } from '~src/context';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import { UploadProps } from 'antd';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const { Dragger } = Upload;
 
@@ -28,50 +26,27 @@ const UploadModalContent = () => {
 	const dispatch = useDispatch();
 	const [fileLink, setFileLink] = useState<string>('');
 	const [fileName, setFileName] = useState<string>('');
-	const {
-		postData: { postType: proposalType, postIndex },
-		setPostData
-	} = usePostDataContext();
+	const [summary, setSummary] = useState<string>('');
+	const { postData } = usePostDataContext();
+	const { postIndex } = postData;
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
+	const { id } = useUserDetailsSelector();
 
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal, progress_report_link, summary_content } = useProgressReportSelector();
-
-	const addProgressReport = async (file_name: string) => {
-		console.log('file link: ', progress_report_link, fileLink);
-		const progress_report = {
-			progress_addedOn: new Date(),
-			progress_file: progress_report_link,
-			progress_name: `${Date.now()}-${file_name}`,
-			progress_summary: summary_content,
-			ratings: []
-		};
-
-		console.log('progress_report: ', progress_report);
-
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addProgressReport', {
-			postId: postIndex,
-			progress_report,
-			proposalType
-		});
-
-		if (editError || !data) {
-			console.error('Error saving post', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if (data) {
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.error('failed to save report');
+	const checkAndRestoreProgressReport = () => {
+		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
+		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
+			setFileLink(progress_report.url);
+			setFileName(progress_report.url.split('/').pop());
+			setSummary(progress_report.summary);
+			dispatch(progressReportActions.setReportUploaded(true));
+			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
 		}
 	};
+
+	useEffect(() => {
+		checkAndRestoreProgressReport();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postIndex, id]);
 
 	const handleUpload = async (file: File) => {
 		dispatch(progressReportActions.setFileName(file.name));
@@ -101,6 +76,15 @@ const UploadModalContent = () => {
 				const sharableLink = await handleUpload(file as File);
 				if (sharableLink) {
 					dispatch(progressReportActions.setProgressReportLink(sharableLink));
+					const progress_report = {
+						post_id: postIndex,
+						proposalType: postData?.postType,
+						summary: '',
+						url: sharableLink,
+						user_id: id
+					};
+
+					localStorage.setItem('progress_report', JSON.stringify(progress_report));
 					onSuccess?.({}, file as any);
 				} else {
 					console.error('Upload failed');
@@ -119,7 +103,6 @@ const UploadModalContent = () => {
 			if (status === 'done') {
 				setFileName(info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
-				addProgressReport(info.file.name);
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
 				message.error(`${info.file.name} file upload failed.`);
@@ -129,7 +112,7 @@ const UploadModalContent = () => {
 			console.log('Dropped files:', e.dataTransfer.files);
 		}
 	};
-	console.log(fileLink);
+
 	return (
 		<article className='mt-2 flex flex-col gap-y-1'>
 			{!report_uploaded && (
@@ -168,10 +151,15 @@ const UploadModalContent = () => {
 			)}
 			{add_summary_cta_clicked && (
 				<ContentForm
-					onChange={(content: any) => {
+					onChange={(content: string) => {
+						setSummary(content);
 						dispatch(progressReportActions.setSummaryContent(content));
+						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
+						progress_report.summary = content;
+						localStorage.setItem('progress_report', JSON.stringify(progress_report));
 					}}
 					height={200}
+					value={summary}
 				/>
 			)}
 			{!report_uploaded ? (

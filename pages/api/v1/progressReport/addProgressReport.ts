@@ -15,6 +15,7 @@ import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubsquidProposalType } from '~src/global/proposalType';
 import console_pretty from '~src/api-utils/console_pretty';
+// ... [rest of your imports and setup]
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
@@ -70,18 +71,22 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
+		const existingPost = postDoc.exists ? postDoc.data() : null;
+
+		// Create updatedPost based on whether a progress report exists
 		const updatedPost: Partial<Post> = {
 			created_at: post?.createdAt,
 			id: post?.index,
 			last_edited_at: post?.updatedAt,
-			progress_report,
+			progress_report: existingPost?.progress_report ? progress_report : existingPost?.progress_report,
 			proposer_address: post?.proposer,
 			typeOfReferendum: post?.type
 		};
 
 		console.log('updated: ', updatedPost);
 
-		// await postDocRef.update(updatedPost);
+		// Update the post document
+		await postDocRef.update(updatedPost);
 
 		return res.status(200).json({ message: 'Progress report added and post updated successfully.' });
 	} catch (error) {

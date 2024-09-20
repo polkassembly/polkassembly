@@ -4,12 +4,13 @@
 import React, { FC, useEffect } from 'react';
 import AuditTab from './AuditTab';
 import { useTheme } from 'next-themes';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import UserInfoTab from './UserInfoTab';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import ProgressReportTab from './ProgressReportTab';
+import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
 
 interface Props {
 	auditData?: any;
@@ -19,6 +20,7 @@ interface Props {
 const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
+	const { network } = useNetworkSelector();
 
 	const currentUser = useUserDetailsSelector();
 	useEffect(() => {
@@ -50,9 +52,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 				/>
 			)}
 
-			{(postData?.status === 'Executed' || postData?.status === 'Passed' || postData?.status === 'Confirmed' || postData?.status === 'Approved') && (
-				<ProgressReportTab className='my-4' />
-			)}
+			{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && <ProgressReportTab className='my-4' />}
 		</div>
 	);
 };

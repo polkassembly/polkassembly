@@ -17,7 +17,6 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACC_CONFIG) as fi
 try {
 	firebaseAdmin.initializeApp({
 		credential: firebaseAdmin.credential.cert(serviceAccount)
-		// storageBucket: process.env.FIREBASE_STORAGE_BUCKET // Specify your storage bucket name here
 	});
 	console.log('Firebase admin Initialized.');
 } catch (error) {

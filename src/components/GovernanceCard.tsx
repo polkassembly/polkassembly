@@ -46,11 +46,11 @@ import classNames from 'classnames';
 import TrackTag from '~src/ui-components/TrackTag';
 import { StarFilled } from '@ant-design/icons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import RatingModal from './ProgressReport/RatingModal';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
+import ProgressReportRatingModal from './ProgressReport/RatingModal';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -378,7 +378,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{status === 'Passed' && (
+							{(status === 'Passed' || status === 'Confirmed' || status === 'Approved') && (
 								<div className='flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFBF60]'>
 									<StarFilled className='text-[14px] text-[#FFBF60]' />
 								</div>
@@ -857,7 +857,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				}
 			>
-				<RatingModal />
+				<ProgressReportRatingModal />
 			</Modal>
 		</>
 	);

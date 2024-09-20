@@ -143,13 +143,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 
 	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses, id } = useUserDetailsSelector();
-	const {
-		postData: { created_at, track_number, statusHistory, postIndex, postType }
-	} = usePostDataContext();
+
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
+	const { created_at, track_number, statusHistory, postIndex, postType } = postData;
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);

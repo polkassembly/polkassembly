@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Modal } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -24,6 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { postData, setPostData } = usePostDataContext();
+	const [averageRating, setAverageRating] = useState<number>();
 	const dispatch = useDispatch();
 	const { report_rating, open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
 
@@ -64,8 +65,14 @@ const ProgressReportInfo = () => {
 		}
 	};
 
-	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0);
-	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
+	const getRatingInfo = () => {
+		setAverageRating(postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+	};
+
+	useEffect(() => {
+		getRatingInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postData?.progress_report]);
 
 	return (
 		<>

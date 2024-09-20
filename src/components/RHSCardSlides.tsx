@@ -180,8 +180,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 		}
 
 		// remove !(not) check from (postData?.userId === id)
-		console.log('hello console --> ', status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge);
-		if (status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
+		// if (!(postData?.userId === id) && status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
+		if ((status === 'Passed' || status === 'Confirmed' || status === 'Approved') && !postData?.progress_report?.progress_file && show_nudge) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -377,7 +377,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 					</div>
 				</div>
 			</div>
-			{status === 'Executed' && <UploadReport />}
+			{(status === 'Passed' || status === 'Confirmed' || status === 'Approved') && <UploadReport />}
 		</>
 	);
 };

@@ -10,7 +10,7 @@ import { usePostDataContext } from '~src/context';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
-const RatingModal = () => {
+const ProgressReportRatingModal = () => {
 	const dispatch = useDispatch();
 	const { postData } = usePostDataContext();
 	const { report_rating } = useProgressReportSelector();
@@ -49,4 +49,4 @@ const RatingModal = () => {
 	);
 };
 
-export default RatingModal;
+export default ProgressReportRatingModal;

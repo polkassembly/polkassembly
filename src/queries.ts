@@ -2774,6 +2774,8 @@ export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExi
   proposals(orderBy: id_ASC, where:{index_eq: $proposalIndex, type_eq: $type_eq}){
     proposer
     index
+    createdAt
+    updatedAt
   }
 }`;
 

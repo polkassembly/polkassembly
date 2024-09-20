@@ -50,7 +50,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 				/>
 			)}
 
-			{postData?.status === 'Executed' && <ProgressReportTab className='my-4' />}
+			{(postData?.status === 'Passed' || postData?.status === 'Confirmed' || postData?.status === 'Approved') && <ProgressReportTab className='my-4' />}
 		</div>
 	);
 };

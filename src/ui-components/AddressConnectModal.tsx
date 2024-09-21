@@ -98,7 +98,7 @@ const AddressConnectModal = ({
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const substrate_address = getSubstrateAddress(loginAddress);
-	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+	const substrate_addresses = (addresses || []).map((address) => (getSubstrateAddress(address) || address || '').toLowerCase());
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
@@ -122,16 +122,17 @@ const AddressConnectModal = ({
 	}, [api, apiReady]);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
-		const account_substrate_address = getSubstrateAddress(account?.address || '');
-		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
+		const account_substrate_address = getSubstrateAddress(account?.address || '') || account?.address || '';
+		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || loginAddress || '').toLowerCase();
+
 		if (account?.isCouncil || false) {
 			if (isConnected) {
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address.toLowerCase())) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
+		} else if (substrate_addresses.includes(account_substrate_address.toLowerCase())) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		} else {
 			return EAddressOtherTextType.UNLINKED_ADDRESS;

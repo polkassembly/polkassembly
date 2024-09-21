@@ -33,6 +33,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 // Testing adding a new commit
 interface ParamField {
@@ -393,7 +394,7 @@ export default function CreateReferendaForm({
 	};
 	const trackArr: string[] = [];
 
-	if (network) {
+	if (network && isOpenGovSupported(network)) {
 		Object.values(PostOrigin).forEach((value) => {
 			trackArr.push(value);
 		});

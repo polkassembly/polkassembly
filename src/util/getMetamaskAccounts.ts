@@ -38,14 +38,15 @@ const getMetamaskAccounts = async ({
 	if (!ethereum) {
 		return;
 	}
-
-	try {
-		await addEthereumChain({
-			ethereum,
-			network
-		});
-	} catch (error) {
-		return;
+	if (Wallet.TALISMAN !== chosenWallet) {
+		try {
+			await addEthereumChain({
+				ethereum,
+				network
+			});
+		} catch (error) {
+			return;
+		}
 	}
 
 	const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -62,8 +63,8 @@ const getMetamaskAccounts = async ({
 			address,
 			meta: {
 				genesisHash: null,
-				name: 'metamask',
-				source: 'metamask'
+				name: chosenWallet,
+				source: chosenWallet
 			}
 		};
 

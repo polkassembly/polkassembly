@@ -558,7 +558,7 @@ class AuthService {
 
 		const isValidSr = skipSignCheck
 			? true
-			: address.startsWith('0x')
+			: address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
 			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
 			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);

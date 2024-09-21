@@ -254,7 +254,7 @@ const AddressConnectModal = ({
 					const { data: confirmData, error: confirmError } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/addressLinkConfirm', {
 						address: substrate_address,
 						signature,
-						wallet
+						wallet: chosenWallet
 					});
 
 					if (confirmError) {

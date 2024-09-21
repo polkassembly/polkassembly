@@ -148,20 +148,22 @@ const AddressConnectModal = ({
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
 
-			if (!wallet) return;
+			if (!wallet) {
+				throw new Error('Wallet not found!');
+			}
 
 			const injected = wallet && wallet.enable && (await wallet.enable(APPNAME));
 
 			const signRaw = injected && injected.signer && injected.signer.signRaw;
-			if (!signRaw) return console.error('Signer not available');
+			if (!signRaw) {
+				throw new Error('Signer not available');
+			}
 
 			let substrate_address: string | null;
 			if (!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
 				if (!substrate_address) {
-					console.error('Invalid address');
-					setLoading(false);
-					return;
+					throw new Error('Invalid Address!');
 				}
 			} else {
 				substrate_address = address;
@@ -188,11 +190,20 @@ const AddressConnectModal = ({
 				const method = 'personal_sign';
 
 				let sendAsyncQuery;
-				if (isMetamaskWallet) {
-					sendAsyncQuery = (window as any).ethereum;
-				} else {
-					sendAsyncQuery = (window as any).web3.currentProvider;
+				switch (chosenWallet) {
+					case Wallet.TALISMAN:
+						sendAsyncQuery = (window as any).talismanEth;
+						break;
+					case Wallet.SUBWALLET:
+						sendAsyncQuery = (window as any).SubWallet;
+						break;
+					case Wallet.NOVAWALLET:
+						sendAsyncQuery = (window as any)?.ethereum;
+						break;
+					default:
+						sendAsyncQuery = (window as any).web3.currentProvider;
 				}
+
 				sendAsyncQuery.sendAsync(
 					{
 						from,

@@ -136,6 +136,7 @@ export interface ChainProps {
 	gTag: string | null;
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
+	assetHubBlockTime?: number;
 	supportedAssets?: IAssets[];
 }
 
@@ -922,6 +923,21 @@ export interface IDailyTreasuryTallyData {
 	balance: string;
 }
 
+export type BalanceItem = {
+	balance: any;
+	status: string;
+	reason: any;
+	extra: any | null;
+};
+
+export type MonthlyBalances = {
+	USDT: BalanceItem | null;
+	USDC: BalanceItem | null;
+};
+
+export type TokenBalancesData = {
+	[month: string]: MonthlyBalances;
+};
 export interface IDelegateAddressDetails {
 	address: string;
 	bio: string;

@@ -19,7 +19,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { IOverviewProps } from '~src/types';
-import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -37,7 +36,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdcValue: '',
 		usdtValue: ''
 	});
-	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
+	const [graphData, setGraphData] = useState<any>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
@@ -127,11 +126,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const getGraphData = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch<IMonthlyTreasuryTally[]>('/api/v1/treasury-amount-history');
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/treasury-amount-history/getTotalUSDdata');
 
 			if (error) {
 				console.error('Error fetching data:', error);
 			}
+
 			if (data) {
 				setGraphData(data);
 			}
@@ -309,10 +309,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				</div>
 				{/* graph */}
 				<div>
-					<OverviewDataGraph
-						graphData={graphData}
-						currentTokenPrice={currentTokenPrice}
-					/>
+					<OverviewDataGraph graphData={graphData} />
 				</div>
 			</div>
 			{!isUsedInGovAnalytics && (

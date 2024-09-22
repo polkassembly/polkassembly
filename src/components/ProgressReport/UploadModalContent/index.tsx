@@ -29,8 +29,16 @@ const UploadModalContent = () => {
 	const [summary, setSummary] = useState<string>('');
 	const { postData } = usePostDataContext();
 	const { postIndex } = postData;
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
+
+	useEffect(() => {
+		if (postData?.progress_report?.progress_file) {
+			setSummary(postData?.progress_report?.progress_summary || '');
+			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
+			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
+		}
+	}, [postData?.progress_report?.progress_file, postData, dispatch]);
 
 	const checkAndRestoreProgressReport = () => {
 		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
@@ -38,6 +46,7 @@ const UploadModalContent = () => {
 			setFileLink(progress_report.url);
 			setFileName(progress_report.url.split('/').pop());
 			setSummary(progress_report.summary);
+			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
 		}
@@ -125,7 +134,7 @@ const UploadModalContent = () => {
 			)}
 			<div className='flex items-center justify-start gap-x-2'>
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>Please update your progress report for users to rate it.</p>
-				{report_uploaded && (
+				{report_uploaded && !postData?.progress_report?.progress_file && (
 					<Button
 						className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'
 						onClick={() => {
@@ -135,6 +144,21 @@ const UploadModalContent = () => {
 						<PlusCircleOutlined className='m-0 p-0' /> Add summary
 					</Button>
 				)}
+				{postData?.progress_report?.progress_file && (
+					<Button
+						className='m-0 -mt-0.5 flex items-center gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
+						onClick={() => {
+							dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+						}}
+					>
+						<ImageIcon
+							src='/assets/icons/edit-pencil.svg'
+							alt='edit-icon'
+						/>{' '}
+						Edit summary
+					</Button>
+				)}
+				{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-white'>(Edited)</p>}
 			</div>
 			{!report_uploaded && (
 				<a
@@ -196,18 +220,20 @@ const UploadModalContent = () => {
 							</div>
 							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-white'>{fileName?.length > 20 ? `${fileName?.slice(0, 20)}` : fileName}</p>
 						</div>
-						<div
-							className='flex cursor-pointer items-center justify-end'
-							onClick={() => {
-								dispatch(progressReportActions.setReportUploaded(false));
-							}}
-						>
-							<ImageIcon
-								src='/assets/icons/pink_edit_icon.svg'
-								alt='edit-icon'
-							/>
-							<p className='m-0 p-0 text-sm text-pink_primary'>Replace</p>
-						</div>
+						{!postData?.progress_report?.progress_file && (
+							<div
+								className='flex cursor-pointer items-center justify-end'
+								onClick={() => {
+									dispatch(progressReportActions.setReportUploaded(false));
+								}}
+							>
+								<ImageIcon
+									src='/assets/icons/pink_edit_icon.svg'
+									alt='edit-icon'
+								/>
+								<p className='m-0 p-0 text-sm text-pink_primary'>Replace</p>
+							</div>
+						)}
 					</div>
 				</div>
 			)}

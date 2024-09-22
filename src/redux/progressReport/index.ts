@@ -10,6 +10,7 @@ const initialState: IProgressReportStore = {
 	add_progress_report_modal_open: false,
 	add_summary_cta_clicked: false,
 	file_name: '',
+	is_summary_edited: false,
 	open_rating_modal: false,
 	open_rating_success_modal: false,
 	open_success_modal: false,
@@ -39,6 +40,7 @@ export const progressReportStore = createSlice({
 				add_progress_report_modal_open: false,
 				add_summary_cta_clicked: false,
 				file_name: '',
+				is_summary_edited: false,
 				open_rating_modal: false,
 				open_rating_success_modal: false,
 				open_success_modal: false,
@@ -57,6 +59,9 @@ export const progressReportStore = createSlice({
 		},
 		setFileName: (state, action: PayloadAction<string>) => {
 			state.file_name = action.payload;
+		},
+		setIsSummaryEdited: (state, action: PayloadAction<boolean>) => {
+			state.is_summary_edited = action.payload;
 		},
 		setOpenRatingModal: (state, action: PayloadAction<boolean>) => {
 			state.open_rating_modal = action.payload;

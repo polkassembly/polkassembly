@@ -11,9 +11,6 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
-import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
-import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getSubsquidProposalType } from '~src/global/proposalType';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
@@ -38,9 +35,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(403).json({ message: messages.UNAUTHORISED });
 		}
 
-		const { postId, proposalType, progress_report } = req.body;
+		const { postId, proposalType, summary } = req.body;
 
-		if (!postId || !proposalType || !progress_report) {
+		if (!postId || !proposalType || !summary) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
@@ -48,40 +45,33 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(500).json({ message: messages.INVALID_PARAMS });
 		}
 
-		const TreasuryRes = await fetchSubsquid({
-			network: network,
-			query: CHECK_IF_OPENGOV_PROPOSAL_EXISTS,
-			variables: {
-				proposalIndex: Number(postId),
-				type_eq: getSubsquidProposalType(proposalType)
-			}
-		});
-
-		const post = TreasuryRes?.data?.proposals?.[0];
-
 		const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 		const postDoc = await postDocRef.get();
 
-		if (post?.index !== Number(postId) && !postDoc.exists) {
+		if (!postDoc.exists) {
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
-		const existingPost = postDoc.exists ? postDoc.data() : null;
+		const existingPost = postDoc.data() as Post;
+
+		if (!existingPost.progress_report) {
+			return res.status(400).json({ message: 'No progress report found for the specified post.' });
+		}
+
+		const updatedProgressReport = {
+			...existingPost.progress_report,
+			isEdited: true,
+			progress_summary: summary
+		};
 
 		const updatedPost: Partial<Post> = {
-			created_at: post?.createdAt,
-			id: post?.index,
-			last_edited_at: post?.updatedAt,
-			progress_report: existingPost?.progress_report ? progress_report : existingPost?.progress_report,
-			proposer_address: post?.proposer,
-			typeOfReferendum: post?.type
+			progress_report: updatedProgressReport
 		};
 
 		await postDocRef.update(updatedPost);
-
-		return res.status(200).json({ message: 'Progress report added and post updated successfully.' });
+		return res.status(200).json({ message: 'Progress summary updated successfully.' });
 	} catch (error) {
-		console.error('Error in updating progress report:', error);
+		console.error('Error in updating progress summary:', error);
 		return res.status(500).json({ message: 'An error occurred while processing the request.' });
 	}
 };

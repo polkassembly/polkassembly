@@ -13,4 +13,5 @@ export interface IProgressReportStore {
 	show_nudge: boolean;
 	file_name: string;
 	report_rating: number;
+	is_summary_edited: boolean;
 }

@@ -27,6 +27,7 @@ const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
+	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const {
@@ -35,6 +36,7 @@ const UploadReport = () => {
 	} = usePostDataContext();
 
 	const addProgressReport = async () => {
+		console.log('adding progress report: ', progress_report_link);
 		const progress_report = {
 			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
@@ -80,6 +82,41 @@ const UploadReport = () => {
 		}
 	};
 
+	const editProgressReport = async () => {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
+			postId: postIndex,
+			proposalType,
+			summary: summary_content
+		});
+
+		if (editError || !data) {
+			console.error('Error saving post', editError);
+			queueNotification({
+				header: 'Error!',
+				message: 'Error in saving your post.',
+				status: NotificationStatus.ERROR
+			});
+		}
+
+		if (data) {
+			queueNotification({
+				header: 'Success!',
+				message: 'Your post is now edited',
+				status: NotificationStatus.SUCCESS
+			});
+			dispatch(progressReportActions.setIsSummaryEdited(true));
+			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+
+			const { progress_report } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report
+			}));
+		} else {
+			console.log('failed to save report');
+		}
+	};
+
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -98,11 +135,11 @@ const UploadReport = () => {
 					/>
 					<CustomButton
 						variant='primary'
-						text='Done'
+						text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
 						buttonsize='sm'
 						disabled={!report_uploaded}
 						onClick={() => {
-							addProgressReport();
+							postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 						}}
 					/>
 				</div>

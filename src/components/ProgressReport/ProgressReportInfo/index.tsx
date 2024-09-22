@@ -20,13 +20,16 @@ import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Markdown from '~src/ui-components/Markdown';
+import { useTheme } from 'next-themes';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const dispatch = useDispatch();
-	const { report_rating, open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
+	const { resolvedTheme: theme } = useTheme();
+	const { report_rating, open_rating_modal, open_rating_success_modal, is_summary_edited } = useProgressReportSelector();
 
 	const addUserRating = async () => {
 		setLoading(true);
@@ -84,11 +87,18 @@ const ProgressReportInfo = () => {
 					/>
 					<ClockCircleOutlined />
 					<p className='m-0 p-0 text-xs text-sidebarBlue'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
+					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-white'>(Edited)</p>}
 				</header>
 				<article className=''>
 					{postData?.progress_report?.progress_summary && (
 						<div className='flex flex-col gap-y-2'>
-							<p className='text-sm text-bodyBlue dark:text-white'>{postData?.progress_report?.progress_summary}</p>
+							<p className='text-sm text-bodyBlue dark:text-white'>
+								<Markdown
+									className='post-content'
+									md={postData?.progress_report?.progress_summary}
+									theme={theme}
+								/>
+							</p>
 						</div>
 					)}
 					{postData?.progress_report?.ratings.length > 0 && (

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
@@ -33,13 +33,19 @@ const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-	const { show_nudge } = useProgressReportSelector();
 	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
 	} = usePostDataContext();
+
+	useEffect(() => {
+		if (postData?.progress_report?.progress_file) {
+			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
+			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
+		}
+	}, [postData?.progress_report?.progress_file, postData, dispatch]);
 
 	const addProgressReport = async () => {
 		const progress_report = {
@@ -86,6 +92,40 @@ const ProgressReportTab = ({ className }: Props) => {
 		}
 	};
 
+	const editProgressReport = async () => {
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
+			postId: postIndex,
+			proposalType,
+			summary: summary_content
+		});
+
+		if (editError || !data) {
+			console.error('Error saving post', editError);
+			queueNotification({
+				header: 'Error!',
+				message: 'Error in saving your post.',
+				status: NotificationStatus.ERROR
+			});
+		}
+
+		if (data) {
+			queueNotification({
+				header: 'Success!',
+				message: 'Your post is now edited',
+				status: NotificationStatus.SUCCESS
+			});
+			dispatch(progressReportActions.setIsSummaryEdited(true));
+
+			const { progress_report } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report
+			}));
+		} else {
+			console.log('failed to save report');
+		}
+	};
+
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -120,17 +160,17 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{postData.userId === currentUser?.id && !postData?.progress_report?.progress_file && show_nudge && (
+					{postData.userId === currentUser?.id && (
 						<>
 							<UploadModalContent />
 							<div className='mt-4 flex justify-end'>
 								<CustomButton
 									variant='primary'
-									text='Done'
+									text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
 									buttonsize='sm'
 									disabled={!report_uploaded}
 									onClick={() => {
-										addProgressReport();
+										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 									}}
 								/>
 							</div>

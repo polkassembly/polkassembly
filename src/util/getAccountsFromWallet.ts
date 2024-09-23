@@ -9,9 +9,8 @@ import { Wallet } from '~src/types';
 import getEncodedAddress from './getEncodedAddress';
 import getSubstrateAddress from './getSubstrateAddress';
 import { ApiPromise } from '@polkadot/api';
-// import getMetamaskWalletAccounts from './getMetamaskWalletAccounts';
 import getMetamaskAccounts from './getMetamaskAccounts';
-import { network as AllNetworks } from '~src/global/networkConstants';
+// import { network as AllNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	network: string;
@@ -32,19 +31,20 @@ const getAccountsFromWallet = async ({
 	chosenAddress,
 	setExtentionOpen
 }: Props): Promise<{ accounts: InjectedAccount[]; account: string } | undefined> => {
-	let ethereum = null;
-	switch (chosenWallet) {
-		case Wallet.TALISMAN:
-			ethereum = (window as any).talismanEth;
-			break;
-		case Wallet.SUBWALLET:
-			ethereum = (window as any).SubWallet;
-			break;
-		case Wallet.NOVAWALLET:
-			ethereum = (window as any)?.ethereum;
-			break;
-	}
-	if (chosenWallet === Wallet.METAMASK || (!!ethereum && [AllNetworks.MOONRIVER, AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.LAOSSIGMA].includes(network))) {
+	// let ethereum = null;
+	// switch (chosenWallet) {
+	// case Wallet.TALISMAN:
+	// ethereum = (window as any).talismanEth;
+	// break;
+	// case Wallet.SUBWALLET:
+	// ethereum = (window as any).SubWallet;
+	// break;
+	// case Wallet.NOVAWALLET:
+	// ethereum = (window as any)?.ethereum;
+	// break;
+	// }
+	// if (chosenWallet === Wallet.METAMASK || (!!ethereum && [AllNetworks.MOONRIVER, AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.LAOSSIGMA].includes(network))) {
+	if (chosenWallet === Wallet.METAMASK) {
 		const accountData = await getMetamaskAccounts({ chosenWallet, loginAddress, network });
 		return { account: accountData?.account || chosenAddress || '', accounts: (accountData?.accounts || []) as InjectedAccount[] };
 	} else {

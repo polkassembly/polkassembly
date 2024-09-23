@@ -49,8 +49,8 @@ export const getCommentsAISummaryByPost = async ({
 			if (!commentData || !commentData.content) return '';
 
 			const commentObj = {
-				id: commentData.user_id || 'unknown',
-				content: removeSymbols(commentData.content.replace(htmlTagRegex, ''))
+				content: removeSymbols(commentData.content.replace(htmlTagRegex, '')),
+				id: commentData.user_id || 'unknown'
 			};
 
 			const repliesRef = commentDoc.ref.collection('replies');
@@ -60,8 +60,8 @@ export const getCommentsAISummaryByPost = async ({
 				const replyData = replyDoc.data();
 				if (replyData && replyData.content) {
 					return {
-						id: replyData.user_id || 'unknown',
-						content: removeSymbols(replyData.content.replace(htmlTagRegex, ''))
+						content: removeSymbols(replyData.content.replace(htmlTagRegex, '')),
+						id: replyData.user_id || 'unknown'
 					};
 				}
 				return '';

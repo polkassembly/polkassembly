@@ -99,63 +99,57 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
-					<Skeleton active />{' '}
-				</div>
-			) : currentuser && currentuser?.id && currentuser?.username && subscribedPosts.length > 0 ? (
-				<div>
-					<div>
-						<TabNavigation
-							currentTab={currentTab}
-							setCurrentTab={setCurrentTab}
-							gov2LatestPosts={subscribedPosts}
-							network={network}
-						/>
-					</div>
-					<div>
-						<PostList
-							postData={filteredPosts}
-							currentUserdata={currentuser}
-						/>
-					</div>
-				</div>
-			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length === 0 ? (
-				<div>
-					<div>
-						<TabNavigation
-							currentTab={currentTab}
-							setCurrentTab={setCurrentTab}
-							gov2LatestPosts={subscribedPosts}
-							network={network}
-						/>
-					</div>
-					<p>No posts available</p>
+				<div className='flex min-h-[200px] w-full items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
+					<Skeleton active />
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (
-				<div
-					className={`flex h-[900px]  ${
-						is_sidebar_collapsed ? 'lg:w-[900px]' : 'w-[790px]'
-					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
-				>
-					<Image
-						src='/assets/icons/noactivity.svg'
-						alt='empty state'
-						className='h-80 w-80 p-0'
-						width={320}
-						height={320}
-					/>
-					<p className='p-0 text-xl font-bold'>No Activity Found</p>
-					<p
-						className='p-0 text-center text-[#243A57] dark:text-white'
-						style={{ lineHeight: '1.8' }}
+				subscribedPosts.length > 0 ? (
+					<div>
+						<div>
+							<TabNavigation
+								currentTab={currentTab}
+								setCurrentTab={setCurrentTab}
+								gov2LatestPosts={subscribedPosts}
+								network={network}
+							/>
+						</div>
+						<div>
+							{filteredPosts.length > 0 ? (
+								<PostList
+									postData={filteredPosts}
+									currentUserdata={currentuser}
+								/>
+							) : (
+								<p>No posts available</p>
+							)}
+						</div>
+					</div>
+				) : (
+					<div
+						className={`flex h-[900px] ${
+							is_sidebar_collapsed ? 'lg:w-[900px]' : 'w-[790px]'
+						} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
 					>
-						Follow or Subscribe to people and posts to view personalized <br />
-						content on your feed!
-					</p>
-				</div>
+						<Image
+							src='/assets/icons/noactivity.svg'
+							alt='empty state'
+							className='h-80 w-80 p-0'
+							width={320}
+							height={320}
+						/>
+						<p className='p-0 text-xl font-bold'>No Activity Found</p>
+						<p
+							className='p-0 text-center text-[#243A57] dark:text-white'
+							style={{ lineHeight: '1.8' }}
+						>
+							Follow or Subscribe to people and posts to view personalized <br />
+							content on your feed!
+						</p>
+					</div>
+				)
 			) : (
 				<div
-					className={`flex h-[900px]  ${
+					className={`flex h-[900px] ${
 						is_sidebar_collapsed ? 'lg:w-[900px]' : 'w-[790px]'
 					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
 				>
@@ -166,8 +160,8 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						width={320}
 						height={320}
 					/>
-					<p className='p-0 text-xl font-bold  dark:text-white'>Join Polkassembly to see your Following tab!</p>
-					<p className='p-0 text-center text-[#243A57]  dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
+					<p className='p-0 text-xl font-bold dark:text-white'>Join Polkassembly to see your Following tab!</p>
+					<p className='p-0 text-center text-[#243A57] dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
 					<LoginButton onClick={() => setLoginOpen(true)} />
 					<SignupButton onClick={() => setSignupOpen(true)} />
 				</div>

@@ -99,6 +99,8 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
 
 	return (
 		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-8 font-poppins hover:shadow-md  dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
@@ -106,6 +108,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				post={post}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
+				currentUserdata={currentUserdata}
 			/>
 
 			<PostContent
@@ -131,7 +134,11 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 			{isMobile && (
 				<div
 					onClick={() => {
-						setShowModal(true);
+						if (currentUserdata && currentUserdata?.id) {
+							setShowModal(true);
+						} else {
+							setLoginOpen(true);
+						}
 					}}
 					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
 				>
@@ -143,21 +150,35 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
 				</div>
 			)}
-			<VoteReferendumModal
-				onAccountChange={onAccountChange}
-				address={address}
-				proposalType={ProposalType.REFERENDUM_V2}
-				setLastVote={setLastVote}
-				setShowModal={setShowModal}
-				showModal={showModal}
-				referendumId={post?.post_id}
-				trackNumber={post?.track_no}
+			{showModal && (
+				<VoteReferendumModal
+					onAccountChange={onAccountChange}
+					address={address}
+					proposalType={ProposalType.REFERENDUM_V2}
+					setLastVote={setLastVote}
+					setShowModal={setShowModal}
+					showModal={showModal}
+					referendumId={post?.post_id}
+					trackNumber={post?.track_no}
+				/>
+			)}
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
 			/>
 		</div>
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> = ({ bgColor, statusLabel, post }) => {
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; currentUserdata: any }> = ({ bgColor, statusLabel, post, currentUserdata }) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
@@ -214,6 +235,8 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> 
 	const decidingBlock = post?.statusHistory?.filter((status: any) => status.status === 'Deciding')?.[0]?.block || 0;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
 
 	const onAccountChange = (address: string) => setAddress(address);
 
@@ -301,7 +324,11 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> 
 						<div className='flex flex-col items-end '>
 							<div
 								onClick={() => {
-									setShowModal(true);
+									if (currentUserdata && currentUserdata?.id) {
+										setShowModal(true);
+									} else {
+										setLoginOpen(true);
+									}
 								}}
 								className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
@@ -361,15 +388,29 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> 
 					)}
 				</div>
 			</div>
-			<VoteReferendumModal
-				onAccountChange={onAccountChange}
-				address={address}
-				proposalType={ProposalType.REFERENDUM_V2}
-				setLastVote={setLastVote}
-				setShowModal={setShowModal}
-				showModal={showModal}
-				referendumId={post?.post_id}
-				trackNumber={post?.track_no}
+			{showModal && (
+				<VoteReferendumModal
+					onAccountChange={onAccountChange}
+					address={address}
+					proposalType={ProposalType.REFERENDUM_V2}
+					setLastVote={setLastVote}
+					setShowModal={setShowModal}
+					showModal={showModal}
+					referendumId={post?.post_id}
+					trackNumber={post?.track_no}
+				/>
+			)}
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
 			/>
 		</>
 	);
@@ -717,7 +758,7 @@ const PostActions: React.FC<{
 												reactionState.userDisliked
 													? theme === 'dark'
 														? '/assets/icons/reactions/DislikeFilledDark.svg'
-														: '/assets/icons/reactions/DislikeFilled.svg'
+														: '/assets/icons/reactions/Dislikefilled.svg'
 													: theme === 'dark'
 													? '/assets/icons/reactions/DislikeOutlinedDark.svg'
 													: '/assets/icons/dislike-pink.svg'

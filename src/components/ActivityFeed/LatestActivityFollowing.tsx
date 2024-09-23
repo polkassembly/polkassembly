@@ -102,9 +102,9 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
 					<Skeleton active />{' '}
 				</div>
-			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
+			) : currentuser && currentuser?.id && currentuser?.username && subscribedPosts.length > 0 ? (
 				<div>
-					<div className='hidden xl:block'>
+					<div>
 						<TabNavigation
 							currentTab={currentTab}
 							setCurrentTab={setCurrentTab}
@@ -118,6 +118,18 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 							currentUserdata={currentuser}
 						/>
 					</div>
+				</div>
+			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length === 0 ? (
+				<div>
+					<div>
+						<TabNavigation
+							currentTab={currentTab}
+							setCurrentTab={setCurrentTab}
+							gov2LatestPosts={subscribedPosts}
+							network={network}
+						/>
+					</div>
+					<p>No posts available</p>
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (
 				<div

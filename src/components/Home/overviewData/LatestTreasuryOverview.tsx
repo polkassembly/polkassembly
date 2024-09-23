@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { poppins } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
+import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
@@ -40,17 +41,32 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdcValue: '',
 		usdtValue: ''
 	});
+	const [hydrationValues, setHydrationValues] = useState<{
+		dotValue: string;
+		usdcValue: string;
+		usdtValue: string;
+	}>({
+		dotValue: '',
+		usdcValue: '',
+		usdtValue: ''
+	});
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
 	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
 
+	const hydrationValue = formatBnBalance(hydrationValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const hydrationValueUSDC = formatUSDWithUnits(String(Number(hydrationValues.usdcValue) / 1000000));
+	const hydrationValueUSDT = formatUSDWithUnits(String(Number(hydrationValues.usdtValue) / 1000000));
+
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
+			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + parseFloat(hydrationValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
 				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000
+				Number(assethubValues.usdtValue) / 1000000 +
+				Number(hydrationValues.usdcValue) / 1000000 +
+				Number(hydrationValues.usdtValue) / 1000000
 		)
 	);
 
@@ -108,16 +124,41 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const fetchHydrationAssetsAmount = async () => {
 		if (!hydrationApi || !hydrationApiReady) return;
-		console.log('inside');
 
 		if (hydrationApiReady && chainProperties?.[network]?.hydrationTreasuryAddress) {
 			if (chainProperties[network]?.hydrationAssets?.[0]?.assetId) {
-				console.log('inside2');
+				const dotResult = (await hydrationApi?.query?.tokens?.accounts(
+					chainProperties[network].hydrationTreasuryAddress,
+					chainProperties[network]?.hydrationAssets?.[0]?.assetId
+				)) as any;
 
-				const usdcResult = (await hydrationApi?.query?.tokens?.accounts(chainProperties[network].assetHubTreasuryAddress, 5)) as any;
+				const data = dotResult.reserved;
+				const freeDOTBalance = data.toBigInt().toString();
+				setHydrationValues((values) => ({ ...values, dotValue: freeDOTBalance }));
+			}
 
-				const data = usdcResult;
-				console.log('freeUSDCBalance', data);
+			// for USDT
+			if (chainProperties[network]?.hydrationAssets?.[1]?.assetId) {
+				const usdtResult = (await hydrationApi?.query?.tokens?.accounts(
+					chainProperties[network].hydrationTreasuryAddress,
+					chainProperties[network]?.hydrationAssets?.[1]?.assetId
+				)) as any;
+
+				const data = usdtResult.free;
+				const freeUSDTBalance = data.toBigInt().toString();
+				setHydrationValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
+			}
+
+			// for USDC
+			if (chainProperties[network]?.hydrationAssets?.[2]?.assetId) {
+				const usdcResult = (await hydrationApi?.query?.tokens?.accounts(
+					chainProperties[network].hydrationTreasuryAddress,
+					chainProperties[network]?.hydrationAssets?.[2]?.assetId
+				)) as any;
+
+				const data = usdcResult.free;
+				const freeUSDCBalance = data.toBigInt().toString();
+				setHydrationValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
 			}
 		}
 	};
@@ -311,6 +352,18 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='text-xs'>
 													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 												</div>
+												{chainProperties?.[network]?.supportedAssets?.[2] && (
+													<>
+														<Divider
+															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='text-xs'>
+															{assetValueUSDT}
+															<span className='ml-[3px] font-normal'>USDT</span>
+														</div>
+													</>
+												)}
 												{chainProperties?.[network]?.supportedAssets?.[1] && (
 													<>
 														<Divider
@@ -323,6 +376,39 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														</div>
 													</>
 												)}
+											</div>
+										</div>
+									)}
+								</div>
+							) : (
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+							)}
+							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+								<div className='mt-2'>
+									{chainProperties[network]?.hydrationTreasuryAddress && (
+										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center `}>
+											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
+												<HydrationIcon />
+												Hydration
+											</span>
+											<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+												<div className='text-xs'>
+													{formatUSDWithUnits(hydrationValue)} <span className='ml-[2px] font-normal'>{unit}</span>
+												</div>
+												{chainProperties?.[network]?.supportedAssets?.[1] && (
+													<>
+														<Divider
+															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='text-xs'>
+															{hydrationValueUSDT}
+															<span className='ml-[3px] font-normal'>USDT</span>
+														</div>
+													</>
+												)}
 												{chainProperties?.[network]?.supportedAssets?.[2] && (
 													<>
 														<Divider
@@ -330,8 +416,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 															type='vertical'
 														/>
 														<div className='text-xs'>
-															{assetValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
+															{hydrationValueUSDC}
+															<span className='ml-[3px] font-normal'>USDC</span>
 														</div>
 													</>
 												)}

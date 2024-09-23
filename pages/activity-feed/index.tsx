@@ -505,10 +505,10 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				network={network}
 			/>
 			<div className=' w-full font-poppins  '>
-				<div className='flex w-full justify-between xl:mt-3 xl:items-center'>
-					<div className='flex flex-col xl:h-12 xl:flex-row xl:gap-5'>
+				<div className='flex w-full justify-between lg:mt-3 xl:items-center'>
+					<div className='flex flex-col lg:flex-row xl:h-12 xl:gap-5'>
 						<div>
-							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:text-2xl xl:mt-2'>
+							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-2 lg:text-2xl'>
 								Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
 							</h1>
 						</div>

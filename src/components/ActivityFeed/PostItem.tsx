@@ -483,7 +483,7 @@ const PostActions: React.FC<{
 		setTimeout(async () => {
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				postId: post_id,
-				postType: type,
+				postType: ProposalType.REFERENDUM_V2,
 				reaction,
 				replyId: null,
 				setReplyReaction: false,

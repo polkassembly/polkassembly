@@ -137,7 +137,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 							<ImageIcon
 								src='/assets/icons/loop.svg'
 								alt='loop'
-								className='h-4 w-4 lg:h-5 lg:w-5'
+								className='-mt-1 h-4 w-4 lg:h-5 lg:w-5'
 							/>
 						</span>
 					</button>

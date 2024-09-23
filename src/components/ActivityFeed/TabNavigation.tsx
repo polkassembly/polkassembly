@@ -3,13 +3,26 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
-import { FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, WishForChangeIcon } from '~src/ui-components/CustomIcons';
+import {
+	AllPostIcon,
+	FellowshipGroupIcon,
+	FellowshipIconNew,
+	GovernanceGroupIcon,
+	GovernanceIconNew,
+	OverviewIcon,
+	RootIcon,
+	StakingAdminIcon,
+	TreasuryGroupIcon,
+	TreasuryIconNew,
+	WishForChangeIcon
+} from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import { TabNavigationProps } from './utils/types';
 import Popover from '~src/basic-components/Popover';
 import { useGlobalSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -60,14 +73,20 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	}
 
 	const tabIcons: { [key: string]: JSX.Element } = {
-		all: <OverviewIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		root: <RootIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		'wish-for-change': <WishForChangeIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		all: (
+			<ImageIcon
+				src='/assets/allpost.svg'
+				alt='All Posts'
+				className='-mt-0.5 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive'
+			/>
+		),
+		root: <RootIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		'wish-for-change': <WishForChangeIcon className='scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		// eslint-disable-next-line sort-keys
-		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		governance: <GovernanceGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		treasury: <TreasuryGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		whitelist: <FellowshipGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+		admin: <StakingAdminIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		governance: <GovernanceIconNew className='-mt-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		treasury: <TreasuryIconNew className='-mt-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		whitelist: <FellowshipIconNew className=' scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 	};
 
 	const tabCategories: { [key: string]: string[] } = {
@@ -161,7 +180,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 
 	return (
-		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object.keys(tabCategories)
 				.filter((category) => !['Treasury', 'Whitelist'].includes(category))
 				.map((category, index) => (
@@ -213,8 +232,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 								arrow={false}
 							>
 								<p
-									className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-										isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
+										isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 									}`}
 									onClick={() => handleCategoryClick(category)}
 								>
@@ -227,8 +246,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							</Popover>
 						) : (
 							<p
-								className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-									isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+								className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
+									isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>

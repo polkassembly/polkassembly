@@ -8,7 +8,6 @@ import { useGlobalSelector } from '~src/redux/selectors';
 
 const PostList: React.FC<PostListProps> = ({ postData, currentUserdata }) => {
 	const { is_sidebar_collapsed } = useGlobalSelector();
-
 	return (
 		<div className={` ${is_sidebar_collapsed ? 'lg:w-[915px]' : 'w-[800px]'} space-y-4`}>
 			{postData.length === 0 ? (

@@ -19,9 +19,9 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import { PieChart } from 'react-minimal-pie-chart';
 import { useTheme } from 'next-themes';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { Button, Divider, Form, Modal, Tooltip } from 'antd';
+import { Button, Divider, Form, Modal, Skeleton, Tooltip } from 'antd';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
-import { IPeriod, NotificationStatus } from '~src/types';
+import { ILastVote, IPeriod, NotificationStatus } from '~src/types';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { useRouter } from 'next/router';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -42,7 +42,16 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import ContentForm from '../ContentForm';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { ProposalType } from '~src/global/proposalType';
+import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import Popover from '~src/basic-components/Popover';
+import TooltipContent from '../Post/ActionsBar/Reactionbar/TooltipContent';
+import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
+import dynamic from 'next/dynamic';
 
+const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
@@ -76,39 +85,32 @@ const getStatusStyle = (status: string) => {
 	return statusStyles[status] || { bgColor: 'bg-[#2ED47A]', label: 'Active' };
 };
 
-const formatDate = (dateString: string) => {
-	return new Date(dateString).toLocaleDateString();
-};
-
 const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
-	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
-	const isExpanded = expandedPostId === post.post_id;
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-	const toggleExpandPost = (postId: number) => {
-		setExpandedPostId(expandedPostId === postId ? null : postId);
-	};
 
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
 
 	const { '👍': likes = { count: 0, userIds: [], usernames: [] }, '👎': dislikes = { count: 0, userIds: [], usernames: [] } } = post?.post_reactions || {};
 
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [address, setAddress] = useState<string>('');
+
+	const onAccountChange = (address: string) => setAddress(address);
+
+	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	return (
-		<div className=' rounded-2xl border-solid border-[#D2D8E0] bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-8 font-poppins hover:shadow-md  dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
 				post={post}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
-				formatDate={formatDate}
 			/>
 
 			<PostContent
 				post={post}
 				content={fullContent}
-				shouldShowReadMore={true}
-				toggleExpandPost={() => toggleExpandPost(post.post_id)}
-				isExpanded={isExpanded}
 				isCommentPost={false}
 			/>
 
@@ -127,22 +129,35 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				currentUserdata={currentUserdata}
 			/>
 			{isMobile && (
-				<Link href={`/referenda/${post?.post_id}`}>
-					<div className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'>
-						<ImageIcon
-							src='/assets/Vote.svg'
-							alt=''
-							className='m-0 h-6 w-6 p-0'
-						/>
-						<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
-					</div>
-				</Link>
+				<div
+					onClick={() => {
+						setShowModal(true);
+					}}
+					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
+				>
+					<ImageIcon
+						src='/assets/Vote.svg'
+						alt=''
+						className='m-0 h-6 w-6 p-0'
+					/>
+					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
+				</div>
 			)}
+			<VoteReferendumModal
+				onAccountChange={onAccountChange}
+				address={address}
+				proposalType={ProposalType.REFERENDUM_V2}
+				setLastVote={setLastVote}
+				setShowModal={setShowModal}
+				showModal={showModal}
+				referendumId={post?.post_id}
+				trackNumber={post?.track_no}
+			/>
 		</div>
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; formatDate: (dateString: string) => string }> = ({ bgColor, statusLabel, post, formatDate }) => {
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> = ({ bgColor, statusLabel, post }) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
@@ -197,13 +212,19 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(post?.status || '');
 	const decidingBlock = post?.statusHistory?.filter((status: any) => status.status === 'Deciding')?.[0]?.block || 0;
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [address, setAddress] = useState<string>('');
+
+	const onAccountChange = (address: string) => setAddress(address);
+
+	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	return (
 		<>
 			<div className='flex justify-between'>
 				<div>
 					<div className='flex items-center gap-4'>
-						<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
+						<p className='pt-[10px] text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
 							{post?.requestedAmount ? (
 								post?.assetId ? (
 									getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
@@ -258,7 +279,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 								alt='timer'
 								className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
 							/>
-							<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{formatDate(String(post.created_at))}</p>
+							<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
 						</div>
 					</div>
 				</div>
@@ -278,16 +299,20 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 						</div>
 					) : (
 						<div className='flex flex-col items-end '>
-							<Link href={`/referenda/${post?.post_id}`}>
-								<div className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'>
-									<ImageIcon
-										src='/assets/Vote.svg'
-										alt=''
-										className='m-0 h-6 w-6 p-0'
-									/>
-									<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
-								</div>
-							</Link>
+							<div
+								onClick={() => {
+									setShowModal(true);
+								}}
+								className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+							>
+								<ImageIcon
+									src='/assets/Vote.svg'
+									alt=''
+									className='m-0 h-6 w-6 p-0'
+								/>
+								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
+							</div>
+
 							<div className='flex items-center gap-2'>
 								{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 									<div className='flex items-center gap-2'>
@@ -336,6 +361,16 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 					)}
 				</div>
 			</div>
+			<VoteReferendumModal
+				onAccountChange={onAccountChange}
+				address={address}
+				proposalType={ProposalType.REFERENDUM_V2}
+				setLastVote={setLastVote}
+				setShowModal={setShowModal}
+				showModal={showModal}
+				referendumId={post?.post_id}
+				trackNumber={post?.track_no}
+			/>
 		</>
 	);
 };
@@ -343,34 +378,30 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 const PostContent: React.FC<{
 	post: any;
 	content: string;
-	shouldShowReadMore: boolean;
-	toggleExpandPost: () => void;
-	isExpanded: boolean;
 	isCommentPost?: boolean;
-}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded, isCommentPost }) => {
+}> = ({ post, content }) => {
 	const trimmedContentForComment = content?.length > 200 ? content?.slice(0, 150) + '...' : content;
-	const trimmedContentForPost = content?.length > 200 && !isExpanded ? content?.slice(0, 200) + '...' : content;
-	const displayedContent = isCommentPost ? trimmedContentForComment : trimmedContentForPost;
-	const showReadMore = !isCommentPost && content?.length > 200;
 
 	return (
 		<>
-			<p className='xl:text-md pt-2 text-[12px] font-medium text-[#243A57] dark:text-white'>
+			<p className='xl:text-md pt-2 text-[15px] font-medium text-[#243A57] dark:text-white'>
 				#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 			</p>
 			<Markdown
 				className='xl:text-md text-[12px] text-[#243A57]'
-				md={displayedContent}
-				isPreview={!isExpanded}
+				md={trimmedContentForComment}
 			/>
-			{showReadMore && shouldShowReadMore && (
-				<p
-					className='cursor-pointer font-medium text-[#1B61FF]'
-					onClick={toggleExpandPost}
-				>
-					{isExpanded ? 'Show Less' : 'Read More'}
-				</p>
-			)}
+			<Link
+				className='flex cursor-pointer gap-1 font-medium text-[#E5007A] underline'
+				href={`/referenda/${post?.post_id}`}
+			>
+				Read More{' '}
+				<ImageIcon
+					src='/assets/more.svg'
+					alt=''
+					className='h-4 w-4'
+				/>
+			</Link>
 		</>
 	);
 };
@@ -397,7 +428,7 @@ const PostReactions: React.FC<{
 							width={20}
 							height={20}
 						/>
-						<p className='md: ml-2 text-[10px] md:pt-3 md:text-sm'>
+						<p className='md: ml-2 text-[10px] md:pt-3 md:text-[12px]'>
 							{likes?.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes?.count - 1} others liked this post`}
 						</p>
 					</div>
@@ -405,9 +436,9 @@ const PostReactions: React.FC<{
 			</div>
 
 			<div className='flex items-center gap-1 md:gap-3'>
-				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-sm'>{dislikes.count} dislikes</p>
+				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{dislikes.count} dislikes</p>
 				<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-sm'>{comments_count || 0} Comments</p>
+				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
 					{post?.highestSentiment?.sentiment == 1 && (
@@ -455,20 +486,24 @@ const PostActions: React.FC<{
 	currentUserdata: any;
 }> = ({ post, currentUserdata }) => {
 	const { post_id, track_no } = post;
-	const userid = currentUserdata?.user_id;
+	const userid = currentUserdata?.id;
+	const username = currentUserdata?.username;
+	const { post_reactions } = post;
+
 	const [reactionState, setReactionState] = useState({
-		dislikesCount: post?.dislikes?.count || 0,
-		likesCount: post?.likes?.count || 0,
-		userDisliked: post?.dislikes?.usernames?.includes(currentUserdata?.username) || false,
-		userLiked: post?.likes?.usernames?.includes(currentUserdata?.username) || false
+		dislikesCount: post_reactions?.['👎']?.count || 0,
+		likesCount: post_reactions?.['👍']?.count || 0,
+		userDisliked: post_reactions?.['👎']?.usernames?.includes(username) || false,
+		userLiked: post_reactions?.['👍']?.usernames?.includes(username) || false
 	});
+	console.log('post', post);
+
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const [showGif, setShowGif] = useState<string | null>(null); // To track if GIF is being shown
-
+	const [showGif, setShowGif] = useState<{ reaction: '👍' | '👎' | null }>({ reaction: null });
 	const { resolvedTheme: theme } = useTheme();
 
-	const handleReactionClick = async (reaction: '👍' | '👎') => {
+	const handleReactionClick = (reaction: '👍' | '👎') => {
 		if (!currentUserdata && !userid) {
 			setLoginOpen(true);
 			return;
@@ -476,10 +511,37 @@ const PostActions: React.FC<{
 
 		const isLiked = reaction === '👍' && reactionState.userLiked;
 		const isDisliked = reaction === '👎' && reactionState.userDisliked;
+
+		setReactionState((prevState) => {
+			const newState = { ...prevState };
+
+			if (reaction === '👍') {
+				if (prevState.userDisliked) {
+					newState.dislikesCount -= 1;
+					newState.userDisliked = false;
+				}
+				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
+				newState.userLiked = !isLiked;
+			} else if (reaction === '👎') {
+				if (prevState.userLiked) {
+					newState.likesCount -= 1;
+					newState.userLiked = false;
+				}
+				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
+				newState.userDisliked = !isDisliked;
+			}
+
+			return newState;
+		});
+
+		if (showGif.reaction !== reaction) {
+			setShowGif({ reaction });
+			setTimeout(() => {
+				setShowGif({ reaction: null });
+			}, 600);
+		}
+
 		const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
-
-		setShowGif(reaction);
-
 		setTimeout(async () => {
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				postId: post_id,
@@ -493,33 +555,10 @@ const PostActions: React.FC<{
 
 			if (error || !data) {
 				console.error('Error updating reaction', error);
-				return;
 			}
-
-			setReactionState((prevState) => {
-				if (reaction === '👍') {
-					return {
-						...prevState,
-						dislikesCount: isLiked ? prevState.dislikesCount : prevState.dislikesCount - (prevState.userDisliked ? 1 : 0),
-						likesCount: isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1,
-						userDisliked: isLiked ? prevState.userDisliked : false,
-						userLiked: !isLiked
-					};
-				} else if (reaction === '👎') {
-					return {
-						...prevState,
-						dislikesCount: isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1,
-						likesCount: isDisliked ? prevState.likesCount : prevState.likesCount - (prevState.userLiked ? 1 : 0),
-						userDisliked: !isDisliked,
-						userLiked: isDisliked ? prevState.userLiked : false
-					};
-				}
-				return prevState;
-			});
-
-			setShowGif(null);
-		}, 1000);
+		}, 100);
 	};
+
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
@@ -546,77 +585,151 @@ const PostActions: React.FC<{
 			document.removeEventListener('mousedown', handleOutsideClick);
 		};
 	}, [isModalOpen]);
+	const likedusernames = post_reactions?.['👍']?.usernames;
+	const dislikedusernames = post_reactions?.['👎']?.usernames;
+	const [likedUserImageData, setLikedUserImageData] = useState<UserProfileImage[]>([]);
+	const [dislikedUserImageData, setDislikedUserImageData] = useState<UserProfileImage[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { network } = useNetworkSelector();
+
+	const likeduserIds = post_reactions?.['👍']?.userIds;
+	const dislikeduserIds = post_reactions?.['👎']?.userIds;
+
+	const getUserProfile = async (userIds: string[], setImageData: React.Dispatch<React.SetStateAction<UserProfileImage[]>>) => {
+		if (userIds?.length) {
+			setIsLoading(true);
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			if (data) {
+				setImageData(data);
+				setIsLoading(false);
+			} else {
+				console.log('There is an error in fetching data');
+				setIsLoading(false);
+			}
+		} else {
+			setImageData([]);
+		}
+	};
+
+	useEffect(() => {
+		if (likeduserIds && likeduserIds.length > 0) {
+			getUserProfile([...likeduserIds].map(String), setLikedUserImageData);
+		}
+	}, [network, likeduserIds]);
+
+	useEffect(() => {
+		if (dislikeduserIds && dislikeduserIds.length > 0) {
+			getUserProfile([...dislikeduserIds].map(String), setDislikedUserImageData);
+		}
+	}, [network, dislikeduserIds]);
+
 	return (
 		<>
 			<div className='flex justify-between'>
+				{/* Like button */}
 				<div className='mt-1 flex items-center md:space-x-4'>
 					<div
-						className='flex cursor-pointer items-center  rounded-lg md:gap-2 md:px-2'
+						className='flex cursor-pointer items-center rounded-lg md:gap-2 md:px-2'
 						onClick={() => handleReactionClick('👍')}
 					>
 						<PostAction
 							icon={
-								showGif === '👍' ? (
+								showGif.reaction === '👍' ? (
 									<Image
 										src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 										alt='liked gif'
-										className='h-10 w-10'
-										width={50}
-										height={50}
+										className='h-5 w-5'
+										width={10}
+										height={10}
 									/>
 								) : (
-									<Image
-										src={
-											reactionState.userLiked
-												? theme === 'dark'
-													? '/assets/icons/reactions/Liked-Colored-Dark.gif'
-													: '/assets/icons/reactions/LikeIconfilled.svg'
-												: theme === 'dark'
-												? '/assets/icons/reactions/LikeOutlinedDark.svg'
-												: '/assets/icons/like-pink.svg'
+									<Popover
+										placement='bottomLeft'
+										content={
+											likedusernames && likedusernames.length > 0 ? (
+												<TooltipContent
+													usernames={likedusernames}
+													users={likedUserImageData}
+													isLoading={isLoading}
+												/>
+											) : (
+												<div>No reactions yet</div>
+											)
 										}
-										alt='like icon'
-										className='h-5 w-5'
-										width={50}
-										height={50}
-									/>
+									>
+										<Image
+											src={
+												reactionState.userLiked
+													? theme === 'dark'
+														? '/assets/icons/reactions/Liked-Colored-Dark.gif'
+														: '/assets/icons/reactions/LikeIconfilled.svg'
+													: theme === 'dark'
+													? '/assets/icons/reactions/LikeOutlinedDark.svg'
+													: '/assets/icons/like-pink.svg'
+											}
+											alt='like icon'
+											className='h-5 w-5'
+											width={50}
+											height={50}
+										/>
+									</Popover>
 								)
 							}
 							label={reactionState.userLiked ? 'Liked' : 'Like'}
-							isMobile={isMobile}
+							isMobile={typeof window !== 'undefined' && window?.screen.width < 1024}
 						/>
 					</div>
 
+					{/* Dislike button */}
 					<div
 						className='flex cursor-pointer items-center gap-2 rounded-lg px-2'
 						onClick={() => handleReactionClick('👎')}
 					>
 						<PostAction
 							icon={
-								showGif === '👎' ? (
-									<ImageIcon
-										src={theme === 'dark' ? 'assets/icons/reactions/DislikeFilledDark.svg' : 'assets/icons/reactions/DislikeFilled.svg'}
-										alt='dislike gif'
-										className='h-5 w-5'
-									/>
+								showGif?.reaction === '👎' ? (
+									<div className='rotate-180'>
+										<Image
+											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
+											alt='disliked gif'
+											className='h-5 w-5'
+											width={10}
+											height={10}
+										/>
+									</div>
 								) : (
-									<ImageIcon
-										src={
-											reactionState.userDisliked
-												? theme === 'dark'
-													? 'assets/icons/reactions/DislikeFilledDark.svg'
-													: 'assets/icons/reactions/DislikeFilled.svg'
-												: theme === 'dark'
-												? 'assets/icons/reactions/DislikeOutlinedDark.svg'
-												: 'assets/icons/dislike-pink.svg'
+									<Popover
+										placement='bottomLeft'
+										content={
+											dislikedusernames && dislikedusernames.length > 0 ? (
+												<TooltipContent
+													usernames={dislikedusernames}
+													users={dislikedUserImageData}
+													isLoading={isLoading}
+												/>
+											) : (
+												<div>No reactions yet</div>
+											)
 										}
-										alt='dislike icon'
-										className='h-5 w-5'
-									/>
+									>
+										<ImageIcon
+											src={
+												reactionState.userDisliked
+													? theme === 'dark'
+														? '/assets/icons/reactions/DislikeFilledDark.svg'
+														: '/assets/icons/reactions/DislikeFilled.svg'
+													: theme === 'dark'
+													? '/assets/icons/reactions/DislikeOutlinedDark.svg'
+													: '/assets/icons/dislike-pink.svg'
+											}
+											alt='dislike icon'
+											className='h-5 w-5'
+										/>
+									</Popover>
 								)
 							}
 							label={reactionState.userDisliked ? 'Disliked' : 'Dislike'}
-							isMobile={isMobile}
+							isMobile={typeof window !== 'undefined' && window?.screen.width < 1024}
 						/>
 					</div>
 
@@ -758,7 +871,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const openModal = () => {
-		if (currentUserdata && currentUserdata.user_id) {
+		if (currentUserdata && currentUserdata?.id) {
 			setIsModalOpen(true);
 		} else if (!loginTriggered) {
 			setLoginOpen(true);
@@ -887,9 +1000,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 		if (error) console.error('Error subscribing to post', error);
 		if (data) console.log(data.message);
 	};
-	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
 
-	console.log('isModalOpen', isModalOpen);
 	useEffect(() => {
 		if (!isModalOpen) {
 			form.resetFields();
@@ -897,12 +1008,6 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 			global.window.localStorage.removeItem(commentKey());
 		}
 	}, [isModalOpen, form]);
-
-	const isExpanded = expandedPostId === post.post_id;
-	const toggleExpandPost = (postId: number) => {
-		setExpandedPostId(expandedPostId === postId ? null : postId);
-	};
-	const fullContent = post?.content || NO_CONTENT_FALLBACK;
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -922,7 +1027,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				postType: ProposalType.REFERENDUM_V2,
 				sentiment: 0,
 				trackNumber: post.track_no,
-				userId: currentUserdata?.user_id
+				userId: currentUserdata?.id
 			});
 			if (error || !data) {
 				queueNotification({
@@ -958,68 +1063,70 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				disabled={loading}
 				validateMessages={{ required: "Please add the  '${name}'" }}
 			>
-				<div className='flex items-center gap-[4px] pt-2 md:gap-2 md:pt-0  '>
-					<Image
-						src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-						alt='profile'
-						className='h-4 w-4 rounded-full xl:h-6 xl:w-6'
-						width={24}
-						height={24}
-					/>
-					<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
-						{post.proposerProfile?.username
-							? post.proposerProfile.username.length > 10
-								? `${post.proposerProfile.username.substring(0, 10)}...`
-								: post.proposerProfile.username
-							: ANONYMOUS_FALLBACK}
-					</p>
-					<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-					<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
-						{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
-					</span>
-					<p className='pt-3 text-[#485F7D]'>|</p>
-					<div className='flex '>
-						<ImageIcon
-							src='/assets/icons/timer.svg'
-							alt='timer'
-							className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+				<div className='flex gap-4'>
+					<div className='flex flex-col items-center gap-2   '>
+						<Image
+							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							alt='profile'
+							className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
+							width={40}
+							height={40}
 						/>
-						<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{formatDate(String(post.created_at))}</p>
+						<Divider
+							type='vertical'
+							className='h-10 rounded-sm border-l-2 border-l-[#D2D8E0] dark:border-[#4B4B4B]'
+						/>
+						<div>
+							<Image
+								src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
+								alt=''
+								className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
+								width={40}
+								height={40}
+							/>
+						</div>
 					</div>
-				</div>
-				<PostContent
-					post={post}
-					content={fullContent}
-					shouldShowReadMore={false}
-					toggleExpandPost={() => toggleExpandPost(post.post_id)}
-					isExpanded={isExpanded}
-					isCommentPost={true}
-				/>
-				<div className='flex items-start gap-2 pt-3 md:pt-10 lg:w-full'>
-					<Image
-						src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-						alt=''
-						className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
-						width={40}
-						height={40}
-					/>
-					<div className='w-[90%] lg:flex-1'>
-						<ContentForm
-							onChange={(content: any) => onContentChange(content)}
-							height={200}
-						/>
+					<div>
+						<div className='flex items-center gap-[4px]  md:gap-2 md:pt-0 '>
+							<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
+								{post.proposerProfile?.username ? post.proposerProfile.username : ANONYMOUS_FALLBACK}
+							</p>
+							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
+								{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
+							</span>
+							<p className='pt-3 text-[#485F7D]'>|</p>
+							<div className='flex '>
+								<ImageIcon
+									src='/assets/icons/timer.svg'
+									alt='timer'
+									className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+								/>
+								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
+							</div>
+						</div>
+						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
+							#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+						</span>
+						<p className='text-[12px] font-light text-[#E5007A]'>Commenting on proposal</p>
+						<div className='w-[90%] lg:flex-1'>
+							<ContentForm
+								onChange={(content: any) => onContentChange(content)}
+								height={200}
+							/>
+						</div>
 					</div>
 				</div>
 
 				<Form.Item>
-					<div className=' flex items-center justify-end md:mt-[20px]'>
+					<div className=' flex items-center justify-end '>
 						<div className='relative'>
 							<div className='flex'>
 								<Button
 									disabled={!content || (typeof content === 'string' && content.trim() === '')}
 									loading={loading}
 									htmlType='submit'
-									className={`my-0 flex h-[40px] w-[67px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
+									className={`my-0 flex h-[40px] w-[100px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
 										!content ? 'opacity-50' : ''
 									}`}
 								>

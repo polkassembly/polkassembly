@@ -396,7 +396,6 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 					console.error('Error fetching user profile:', userProfileError);
 					return;
 				}
-
 				if (userProfileData) {
 					setCurrentUserdata(userProfileData);
 
@@ -556,10 +555,10 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 						</div>
 						{currentUser?.username && currentUser?.id && (
 							<div>
-								<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+								<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5  text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
 									<div className='flex items-center justify-between gap-2'>
 										<div className='flex items-center '>
-											<p className='pt-3 font-semibold'>Voted Proposals</p>
+											<p className='pt-3 text-[18px] font-semibold text-[#243A57] dark:text-white'>Voted Proposals</p>
 											<Image
 												src='/assets/icons/arrow.svg'
 												alt=''
@@ -568,7 +567,9 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 												height={20}
 											/>
 										</div>
-										<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
+										<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
+											Last 15 days
+										</p>
 									</div>
 									<div>
 										<p className='text-[#485F7D]'>
@@ -581,8 +582,8 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 						)}
 
 						<div>
-							<div className='relative mt-5 rounded-xxl  text-[13px] drop-shadow-md dark:bg-section-dark-overlay '>
-								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : '#00'}</p>
+							<div className='relative mt-5 rounded-xxl text-[13px]'>
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57] '>Rank {userRank ? userRank : '#00'}</p>
 								<div className='relative h-full w-full'>
 									<Image
 										src='/assets/rankcard1.svg'
@@ -603,7 +604,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 
 										{currentUser?.username && currentUser?.id ? (
 											<>
-												<div className='absolute bottom-1 left-0 right-0 flex items-center justify-between p-3'>
+												<div className='absolute bottom-3 left-0 right-0 flex items-center justify-between p-3'>
 													<div className='flex items-center gap-2'>
 														<Image
 															src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
@@ -612,7 +613,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 															width={40}
 															height={40}
 														/>
-														<p className='mt-2 font-semibold text-black'>{username}</p>
+														<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{username}</p>
 													</div>
 													<div className='flex items-center gap-4'>
 														<ScoreTag score={currentUserdata?.profile_score} />

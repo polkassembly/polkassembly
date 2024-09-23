@@ -138,15 +138,14 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 
 const AboutActivity = ({ className, networkSocialsData }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	return (
-		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
+		<div className={`${className} rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
 			</div>
 
 			<p className='medium  items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				Polkadot is the all-in-one DeFi hub of Polkadot.
-				<br />
-				<span className={'m-0 cursor-pointer p-0 text-xs font-semibold text-pink_primary'}>Know More</span>
+				<span className={'m-0 cursor-pointer pl-1 text-xs font-semibold text-pink_primary'}>Know More</span>
 				<div className='hidden  lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</p>
 

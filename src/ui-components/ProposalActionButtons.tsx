@@ -174,7 +174,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 						<Dropdown
 							theme={theme}
 							overlayStyle={{ marginTop: '20px' }}
-							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
+							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container  ${
 								theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 							}`}
 							overlayClassName='z-[1056'

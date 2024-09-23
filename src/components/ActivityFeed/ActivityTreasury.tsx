@@ -224,7 +224,7 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 				!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-1' : ''
 			} mt-5 grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
 		>
-			<div className='flex w-full flex-1 flex-col rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+			<div className='dark:bg-section-dark-overlaysm:my-0 flex w-full flex-1 flex-col rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay lg:px-6 lg:py-4'>
 				<div className=''>
 					<div>
 						{!available.isLoading ? (

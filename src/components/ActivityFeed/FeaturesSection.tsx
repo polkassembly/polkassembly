@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 function FeaturesSection() {
@@ -43,10 +44,10 @@ function FeaturesSection() {
 	};
 
 	return (
-		<div className='mt-5 rounded-xxl bg-white p-5 font-poppins text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
 			<div className='flex items-start justify-between gap-2'>
 				<div className='flex items-start gap-1'>
-					<p className='text-lg font-semibold'>Features</p>
+					<p className='text-lg font-semibold text-[#243A57] dark:text-white'>Features</p>
 					<p className='mt-1 rounded-full bg-[#E5007A] p-1 text-[10px] font-bold text-white'>LIVE</p>
 				</div>
 				<div className='flex gap-2'>
@@ -60,14 +61,16 @@ function FeaturesSection() {
 				</div>
 			</div>
 			<div>
-				<img
+				<Image
 					src={features[currentIndex].image}
 					className='h-full w-full'
 					alt={features[currentIndex].title}
+					width={800}
+					height={800}
 				/>
 				<div className='mt-2'>
-					<p className='m-0 text-lg font-semibold'>{features[currentIndex].title}</p>
-					<p className='text-[14px]'>{features[currentIndex].description}</p>
+					<p className='m-0 text-lg font-semibold text-[#243A57] dark:text-white'>{features[currentIndex].title}</p>
+					<p className='text-[14px] text-[#243A57] dark:text-white'>{features[currentIndex].description}</p>
 				</div>
 			</div>
 		</div>

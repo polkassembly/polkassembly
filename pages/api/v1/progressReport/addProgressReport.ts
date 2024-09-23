@@ -44,7 +44,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
-		if (isNaN(postId) || !isProposalTypeValid(proposalType)) {
+		if (!isProposalTypeValid(proposalType)) {
 			return res.status(500).json({ message: messages.INVALID_PARAMS });
 		}
 
@@ -66,19 +66,16 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
-		const existingPost = postDoc.exists ? postDoc.data() : null;
-
 		const updatedPost: Partial<Post> = {
 			created_at: post?.createdAt,
 			id: post?.index,
 			last_edited_at: post?.updatedAt,
-			progress_report: existingPost?.progress_report ? progress_report : existingPost?.progress_report,
+			progress_report: progress_report,
 			proposer_address: post?.proposer,
 			typeOfReferendum: post?.type
 		};
 
 		await postDocRef.update(updatedPost);
-
 		return res.status(200).json({ message: 'Progress report added and post updated successfully.' });
 	} catch (error) {
 		console.error('Error in updating progress report:', error);

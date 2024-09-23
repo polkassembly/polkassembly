@@ -131,7 +131,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 					className=' '
 				>
-					<button className=' mr-2 mt-1 flex cursor-pointer  items-center gap-[2px] rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-1 font-poppins text-[10px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D]  dark:text-white md:mr-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-2'>
+					<button className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-poppins text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-2'>
 						Switch to <span className='font-semibold'>{buttonText}</span>
 						<span>
 							<ImageIcon
@@ -143,8 +143,9 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					</button>
 				</Link>
 			) : null}
+
 			{isUsedInHomePage && (
-				<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
+				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (
 						<CustomButton
 							className='hidden w-min max-sm:p-1.5 xl:block'
@@ -169,7 +170,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 						</CustomButton>
 					)}
 
-					<div className='-mt-1'>
+					<div className='mt-1 md:-mt-1'>
 						<Dropdown
 							theme={theme}
 							overlayStyle={{ marginTop: '20px' }}

@@ -512,10 +512,10 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 								Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
 							</h1>
 						</div>
-						<div className='mt-2 flex h-9 items-center gap-1 rounded-lg bg-[#ECECEC] p-2 dark:bg-white dark:bg-opacity-[12%] lg:p-2 xl:gap-2  xl:pt-5'>
+						<div className='mt-2 flex h-9 items-center gap-1 rounded-lg bg-[#ECECEC] p-2 dark:bg-white dark:bg-opacity-[12%] md:gap-2 md:p-2  md:pt-5'>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`mt-4 cursor-pointer rounded-md px-2 py-[3px] text-[15px] font-semibold  md:mt-1 lg:text-[16px] xl:px-4 xl:py-[5px] ${
+								className={`mt-4 cursor-pointer rounded-md px-2 py-[3px] text-[15px] font-semibold  md:mt-1 md:px-4 md:py-[5px] md:text-[16px] ${
 									activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>
@@ -523,15 +523,15 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							</p>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`mt-4 cursor-pointer rounded-lg px-2 py-[3px] text-[15px] font-semibold md:mt-1 lg:text-[16px] xl:px-4 xl:py-[5px] ${
+								className={`mt-4 cursor-pointer rounded-lg px-2 py-[3px] text-[15px] font-semibold md:mt-1 md:px-4 md:py-[5px] md:text-[16px] ${
 									activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>
-								Subscribed Post
+								Subscribed
 							</p>
 						</div>
 					</div>
-					<div className='flex flex-col gap-2 lg:flex-row xl:mr-[6px] xl:justify-between'>
+					<div className='flex flex-col items-end gap-2 lg:flex-row xl:mr-[6px] xl:justify-end'>
 						<ProposalActionButtons isUsedInHomePage={true} />
 					</div>
 				</div>

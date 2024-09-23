@@ -9,10 +9,10 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { fetchUserProfile, fetchVoterProfileImage } from './utils/utils';
 import TabNavigation from './TabNavigation';
-import { LoadingOutlined } from '@ant-design/icons';
 import PostList from './PostList';
 import { IPostData } from './utils/types';
 import Image from 'next/image';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const LoginButton = ({ onClick }: { onClick: () => void }) => (
 	<p
@@ -99,8 +99,8 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex h-[10px] w-[900px] items-center justify-center'>
-					<LoadingOutlined style={{ color: '#E5007A', fontSize: '18px' }} />
+				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5'>
+					<Skeleton active />{' '}
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username && filteredPosts.length > 0 ? (
 				<div>

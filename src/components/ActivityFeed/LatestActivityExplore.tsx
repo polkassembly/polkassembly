@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { LoadingOutlined } from '@ant-design/icons';
 import PostList from './PostList';
 import { fetchVoterProfileImage, fetchUserProfile } from './utils/utils';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TabNavigation from './TabNavigation';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface LatestActivityExploreProps {
 	currentUserdata?: any;
@@ -98,8 +98,8 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 			</div>
 
 			{loading ? (
-				<div className='flex min-h-[50px] w-full items-center justify-center'>
-					<LoadingOutlined />
+				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5'>
+					<Skeleton active />{' '}
 				</div>
 			) : (
 				<PostList

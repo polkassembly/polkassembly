@@ -46,7 +46,7 @@ interface IPostCommentFormProps {
 	setPosted?: (pre: boolean) => void;
 }
 
-interface IEmojiOption {
+export interface IEmojiOption {
 	icon: any;
 	currentSentiment: number;
 	clickable?: boolean;

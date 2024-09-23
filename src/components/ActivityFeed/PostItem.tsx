@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { MessageType } from '~src/auth/types';
+import { ChangeResponseType, MessageType } from '~src/auth/types';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -19,9 +19,9 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import { PieChart } from 'react-minimal-pie-chart';
 import { useTheme } from 'next-themes';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { Divider, Tooltip } from 'antd';
+import { Button, Divider, Form, Modal, Tooltip } from 'antd';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
-import { IPeriod } from '~src/types';
+import { IPeriod, NotificationStatus } from '~src/types';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { useRouter } from 'next/router';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -38,6 +38,10 @@ import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
+import queueNotification from '~src/ui-components/QueueNotification';
+import ContentForm from '../ContentForm';
+import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
+import { ProposalType } from '~src/global/proposalType';
 
 const ZERO_BN = new BN(0);
 
@@ -89,9 +93,6 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const { '👍': likes = { count: 0, userIds: [], usernames: [] }, '👎': dislikes = { count: 0, userIds: [], usernames: [] } } = post?.post_reactions || {};
 
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
-	const truncatedContent = fullContent.substring(0, 200);
-	const shouldShowReadMore = fullContent.length > truncatedContent.length;
-	const postContent = isExpanded ? fullContent : truncatedContent;
 
 	return (
 		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
@@ -104,10 +105,11 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 
 			<PostContent
 				post={post}
-				content={postContent}
-				shouldShowReadMore={shouldShowReadMore}
+				content={fullContent}
+				shouldShowReadMore={true}
 				toggleExpandPost={() => toggleExpandPost(post.post_id)}
 				isExpanded={isExpanded}
+				isCommentPost={false}
 			/>
 
 			<PostReactions
@@ -120,7 +122,10 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				post={post}
 				currentUserdata={currentUserdata}
 			/>
-			<PostCommentSection currentUserdata={currentUserdata} />
+			<PostCommentSection
+				post={post}
+				currentUserdata={currentUserdata}
+			/>
 		</div>
 	);
 };
@@ -329,26 +334,34 @@ const PostContent: React.FC<{
 	shouldShowReadMore: boolean;
 	toggleExpandPost: () => void;
 	isExpanded: boolean;
-}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
-	<>
-		<p className='xl:text-md pt-2 text-[12px] font-medium text-[#243A57] dark:text-white'>
-			#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
-		</p>
-		<Markdown
-			className='xl:text-md text-[12px] text-[#243A57]'
-			md={content}
-			isPreview={!isExpanded}
-		/>
-		{shouldShowReadMore && (
-			<p
-				className='cursor-pointer font-medium text-[#1B61FF]'
-				onClick={toggleExpandPost}
-			>
-				{isExpanded ? 'Show Less' : 'Read More'}
+	isCommentPost?: boolean;
+}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded, isCommentPost }) => {
+	const trimmedContentForComment = content?.length > 200 ? content?.slice(0, 150) + '...' : content;
+	const trimmedContentForPost = content?.length > 200 && !isExpanded ? content?.slice(0, 200) + '...' : content;
+	const displayedContent = isCommentPost ? trimmedContentForComment : trimmedContentForPost;
+	const showReadMore = !isCommentPost && content?.length > 200;
+
+	return (
+		<>
+			<p className='xl:text-md pt-2 text-[12px] font-medium text-[#243A57] dark:text-white'>
+				#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 			</p>
-		)}
-	</>
-);
+			<Markdown
+				className='xl:text-md text-[12px] text-[#243A57]'
+				md={displayedContent}
+				isPreview={!isExpanded}
+			/>
+			{showReadMore && shouldShowReadMore && (
+				<p
+					className='cursor-pointer font-medium text-[#1B61FF]'
+					onClick={toggleExpandPost}
+				>
+					{isExpanded ? 'Show Less' : 'Read More'}
+				</p>
+			)}
+		</>
+	);
+};
 
 const PostReactions: React.FC<{
 	likes: { count: number; usernames: string[] };
@@ -614,24 +627,251 @@ const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, labe
 	</div>
 );
 
-const PostCommentSection: React.FC<{ currentUserdata: any }> = ({ currentUserdata }) => (
-	<div className='mt-3 flex items-center'>
-		<Image
-			src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-			alt=''
-			className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
-			width={40}
-			height={40}
-		/>
-		<input
-			type='text'
-			placeholder={COMMENT_PLACEHOLDER}
-			className='activityborder2 ml-7 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] xl:h-10'
-		/>
-		<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
-			{POST_LABEL}
-		</button>
-	</div>
-);
+const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ post, currentUserdata }) => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const inputRef = useRef<HTMLInputElement>(null);
+	const modalWrapperRef = useRef<HTMLDivElement>(null);
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
+				closeModal();
+			}
+		};
+		if (isModalOpen) {
+			document.addEventListener('mousedown', handleOutsideClick);
+		} else {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	}, [isModalOpen]);
+
+	return (
+		<div className='mt-3 flex items-center'>
+			<Image
+				src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
+				alt=''
+				className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
+				width={40}
+				height={40}
+			/>
+			<input
+				ref={inputRef}
+				type='text'
+				placeholder={COMMENT_PLACEHOLDER}
+				className='activityborder2 ml-7 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] '
+				onFocus={openModal}
+			/>
+			<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
+				{POST_LABEL}
+			</button>
+
+			{isModalOpen && (
+				<>
+					<div
+						className='fixed inset-0 z-40 bg-black bg-opacity-30'
+						onClick={closeModal}
+					/>
+					<Modal
+						visible={isModalOpen}
+						onCancel={closeModal}
+						footer={null}
+						centered
+						className='z-50'
+					>
+						<div
+							className='w-full'
+							ref={modalWrapperRef}
+						>
+							<CommentModal
+								post={post}
+								isModalOpen={isModalOpen}
+								onclose={closeModal}
+								currentUserdata={currentUserdata}
+							/>
+						</div>
+					</Modal>
+				</>
+			)}
+		</div>
+	);
+};
+
+const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boolean; onclose: () => void }> = ({ post, currentUserdata, isModalOpen, onclose }) => {
+	const [form] = Form.useForm();
+	const commentKey = () => `comment:${global.window.location.href}`;
+	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
+	const onContentChange = (content: string) => {
+		setContent(content);
+		global.window.localStorage.setItem(commentKey(), content);
+		return content.length ? content : null;
+	};
+	const handleModalOpen = async () => {
+		await form.validateFields();
+		const content = form.getFieldValue('content');
+		if (!content) return;
+		handleSave();
+	};
+	const [loading, setLoading] = useState(false);
+
+	const createSubscription = async (postId: number | string) => {
+		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
+		if (error) console.error('Error subscribing to post', error);
+		if (data) console.log(data.message);
+	};
+	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
+
+	console.log('isModalOpen', isModalOpen);
+	useEffect(() => {
+		if (!isModalOpen) {
+			form.resetFields();
+			setContent('');
+			global.window.localStorage.removeItem(commentKey());
+		}
+	}, [isModalOpen, form]);
+
+	const isExpanded = expandedPostId === post.post_id;
+	const toggleExpandPost = (postId: number) => {
+		setExpandedPostId(expandedPostId === postId ? null : postId);
+	};
+	const fullContent = post?.content || NO_CONTENT_FALLBACK;
+
+	const handleSave = async () => {
+		await form.validateFields();
+		const content = form.getFieldValue('content');
+		if (!content) return;
+		setContent('');
+
+		form.resetFields();
+		form.setFieldValue('content', '');
+		global.window.localStorage.removeItem(commentKey());
+		post.post_id && createSubscription(post.post_id);
+
+		try {
+			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
+				content,
+				postId: post.post_id,
+				postType: ProposalType.REFERENDUM_V2,
+				sentiment: 0,
+				trackNumber: post.track_no,
+				userId: currentUserdata?.user_id
+			});
+			if (error || !data) {
+				queueNotification({
+					header: 'Failed!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
+			} else if (data) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Comment created successfully.',
+					status: NotificationStatus.SUCCESS
+				});
+			}
+		} catch (error) {
+			console.error('Error while saving comment:', error);
+		} finally {
+			onclose();
+			setLoading(false);
+		}
+	};
+
+	return (
+		<>
+			<Form
+				form={form}
+				name='comment-content-form'
+				layout='vertical'
+				onFinish={handleModalOpen}
+				initialValues={{
+					content
+				}}
+				disabled={loading}
+				validateMessages={{ required: "Please add the  '${name}'" }}
+			>
+				<div className='flex items-center gap-2  '>
+					<Image
+						src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+						alt='profile'
+						className='h-4 w-4 rounded-full xl:h-6 xl:w-6'
+						width={24}
+						height={24}
+					/>
+					<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
+						{post.proposerProfile?.username
+							? post.proposerProfile.username.length > 10
+								? `${post.proposerProfile.username.substring(0, 10)}...`
+								: post.proposerProfile.username
+							: ANONYMOUS_FALLBACK}
+					</p>
+					<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+					<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
+						{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
+					</span>
+					<p className='pt-3 text-[#485F7D]'>|</p>
+					<div className='flex '>
+						<ImageIcon
+							src='/assets/icons/timer.svg'
+							alt='timer'
+							className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+						/>
+						<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{formatDate(String(post.created_at))}</p>
+					</div>
+				</div>
+				<PostContent
+					post={post}
+					content={fullContent}
+					shouldShowReadMore={false}
+					toggleExpandPost={() => toggleExpandPost(post.post_id)}
+					isExpanded={isExpanded}
+					isCommentPost={true}
+				/>
+				<div className='flex w-full items-start gap-2 pt-10'>
+					<Image
+						src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
+						alt=''
+						className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
+						width={40}
+						height={40}
+					/>
+					<div className='flex-1'>
+						<ContentForm
+							onChange={(content: any) => onContentChange(content)}
+							height={200}
+						/>
+					</div>
+				</div>
+
+				<Form.Item>
+					<div className=' mt-[20px] flex items-center justify-end'>
+						<div className='relative'>
+							<div className='flex'>
+								<Button
+									disabled={!content || (typeof content === 'string' && content.trim() === '')}
+									loading={loading}
+									htmlType='submit'
+									className={`my-0 flex h-[40px] w-[67px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
+										!content ? 'opacity-50' : ''
+									}`}
+								>
+									Post
+								</Button>
+							</div>
+						</div>
+					</div>
+				</Form.Item>
+			</Form>
+		</>
+	);
+};
 
 export default PostItem;

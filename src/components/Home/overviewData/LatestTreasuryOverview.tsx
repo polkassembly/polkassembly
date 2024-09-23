@@ -20,6 +20,7 @@ import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import BN from 'bn.js';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -28,6 +29,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
 	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
+	const [hydrationApi, setHydrationApi] = useState<ApiPromise | null>(null);
+	const [hydrationApiReady, setHydrationApiReady] = useState<boolean>(false);
 	const [assethubValues, setAssethubValues] = useState<{
 		dotValue: string;
 		usdcValue: string;
@@ -103,6 +106,22 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		return;
 	};
 
+	const fetchHydrationAssetsAmount = async () => {
+		if (!hydrationApi || !hydrationApiReady) return;
+		console.log('inside');
+
+		if (hydrationApiReady && chainProperties?.[network]?.hydrationTreasuryAddress) {
+			if (chainProperties[network]?.hydrationAssets?.[0]?.assetId) {
+				console.log('inside2');
+
+				const usdcResult = (await hydrationApi?.query?.tokens?.accounts(chainProperties[network].assetHubTreasuryAddress, 5)) as any;
+
+				const data = usdcResult;
+				console.log('freeUSDCBalance', data);
+			}
+		}
+	};
+
 	const fetchDataFromApi = async () => {
 		try {
 			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
@@ -160,6 +179,25 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					console.error(error);
 				});
 		})();
+		(async () => {
+			const wsProvider = new WsProvider(chainProperties?.[network]?.hydrationEndpoints?.[0]);
+			const apiPromise = await ApiPromise.create({ provider: wsProvider });
+			setHydrationApi(apiPromise);
+			const timer = setTimeout(async () => {
+				await apiPromise.disconnect();
+			}, 60000);
+
+			apiPromise?.isReady
+				.then(() => {
+					clearTimeout(timer);
+					setHydrationApiReady(true);
+				})
+				.catch(async (error) => {
+					clearTimeout(timer);
+					await apiPromise.disconnect();
+					console.error(error);
+				});
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -172,8 +210,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	useEffect(() => {
 		if (!assethubApi || !assethubApiReady) return;
 		fetchAssetsAmount();
+		if (!hydrationApi || !hydrationApiReady) return;
+		fetchHydrationAssetsAmount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [assethubApi, assethubApiReady]);
+	}, [assethubApi, assethubApiReady, hydrationApi, hydrationApiReady]);
 
 	return (
 		<div

@@ -110,6 +110,11 @@ export interface IAssets {
 	genralIndex: string;
 }
 
+interface Asset {
+	label: string;
+	assetId: number;
+}
+
 export interface ChainProps {
 	peopleChainRpcEndpoint?: string;
 	peopleChainParachain?: string;
@@ -137,6 +142,9 @@ export interface ChainProps {
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
 	supportedAssets?: IAssets[];
+	hydrationTreasuryAddress?: string;
+	hydrationEndpoints?: string[];
+	hydrationAssets?: Asset[];
 }
 
 export type TRPCEndpoint = {

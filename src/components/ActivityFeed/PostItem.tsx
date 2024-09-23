@@ -303,7 +303,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 											>
 												<div className='mt-2 min-w-[30px]'>
 													<ProgressBar
-														strokeWidth={5}
+														strokeWidth={7}
 														percent={decision.periodPercent || 0}
 														strokeColor='#407AFC'
 														trailColor='#D4E0FC'
@@ -325,7 +325,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; fo
 									startAngle={-180}
 									lengthAngle={180}
 									rounded={true}
-									lineWidth={20}
+									lineWidth={30}
 									data={[
 										{ color: ayeColor, title: 'Aye', value: isAyeNaN ? 50 : ayesPercentage },
 										{ color: nayColor, title: 'Nay', value: isNayNaN ? 50 : naysPercentage }
@@ -383,7 +383,7 @@ const PostReactions: React.FC<{
 	const { firstVoterProfileImg, comments_count } = post;
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const username = likes?.usernames?.[0] || '';
-	const displayUsername = isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
+	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>

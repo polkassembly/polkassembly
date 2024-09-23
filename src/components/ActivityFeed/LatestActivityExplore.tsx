@@ -98,7 +98,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 			</div>
 
 			{loading ? (
-				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5'>
+				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
 					<Skeleton active />{' '}
 				</div>
 			) : (

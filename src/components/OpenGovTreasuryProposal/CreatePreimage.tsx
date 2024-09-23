@@ -154,7 +154,7 @@ const CreatePreimage = ({
 	const trackArr: string[] = [];
 	const maxSpendArr: { track: string; maxSpend: number }[] = [];
 	const [gasFee, setGasFee] = useState(ZERO_BN);
-	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit || 0}` || 0);
 
 	if (network) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {

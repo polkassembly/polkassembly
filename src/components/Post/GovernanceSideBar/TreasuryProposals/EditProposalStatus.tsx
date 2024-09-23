@@ -184,7 +184,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={modalOpen}
 				className={`${className} dark:text-lightblue dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				title={<span className='dark:text-sidebarBlue'>Set Deadline Date</span>}
+				title={<span className='dark:text-white'>Set Deadline Date</span>}
 				centered
 				footer={[
 					<div

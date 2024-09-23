@@ -285,7 +285,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 							<div className='flex w-full items-end gap-2 text-sm '>
 								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 									<Address
-										address={proposer || ''}
+										address={proposer || loginAddress || ''}
 										isTruncateUsername={false}
 										displayInline
 									/>

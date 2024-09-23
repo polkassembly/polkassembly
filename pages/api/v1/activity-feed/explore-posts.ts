@@ -237,7 +237,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					});
 					let maxSentiment = null;
 					let maxSentimentCount = 0;
+					let totalSentiments = 0;
 					Object.entries(sentiments).map(([key, value]) => {
+						totalSentiments += 1;
 						if (maxSentimentCount < value) {
 							maxSentimentCount = value;
 							maxSentiment = key;
@@ -257,7 +259,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						end,
 						gov_type: data.gov_type,
 						hash,
-						highestSentiment: maxSentiment ? { percentage: (maxSentimentCount * 100) / commentsCount, sentiment: maxSentiment } : null,
+						highestSentiment: maxSentiment ? { percentage: Math.floor((maxSentimentCount * 100) / totalSentiments), sentiment: maxSentiment } : null,
 						identity,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,

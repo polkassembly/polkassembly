@@ -36,6 +36,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 	const { id } = useUserDetailsSelector();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [totalLockedBalance, setTotalLockedBalance] = useState<BN>(ZERO_BN);
+	const [refreshKey, setRefreshKey] = useState(false);
 
 	useEffect(() => {
 		setTotalLockedBalance(ZERO_BN);
@@ -63,7 +64,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, selectedAddresses, userProfile, network]);
+	}, [api, apiReady, selectedAddresses, userProfile, network, refreshKey]);
 
 	return (
 		<div
@@ -82,7 +83,13 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				/>
 				Balance
 			</span>
-			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && <VoteUnlock addresses={selectedAddresses} />}
+			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && (
+				<VoteUnlock
+					refreshKey={refreshKey}
+					setRefreshKey={setRefreshKey}
+					addresses={selectedAddresses}
+				/>
+			)}
 			<div className=' text-light flex flex-col gap-4 text-sm font-normal tracking-wide dark:text-blue-dark-medium '>
 				<span className='flex justify-between'>
 					<span className='flex gap-2'>

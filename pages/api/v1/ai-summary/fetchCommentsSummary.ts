@@ -9,7 +9,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { ICommentsSummary } from '~src/types';
 import { getCommentsAISummaryByPost } from '.';
-import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
+import { isValidNetwork } from '~src/api-utils';
 import messages from '~src/auth/utils/messages';
 
 interface FetchCommentsSummaryFromPostParams {
@@ -80,10 +80,11 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (network != 'rococo') return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const { postId, postType } = req.body;
 
-	if (!postId || isNaN(Number(postId)) || !postType || !isProposalTypeValid(postType)) {
+	if (!postId || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

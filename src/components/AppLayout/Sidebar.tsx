@@ -142,6 +142,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen, archivedDropdownOpen]);
+	const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+	const onOpenChange = (keys: string[]) => {
+		const filteredKeys = keys.filter((key) => key !== '');
+		setOpenKeys(filteredKeys);
+
+		if (!sidebarCollapsed) {
+			localStorage.setItem('openKeys', JSON.stringify(filteredKeys));
+		}
+	};
+
+	const handleSidebarToggle = () => {
+		if (sidebarCollapsed) {
+			setOpenKeys([]);
+		} else {
+			const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
+			setOpenKeys(storedKeys);
+		}
+	};
+	useEffect(() => {
+		handleSidebarToggle();
+	}, [sidebarCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		const currentPath = router.pathname;
@@ -2109,6 +2131,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<Menu
 						theme={theme as any}
 						mode='inline'
+						openKeys={openKeys}
+						onOpenChange={onOpenChange}
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}

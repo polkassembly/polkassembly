@@ -708,7 +708,7 @@ const PostActions: React.FC<{
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%]'
+						className='z-50 w-[80%] lg:w-auto'
 					>
 						<div
 							className='lg:w-full'
@@ -845,7 +845,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%]'
+						className='z-50 w-[80%] lg:w-auto'
 					>
 						<div
 							className='lg:w-full'

@@ -180,7 +180,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 			});
 		}
 
-		if (!(postData?.userId === id) && showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData)) {
+		if (postData?.userId === id && showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData)) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({

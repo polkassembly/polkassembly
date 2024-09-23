@@ -68,7 +68,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			progress_report: updatedProgressReport
 		};
 
-		await postDocRef.update(updatedPost);
+		await postDocRef.update(updatedPost).catch((error) => {
+			console.error('Error updating the post document:', error);
+			throw new Error('Failed to update the post document.');
+		});
 		return res.status(200).json({ message: 'Progress summary updated successfully.' });
 	} catch (error) {
 		console.error('Error in updating progress summary:', error);

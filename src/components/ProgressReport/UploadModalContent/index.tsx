@@ -19,6 +19,7 @@ import { usePostDataContext } from '~src/context';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { UploadProps } from 'antd';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
 
 const { Dragger } = Upload;
 
@@ -65,7 +66,7 @@ const UploadModalContent = () => {
 		try {
 			const formData = new FormData();
 			formData.append('media', file);
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/progressReport/uploadReport', formData);
+			const { data, error } = await nextApiClientFetch<IUploadResponseType>('/api/v1/progressReport/uploadReport', formData);
 			if (data) {
 				setFileLink(data?.displayUrl);
 				sharableLink = data.displayUrl;
@@ -117,9 +118,7 @@ const UploadModalContent = () => {
 				message.error(`${info.file.name} file upload failed.`);
 			}
 		},
-		onDrop(e) {
-			console.log('Dropped files:', e.dataTransfer.files);
-		}
+		onDrop() {}
 	};
 
 	return (

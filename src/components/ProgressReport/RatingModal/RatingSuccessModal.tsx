@@ -6,11 +6,12 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { StarFilled } from '@ant-design/icons';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
+import { IRating } from '~src/types';
 
 const RatingSuccessModal = () => {
 	const { report_rating } = useProgressReportSelector();
 	const { postData } = usePostDataContext();
-	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0);
+	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: IRating) => sum + current.rating, 0);
 	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
 
 	return (

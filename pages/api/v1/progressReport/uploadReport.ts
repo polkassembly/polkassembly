@@ -19,7 +19,11 @@ export const config = {
 	}
 };
 
-const handler: NextApiHandler<any | MessageType> = async (req: NextApiRequest, res: NextApiResponse) => {
+export interface IUploadResponseType {
+	displayUrl: string;
+}
+
+const handler: NextApiHandler<IUploadResponseType | MessageType> = async (req: NextApiRequest, res: NextApiResponse) => {
 	storeApiKeyUsage(req);
 	const form = new IncomingForm();
 	const MAX_FILE_SIZE = 10 * 1024 * 1024;

@@ -18,7 +18,7 @@ import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { IRating, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
@@ -63,7 +63,7 @@ const ProgressReportInfo = () => {
 	};
 
 	const getRatingInfo = () => {
-		setAverageRating(postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+		setAverageRating(postData?.progress_report?.ratings.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
 	};
 
 	useEffect(() => {

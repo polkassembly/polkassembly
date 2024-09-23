@@ -128,49 +128,48 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 			<div
 				className={'rounded-sm rounded-t-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark'}
 			>
-				<div className='flex justify-between border-[1px] px-3 py-3 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2 sm:px-6 sm:py-6'>
-					<div className='flex w-full flex-col max-sm:flex-col-reverse max-sm:gap-2 '>
+				<div className='flex w-full flex-wrap justify-between border-[1px] px-3 py-3 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2 sm:px-6 sm:py-6'>
+					<div className='flex w-full shrink-0 flex-col flex-wrap max-sm:flex-col-reverse max-sm:gap-2'>
 						{proposal?.status !== 'Submitted' && (
-							<div className=' flex items-center gap-2 sm:hidden'>
-								<div className={`flex items-center text-xs ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-blue-light-medium dark:text-blue-dark-medium'}`}>
-									<ClockCircleOutlined className='mr-1' />
-									{remainingTime}
-									Remaining
+							<div className='flex shrink-0 flex-wrap items-center gap-2 sm:hidden'>
+								<div className={`flex items-center text-xs ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-blue-light-medium dark:text-blue-dark-medium'} shrink-0`}>
+									<ClockCircleOutlined className='mr-1 shrink-0' />
+									{remainingTime} Remaining
 								</div>
 							</div>
 						)}
-						<h2 className='text-medium text-sm text-bodyBlue dark:text-white max-sm:mt-1'>{mainTitle}</h2>
-						<div className='flex gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium sm:mt-[5px] sm:items-start lg:items-center '>
-							<div className='flex items-center justify-between max-sm:w-full'>
-								<div className='flex items-center gap-[2px] sm:gap-1'>
+						<h2 className='text-medium shrink-0 break-words text-sm text-bodyBlue dark:text-white max-sm:mt-1'>{mainTitle}</h2>
+						<div className='flex shrink-0 flex-wrap gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium sm:mt-[5px] sm:items-start lg:items-center'>
+							<div className='flex shrink-0 flex-wrap items-center justify-between max-sm:w-full'>
+								<div className='flex shrink-0 flex-wrap items-center gap-[2px] sm:gap-1'>
 									By:
 									<span className='sm:hidden'>
 										<Address
 											address={String(proposal?.proposer)}
-											className='address ml-1'
+											className='address ml-1 shrink-0 break-words'
 											displayInline
 											iconSize={18}
-											usernameClassName='text-xs font-normal'
+											usernameClassName='text-xs font-normal shrink-0'
 											isTruncateUsername={false}
 										/>
 									</span>
 									<span className='hidden sm:block'>
 										<Address
 											address={String(proposal?.proposer)}
-											className='address ml-1.5 flex items-center'
+											className='address ml-1.5 flex shrink-0 items-center break-words'
 											displayInline
-											usernameClassName='text-xs font-medium'
+											usernameClassName='text-xs font-medium shrink-0'
 											isTruncateUsername={false}
 										/>
 									</span>
 									{relativeCreatedAt && (
-										<div className='flex items-center justify-center sm:hidden'>
+										<div className='flex shrink-0 items-center justify-center sm:hidden'>
 											<Divider
 												type='vertical'
-												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'
+												className='border-l-1 shrink-0 border-lightBlue dark:border-icon-dark-inactive'
 											/>
-											<div className='flex items-center'>
-												<ClockCircleOutlined className='mr-1' /> <span className='text-[10px]'>{relativeCreatedAt}</span>
+											<div className='flex shrink-0 items-center'>
+												<ClockCircleOutlined className='mr-1 shrink-0' /> <span className='text-[10px]'>{relativeCreatedAt}</span>
 											</div>
 										</div>
 									)}
@@ -179,7 +178,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									height={24}
 									width={80}
 									shape='default'
-									className={`ml-1 gap-[2px] self-end sm:hidden ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
+									className={`ml-1 shrink-0 gap-[2px] self-end max-sm:mt-[6px] sm:hidden ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
 									disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
 									variant='default'
 								>
@@ -190,47 +189,39 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 										alt=''
 										className={'dark:text-white'}
 									/>
-									<span className='text-[10px] font-medium text-pink_primary'>Cast Vote</span>
+									<span className='shrink-0 text-[10px] font-medium text-pink_primary'>Cast Vote</span>
 								</CustomButton>
 							</div>
 
-							<div className='hidden items-center justify-center gap-2 sm:flex'>
+							<div className='hidden shrink-0 items-center justify-center gap-2 sm:flex'>
 								<Divider
 									type='vertical'
-									className='border-l-1 ml-[4px] mr-[4px] border-lightBlue dark:border-icon-dark-inactive'
+									className='border-l-1 ml-[4px] mr-[4px] shrink-0 border-lightBlue dark:border-icon-dark-inactive'
 								/>
 								{relativeCreatedAt && (
 									<>
-										<div className='flex items-center'>
-											<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+										<div className='flex shrink-0 items-center'>
+											<ClockCircleOutlined className='mr-1 shrink-0' /> {relativeCreatedAt}
 										</div>
 									</>
 								)}
 							</div>
 							{proposal?.status !== 'Submitted' && (
-								<div className='hidden items-center justify-center gap-2 sm:flex'>
+								<div className='hidden shrink-0 items-center justify-center gap-2 sm:flex'>
 									<Divider
 										type='vertical'
 										style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
 									/>
-									<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue dark:text-white'}`}>
-										<ClockCircleOutlined className='mr-1' />
-										{remainingTime}
-										Remaining
+									<div className={`flex shrink-0 items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue dark:text-white'}`}>
+										<ClockCircleOutlined className='mr-1 shrink-0' />
+										{remainingTime} Remaining
 									</div>
 								</div>
 							)}
 						</div>
 					</div>
-					<CustomButton
-						className={`hidden items-center gap-2 max-sm:mt-2 sm:flex ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
-						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
-						variant='default'
-					>
-						<VoteIcon />
-						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>
-					</CustomButton>
 				</div>
+
 				{(votingData && !status.includes(ETrackDelegationStatus.UNDELEGATED) && isAye) || isNay || isAbstain ? (
 					<div
 						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid py-1 sm:px-6 sm:py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
@@ -278,7 +269,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					</div>
 				) : (
 					votingData && (
-						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] py-1 dark:bg-[#1D160E] sm:px-6 sm:py-2'>
+						<div className='flex rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] py-1 dark:bg-[#1D160E] sm:gap-2 sm:px-6 sm:py-2'>
 							{status.includes(ETrackDelegationStatus.DELEGATED) && (
 								<>
 									<Address
@@ -299,7 +290,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									/>
 								</>
 							)}
-							<div className='flex items-center justify-center text-[10px] text-lightBlue dark:text-blue-dark-medium max-sm:-ml-2 sm:text-xs'>
+							<div className='flex items-center justify-center text-[10px] text-lightBlue dark:text-blue-dark-medium max-sm:pl-[10px] sm:text-xs'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

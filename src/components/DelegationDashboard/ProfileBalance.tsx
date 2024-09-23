@@ -90,9 +90,9 @@ const ProfileBalances = ({ className }: Props) => {
 	}, [delegationDashboardAddress, api, apiReady, defaultAddress]);
 
 	return (
-		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
+		<div className={'flex w-full items-center justify-between pl-[26px] max-md:pl-4 '}>
 			{/* for small screen */}
-			<div className=' flex items-center space-x-2 sm:hidden'>
+			<div className='flex items-center space-x-2 pt-1 sm:hidden'>
 				{balancesArr.slice(0, 1).map((balance) => (
 					<div
 						key={balance?.label}
@@ -163,7 +163,7 @@ const ProfileBalances = ({ className }: Props) => {
 			</div>
 
 			{/* for large screen */}
-			<div className={`${className} hidden h-full items-center gap-2 py-4 max-md:px-2.5 sm:flex`}>
+			<div className={`${className} hidden h-full items-center gap-2 py-4 max-md:px-2.5 sm:flex lg:mt-[6px]`}>
 				{balancesArr.map((balance) => (
 					<div
 						key={balance?.label}
@@ -194,7 +194,7 @@ const ProfileBalances = ({ className }: Props) => {
 					</div>
 				))}
 			</div>
-			<div className='-mt-6 mr-4 hidden w-48 sm:mr-6 sm:flex sm:w-52'>
+			<div className='-mt-7 mr-4 hidden w-48 sm:mr-6 sm:flex sm:w-52'>
 				{!!accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled

@@ -341,12 +341,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			)}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive ' />}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>
-						<DelegateModalIcon className='-mt-1 mr-2 text-lightBlue dark:text-icon-dark-inactive' />
+						<DelegateModalIcon className='-mt-1 mr-2 text-[20px] text-lightBlue dark:text-icon-dark-inactive ' />
 						Delegate
 					</div>
 				}
@@ -512,12 +512,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										/>
 									</div>
 								</div>
-								<div className='track-[0.0025em] mt-3 flex items-center justify-between rounded-md bg-[#F6F7F9] px-3 py-3 dark:bg-inactiveIconDark sm:mt-4 sm:px-[17px] sm:py-[13px]'>
-									<div className='flex items-center justify-center gap-2.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
+								<div className='track-[0.0025em] mt-3 flex items-center justify-between rounded-md bg-[#F6F7F9] px-2 py-2 dark:bg-inactiveIconDark sm:mt-4 sm:px-[17px] sm:py-[13px]'>
+									<div className='flex items-center justify-center gap-2.5 text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
-									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+									<div className='flex items-center justify-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high sm:text-sm'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
@@ -665,10 +665,18 @@ export default styled(DelegateModal)`
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 	}
+	@media (max-width: 640px) and (min-width: 320px) {
+		.ant-modal-content .ant-modal-close {
+			margin-top: -3px !important;
+		}
+	}
 
 	@media (max-width: 365px) and (min-width: 320px) {
 		.delegation-buttons {
-			padding: 12px 0px !important;
+			padding: 12px 0px;
+		}
+		.ant-modal-content .ant-modal-close {
+			margin-top: -3px !important;
 		}
 	}
 	@media (max-width: 640px) {

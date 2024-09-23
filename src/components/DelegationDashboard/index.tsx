@@ -82,7 +82,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	return (
 		<div className={`${className} delegation-dashboard`}>
-			{isLoggedOut ? (
+			{isLoggedOut || !userDetails.loginAddress ? (
 				<div className='wallet-info-board mt-[-25px] hidden h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20 sm:flex'>
 					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
 					<Button
@@ -95,15 +95,16 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					</Button>
 				</div>
 			) : (
-				<div className='wallet-info-board gap mt-[-25px] flex h-[70px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw] sm:h-[90px]'>
+				<div className='wallet-info-board h-[50px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:-mt-28 max-lg:w-[99.3vw] max-sm:mt-[-65px] sm:h-[90px] lg:left-0 lg:-mt-10 '>
 					<ProfileBalances />
 				</div>
 			)}
-
-			<BecomeDelegateSmall />
+			{(isLoggedOut || !userDetails.loginAddress) && <BecomeDelegateSmall />}
 
 			{(isLoggedOut || !userDetails.loginAddress) && (
-				<h2 className='mb-6 mt-5 hidden text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] sm:block md:mb-5'>Delegation </h2>
+				<div className='hidden sm:block'>
+					<h2 className='mb-6 mt-5 hidden text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+				</div>
 			)}
 
 			{(isLoggedOut || !userDetails.loginAddress) && (

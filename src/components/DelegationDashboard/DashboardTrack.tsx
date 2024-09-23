@@ -180,10 +180,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 
 	return (
 		<div className={`${className}`}>
-			<div className='wallet-info-board gap mt-[-25px] flex h-[70px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw] sm:h-[90px]'>
+			<div className='wallet-info-board gap mt-[-110px] flex h-[70px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw] sm:h-[90px]'>
 				<ProfileBalances />
 			</div>
-			<div className='dashboard-heading mb-4 flex items-center gap-2 dark:text-white max-lg:pt-[60px] sm:mt-5 md:mb-5'>
+			<div className='dashboard-heading mb-4 flex items-center gap-2 dark:text-white max-lg:pt-[60px] sm:mt-4 md:mb-5'>
 				<span
 					className='cursor-pointer text-sm'
 					onClick={() => router.push('/delegation')}

@@ -146,7 +146,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 				defaultActiveKey='2'
 				theme={theme}
 				type='card'
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
+				className={`ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high ${isLoggedOut ? '' : 'max-lg:mt-28 max-sm:mt-16'}`}
 				items={tabItems}
 			/>
 			<BecomeDelegateModal

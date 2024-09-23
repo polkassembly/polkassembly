@@ -24,7 +24,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod, IVotesHistoryResponse, NotificationStatus } from '~src/types';
+import { IPeriod, IProgressReport, IVotesHistoryResponse, NotificationStatus } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -116,6 +116,7 @@ interface IGovernanceProps {
 	childBountyAmount?: any;
 	parentBounty?: number;
 	allChildBounties?: any[];
+	progress_report?: IProgressReport;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -155,7 +156,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		childBountyAmount,
 		parentBounty,
 		allChildBounties,
-		assetId
+		assetId,
+		progress_report
 	} = props;
 
 	const router = useRouter();
@@ -378,10 +380,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && (
-								<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6]'>
-									<StarFilled className='text-[14px] text-[#FFBF60]' />
-								</div>
+							{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && progress_report?.progress_file && (
+								<Tooltip
+									color='#363636'
+									title='Rate Progress Report'
+								>
+									<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6] dark:bg-transparent'>
+										<StarFilled className='text-[14px] text-[#FFBF60]' />
+									</div>
+								</Tooltip>
 							)}
 						</div>
 						<div className={' flex items-center justify-end'}>

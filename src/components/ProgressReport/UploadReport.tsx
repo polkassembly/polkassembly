@@ -145,7 +145,7 @@ const UploadReport = () => {
 						buttonsize='sm'
 						loading={loading}
 						className={`${loading ? 'opacity-60' : ''}`}
-						disabled={!report_uploaded}
+						disabled={!report_uploaded && !postData?.progress_report?.progress_file}
 						onClick={() => {
 							postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 						}}

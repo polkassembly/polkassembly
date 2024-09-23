@@ -241,13 +241,16 @@ const UploadModalContent = () => {
 				</div>
 			)}
 			{postData?.progress_report?.progress_file && (
-				<p className='m-0 mt-2 p-0 text-sm text-bodyBlue dark:text-white'>
-					<Markdown
-						className='post-content'
-						md={postData?.progress_report?.progress_summary}
-						theme={theme}
-					/>
-				</p>
+				<div className='mt-2 flex flex-col gap-y-1'>
+					<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary: </h1>
+					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-[#909090]'>
+						<Markdown
+							className='post-content'
+							md={postData?.progress_report?.progress_summary}
+							theme={theme}
+						/>
+					</p>
+				</div>
 			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'

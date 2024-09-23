@@ -22,6 +22,7 @@ import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { GlobalActions } from '~src/redux/global';
 
 interface INotificationProps {
 	className?: string;
@@ -160,14 +161,20 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			{userId ? (
 				<Popover
 					onOpenChange={(open: boolean) => {
-						setSidedrawer(false);
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpen(open);
 					}}
 					open={open}
 					content={
 						<NotificationsContent
 							closePopover={(open: boolean) => {
-								setSidedrawer(false);
+								if (isMobile) {
+									dispatch(GlobalActions.setIsSidebarCollapsed(true));
+									setSidedrawer(false);
+								}
 								setOpen(!open);
 							}}
 						/>
@@ -197,7 +204,10 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 				<div
 					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
 					onClick={() => {
-						setSidedrawer(false);
+						if (isMobile) {
+							dispatch(GlobalActions.setIsSidebarCollapsed(true));
+							setSidedrawer(false);
+						}
 						setOpenLoginPrompt(!openLoginPrompt);
 					}}
 				>

@@ -19,7 +19,7 @@ import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
@@ -29,6 +29,7 @@ import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import Sidebar from './Sidebar';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { GlobalActions } from '~src/redux/global';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -47,13 +48,15 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
-	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -64,7 +67,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	const [isMobile, setIsMobile] = useState(false);
+	// const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
@@ -81,27 +85,27 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (
-				sidebarRef.current &&
-				!sidebarRef.current.contains(event.target as Node) &&
-				headerRef.current &&
-				!headerRef.current.contains(event.target as Node) // Ensure header clicks don't close sidebar
-			) {
-				setSidebarCollapsed(true); // Close sidebar
-			}
-		}
+		const handleResize = () => {
+			const isMobile = window.innerWidth < 1024;
+			setIsMobile(isMobile);
 
-		if (!sidebarCollapsed) {
-			document.addEventListener('mousedown', handleClickOutside);
-		} else {
-			document.removeEventListener('mousedown', handleClickOutside);
-		}
+			if (!isMobile) {
+				setSidedrawer(true);
+				dispatch(GlobalActions.setIsSidebarCollapsed(false));
+			} else {
+				setSidedrawer(false);
+				dispatch(GlobalActions.setIsSidebarCollapsed(true));
+			}
+		};
+
+		handleResize();
+		window.addEventListener('resize', handleResize);
 
 		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
+			window.removeEventListener('resize', handleResize);
 		};
-	}, [sidebarCollapsed]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		document.body.classList.remove('light-theme', 'dark-theme');
@@ -128,18 +132,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			};
 		}
 	}, [router, isMobile]);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.screen.width < 1024);
-		};
-
-		handleResize();
-		window.addEventListener('resize', handleResize);
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
 
 	useEffect(() => {
 		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
@@ -177,7 +169,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}
-						className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
 						setSidedrawer={setSidedrawer}
 						previousRoute={previousRoute}
 						displayName={mainDisplay}
@@ -195,7 +186,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								className={`absolute left-0 top-0 z-[150]  w-full  ${className}`}
 								sidebarCollapsed={false}
 								setSidedrawer={setSidedrawer}
-								setSidebarCollapsed={setSidebarCollapsed}
 								sidedrawer={sidedrawer}
 								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 								setIdentityMobileModal={setIdentityMobileModal}
@@ -211,8 +201,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<>
 								<Sidebar
 									className={className}
-									sidebarCollapsed={sidebarCollapsed}
-									setSidebarCollapsed={setSidebarCollapsed}
+									sidebarCollapsed={is_sidebar_collapsed}
 									sidedrawer={sidedrawer}
 									setSidedrawer={setSidedrawer}
 									setOpenAddressLinkedModal={setOpenAddressLinkedModal}
@@ -224,18 +213,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									isIdentityUnverified={isIdentityUnverified}
 									setLoginOpen={setLoginOpen}
 								/>
-								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
-									{sidebarCollapsed ? (
+								<div className={`fixed  ${is_sidebar_collapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
+									{is_sidebar_collapsed ? (
 										<div
 											onClick={() => {
-												if (sidebarCollapsed) {
-													setSidebarCollapsed(false);
+												if (is_sidebar_collapsed) {
+													dispatch(GlobalActions.setIsSidebarCollapsed(false));
 													setSidedrawer(true);
 												}
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 												alt='close nav'
 											/>
@@ -243,14 +232,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									) : (
 										<div
 											onClick={() => {
-												if (!sidebarCollapsed) {
-													setSidebarCollapsed(true);
+												if (!is_sidebar_collapsed) {
+													dispatch(GlobalActions.setIsSidebarCollapsed(true));
 													setSidedrawer(false);
 												}
 											}}
 											className='sidebar-toggle-button border border-solid border-[#D2D8E0] dark:border-[#4B4B4B] dark:bg-black dark:text-white'
 										>
-											<img
+											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 												alt='open nav'
 											/>
@@ -267,13 +256,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
-													<Content>
+												<div className='flex flex-row'>
+													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
+													<Content
+														className={`${
+															!is_sidebar_collapsed && 'pl-32 2xl:pl-0'
+														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
+													>
 														<Component {...pageProps} />
 													</Content>
 												</div>
 												<Footer
-													className={` ${!sidebarCollapsed && 'pl-[210px] pr-20'} `}
+													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
 													theme={theme as any}
 												/>
 											</div>
@@ -305,19 +299,30 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<div className='relative w-full'>
 										{!isMobile ? (
-											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
-													<Content>
+											<div className={`${!is_sidebar_collapsed && ''}`}>
+												<div className='flex flex-row'>
+													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
+													<Content
+														className={`${
+															!is_sidebar_collapsed && 'pl-28 2xl:pl-0'
+														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
+													>
 														<Component {...pageProps} />
 													</Content>
 												</div>
+
 												<Footer
-													className={` ${!sidebarCollapsed && 'pl-[210px] pr-20'} `}
+													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
 													theme={theme as any}
 												/>
 											</div>
 										) : (
-											<div className='relative mx-auto w-full'>
+											<div
+												onClick={() => {
+													setSidedrawer(false);
+												}}
+												className='relative mx-auto w-full'
+											>
 												<div>
 													<div className='my-6 px-3'>
 														<Content>
@@ -477,7 +482,7 @@ export default styled(AppLayout)`
 		border-right: none !important;
 	}
 	li .ant-menu-item-only-child {
-		padding-left: 25px !important;
+		padding-left: 35px !important;
 		margin-left: 20px !important;
 	}
 
@@ -619,7 +624,7 @@ export default styled(AppLayout)`
 	}
 
 	.activeborder {
-		border: 1px solid #e5007a;
+		border: 2px solid #e5007a;
 		border-radius: 10px;
 	}
 	.activeborderhover {

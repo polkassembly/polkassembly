@@ -126,7 +126,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{pathname === '/activity-feed' || pathname === '/opengov' || pathname === '/' ? (
+			{pathname === '/activity-feed' || pathname === '/opengov' ? (
 				<Link
 					href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 					className=' '

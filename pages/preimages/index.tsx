@@ -103,8 +103,6 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	console.log(data, 'dataa');
-
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { preimages, count } = data;

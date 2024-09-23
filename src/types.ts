@@ -951,4 +951,5 @@ export enum EDelegationSourceFilters {
 export interface ICommentsSummary {
 	summary_negative: string;
 	summary_positive: string;
+	summary_neutral: string;
 }

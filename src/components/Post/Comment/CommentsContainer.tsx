@@ -24,6 +24,7 @@ import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
 import GreenTickIcon from '~assets/icons/green-tick.svg';
 import MinusSignIcon from '~assets/icons/minus-sign.svg';
+import CrossSignIcon from '~assets/icons/cross-sign.svg';
 import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
 import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
 import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
@@ -126,6 +127,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
 	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
 	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
+	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
@@ -142,7 +144,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 		});
 		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
-		return wordCount > 200;
+		return wordCount > 100;
 	};
 
 	if (filterSentiments) {
@@ -323,11 +325,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
-	const toggleSummary = (type: 'positive' | 'negative') => {
+	const toggleSummary = (type: 'positive' | 'negative' | 'neutral') => {
 		if (type === 'positive') {
 			setShowPositiveSummary(!showPositiveSummary);
-		} else {
+		} else if (type === 'negative') {
 			setShowNegativeSummary(!showNegativeSummary);
+		} else if (type === 'neutral') {
+			setNeutralSummary(!showNeutralSummary);
 		}
 	};
 
@@ -425,6 +429,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<MinusSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
+										<span
+											onClick={() => toggleSummary('neutral')}
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
+										>
+											{showNeutralSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<CrossSignIcon />
 								</span>
 								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}

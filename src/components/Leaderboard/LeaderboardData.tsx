@@ -44,7 +44,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
-
 	useEffect(() => {
 		const fetchData = async () => {
 			if (router.isReady) {
@@ -140,18 +139,26 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	];
 
 	const getLeaderboardData = async () => {
-		const body = searchedUsername ? { page: 1, username: searchedUsername } : { page: currentPage };
+		const body = { page: currentPage };
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
+
 		if (error) {
 			console.error(error);
 			return;
 		}
+
 		let modifiedData = data?.data || [];
+
+		if (searchedUsername) {
+			modifiedData = modifiedData.filter((item) => item?.username.toLowerCase().includes(searchedUsername.toLowerCase()));
+		}
+
 		if (!searchedUsername && currentPage === 1) {
 			modifiedData = modifiedData.slice(3);
 		}
+
 		setTableData(modifiedData);
-		setTotalData(searchedUsername ? 1 : currentPage === 1 ? 47 : 50);
+		setTotalData(searchedUsername ? modifiedData.length : currentPage === 1 ? 47 : 50);
 	};
 
 	const getUserProfile = async (username: string) => {
@@ -181,7 +188,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			filteredValue: [searchedUsername || ''],
 			key: 'user',
 			onFilter: (value, record) => {
-				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
+				return String(record.user).toLowerCase().includes(String(value).toLowerCase());
 			},
 			render: (user, obj) => (
 				<div className='flex items-center gap-x-2'>
@@ -319,7 +326,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
+	console.log(dataSource, currentUserDataSource);
+
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
+	console.log('combined: ', combinedDataSource);
 
 	return (
 		<Spin spinning={loading || loadingCurrentUser}>
@@ -347,7 +357,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					columns={columns}
 					className={`${className} w-full overflow-x-auto`}
 					dataSource={combinedDataSource}
-					pagination={{ pageSize: searchedUsername ? 1 : 10, total: searchedUsername ? tableData.length : totalData }}
+					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
 					onChange={handleTableChange}
 					theme={theme}
 					rowClassName={(record) => {

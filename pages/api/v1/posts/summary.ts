@@ -9,6 +9,7 @@ import { isOffChainProposalTypeValid, isValidNetwork, isProposalTypeValid } from
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export interface IPostSummaryResponse {
 	summary: string;
@@ -38,29 +39,41 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const postData = doc.data();
+	let contentToSummarize = postData?.content;
 
-	if (postData?.max_150_char_summary) {
-		return res.status(200).json({ summary: postData.max_150_char_summary });
+	if (!postData?.max_150_char_summary) {
+		if (contentToSummarize) {
+			const max_150_char_summary = await fetchContentSummary(
+				contentToSummarize as string,
+				proposalType as any,
+				process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+			);
+
+			await postRef.set({ max_150_char_summary }, { merge: true });
+			return res.status(200).json({ summary: max_150_char_summary });
+		}
+
+		const subsquireRes = await getSubSquareContentAndTitle(proposalType as any, network, postId as any);
+
+		if (subsquireRes.content) {
+			contentToSummarize = subsquireRes.content;
+
+			const max_150_char_summary = await fetchContentSummary(
+				contentToSummarize as string,
+				proposalType as any,
+				process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+			);
+
+			await postRef.set({ content: contentToSummarize, max_150_char_summary }, { merge: true });
+			return res.status(200).json({ summary: max_150_char_summary });
+		} else {
+			const noSummary = 'No contextual information available for this post.';
+			await postRef.set({ max_150_char_summary: noSummary }, { merge: true });
+			return res.status(200).json({ summary: noSummary });
+		}
 	}
 
-	const contentToSummarize = postData?.content || postData?.summary;
-
-	if (!contentToSummarize) {
-		return res.status(200).json({ summary: '' });
-	}
-
-	const max_150_char_summary = await fetchContentSummary(
-		contentToSummarize as string,
-		proposalType as any,
-		process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
-	);
-
-	if (!max_150_char_summary) {
-		return res.status(200).json({ summary: '' });
-	}
-	await postRef.set({ max_150_char_summary }, { merge: true });
-
-	return res.status(200).json({ summary: max_150_char_summary });
+	return res.status(200).json({ summary: postData.max_150_char_summary });
 };
 
 export default withErrorHandling(handler);

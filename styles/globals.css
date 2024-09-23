@@ -913,9 +913,6 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 
 .dark .ant-upload-list-item,
 .dark .ant-upload-list-item-uploading {
-    color: white !important;
+    color: #909090 !important;
 }
 
-.dark .ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-icon .anticon {
-  color: white !important;
-}

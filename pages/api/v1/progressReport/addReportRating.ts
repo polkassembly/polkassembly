@@ -6,13 +6,13 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
+// import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
 
-const handler: NextApiHandler<MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
@@ -38,6 +38,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user_id = user?.id?.toString();
 
 		const { postId, proposalType, rating } = req.body;
+		console.log('inside api: ', rating);
 
 		if (!proposalType || rating === undefined || isNaN(postId) || !isProposalTypeValid(proposalType)) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
@@ -62,7 +63,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			progress_report: progressReport
 		});
 
-		return res.status(200).json({ message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY });
+		// Return the updated progress_report in the response
+		return res.status(200).json({
+			message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY,
+			progress_report: progressReport
+		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
 		return res.status(500).json({ message: 'An error occurred while processing the request.' });

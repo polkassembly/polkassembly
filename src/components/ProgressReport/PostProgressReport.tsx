@@ -18,11 +18,12 @@ interface Props {
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
+
 	return (
-		<div className={`${className} mt-2`}>
+		<div className={`${className} mt-2 rounded-lg border-solid border-[#796EEC]`}>
 			<Collapse
 				size='large'
-				className={'h-full border-solid border-[#796EEC] bg-[#F0EEFE]'}
+				className={'h-full bg-[#F0EEFE]'}
 				expandIconPosition='end'
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
@@ -44,8 +45,8 @@ const PostProgressReport = ({ className }: Props) => {
 					<section className='w-full bg-[#F0EEFE]'>
 						{postData?.progress_report?.progress_summary && (
 							<div className='flex flex-col gap-y-2'>
-								<h1 className='text-sm font-semibold text-bodyBlue dark:text-white'>Progress Report Summary</h1>
-								<p className='text-sm text-bodyBlue dark:text-white'>{postData?.progress_report?.progress_summary}</p>
+								<h1 className='text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
+								<p className='text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
 							</div>
 						)}
 						<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
@@ -63,7 +64,7 @@ const PostProgressReport = ({ className }: Props) => {
 										alt='pdf.icon'
 									/>
 								</div>
-								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
+								<p className='m-0 p-0 text-xs text-sidebarBlue'>
 									{postData?.progress_report?.progress_name?.length > 20
 										? `${postData?.progress_report?.progress_name?.slice(0, 20)}...`
 										: postData?.progress_report?.progress_name || 'Progress Report'}

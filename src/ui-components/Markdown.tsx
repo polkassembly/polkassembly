@@ -28,7 +28,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		margin-bottom: 0;
 		overflow-wrap: break-word;
 		max-width: 100%;
-		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'red' : '#243A57')} !important;
 
 		* {
 			max-width: 100% !important;
@@ -60,7 +60,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 0 0 0.5rem 0;
 			color: ${(props: any) => (props.theme == 'dark' ? '#fff' : '#243A57')} !important;
 			font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
-			border: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+			border: ${(props: any) => (props.theme == 'dark' ? '#243A57' : '#243A57')} !important;
 		}
 
 		h1 {
@@ -322,13 +322,13 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 	return (
 		<div
 			ref={markdownRef}
-			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
+			className={`selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white ${className}`}
 		>
 			<HighlightMenu markdownRef={markdownRef} />
 			<StyledMarkdown
-				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isUsedInComments && 'comments-image'} ${disableQuote && 'hide-blockquote'} ${
+				className={`${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isUsedInComments && 'comments-image'} ${disableQuote && 'hide-blockquote'} ${
 					isAutoComplete && 'mde-autocomplete-content'
-				} dark-text-white w-full`}
+				} dark-text-white w-full ${className}`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}

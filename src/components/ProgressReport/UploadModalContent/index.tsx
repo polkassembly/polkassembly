@@ -157,7 +157,7 @@ const UploadModalContent = () => {
 						Edit summary
 					</Button>
 				)}
-				{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-white'>(Edited)</p>}
+				{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
 			</div>
 			{!report_uploaded && (
 				<a

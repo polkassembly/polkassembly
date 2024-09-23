@@ -4,7 +4,7 @@
 import { Modal } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { progressReportActions } from '~src/redux/progressReport';
@@ -27,6 +27,7 @@ const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState<boolean>(false);
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
@@ -44,7 +45,7 @@ const UploadReport = () => {
 			progress_summary: summary_content,
 			ratings: []
 		};
-
+		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addProgressReport', {
 			postId: postIndex,
 			progress_report,
@@ -52,6 +53,7 @@ const UploadReport = () => {
 		});
 
 		if (editError || !data) {
+			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
@@ -61,6 +63,7 @@ const UploadReport = () => {
 		}
 
 		if (data) {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post is now edited',
@@ -76,6 +79,7 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			localStorage.removeItem('progress_report');
 			router.reload();
 		} else {
 			console.error('failed to save report');
@@ -128,7 +132,6 @@ const UploadReport = () => {
 						variant='default'
 						text='Cancel'
 						buttonsize='sm'
-						disabled={!report_uploaded}
 						onClick={() => {
 							dispatch(progressReportActions.setAddProgressReportModalOpen(false));
 						}}
@@ -137,6 +140,8 @@ const UploadReport = () => {
 						variant='primary'
 						text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
 						buttonsize='sm'
+						loading={loading}
+						className={`${loading ? 'opacity-60' : ''}`}
 						disabled={!report_uploaded}
 						onClick={() => {
 							postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();

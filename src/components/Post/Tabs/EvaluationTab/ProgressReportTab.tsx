@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
@@ -33,6 +33,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
+	const [loading, setLoading] = useState<boolean>(false);
 	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const {
@@ -55,7 +56,7 @@ const ProgressReportTab = ({ className }: Props) => {
 			progress_summary: summary_content,
 			ratings: []
 		};
-
+		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addProgressReport', {
 			postId: postIndex,
 			progress_report,
@@ -63,6 +64,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		});
 
 		if (editError || !data) {
+			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
@@ -72,6 +74,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		}
 
 		if (data) {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post is now edited',
@@ -168,6 +171,8 @@ const ProgressReportTab = ({ className }: Props) => {
 									variant='primary'
 									text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
 									buttonsize='sm'
+									loading={loading}
+									className={`${loading ? 'opacity-60' : ''}`}
 									disabled={!report_uploaded}
 									onClick={() => {
 										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();

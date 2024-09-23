@@ -7,19 +7,38 @@ import { useProgressReportSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import { usePostDataContext } from '~src/context';
+import Markdown from '~src/ui-components/Markdown';
+import { useTheme } from 'next-themes';
+import { StarOutlined } from '@ant-design/icons';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
 const ProgressReportRatingModal = () => {
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const { report_rating } = useProgressReportSelector();
+	const customIcons = Object.fromEntries(
+		[1, 2, 3, 4, 5].map((key, index) => [
+			key,
+			<StarOutlined
+				key={index}
+				className='dark:text-[#909090]'
+			/>
+		])
+	) as Record<number, React.ReactNode>;
 
 	return (
 		<>
 			<section className='flex flex-col gap-y-2'>
-				{postData?.progress_report?.progress_summary && <h1 className='text-normal text-lg text-bodyBlue dark:text-section-dark-overlay'>Summary of Progress Report</h1>}
-				<p className='text-sm text-bodyBlue dark:text-white'>{postData?.progress_report?.progress_summary}</p>
+				{postData?.progress_report?.progress_summary && <h1 className='text-normal mt-3 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
+				<p className='m-0 -mt-1 p-0 text-sm text-bodyBlue dark:text-white'>
+					<Markdown
+						className='post-content'
+						md={postData?.progress_report?.progress_summary}
+						theme={theme}
+					/>
+				</p>
 				{postData?.progress_report?.progress_summary && (
 					<Divider
 						dashed={true}
@@ -27,7 +46,7 @@ const ProgressReportRatingModal = () => {
 					/>
 				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal text-lg text-bodyBlue dark:text-white'>Rate Delievery</h1>
+					<h1 className='text-normal text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
 					<>
 						<Rate
 							tooltips={desc}
@@ -37,8 +56,19 @@ const ProgressReportRatingModal = () => {
 							value={report_rating}
 							className='-mt-3 scale-[3]'
 						/>
-						{postData?.progress_report?.ratings.length > 0 && (
-							<p className='mt-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings.length} users have already rated the progress report.</p>
+						{theme === 'dark' && (
+							<Rate
+								tooltips={desc}
+								onChange={(e: any) => {
+									dispatch(progressReportActions.setReportRating(e));
+								}}
+								value={report_rating}
+								className='custom-rate -mt-[40px] scale-[3]'
+								character={({ index = 0 }) => customIcons[index + 1]}
+							/>
+						)}
+						{postData?.progress_report?.ratings?.length > 0 && (
+							<p className='mt-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings?.length} users have already rated the progress report.</p>
 						)}
 					</>
 				</div>

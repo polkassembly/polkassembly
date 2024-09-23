@@ -25,7 +25,7 @@ import { useTheme } from 'next-themes';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const { postData } = usePostDataContext();
+	const { postData, setPostData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
@@ -55,6 +55,14 @@ const ProgressReportInfo = () => {
 				message: 'Your rating is now added',
 				status: NotificationStatus.SUCCESS
 			});
+			const { progress_report } = data;
+			console.log('progress: ', report_rating);
+			console.log('progress2: ', data);
+			// const ratingData = postData?.progress_report?.ratings;
+			setPostData((prev) => ({
+				...prev,
+				progress_report
+			}));
 			dispatch(progressReportActions.setOpenRatingModal(false));
 			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
 		} else {
@@ -63,7 +71,7 @@ const ProgressReportInfo = () => {
 	};
 
 	const getRatingInfo = () => {
-		setAverageRating(postData?.progress_report?.ratings.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+		setAverageRating(postData?.progress_report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
 	};
 
 	useEffect(() => {
@@ -85,14 +93,14 @@ const ProgressReportInfo = () => {
 						type='vertical'
 						style={{ borderLeft: '1px solid var(--lightBlue)' }}
 					/>
-					<ClockCircleOutlined />
-					<p className='m-0 p-0 text-xs text-sidebarBlue'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
-					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-white'>(Edited)</p>}
+					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
+					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
+					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
 				</header>
 				<article className=''>
 					{postData?.progress_report?.progress_summary && (
 						<div className='flex flex-col gap-y-2'>
-							<p className='text-sm text-bodyBlue dark:text-white'>
+							<p className='mt-2 text-sm text-bodyBlue dark:text-white'>
 								<Markdown
 									className='post-content'
 									md={postData?.progress_report?.progress_summary}
@@ -101,9 +109,9 @@ const ProgressReportInfo = () => {
 							</p>
 						</div>
 					)}
-					{postData?.progress_report?.ratings.length > 0 && (
-						<p className='m-0 mb-4 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
-							Average Rating({postData?.progress_report?.ratings.length}): {averageRating}
+					{postData?.progress_report?.ratings?.length > 0 && (
+						<p className='m-0 -mt-2 mb-4 p-0 text-xs text-sidebarBlue dark:text-[#909090]'>
+							Average Rating({postData?.progress_report?.ratings?.length}): {averageRating}
 						</p>
 					)}
 					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
@@ -121,7 +129,7 @@ const ProgressReportInfo = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
 						</div>
 					</div>
 				</article>
@@ -152,6 +160,8 @@ const ProgressReportInfo = () => {
 						/>
 						<CustomButton
 							variant='primary'
+							loading={loading}
+							className={`${loading ? 'opacity-60' : ''}`}
 							text='Rate'
 							buttonsize='sm'
 							disabled={loading}

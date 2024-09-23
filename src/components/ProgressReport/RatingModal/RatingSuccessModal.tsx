@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { StarFilled } from '@ant-design/icons';
 import { useProgressReportSelector } from '~src/redux/selectors';
@@ -11,8 +11,16 @@ import { IRating } from '~src/types';
 const RatingSuccessModal = () => {
 	const { report_rating } = useProgressReportSelector();
 	const { postData } = usePostDataContext();
-	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: IRating) => sum + current.rating, 0);
-	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
+	const [averageRating, setAverageRating] = useState<number>();
+
+	const getRatingInfo = () => {
+		setAverageRating(postData?.progress_report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+	};
+
+	useEffect(() => {
+		getRatingInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postData?.progress_report]);
 
 	return (
 		<section className='h-[200px] p-6'>
@@ -31,8 +39,8 @@ const RatingSuccessModal = () => {
 						/>
 					))}{' '}
 				</div>
-				<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
-					{postData?.progress_report?.ratings.length} user(s) rated and the Average Delivery rating is {averageRating}/5
+				<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>
+					{postData?.progress_report?.ratings?.length} user(s) rated and the Average Delivery rating is {averageRating}/5
 				</p>
 			</div>
 		</section>

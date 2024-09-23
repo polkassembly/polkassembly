@@ -11,6 +11,7 @@ import { ProposalType } from '~src/global/proposalType';
 import fetch from 'node-fetch';
 import { ICommentsSummary } from '~src/types';
 import messages from '~src/auth/utils/messages';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 interface GetCommentsAISummaryResponse {
 	data: ICommentsSummary | null;
@@ -43,11 +44,14 @@ export const getCommentsAISummaryByPost = async ({
 
 		const htmlTagRegex = /<\/?[^>]+(>|$)/g;
 
-		const commentsTextPromises = commentsSnapshot.docs.map(async (commentDoc) => {
+		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
 			const commentData = commentDoc.data();
 			if (!commentData || !commentData.content) return '';
 
-			let commentText = commentData.content.replace(htmlTagRegex, '');
+			const commentObj = {
+				id: commentData.user_id || 'unknown',
+				content: removeSymbols(commentData.content.replace(htmlTagRegex, ''))
+			};
 
 			const repliesRef = commentDoc.ref.collection('replies');
 			const repliesSnapshot = await repliesRef.get();
@@ -55,29 +59,36 @@ export const getCommentsAISummaryByPost = async ({
 			const repliesPromises = repliesSnapshot.docs.map(async (replyDoc) => {
 				const replyData = replyDoc.data();
 				if (replyData && replyData.content) {
-					return replyData.content.replace(htmlTagRegex, '');
+					return {
+						id: replyData.user_id || 'unknown',
+						content: removeSymbols(replyData.content.replace(htmlTagRegex, ''))
+					};
 				}
 				return '';
 			});
 
 			const repliesResults = await Promise.allSettled(repliesPromises);
 
-			repliesResults.forEach((result) => {
-				if (result.status === 'fulfilled') {
-					commentText += ' ' + (result as PromiseFulfilledResult<string>).value;
-				}
-			});
+			const repliesObjects = repliesResults
+				.filter((result) => result.status === 'fulfilled' && result.value)
+				.map((result) => (result as PromiseFulfilledResult<{ id: string; content: string }>).value);
 
-			return commentText;
+			return [commentObj, ...repliesObjects];
 		});
 
-		const commentsTextsResults = await Promise.allSettled(commentsTextPromises);
+		const commentsDataResults = await Promise.allSettled(commentsDataPromises);
 
-		const allCommentsText = commentsTextsResults
-			.filter((result) => result.status === 'fulfilled' && (result as PromiseFulfilledResult<string>).value)
-			.map((result) => (result as PromiseFulfilledResult<string>).value)
-			.join(' ')
-			.trim();
+		const allCommentsAndReplies = commentsDataResults
+			.filter((result) => result.status === 'fulfilled' && result.value)
+			.flatMap((result) => (result as PromiseFulfilledResult<any[]>).value);
+
+		if (!allCommentsAndReplies.length) {
+			return {
+				data: null,
+				error: 'No comments or replies found.',
+				status: 404
+			};
+		}
 
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
 
@@ -91,7 +102,7 @@ export const getCommentsAISummaryByPost = async ({
 
 		const response = await fetch(apiUrl, {
 			body: JSON.stringify({
-				text: allCommentsText
+				text: JSON.stringify({ allCommentsAndReplies })
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -100,7 +111,11 @@ export const getCommentsAISummaryByPost = async ({
 		});
 
 		if (!response.ok) {
-			throw new Error(`Error fetching AI summary: ${response.statusText}`);
+			return {
+				data: null,
+				error: messages.API_FETCH_ERROR,
+				status: 500
+			};
 		}
 
 		const data = (await response.json()) as ICommentsSummary | null;

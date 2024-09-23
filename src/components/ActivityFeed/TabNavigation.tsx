@@ -3,19 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
-import {
-	AllPostIcon,
-	FellowshipGroupIcon,
-	FellowshipIconNew,
-	GovernanceGroupIcon,
-	GovernanceIconNew,
-	OverviewIcon,
-	RootIcon,
-	StakingAdminIcon,
-	TreasuryGroupIcon,
-	TreasuryIconNew,
-	WishForChangeIcon
-} from '~src/ui-components/CustomIcons';
+import { FellowshipIconNew, GovernanceIconNew, RootIcon, StakingAdminIcon, TreasuryIconNew, WishForChangeIcon } from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import { TabNavigationProps } from './utils/types';
 import Popover from '~src/basic-components/Popover';

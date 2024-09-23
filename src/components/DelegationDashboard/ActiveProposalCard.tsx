@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import { noTitle } from '~src/global/noTitle';
 import Address from '~src/ui-components/Address';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import VoteIcon from '~assets/icons/vote.svg';
 import Link from 'next/link';
 import { getDefaultPeriod } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
 import dayjs from 'dayjs';

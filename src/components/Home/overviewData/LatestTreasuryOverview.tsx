@@ -333,7 +333,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
 													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
 													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
-													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
+													<span className='text-[12px] text-blue-light-high dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>
 											</div>
 										) : (
@@ -385,9 +385,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								</div>
 							)}
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='mt-2'>
+								<div className='mt-2 flex flex-col xl:items-end'>
 									{chainProperties[network]?.hydrationTreasuryAddress && (
-										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center `}>
+										<div className={`${poppins.className} ${poppins.variable} flex items-center `}>
 											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 												<HydrationIcon />
 												Hydration
@@ -512,7 +512,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<>
 										<div className='sm:mb-2'>
 											<div className='flex items-center'>
-												<span className={`${poppins.className} ${poppins.variable} mr-2 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}>
+												<span
+													className={`${poppins.className} ${poppins.variable} mr-2 pt-[3px] text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
+												>
 													Spend Period Remaining
 												</span>
 
@@ -523,7 +525,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 
 											<div
-												className={`${poppins.className} ${poppins.variable} mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
+												className={`${poppins.className} ${poppins.variable} flex items-baseline whitespace-pre pt-[5px] font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
 											>
 												{spendPeriod.value?.total ? (
 													<>
@@ -550,9 +552,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												)}
 											</div>
 										</div>
-										<span className='flex items-center gap-[10px]'>
+										<span className=' flex items-center gap-[10px]'>
 											<ProgressBar
-												className='m-0 flex items-center p-0'
+												className=' flex items-center p-0'
 												percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
 												trailColor={trailColor}
 												strokeColor='#E5007A'

@@ -249,12 +249,6 @@ const UploadModalContent = () => {
 					/>
 				</p>
 			)}
-			{report_uploaded && (
-				<div className='-mb-4 mt-1 flex items-center text-sm text-sidebarBlue dark:text-white'>
-					<span className='m-0 p-0 font-semibold'>NOTE: </span>
-					<span className='m-0 p-0 font-normal'>All historical & edited reports will be visible to users</span>
-				</div>
-			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}

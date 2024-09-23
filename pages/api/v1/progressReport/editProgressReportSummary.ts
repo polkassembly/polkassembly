@@ -6,13 +6,12 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
 
-const handler: NextApiHandler<MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
@@ -72,7 +71,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			console.error('Error updating the post document:', error);
 			throw new Error('Failed to update the post document.');
 		});
-		return res.status(200).json({ message: 'Progress summary updated successfully.' });
+
+		return res.status(200).json({
+			message: 'Progress summary updated successfully.',
+			progress_report: updatedProgressReport
+		});
 	} catch (error) {
 		console.error('Error in updating progress summary:', error);
 		return res.status(500).json({ message: 'An error occurred while processing the request.' });

@@ -37,7 +37,6 @@ const UploadReport = () => {
 	} = usePostDataContext();
 
 	const addProgressReport = async () => {
-		console.log('adding progress report: ', progress_report_link);
 		const progress_report = {
 			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
@@ -87,6 +86,8 @@ const UploadReport = () => {
 	};
 
 	const editProgressReport = async () => {
+		setLoading(true);
+
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
 			postId: postIndex,
 			proposalType,
@@ -94,6 +95,7 @@ const UploadReport = () => {
 		});
 
 		if (editError || !data) {
+			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
@@ -103,6 +105,7 @@ const UploadReport = () => {
 		}
 
 		if (data) {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post is now edited',

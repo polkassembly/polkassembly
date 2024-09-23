@@ -6,7 +6,6 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-// import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
@@ -63,7 +62,6 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 			progress_report: progressReport
 		});
 
-		// Return the updated progress_report in the response
 		return res.status(200).json({
 			message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY,
 			progress_report: progressReport

@@ -18,6 +18,7 @@ import { NotificationStatus } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -36,6 +37,8 @@ const ProgressReportTab = ({ className }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
+	const router = useRouter();
+
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -90,6 +93,7 @@ const ProgressReportTab = ({ className }: Props) => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			router.reload();
 		} else {
 			console.log('failed to save report');
 		}
@@ -181,7 +185,7 @@ const ProgressReportTab = ({ className }: Props) => {
 							</div>
 						</>
 					)}
-					{!(postData.userId === currentUser?.id) && postData?.progress_report?.progress_file ? (
+					{postData.userId !== currentUser?.id && postData?.progress_report?.progress_file ? (
 						<ProgressReportInfo />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>

@@ -20,6 +20,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { UploadProps } from 'antd';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
+import Markdown from '~src/ui-components/Markdown';
+import { useTheme } from 'next-themes';
 
 const { Dragger } = Upload;
 
@@ -29,6 +31,8 @@ const UploadModalContent = () => {
 	const [fileName, setFileName] = useState<string>('');
 	const [summary, setSummary] = useState<string>('');
 	const { postData } = usePostDataContext();
+	const { resolvedTheme: theme } = useTheme();
+
 	const { postIndex } = postData;
 	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
@@ -185,7 +189,7 @@ const UploadModalContent = () => {
 					value={summary}
 				/>
 			)}
-			{!report_uploaded ? (
+			{!report_uploaded && !postData?.progress_report?.progress_file ? (
 				<Dragger {...props}>
 					<div className='flex flex-row items-center justify-center gap-x-3'>
 						<p className='ant-upload-drag-icon'>
@@ -235,6 +239,15 @@ const UploadModalContent = () => {
 						)}
 					</div>
 				</div>
+			)}
+			{postData?.progress_report?.progress_file && (
+				<p className='m-0 mt-2 p-0 text-sm text-bodyBlue dark:text-white'>
+					<Markdown
+						className='post-content'
+						md={postData?.progress_report?.progress_summary}
+						theme={theme}
+					/>
+				</p>
 			)}
 			{report_uploaded && (
 				<div className='-mb-4 mt-1 flex items-center text-sm text-sidebarBlue dark:text-white'>

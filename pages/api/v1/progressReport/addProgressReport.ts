@@ -6,7 +6,6 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
@@ -15,7 +14,7 @@ import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubsquidProposalType } from '~src/global/proposalType';
 
-const handler: NextApiHandler<MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
@@ -76,7 +75,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		};
 
 		await postDocRef.update(updatedPost);
-		return res.status(200).json({ message: 'Progress report added and post updated successfully.' });
+
+		return res.status(200).json({
+			message: 'Progress report added and post updated successfully.',
+			progress_report: progress_report
+		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
 		return res.status(500).json({ message: 'An error occurred while processing the request.' });

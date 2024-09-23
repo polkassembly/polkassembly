@@ -508,14 +508,14 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				<div className='flex w-full justify-between xl:mt-3 xl:items-center'>
 					<div className='flex flex-col xl:h-12 xl:flex-row xl:gap-5'>
 						<div>
-							<h1 className='mx-2 font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:text-2xl xl:mt-2'>
+							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:text-2xl xl:mt-2'>
 								Activity <span className='rounded-lg bg-[#fee814] px-2 py-1 shadow '>Feed</span>{' '}
 							</h1>
 						</div>
-						<div className='mt-2 flex items-center rounded-lg bg-[#ECECEC] text-[14px] dark:bg-white dark:bg-opacity-[12%] lg:p-2 xl:gap-2  xl:pt-5'>
+						<div className='mt-2 flex h-9 items-center gap-1 rounded-lg bg-[#ECECEC] p-2 dark:bg-white dark:bg-opacity-[12%] lg:p-2 xl:gap-2  xl:pt-5'>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`lg:text-md cursor-pointer rounded-md px-1 text-[12px] font-semibold xl:px-4 xl:py-[8px] ${
+								className={`mt-4 cursor-pointer rounded-md px-2 py-[3px] text-[15px] font-semibold  md:mt-1 lg:text-[16px] xl:px-4 xl:py-[5px] ${
 									activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>
@@ -523,7 +523,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							</p>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`lg:text-md cursor-pointer rounded-lg px-1 text-[12px] font-semibold xl:px-4 xl:py-[8px] ${
+								className={`mt-4 cursor-pointer rounded-lg px-2 py-[3px] text-[15px] font-semibold md:mt-1 lg:text-[16px] xl:px-4 xl:py-[5px] ${
 									activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
 								}`}
 							>

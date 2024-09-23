@@ -131,7 +131,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 					className=' '
 				>
-					<button className=' mr-2 flex w-[105px] cursor-pointer items-center rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-1 font-poppins text-[10px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D]  dark:text-white md:mr-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-2'>
+					<button className=' mr-2 mt-1 flex cursor-pointer  items-center gap-[2px] rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-1 font-poppins text-[10px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D]  dark:text-white md:mr-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-2'>
 						Switch to <span className='font-semibold'>{buttonText}</span>
 						<span>
 							<ImageIcon

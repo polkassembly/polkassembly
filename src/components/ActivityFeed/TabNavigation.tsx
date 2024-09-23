@@ -161,7 +161,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 
 	return (
-		<div className='activityborder mb-5 flex  justify-between rounded-lg border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' mb-5 flex  justify-between rounded-lg border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object.keys(tabCategories)
 				.filter((category) => !['Treasury', 'Whitelist'].includes(category))
 				.map((category, index) => (

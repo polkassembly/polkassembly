@@ -83,7 +83,7 @@ const formatDate = (dateString: string) => {
 const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
 	const isExpanded = expandedPostId === post.post_id;
-
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const toggleExpandPost = (postId: number) => {
 		setExpandedPostId(expandedPostId === postId ? null : postId);
 	};
@@ -95,7 +95,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
 
 	return (
-		<div className='activityborder rounded-2xl bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' rounded-2xl border-solid border-[#D2D8E0] bg-white p-8 font-poppins shadow-md dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
 				post={post}
 				bgColor={bgColor}
@@ -126,6 +126,18 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				post={post}
 				currentUserdata={currentUserdata}
 			/>
+			{isMobile && (
+				<Link href={`/referenda/${post?.post_id}`}>
+					<div className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'>
+						<ImageIcon
+							src='/assets/Vote.svg'
+							alt=''
+							className='m-0 h-6 w-6 p-0'
+						/>
+						<p className='cursor-pointer pt-3 font-medium'>Cast Vote</p>
+					</div>
+				</Link>
+			)}
 		</div>
 	);
 };
@@ -369,7 +381,10 @@ const PostReactions: React.FC<{
 	post: any;
 }> = ({ likes, dislikes, post }) => {
 	const { firstVoterProfileImg, comments_count } = post;
-
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const username = likes?.usernames?.[0] || '';
+	const displayUsername = isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
@@ -382,17 +397,54 @@ const PostReactions: React.FC<{
 							width={20}
 							height={20}
 						/>
-						<p className='ml-2 pt-3'>
-							{likes?.count === 1 ? `${likes?.usernames?.[0]} has liked this post` : `${likes?.usernames?.[0]} & ${likes?.count - 1} others liked this post`}
+						<p className='md: ml-2 text-[10px] md:pt-3 md:text-sm'>
+							{likes?.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes?.count - 1} others liked this post`}
 						</p>
 					</div>
 				)}
 			</div>
 
-			<div className='flex items-center gap-3'>
-				<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{dislikes.count} dislikes</p>
+			<div className='flex items-center gap-1 md:gap-3'>
+				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-sm'>{dislikes.count} dislikes</p>
 				<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-				<p className='text-sm text-gray-600 dark:text-[#9E9E9E]'>{comments_count || 0} Comments</p>
+				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-sm'>{comments_count || 0} Comments</p>
+				{post?.highestSentiment?.sentiment > 0 && <p className='block text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
+				<div className='block lg:hidden'>
+					{post?.highestSentiment?.sentiment == 1 && (
+						<EmojiOption
+							icon={
+								theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+							}
+							title={'Completely Against'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 2 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Slightly Against'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 3 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Neutral'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 4 && (
+						<EmojiOption
+							icon={theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+							title={'Slightly For'}
+						/>
+					)}
+					{post?.highestSentiment?.sentiment == 5 && (
+						<EmojiOption
+							icon={
+								theme === 'dark' ? <DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+							}
+							title={'Completely For'}
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);
@@ -426,7 +478,6 @@ const PostActions: React.FC<{
 		const isDisliked = reaction === '👎' && reactionState.userDisliked;
 		const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
 
-		// Simulate the GIF display for 3 seconds
 		setShowGif(reaction);
 
 		setTimeout(async () => {
@@ -469,12 +520,38 @@ const PostActions: React.FC<{
 			setShowGif(null);
 		}, 1000);
 	};
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const modalWrapperRef = useRef<HTMLDivElement>(null);
+
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
+				closeModal();
+			}
+		};
+		if (isModalOpen) {
+			document.addEventListener('mousedown', handleOutsideClick);
+		} else {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	}, [isModalOpen]);
 	return (
 		<>
 			<div className='flex justify-between'>
-				<div className='mt-1 flex items-center space-x-4'>
+				<div className='mt-1 flex items-center md:space-x-4'>
 					<div
-						className='flex cursor-pointer items-center gap-2 rounded-lg px-2'
+						className='flex cursor-pointer items-center  rounded-lg md:gap-2 md:px-2'
 						onClick={() => handleReactionClick('👍')}
 					>
 						<PostAction
@@ -506,11 +583,12 @@ const PostActions: React.FC<{
 								)
 							}
 							label={reactionState.userLiked ? 'Liked' : 'Like'}
+							isMobile={isMobile}
 						/>
 					</div>
 
 					<div
-						className='flex cursor-pointer items-center gap-2 rounded-lg  px-2'
+						className='flex cursor-pointer items-center gap-2 rounded-lg px-2'
 						onClick={() => handleReactionClick('👎')}
 					>
 						<PostAction
@@ -538,6 +616,30 @@ const PostActions: React.FC<{
 								)
 							}
 							label={reactionState.userDisliked ? 'Disliked' : 'Dislike'}
+							isMobile={isMobile}
+						/>
+					</div>
+
+					<div
+						onClick={() => {
+							if (!currentUserdata && !userid) {
+								setLoginOpen(true);
+								return;
+							} else {
+								openModal();
+							}
+						}}
+					>
+						<PostAction
+							icon={
+								<ImageIcon
+									src='/assets/icons/comment-pink.svg'
+									alt='comment icon'
+									className='h-5 w-5'
+								/>
+							}
+							label={COMMENT_LABEL}
+							isMobile={isMobile}
 						/>
 					</div>
 					<Link
@@ -552,22 +654,13 @@ const PostActions: React.FC<{
 									className='h-5 w-5'
 								/>
 							}
-							label='Share'
+							label={!isMobile ? 'Share' : ''}
+							isMobile={isMobile}
 						/>
 					</Link>
-
-					<PostAction
-						icon={
-							<ImageIcon
-								src='/assets/icons/comment-pink.svg'
-								alt='comment icon'
-								className='h-5 w-5'
-							/>
-						}
-						label={COMMENT_LABEL}
-					/>
 				</div>
-				<div>
+
+				<div className='hidden lg:block'>
 					{post?.highestSentiment?.sentiment == 1 && (
 						<EmojiOption
 							icon={
@@ -604,6 +697,33 @@ const PostActions: React.FC<{
 					)}
 				</div>
 			</div>
+			{isModalOpen && (
+				<>
+					<div
+						className='fixed inset-0 z-40 bg-black bg-opacity-30'
+						onClick={closeModal}
+					/>
+					<Modal
+						visible={isModalOpen}
+						onCancel={closeModal}
+						footer={null}
+						centered
+						className='z-50 w-[80%]'
+					>
+						<div
+							className='lg:w-full'
+							ref={modalWrapperRef}
+						>
+							<CommentModal
+								post={post}
+								isModalOpen={isModalOpen}
+								onclose={closeModal}
+								currentUserdata={currentUserdata}
+							/>
+						</div>
+					</Modal>
+				</>
+			)}
 			<SignupPopup
 				setLoginOpen={setLoginOpen}
 				modalOpen={openSignup}
@@ -620,23 +740,45 @@ const PostActions: React.FC<{
 	);
 };
 
-const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, label }) => (
+const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean }> = ({ icon, label, isMobile }) => (
 	<div className='flex items-center gap-2'>
-		{icon}
-		<p className='hidden cursor-pointer pt-4 text-[#E5007A] xl:block'>{label}</p>
+		<span>{icon}</span>
+		{isMobile && <p className='cursor-pointer pt-4 text-[#E5007A]'>{label}</p>}
+		{!isMobile && <p className='hidden cursor-pointer pt-4 text-[#E5007A] xl:block'>{label}</p>}
 	</div>
 );
 
 const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ post, currentUserdata }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [loginTriggered, setLoginTriggered] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+
 	const openModal = () => {
-		setIsModalOpen(true);
+		if (currentUserdata && currentUserdata.user_id) {
+			setIsModalOpen(true);
+		} else if (!loginTriggered) {
+			setLoginOpen(true);
+			setLoginTriggered(true);
+
+			if (inputRef.current) {
+				inputRef.current.blur();
+			}
+		}
 	};
+
 	const closeModal = () => {
 		setIsModalOpen(false);
 	};
+
+	const closeLoginModal = () => {
+		setLoginOpen(false);
+		setLoginTriggered(false);
+	};
+
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
@@ -656,23 +798,41 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 
 	return (
 		<div className='mt-3 flex items-center'>
-			<Image
-				src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-				alt=''
-				className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
-				width={40}
-				height={40}
-			/>
+			{!isMobile && (
+				<Image
+					src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
+					alt=''
+					className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
+					width={40}
+					height={40}
+				/>
+			)}
+
 			<input
 				ref={inputRef}
 				type='text'
 				placeholder={COMMENT_PLACEHOLDER}
-				className='activityborder2 ml-7 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] '
+				className={` h-9 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 ${
+					!isMobile ? 'ml-7' : ''
+				}`}
 				onFocus={openModal}
 			/>
 			<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
 				{POST_LABEL}
 			</button>
+
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={closeLoginModal}
+				isModal={true}
+			/>
 
 			{isModalOpen && (
 				<>
@@ -685,10 +845,10 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50'
+						className='z-50 w-[80%]'
 					>
 						<div
-							className='w-full'
+							className='lg:w-full'
 							ref={modalWrapperRef}
 						>
 							<CommentModal
@@ -798,7 +958,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				disabled={loading}
 				validateMessages={{ required: "Please add the  '${name}'" }}
 			>
-				<div className='flex items-center gap-2  '>
+				<div className='flex items-center gap-[4px] pt-2 md:gap-2 md:pt-0  '>
 					<Image
 						src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 						alt='profile'
@@ -835,15 +995,15 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 					isExpanded={isExpanded}
 					isCommentPost={true}
 				/>
-				<div className='flex w-full items-start gap-2 pt-10'>
+				<div className='flex items-start gap-2 pt-3 md:pt-10 lg:w-full'>
 					<Image
 						src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 						alt=''
-						className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
+						className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
 						width={40}
 						height={40}
 					/>
-					<div className='flex-1'>
+					<div className='w-[90%] lg:flex-1'>
 						<ContentForm
 							onChange={(content: any) => onContentChange(content)}
 							height={200}
@@ -852,7 +1012,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				</div>
 
 				<Form.Item>
-					<div className=' mt-[20px] flex items-center justify-end'>
+					<div className=' flex items-center justify-end md:mt-[20px]'>
 						<div className='relative'>
 							<div className='flex'>
 								<Button

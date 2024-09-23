@@ -454,7 +454,7 @@ const PostActions: React.FC<{
 	post: any;
 	currentUserdata: any;
 }> = ({ post, currentUserdata }) => {
-	const { post_id, type, track_no } = post;
+	const { post_id, track_no } = post;
 	const userid = currentUserdata?.user_id;
 	const [reactionState, setReactionState] = useState({
 		dislikesCount: post?.dislikes?.count || 0,

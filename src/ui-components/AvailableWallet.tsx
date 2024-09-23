@@ -51,7 +51,7 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 							}
 						/>
 					)}
-					{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) && isMetamaskWallet && (
+					{['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet && (
 						<WalletButton
 							disabled={!apiReady}
 							className={`h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.METAMASK && 'border border-solid border-pink_primary'}`}

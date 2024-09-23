@@ -555,10 +555,10 @@ class AuthService {
 		if (!addressToLinkDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_NOT_FOUND, 404);
 
 		const addressToLink = addressToLinkDoc.data() as Address;
-
 		const isValidSr = skipSignCheck
 			? true
-			: address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
+			: // : address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
+			address.startsWith('0x')
 			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
 			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);

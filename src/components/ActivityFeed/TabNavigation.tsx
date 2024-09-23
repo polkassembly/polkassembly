@@ -161,7 +161,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 
 	return (
-		<div className=' mb-5 flex  justify-between rounded-lg border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object.keys(tabCategories)
 				.filter((category) => !['Treasury', 'Whitelist'].includes(category))
 				.map((category, index) => (
@@ -172,53 +172,71 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							display: is_sidebar_collapsed || index <= 2 ? 'flex' : 'none'
 						}}
 					>
-						<p
-							className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-								isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
-							}`}
-							onClick={() => handleCategoryClick(category)}
-						>
-							<span className='flex items-center'>
-								{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
-								<span className='ml-2 whitespace-nowrap'>{category}</span>
-								{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
-							</span>
-						</p>
+						{tabCategories[category].length > 1 ? (
+							<Popover
+								content={
+									<div className='w-44 divide-y divide-gray-100 pb-2 '>
+										<div className='w-full pt-2 text-sm text-gray-700 dark:text-gray-200'>
+											{tabCategories[category].map((tabKey) => {
+												const tabItem = tabItems.find((item) => item.key === tabKey);
+												const normalizedLabel = tabItem?.label.replace(/\s+/g, '');
 
-						{currentCategory === category && tabCategories[category].length > 1 && (
-							<div
-								ref={dropdownRef}
-								id='dropdown'
-								className='absolute left-0 top-5 z-50 mt-2 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700'
-							>
-								<ul className='pt-2 text-sm text-gray-700 dark:text-gray-200'>
-									{tabCategories[category].map((tabKey) => {
-										const tabItem = tabItems.find((item) => item.key === tabKey);
-										const normalizedLabel = tabItem?.label.replace(/\s+/g, '');
-										return (
-											tabItem && (
-												<p
-													key={tabItem.key}
-													className={`block cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-														currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
-													}`}
-													onClick={() => handleTabClick(tabItem.key)}
-												>
-													<span className='flex w-full items-center justify-between '>
-														<div>
-															{tabIcons[tabItem.key.toLowerCase()]}
-															<span className='ml-2'>{tabItem.label} </span>
+												return (
+													tabItem && (
+														<div
+															key={tabItem.key}
+															className={`block cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
+																currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
+															}`}
+															onClick={() => handleTabClick(tabItem.key)}
+														>
+															<span className='flex w-full items-center justify-between'>
+																<div>
+																	{tabIcons[tabItem.key.toLowerCase()]}
+																	<span className='ml-2'>{tabItem.label} </span>
+																</div>
+																<span
+																	className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
+																>
+																	{tabItem.posts}
+																</span>
+															</span>
 														</div>
-														<span className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}>
-															{tabItem.posts}
-														</span>
-													</span>
-												</p>
-											)
-										);
-									})}
-								</ul>
-							</div>
+													)
+												);
+											})}
+										</div>
+									</div>
+								}
+								placement='bottom'
+								trigger='click'
+								arrow={false}
+							>
+								<p
+									className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
+										isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									}`}
+									onClick={() => handleCategoryClick(category)}
+								>
+									<span className='flex items-center'>
+										{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
+										<span className='ml-2 whitespace-nowrap'>{category}</span>
+										{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
+									</span>
+								</p>
+							</Popover>
+						) : (
+							<p
+								className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
+									isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+								}`}
+								onClick={() => handleCategoryClick(category)}
+							>
+								<span className='flex items-center'>
+									{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
+									<span className='ml-2 whitespace-nowrap'>{category}</span>
+								</span>
+							</p>
 						)}
 					</div>
 				))}

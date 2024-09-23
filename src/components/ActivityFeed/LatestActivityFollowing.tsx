@@ -138,7 +138,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						style={{ lineHeight: '1.8' }}
 					>
 						Follow or Subscribe to people and posts to view personalized <br />
-						content on your <span className='rounded-md bg-[#fee814] p-1 text-black shadow'>feed</span>!
+						content on your feed!
 					</p>
 				</div>
 			) : (

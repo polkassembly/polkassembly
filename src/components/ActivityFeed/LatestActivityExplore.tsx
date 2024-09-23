@@ -88,7 +88,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 
 	return (
 		<div className=''>
-			<div className='hidden xl:block '>
+			<div className=''>
 				<TabNavigation
 					currentTab={currentTab}
 					setCurrentTab={setCurrentTab}

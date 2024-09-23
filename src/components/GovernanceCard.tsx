@@ -379,7 +379,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</Tooltip>
 							)}
 							{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && (
-								<div className='flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFBF60]'>
+								<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6]'>
 									<StarFilled className='text-[14px] text-[#FFBF60]' />
 								</div>
 							)}

@@ -560,7 +560,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 								<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5  text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
 									<div className='flex items-center justify-between gap-2'>
 										<div className='flex items-center '>
-											<p className='pt-3 text-[18px] font-semibold text-[#243A57] dark:text-white'>Voted Proposals</p>
+											<p className='whitespace-nowrap pt-3 text-[18px] font-semibold text-[#243A57] dark:text-white'>Voted Proposals</p>
 											<Image
 												src='/assets/icons/arrow.svg'
 												alt=''

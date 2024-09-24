@@ -8,15 +8,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
-import { BN } from 'bn.js';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import BN from 'bn.js';
 import getBeneficiaryAmountAndAsset from '../OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { PieChart } from 'react-minimal-pie-chart';
 import { useTheme } from 'next-themes';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { Button, Divider, Form, Modal, Skeleton, Tooltip } from 'antd';
@@ -47,6 +44,13 @@ import Popover from '~src/basic-components/Popover';
 import TooltipContent from '../Post/ActionsBar/Reactionbar/TooltipContent';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import dynamic from 'next/dynamic';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import TopicTag from '~src/ui-components/TopicTag';
+import getReferendumVotes from '~src/util/getReferendumVotes';
+import ActivityProgressinlisting from './ActivityProgressinlisting';
+import { inputToBn } from '~src/util/inputToBn';
+import { getUsdValueFromAsset } from '../OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
+import getAssetDecimalFromAssetId from '../OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
 
 const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {
 	loading: () => <Skeleton active />,
@@ -55,7 +59,6 @@ const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Refe
 const ZERO_BN = new BN(0);
 
 const ANONYMOUS_FALLBACK = 'Anonymous';
-const GENERAL_TOPIC_FALLBACK = 'General';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 const COMMENT_LABEL = 'Comment';
@@ -99,9 +102,8 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-8 font-poppins hover:shadow-md  dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			<PostHeader
@@ -141,7 +143,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 						if (currentUserdata && currentUserdata?.id) {
 							setShowModal(true);
 						} else {
-							setLoginOpen(true);
+							setModalOpen(true);
 						}
 					}}
 					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
@@ -166,17 +168,13 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 					trackNumber={post?.track_no}
 				/>
 			)}
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
+			<ReferendaLoginPrompts
+				theme={theme}
+				modalOpen={modalOpen}
+				setModalOpen={setModalOpen}
+				image='/assets/Gifs/login-vote.gif'
+				title={'Join Polkassembly to Vote on this proposal.'}
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</div>
 	);
@@ -184,6 +182,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 
 const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; currentUserdata: any }> = ({ bgColor, statusLabel, post, currentUserdata }) => {
 	const { network } = useNetworkSelector();
+	const userid = currentUserdata?.id;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
@@ -231,20 +230,67 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 	const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
 	const isAyeNaN = isNaN(ayesPercentage);
 	const isNayNaN = isNaN(naysPercentage);
-	const ayeColor = theme === 'dark' ? '#64A057' : '#2ED47A';
-	const nayColor = theme === 'dark' ? '#BD2020' : '#E84865';
 	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(post?.status || '');
 	const decidingBlock = post?.statusHistory?.filter((status: any) => status.status === 'Deciding')?.[0]?.block || 0;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const onAccountChange = (address: string) => setAddress(address);
+	const [votesData, setVotesData] = useState(null);
 
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
+	useEffect(() => {
+		const fetchData = async () => {
+			if (network && post.post_id) {
+				const votesResponse = await getReferendumVotes(network, post.post_id);
+				if (votesResponse.data) {
+					setVotesData(votesResponse.data);
+				} else {
+					console.error(votesResponse.error);
+				}
+			}
+		};
+
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [post.post_id, network]);
+	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
+	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
+	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
+
+	const fetchUSDValue = async () => {
+		if (!post?.created_at || dayjs(post?.created_at).isSame(dayjs())) return;
+		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
+		let proposalClosedStatusDetails: any = null;
+		post?.timeline?.[0]?.statuses.map((status: any) => {
+			if (passedProposalStatuses.includes(status.status)) {
+				proposalClosedStatusDetails = status;
+			}
+			setIsProposalClosed(!!proposalClosedStatusDetails);
+		});
+
+		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
+			closedStatus: proposalClosedStatusDetails || null,
+			postId: post?.post_id,
+			proposalCreatedAt: post?.created_at || null
+		});
+
+		if (data) {
+			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
+			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
+			setBnUsdValueOnClosed(bnClosed);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+	useEffect(() => {
+		fetchUSDValue();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>
@@ -268,18 +314,42 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 									'$0'
 								)}
 							</p>
+
 							<div>
 								<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
 									~{' '}
-									{parseBalance(
-										requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() ||
-											'0',
-										0,
-										false,
-										network
-									)}{' '}
+									{post?.assetId ? (
+										`${getUsdValueFromAsset({
+											currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+											dedTokenUsdPrice: dedTokenUsdPrice || '0',
+											generalIndex: post?.assetId,
+											inputAmountValue: new BN(post?.requestedAmount)
+												.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
+												.toString(),
+											network
+										})} ${chainProperties[network]?.tokenSymbol}`
+									) : (
+										<span>
+											{parseBalance(
+												requestedAmountFormatted
+													?.mul(
+														!isProposalClosed
+															? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+															: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+															? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+															: bnUsdValueOnClosed
+													)
+													?.toString() || '0',
+												0,
+												false,
+												network
+											)}{' '}
+											USD{' '}
+										</span>
+									)}
 								</p>
 							</div>
+
 							<div>
 								<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
 							</div>
@@ -300,15 +370,17 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 									: ANONYMOUS_FALLBACK}
 							</p>
 							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-							<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
-								{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
-							</span>
-							<p className='pt-3 text-[#485F7D]'>|</p>
+							<TopicTag
+								topic={post?.topic?.name}
+								className={post?.topic?.name}
+								theme={theme as any}
+							/>
+							<p className='pt-[14px] text-[#485F7D]'>|</p>
 							<div className='flex '>
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+									className=' h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
 								/>
 								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
@@ -333,10 +405,11 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 						<div className='flex flex-col items-end '>
 							<div
 								onClick={() => {
-									if (currentUserdata && currentUserdata?.id) {
-										setShowModal(true);
+									if (!currentUserdata && !userid) {
+										setModalOpen(true);
+										return;
 									} else {
-										setLoginOpen(true);
+										setShowModal(true);
 									}
 								}}
 								className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
@@ -362,7 +435,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 												}
 												color='#575255'
 											>
-												<div className='mt-2 min-w-[30px]'>
+												<div className='mt-2 min-w-[30px] hover:cursor-pointer'>
 													<ProgressBar
 														strokeWidth={7}
 														percent={decision.periodPercent || 0}
@@ -379,19 +452,16 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 										/>
 									</div>
 								)}
-
-								<PieChart
-									className='w-10'
-									center={[50, 75]}
-									startAngle={-180}
-									lengthAngle={180}
-									rounded={true}
-									lineWidth={30}
-									data={[
-										{ color: ayeColor, title: 'Aye', value: isAyeNaN ? 50 : ayesPercentage },
-										{ color: nayColor, title: 'Nay', value: isNayNaN ? 50 : naysPercentage }
-									]}
-								/>
+								<div className='hover:cursor-pointer'>
+									<ActivityProgressinlisting
+										index={0}
+										proposalType={ProposalType.REFERENDUM_V2}
+										votesData={votesData}
+										onchainId={post?.post_id}
+										status={post?.status}
+										tally={post?.tally}
+									/>
+								</div>
 							</div>
 						</div>
 					)}
@@ -409,17 +479,13 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 					trackNumber={post?.track_no}
 				/>
 			)}
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
+			<ReferendaLoginPrompts
+				theme={theme}
+				modalOpen={modalOpen}
+				setModalOpen={setModalOpen}
+				image='/assets/Gifs/login-vote.gif'
+				title={'Join Polkassembly to Vote on this proposal.'}
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</>
 	);
@@ -435,7 +501,7 @@ const PostContent: React.FC<{
 	return (
 		<>
 			<p className='xl:text-md pt-2 text-[15px] font-medium text-[#243A57] dark:text-white'>
-				#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+				#{post?.post_id} {post?.title || 'Untitled Post'}
 			</p>
 			<Markdown
 				className='xl:text-md text-[12px] text-[#243A57]'
@@ -560,14 +626,15 @@ const PostActions: React.FC<{
 		userLiked: post_reactions?.['👍']?.usernames?.includes(username) || false
 	});
 
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
+	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
 	const [showGif, setShowGif] = useState<{ reaction: '👍' | '👎' | null }>({ reaction: null });
 	const { resolvedTheme: theme } = useTheme();
 
 	const handleReactionClick = (reaction: '👍' | '👎') => {
 		if (!currentUserdata && !userid) {
-			setLoginOpen(true);
+			if (reaction === '👍') setLikeModalOpen(true);
+			if (reaction === '👎') setDislikeModalOpen(true);
 			return;
 		}
 
@@ -671,7 +738,7 @@ const PostActions: React.FC<{
 			setImageData([]);
 		}
 	};
-
+	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	useEffect(() => {
 		if (likeduserIds && likeduserIds.length > 0) {
 			getUserProfile([...likeduserIds].map(String), setLikedUserImageData);
@@ -797,7 +864,7 @@ const PostActions: React.FC<{
 					<div
 						onClick={() => {
 							if (!currentUserdata && !userid) {
-								setLoginOpen(true);
+								setOpenLoginModal(true);
 								return;
 							} else {
 								openModal();
@@ -911,17 +978,28 @@ const PostActions: React.FC<{
 					</Modal>
 				</>
 			)}
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
+			<ReferendaLoginPrompts
+				modalOpen={openLikeModal}
+				setModalOpen={setLikeModalOpen}
+				image='/assets/Gifs/login-like.gif'
+				title='Join Polkassembly to Like this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
+
+			<ReferendaLoginPrompts
+				modalOpen={openDislikeModal}
+				setModalOpen={setDislikeModalOpen}
+				image='/assets/Gifs/login-dislike.gif'
+				title='Join Polkassembly to Dislike this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
+			<ReferendaLoginPrompts
+				theme={theme}
+				modalOpen={openLoginModal}
+				setModalOpen={setOpenLoginModal}
+				image='/assets/Gifs/login-discussion.gif'
+				title='Join Polkassembly to Comment on this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</>
 	);
@@ -937,18 +1015,17 @@ const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean
 
 const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ post, currentUserdata }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const userid = currentUserdata?.id;
+	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [loginTriggered, setLoginTriggered] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-
 	const openModal = () => {
-		if (currentUserdata && currentUserdata?.id) {
+		if (currentUserdata && userid) {
 			setIsModalOpen(true);
 		} else if (!loginTriggered) {
-			setLoginOpen(true);
+			setOpenLoginModal(true);
 			setLoginTriggered(true);
 
 			if (inputRef.current) {
@@ -959,11 +1036,6 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 
 	const closeModal = () => {
 		setIsModalOpen(false);
-	};
-
-	const closeLoginModal = () => {
-		setLoginOpen(false);
-		setLoginTriggered(false);
 	};
 
 	useEffect(() => {
@@ -982,6 +1054,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 			document.removeEventListener('mousedown', handleOutsideClick);
 		};
 	}, [isModalOpen]);
+	const { resolvedTheme: theme } = useTheme();
 
 	return (
 		<div className='mt-3 flex items-center'>
@@ -1008,17 +1081,13 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 				{POST_LABEL}
 			</button>
 
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={closeLoginModal}
-				isModal={true}
+			<ReferendaLoginPrompts
+				theme={theme}
+				modalOpen={openLoginModal}
+				setModalOpen={setOpenLoginModal}
+				image='/assets/Gifs/login-discussion.gif'
+				title='Join Polkassembly to Comment on this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 
 			{isModalOpen && (
@@ -1054,8 +1123,8 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 
 const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boolean; onclose: () => void }> = ({ post, currentUserdata, isModalOpen, onclose }) => {
 	const [form] = Form.useForm();
-	const commentKey = () => `comment:${global.window.location.href}`;
-	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
+	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
+	const [content, setContent] = useState(typeof window !== 'undefined' ? window.localStorage.getItem(commentKey()) || '' : '');
 	const onContentChange = (content: string) => {
 		setContent(content);
 		global.window.localStorage.setItem(commentKey(), content);
@@ -1124,6 +1193,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 		}
 	};
 
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<>
 			<Form
@@ -1137,7 +1207,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				disabled={loading}
 				validateMessages={{ required: "Please add the  '${name}'" }}
 			>
-				<div className='flex gap-4'>
+				<div className='flex gap-4 font-poppins'>
 					<div className='flex flex-col items-center gap-2   '>
 						<Image
 							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
@@ -1166,9 +1236,11 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 								{post.proposerProfile?.username ? post.proposerProfile.username : ANONYMOUS_FALLBACK}
 							</p>
 							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-							<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
-								{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
-							</span>
+							<TopicTag
+								topic={post?.topic?.name}
+								className={post?.topic?.name}
+								theme={theme as any}
+							/>
 							<p className='pt-3 text-[#485F7D]'>|</p>
 							<div className='flex '>
 								<ImageIcon
@@ -1180,9 +1252,9 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
-							#{post?.post_id} {post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='text-[12px] font-light text-[#E5007A]'>Commenting on proposal</p>
+						<p className='font-poppins text-[12px] font-light text-[#E5007A]'>Commenting on proposal</p>
 						<div className='w-[90%] lg:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}

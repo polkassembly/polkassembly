@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import { poppins } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import classNames from 'classnames';
+import Tooltip from '~src/basic-components/Tooltip';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -178,6 +179,18 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, id]);
 
+	const getIconForUndelegationTimeLeft = (percentage: number) => {
+		if (percentage >= 75) {
+			return '/assets/icons/whole-time-left-clock.svg';
+		} else if (percentage < 75 && percentage >= 50) {
+			return '/assets/icons/three-forth-time-left-clock.svg';
+		} else if (percentage < 50 && percentage >= 25) {
+			return '/assets/icons/half-time-left-clock.svg';
+		} else {
+			return '/assets/icons/one-third-time-left-clock.svg';
+		}
+	};
+
 	return (
 		<div className={`${className}`}>
 			<div className='wallet-info-board gap mt-[-110px] flex h-[70px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw] sm:h-[90px]'>
@@ -325,7 +338,52 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 														</div>
 														<div className='flex flex-col'>
 															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Delegated on:</span>{' '}
-															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{dayjs(row.delegatedOn).format('DD MMM YYYY')}</span>
+															<div className='flex items-center gap-1'>
+																<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{dayjs(row.delegatedOn).format('DD MMM YYYY')}</span>
+																{handleUndelegationDisable(
+																	rowData
+																		.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																		?.map((item, index) => {
+																			return { ...item, index: index + 1 };
+																		})
+																)?.timeLeftInUndelegation && (
+																	<Tooltip
+																		title={
+																			<div className={classNames(poppins.className, poppins.variable, 'text-[13px]')}>
+																				You can undelegate votes on{' '}
+																				{
+																					handleUndelegationDisable(
+																						rowData
+																							.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																							?.map((item, index) => {
+																								return { ...item, index: index + 1 };
+																							})
+																					)?.timeLeftInUndelegation?.time
+																				}
+																			</div>
+																		}
+																		className={classNames(poppins.className, poppins.variable, 'text-xs')}
+																		overlayClassName='px-1 max-w-[300px]'
+																	>
+																		<span className='-mt-1'>
+																			<Image
+																				src={getIconForUndelegationTimeLeft(
+																					handleUndelegationDisable(
+																						rowData
+																							.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																							?.map((item, index) => {
+																								return { ...item, index: index + 1 };
+																							})
+																					)?.timeLeftInUndelegation?.percentage || 0
+																				)}
+																				alt=''
+																				width={16}
+																				height={16}
+																			/>
+																		</span>
+																	</Tooltip>
+																)}
+															</div>
 														</div>
 													</div>
 												</div>

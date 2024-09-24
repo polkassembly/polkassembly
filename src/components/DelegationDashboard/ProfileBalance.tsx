@@ -92,74 +92,88 @@ const ProfileBalances = ({ className }: Props) => {
 	return (
 		<div className={'flex w-full items-center justify-between pl-[26px] max-md:pl-4 '}>
 			{/* for small screen */}
-			<div className='flex items-center space-x-2 pt-1 sm:hidden'>
-				{balancesArr.slice(0, 1).map((balance) => (
-					<div
-						key={balance?.label}
-						className='ml-[2px] flex h-full gap-1'
-					>
-						<div className='flex flex-col justify-start gap-1'>
-							<div
-								className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-									poppins.className
-								} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
-							>
-								{formatedBalance(balance.value, unit, 2)}
-								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
-								<span onClick={() => setOpenBalanceDetailsModal(true)}>
+			<div className='flex w-full items-center justify-between'>
+				<div className='flex items-center space-x-2 pt-1 sm:hidden'>
+					{balancesArr.slice(0, 1).map((balance) => (
+						<div
+							key={balance?.label}
+							className='ml-[2px] flex h-full gap-1'
+						>
+							<div className='flex flex-col justify-start gap-1'>
+								<div
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+										poppins.className
+									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+								>
+									{formatedBalance(balance.value, unit, 2)}
+									<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+									<span onClick={() => setOpenBalanceDetailsModal(true)}>
+										<Image
+											src={'/assets/delegation-tracks/info-white.svg'}
+											height={20}
+											width={20}
+											alt=''
+											className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
+										/>
+									</span>
+								</div>
+								<div className='flex items-center justify-start gap-2'>
 									<Image
-										src={'/assets/delegation-tracks/info-white.svg'}
-										height={20}
-										width={20}
+										src={'/assets/icons/polkadot-logo.svg'}
+										height={18}
+										width={18}
 										alt=''
-										className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
+										className={'sm:hidden'}
 									/>
-								</span>
+									<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+								</div>
 							</div>
-							<div className='flex items-center justify-start gap-2'>
-								<Image
-									src={'/assets/icons/polkadot-logo.svg'}
-									height={18}
-									width={18}
-									alt=''
-									className={'sm:hidden'}
-								/>
-								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+							<Divider
+								type='vertical'
+								className=' mt-1 h-[38px] bg-section-light-container '
+							/>
+						</div>
+					))}
+					{balancesArr.slice(1, 2).map((balance) => (
+						<div
+							key={balance?.label}
+							className='flex h-full gap-1'
+						>
+							<div className='flex flex-col justify-start gap-1'>
+								<div
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+										poppins.className
+									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+								>
+									{formatedBalance(balance.value, unit, 2)}
+									<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+								</div>
+								<div className=' flex items-center justify-start gap-2'>
+									<Image
+										src={balance.icon}
+										height={18}
+										width={18}
+										alt=''
+										className={'sm:hidden'}
+									/>
+									<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+								</div>
 							</div>
 						</div>
-						<Divider
-							type='vertical'
-							className=' mt-1 h-[38px] bg-section-light-container '
-						/>
-					</div>
-				))}
-				{balancesArr.slice(1, 2).map((balance) => (
-					<div
-						key={balance?.label}
-						className='flex h-full gap-1'
-					>
-						<div className='flex flex-col justify-start gap-1'>
-							<div
-								className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-									poppins.className
-								} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
-							>
-								{formatedBalance(balance.value, unit, 2)}
-								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
-							</div>
-							<div className=' flex items-center justify-start gap-2'>
-								<Image
-									src={balance.icon}
-									height={18}
-									width={18}
-									alt=''
-									className={'sm:hidden'}
-								/>
-								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
-							</div>
-						</div>
-					</div>
-				))}
+					))}
+				</div>
+				<span
+					className='mr-3 cursor-pointer'
+					onClick={() => setOpenBalanceDetailsModal(true)}
+				>
+					<Image
+						className=' h-5 w-5 rounded-full object-contain'
+						src={'/assets/icons/three-dots-vertical.svg'}
+						alt='Logo'
+						width={20}
+						height={20}
+					/>
+				</span>
 			</div>
 
 			{/* for large screen */}

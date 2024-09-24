@@ -1033,9 +1033,12 @@ const PostActions: React.FC<{
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%] lg:w-[650px]'
+						className='z-50 w-[90%] lg:w-[650px]'
 					>
-						<div ref={modalWrapperRef}>
+						<div
+							className='w-[90%] lg:w-[600px]'
+							ref={modalWrapperRef}
+						>
 							<CommentModal
 								post={post}
 								isModalOpen={isModalOpen}
@@ -1171,9 +1174,12 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%] lg:w-[650px]'
+						className='z-50 w-[90%] lg:w-[650px]'
 					>
-						<div ref={modalWrapperRef}>
+						<div
+							className='w-[90%] lg:w-[600px]'
+							ref={modalWrapperRef}
+						>
 							<CommentModal
 								post={post}
 								isModalOpen={isModalOpen}
@@ -1277,7 +1283,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 				disabled={loading}
 				validateMessages={{ required: "Please add the  '${name}'" }}
 			>
-				<div className='flex gap-4 font-poppins'>
+				<div className='flex gap-4 pt-4 font-poppins md:pt-0'>
 					<div className='flex flex-col items-center gap-2   '>
 						<Image
 							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
@@ -1302,13 +1308,13 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 					</div>
 					<div>
 						<div className='flex items-center gap-[4px]  md:gap-2 md:pt-0 '>
-							<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
+							<p className='pt-3 text-[11px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
 								{post.proposerProfile?.username ? post.proposerProfile.username : ANONYMOUS_FALLBACK}
 							</p>
 							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
 							<TopicTag
 								topic={post?.topic?.name}
-								className={post?.topic?.name}
+								className='m-0 p-0 text-[10px]'
 								theme={theme as any}
 							/>
 							<p className='pt-3 text-[#485F7D]'>|</p>
@@ -1316,16 +1322,16 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
+									className=' h-4 w-4 pt-1 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
-								<p className='pt-2 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='whitespace-nowrap pt-2 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
 						<p className='font-poppins text-[12px] font-light text-[#E5007A]'>Commenting on proposal</p>
-						<div className='w-[90%] lg:flex-1'>
+						<div className='w-[250px] md:w-[500px]  md:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}
 								height={200}

@@ -1063,6 +1063,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 		return () => {
 			document.removeEventListener('mousedown', handleOutsideClick);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isModalOpen]);
 	const { resolvedTheme: theme } = useTheme();
 

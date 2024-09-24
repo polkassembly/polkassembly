@@ -12,7 +12,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -35,18 +35,18 @@ const OverviewDataGraph = ({
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const filteredData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
+	// Ensure the months are abbreviated properly in sorting and filtering
+	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0).sort((a, b) => monthOrder.indexOf(a.month.slice(0, 3)) - monthOrder.indexOf(b.month.slice(0, 3)));
 
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData.length - 1]?.month;
 
+	// Prepare the data for the graph with abbreviated month names
 	const formattedData = [
 		{
 			id: 'balance',
 			data: filteredData.map((item) => ({
-				x: item.month.charAt(0).toUpperCase() + item.month.slice(1),
+				x: item.month.slice(0, 3), // Abbreviate month names
 				y: formatUSDWithUnits(
 					formatBnBalance(
 						item.balance,
@@ -84,8 +84,8 @@ const OverviewDataGraph = ({
 					tickPadding: 25,
 					tickRotation: 0,
 					format: (value) => {
-						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
-							return '';
+						if (value === firstMonth.slice(0, 3) || value === lastMonth.slice(0, 3)) {
+							return ''; // Skip first and last month if desired
 						}
 						return value;
 					}

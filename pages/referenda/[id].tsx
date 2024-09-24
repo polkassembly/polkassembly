@@ -4,7 +4,7 @@
 
 import { GetServerSideProps } from 'next';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, memo, useEffect } from 'react';
+import React, { FC, memo, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
@@ -16,6 +16,9 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import { useGlobalSelector } from '~src/redux/selectors';
+import ConfusionModal from '~src/ui-components/ConfusionModal';
+import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const proposalType = ProposalType.OPEN_GOV;
@@ -45,11 +48,12 @@ interface IReferendaPostProps {
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { post, error, network } = props;
 	const dispatch = useDispatch();
-
+	const { is_sidebar_collapsed } = useGlobalSelector();
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	const [isModalOpen, setModalOpen] = useState(false);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -67,9 +71,29 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
+				<div
+					className={`bg-gradient-to-r-pink absolute left-0 top-0 flex w-full gap-2  ${
+						is_sidebar_collapsed ? 'pl-28' : 'pl-[265px]'
+					}  font-poppins  text-[12px] font-medium text-white`}
+				>
+					<p className='pt-3 '>Confused about making a decision?</p>
+					<div
+						onClick={() => {
+							setModalOpen(true);
+						}}
+						className=' mt-2 flex h-6 cursor-pointer gap-2 rounded-md bg-[#0000004D] bg-opacity-[30%] px-2 pt-1'
+					>
+						<ImageIcon
+							src='/assets/icons/transformedshare.svg'
+							alt='share icon'
+							className='h-4 w-4'
+						/>
+						<p className=''>Share proposal</p>
+					</div>
+					<p className='pt-3'>with a friend to get their opinion!</p>
+				</div>
 
-				{trackName && <BackToListingView trackName={trackName} />}
-
+				<div className='mt-10'>{trackName && <BackToListingView trackName={trackName} />}</div>
 				<div className='mt-6'>
 					<Post
 						post={post}
@@ -77,6 +101,12 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 						proposalType={proposalType}
 					/>
 				</div>
+				{
+					<ConfusionModal
+						modalOpen={isModalOpen}
+						setModalOpen={setModalOpen}
+					/>
+				}
 			</>
 		);
 	}

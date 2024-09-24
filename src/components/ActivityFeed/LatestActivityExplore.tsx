@@ -10,11 +10,7 @@ import TabNavigation from './TabNavigation';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import Skeleton from '~src/basic-components/Skeleton';
 
-interface LatestActivityExploreProps {
-	currentUserdata?: any;
-}
-
-const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUserdata }) => {
+const LatestActivityExplore: React.FC = () => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [postData, setPostData] = useState<any[]>([]);
 	const { network } = useNetworkSelector();
@@ -100,10 +96,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ currentUs
 						gov2LatestPosts={postData}
 						network={network}
 					/>
-					<PostList
-						postData={filteredPosts}
-						currentUserdata={currentUserdata}
-					/>
+					<PostList postData={filteredPosts} />
 				</div>
 			)}
 		</div>

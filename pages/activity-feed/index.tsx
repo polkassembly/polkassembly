@@ -539,9 +539,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
 					{/* Main content with flex-grow and shrink */}
 					<div className='mx-1 mt-8 flex-grow'>
-						<div className=''>
-							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
-						</div>
+						<div className=''>{activeTab === 'explore' ? <LatestActivityExplore /> : <LatestActivityFollowing />}</div>
 					</div>
 
 					{/* Sidebar */}

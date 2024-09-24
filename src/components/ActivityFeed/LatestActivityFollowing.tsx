@@ -32,11 +32,7 @@ const SignupButton = ({ onClick }: { onClick: () => void }) => (
 	</p>
 );
 
-interface LatestActivityFollowingProps {
-	currentUserdata?: any;
-}
-
-const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
+const LatestActivityFollowing: React.FC = () => {
 	const currentuser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
@@ -112,16 +108,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 								network={network}
 							/>
 						</div>
-						<div>
-							{filteredPosts.length > 0 ? (
-								<PostList
-									postData={filteredPosts}
-									currentUserdata={currentuser}
-								/>
-							) : (
-								<p>No posts available</p>
-							)}
-						</div>
+						<div>{filteredPosts.length > 0 ? <PostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
 					</div>
 				) : (
 					<div className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'}>

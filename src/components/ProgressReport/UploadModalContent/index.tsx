@@ -13,7 +13,6 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { usePostDataContext } from '~src/context';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -135,35 +134,48 @@ const UploadModalContent = () => {
 					message={<span className='dark:text-blue-dark-high'>Progress Report Pending!</span>}
 				/>
 			)}
-			<div className='flex items-center justify-start gap-x-2'>
-				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>Please update your progress report for users to rate it.</p>
-				{report_uploaded && !postData?.progress_report?.progress_file && (
-					<Button
-						className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'
-						onClick={() => {
-							dispatch(progressReportActions.setAddSummaryCTAClicked(true));
-						}}
-					>
-						<PlusCircleOutlined className='m-0 p-0' /> Add summary
-					</Button>
-				)}
-				{postData?.progress_report?.progress_file && (
-					<Button
-						className='m-0 -mt-0.5 flex items-center gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
-						onClick={() => {
-							dispatch(progressReportActions.setAddSummaryCTAClicked(true));
-						}}
-					>
-						<ImageIcon
-							src='/assets/icons/edit-pencil.svg'
-							alt='edit-icon'
-						/>{' '}
-						Edit summary
-					</Button>
-				)}
-				{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
-			</div>
-			{!report_uploaded && (
+			{postData?.progress_report?.progress_file && (
+				<div className='flex flex-col'>
+					<p className='m-0 flex items-center p-0 text-sm text-bodyBlue dark:text-[#909090]'>
+						<Markdown
+							className='post-content'
+							md={postData?.progress_report?.progress_summary}
+							theme={theme}
+						/>
+					</p>
+					<div className='-mt-2 flex items-center justify-between gap-x-1'>
+						<Button
+							className='m-0 -mt-0.5 flex items-center gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
+							onClick={() => {
+								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+							}}
+						>
+							<ImageIcon
+								src='/assets/icons/edit-pencil.svg'
+								alt='edit-icon'
+							/>{' '}
+							Edit summary
+						</Button>
+						{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
+					</div>
+				</div>
+			)}
+			{!postData?.progress_report?.progress_file && (
+				<div className='flex items-center justify-start gap-x-2'>
+					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>Please update your progress report for users to rate it.</p>
+					{report_uploaded && !postData?.progress_report?.progress_file && (
+						<Button
+							className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'
+							onClick={() => {
+								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+							}}
+						>
+							<PlusCircleOutlined className='m-0 p-0' /> Add summary
+						</Button>
+					)}
+				</div>
+			)}
+			{!report_uploaded && !postData?.progress_report?.progress_file && (
 				<a
 					href='https://docs.google.com/document/d/1jcHt-AJXZVqyEd9qCI3aMMF9_ZjKXcSk7BDTaP3m9i0/edit#heading=h.te0u4reg87so'
 					target='_blank'
@@ -207,7 +219,7 @@ const UploadModalContent = () => {
 			) : (
 				<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
 					<iframe
-						src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileLink)}&embedded=true`}
+						src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileLink || postData?.progress_report?.progress_file)}&embedded=true`}
 						width='100%'
 						height='180px'
 						title='PDF Preview'
@@ -240,36 +252,17 @@ const UploadModalContent = () => {
 					</div>
 				</div>
 			)}
-			{postData?.progress_report?.progress_file && (
-				<div className='mt-2 flex flex-col gap-y-1'>
-					<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary: </h1>
-					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-[#909090]'>
-						<Markdown
-							className='post-content'
-							md={postData?.progress_report?.progress_summary}
-							theme={theme}
-						/>
-					</p>
-				</div>
-			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
 				open={open_success_modal}
 				maskClosable={false}
-				footer={
-					<CustomButton
-						variant='primary'
-						className='w-full'
-						text='close'
-						onClick={() => {
-							dispatch(progressReportActions.setShowNudge(false));
-							dispatch(progressReportActions.setOpenSuccessModal(false));
-						}}
-					/>
-				}
+				footer={null}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				onCancel={() => {}}
+				onCancel={() => {
+					dispatch(progressReportActions.setShowNudge(false));
+					dispatch(progressReportActions.setOpenSuccessModal(false));
+				}}
 			>
 				<SuccessModal />
 			</Modal>

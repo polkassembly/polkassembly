@@ -10,6 +10,7 @@ import { usePostDataContext } from '~src/context';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
@@ -17,6 +18,7 @@ const ProgressReportRatingModal = () => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
+	const router = useRouter();
 	const { report_rating } = useProgressReportSelector();
 	const customIcons = Object.fromEntries(
 		[1, 2, 3, 4, 5].map((key, index) => [
@@ -28,24 +30,35 @@ const ProgressReportRatingModal = () => {
 		])
 	) as Record<number, React.ReactNode>;
 
+	console.log('hi link:', postData);
+
 	return (
 		<>
 			<section className='flex flex-col gap-y-2'>
 				{postData?.progress_report?.progress_summary && <h1 className='text-normal mt-3 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
-				<p className='m-0 -mt-1 p-0 text-sm text-bodyBlue dark:text-white'>
+				<p className='m-0 -mt-3 p-0 text-sm text-bodyBlue dark:text-white'>
 					<Markdown
 						className='post-content'
 						md={postData?.progress_report?.progress_summary}
 						theme={theme}
 					/>
 				</p>
+				<p
+					className='m-0 -mt-2 cursor-pointer p-0 text-sm font-normal text-pink_primary'
+					onClick={() => {
+						router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);
+						dispatch(progressReportActions.setOpenRatingModal(false));
+					}}
+				>
+					View Progress Report in detail
+				</p>
 				{postData?.progress_report?.progress_summary && (
 					<Divider
 						dashed={true}
-						className='my-4'
+						className='my-3'
 					/>
 				)}
-				<div className='flex flex-col items-center justify-center gap-y-2'>
+				<div className='-mb-8 flex flex-col items-center justify-center gap-y-2'>
 					<h1 className='text-normal text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
 					<>
 						<Rate
@@ -68,7 +81,7 @@ const ProgressReportRatingModal = () => {
 							/>
 						)}
 						{postData?.progress_report?.ratings?.length > 0 && (
-							<p className='mt-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings?.length} users have already rated the progress report.</p>
+							<p className='my-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings?.length} users have already rated the progress report.</p>
 						)}
 					</>
 				</div>

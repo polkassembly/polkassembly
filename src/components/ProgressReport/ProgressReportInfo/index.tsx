@@ -13,7 +13,7 @@ import { poppins } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import RatingModal from '../RatingModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { useProgressReportSelector } from '~src/redux/selectors';
+import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
@@ -22,6 +22,8 @@ import { IRating, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -29,6 +31,10 @@ const ProgressReportInfo = () => {
 	const [averageRating, setAverageRating] = useState<number>();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { loginAddress } = useUserDetailsSelector();
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	const { report_rating, open_rating_modal, open_rating_success_modal, is_summary_edited } = useProgressReportSelector();
 
 	const addUserRating = async () => {
@@ -79,6 +85,57 @@ const ProgressReportInfo = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postData?.progress_report]);
 
+	const renderStars = () => {
+		if (averageRating) {
+			const fullStars = Math.floor(averageRating);
+			const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+			const totalStars = fullStars + halfStar;
+
+			const starsArray = [];
+
+			for (let i = 0; i < fullStars; i++) {
+				starsArray.push(
+					<StarFilled
+						key={i}
+						style={{ color: '#fadb14' }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			if (halfStar) {
+				starsArray.push(
+					<StarFilled
+						key='half'
+						style={{ color: '#fadb14', opacity: 0.5 }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			// Fill up the remaining stars to always show a total of 5 stars
+			for (let i = totalStars; i < 5; i++) {
+				starsArray.push(
+					<StarFilled
+						key={`empty-${i}`}
+						style={{ color: '#d9d9d9' }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			return starsArray;
+		}
+
+		// Default case when there's no rating
+		return Array.from({ length: 5 }, (_, i) => (
+			<StarFilled
+				key={i}
+				style={{ color: '#d9d9d9' }}
+			/>
+		));
+	};
+
 	return (
 		<>
 			<section className='flex flex-col gap-y-2'>
@@ -86,18 +143,19 @@ const ProgressReportInfo = () => {
 					<NameLabel
 						defaultAddress={postData?.proposer || ''}
 						truncateUsername
-						usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden'
+						usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden font-normal'
 					/>
 					<Divider
 						className='hidden md:inline-block'
 						type='vertical'
-						style={{ borderLeft: '1px solid var(--lightBlue)' }}
+						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
 					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
 					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
 				</header>
 				<article className=''>
+					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue'>{postData?.title}</h1>
 					{postData?.progress_report?.progress_summary && (
 						<div className='flex flex-col gap-y-2'>
 							<p className='mt-2 text-sm text-bodyBlue dark:text-white'>
@@ -110,8 +168,8 @@ const ProgressReportInfo = () => {
 						</div>
 					)}
 					{postData?.progress_report?.ratings?.length > 0 && (
-						<p className='m-0 -mt-2 mb-4 p-0 text-xs text-sidebarBlue dark:text-[#909090]'>
-							Average Rating({postData?.progress_report?.ratings?.length}): {averageRating}
+						<p className='m-0 -mt-3 mb-4 flex items-center p-0 text-xs text-sidebarBlue dark:text-[#909090]'>
+							Average Rating({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
 						</p>
 					)}
 					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
@@ -134,15 +192,31 @@ const ProgressReportInfo = () => {
 					</div>
 				</article>
 				<Button
-					className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
+					className='m-0 -mb-3 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-semibold text-pink_primary'
 					onClick={() => {
-						dispatch(progressReportActions.setOpenRatingModal(true));
+						if (loginAddress) {
+							dispatch(progressReportActions.setOpenRatingModal(true));
+						} else {
+							setLoginOpen(true);
+						}
 					}}
 				>
 					<StarFilled />
 					<p className='m-0 p-0'>Rate Delievery</p>
 				</Button>
 			</section>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
@@ -191,18 +265,11 @@ const ProgressReportInfo = () => {
 				open={open_rating_success_modal}
 				// open={true}
 				maskClosable={false}
-				footer={
-					<CustomButton
-						variant='primary'
-						className='w-full'
-						text='close'
-						onClick={() => {
-							dispatch(progressReportActions.setOpenRatingSuccessModal(false));
-						}}
-					/>
-				}
+				footer={null}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				onCancel={() => {}}
+				onCancel={() => {
+					dispatch(progressReportActions.setOpenRatingSuccessModal(false));
+				}}
 			>
 				<RatingSuccessModal />
 			</Modal>

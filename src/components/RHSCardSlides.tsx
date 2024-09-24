@@ -21,6 +21,8 @@ import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import UploadReport from './ProgressReport/UploadReport';
 import { showProgressReportUploadFlow } from './ProgressReport/utils';
+import LoginPopup from '~src/ui-components/loginPopup';
+import SignupPopup from '~src/ui-components/SignupPopup';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -52,6 +54,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	const [showRefundDeposit, setShowRefundDeposit] = useState<{ show: boolean; decisionDeposit: boolean; submissionDeposit: boolean }>({
 		decisionDeposit: false,
 		show: false,
@@ -191,7 +196,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
-						dispatch(progressReportActions.setAddProgressReportModalOpen(true));
+						if (loginAddress) {
+							dispatch(progressReportActions.setAddProgressReportModalOpen(true));
+						} else {
+							setLoginOpen(true);
+						}
 					},
 					description: 'Your proposal is past the deadline, pls add a progress report.',
 					icon: '/assets/icons/progressReport.svg',
@@ -382,6 +391,18 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 					</div>
 				</div>
 			</div>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && <UploadReport />}
 		</>
 	);

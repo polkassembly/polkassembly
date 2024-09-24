@@ -31,31 +31,33 @@ const PostProgressReport = ({ className }: Props) => {
 			>
 				<Panel
 					header={
-						<div className='channel-header mt-0.5 flex items-center'>
+						<div className='channel-header -ml-3 flex items-center'>
 							<ImageIcon
 								src='/assets/icons/books-icon.svg'
 								alt='progress-file-icon'
+								className='mr-1 mt-[2px] scale-125 '
 							/>
-							<p className='mb-0 ml-1 text-[14px] font-normal text-blue-light-high md:text-[14px]'>A new Progress Report was added for this referenda.</p>
+							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high md:text-[14px]'>A new Progress Report was added for this referenda.</p>
 						</div>
 					}
 					key='1'
+					// className='h-[45px]'
 					style={{ backgroundColor: '#F0EEFE' }}
 				>
 					<section className='w-full bg-[#F0EEFE]'>
 						{postData?.progress_report?.progress_summary && (
-							<div className='flex flex-col gap-y-2'>
-								<h1 className='text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
-								<p className='text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
+							<div className='-mt-2 flex flex-col gap-y-2'>
+								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
+								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
 							</div>
 						)}
-						<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
+						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
 							<iframe
 								src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 								width='100%'
 								height='180px'
 								title='PDF Preview'
-								className='rounded-md border border-white'
+								className='rounded-md border border-white bg-white'
 							></iframe>
 							<div className='flex items-center justify-start gap-x-2'>
 								<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
@@ -72,7 +74,7 @@ const PostProgressReport = ({ className }: Props) => {
 							</div>
 						</div>
 						<p
-							className='m-0 mt-4 cursor-pointer p-0 text-xs text-pink_primary'
+							className='m-0 mt-4 cursor-pointer p-0 text-xs font-semibold text-pink_primary'
 							onClick={() => {
 								const currentQuery = router.query;
 								router.push({
@@ -84,7 +86,7 @@ const PostProgressReport = ({ className }: Props) => {
 								});
 							}}
 						>
-							show more
+							Show more
 						</p>
 					</section>
 				</Panel>

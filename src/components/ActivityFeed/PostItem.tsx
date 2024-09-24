@@ -67,14 +67,19 @@ const COMMENT_LABEL = 'Comment';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
 
-const EmojiOption = ({ icon, title }: { icon: React.ReactNode; title: string }) => {
+const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => {
 	return (
 		<Tooltip
 			color='#363636'
-			title={title}
+			title={`${title}${percentage ? ` - ${percentage}%` : ''}`}
 			placement='top'
 		>
-			<div className={'  h-10 w-10 rounded-full border-none bg-transparent pl-3   text-2xl '}>{icon}</div>
+			<div
+				className='-mt-[10px] flex items-center justify-center gap-2 rounded-full border-none bg-transparent text-2xl transition-all duration-200 hover:scale-110'
+				style={{ cursor: 'pointer' }}
+			>
+				{icon} {percentage ? <span className='text-[10px] text-[#d12274]'>{percentage}%</span> : ''}
+			</div>
 		</Tooltip>
 	);
 };
@@ -107,7 +112,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white px-4 py-6 font-poppins hover:shadow-md dark:border-solid  dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:p-8'>
+		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
 			<PostHeader
 				post={post}
 				bgColor={bgColor}
@@ -130,7 +135,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 					post={post}
 				/>
 			</Link>
-			<div className='border-t-[0.01px]  border-solid border-[#D2D8E0]'></div>
+			<Divider className='m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0' />
 			<PostActions
 				post={post}
 				currentUserdata={currentUserdata}
@@ -306,7 +311,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 				>
 					<div>
 						<div className='flex items-center gap-1 md:gap-4'>
-							<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-2xl'>
+							<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
 								{post?.requestedAmount ? (
 									post?.assetId ? (
 										getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
@@ -365,7 +370,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 								<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
 							</div>
 						</div>
-						<div className='flex items-center gap-1 md:gap-2 '>
+						<div className='-mt-3 flex items-center gap-1 md:gap-2 '>
 							<Image
 								src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 								alt='profile'
@@ -391,9 +396,9 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[14px]'
+									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[10px]'
 								/>
-								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='pt-3 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
 						</div>
 					</div>
@@ -413,7 +418,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 							</div>
 						</div>
 					) : (
-						<div className='flex flex-col items-end '>
+						<div className='mt-1 flex flex-col items-end '>
 							<div
 								onClick={() => {
 									if (!currentUserdata && !userid) {
@@ -423,7 +428,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 										setShowModal(true);
 									}
 								}}
-								className='m-0 mt-3 flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='m-0  flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
 								<ImageIcon
 									src='/assets/Vote.svg'
@@ -511,15 +516,15 @@ const PostContent: React.FC<{
 
 	return (
 		<>
-			<p className='xl:text-md pt-2 text-[15px] font-medium text-[#243A57] dark:text-white'>
+			<p className='xl:text-md pt-2 text-[15px] font-semibold text-[#243A57] dark:text-white'>
 				#{post?.post_id} {post?.title || 'Untitled Post'}
 			</p>
 			<Markdown
-				className='xl:text-md text-[12px] text-[#243A57]'
+				className='xl:text-md text-[14px] text-[#243A57]'
 				md={trimmedContentForComment}
 			/>
 			<Link
-				className='flex cursor-pointer gap-1 font-medium text-[#E5007A] underline'
+				className='flex cursor-pointer gap-1 text-[12px] font-medium text-[#E5007A] hover:underline'
 				href={`/referenda/${post?.post_id}`}
 			>
 				Read More{' '}
@@ -544,7 +549,7 @@ const PostReactions: React.FC<{
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className='flex items-center justify-between pt-2 text-sm text-gray-500 dark:text-[#9E9E9E]'>
+		<div className='flex items-center justify-between  text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
 				{likes.count > 0 && likes?.usernames?.length > 0 && (
 					<div className='flex items-center'>
@@ -564,56 +569,78 @@ const PostReactions: React.FC<{
 
 			<div className='flex items-center gap-1 md:gap-3'>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{dislikes.count} dislikes</p>
-				<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
+				<p className='pt-1 text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
-				{post?.highestSentiment?.sentiment > 0 && <p className='block text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
-				<div className='block lg:hidden'>
-					<div className='flex items-center'>
-						<div>
-							{post?.highestSentiment?.sentiment == 0 && (
+				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
+				<div className='block pt-2 lg:hidden'>
+					<div className='flex items-center space-x-2'>
+						<div className='flex items-center space-x-1'>
+							{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment1 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SadDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Completely Against'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 2 && (
 								<EmojiOption
-									icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+									icon={
+										theme === 'dark' ? (
+											<DarkSentiment2 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SadIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
+									}
 									title={'Slightly Against'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 3 && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment3 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<NeutralIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Neutral'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 4 && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment4 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SmileIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Slightly For'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 5 && (
 								<EmojiOption
 									icon={
 										theme === 'dark' ? (
-											<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
+											<DarkSentiment5 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
 										) : (
-											<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+											<SmileDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
 										)
 									}
 									title={'Completely For'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 						</div>
-						<p className='text-[10px] text-[#485F7D] md:text-[12px] '>{post?.highestSentiment?.percentage && `${post?.highestSentiment?.percentage}%`}</p>
 					</div>
 				</div>
 			</div>
@@ -787,8 +814,11 @@ const PostActions: React.FC<{
 	return (
 		<>
 			<div className='flex justify-between'>
-				<div className='mt-1 flex items-center space-x-3 md:space-x-4'>
-					<div onClick={() => handleReactionClick('👍')}>
+				<div className='mt-1 flex items-center space-x-5 md:space-x-2'>
+					<div
+						className='flex w-[60px] items-center justify-center' // Fixed width and centered content
+						onClick={() => handleReactionClick('👍')}
+					>
 						<PostAction
 							icon={
 								showGif.reaction === '👍' ? (
@@ -796,8 +826,8 @@ const PostActions: React.FC<{
 										src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 										alt='liked gif'
 										className='h-4 w-4'
-										width={5}
-										height={5}
+										width={4}
+										height={4}
 									/>
 								) : (
 									<Popover
@@ -814,7 +844,7 @@ const PostActions: React.FC<{
 											)
 										}
 									>
-										<Image
+										<ImageIcon
 											src={
 												reactionState.userLiked
 													? theme === 'dark'
@@ -826,8 +856,6 @@ const PostActions: React.FC<{
 											}
 											alt='like icon'
 											className='h-4 w-4'
-											width={5}
-											height={5}
 										/>
 									</Popover>
 								)
@@ -837,7 +865,10 @@ const PostActions: React.FC<{
 						/>
 					</div>
 
-					<div onClick={() => handleReactionClick('👎')}>
+					<div
+						className='flex w-[60px] items-center justify-center md:w-[80px]' // Fixed width and centered content
+						onClick={() => handleReactionClick('👎')}
+					>
 						<PostAction
 							icon={
 								showGif?.reaction === '👎' ? (
@@ -846,8 +877,8 @@ const PostActions: React.FC<{
 											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 											alt='disliked gif'
 											className='h-4 w-4'
-											width={5}
-											height={5}
+											width={4}
+											height={4}
 										/>
 									</div>
 								) : (
@@ -865,7 +896,7 @@ const PostActions: React.FC<{
 											)
 										}
 									>
-										<Image
+										<ImageIcon
 											src={
 												reactionState.userDisliked
 													? theme === 'dark'
@@ -877,8 +908,6 @@ const PostActions: React.FC<{
 											}
 											alt='dislike icon'
 											className='h-4 w-4'
-											width={5}
-											height={5}
 										/>
 									</Popover>
 								)
@@ -897,73 +926,99 @@ const PostActions: React.FC<{
 								openModal();
 							}
 						}}
+						className='flex w-[60px] items-center justify-center pl-1 md:w-[80px]'
 					>
 						<PostAction
 							icon={
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/commentdark.svg' : '/assets/icons/comment-pink.svg'}`}
 									alt='comment icon'
-									className='h-5 w-5'
+									className='-mt-1 h-4 w-4'
 								/>
 							}
 							label={COMMENT_LABEL}
 							isMobile={isMobile}
 						/>
 					</div>
-					<ActivityShare
-						title={post?.title}
-						postId={post?.post_id}
-						proposalType={ProposalType.REFERENDUM_V2}
-					/>
+
+					<div className='md:pl-2'>
+						<ActivityShare
+							title={post?.title}
+							postId={post?.post_id}
+							proposalType={ProposalType.REFERENDUM_V2}
+						/>
+					</div>
 				</div>
 
 				<div className='hidden pt-2 lg:block'>
-					<div className='flex items-center'>
-						<div>
-							{post?.highestSentiment?.sentiment == 0 && (
+					<div className='flex items-center space-x-2'>
+						<div className='flex items-center space-x-1'>
+							{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment1 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SadDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Completely Against'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 2 && (
 								<EmojiOption
-									icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+									icon={
+										theme === 'dark' ? (
+											<DarkSentiment2 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SadIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
+									}
 									title={'Slightly Against'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 3 && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment3 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<NeutralIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Neutral'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 4 && (
 								<EmojiOption
 									icon={
-										theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										theme === 'dark' ? (
+											<DarkSentiment4 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										) : (
+											<SmileIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
+										)
 									}
 									title={'Slightly For'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 							{post?.highestSentiment?.sentiment == 5 && (
 								<EmojiOption
 									icon={
 										theme === 'dark' ? (
-											<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
+											<DarkSentiment5 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
 										) : (
-											<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+											<SmileDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
 										)
 									}
 									title={'Completely For'}
+									percentage={post?.highestSentiment?.percentage || null}
 								/>
 							)}
 						</div>
-						<p className='text-[10px] text-[#485F7D] md:text-[12px] '>{post?.highestSentiment?.percentage && `${post?.highestSentiment?.percentage}%`}</p>
 					</div>
 				</div>
 			</div>
@@ -1021,8 +1076,8 @@ const PostActions: React.FC<{
 const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean }> = ({ icon, label, isMobile }) => (
 	<div className='flex items-center gap-2'>
 		<span>{icon}</span>
-		{isMobile && <p className='cursor-pointer pt-4 text-[#E5007A]'>{label}</p>}
-		{!isMobile && <p className='hidden cursor-pointer pt-4 text-[#E5007A] xl:block'>{label}</p>}
+		{isMobile && <p className='cursor-pointer pt-4 text-[10px] text-[#E5007A]'>{label}</p>}
+		{!isMobile && <p className='hidden cursor-pointer pt-4 text-[12px] text-[#E5007A] xl:block'>{label}</p>}
 	</div>
 );
 
@@ -1091,7 +1146,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 			/>
 			<button
 				onClick={openModal}
-				className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
+				className='h-9 w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
 			>
 				{POST_LABEL}
 			</button>
@@ -1257,13 +1312,13 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 								theme={theme as any}
 							/>
 							<p className='pt-3 text-[#485F7D]'>|</p>
-							<div className='flex '>
+							<div className='flex gap-[2px]'>
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
 									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
 								/>
-								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='pt-2 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>

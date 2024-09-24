@@ -68,16 +68,16 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 			className=''
 		>
-			<button className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-poppins text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
-				Switch to <span className='font-semibold'>{pathname === '/activity-feed' ? 'Overview' : 'Active Feed'}</span>
+			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-poppins text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
+				Switch to <span className='font-semibold'>{pathname === '/activity-feed' ? 'Overview' : 'Activity Feed'}</span>
 				<span>
 					<ImageIcon
 						src='/assets/icons/loop.svg'
 						alt='loop'
-						className='-mt-1 h-4 w-4 lg:h-5 lg:w-5'
+						className=' h-4 w-4 lg:h-5 lg:w-5'
 					/>
 				</span>
-			</button>
+			</div>
 		</Link>
 	);
 

@@ -131,7 +131,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
 					>
 						<Image
-							src='/assets/icons/noactivity.svg'
+							src='/assets/activityfeed/gifs/noactivity.gif'
 							alt='empty state'
 							className='h-80 w-80 p-0'
 							width={320}
@@ -154,7 +154,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
 				>
 					<Image
-						src='/assets/icons/nologin.svg'
+						src='/assets/activityfeed/gifs/nologin.gif'
 						alt='empty state'
 						className='h-80 w-80 p-0'
 						width={320}

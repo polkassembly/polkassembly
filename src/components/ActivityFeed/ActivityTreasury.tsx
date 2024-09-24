@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -16,10 +15,8 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
+import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nextBurn, tokenValue }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -48,25 +45,6 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 				Number(assethubValues.usdtValue) / 1000000
 		)
 	);
-
-	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
-	const formatedBalanceDifference =
-		graphBalanceDifference &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				graphBalanceDifference.toString(),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: true
-				},
-				network
-			)
-		);
-
-	const sortedGraphData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
 
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
@@ -155,29 +133,6 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 		}
 	};
 
-	const getDifferenceData = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IDailyTreasuryTallyData>('/api/v1/treasury-amount-history/get-daily-tally-data');
-
-			if (error) {
-				console.error('Error fetching daily tally data:', error);
-			}
-
-			if (data) {
-				if (sortedGraphData.length > 0) {
-					const lastGraphBalance = parseFloat(sortedGraphData[sortedGraphData.length - 1]?.balance);
-
-					const apiBalance = parseFloat(data.balance);
-					const difference = apiBalance - lastGraphBalance;
-
-					setGraphBalanceDifference(difference);
-				}
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
-
 	useEffect(() => {
 		(async () => {
 			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
@@ -206,11 +161,6 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 		getGraphData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
-	useEffect(() => {
-		getDifferenceData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, graphData.length]);
 
 	useEffect(() => {
 		if (!assethubApi || !assethubApiReady) return;
@@ -246,9 +196,9 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 											) : (
 												<span>N/A</span>
 											)}
-											{formatedBalanceDifference && (
+											{totalTreasuryValueUSD && (
 												<div className='flex items-baseline'>
-													<span className={`${poppins.className} ${poppins.variable} ml-1 mt-1 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+													<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 														~${totalTreasuryValueUSD}
 													</span>
 												</div>
@@ -276,7 +226,9 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 															{chainProperties[network]?.assetHubTreasuryAddress && (
 																<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center`}>
 																	<span className='flex items-center gap-2 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-																		<AssethubIcon />
+																		<div>
+																			<AssethubIcon />
+																		</div>
 																		<span>Asset Hub</span>
 																	</span>
 																	<div className='ml-2 flex flex-wrap gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>

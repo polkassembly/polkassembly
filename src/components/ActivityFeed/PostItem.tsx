@@ -754,21 +754,17 @@ const PostActions: React.FC<{
 	return (
 		<>
 			<div className='flex justify-between'>
-				{/* Like button */}
 				<div className='mt-1 flex items-center md:space-x-4'>
-					<div
-						className='flex cursor-pointer items-center rounded-lg md:gap-2 md:px-2'
-						onClick={() => handleReactionClick('👍')}
-					>
+					<div onClick={() => handleReactionClick('👍')}>
 						<PostAction
 							icon={
 								showGif.reaction === '👍' ? (
 									<Image
 										src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 										alt='liked gif'
-										className='h-5 w-5'
-										width={10}
-										height={10}
+										className='h-4 w-4'
+										width={5}
+										height={5}
 									/>
 								) : (
 									<Popover
@@ -789,16 +785,16 @@ const PostActions: React.FC<{
 											src={
 												reactionState.userLiked
 													? theme === 'dark'
-														? '/assets/icons/reactions/Liked-Colored-Dark.gif'
-														: '/assets/icons/reactions/LikeIconfilled.svg'
+														? '/assets/activityfeed/darkliked.svg'
+														: '/assets/activityfeed/liked.svg'
 													: theme === 'dark'
-													? '/assets/icons/reactions/LikeOutlinedDark.svg'
-													: '/assets/icons/like-pink.svg'
+													? '/assets/activityfeed/likedark.svg'
+													: '/assets/activityfeed/like.svg'
 											}
 											alt='like icon'
-											className='h-5 w-5'
-											width={50}
-											height={50}
+											className='h-4 w-4'
+											width={5}
+											height={5}
 										/>
 									</Popover>
 								)
@@ -808,11 +804,7 @@ const PostActions: React.FC<{
 						/>
 					</div>
 
-					{/* Dislike button */}
-					<div
-						className='flex cursor-pointer items-center gap-2 rounded-lg px-2'
-						onClick={() => handleReactionClick('👎')}
-					>
+					<div onClick={() => handleReactionClick('👎')}>
 						<PostAction
 							icon={
 								showGif?.reaction === '👎' ? (
@@ -820,9 +812,9 @@ const PostActions: React.FC<{
 										<Image
 											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 											alt='disliked gif'
-											className='h-5 w-5'
-											width={10}
-											height={10}
+											className='h-4 w-4'
+											width={5}
+											height={5}
 										/>
 									</div>
 								) : (
@@ -840,18 +832,20 @@ const PostActions: React.FC<{
 											)
 										}
 									>
-										<ImageIcon
+										<Image
 											src={
 												reactionState.userDisliked
 													? theme === 'dark'
-														? '/assets/icons/reactions/DislikeFilledDark.svg'
-														: '/assets/icons/reactions/Dislikefilled.svg'
+														? '/assets/activityfeed/darkdisliked.svg'
+														: '/assets/activityfeed/disliked.svg'
 													: theme === 'dark'
-													? '/assets/icons/reactions/DislikeOutlinedDark.svg'
-													: '/assets/icons/dislike-pink.svg'
+													? '/assets/activityfeed/dislikedark.svg'
+													: '/assets/activityfeed/dislike.svg'
 											}
 											alt='dislike icon'
-											className='h-5 w-5'
+											className='h-4 w-4'
+											width={5}
+											height={5}
 										/>
 									</Popover>
 								)
@@ -1022,7 +1016,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const openModal = () => {
-		if (currentUserdata && userid) {
+		if (userid) {
 			setIsModalOpen(true);
 		} else if (!loginTriggered) {
 			setOpenLoginModal(true);
@@ -1071,13 +1065,17 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 			<input
 				ref={inputRef}
 				type='text'
+				value={''}
 				placeholder={COMMENT_PLACEHOLDER}
 				className={` h-9 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 ${
 					!isMobile ? 'ml-7' : ''
 				}`}
-				onFocus={openModal}
+				onClick={openModal}
 			/>
-			<button className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'>
+			<button
+				onClick={openModal}
+				className='w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
+			>
 				{POST_LABEL}
 			</button>
 

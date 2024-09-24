@@ -260,7 +260,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
 														className={`${
-															!is_sidebar_collapsed && '3xl:pl-0 pl-32'
+															!is_sidebar_collapsed && '3xl:pl-0 pl-[145px]'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
 														<Component {...pageProps} />
@@ -304,7 +304,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
 														className={`${
-															!is_sidebar_collapsed && '3xl:pl-0 pl-28'
+															!is_sidebar_collapsed && '3xl:pl-0 pl-[145px]'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
 														<Component {...pageProps} />

@@ -60,11 +60,6 @@ const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/Acti
 	ssr: false
 });
 
-const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivity/BatchVotingBadge'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
-
 interface Gov2LatestPosts {
 	allGov2Posts: any;
 	discussionPosts: any;
@@ -155,7 +150,6 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { username } = currentUser;
 	const { resolvedTheme: theme } = useTheme();
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [proposaldata, setProposalData] = useState({ proposals: 0, votes: 0 });
 	const { api, apiReady } = useApiContext();
@@ -534,16 +528,16 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 					</div>
 				</div>
 
-				<div className='flex flex-col justify-between gap-5 overflow-x-hidden xl:flex-row'>
-					{/* Main content */}
+				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
+					{/* Main content with flex-grow */}
 					<div className='mx-1 mt-8 flex-grow'>
-						<div className='mx-1'>
+						<div className='w-full'>
 							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
 						</div>
 					</div>
 
 					{/* Sidebar */}
-					<div className='hidden shrink-0 xl:block xl:w-[305px]'>
+					<div className='hidden shrink-0 xl:block xl:max-w-[305px]'>
 						<div className='mx-1 mt-2 md:mt-6'>
 							{networkSocialsData && (
 								<AboutActivity

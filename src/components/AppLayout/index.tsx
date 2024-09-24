@@ -165,15 +165,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<div>
 			<Layout className={`${className} relative`}>
-				<div
-					onClick={() => {
-						if (!isMobile) {
-							dispatch(GlobalActions.setIsSidebarCollapsed(true));
-							setSidedrawer(false);
-						}
-					}}
-					ref={headerRef}
-				>
+				<div ref={headerRef}>
 					<NavHeader
 						theme={theme as any}
 						sidedrawer={sidedrawer}
@@ -308,13 +300,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div className={`${!is_sidebar_collapsed && ''}`}>
-												<div
-													onClick={() => {
-														dispatch(GlobalActions.setIsSidebarCollapsed(true));
-														setSidedrawer(false);
-													}}
-													className='flex flex-row'
-												>
+												<div className='flex flex-row'>
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
 														className={`${

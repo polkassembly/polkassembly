@@ -658,16 +658,38 @@ const PostActions: React.FC<{
 				if (prevState.userDisliked) {
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
+					post_reactions['👎'].count -= 1;
+					const index = post_reactions['👎'].usernames.indexOf(username);
+					if (index > -1) post_reactions['👎'].usernames.splice(index, 1);
 				}
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
+				if (!isLiked) {
+					post_reactions['👍'].usernames.push(username);
+					post_reactions['👍'].count += 1;
+				} else {
+					const index = post_reactions['👍'].usernames.indexOf(username);
+					if (index > -1) post_reactions['👍'].usernames.splice(index, 1);
+					post_reactions['👍'].count -= 1;
+				}
 			} else if (reaction === '👎') {
 				if (prevState.userLiked) {
 					newState.likesCount -= 1;
 					newState.userLiked = false;
+					post_reactions['👍'].count -= 1;
+					const index = post_reactions['👍'].usernames.indexOf(username);
+					if (index > -1) post_reactions['👍'].usernames.splice(index, 1);
 				}
 				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
 				newState.userDisliked = !isDisliked;
+				if (!isDisliked) {
+					post_reactions['👎'].usernames.push(username);
+					post_reactions['👎'].count += 1;
+				} else {
+					const index = post_reactions['👎'].usernames.indexOf(username);
+					if (index > -1) post_reactions['👎'].usernames.splice(index, 1);
+					post_reactions['👎'].count -= 1;
+				}
 			}
 
 			return newState;

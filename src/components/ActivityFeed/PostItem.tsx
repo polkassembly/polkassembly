@@ -917,7 +917,7 @@ const PostActions: React.FC<{
 					/>
 				</div>
 
-				<div className='hidden lg:block'>
+				<div className='hidden pt-2 lg:block'>
 					<div className='flex items-center'>
 						<div>
 							{post?.highestSentiment?.sentiment == 0 && (

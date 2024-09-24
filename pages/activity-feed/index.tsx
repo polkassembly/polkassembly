@@ -609,8 +609,8 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 											</div>
 										</div>
 									) : (
-										<div className='absolute -bottom-1 left-0 right-0 flex justify-center'>
-											<p className='text-center text-lg font-bold'>
+										<div className='absolute bottom-4 left-0 right-0 flex justify-center'>
+											<p className='text-center font-poppins text-[16px] font-semibold text-[#243A57]'>
 												<span
 													onClick={() => setLoginOpen(true)}
 													className='cursor-pointer text-[#E5007A] underline'

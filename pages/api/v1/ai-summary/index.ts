@@ -46,10 +46,15 @@ export const getCommentsAISummaryByPost = async ({
 
 		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
 			const commentData = commentDoc.data();
-			if (!commentData || !commentData.content) return null;
+			if (!commentData || !commentData.content) return '';
 
 			const commentObj = {
-				content: removeSymbols(commentData.content.replace(htmlTagRegex, '')),
+				content: removeSymbols(commentData.content.replace(htmlTagRegex, ''))
+					.replace(/&nbsp;/g, ' ')
+					.replace(/\n/g, ' ')
+					.replace(/\+/g, ' ')
+					.replace(/"/g, '')
+					.replace(/\s\s+/g, ' '),
 				id: commentData.user_id || 'unknown'
 			};
 
@@ -60,11 +65,16 @@ export const getCommentsAISummaryByPost = async ({
 				const replyData = replyDoc.data();
 				if (replyData && replyData.content) {
 					return {
-						content: removeSymbols(replyData.content.replace(htmlTagRegex, '')),
+						content: removeSymbols(replyData.content.replace(htmlTagRegex, ''))
+							.replace(/&nbsp;/g, ' ')
+							.replace(/\n/g, ' ')
+							.replace(/\+/g, ' ')
+							.replace(/"/g, '')
+							.replace(/\s\s+/g, ' '),
 						id: replyData.user_id || 'unknown'
 					};
 				}
-				return null;
+				return '';
 			});
 
 			const repliesResults = await Promise.allSettled(repliesPromises);
@@ -102,7 +112,7 @@ export const getCommentsAISummaryByPost = async ({
 
 		const response = await fetch(apiUrl, {
 			body: JSON.stringify({
-				text: JSON.stringify({ allCommentsAndReplies })
+				text: allCommentsAndReplies
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -113,8 +123,8 @@ export const getCommentsAISummaryByPost = async ({
 		if (!response.ok) {
 			return {
 				data: null,
-				error: messages.API_FETCH_ERROR,
-				status: 500
+				error: `Failed to fetch: ${response.status} - ${response.statusText}`,
+				status: response.status
 			};
 		}
 

@@ -216,7 +216,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	useEffect(() => {
 		getOverallSentimentPercentage();
 		if (!Object.keys(comments).length) return;
-		if (network != 'rococo') return;
 		setHasEnoughContent(CommentsContentCheck(comments));
 		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -394,85 +393,83 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-			{network == 'rococo' ? (
-				<div className='mt-4'>
-					{fetchingAISummary ? (
-						<Skeleton className='mt-4' />
-					) : aiContentSummary && hasEnoughContent ? (
-						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
-							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
-								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
-								<span
-									className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
-								>
-									<span className='mr-1 '>Based on</span>
-									{allComments.length || 0}
-									<span className='ml-1'>Comments</span>
-								</span>
-							</div>
-							{aiContentSummary?.summary_positive && (
-								<div className='mt-2 flex items-start gap-4'>
-									<span className='mt-2'>
-										<GreenTickIcon />
-									</span>
-									<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-										{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
-										{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
-											<span
-												onClick={() => toggleSummary('positive')}
-												className='ml-1 cursor-pointer text-sm text-pink_primary'
-											>
-												{showPositiveSummary ? 'See Less' : 'See More'}
-											</span>
-										)}
-									</p>
-								</div>
-							)}
-
-							{aiContentSummary?.summary_neutral && (
-								<div className='flex items-start gap-4'>
-									<span className='mt-2'>
-										<MinusSignIcon />
-									</span>
-									<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-										{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
-										{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
-											<span
-												onClick={() => toggleSummary('neutral')}
-												className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
-											>
-												{showNeutralSummary ? 'See Less' : 'See More'}
-											</span>
-										)}
-									</p>
-								</div>
-							)}
-
-							{aiContentSummary?.summary_negative && (
-								<div className='flex items-start gap-4'>
-									<span className='mt-2'>
-										<CrossSignIcon />
-									</span>
-									<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-										{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
-										{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
-											<span
-												onClick={() => toggleSummary('negative')}
-												className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
-											>
-												{showNegativeSummary ? 'See Less' : 'See More'}
-											</span>
-										)}
-									</p>
-								</div>
-							)}
-							<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-								<AiStarIcon className='text-base' /> AI-generated from comments
-							</h2>
+			<div className='mt-4'>
+				{fetchingAISummary ? (
+					<Skeleton className='mt-4' />
+				) : aiContentSummary && hasEnoughContent ? (
+					<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+						<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+							<span
+								className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+							>
+								<span className='mr-1 '>Based on</span>
+								{allComments.length || 0}
+								<span className='ml-1'>Comments</span>
+							</span>
 						</div>
-					) : null}
-				</div>
-			) : null}
+						{aiContentSummary?.summary_positive && (
+							<div className='mt-2 flex items-start gap-4'>
+								<span className='mt-2'>
+									<GreenTickIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
+										<span
+											onClick={() => toggleSummary('positive')}
+											className='ml-1 cursor-pointer text-sm text-pink_primary'
+										>
+											{showPositiveSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+						)}
+
+						{aiContentSummary?.summary_neutral && (
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<MinusSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
+										<span
+											onClick={() => toggleSummary('neutral')}
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
+										>
+											{showNeutralSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+						)}
+
+						{aiContentSummary?.summary_negative && (
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<CrossSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
+										<span
+											onClick={() => toggleSummary('negative')}
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
+										>
+											{showNegativeSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+						)}
+						<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+							<AiStarIcon className='text-base' /> AI-generated from comments
+						</h2>
+					</div>
+				) : null}
+			</div>
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'

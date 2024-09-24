@@ -17,7 +17,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 const LoginButton = ({ onClick }: { onClick: () => void }) => (
 	<p
 		onClick={onClick}
-		className='w-full cursor-pointer rounded-md bg-[#E5007A] px-4 py-2 text-center text-lg text-white lg:w-[400px]'
+		className='w-full cursor-pointer rounded-md bg-[#E5007A] px-4 py-2 text-center text-[14px] text-white lg:w-[400px]'
 	>
 		Log In
 	</p>
@@ -26,7 +26,7 @@ const LoginButton = ({ onClick }: { onClick: () => void }) => (
 const SignupButton = ({ onClick }: { onClick: () => void }) => (
 	<p
 		onClick={onClick}
-		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-lg text-[#E5007A] lg:w-[400px] lg:border'
+		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-[14px] text-[#E5007A] lg:w-[400px] lg:border'
 	>
 		Sign Up
 	</p>
@@ -132,7 +132,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 							width={320}
 							height={320}
 						/>
-						<p className='p-0 text-xl font-bold'>No Activity Found</p>
+						<p className='p-0 text-xl font-medium text-[#243A57]'>No Activity Found</p>
 						<p
 							className='p-0 text-center text-[#243A57] dark:text-white'
 							style={{ lineHeight: '1.8' }}
@@ -151,10 +151,12 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						width={320}
 						height={320}
 					/>
-					<p className='p-0 text-xl font-bold dark:text-white'>Join Polkassembly to see your Following tab!</p>
+					<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>Join Polkassembly to see your Following tab!</p>
 					<p className='p-0 text-center text-[#243A57] dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
-					<LoginButton onClick={() => setLoginOpen(true)} />
-					<SignupButton onClick={() => setSignupOpen(true)} />
+					<div className='pt-3'>
+						<LoginButton onClick={() => setLoginOpen(true)} />
+						<SignupButton onClick={() => setSignupOpen(true)} />
+					</div>
 				</div>
 			)}
 			<SignupPopup

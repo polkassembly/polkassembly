@@ -159,16 +159,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 				value={status}
 				onChange={(e) => setStatusValue(e.target.value)}
 			>
-				{Object.entries(statusCounts).map(([key, value]) => (
-					<Menu.Item key={key}>
-						<Radio
-							value={key}
-							className='text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'
-						>
-							{key.charAt(0).toUpperCase() + key.slice(1).toLowerCase().split('_').join(' ')} ({value})
-						</Radio>
-					</Menu.Item>
-				))}
+				{statusCounts &&
+					Object.entries(statusCounts).map(([key, value]) =>
+						key && value !== undefined ? (
+							<Menu.Item key={key}>
+								<Radio
+									value={key}
+									className='text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'
+								>
+									{key.charAt(0).toUpperCase() + key.slice(1).toLowerCase().split('_').join(' ')} ({value})
+								</Radio>
+							</Menu.Item>
+						) : null
+					)}
 			</Radio.Group>
 		</Menu>
 	);

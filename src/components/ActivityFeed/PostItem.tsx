@@ -97,11 +97,7 @@ const getStatusStyle = (status: string) => {
 
 const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
-
-	const { '👍': likes = { count: 0, userIds: [], usernames: [] }, '👎': dislikes = { count: 0, userIds: [], usernames: [] } } = post?.post_reactions || {};
-
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
@@ -110,7 +106,17 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	const { post_reactions } = post;
 	const { resolvedTheme: theme } = useTheme();
+	const [reactionState, setReactionState] = useState({
+		dislikesCount: post_reactions?.['👎']?.count || 0,
+		dislikesUsernames: post_reactions?.['👎']?.usernames || [],
+		likesCount: post_reactions?.['👍']?.count || 0,
+		likesUsernames: post_reactions?.['👍']?.usernames || [],
+		userDisliked: post_reactions?.['👎']?.usernames?.includes(currentUserdata?.username) || false,
+		userLiked: post_reactions?.['👍']?.usernames?.includes(currentUserdata?.username) || false
+	});
+
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
 			<PostHeader
@@ -130,8 +136,8 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				/>
 
 				<PostReactions
-					likes={likes}
-					dislikes={dislikes}
+					likes={{ count: reactionState.likesCount, usernames: reactionState.likesUsernames }}
+					dislikes={{ count: reactionState.dislikesCount, usernames: reactionState.dislikesUsernames }}
 					post={post}
 				/>
 			</Link>
@@ -139,6 +145,8 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 			<PostActions
 				post={post}
 				currentUserdata={currentUserdata}
+				reactionState={reactionState}
+				setReactionState={setReactionState}
 			/>
 			<PostCommentSection
 				post={post}
@@ -560,8 +568,12 @@ const PostReactions: React.FC<{
 							width={20}
 							height={20}
 						/>
-						<p className='md: ml-2 text-[10px] md:pt-3 md:text-[12px]'>
-							{likes?.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes?.count - 1} others liked this post`}
+						<p className='md: ml-2 text-[10px] md:pt-5 md:text-[12px]'>
+							{likes.count > 0 && (
+								<div>
+									<p>{likes.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes.count - 1} others liked this post`}</p>
+								</div>
+							)}{' '}
 						</p>
 					</div>
 				)}
@@ -651,18 +663,13 @@ const PostReactions: React.FC<{
 const PostActions: React.FC<{
 	post: any;
 	currentUserdata: any;
-}> = ({ post, currentUserdata }) => {
+	reactionState: any;
+	setReactionState: React.Dispatch<React.SetStateAction<any>>;
+}> = ({ post, currentUserdata, reactionState, setReactionState }) => {
 	const { post_id, track_no } = post;
 	const userid = currentUserdata?.id;
 	const username = currentUserdata?.username;
 	const { post_reactions } = post;
-
-	const [reactionState, setReactionState] = useState({
-		dislikesCount: post_reactions?.['👎']?.count || 0,
-		likesCount: post_reactions?.['👍']?.count || 0,
-		userDisliked: post_reactions?.['👎']?.usernames?.includes(username) || false,
-		userLiked: post_reactions?.['👍']?.usernames?.includes(username) || false
-	});
 
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
 	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
@@ -670,7 +677,7 @@ const PostActions: React.FC<{
 	const { resolvedTheme: theme } = useTheme();
 
 	const handleReactionClick = (reaction: '👍' | '👎') => {
-		if (!currentUserdata && !userid) {
+		if (!currentUserdata || !userid || !username) {
 			if (reaction === '👍') setLikeModalOpen(true);
 			if (reaction === '👎') setDislikeModalOpen(true);
 			return;
@@ -679,7 +686,7 @@ const PostActions: React.FC<{
 		const isLiked = reaction === '👍' && reactionState.userLiked;
 		const isDisliked = reaction === '👎' && reactionState.userDisliked;
 
-		setReactionState((prevState) => {
+		setReactionState((prevState: typeof reactionState) => {
 			const newState = { ...prevState };
 
 			if (reaction === '👍') {
@@ -687,17 +694,17 @@ const PostActions: React.FC<{
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
 					post_reactions['👎'].count -= 1;
-					const index = post_reactions['👎'].usernames.indexOf(username);
-					if (index > -1) post_reactions['👎'].usernames.splice(index, 1);
+					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username); // Instantaneous removal of the username
 				}
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
 				if (!isLiked) {
-					post_reactions['👍'].usernames.push(username);
-					post_reactions['👍'].count += 1;
+					if (username && !post_reactions['👍'].usernames.includes(username)) {
+						post_reactions['👍'].usernames.push(username);
+						post_reactions['👍'].count += 1;
+					}
 				} else {
-					const index = post_reactions['👍'].usernames.indexOf(username);
-					if (index > -1) post_reactions['👍'].usernames.splice(index, 1);
+					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username); // Instantaneous removal of the username
 					post_reactions['👍'].count -= 1;
 				}
 			} else if (reaction === '👎') {
@@ -705,17 +712,17 @@ const PostActions: React.FC<{
 					newState.likesCount -= 1;
 					newState.userLiked = false;
 					post_reactions['👍'].count -= 1;
-					const index = post_reactions['👍'].usernames.indexOf(username);
-					if (index > -1) post_reactions['👍'].usernames.splice(index, 1);
+					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username);
 				}
 				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
 				newState.userDisliked = !isDisliked;
 				if (!isDisliked) {
-					post_reactions['👎'].usernames.push(username);
-					post_reactions['👎'].count += 1;
+					if (username && !post_reactions['👎'].usernames.includes(username)) {
+						post_reactions['👎'].usernames.push(username);
+						post_reactions['👎'].count += 1;
+					}
 				} else {
-					const index = post_reactions['👎'].usernames.indexOf(username);
-					if (index > -1) post_reactions['👎'].usernames.splice(index, 1);
+					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username);
 					post_reactions['👎'].count -= 1;
 				}
 			}
@@ -832,6 +839,7 @@ const PostActions: React.FC<{
 								) : (
 									<Popover
 										placement='bottomLeft'
+										trigger='hover'
 										content={
 											likedusernames && likedusernames.length > 0 ? (
 												<TooltipContent
@@ -884,6 +892,7 @@ const PostActions: React.FC<{
 								) : (
 									<Popover
 										placement='bottomLeft'
+										trigger='hover'
 										content={
 											dislikedusernames && dislikedusernames.length > 0 ? (
 												<TooltipContent

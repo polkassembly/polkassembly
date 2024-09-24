@@ -151,7 +151,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						<p
 							key={category}
 							className={` flex cursor-pointer justify-between rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-								isTabSelected(category) ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
+								isTabSelected(category) ? 'bg-[#F2F4F7] font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
 							}`}
 							onClick={() => handleCategoryClick(category)}
 						>
@@ -221,7 +221,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							>
 								<p
 									className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-										isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+										isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 									}`}
 									onClick={() => handleCategoryClick(category)}
 								>
@@ -235,7 +235,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						) : (
 							<p
 								className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-									isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
@@ -316,7 +316,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						>
 							<p
 								className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-									isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>

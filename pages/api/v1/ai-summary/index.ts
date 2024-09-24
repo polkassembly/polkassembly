@@ -46,7 +46,7 @@ export const getCommentsAISummaryByPost = async ({
 
 		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
 			const commentData = commentDoc.data();
-			if (!commentData || !commentData.content) return '';
+			if (!commentData || !commentData.content) return null;
 
 			const commentObj = {
 				content: removeSymbols(commentData.content.replace(htmlTagRegex, '')),
@@ -64,7 +64,7 @@ export const getCommentsAISummaryByPost = async ({
 						id: replyData.user_id || 'unknown'
 					};
 				}
-				return '';
+				return null;
 			});
 
 			const repliesResults = await Promise.allSettled(repliesPromises);

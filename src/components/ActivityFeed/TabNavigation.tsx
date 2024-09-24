@@ -182,7 +182,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						{tabCategories[category].length > 1 ? (
 							<Popover
 								content={
-									<div className='w-44 divide-y divide-gray-100 pb-2 '>
+									<div className='w-[220px] divide-y divide-gray-100 pb-2 '>
 										<div className='w-full pt-2 text-sm text-gray-700 dark:text-gray-200'>
 											{tabCategories[category].map((tabKey) => {
 												const tabItem = tabItems.find((item) => item.key === tabKey);
@@ -200,7 +200,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 															<span className='flex w-full items-center justify-between'>
 																<div>
 																	{tabIcons[tabItem.key.toLowerCase()]}
-																	<span className='ml-2'>{tabItem.label} </span>
+																	<span className='ml-2 whitespace-nowrap'>{tabItem.label} </span>
 																</div>
 																<span
 																	className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
@@ -249,14 +249,14 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 				))}
 
 			{!is_sidebar_collapsed && (
-				<div className='relative flex px-[10px]'>
+				<div className='relative flex'>
 					<Popover
 						content={popoverContent}
 						placement={'bottomRight'}
 						trigger='click'
 						arrow={false}
 					>
-						<div className='relative flex px-[10px]'>
+						<div className='relative flex '>
 							<p
 								className={`flex cursor-pointer items-center justify-between gap-2 px-2 text-sm font-medium ${
 									isTrackDropdownOpen ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'

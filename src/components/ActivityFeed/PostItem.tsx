@@ -563,9 +563,9 @@ const PostReactions: React.FC<{
 			</div>
 
 			<div className='flex items-center gap-1 md:gap-3'>
-				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{dislikes.count} dislikes</p>
+				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{dislikes.count} dislikes</p>
 				<p className='text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
+				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
 					<div className='flex items-center'>

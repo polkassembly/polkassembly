@@ -80,7 +80,7 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 						alt='share icon'
 						className='h-5 w-5'
 					/>
-					<span className='dark:[#FF4098] hidden pt-1 font-medium text-[#E5007A] md:block'>Share</span>
+					<span className='dark:[#FF4098] hidden pt-1 text-[10px] font-medium text-[#E5007A] md:block md:text-[12px]'>Share</span>
 				</span>
 			</div>
 		</>

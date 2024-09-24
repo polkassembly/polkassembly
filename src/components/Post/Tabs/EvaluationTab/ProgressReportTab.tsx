@@ -34,9 +34,17 @@ const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
+
 	const [loading, setLoading] = useState<boolean>(false);
 	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
+	const [originalSummary, setOriginalSummary] = useState<string>(summary_content);
+
+	useEffect(() => {
+		setOriginalSummary(summary_content);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	const dispatch = useDispatch();
+
 	const router = useRouter();
 
 	const {
@@ -177,8 +185,12 @@ const ProgressReportTab = ({ className }: Props) => {
 									text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
 									buttonsize='sm'
 									loading={loading}
-									className={`${loading ? 'opacity-60' : ''}`}
-									disabled={!report_uploaded && !postData?.progress_report?.progress_file}
+									className={`${loading ? 'opacity-60' : ''} ${
+										(postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
+											? 'opacity-60'
+											: ''
+									} `}
+									disabled={postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
 									onClick={() => {
 										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 									}}

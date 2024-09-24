@@ -25,7 +25,7 @@ const ProgressReportRatingModal = () => {
 			key,
 			<StarOutlined
 				key={index}
-				className='dark:text-[#909090]'
+				className='dark:text-blue-dark-medium'
 			/>
 		])
 	) as Record<number, React.ReactNode>;

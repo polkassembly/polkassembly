@@ -152,7 +152,7 @@ const ProgressReportInfo = () => {
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
 					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
-					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-[#909090]'>(Edited)</p>}
+					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 				</header>
 				<article className=''>
 					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue'>{postData?.title}</h1>
@@ -168,17 +168,17 @@ const ProgressReportInfo = () => {
 						</div>
 					)}
 					{postData?.progress_report?.ratings?.length > 0 && (
-						<p className='m-0 -mt-3 mb-4 flex items-center p-0 text-xs text-sidebarBlue dark:text-[#909090]'>
+						<p className='m-0 -mt-3 mb-4 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
 							Average Rating({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
 						</p>
 					)}
-					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
+					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
 						<iframe
 							src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 							width='100%'
 							height='180px'
 							title='PDF Preview'
-							className='rounded-md border border-white'
+							className='rounded-md border border-white bg-white dark:border-[#3B444F] dark:bg-black'
 						></iframe>
 						<div className='flex items-center justify-start gap-x-2'>
 							<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
@@ -187,7 +187,7 @@ const ProgressReportInfo = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
 						</div>
 					</div>
 				</article>

@@ -11,7 +11,6 @@ import { useProgressReportSelector } from '~src/redux/selectors';
 import ContentForm from '~src/components/ContentForm';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { usePostDataContext } from '~src/context';
@@ -21,10 +20,12 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import SuccessModal from './UploadModalContent/SuccessModal';
+import UploadReport from './UploadReport';
 
 const { Dragger } = Upload;
 
-const UploadModalContent = () => {
+const EditSummary = () => {
 	const dispatch = useDispatch();
 	const [fileLink, setFileLink] = useState<string>('');
 	const [fileName, setFileName] = useState<string>('');
@@ -150,7 +151,8 @@ const UploadModalContent = () => {
 						<Button
 							className='m-0 -mt-0.5 flex items-center gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
 							onClick={() => {
-								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+								// dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+								dispatch(progressReportActions.setAddProgressReportModalOpen(true));
 							}}
 						>
 							<ImageIcon
@@ -170,7 +172,9 @@ const UploadModalContent = () => {
 						<Button
 							className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'
 							onClick={() => {
-								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
+								dispatch(progressReportActions.setAddProgressReportModalOpen(true));
+
+								// dispatch(progressReportActions.setAddSummaryCTAClicked(true));
 							}}
 						>
 							<PlusCircleOutlined className='m-0 p-0' /> Add summary
@@ -196,6 +200,7 @@ const UploadModalContent = () => {
 					onChange={(content: string) => {
 						console.log('summaryc', content);
 						setSummary(content);
+						// setTest(content);
 						dispatch(progressReportActions.setSummaryContent(content));
 						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 						progress_report.summary = content;
@@ -203,7 +208,7 @@ const UploadModalContent = () => {
 					}}
 					autofocus={true}
 					height={200}
-					// value={summary}
+					value={summary}
 				/>
 			)}
 			{!report_uploaded && !postData?.progress_report?.progress_file ? (
@@ -271,8 +276,9 @@ const UploadModalContent = () => {
 			>
 				<SuccessModal />
 			</Modal>
+			<UploadReport />
 		</article>
 	);
 };
 
-export default UploadModalContent;
+export default EditSummary;

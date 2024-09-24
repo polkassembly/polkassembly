@@ -51,13 +51,13 @@ const PostProgressReport = ({ className }: Props) => {
 								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
 							</div>
 						)}
-						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
+						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] bg-white p-4 dark:border-[#3B444F] dark:bg-black'>
 							<iframe
 								src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 								width='100%'
 								height='180px'
 								title='PDF Preview'
-								className='rounded-md border border-white bg-white'
+								className='rounded-md border border-white bg-white dark:border-[#3B444F]'
 							></iframe>
 							<div className='flex items-center justify-start gap-x-2'>
 								<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
@@ -66,7 +66,7 @@ const PostProgressReport = ({ className }: Props) => {
 										alt='pdf.icon'
 									/>
 								</div>
-								<p className='m-0 p-0 text-xs text-sidebarBlue'>
+								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>
 									{postData?.progress_report?.progress_name?.length > 20
 										? `${postData?.progress_report?.progress_name?.slice(0, 20)}...`
 										: postData?.progress_report?.progress_name || 'Progress Report'}

@@ -978,12 +978,9 @@ const PostActions: React.FC<{
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%] lg:w-auto'
+						className='z-50 w-[80%] lg:w-[650px]'
 					>
-						<div
-							className='lg:w-full'
-							ref={modalWrapperRef}
-						>
+						<div ref={modalWrapperRef}>
 							<CommentModal
 								post={post}
 								isModalOpen={isModalOpen}
@@ -1034,6 +1031,8 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 	const userid = currentUserdata?.id;
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
+
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const openModal = () => {
@@ -1045,6 +1044,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 	};
 
 	const closeModal = () => {
+		global.window.localStorage.removeItem(commentKey());
 		setIsModalOpen(false);
 	};
 
@@ -1115,12 +1115,9 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 						onCancel={closeModal}
 						footer={null}
 						centered
-						className='z-50 w-[80%] lg:w-auto'
+						className='z-50 w-[80%] lg:w-[650px]'
 					>
-						<div
-							className='lg:w-full'
-							ref={modalWrapperRef}
-						>
+						<div ref={modalWrapperRef}>
 							<CommentModal
 								post={post}
 								isModalOpen={isModalOpen}
@@ -1170,12 +1167,15 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 		await form.validateFields();
 		const content = form.getFieldValue('content');
 		if (!content) return;
-		setContent('');
+		setLoading(true);
 
+		setContent('');
 		form.resetFields();
-		form.setFieldValue('content', '');
 		global.window.localStorage.removeItem(commentKey());
-		post.post_id && createSubscription(post.post_id);
+
+		if (post.post_id) {
+			await createSubscription(post.post_id);
+		}
 
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
@@ -1192,7 +1192,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 					message: error,
 					status: NotificationStatus.ERROR
 				});
-			} else if (data) {
+			} else {
 				queueNotification({
 					header: 'Success!',
 					message: 'Comment created successfully.',

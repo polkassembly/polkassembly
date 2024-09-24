@@ -391,7 +391,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
+									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[14px]'
 								/>
 								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
@@ -1260,7 +1260,7 @@ const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boo
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
 								/>
 								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>

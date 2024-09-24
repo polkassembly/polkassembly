@@ -529,15 +529,15 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				</div>
 
 				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
-					{/* Main content with flex-grow */}
+					{/* Main content with flex-grow and shrink */}
 					<div className='mx-1 mt-8 flex-grow'>
-						<div className='w-full'>
+						<div className=''>
 							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
 						</div>
 					</div>
 
 					{/* Sidebar */}
-					<div className='hidden shrink-0 xl:block xl:max-w-[305px]'>
+					<div className='hidden shrink-0 xl:block xl:max-w-[270px] 2xl:max-w-[305px]'>
 						<div className='mx-1 mt-2 md:mt-6'>
 							{networkSocialsData && (
 								<AboutActivity
@@ -551,7 +551,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
 								<div className='flex items-center justify-between gap-2'>
 									<div className='flex items-center'>
-										<p className='whitespace-nowrap pt-3 text-[18px] font-semibold text-[#243A57] dark:text-white'>Voted Proposals</p>
+										<p className='whitespace-nowrap pt-3 font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
 										<Image
 											src='/assets/icons/arrow.svg'
 											alt=''

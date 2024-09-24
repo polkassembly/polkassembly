@@ -381,7 +381,15 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	}, [currentTokenPrice, network]);
 	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
 	const [userRank, setUserRank] = useState<number | 0>(0);
+	const [isLoading, setIsLoading] = useState(true);
 
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIsLoading(false);
+		}, 3000);
+
+		return () => clearTimeout(timer);
+	}, []);
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
 			try {
@@ -546,31 +554,36 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 								/>
 							)}
 						</div>
-
-						{currentUser?.username && currentUser?.id && (
-							<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
-								<div className='flex items-center justify-between gap-2'>
-									<div className='flex items-center'>
-										<p className='whitespace-nowrap pt-3 font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
-										<Image
-											src='/assets/icons/arrow.svg'
-											alt=''
-											className='h-5 w-5 -rotate-90 p-0'
-											width={20}
-											height={20}
-										/>
+						{isLoading ? (
+							<Skeleton active />
+						) : (
+							<>
+								{currentUser?.username && currentUser?.id && (
+									<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
+										<div className='flex items-center justify-between gap-2'>
+											<div className='flex items-center'>
+												<p className='whitespace-nowrap pt-3 font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
+												<Image
+													src='/assets/icons/arrow.svg'
+													alt=''
+													className='h-5 w-5 -rotate-90 p-0'
+													width={20}
+													height={20}
+												/>
+											</div>
+											<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
+												Last 15 days
+											</p>
+										</div>
+										<div>
+											<p className='text-[#485F7D]'>
+												<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
+												<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
+											</p>
+										</div>
 									</div>
-									<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
-										Last 15 days
-									</p>
-								</div>
-								<div>
-									<p className='text-[#485F7D]'>
-										<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
-										<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
-									</p>
-								</div>
-							</div>
+								)}
+							</>
 						)}
 
 						{/* Rank Section */}

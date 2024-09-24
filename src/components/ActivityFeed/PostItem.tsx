@@ -52,6 +52,7 @@ import { inputToBn } from '~src/util/inputToBn';
 import { getUsdValueFromAsset } from '../OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from '../OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import ActivityShare from './ActivityShare';
 
 const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {
 	loading: () => <Skeleton active />,
@@ -106,7 +107,7 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-8 font-poppins hover:shadow-md  dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white px-4 py-6 font-poppins hover:shadow-md dark:border-solid  dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:p-8'>
 			<PostHeader
 				post={post}
 				bgColor={bgColor}
@@ -149,12 +150,12 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 					}}
 					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
 				>
-					{/* <ImageIcon
+					<ImageIcon
 						src='/assets/Vote.svg'
 						alt=''
 						className='m-0 h-6 w-6 p-0'
-					/> */}
-					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
+					/>
+					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
 				</div>
 			)}
 			{showModal && (
@@ -304,8 +305,8 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 					passHref
 				>
 					<div>
-						<div className='flex items-center gap-4'>
-							<p className='pt-[10px] text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
+						<div className='flex items-center gap-1 md:gap-4'>
+							<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-2xl'>
 								{post?.requestedAmount ? (
 									post?.assetId ? (
 										getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
@@ -364,7 +365,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 								<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
 							</div>
 						</div>
-						<div className='flex items-center gap-2 '>
+						<div className='flex items-center gap-1 md:gap-2 '>
 							<Image
 								src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 								alt='profile'
@@ -390,7 +391,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 								<ImageIcon
 									src='/assets/icons/timer.svg'
 									alt='timer'
-									className=' h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
+									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[14px] xl:h-5 xl:w-5'
 								/>
 								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
@@ -543,7 +544,7 @@ const PostReactions: React.FC<{
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className='flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
+		<div className='flex items-center justify-between pt-2 text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
 				{likes.count > 0 && likes?.usernames?.length > 0 && (
 					<div className='flex items-center'>
@@ -786,7 +787,7 @@ const PostActions: React.FC<{
 	return (
 		<>
 			<div className='flex justify-between'>
-				<div className='mt-1 flex items-center md:space-x-4'>
+				<div className='mt-1 flex items-center space-x-3 md:space-x-4'>
 					<div onClick={() => handleReactionClick('👍')}>
 						<PostAction
 							icon={
@@ -900,7 +901,7 @@ const PostActions: React.FC<{
 						<PostAction
 							icon={
 								<ImageIcon
-									src='/assets/icons/comment-pink.svg'
+									src={`${theme === 'dark' ? '/assets/activityfeed/commentdark.svg' : '/assets/icons/comment-pink.svg'}`}
 									alt='comment icon'
 									className='h-5 w-5'
 								/>
@@ -909,22 +910,11 @@ const PostActions: React.FC<{
 							isMobile={isMobile}
 						/>
 					</div>
-					<Link
-						target='_blank'
-						href={'https://twitter.com/'}
-					>
-						<PostAction
-							icon={
-								<ImageIcon
-									src='/assets/icons/share-pink.svg'
-									alt='share icon'
-									className='h-5 w-5'
-								/>
-							}
-							label={!isMobile ? 'Share' : ''}
-							isMobile={isMobile}
-						/>
-					</Link>
+					<ActivityShare
+						title={post?.title}
+						postId={post?.post_id}
+						proposalType={ProposalType.REFERENDUM_V2}
+					/>
 				</div>
 
 				<div className='hidden lg:block'>
@@ -1043,20 +1033,14 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const userid = currentUserdata?.id;
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const [loginTriggered, setLoginTriggered] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const openModal = () => {
 		if (userid) {
 			setIsModalOpen(true);
-		} else if (!loginTriggered) {
+		} else {
 			setOpenLoginModal(true);
-			setLoginTriggered(true);
-
-			if (inputRef.current) {
-				inputRef.current.blur();
-			}
 		}
 	};
 

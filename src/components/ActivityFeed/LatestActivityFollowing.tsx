@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -44,7 +44,6 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [loading, setLoading] = useState<boolean>(false); // Loading state
 	const { network } = useNetworkSelector();
-	const { is_sidebar_collapsed } = useGlobalSelector();
 
 	useEffect(() => {
 		const fetchPostUpdates = async () => {
@@ -125,11 +124,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 						</div>
 					</div>
 				) : (
-					<div
-						className={`flex h-[900px] ${
-							is_sidebar_collapsed ? 'lg:w-[900px] xl:w-[915px]' : 'w-[790px] xl:w-[915px]'
-						} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
-					>
+					<div className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'}>
 						<Image
 							src='/assets/activityfeed/gifs/noactivity.gif'
 							alt='empty state'
@@ -148,11 +143,7 @@ const LatestActivityFollowing: React.FC<LatestActivityFollowingProps> = () => {
 					</div>
 				)
 			) : (
-				<div
-					className={`flex h-[900px] ${
-						is_sidebar_collapsed ? 'lg:w-[900px] xl:w-[915px]' : 'w-[790px]  xl:w-[915px]'
-					} flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]`}
-				>
+				<div className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'}>
 					<Image
 						src='/assets/activityfeed/gifs/nologin.gif'
 						alt='empty state'

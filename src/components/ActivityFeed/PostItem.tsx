@@ -51,6 +51,7 @@ import ActivityProgressinlisting from './ActivityProgressinlisting';
 import { inputToBn } from '~src/util/inputToBn';
 import { getUsdValueFromAsset } from '../OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from '../OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 
 const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {
 	loading: () => <Skeleton active />,
@@ -148,11 +149,11 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 					}}
 					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
 				>
-					<ImageIcon
+					{/* <ImageIcon
 						src='/assets/Vote.svg'
 						alt=''
 						className='m-0 h-6 w-6 p-0'
-					/>
+					/> */}
 					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
 				</div>
 			)}
@@ -240,7 +241,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 
 	const onAccountChange = (address: string) => setAddress(address);
 	const [votesData, setVotesData] = useState(null);
-
+	const [loading, setLoading] = useState<boolean>(false);
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	useEffect(() => {
 		const fetchData = async () => {
@@ -263,6 +264,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
 
 	const fetchUSDValue = async () => {
+		setLoading(true);
 		if (!post?.created_at || dayjs(post?.created_at).isSame(dayjs())) return;
 		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		let proposalClosedStatusDetails: any = null;
@@ -283,8 +285,10 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
+			setLoading(false);
 		} else if (error) {
 			console.log(error);
+			setLoading(false);
 		}
 	};
 	useEffect(() => {
@@ -317,35 +321,41 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 
 							<div>
 								<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
-									~{' '}
-									{post?.assetId ? (
-										`${getUsdValueFromAsset({
-											currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
-											dedTokenUsdPrice: dedTokenUsdPrice || '0',
-											generalIndex: post?.assetId,
-											inputAmountValue: new BN(post?.requestedAmount)
-												.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
-												.toString(),
-											network
-										})} ${chainProperties[network]?.tokenSymbol}`
+									{loading ? (
+										<SkeletonInput className='w-5' />
 									) : (
-										<span>
-											{parseBalance(
-												requestedAmountFormatted
-													?.mul(
-														!isProposalClosed
-															? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-															: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-															? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-															: bnUsdValueOnClosed
-													)
-													?.toString() || '0',
-												0,
-												false,
-												network
-											)}{' '}
-											USD{' '}
-										</span>
+										<>
+											~{' '}
+											{post?.assetId ? (
+												`${getUsdValueFromAsset({
+													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: post?.assetId,
+													inputAmountValue: new BN(post?.requestedAmount)
+														.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
+														.toString(),
+													network
+												})} ${chainProperties[network]?.tokenSymbol}`
+											) : (
+												<span>
+													{parseBalance(
+														requestedAmountFormatted
+															?.mul(
+																!isProposalClosed
+																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																	: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																	: bnUsdValueOnClosed
+															)
+															?.toString() || '0',
+														0,
+														false,
+														network
+													)}{' '}
+													USD{' '}
+												</span>
+											)}
+										</>
 									)}
 								</p>
 							</div>
@@ -412,14 +422,14 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 										setShowModal(true);
 									}
 								}}
-								className='m-0 flex cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='m-0 mt-3 flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
 								<ImageIcon
 									src='/assets/Vote.svg'
 									alt=''
 									className='m-0 h-6 w-6 p-0'
 								/>
-								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}</p>
+								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
 							</div>
 
 							<div className='flex items-center gap-2'>

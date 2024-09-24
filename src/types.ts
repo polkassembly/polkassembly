@@ -659,7 +659,8 @@ export enum EUserActivityType {
 	REACTED = 'REACTED',
 	COMMENTED = 'COMMENTED',
 	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
+	MENTIONED = 'MENTIONED',
+	REMOVED_VOTE = 'REMOVED_VOTE'
 }
 
 export enum EUserActivityIn {

@@ -42,7 +42,7 @@ import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { BN } from 'bn.js';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -494,6 +494,8 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const [activeTab, setActiveTab] = useState('explore');
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const { is_sidebar_collapsed } = useGlobalSelector();
+
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
@@ -540,11 +542,11 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 						</div>
 					)}
 					<div className='mx-1 mt-8 '>
-						<div className='mx-1  '>
+						<div className={`mx-1 xl:w-[915px] ${is_sidebar_collapsed ? 'xl:w-[915px]' : 'xl:w-[800px] 2xl:w-[915px]'} `}>
 							{activeTab === 'explore' ? <LatestActivityExplore currentUserdata={currentUserdata} /> : <LatestActivityFollowing currentUserdata={currentUserdata} />}
 						</div>
 					</div>
-					<div className=' hidden w-[340px] xl:block  '>
+					<div className=' hidden w-[305px] xl:block  '>
 						<div className='mx-1 mt-2 md:mt-6'>
 							{networkSocialsData && (
 								<AboutActivity

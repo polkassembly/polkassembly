@@ -69,7 +69,7 @@ const EmojiOption = ({ icon, title }: { icon: React.ReactNode; title: string }) 
 			title={title}
 			placement='top'
 		>
-			<div className={'  h-10 w-10 rounded-full border-none bg-transparent pl-3 pt-2  text-2xl '}>{icon}</div>
+			<div className={'  h-10 w-10 rounded-full border-none bg-transparent pl-3   text-2xl '}>{icon}</div>
 		</Tooltip>
 	);
 };
@@ -110,18 +110,22 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				statusLabel={statusLabel}
 				currentUserdata={currentUserdata}
 			/>
+			<Link
+				href={`/referenda/${post?.post_id}`}
+				passHref
+			>
+				<PostContent
+					post={post}
+					content={fullContent}
+					isCommentPost={false}
+				/>
 
-			<PostContent
-				post={post}
-				content={fullContent}
-				isCommentPost={false}
-			/>
-
-			<PostReactions
-				likes={likes}
-				dislikes={dislikes}
-				post={post}
-			/>
+				<PostReactions
+					likes={likes}
+					dislikes={dislikes}
+					post={post}
+				/>
+			</Link>
 			<div className='border-t-[0.01px]  border-solid border-[#D2D8E0]'></div>
 			<PostActions
 				post={post}
@@ -245,67 +249,72 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; cu
 	return (
 		<>
 			<div className='flex justify-between'>
-				<div>
-					<div className='flex items-center gap-4'>
-						<p className='pt-[10px] text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
-							{post?.requestedAmount ? (
-								post?.assetId ? (
-									getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+				<Link
+					href={`/referenda/${post?.post_id}`}
+					passHref
+				>
+					<div>
+						<div className='flex items-center gap-4'>
+							<p className='pt-[10px] text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] xl:text-2xl'>
+								{post?.requestedAmount ? (
+									post?.assetId ? (
+										getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+									) : (
+										<>
+											{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+										</>
+									)
 								) : (
-									<>
-										{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-									</>
-								)
-							) : (
-								'$0'
-							)}
-						</p>
-						<div>
-							<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
-								~{' '}
-								{parseBalance(
-									requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() ||
-										'0',
-									0,
-									false,
-									network
-								)}{' '}
+									'$0'
+								)}
 							</p>
+							<div>
+								<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+									~{' '}
+									{parseBalance(
+										requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))))?.toString() ||
+											'0',
+										0,
+										false,
+										network
+									)}{' '}
+								</p>
+							</div>
+							<div>
+								<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
+							</div>
 						</div>
-						<div>
-							<p className={`rounded-full px-3 py-2 text-white dark:text-black ${bgColor}`}>{statusLabel}</p>
-						</div>
-					</div>
-					<div className='flex items-center gap-2 '>
-						<Image
-							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-							alt='profile'
-							className='h-4 w-4 rounded-full xl:h-6 xl:w-6'
-							width={24}
-							height={24}
-						/>
-						<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
-							{post.proposerProfile?.username
-								? post.proposerProfile.username.length > 10
-									? `${post.proposerProfile.username.substring(0, 10)}...`
-									: post.proposerProfile.username
-								: ANONYMOUS_FALLBACK}
-						</p>
-						<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
-						<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
-							{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
-						</span>
-						<p className='pt-3 text-[#485F7D]'>|</p>
-						<div className='flex '>
-							<ImageIcon
-								src='/assets/icons/timer.svg'
-								alt='timer'
-								className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+						<div className='flex items-center gap-2 '>
+							<Image
+								src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+								alt='profile'
+								className='h-4 w-4 rounded-full xl:h-6 xl:w-6'
+								width={24}
+								height={24}
 							/>
-							<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
+							<p className='pt-3 text-[12px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
+								{post.proposerProfile?.username
+									? post.proposerProfile.username.length > 10
+										? `${post.proposerProfile.username.substring(0, 10)}...`
+										: post.proposerProfile.username
+									: ANONYMOUS_FALLBACK}
+							</p>
+							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md rounded-lg bg-[#FCF1F4] p-2 text-[10px] text-[#EB5688] dark:bg-[#4D2631] dark:text-[##EB5688] xl:text-sm'>
+								{post?.topic?.name || GENERAL_TOPIC_FALLBACK}
+							</span>
+							<p className='pt-3 text-[#485F7D]'>|</p>
+							<div className='flex '>
+								<ImageIcon
+									src='/assets/icons/timer.svg'
+									alt='timer'
+									className='mt-2 h-4 w-4 text-[#485F7D] dark:text-[#9E9E9E] md:mt-3 xl:h-5 xl:w-5'
+								/>
+								<p className='pt-3 text-[10px] text-gray-500 dark:text-[#9E9E9E] xl:text-sm'>{getRelativeCreatedAt(post.created_at)}</p>
+							</div>
 						</div>
 					</div>
-				</div>
+				</Link>
 				<div className='hidden lg:block'>
 					{post?.isVoted ? (
 						<div className='flex items-center gap-5'>
@@ -482,40 +491,53 @@ const PostReactions: React.FC<{
 				<p className='text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
-					{post?.highestSentiment?.sentiment == 1 && (
-						<EmojiOption
-							icon={
-								theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
-							}
-							title={'Completely Against'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 2 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Slightly Against'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 3 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Neutral'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 4 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Slightly For'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 5 && (
-						<EmojiOption
-							icon={
-								theme === 'dark' ? <DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
-							}
-							title={'Completely For'}
-						/>
-					)}
+					<div className='flex items-center'>
+						<div>
+							{post?.highestSentiment?.sentiment == 0 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Completely Against'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 2 && (
+								<EmojiOption
+									icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+									title={'Slightly Against'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 3 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Neutral'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 4 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Slightly For'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 5 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? (
+											<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
+										) : (
+											<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										)
+									}
+									title={'Completely For'}
+								/>
+							)}
+						</div>
+						<p className='text-[10px] text-[#485F7D] md:text-[12px] '>{post?.highestSentiment?.percentage && `${post?.highestSentiment?.percentage}%`}</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -537,7 +559,6 @@ const PostActions: React.FC<{
 		userDisliked: post_reactions?.['👎']?.usernames?.includes(username) || false,
 		userLiked: post_reactions?.['👍']?.usernames?.includes(username) || false
 	});
-	console.log('post', post);
 
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
@@ -644,7 +665,6 @@ const PostActions: React.FC<{
 				setImageData(data);
 				setIsLoading(false);
 			} else {
-				console.log('There is an error in fetching data');
 				setIsLoading(false);
 			}
 		} else {
@@ -815,40 +835,53 @@ const PostActions: React.FC<{
 				</div>
 
 				<div className='hidden lg:block'>
-					{post?.highestSentiment?.sentiment == 1 && (
-						<EmojiOption
-							icon={
-								theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
-							}
-							title={'Completely Against'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 2 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Slightly Against'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 3 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Neutral'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 4 && (
-						<EmojiOption
-							icon={theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-							title={'Slightly For'}
-						/>
-					)}
-					{post?.highestSentiment?.sentiment == 5 && (
-						<EmojiOption
-							icon={
-								theme === 'dark' ? <DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
-							}
-							title={'Completely For'}
-						/>
-					)}
+					<div className='flex items-center'>
+						<div>
+							{post?.highestSentiment?.sentiment == 0 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Completely Against'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 2 && (
+								<EmojiOption
+									icon={theme === 'dark' ? <DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+									title={'Slightly Against'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 3 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Neutral'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 4 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? <DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} /> : <SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+									}
+									title={'Slightly For'}
+								/>
+							)}
+							{post?.highestSentiment?.sentiment == 5 && (
+								<EmojiOption
+									icon={
+										theme === 'dark' ? (
+											<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
+										) : (
+											<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+										)
+									}
+									title={'Completely For'}
+								/>
+							)}
+						</div>
+						<p className='text-[10px] text-[#485F7D] md:text-[12px] '>{post?.highestSentiment?.percentage && `${post?.highestSentiment?.percentage}%`}</p>
+					</div>
 				</div>
 			</div>
 			{isModalOpen && (

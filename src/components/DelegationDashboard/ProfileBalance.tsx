@@ -87,7 +87,7 @@ const ProfileBalances = ({ className }: Props) => {
 
 		getAllAccounts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, defaultAddress]);
+	}, [delegationDashboardAddress, api, apiReady]);
 
 	return (
 		<div className={'flex w-full items-center justify-between pl-[26px] max-md:pl-4 '}>

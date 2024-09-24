@@ -585,7 +585,7 @@ const PostReactions: React.FC<{
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block  lg:hidden'>
-					<div className='mt-2 flex items-center space-x-1'>
+					<div className='mt-5 flex items-center space-x-1'>
 						{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
 							<EmojiOption
 								icon={
@@ -958,7 +958,7 @@ const PostActions: React.FC<{
 				</div>
 
 				<div className='hidden  lg:block'>
-					<div className='mt-2 flex items-center space-x-1'>
+					<div className='mt-5 flex items-center space-x-1'>
 						{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
 							<EmojiOption
 								icon={

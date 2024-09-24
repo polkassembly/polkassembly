@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import BN from 'bn.js';
 import getBeneficiaryAmountAndAsset from '../OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
@@ -95,7 +95,8 @@ const getStatusStyle = (status: string) => {
 	return statusStyles[status] || { bgColor: 'bg-[#2ED47A]', label: 'Active' };
 };
 
-const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
+const PostItem: React.FC<any> = ({ post }) => {
+	const currentUserdata = useUserDetailsSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const { bgColor, label: statusLabel } = getStatusStyle(post.status || 'Active');
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
@@ -123,7 +124,6 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 				post={post}
 				bgColor={bgColor}
 				statusLabel={statusLabel}
-				currentUserdata={currentUserdata}
 			/>
 			<Link
 				href={`/referenda/${post?.post_id}`}
@@ -144,14 +144,10 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 			<Divider className='m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0' />
 			<PostActions
 				post={post}
-				currentUserdata={currentUserdata}
 				reactionState={reactionState}
 				setReactionState={setReactionState}
 			/>
-			<PostCommentSection
-				post={post}
-				currentUserdata={currentUserdata}
-			/>
+			<PostCommentSection post={post} />
 			{isMobile && (
 				<div
 					onClick={() => {
@@ -195,7 +191,8 @@ const PostItem: React.FC<any> = ({ post, currentUserdata }) => {
 	);
 };
 
-const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any; currentUserdata: any }> = ({ bgColor, statusLabel, post, currentUserdata }) => {
+const PostHeader: React.FC<{ bgColor: string; statusLabel: string; post: any }> = ({ bgColor, statusLabel, post }) => {
+	const currentUserdata = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const userid = currentUserdata?.id;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -660,10 +657,10 @@ const PostReactions: React.FC<{
 
 const PostActions: React.FC<{
 	post: any;
-	currentUserdata: any;
 	reactionState: any;
 	setReactionState: React.Dispatch<React.SetStateAction<any>>;
-}> = ({ post, currentUserdata, reactionState, setReactionState }) => {
+}> = ({ post, reactionState, setReactionState }) => {
+	const currentUserdata = useUserDetailsSelector();
 	const { post_id, track_no } = post;
 	const userid = currentUserdata?.id;
 	const username = currentUserdata?.username;
@@ -821,7 +818,7 @@ const PostActions: React.FC<{
 			<div className='flex justify-between'>
 				<div className='mt-1 flex items-center space-x-5 md:space-x-2'>
 					<div
-						className='flex w-[60px] items-center justify-center' // Fixed width and centered content
+						className='flex w-[60px] items-center justify-center'
 						onClick={() => handleReactionClick('👍')}
 					>
 						<PostAction
@@ -926,11 +923,10 @@ const PostActions: React.FC<{
 
 					<div
 						onClick={() => {
-							if (!currentUserdata && !userid) {
-								setOpenLoginModal(true);
-								return;
-							} else {
+							if (userid) {
 								openModal();
+							} else {
+								setOpenLoginModal(true);
 							}
 						}}
 						className='flex w-[60px] items-center justify-center pl-1 md:w-[80px]'
@@ -1089,8 +1085,9 @@ const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean
 	</div>
 );
 
-const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ post, currentUserdata }) => {
+const PostCommentSection: React.FC<{ post: any }> = ({ post }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const currentUserdata = useUserDetailsSelector();
 	const userid = currentUserdata?.id;
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -1134,7 +1131,7 @@ const PostCommentSection: React.FC<{ post: any; currentUserdata: any }> = ({ pos
 		<div className='mt-3 flex items-center'>
 			{!isMobile && (
 				<Image
-					src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
+					src={`${currentUserdata?.picture ? currentUserdata?.picture : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 					alt=''
 					className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
 					width={40}

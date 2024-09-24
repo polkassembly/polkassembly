@@ -5,7 +5,7 @@ import React from 'react';
 import PostItem from './PostItem';
 import { PostListProps } from './utils/types';
 
-const PostList: React.FC<PostListProps> = ({ postData, currentUserdata }) => {
+const PostList: React.FC<PostListProps> = ({ postData }) => {
 	return (
 		<div className='space-y-5'>
 			{postData.length === 0 ? (
@@ -15,7 +15,6 @@ const PostList: React.FC<PostListProps> = ({ postData, currentUserdata }) => {
 					<PostItem
 						key={index}
 						post={post}
-						currentUserdata={currentUserdata}
 					/>
 				))
 			)}

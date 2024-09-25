@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button } from 'antd';
 import React, { useState } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
@@ -11,7 +10,7 @@ interface ExpandableMarkdownProps {
 }
 
 const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) => {
-	const [height, setHeight] = useState(301); // Initial height of 301px
+	const [height, setHeight] = useState(301);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const heightIncrement = 301;
 
@@ -19,16 +18,18 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 		const contentHeight = document.getElementById('expandable-content')?.scrollHeight || 0;
 		const newHeight = Math.min(height + heightIncrement, contentHeight);
 		setHeight(newHeight);
+		window.scrollBy({
+			behavior: 'smooth',
+			top: heightIncrement
+		});
 		if (newHeight >= contentHeight) {
 			setIsExpanded(true);
 		}
 	};
 
 	const handleShowLess = () => {
-		const newHeight = Math.max(height - heightIncrement, 301); // Decrease height but not below 301px
+		const newHeight = Math.max(height - heightIncrement, 301);
 		setHeight(newHeight);
-
-		// Scroll up by 301px
 		window.scrollBy({
 			behavior: 'smooth',
 			top: -heightIncrement
@@ -52,24 +53,24 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 			</div>
 			{height < (document.getElementById('expandable-content')?.scrollHeight || 0) && !isExpanded && (
 				<div className='flex w-full justify-center'>
-					<Button
+					<p
 						onClick={handleShowMore}
-						className='my-1 flex h-[30px] w-[120px] items-center justify-start border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
+						className='my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
 						style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
 					>
 						Show More
-					</Button>
+					</p>
 				</div>
 			)}
 			{isExpanded && (
 				<div className='flex w-full justify-center'>
-					<button
+					<p
 						onClick={handleShowLess}
-						className='mb-2 flex h-[30px] w-[120px] items-center justify-start border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
+						className='my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
 						style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
 					>
 						Show Less
-					</button>
+					</p>
 				</div>
 			)}
 		</div>

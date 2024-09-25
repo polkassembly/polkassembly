@@ -105,6 +105,10 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 					<ConfusionModal
 						modalOpen={isModalOpen}
 						setModalOpen={setModalOpen}
+						className='w-[600px]'
+						postId={post.id}
+						proposalType={proposalType}
+						title={post.title}
 					/>
 				}
 			</>

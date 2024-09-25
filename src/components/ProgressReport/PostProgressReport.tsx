@@ -41,7 +41,7 @@ const PostProgressReport = ({ className }: Props) => {
 						</div>
 					}
 					key='1'
-					// className='h-[45px]'
+					className='m-0 p-0'
 					style={{ backgroundColor: '#F0EEFE' }}
 				>
 					<section className='w-full bg-[#F0EEFE]'>
@@ -51,13 +51,13 @@ const PostProgressReport = ({ className }: Props) => {
 								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
 							</div>
 						)}
-						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] bg-white p-4 dark:border-[#3B444F] dark:bg-black'>
+						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] bg-white p-4'>
 							<iframe
 								src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 								width='100%'
 								height='180px'
 								title='PDF Preview'
-								className='rounded-md border border-white bg-white dark:border-[#3B444F]'
+								className='rounded-md border border-white bg-white'
 							></iframe>
 							<div className='flex items-center justify-start gap-x-2'>
 								<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
@@ -103,5 +103,8 @@ export default styled(PostProgressReport)`
 	.ant-collapse .ant-collapse-content {
 		border-top: 1px solid #796eec !important;
 		border-bottom: 1px solid #796eec !important;
+	}
+	.ant-collapse-large > .ant-collapse-item > .ant-collapse-header {
+		padding: 8px 24px;
 	}
 `;

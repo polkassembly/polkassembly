@@ -34,17 +34,17 @@ const ProgressReportRatingModal = () => {
 
 	return (
 		<>
-			<section className='flex flex-col gap-y-2'>
-				{postData?.progress_report?.progress_summary && <h1 className='text-normal mt-3 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
-				<p className='m-0 -mt-3 p-0 text-sm text-bodyBlue dark:text-white'>
+			<section className='flex flex-col gap-y-1'>
+				{postData?.progress_report?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
+				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
-						className='post-content'
+						className='post-content m-0 p-0 dark:text-blue-dark-medium'
 						md={postData?.progress_report?.progress_summary}
 						theme={theme}
 					/>
 				</p>
 				<p
-					className='m-0 -mt-2 cursor-pointer p-0 text-sm font-normal text-pink_primary'
+					className='m-0 cursor-pointer p-0 text-sm font-normal text-pink_primary'
 					onClick={() => {
 						router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);
 						dispatch(progressReportActions.setOpenRatingModal(false));
@@ -58,8 +58,8 @@ const ProgressReportRatingModal = () => {
 						className='my-3'
 					/>
 				)}
-				<div className='-mb-8 flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
+				<div className='flex flex-col items-center justify-center gap-y-2'>
+					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
 					<>
 						<Rate
 							tooltips={desc}
@@ -80,10 +80,12 @@ const ProgressReportRatingModal = () => {
 								character={({ index = 0 }) => customIcons[index + 1]}
 							/>
 						)}
-						{postData?.progress_report?.ratings?.length > 0 && (
-							<p className='my-4 text-xs text-sidebarBlue dark:text-white'>{postData?.progress_report?.ratings?.length} users have already rated the progress report.</p>
-						)}
 					</>
+					{postData?.progress_report?.ratings?.length > 0 && (
+						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
+							{postData?.progress_report?.ratings?.length} users have already rated the progress report.
+						</p>
+					)}
 				</div>
 			</section>
 		</>

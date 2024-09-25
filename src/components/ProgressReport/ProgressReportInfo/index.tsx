@@ -138,15 +138,15 @@ const ProgressReportInfo = () => {
 
 	return (
 		<>
-			<section className='flex flex-col gap-y-2'>
+			<section className='flex flex-col gap-y-3'>
 				<header className='flex items-center justify-start gap-x-1'>
 					<NameLabel
 						defaultAddress={postData?.proposer || ''}
 						truncateUsername
-						usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden font-normal'
+						usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden font-normal dark:text-blue-dark-medium'
 					/>
 					<Divider
-						className='hidden md:inline-block'
+						className='hidden dark:text-blue-dark-medium md:inline-block'
 						type='vertical'
 						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
@@ -154,25 +154,23 @@ const ProgressReportInfo = () => {
 					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
 					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 				</header>
-				<article className=''>
-					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue'>{postData?.title}</h1>
+				<article className='flex flex-col gap-y-1'>
+					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue dark:text-white'>{postData?.title}</h1>
 					{postData?.progress_report?.progress_summary && (
-						<div className='flex flex-col gap-y-2'>
-							<p className='mt-2 text-sm text-bodyBlue dark:text-white'>
-								<Markdown
-									className='post-content'
-									md={postData?.progress_report?.progress_summary}
-									theme={theme}
-								/>
-							</p>
-						</div>
+						<p className='m-0 mt-2 p-0 text-sm text-bodyBlue dark:text-white'>
+							<Markdown
+								className='post-content m-0 p-0'
+								md={postData?.progress_report?.progress_summary}
+								theme={theme}
+							/>
+						</p>
 					)}
 					{postData?.progress_report?.ratings?.length > 0 && (
-						<p className='m-0 -mt-3 mb-4 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
+						<p className='m-0 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
 							Average Rating({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
 						</p>
 					)}
-					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
+					<div className='mt-2 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
 						<iframe
 							src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 							width='100%'

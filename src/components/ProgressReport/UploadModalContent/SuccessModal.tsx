@@ -24,7 +24,7 @@ const SuccessModal = () => {
 			<div className='-mt-[136px] flex flex-col items-center justify-center'>
 				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Progress Report Successfully Added</h1>
 				<p
-					className='m-0 mb-4 mt-1 p-0 text-sm font-normal text-pink_primary'
+					className='m-0 mb-4 mt-1 cursor-pointer p-0 text-sm font-normal text-pink_primary'
 					onClick={() => {
 						dispatch(progressReportActions.setOpenSuccessModal(false));
 						router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);

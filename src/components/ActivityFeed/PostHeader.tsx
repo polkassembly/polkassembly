@@ -266,7 +266,7 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 						<div className='mt-1 flex flex-col items-end '>
 							<div
 								onClick={() => {
-									if (!currentUserdata && !userid) {
+									if (!userid) {
 										setModalOpen(true);
 									} else {
 										setShowModal(true);

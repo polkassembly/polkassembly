@@ -1218,7 +1218,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.content = res.content;
 				post.title = res.title;
 
-				if (!post.content && !post.title && (res.title || res.content)) {
+				if (res.title || res.content) {
 					post.dataSource = 'subsquare';
 				}
 

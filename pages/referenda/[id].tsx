@@ -72,7 +72,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 					network={network}
 				/>
 				<div
-					className={`bg-gradient-to-r-pink absolute left-0 top-0 flex w-full gap-2  ${
+					className={`bg-absolute·left-0·top-0·flex·w-full·gap-2·bg-gradient-to-r-pink ${
 						is_sidebar_collapsed ? 'pl-28' : 'pl-[265px]'
 					}  font-poppins  text-[12px] font-medium text-white`}
 				>

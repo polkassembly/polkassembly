@@ -18,6 +18,7 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { useGlobalSelector } from '~src/redux/selectors';
 import ConfusionModal from '~src/ui-components/ConfusionModal';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
@@ -54,7 +55,10 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const [isModalOpen, setModalOpen] = useState(false);
-
+	const [isContentVisible, setContentVisible] = useState(true);
+	const handleToggleContent = () => {
+		setContentVisible(false);
+	};
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) {
@@ -71,37 +75,49 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
+				{/* Confusion banner */}
 				<div
-					className={`bg-absolute·left-0·top-0·flex·w-full·gap-2·bg-gradient-to-r-pink ${
+					className={`transition-opacity duration-100 ${
+						isContentVisible ? 'opacity-100' : 'opacity-0'
+					} absolute left-0 top-0 flex w-full justify-between bg-gradient-to-r from-[#D80676] to-[#FF778F] pr-10 ${
 						is_sidebar_collapsed ? 'pl-28' : 'pl-[265px]'
-					}  font-poppins  text-[12px] font-medium text-white`}
+					} font-poppins text-[12px] font-medium text-white`}
 				>
-					<p className='pt-3 '>Confused about making a decision?</p>
-					<div
-						onClick={() => {
-							setModalOpen(true);
-						}}
-						className=' mt-2 flex h-6 cursor-pointer gap-2 rounded-md bg-[#0000004D] bg-opacity-[30%] px-2 pt-1'
-					>
-						<ImageIcon
-							src='/assets/icons/transformedshare.svg'
-							alt='share icon'
-							className='h-4 w-4'
-						/>
-						<p className=''>Share proposal</p>
+					<div className='flex gap-2'>
+						<p className='pt-3 '>Confused about making a decision?</p>
+						<div
+							onClick={() => setModalOpen(true)}
+							className='mt-2 flex h-6 cursor-pointer gap-2 rounded-md bg-[#0000004D] bg-opacity-[30%] px-2 pt-1'
+						>
+							<ImageIcon
+								src='/assets/icons/transformedshare.svg'
+								alt='share icon'
+								className='h-4 w-4'
+							/>
+							<p className=''>Share proposal</p>
+						</div>
+						<p className='pt-3'>with a friend to get their opinion!</p>
 					</div>
-					<p className='pt-3'>with a friend to get their opinion!</p>
+					<div onClick={handleToggleContent}>
+						<CloseIcon className='cursor-pointer pt-[10px] text-2xl' />
+					</div>
 				</div>
 
-				<div className='mt-10'>{trackName && <BackToListingView trackName={trackName} />}</div>
-				<div className='mt-6'>
-					<Post
-						post={post}
-						trackName={trackName === 'Root' ? 'root' : trackName}
-						proposalType={proposalType}
-					/>
+				{/* Main content */}
+				<div className={`transition-opacity duration-500 ${isContentVisible ? 'mt-7' : 'mt-0'}`}>
+					{trackName && <BackToListingView trackName={trackName} />}
+
+					<div className='mt-6'>
+						<Post
+							post={post}
+							trackName={trackName === 'Root' ? 'root' : trackName}
+							proposalType={proposalType}
+						/>
+					</div>
 				</div>
-				{
+
+				{/* Confusion Modal */}
+				{isModalOpen && (
 					<ConfusionModal
 						modalOpen={isModalOpen}
 						setModalOpen={setModalOpen}
@@ -110,7 +126,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 						proposalType={proposalType}
 						title={post.title}
 					/>
-				}
+				)}
 			</>
 		);
 	}

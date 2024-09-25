@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { Divider } from 'antd';
 import React, { useState } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
@@ -55,7 +56,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 				<div className='flex w-full justify-center'>
 					<p
 						onClick={handleShowMore}
-						className='my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
+						className='m-0 my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-medium text-pink_primary'
 						style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
 					>
 						Show More
@@ -66,13 +67,14 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 				<div className='flex w-full justify-center'>
 					<p
 						onClick={handleShowLess}
-						className='my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-normal text-pink_primary'
+						className='m-0 my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-medium text-pink_primary'
 						style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
 					>
 						Show Less
 					</p>
 				</div>
 			)}
+			<Divider className='border-1 my-0 -mr-4 bg-[#f4f5f6] text-lightBlue dark:bg-separatorDark' />
 		</div>
 	);
 };

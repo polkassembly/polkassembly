@@ -340,14 +340,16 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 					trackNumber={post?.track_no}
 				/>
 			)}
-			<ReferendaLoginPrompts
-				theme={theme}
-				modalOpen={modalOpen}
-				setModalOpen={setModalOpen}
-				image='/assets/Gifs/login-vote.gif'
-				title={'Join Polkassembly to Vote on this proposal.'}
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
-			/>
+			{modalOpen && (
+				<ReferendaLoginPrompts
+					theme={theme}
+					modalOpen={modalOpen}
+					setModalOpen={setModalOpen}
+					image='/assets/Gifs/login-vote.gif'
+					title={'Join Polkassembly to Vote on this proposal.'}
+					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				/>
+			)}
 		</>
 	);
 };

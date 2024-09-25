@@ -140,7 +140,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			});
 
 			let post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-			if (!post.preimage?.proposer && !post?.proposer && isSubscanSupport(network)) {
+			if (!post?.proposer && !post?.preimage?.proposer && isSubscanSupport(network)) {
 				post = await getSubscanData('/api/scan/referenda/referendum', network, { referendum_index: Number(postId) });
 			}
 			if (!post) return res.status(500).json({ message: 'Post not found on our on-chain database. Something went wrong.' });
@@ -251,7 +251,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 
 		let post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-		if (!post.preimage?.proposer && !post?.proposer && isSubscanSupport(network)) {
+		if (post?.proposer && !post?.preimage?.proposer && isSubscanSupport(network)) {
 			post = await getSubscanData('/api/scan/referenda/referendum', network, { referendum_index: Number(postId) });
 		}
 		if (!post) return res.status(500).json({ message: 'Post not found on our on-chain database. Something went wrong.' });

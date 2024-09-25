@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import { FellowshipIconNew, GovernanceIconNew, RootIcon, StakingAdminIcon, TreasuryIconNew, WishForChangeIcon } from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-import { TabNavigationProps } from './utils/types';
+import { TabItem, TabNavigationProps } from './utils/types';
 import Popover from '~src/basic-components/Popover';
 import { useGlobalSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
@@ -31,23 +31,26 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		};
 	}, []);
 
-	const tabItems = [
+	const tabItems: TabItem[] = [
 		{
 			key: 'all',
 			label: 'All',
-			posts: gov2LatestPosts.length
+			posts: gov2LatestPosts.length,
+			group: 'Other'
 		},
 		{
 			key: 'wish-for-change',
 			label: 'Wish For Change',
-			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length
+			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length,
+			group: 'Other'
 		}
 	];
 
 	if (network && networkTrackInfo[network]) {
 		Object.keys(networkTrackInfo[network]).forEach((trackName) => {
-			const trackId = networkTrackInfo[network][trackName].trackId;
-			const postsCount = gov2LatestPosts.filter((post: any) => post.track_no === trackId).length;
+			const trackInfo = networkTrackInfo[network][trackName];
+			const trackId = trackInfo.trackId;
+			const postsCount = gov2LatestPosts.filter((post: { track_no: number }) => post.track_no === trackId).length;
 
 			tabItems.push({
 				key: trackName
@@ -55,10 +58,21 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 					.join('-')
 					.toLowerCase(),
 				label: trackName.split(/(?=[A-Z])/).join(' '),
-				posts: postsCount
+				posts: postsCount,
+				group: trackInfo.group || 'Other'
 			});
 		});
 	}
+	const dynamicGroups = ['Governance', 'Treasury', 'Whitelist'];
+	const filteredGroups = tabItems.reduce(
+		(acc: { [key: string]: string[] }, item) => {
+			if (dynamicGroups.includes(item.group)) {
+				(acc[item.group] = acc[item.group] || []).push(item.key);
+			}
+			return acc;
+		},
+		{} as { [key: string]: string[] }
+	);
 
 	const tabIcons: { [key: string]: JSX.Element } = {
 		all: (
@@ -81,15 +95,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		All: ['all'],
 		Root: ['root'],
 		['Wish For Change']: ['wish-for-change'],
-		// eslint-disable-next-line sort-keys
 		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
-		Governance: tabItems.filter((item) => ['lease-admin', 'general-admin', 'referendum-canceller', 'referendum-killer'].includes(item.key)).map((item) => item.key),
-		Treasury: tabItems
-			.filter((item) => ['big-spender', 'medium-spender', 'small-spender', 'big-tipper', 'small-tipper', 'treasurer', 'on-chain-bounties', 'child-bounties'].includes(item.key))
-			.map((item) => item.key),
-		Whitelist: ['members', 'whitelisted-caller', 'fellowship-admin']
+		...filteredGroups // Spread dynamically grouped categories
 	};
-
 	const handleCategoryClick = (category: string) => {
 		if (tabCategories[category].length > 1) {
 			setCurrentCategory(currentCategory === category ? null : category);

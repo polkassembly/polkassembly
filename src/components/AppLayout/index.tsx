@@ -142,7 +142,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	useEffect(() => {
 		getTotalActiveProposalsCount();
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -350,6 +349,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</div>
 				</Layout>
+
 				{onchainIdentitySupportedNetwork.includes(network) && (
 					<OnchainIdentity
 						open={open}

@@ -48,14 +48,17 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import AboutActivity from '~src/components/ActivityFeed/AboutActivity';
-import LatestActivityFollowing from '~src/components/ActivityFeed/LatestActivityFollowing';
-import LatestActivityExplore from '~src/components/ActivityFeed/LatestActivityExplore';
 import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import Image from 'next/image';
 
 const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const LatestActivity = dynamic(() => import('~src/components/ActivityFeed/LatestActivity'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -386,7 +389,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			setIsLoading(false);
-		}, 3000);
+		}, 5000);
 
 		return () => clearTimeout(timer);
 	}, []);
@@ -539,7 +542,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
 					{/* Main content with flex-grow and shrink */}
 					<div className='mx-1 mt-8 flex-grow'>
-						<div className=''>{activeTab === 'explore' ? <LatestActivityExplore /> : <LatestActivityFollowing />}</div>
+						<div className=''>{activeTab === 'explore' ? <LatestActivity currentTab='explore' /> : <LatestActivity currentTab='following' />}</div>
 					</div>
 
 					{/* Sidebar */}
@@ -552,90 +555,92 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 								/>
 							)}
 						</div>
-						{isLoading ? (
-							<Skeleton active />
-						) : (
-							<>
-								{currentUser?.username && currentUser?.id && (
-									<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
-										<div className='flex items-center justify-between gap-2'>
-											<div className='flex items-center'>
-												<p className='whitespace-nowrap pt-3 font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
-												<Image
-													src='/assets/icons/arrow.svg'
-													alt=''
-													className='h-5 w-5 -rotate-90 p-0'
-													width={20}
-													height={20}
-												/>
-											</div>
-											<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
-												Last 15 days
-											</p>
-										</div>
-										<div>
-											<p className='text-[#485F7D]'>
-												<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
-												<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
-											</p>
-										</div>
-									</div>
-								)}
-							</>
-						)}
 
-						{/* Rank Section */}
-						<div className='relative mt-5 rounded-xxl text-[13px]'>
-							<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>Rank {userRank ? userRank : '#00'}</p>
-							<div className='relative h-full w-full'>
-								<Image
-									src='/assets/rankcard1.svg'
-									className='h-full w-full'
-									alt='rankcard1'
-									width={340}
-									height={340}
-								/>
-								<div className='absolute -bottom-2 left-1/2 z-20 w-full -translate-x-1/2 transform p-[0.2px]'>
+						<>
+							{currentUser?.username && currentUser?.id && (
+								<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
+									<div className='flex items-center justify-between gap-2'>
+										<div className='flex items-center'>
+											<p className='whitespace-nowrap pt-3 font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
+											<Image
+												src='/assets/icons/arrow.svg'
+												alt=''
+												className='h-5 w-5 -rotate-90 p-0'
+												width={20}
+												height={20}
+											/>
+										</div>
+										<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
+											Last 15 days
+										</p>
+									</div>
+									<div>
+										<p className='text-[#485F7D] dark:text-[#9E9E9E]'>
+											<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
+											<span className='text-md font-semibold text-[#485F7D] dark:text-[#9E9E9E]'>{proposaldata.proposals}</span> active proposals
+										</p>
+									</div>
+								</div>
+							)}
+						</>
+
+						{isLoading ? (
+							<Skeleton
+								active
+								className='my-5'
+							/>
+						) : (
+							<div className='relative mt-5 rounded-xxl text-[13px]'>
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>Rank {userRank ? userRank : '#00'}</p>
+								<div className='relative h-full w-full'>
 									<Image
-										src={theme === 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
-										className='max-h-[100px] w-full'
-										alt='rankcard2'
+										src='/assets/rankcard1.svg'
+										className='h-full w-full'
+										alt='rankcard1'
 										width={340}
 										height={340}
 									/>
-									{currentUser?.username && currentUser?.id ? (
-										<div className='absolute bottom-3 left-0 right-0 flex items-center justify-between p-3'>
-											<div className='flex items-center gap-2'>
-												<Image
-													src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
-													className='h-10 w-10 rounded-full'
-													alt='rankcard3'
-													width={40}
-													height={40}
-												/>
-												<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{username}</p>
+									<div className='absolute left-1/2 z-20 w-full -translate-x-1/2 transform p-[0.2px] xl:-bottom-3 2xl:-bottom-2'>
+										<Image
+											src={theme === 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
+											className='max-h-[100px] w-full'
+											alt='rankcard2'
+											width={340}
+											height={340}
+										/>
+										{currentUser?.username && currentUser?.id ? (
+											<div className='absolute bottom-3 left-0 right-0 flex items-center justify-between p-3'>
+												<div className='flex items-center gap-2'>
+													<Image
+														src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
+														className='h-10 w-10 rounded-full'
+														alt='rankcard3'
+														width={40}
+														height={40}
+													/>
+													<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{username}</p>
+												</div>
+												<div className='flex items-center gap-4'>
+													<ScoreTag score={currentUserdata?.profile_score} />
+												</div>
 											</div>
-											<div className='flex items-center gap-4'>
-												<ScoreTag score={currentUserdata?.profile_score} />
+										) : (
+											<div className='absolute bottom-4 left-0 right-0 flex justify-center'>
+												<p className='text-center font-poppins text-[16px] font-semibold text-[#243A57]'>
+													<span
+														onClick={() => setLoginOpen(true)}
+														className='cursor-pointer text-[#E5007A] underline'
+													>
+														Login
+													</span>{' '}
+													to see your rank.
+												</p>
 											</div>
-										</div>
-									) : (
-										<div className='absolute bottom-4 left-0 right-0 flex justify-center'>
-											<p className='text-center font-poppins text-[16px] font-semibold text-[#243A57]'>
-												<span
-													onClick={() => setLoginOpen(true)}
-													className='cursor-pointer text-[#E5007A] underline'
-												>
-													Login
-												</span>{' '}
-												to see your rank.
-											</p>
-										</div>
-									)}
+										)}
+									</div>
 								</div>
 							</div>
-						</div>
-
+						)}
 						{/* Features Section */}
 						<div>
 							<FeaturesSection />

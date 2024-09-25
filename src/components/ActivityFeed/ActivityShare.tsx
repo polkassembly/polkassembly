@@ -78,7 +78,7 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 					<ImageIcon
 						src={`${theme === 'dark' ? '/assets/activityfeed/sharedark.svg' : '/assets/icons/share-pink.svg'}`}
 						alt='share icon'
-						className='h-5 w-5'
+						className='mt-1 h-5 w-5'
 					/>
 					<span className='dark:[#FF4098] pt-1 text-[10px] font-medium text-[#E5007A]  md:text-[12px]'>Share</span>
 				</span>

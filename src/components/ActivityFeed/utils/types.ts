@@ -32,8 +32,3 @@ export interface TabNavigationProps {
 export interface PostListProps {
 	postData: IPostData[];
 }
-
-export interface PostItemProps {
-	post: IPostData;
-	currentUserdata?: any;
-}

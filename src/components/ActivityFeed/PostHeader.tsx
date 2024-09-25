@@ -268,12 +268,11 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 								onClick={() => {
 									if (!currentUserdata && !userid) {
 										setModalOpen(true);
-										return;
 									} else {
 										setShowModal(true);
 									}
 								}}
-								className='m-0  flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='m-0 flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
 								<ImageIcon
 									src='/assets/Vote.svg'
@@ -327,29 +326,30 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 						</div>
 					)}
 				</div>
+				{showModal && (
+					<VoteReferendumModal
+						onAccountChange={onAccountChange}
+						address={address}
+						proposalType={ProposalType.REFERENDUM_V2}
+						setLastVote={setLastVote}
+						setShowModal={setShowModal}
+						showModal={showModal}
+						referendumId={post?.post_id}
+						trackNumber={post?.track_no}
+					/>
+				)}
+
+				{modalOpen && (
+					<ReferendaLoginPrompts
+						theme={theme}
+						modalOpen={modalOpen}
+						setModalOpen={setModalOpen}
+						image='/assets/Gifs/login-vote.gif'
+						title={'Join Polkassembly to Vote on this proposal.'}
+						subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+					/>
+				)}
 			</div>
-			{showModal && (
-				<VoteReferendumModal
-					onAccountChange={onAccountChange}
-					address={address}
-					proposalType={ProposalType.REFERENDUM_V2}
-					setLastVote={setLastVote}
-					setShowModal={setShowModal}
-					showModal={showModal}
-					referendumId={post?.post_id}
-					trackNumber={post?.track_no}
-				/>
-			)}
-			{modalOpen && (
-				<ReferendaLoginPrompts
-					theme={theme}
-					modalOpen={modalOpen}
-					setModalOpen={setModalOpen}
-					image='/assets/Gifs/login-vote.gif'
-					title={'Join Polkassembly to Vote on this proposal.'}
-					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
-				/>
-			)}
 		</>
 	);
 };

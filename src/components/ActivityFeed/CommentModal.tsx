@@ -15,10 +15,20 @@ import TopicTag from '~src/ui-components/TopicTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import NameLabel from '~src/ui-components/NameLabel';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
-const ANONYMOUS_FALLBACK = 'Anonymous';
 
-export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boolean; onclose: () => void }> = ({ post, currentUserdata, isModalOpen, onclose }) => {
+export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boolean; onclose: () => void }> = ({
+	post,
+	currentUserdata,
+	isModalOpen,
+	onclose
+}: {
+	post: any;
+	currentUserdata: any;
+	isModalOpen: boolean;
+	onclose: () => void;
+}) => {
 	const [form] = Form.useForm();
 	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
 	const [content, setContent] = useState(typeof window !== 'undefined' ? window.localStorage.getItem(commentKey()) || '' : '');
@@ -66,10 +76,10 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				postId: post.post_id,
+				postId: post?.post_id,
 				postType: ProposalType.REFERENDUM_V2,
 				sentiment: 0,
-				trackNumber: post.track_no,
+				trackNumber: post?.track_no,
 				userId: currentUserdata?.id
 			});
 			if (error || !data) {
@@ -132,9 +142,12 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 					</div>
 					<div>
 						<div className='flex items-center gap-[4px]  md:gap-2 md:pt-0 '>
-							<p className='pt-3 text-[11px] font-medium text-[#243A57] dark:text-white xl:text-sm'>
-								{post.proposerProfile?.username ? post.proposerProfile.username : ANONYMOUS_FALLBACK}
-							</p>
+							<NameLabel
+								defaultAddress={post?.proposer}
+								username={post.proposerProfile?.username}
+								truncateUsername={true}
+								usernameClassName='text-xs text-ellipsis overflow-hidden'
+							/>
 							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
 							<TopicTag
 								topic={post?.topic?.name}

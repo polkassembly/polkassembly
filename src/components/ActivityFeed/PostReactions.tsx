@@ -38,7 +38,7 @@ export const PostReactions: React.FC<{
 	likes: { count: number; usernames: string[] };
 	dislikes: { count: number; usernames: string[] };
 	post: any;
-}> = ({ likes, dislikes, post }) => {
+}> = ({ likes, dislikes, post }: { likes: { count: number; usernames: string[] }; dislikes: { count: number; usernames: string[] }; post: any }) => {
 	const { firstVoterProfileImg, comments_count } = post;
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const username = likes?.usernames?.[0] || '';

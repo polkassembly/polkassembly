@@ -7,7 +7,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { Divider, Modal, Skeleton } from 'antd';
 import { ILastVote } from '~src/types';
@@ -23,15 +22,13 @@ const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Refe
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-const ZERO_BN = new BN(0);
 
-const ANONYMOUS_FALLBACK = 'Anonymous';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
 
-const PostItem: React.FC<any> = ({ post }) => {
+const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const currentUserdata = useUserDetailsSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;

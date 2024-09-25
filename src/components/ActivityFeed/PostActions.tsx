@@ -29,7 +29,7 @@ import { Modal } from 'antd';
 import { CommentModal } from './CommentModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
-const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean }> = ({ icon, label, isMobile }) => (
+const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean }> = ({ icon, label, isMobile }: { icon: JSX.Element; label: string; isMobile: boolean }) => (
 	<div className='flex items-center gap-2'>
 		<span>{icon}</span>
 		{isMobile && <p className='cursor-pointer pt-4 text-[10px] text-[#E5007A] dark:text-[#FF4098]'>{label}</p>}
@@ -41,7 +41,7 @@ export const PostActions: React.FC<{
 	post: any;
 	reactionState: any;
 	setReactionState: React.Dispatch<React.SetStateAction<any>>;
-}> = ({ post, reactionState, setReactionState }) => {
+}> = ({ post, reactionState, setReactionState }: { post: any; reactionState: any; setReactionState: React.Dispatch<React.SetStateAction<any>> }) => {
 	const currentUserdata = useUserDetailsSelector();
 	const { post_id, track_no } = post;
 	const userid = currentUserdata?.id;

@@ -37,7 +37,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 const ZERO_BN = new BN(0);
 
-export const PostHeader: React.FC<{ post: any }> = ({ post }) => {
+export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => {
 	const currentUserdata = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const userid = currentUserdata?.id;

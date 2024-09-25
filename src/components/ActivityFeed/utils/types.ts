@@ -32,3 +32,10 @@ export interface TabNavigationProps {
 export interface PostListProps {
 	postData: IPostData[];
 }
+
+export interface TabItem {
+	key: string;
+	label: string;
+	posts: number;
+	group: string;
+}

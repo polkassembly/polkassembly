@@ -33,16 +33,16 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 
 	const tabItems: TabItem[] = [
 		{
+			group: 'Other',
 			key: 'all',
 			label: 'All',
-			posts: gov2LatestPosts.length,
-			group: 'Other'
+			posts: gov2LatestPosts.length
 		},
 		{
+			group: 'Other',
 			key: 'wish-for-change',
 			label: 'Wish For Change',
-			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length,
-			group: 'Other'
+			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length
 		}
 	];
 
@@ -53,13 +53,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 			const postsCount = gov2LatestPosts.filter((post: { track_no: number }) => post.track_no === trackId).length;
 
 			tabItems.push({
+				group: trackInfo.group || 'Other',
 				key: trackName
 					.split(/(?=[A-Z])/)
 					.join('-')
 					.toLowerCase(),
 				label: trackName.split(/(?=[A-Z])/).join(' '),
-				posts: postsCount,
-				group: trackInfo.group || 'Other'
+				posts: postsCount
 			});
 		});
 	}
@@ -95,8 +95,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		All: ['all'],
 		Root: ['root'],
 		['Wish For Change']: ['wish-for-change'],
+		// eslint-disable-next-line sort-keys
 		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
-		...filteredGroups // Spread dynamically grouped categories
+		...filteredGroups
 	};
 	const handleCategoryClick = (category: string) => {
 		if (tabCategories[category].length > 1) {

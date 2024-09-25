@@ -1942,11 +1942,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 												onClick={(e) => {
 													e.stopPropagation();
 													e.preventDefault();
-													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-														userId: currentUser?.id || '',
-														userName: currentUser?.username || ''
-													});
-													handleIdentityButtonClick();
+													if (currentUser?.id && currentUser?.username) {
+														trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+															userId: currentUser?.id || '',
+															userName: currentUser?.username || ''
+														});
+														handleIdentityButtonClick();
+													} else {
+														setLoginOpen(true);
+													}
 												}}
 											>
 												<Image
@@ -2034,11 +2038,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 											onClick={(e) => {
 												e.stopPropagation();
 												e.preventDefault();
-												trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-													userId: currentUser?.id || '',
-													userName: currentUser?.username || ''
-												});
-												handleIdentityButtonClick();
+												if (currentUser?.id && currentUser?.username) {
+													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+														userId: currentUser?.id || '',
+														userName: currentUser?.username || ''
+													});
+													handleIdentityButtonClick();
+												} else {
+													setLoginOpen(true);
+												}
 											}}
 											className='activeborderhover group relative w-10'
 										>

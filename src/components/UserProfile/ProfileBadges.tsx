@@ -33,18 +33,15 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
-	const network = getNetwork(); // Get the current network
+	const network = getNetwork();
 
-	// Helper function to process the requirements
 	const getRequirementText = (requirement: string | ((network: string) => string), network: string) => {
 		return typeof requirement === 'function' ? requirement(network) : requirement;
 	};
 
-	// Map through badges and prepare them for display
 	const badgesToShow = badgeDetails.map((badgeDetail) => {
 		const unlockedBadge = badges?.find((unlocked) => unlocked.name === badgeDetail.name && unlocked.check);
 
-		// Prepare the badge for display, handling locked/unlocked cases
 		if (unlockedBadge) {
 			return {
 				...badgeDetail,
@@ -56,7 +53,6 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 				unlockedAt: unlockedBadge.unlockedAt
 			};
 		} else {
-			// Get the locked badge image and details
 			const lockedBadge = defaultLockedBadges.find((locked) => locked.name === badgeDetail.name);
 			return {
 				...badgeDetail,
@@ -158,7 +154,6 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 				))}
 			</div>
 
-			{/* Badge Unlocked Modal */}
 			<BadgeUnlockedModal
 				open={openModal}
 				setOpen={setOpenModal}

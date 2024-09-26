@@ -7,7 +7,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { Divider, Modal, Skeleton } from 'antd';
+import { Divider, Modal } from 'antd';
 import { ILastVote } from '~src/types';
 import { ProposalType } from '~src/global/proposalType';
 import dynamic from 'next/dynamic';
@@ -20,6 +20,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext } from '~src/context';
 import { BN } from 'bn.js';
 import _ from 'lodash';
+import Skeleton from '~src/basic-components/Skeleton';
 const ZERO = new BN(0);
 
 const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {

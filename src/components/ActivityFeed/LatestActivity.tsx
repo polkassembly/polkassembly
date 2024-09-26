@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Skeleton } from 'antd';
 import Image from 'next/image';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import TabNavigation from './TabNavigation';
@@ -13,6 +12,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | null> => {
 	try {
@@ -140,11 +140,8 @@ const LatestActivityExplore: React.FC = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#1c1d1f]'>
-					<Skeleton
-						className='text-[#797979]'
-						active
-					/>{' '}
+				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
+					<Skeleton active />{' '}
 				</div>
 			) : (
 				<div className=''>
@@ -241,7 +238,7 @@ const LatestActivityFollowing: React.FC = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#1c1d1f]'>
+				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (

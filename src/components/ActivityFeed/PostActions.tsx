@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import { useEffect, useRef, useState } from 'react';
 import { MessageType } from '~src/auth/types';
-import Popover from '~src/basic-components/Popover';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -28,14 +27,8 @@ import ActivityShare from './ActivityShare';
 import { Modal } from 'antd';
 import { CommentModal } from './CommentModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-
-const PostAction: React.FC<{ icon: JSX.Element; label: string; isMobile: boolean }> = ({ icon, label, isMobile }: { icon: JSX.Element; label: string; isMobile: boolean }) => (
-	<div className='flex items-center gap-2'>
-		<span>{icon}</span>
-		{isMobile && <p className='cursor-pointer pt-4 text-[10px] text-[#E5007A] dark:text-[#FF4098]'>{label}</p>}
-		{!isMobile && <p className='hidden cursor-pointer pt-4 text-[12px] text-[#E5007A] dark:text-[#FF4098] xl:block'>{label}</p>}
-	</div>
-);
+import Popover from '~src/basic-components/Popover';
+import _ from 'lodash';
 
 export const PostActions: React.FC<{
 	post: any;
@@ -71,7 +64,7 @@ export const PostActions: React.FC<{
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
 					post_reactions['👎'].count -= 1;
-					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username); // Instantaneous removal of the username
+					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username);
 				}
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
@@ -81,7 +74,7 @@ export const PostActions: React.FC<{
 						post_reactions['👍'].count += 1;
 					}
 				} else {
-					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username); // Instantaneous removal of the username
+					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username);
 					post_reactions['👍'].count -= 1;
 				}
 			} else if (reaction === '👎') {
@@ -106,6 +99,15 @@ export const PostActions: React.FC<{
 
 			return newState;
 		});
+
+		// Debounced user profile update
+		_.debounce(() => {
+			if (reaction === '👍') {
+				getUserProfile([...post_reactions['👍'].userIds].map(String), setLikedUserImageData);
+			} else if (reaction === '👎') {
+				getUserProfile([...post_reactions['👎'].userIds].map(String), setDislikedUserImageData);
+			}
+		}, 200)();
 
 		if (showGif.reaction !== reaction) {
 			setShowGif({ reaction });
@@ -133,7 +135,6 @@ export const PostActions: React.FC<{
 	};
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
 
 	const openModal = () => {
@@ -172,6 +173,7 @@ export const PostActions: React.FC<{
 		if (userIds?.length) {
 			setIsLoading(true);
 			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			console.log('Fetched user profile data:', data); // Debugging
 			if (data) {
 				setImageData(data);
 				setIsLoading(false);
@@ -182,53 +184,55 @@ export const PostActions: React.FC<{
 			setImageData([]);
 		}
 	};
+
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	useEffect(() => {
 		if (likeduserIds && likeduserIds.length > 0) {
 			getUserProfile([...likeduserIds].map(String), setLikedUserImageData);
 		}
-	}, [network, likeduserIds]);
+	}, [network, likeduserIds, reactionState.userLiked]);
 
 	useEffect(() => {
 		if (dislikeduserIds && dislikeduserIds.length > 0) {
 			getUserProfile([...dislikeduserIds].map(String), setDislikedUserImageData);
 		}
-	}, [network, dislikeduserIds]);
+	}, [network, dislikeduserIds, reactionState.userDisliked]);
 
 	return (
 		<>
 			<div className='flex justify-between'>
 				<div className='mt-1 flex items-center space-x-5 md:space-x-2'>
 					<div
-						className='flex w-[60px] items-center justify-center'
 						onClick={() => handleReactionClick('👍')}
+						className='flex w-[60px] cursor-pointer items-center justify-center transition-transform hover:scale-105'
 					>
-						<PostAction
-							icon={
-								showGif.reaction === '👍' ? (
-									<Image
-										src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
-										alt='liked gif'
-										className='h-4 w-4'
-										width={4}
-										height={4}
+						<Popover
+							placement='bottom'
+							trigger='hover'
+							content={
+								likedusernames && likedusernames.length > 0 ? (
+									<TooltipContent
+										usernames={likedusernames}
+										users={likedUserImageData}
+										isLoading={isLoading}
 									/>
 								) : (
-									<Popover
-										placement='bottomLeft'
-										trigger='hover'
-										content={
-											likedusernames && likedusernames.length > 0 ? (
-												<TooltipContent
-													usernames={likedusernames}
-													users={likedUserImageData}
-													isLoading={isLoading}
-												/>
-											) : (
-												<div>No reactions yet</div>
-											)
-										}
-									>
+									<div>No reactions yet</div>
+								)
+							}
+							arrow={true}
+						>
+							<div className='flex items-center gap-2'>
+								<span>
+									{showGif.reaction === '👍' ? (
+										<Image
+											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
+											alt='liked gif'
+											className='h-4 w-4'
+											width={4}
+											height={4}
+										/>
+									) : (
 										<ImageIcon
 											src={
 												reactionState.userLiked
@@ -240,67 +244,82 @@ export const PostActions: React.FC<{
 													: '/assets/activityfeed/like.svg'
 											}
 											alt='like icon'
-											className='h-4 w-4'
+											className='cursor-pointer'
 										/>
-									</Popover>
-								)
-							}
-							label={reactionState.userLiked ? 'Liked' : 'Like'}
-							isMobile={typeof window !== 'undefined' && window?.screen.width < 1024}
-						/>
+									)}
+								</span>
+								<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userLiked ? 'Liked' : 'Like'}</p>
+							</div>
+						</Popover>
 					</div>
 
 					<div
-						className='flex w-[60px] items-center justify-center md:w-[80px]' // Fixed width and centered content
+						className='flex w-[60px] cursor-pointer items-center justify-center transition-transform hover:scale-105 md:w-[80px]' // Added cursor pointer and hover effect
 						onClick={() => handleReactionClick('👎')}
 					>
-						<PostAction
-							icon={
-								showGif?.reaction === '👎' ? (
-									<div className='rotate-180'>
-										<Image
-											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
-											alt='disliked gif'
-											className='h-4 w-4'
-											width={4}
-											height={4}
-										/>
-									</div>
+						<Popover
+							placement='bottom'
+							trigger='hover'
+							content={
+								dislikedusernames && dislikedusernames.length > 0 ? (
+									<TooltipContent
+										usernames={dislikedusernames}
+										users={dislikedUserImageData}
+										isLoading={isLoading}
+									/>
 								) : (
-									<Popover
-										placement='bottomLeft'
-										trigger='hover'
-										content={
-											dislikedusernames && dislikedusernames.length > 0 ? (
-												<TooltipContent
-													usernames={dislikedusernames}
-													users={dislikedUserImageData}
-													isLoading={isLoading}
-												/>
-											) : (
-												<div>No reactions yet</div>
-											)
-										}
-									>
-										<ImageIcon
-											src={
-												reactionState.userDisliked
-													? theme === 'dark'
-														? '/assets/activityfeed/darkdisliked.svg'
-														: '/assets/activityfeed/disliked.svg'
-													: theme === 'dark'
-													? '/assets/activityfeed/dislikedark.svg'
-													: '/assets/activityfeed/dislike.svg'
-											}
-											alt='dislike icon'
-											className='h-4 w-4'
-										/>
-									</Popover>
+									<div>No reactions yet</div>
 								)
 							}
-							label={reactionState.userDisliked ? 'Disliked' : 'Dislike'}
-							isMobile={typeof window !== 'undefined' && window?.screen.width < 1024}
-						/>
+							arrow={true}
+						>
+							<div className='flex items-center gap-2'>
+								<span>
+									{showGif.reaction === '👎' ? (
+										<div className='rotate-180'>
+											<Image
+												src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
+												alt='disliked gif'
+												className='h-4 w-4'
+												width={4}
+												height={4}
+											/>
+										</div>
+									) : (
+										<Popover
+											placement='bottomLeft'
+											trigger='hover'
+											content={
+												dislikedusernames && dislikedusernames.length > 0 ? (
+													<TooltipContent
+														usernames={dislikedusernames}
+														users={dislikedUserImageData}
+														isLoading={isLoading}
+													/>
+												) : (
+													<div>No reactions yet</div>
+												)
+											}
+										>
+											<ImageIcon
+												src={
+													reactionState.userDisliked
+														? theme === 'dark'
+															? '/assets/activityfeed/darkdisliked.svg'
+															: '/assets/activityfeed/disliked.svg'
+														: theme === 'dark'
+														? '/assets/activityfeed/dislikedark.svg'
+														: '/assets/activityfeed/dislike.svg'
+												}
+												alt='dislike icon'
+												className='h-4 w-4'
+											/>
+										</Popover>
+									)}
+								</span>
+								<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userDisliked ? 'Disliked' : 'Dislike'}</p>
+							</div>
+						</Popover>
 					</div>
 
 					<div
@@ -311,22 +330,21 @@ export const PostActions: React.FC<{
 								setOpenLoginModal(true);
 							}
 						}}
-						className='flex w-[60px] items-center justify-center pl-1 md:w-[80px]'
+						className='flex w-[60px] items-center justify-center pl-1 transition-transform hover:scale-105 md:w-[80px]'
 					>
-						<PostAction
-							icon={
+						<div className='flex items-center gap-2'>
+							<span>
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/commentdark.svg' : '/assets/icons/comment-pink.svg'}`}
 									alt='comment icon'
 									className='h-4 w-4'
 								/>
-							}
-							label={COMMENT_LABEL}
-							isMobile={isMobile}
-						/>
+							</span>
+							<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
+						</div>
 					</div>
 
-					<div className='md:pl-2'>
+					<div className='transition-transform hover:scale-105 md:pl-2'>
 						<ActivityShare
 							title={post?.title}
 							postId={post?.post_id}

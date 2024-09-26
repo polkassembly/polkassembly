@@ -140,8 +140,11 @@ const LatestActivityExplore: React.FC = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
-					<Skeleton active />{' '}
+				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#1c1d1f]'>
+					<Skeleton
+						className='text-[#797979]'
+						active
+					/>{' '}
 				</div>
 			) : (
 				<div className=''>
@@ -238,7 +241,7 @@ const LatestActivityFollowing: React.FC = () => {
 	return (
 		<div className=''>
 			{loading ? (
-				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#0D0D0D]'>
+				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#1c1d1f]'>
 					<Skeleton active />
 				</div>
 			) : currentuser && currentuser?.id && currentuser?.username ? (
@@ -255,7 +258,9 @@ const LatestActivityFollowing: React.FC = () => {
 						<div>{filteredPosts.length > 0 ? <PostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
 					</div>
 				) : (
-					<div className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'}>
+					<div
+						className={'flex h-[900px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}
+					>
 						<Image
 							src='/assets/activityfeed/gifs/noactivity.gif'
 							alt='empty state'
@@ -274,7 +279,9 @@ const LatestActivityFollowing: React.FC = () => {
 					</div>
 				)
 			) : (
-				<div className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'}>
+				<div
+					className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}
+				>
 					<Image
 						src='/assets/activityfeed/gifs/nologin.gif'
 						alt='empty state'

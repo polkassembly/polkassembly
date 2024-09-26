@@ -41,12 +41,11 @@ const OverviewDataGraph = ({
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData.length - 1]?.month;
 
-	// Prepare the data for the graph with abbreviated month names
 	const formattedData = [
 		{
 			id: 'balance',
 			data: filteredData.map((item) => ({
-				x: item.month.slice(0, 3), // Abbreviate month names
+				x: item.month.slice(0, 3),
 				y: formatUSDWithUnits(
 					formatBnBalance(
 						item.balance,
@@ -85,7 +84,7 @@ const OverviewDataGraph = ({
 					tickRotation: 0,
 					format: (value) => {
 						if (value === firstMonth.slice(0, 3) || value === lastMonth.slice(0, 3)) {
-							return ''; // Skip first and last month if desired
+							return '';
 						}
 						return value;
 					}

@@ -44,10 +44,10 @@ function FeaturesSection() {
 	};
 
 	return (
-		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
+		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>
 			<div className='flex items-start justify-between gap-2'>
 				<div className='flex items-start gap-1'>
-					<p className='text-lg font-semibold text-[#243A57] dark:text-white'>Features</p>
+					<p className='text-[20px] font-semibold text-[#243A57] dark:text-white'>Features</p>
 					<p className='mt-1 rounded-full bg-[#E5007A] p-1 text-[10px] font-bold text-white'>LIVE</p>
 				</div>
 				<div className='flex gap-2'>
@@ -60,7 +60,7 @@ function FeaturesSection() {
 					))}
 				</div>
 			</div>
-			<div>
+			<div className='-mt-2'>
 				<Image
 					src={features[currentIndex].image}
 					className='h-full w-full'
@@ -68,9 +68,9 @@ function FeaturesSection() {
 					width={800}
 					height={800}
 				/>
-				<div className='mt-2'>
-					<p className='m-0 text-lg font-semibold text-[#243A57] dark:text-white'>{features[currentIndex].title}</p>
-					<p className='text-[14px] text-[#243A57] dark:text-white'>{features[currentIndex].description}</p>
+				<div className='mt-3'>
+					<p className='m-0 text-[16px] font-semibold text-[#243A57] dark:text-white'>{features[currentIndex].title}</p>
+					<p className='pt-1 text-[14px] text-[#243A57] dark:text-white'>{features[currentIndex].description}</p>
 				</div>
 			</div>
 		</div>

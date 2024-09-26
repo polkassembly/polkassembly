@@ -3,7 +3,20 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
-import { FellowshipIconNew, GovernanceIconNew, RootIcon, StakingAdminIcon, TreasuryIconNew, WishForChangeIcon } from '~src/ui-components/CustomIcons';
+import {
+	AllPostIcon,
+	FellowshipIconNew,
+	GovernanceIconNew,
+	RootIcon,
+	SelectedGovernance,
+	SelectedRoot,
+	SelectedTreasury,
+	SelectedWhitelist,
+	SelectedWishForChange,
+	StakingAdminIcon,
+	TreasuryIconNew,
+	WishForChangeIcon
+} from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import { TabItem, TabNavigationProps } from './utils/types';
 import Popover from '~src/basic-components/Popover';
@@ -11,13 +24,14 @@ import { useGlobalSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTheme } from 'next-themes';
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const [isTrackDropdownOpen, setIsTrackDropdownOpen] = useState<boolean>(false);
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -77,18 +91,36 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const tabIcons: { [key: string]: JSX.Element } = {
 		all: (
 			<ImageIcon
-				src='/assets/allpost.svg'
+				src={`${theme === 'dark' ? '/assets/activityfeed/darkallpost.svg' : '/assets/allpost.svg'}`}
 				alt='All Posts'
 				className='-mt-0.5 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive'
 			/>
 		),
 		root: <RootIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		'wish-for-change': <WishForChangeIcon className='scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		'wish-for-change': <WishForChangeIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		// eslint-disable-next-line sort-keys
 		admin: <StakingAdminIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		governance: <GovernanceIconNew className='-mt-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		treasury: <TreasuryIconNew className='-mt-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		whitelist: <FellowshipIconNew className=' scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+	};
+
+	const selectedtabIcons: { [key: string]: JSX.Element } = {
+		all: <AllPostIcon className='selected-icon mt-0.5 scale-90 text-2xl font-medium ' />,
+		root: <SelectedRoot className='selected-icon  mt-0.5 scale-90 text-2xl font-medium ' />,
+		// eslint-disable-next-line sort-keys
+		'wish-for-change': <SelectedWishForChange className='selected-icon -mr-1 scale-90  text-2xl font-medium ' />,
+		// eslint-disable-next-line sort-keys
+		admin: (
+			<ImageIcon
+				src='/assets/selected-icons/Staking Admin.svg'
+				alt='Staking Admin'
+				className=' selected-icon -mr-1 -mt-1 w-6 scale-90 text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive'
+			/>
+		),
+		governance: <SelectedGovernance className='selected-icon -mt-0.5  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		treasury: <SelectedTreasury className='selected-icon -mt-0.5  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
+		whitelist: <SelectedWhitelist className=' selected-icon  -mt-0.5  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 	};
 
 	const tabCategories: { [key: string]: string[] } = {
@@ -117,6 +149,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const isTabSelected = (category: string) => {
 		return tabCategories[category].some((tabKey) => tabKey === currentTab);
 	};
+	console.log(currentCategory);
 
 	const popoverContent = (
 		<div className='left-2 w-40 pt-1 text-sm text-gray-700 dark:text-gray-200'>
@@ -160,12 +193,12 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						<p
 							key={category}
 							className={` flex cursor-pointer justify-between rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-								isTabSelected(category) ? 'bg-[#F2F4F7] font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
+								isTabSelected(category) ? 'bg-[#ffe6ef] font-medium text-[#E5007A] dark:bg-[#530D0F] ' : ''
 							}`}
 							onClick={() => handleCategoryClick(category)}
 						>
 							<span className='flex items-center'>
-								{tabIcons[category.toLowerCase()]}
+								{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 								<span className='ml-2 whitespace-nowrap'>{category}</span>
 							</span>
 							{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 -rotate-90 transform transition-transform'} />}
@@ -229,13 +262,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 								arrow={false}
 							>
 								<p
-									className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-										isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									className={`flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
+										isTabSelected(category) ? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530D0F] ' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 									}`}
 									onClick={() => handleCategoryClick(category)}
 								>
 									<span className='flex items-center'>
-										{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
+										{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 										<span className='ml-2 whitespace-nowrap'>{category}</span>
 										{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
 									</span>
@@ -243,13 +276,17 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							</Popover>
 						) : (
 							<p
-								className={`flex cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-									isTabSelected(category) ? 'rounded-lg bg-[#FFF2F9] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+								className={`flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
+									isTabSelected(category) ? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530D0F] ' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
 								<span className='flex items-center'>
-									{tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
+									{isTabSelected(category) ? (
+										<span className=''>{selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')]}</span>
+									) : (
+										tabIcons[category.toLowerCase().replace(/\s+/g, '-')]
+									)}
 									<span className='ml-2 whitespace-nowrap'>{category}</span>
 								</span>
 							</p>
@@ -270,8 +307,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 								className={`flex cursor-pointer items-center justify-between gap-2 px-2 text-sm font-medium ${
 									isTrackDropdownOpen ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
+								onClick={() => handleCategoryClick('Treasury')}
 							>
-								{tabIcons['treasury']}
+								{isTabSelected('Treasury') ? selectedtabIcons['treasury'] : tabIcons['treasury']}
 								Treas <ThreeDotsIcon />
 							</p>
 						</div>
@@ -282,7 +320,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 				['Treasury', 'Whitelist'].map((category) => (
 					<div
 						key={category}
-						className='relative flex flex-col px-[10px] pt-1'
+						className='relative flex flex-col  pt-2'
 					>
 						<Popover
 							content={
@@ -324,13 +362,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							arrow={false}
 						>
 							<p
-								className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium ${
-									isTabSelected(category) ? 'rounded-lg bg-[#F2F4F7] p-1 font-medium text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+								className={`-mt-[6px] flex h-9 cursor-pointer items-center justify-between px-2 text-sm font-medium ${
+									isTabSelected(category) ? ' rounded-lg bg-[#ffe6ef] font-medium text-[#E5007A] dark:bg-[#530D0F] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
 								<span className='flex items-center'>
-									{tabIcons[category.toLowerCase()]}
+									{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 									<span className='ml-2 whitespace-nowrap'>{category}</span>
 									{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
 								</span>

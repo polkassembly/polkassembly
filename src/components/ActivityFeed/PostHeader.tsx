@@ -37,15 +37,38 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 const ZERO_BN = new BN(0);
 
-export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => {
+export interface ITallyData {
+	ayes: BN;
+	nays: BN;
+	support: BN;
+}
+
+export interface PostHeaderProps {
+	post: any;
+	tallyData: ITallyData;
+	setUpdateTally: React.Dispatch<React.SetStateAction<boolean>>;
+	updateTally: boolean;
+}
+
+export const PostHeader: React.FC<PostHeaderProps> = ({
+	post,
+	tallyData,
+	setUpdateTally,
+	updateTally
+}: {
+	post: any;
+	tallyData: ITallyData;
+	setUpdateTally: React.Dispatch<React.SetStateAction<boolean>>;
+	updateTally: boolean;
+}) => {
 	const currentUserdata = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const userid = currentUserdata?.id;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
-	const ayes = String(post?.tally?.ayes).startsWith('0x') ? new BN(post?.tally?.ayes.slice(2), 'hex') : new BN(post?.tally?.ayes || 0);
-	const nays = String(post?.tally?.nays).startsWith('0x') ? new BN(post?.tally?.nays.slice(2), 'hex') : new BN(post?.tally?.nays || 0);
+	const ayes = tallyData.ayes;
+	const nays = tallyData.nays;
 	const [decision, setDecision] = useState<IPeriod>();
 	const router = useRouter();
 	const ayesNumber = Number(ayes.toString());
@@ -161,68 +184,70 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 					passHref
 				>
 					<div>
-						<div className='flex items-center gap-1 md:gap-4'>
-							<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
-								{post?.requestedAmount ? (
-									post?.assetId ? (
-										getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
-									) : (
-										<>
-											{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-										</>
-									)
-								) : (
-									'$0'
-								)}
-							</p>
-							<div>
-								<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
-									{loading ? (
-										<SkeletonInput className='w-5' />
-									) : (
-										<>
-											~{' '}
-											{post?.assetId ? (
-												`${getUsdValueFromAsset({
-													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
-													dedTokenUsdPrice: dedTokenUsdPrice || '0',
-													generalIndex: post?.assetId,
-													inputAmountValue: new BN(post?.requestedAmount)
-														.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
-														.toString(),
-													network
-												})} ${chainProperties[network]?.tokenSymbol}`
+						<div className='flex items-center gap-1 md:gap-2'>
+							{post?.requestedAmount && post?.requestedAmount !== '0' ? (
+								<>
+									<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
+										{post?.assetId ? (
+											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+										) : (
+											<>
+												{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+											</>
+										)}
+									</p>
+									<div>
+										<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+											{loading ? (
+												<SkeletonInput className='w-5' />
 											) : (
-												<span>
-													{parseBalance(
-														requestedAmountFormatted
-															?.mul(
-																!isProposalClosed
-																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-																	: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-																	: bnUsdValueOnClosed
-															)
-															?.toString() || '0',
-														0,
-														false,
-														network
-													)}{' '}
-													USD{' '}
-												</span>
+												<>
+													~{' '}
+													{post?.assetId && post?.requestedAmount ? (
+														`${getUsdValueFromAsset({
+															currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+															dedTokenUsdPrice: dedTokenUsdPrice || '0',
+															generalIndex: post?.assetId,
+															inputAmountValue: new BN(post?.requestedAmount)
+																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
+																.toString(),
+															network
+														})} ${chainProperties[network]?.tokenSymbol}`
+													) : (
+														<span>
+															{parseBalance(
+																requestedAmountFormatted
+																	?.mul(
+																		!isProposalClosed
+																			? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																			: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+																			? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																			: bnUsdValueOnClosed
+																	)
+																	?.toString() || '0',
+																0,
+																false,
+																network
+															)}{' '}
+															USD{' '}
+														</span>
+													)}
+												</>
 											)}
-										</>
-									)}
-								</p>
-							</div>
+										</p>
+									</div>
+								</>
+							) : null}
+
 							{post?.status && (
 								<StatusTag
 									theme={theme}
 									className='mb-3'
 									status={post?.status}
 								/>
-							)}{' '}
+							)}
 						</div>
+
 						<div className='-mt-3 flex items-center gap-1 md:gap-2 '>
 							<NameLabel
 								defaultAddress={post?.proposer}
@@ -236,10 +261,10 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 								className={post?.topic?.name}
 								theme={theme as any}
 							/>
-							<p className='pt-[14px] text-[#485F7D]'>|</p>
+							<p className='pt-[14px] text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
 							<div className='flex '>
 								<ImageIcon
-									src='/assets/icons/timer.svg'
+									src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
 									alt='timer'
 									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[10px]'
 								/>
@@ -272,7 +297,7 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 										setShowModal(true);
 									}
 								}}
-								className='m-0 flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
 								<ImageIcon
 									src='/assets/Vote.svg'
@@ -319,37 +344,37 @@ export const PostHeader: React.FC<{ post: any }> = ({ post }: { post: any }) => 
 										votesData={votesData}
 										onchainId={post?.post_id}
 										status={post?.status}
-										tally={post?.tally}
+										tally={tallyData}
 									/>
 								</div>
 							</div>
 						</div>
 					)}
 				</div>
-				{showModal && (
-					<VoteReferendumModal
-						onAccountChange={onAccountChange}
-						address={address}
-						proposalType={ProposalType.REFERENDUM_V2}
-						setLastVote={setLastVote}
-						setShowModal={setShowModal}
-						showModal={showModal}
-						referendumId={post?.post_id}
-						trackNumber={post?.track_no}
-					/>
-				)}
-
-				{modalOpen && (
-					<ReferendaLoginPrompts
-						theme={theme}
-						modalOpen={modalOpen}
-						setModalOpen={setModalOpen}
-						image='/assets/Gifs/login-vote.gif'
-						title={'Join Polkassembly to Vote on this proposal.'}
-						subtitle='Discuss, contribute and get regular updates from Polkassembly.'
-					/>
-				)}
 			</div>
+			{showModal && (
+				<VoteReferendumModal
+					onAccountChange={onAccountChange}
+					address={address}
+					proposalType={ProposalType.REFERENDUM_V2}
+					setLastVote={setLastVote}
+					setShowModal={setShowModal}
+					showModal={showModal}
+					referendumId={post?.post_id}
+					trackNumber={post?.track_no}
+					setUpdateTally={setUpdateTally}
+					updateTally={updateTally}
+				/>
+			)}
+
+			<ReferendaLoginPrompts
+				theme={theme}
+				modalOpen={modalOpen}
+				setModalOpen={setModalOpen}
+				image='/assets/Gifs/login-vote.gif'
+				title={'Join Polkassembly to Vote on this proposal.'}
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 		</>
 	);
 };

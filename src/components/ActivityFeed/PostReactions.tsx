@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Tooltip } from 'antd';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
 import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
 import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
@@ -14,6 +13,7 @@ import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
+import ImageComponent from '../ImageComponent';
 
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
@@ -49,14 +49,12 @@ export const PostReactions: React.FC<{
 			<div>
 				{likes.count > 0 && likes?.usernames?.length > 0 && (
 					<div className='flex items-center'>
-						<Image
+						<ImageComponent
 							src={firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 							alt='Voter Profile'
-							className='h-5 w-5 rounded-full'
-							width={20}
-							height={20}
+							className='h-6 w-6 rounded-full'
 						/>
-						<p className='md: ml-2 text-[10px] md:pt-5 md:text-[12px]'>
+						<p className='text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
 							{likes.count > 0 && (
 								<div>
 									<p>{likes.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes.count - 1} others liked this post`}</p>

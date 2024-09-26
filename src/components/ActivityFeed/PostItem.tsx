@@ -1,11 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Divider, Modal, Skeleton } from 'antd';
@@ -17,6 +16,11 @@ import { PostHeader } from './PostHeader';
 import { CommentModal } from './CommentModal';
 import { PostReactions } from './PostReactions';
 import { PostActions } from './PostActions';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useApiContext } from '~src/context';
+import { BN } from 'bn.js';
+import _ from 'lodash';
+const ZERO = new BN(0);
 
 const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Referenda/VoteReferendumModal'), {
 	loading: () => <Skeleton active />,
@@ -34,13 +38,14 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const fullContent = post?.content || NO_CONTENT_FALLBACK;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
-
+	const [updateTally, setUpdateTally] = useState<boolean>(false);
 	const onAccountChange = (address: string) => setAddress(address);
-
+	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const { post_reactions } = post;
 	const { resolvedTheme: theme } = useTheme();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [reactionState, setReactionState] = useState({
 		dislikesCount: post_reactions?.['👎']?.count || 0,
 		dislikesUsernames: post_reactions?.['👎']?.usernames || [],
@@ -49,72 +54,172 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 		userDisliked: post_reactions?.['👎']?.usernames?.includes(currentUserdata?.username) || false,
 		userLiked: post_reactions?.['👍']?.usernames?.includes(currentUserdata?.username) || false
 	});
+	const [tallyData, setTallyData] = useState({
+		ayes: post?.tally?.ayes ? (String(post?.tally?.ayes).startsWith('0x') ? new BN(post?.tally?.ayes.slice(2), 'hex') : new BN(post?.tally?.ayes)) : ZERO,
+		nays: post?.tally?.nays ? (String(post?.tally?.nays).startsWith('0x') ? new BN(post?.tally?.nays.slice(2), 'hex') : new BN(post?.tally?.nays)) : ZERO,
+		support: post?.tally?.support ? (String(post?.tally?.support).startsWith('0x') ? new BN(post?.tally?.support.slice(2), 'hex') : new BN(post?.tally?.support)) : ZERO
+	});
+
+	const handleTallyData = async (tally: any) => {
+		if (!api || !apiReady) return;
+		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
+			setTallyData({
+				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
+				support: String(tally?.support).startsWith('0x') ? new BN(tally?.support || 0, 'hex') : new BN(tally?.support || 0)
+			});
+			setIsLoading(false);
+			return;
+		}
+
+		try {
+			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(post?.post_id);
+			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				setTallyData({
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.nays),
+					support:
+						typeof parsedReferendumInfo.ongoing.tally.support === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.support)
+				});
+				setIsLoading(false);
+			} else {
+				setTallyData({
+					ayes: new BN(tally?.ayes || 0, 'hex'),
+					nays: new BN(tally?.nays || 0, 'hex'),
+					support: new BN(tally?.support || 0, 'hex')
+				});
+				setIsLoading(false);
+			}
+		} catch (err) {
+			setTallyData({
+				ayes: new BN(tally?.ayes || 0, 'hex'),
+				nays: new BN(tally?.nays || 0, 'hex'),
+				support: new BN(tally?.support || 0, 'hex')
+			});
+			setIsLoading(false);
+		}
+	};
+	const handleSummaryReload = async () => {
+		setIsLoading(true);
+		const { data, error } = await nextApiClientFetch<{
+			tally: {
+				ayes: string;
+				nays: string;
+				support: string;
+				bareAyes: string;
+			};
+		}>('/api/v1/getTallyVotesData', {
+			postId: post?.post_id,
+			proposalType: ProposalType.REFERENDUM_V2
+		});
+
+		if (data) {
+			handleTallyData(data?.tally);
+		} else if (error) {
+			console.log(error);
+		}
+		setIsLoading(false);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const handleDebounceTallyData = useCallback(_.debounce(handleSummaryReload, 10000), [updateTally]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+
+	useEffect(() => {
+		setIsLoading(true);
+		handleDebounceTallyData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [updateTally]);
 
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
-			<PostHeader post={post} />
-			<Link
-				href={`/referenda/${post?.post_id}`}
-				passHref
-			>
-				<PostContent
-					post={post}
-					content={fullContent}
-					isCommentPost={false}
-				/>
-
-				<PostReactions
-					likes={{ count: reactionState.likesCount, usernames: reactionState.likesUsernames }}
-					dislikes={{ count: reactionState.dislikesCount, usernames: reactionState.dislikesUsernames }}
-					post={post}
-				/>
-			</Link>
-			<Divider className='m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0' />
-			<PostActions
-				post={post}
-				reactionState={reactionState}
-				setReactionState={setReactionState}
-			/>
-			<PostCommentSection post={post} />
-			{isMobile && (
-				<div
-					onClick={() => {
-						if (currentUserdata && currentUserdata?.id) {
-							setShowModal(true);
-						} else {
-							setModalOpen(true);
-						}
-					}}
-					className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
-				>
-					<ImageIcon
-						src='/assets/Vote.svg'
-						alt=''
-						className='m-0 h-6 w-6 p-0'
+			{isLoading ? (
+				<>
+					<Skeleton active />
+				</>
+			) : (
+				<>
+					<PostHeader
+						post={post}
+						tallyData={tallyData}
+						updateTally={updateTally}
+						setUpdateTally={setUpdateTally}
 					/>
-					<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
-				</div>
+					<Link
+						href={`/referenda/${post?.post_id}`}
+						passHref
+					>
+						<PostContent
+							post={post}
+							content={fullContent}
+							isCommentPost={false}
+						/>
+
+						<PostReactions
+							likes={{ count: reactionState.likesCount, usernames: reactionState.likesUsernames }}
+							dislikes={{ count: reactionState.dislikesCount, usernames: reactionState.dislikesUsernames }}
+							post={post}
+						/>
+					</Link>
+					<Divider className='m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B]' />
+					<PostActions
+						post={post}
+						reactionState={reactionState}
+						setReactionState={setReactionState}
+					/>
+					<PostCommentSection post={post} />
+					{isMobile && (
+						<div
+							onClick={() => {
+								if (currentUserdata && currentUserdata?.id) {
+									setShowModal(true);
+								} else {
+									setModalOpen(true);
+								}
+							}}
+							className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
+						>
+							<ImageIcon
+								src='/assets/Vote.svg'
+								alt=''
+								className='m-0 h-6 w-6 p-0'
+							/>
+							<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
+						</div>
+					)}
+					{showModal && (
+						<VoteReferendumModal
+							onAccountChange={onAccountChange}
+							address={address}
+							proposalType={ProposalType.REFERENDUM_V2}
+							setLastVote={setLastVote}
+							setShowModal={setShowModal}
+							showModal={showModal}
+							referendumId={post?.post_id}
+							trackNumber={post?.track_no}
+							setUpdateTally={setUpdateTally}
+							updateTally={updateTally}
+						/>
+					)}
+					<ReferendaLoginPrompts
+						theme={theme}
+						modalOpen={modalOpen}
+						setModalOpen={setModalOpen}
+						image='/assets/Gifs/login-vote.gif'
+						title={'Join Polkassembly to Vote on this proposal.'}
+						subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+					/>
+				</>
 			)}
-			{showModal && (
-				<VoteReferendumModal
-					onAccountChange={onAccountChange}
-					address={address}
-					proposalType={ProposalType.REFERENDUM_V2}
-					setLastVote={setLastVote}
-					setShowModal={setShowModal}
-					showModal={showModal}
-					referendumId={post?.post_id}
-					trackNumber={post?.track_no}
-				/>
-			)}
-			<ReferendaLoginPrompts
-				theme={theme}
-				modalOpen={modalOpen}
-				setModalOpen={setModalOpen}
-				image='/assets/Gifs/login-vote.gif'
-				title={'Join Polkassembly to Vote on this proposal.'}
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
-			/>
 		</div>
 	);
 };
@@ -143,7 +248,7 @@ const PostContent: React.FC<{
 				<ImageIcon
 					src='/assets/more.svg'
 					alt=''
-					className='h-4 w-4'
+					className='-mt-0.5 h-4 w-4'
 				/>
 			</Link>
 		</>
@@ -195,12 +300,10 @@ const PostCommentSection: React.FC<{ post: any }> = ({ post }) => {
 	return (
 		<div className='mt-3 flex items-center'>
 			{!isMobile && (
-				<Image
+				<ImageIcon
 					src={`${currentUserdata?.picture ? currentUserdata?.picture : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 					alt=''
 					className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
-					width={40}
-					height={40}
 				/>
 			)}
 
@@ -209,14 +312,14 @@ const PostCommentSection: React.FC<{ post: any }> = ({ post }) => {
 				type='text'
 				value={''}
 				placeholder={COMMENT_PLACEHOLDER}
-				className={` h-9 w-full rounded-l-lg border border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 ${
-					!isMobile ? 'ml-7' : ''
+				className={` h-9 w-full rounded-l-lg border-y border-l border-r-0 border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 ${
+					!isMobile ? 'ml-3' : ''
 				}`}
 				onClick={openModal}
 			/>
 			<button
 				onClick={openModal}
-				className='h-9 w-28 cursor-pointer rounded-r-lg border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
+				className='h-9 w-28 cursor-pointer rounded-r-lg  border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
 			>
 				{POST_LABEL}
 			</button>

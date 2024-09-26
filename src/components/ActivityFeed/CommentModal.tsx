@@ -157,7 +157,7 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 							<p className='pt-3 text-[#485F7D]'>|</p>
 							<div className='flex gap-[2px]'>
 								<ImageIcon
-									src='/assets/icons/timer.svg'
+									src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
 									alt='timer'
 									className=' h-4 w-4 pt-1 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
@@ -167,7 +167,7 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='font-poppins text-[12px] font-light text-[#E5007A]'>Commenting on proposal</p>
+						<p className='font-poppins text-[12px]  font-medium text-[#E5007A]'>Commenting on proposal</p>
 						<div className='w-[250px] md:w-[500px]  md:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}

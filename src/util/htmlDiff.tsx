@@ -7,8 +7,8 @@ import { useTheme } from 'next-themes';
 import striptags from 'striptags';
 import removeMd from 'remove-markdown';
 
-export function removeSymbols(input: string) {
-	if (!input) return;
+export function removeSymbols(input: string | undefined): string {
+	if (!input) return '';
 	return removeMd(striptags(String(input)));
 }
 

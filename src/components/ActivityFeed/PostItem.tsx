@@ -49,12 +49,17 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [reactionState, setReactionState] = useState({
 		dislikesCount: post_reactions?.['👎']?.count || 0,
+		dislikesImages: [],
+		dislikesUserIds: post_reactions?.['👎']?.userIds || [],
 		dislikesUsernames: post_reactions?.['👎']?.usernames || [],
 		likesCount: post_reactions?.['👍']?.count || 0,
+		likesImages: [],
+		likesUserIds: post_reactions?.['👍']?.userIds || [],
 		likesUsernames: post_reactions?.['👍']?.usernames || [],
 		userDisliked: post_reactions?.['👎']?.usernames?.includes(currentUserdata?.username) || false,
 		userLiked: post_reactions?.['👍']?.usernames?.includes(currentUserdata?.username) || false
 	});
+
 	const [tallyData, setTallyData] = useState({
 		ayes: post?.tally?.ayes ? (String(post?.tally?.ayes).startsWith('0x') ? new BN(post?.tally?.ayes.slice(2), 'hex') : new BN(post?.tally?.ayes)) : ZERO,
 		nays: post?.tally?.nays ? (String(post?.tally?.nays).startsWith('0x') ? new BN(post?.tally?.nays.slice(2), 'hex') : new BN(post?.tally?.nays)) : ZERO,

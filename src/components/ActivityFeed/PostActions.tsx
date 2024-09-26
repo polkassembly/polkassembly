@@ -9,7 +9,6 @@ import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import TooltipContent from '../Post/ActionsBar/Reactionbar/TooltipContent';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { EmojiOption } from './PostReactions';
 const COMMENT_LABEL = 'Comment';
@@ -29,6 +28,11 @@ import { CommentModal } from './CommentModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import Popover from '~src/basic-components/Popover';
 import _ from 'lodash';
+import Link from 'next/link';
+import ImageComponent from '../ImageComponent';
+import { poppins } from 'pages/_app';
+import classNames from 'classnames';
+const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
 export const PostActions: React.FC<{
 	post: any;
@@ -46,7 +50,36 @@ export const PostActions: React.FC<{
 	const [showGif, setShowGif] = useState<{ reaction: '👍' | '👎' | null }>({ reaction: null });
 	const { resolvedTheme: theme } = useTheme();
 
-	const handleReactionClick = (reaction: '👍' | '👎') => {
+	const renderUsernames = (reaction: '👍' | '👎') => {
+		const reactionsData = post_reactions[reaction];
+		const usernames = reactionsData?.usernames || [];
+		const userImages = reactionsData?.images || [];
+
+		return usernames?.length ? (
+			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>
+				{usernames.map((name: string, index: number) => (
+					<Link
+						href={`https://${network}.polkassembly.io/user/${name}`}
+						key={index}
+						target='_blank'
+						className='mb-[6px] flex items-center gap-[6px]'
+					>
+						<ImageComponent
+							src={userImages[index] || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							alt='User Picture'
+							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
+						/>
+						<span className='pt-1 text-sm text-gray-600 dark:text-gray-300'>{name}</span>
+					</Link>
+				))}
+			</div>
+		) : (
+			<p className='text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+		);
+	};
+
+	const handleReactionClick = async (reaction: '👍' | '👎') => {
 		if (!currentUserdata || !userid || !username) {
 			if (reaction === '👍') setLikeModalOpen(true);
 			if (reaction === '👎') setDislikeModalOpen(true);
@@ -56,68 +89,92 @@ export const PostActions: React.FC<{
 		const isLiked = reaction === '👍' && reactionState.userLiked;
 		const isDisliked = reaction === '👎' && reactionState.userDisliked;
 
+		const fetchAndUpdateImage = async (userId: number) => {
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds: [userId] });
+			return data?.[0]?.image || FIRST_VOTER_PROFILE_IMG_FALLBACK;
+		};
+
 		setReactionState((prevState: typeof reactionState) => {
 			const newState = { ...prevState };
 
 			if (reaction === '👍') {
+				if (!post_reactions['👍'].images) {
+					post_reactions['👍'].images = [];
+				}
 				if (prevState.userDisliked) {
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
 					post_reactions['👎'].count -= 1;
-					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username);
+					post_reactions['👎'].userIds = post_reactions['👎'].userIds?.filter((id: number) => id !== userid);
+					post_reactions['👎'].usernames = post_reactions['👎'].usernames?.filter((name: string) => name !== username);
+					post_reactions['👎'].images = post_reactions['👎'].images?.filter((img: string, idx: number) => post_reactions['👎'].usernames[idx] !== username);
 				}
+
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
+
 				if (!isLiked) {
 					if (username && !post_reactions['👍'].usernames.includes(username)) {
-						post_reactions['👍'].usernames.push(username);
-						post_reactions['👍'].count += 1;
+						fetchAndUpdateImage(userid).then((image) => {
+							post_reactions['👍'].usernames.push(username);
+							post_reactions['👍'].userIds.push(userid);
+							post_reactions['👍'].images.push(image);
+							post_reactions['👍'].count += 1;
+						});
 					}
 				} else {
-					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username);
+					post_reactions['👍'].usernames = post_reactions['👍'].usernames?.filter((name: string) => name !== username);
+					post_reactions['👍'].userIds = post_reactions['👍'].userIds?.filter((id: number) => id !== userid);
+					post_reactions['👍'].images = post_reactions['👍'].images?.filter((img: string, idx: number) => post_reactions['👍'].usernames[idx] !== username);
 					post_reactions['👍'].count -= 1;
 				}
 			} else if (reaction === '👎') {
+				if (!post_reactions['👎'].images) {
+					post_reactions['👎'].images = [];
+				}
 				if (prevState.userLiked) {
 					newState.likesCount -= 1;
 					newState.userLiked = false;
 					post_reactions['👍'].count -= 1;
-					post_reactions['👍'].usernames = post_reactions['👍'].usernames.filter((name: string) => name !== username);
+					post_reactions['👍'].userIds = post_reactions['👍'].userIds?.filter((id: number) => id !== userid);
+					post_reactions['👍'].usernames = post_reactions['👍'].usernames?.filter((name: string) => name !== username);
+					post_reactions['👍'].images = post_reactions['👍'].images?.filter((img: string, idx: number) => post_reactions['👍'].usernames[idx] !== username);
 				}
+
 				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
 				newState.userDisliked = !isDisliked;
+
 				if (!isDisliked) {
 					if (username && !post_reactions['👎'].usernames.includes(username)) {
-						post_reactions['👎'].usernames.push(username);
-						post_reactions['👎'].count += 1;
+						fetchAndUpdateImage(userid).then((image) => {
+							post_reactions['👎'].usernames.push(username);
+							post_reactions['👎'].userIds.push(userid);
+							post_reactions['👎'].images.push(image);
+							post_reactions['👎'].count += 1;
+						});
 					}
 				} else {
-					post_reactions['👎'].usernames = post_reactions['👎'].usernames.filter((name: string) => name !== username);
+					post_reactions['👎'].usernames = post_reactions['👎'].usernames?.filter((name: string) => name !== username);
+					post_reactions['👎'].userIds = post_reactions['👎'].userIds?.filter((id: number) => id !== userid); // Remove user ID
+					post_reactions['👎'].images = post_reactions['👎'].images?.filter((img: string, idx: number) => post_reactions['👎'].usernames[idx] !== username);
 					post_reactions['👎'].count -= 1;
 				}
 			}
 
-			return newState;
+			return {
+				...newState,
+				dislikesUsernames: post_reactions['👎'].usernames,
+				likesUsernames: post_reactions['👍'].usernames
+			};
 		});
-
-		// Debounced user profile update
-		_.debounce(() => {
-			if (reaction === '👍') {
-				getUserProfile([...post_reactions['👍'].userIds].map(String), setLikedUserImageData);
-			} else if (reaction === '👎') {
-				getUserProfile([...post_reactions['👎'].userIds].map(String), setDislikedUserImageData);
-			}
-		}, 200)();
 
 		if (showGif.reaction !== reaction) {
 			setShowGif({ reaction });
-			setTimeout(() => {
-				setShowGif({ reaction: null });
-			}, 600);
+			setTimeout(() => setShowGif({ reaction: null }), 1000);
 		}
 
-		const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
-		setTimeout(async () => {
+		_.debounce(async () => {
+			const actionName = `${isLiked || isDisliked ? 'remove' : 'add'}PostReaction`;
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				postId: post_id,
 				postType: ProposalType.REFERENDUM_V2,
@@ -127,11 +184,10 @@ export const PostActions: React.FC<{
 				trackNumber: track_no,
 				userId: userid
 			});
-
 			if (error || !data) {
 				console.error('Error updating reaction', error);
 			}
-		}, 100);
+		}, 200)();
 	};
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,44 +215,9 @@ export const PostActions: React.FC<{
 			document.removeEventListener('mousedown', handleOutsideClick);
 		};
 	}, [isModalOpen]);
-	const likedusernames = post_reactions?.['👍']?.usernames;
-	const dislikedusernames = post_reactions?.['👎']?.usernames;
-	const [likedUserImageData, setLikedUserImageData] = useState<UserProfileImage[]>([]);
-	const [dislikedUserImageData, setDislikedUserImageData] = useState<UserProfileImage[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 
-	const likeduserIds = post_reactions?.['👍']?.userIds;
-	const dislikeduserIds = post_reactions?.['👎']?.userIds;
-
-	const getUserProfile = async (userIds: string[], setImageData: React.Dispatch<React.SetStateAction<UserProfileImage[]>>) => {
-		if (userIds?.length) {
-			setIsLoading(true);
-			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
-			console.log('Fetched user profile data:', data); // Debugging
-			if (data) {
-				setImageData(data);
-				setIsLoading(false);
-			} else {
-				setIsLoading(false);
-			}
-		} else {
-			setImageData([]);
-		}
-	};
-
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	useEffect(() => {
-		if (likeduserIds && likeduserIds.length > 0) {
-			getUserProfile([...likeduserIds].map(String), setLikedUserImageData);
-		}
-	}, [network, likeduserIds, reactionState.userLiked]);
-
-	useEffect(() => {
-		if (dislikeduserIds && dislikeduserIds.length > 0) {
-			getUserProfile([...dislikeduserIds].map(String), setDislikedUserImageData);
-		}
-	}, [network, dislikeduserIds, reactionState.userDisliked]);
 
 	return (
 		<>
@@ -209,28 +230,19 @@ export const PostActions: React.FC<{
 						<Popover
 							placement='bottom'
 							trigger='hover'
-							content={
-								likedusernames && likedusernames.length > 0 ? (
-									<TooltipContent
-										usernames={likedusernames}
-										users={likedUserImageData}
-										isLoading={isLoading}
-									/>
-								) : (
-									<div>No reactions yet</div>
-								)
-							}
+							content={<> {renderUsernames('👍')}</>}
 							arrow={true}
 						>
 							<div className='flex items-center gap-2'>
-								<span>
+								<span style={{ height: '12px', width: '15px' }}>
+									{' '}
 									{showGif.reaction === '👍' ? (
 										<Image
 											src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 											alt='liked gif'
-											className='h-4 w-4'
-											width={4}
-											height={4}
+											className='-ml-2 -mt-2 h-9 w-9'
+											width={36}
+											height={36}
 										/>
 									) : (
 										<ImageIcon
@@ -244,7 +256,7 @@ export const PostActions: React.FC<{
 													: '/assets/activityfeed/like.svg'
 											}
 											alt='like icon'
-											className='cursor-pointer'
+											className='h-9 w-9 cursor-pointer'
 										/>
 									)}
 								</span>
@@ -254,67 +266,42 @@ export const PostActions: React.FC<{
 					</div>
 
 					<div
-						className='flex w-[60px] cursor-pointer items-center justify-center transition-transform hover:scale-105 md:w-[80px]' // Added cursor pointer and hover effect
+						className='flex w-[60px] cursor-pointer items-center justify-center transition-transform hover:scale-105 md:w-[80px]'
 						onClick={() => handleReactionClick('👎')}
 					>
 						<Popover
 							placement='bottom'
 							trigger='hover'
-							content={
-								dislikedusernames && dislikedusernames.length > 0 ? (
-									<TooltipContent
-										usernames={dislikedusernames}
-										users={dislikedUserImageData}
-										isLoading={isLoading}
-									/>
-								) : (
-									<div>No reactions yet</div>
-								)
-							}
+							content={<> {renderUsernames('👎')}</>}
 							arrow={true}
 						>
 							<div className='flex items-center gap-2'>
-								<span>
+								<span style={{ height: '20px', width: '15px' }}>
 									{showGif.reaction === '👎' ? (
-										<div className='rotate-180'>
+										<div>
 											<Image
 												src={theme === 'dark' ? '/assets/icons/reactions/Liked-Colored-Dark.gif' : '/assets/icons/reactions/Liked-Colored.gif'}
 												alt='disliked gif'
-												className='h-4 w-4'
+												className='-ml-2 -mt-2 h-9 w-9'
 												width={4}
+												style={{ height: '24px', transform: 'scaleX(-1) rotate(180deg)', width: '24px' }}
 												height={4}
 											/>
 										</div>
 									) : (
-										<Popover
-											placement='bottomLeft'
-											trigger='hover'
-											content={
-												dislikedusernames && dislikedusernames.length > 0 ? (
-													<TooltipContent
-														usernames={dislikedusernames}
-														users={dislikedUserImageData}
-														isLoading={isLoading}
-													/>
-												) : (
-													<div>No reactions yet</div>
-												)
+										<ImageIcon
+											src={
+												reactionState.userDisliked
+													? theme === 'dark'
+														? '/assets/activityfeed/darkdisliked.svg'
+														: '/assets/activityfeed/disliked.svg'
+													: theme === 'dark'
+													? '/assets/activityfeed/dislikedark.svg'
+													: '/assets/activityfeed/dislike.svg'
 											}
-										>
-											<ImageIcon
-												src={
-													reactionState.userDisliked
-														? theme === 'dark'
-															? '/assets/activityfeed/darkdisliked.svg'
-															: '/assets/activityfeed/disliked.svg'
-														: theme === 'dark'
-														? '/assets/activityfeed/dislikedark.svg'
-														: '/assets/activityfeed/dislike.svg'
-												}
-												alt='dislike icon'
-												className='h-4 w-4'
-											/>
-										</Popover>
+											alt='dislike icon'
+											className='mt-1 h-4 w-4'
+										/>
 									)}
 								</span>
 								<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userDisliked ? 'Disliked' : 'Dislike'}</p>
@@ -337,7 +324,7 @@ export const PostActions: React.FC<{
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/commentdark.svg' : '/assets/icons/comment-pink.svg'}`}
 									alt='comment icon'
-									className='h-4 w-4'
+									className='-mt-1 mr-1 h-4 w-4 dark:mr-0 dark:mt-1'
 								/>
 							</span>
 							<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>

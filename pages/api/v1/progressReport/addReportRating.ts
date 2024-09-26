@@ -37,7 +37,6 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		const user_id = user?.id?.toString();
 
 		const { postId, proposalType, rating } = req.body;
-		console.log('inside api: ', rating);
 
 		if (!proposalType || rating === undefined || isNaN(postId) || !isProposalTypeValid(proposalType)) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });

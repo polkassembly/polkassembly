@@ -41,12 +41,12 @@ const handler: NextApiHandler<IUploadResponseType | MessageType> = async (req: N
 
 			const token = getTokenFromReq(req);
 			if (!token) {
-				return res.status(400).json({ message: 'Invalid token' });
+				return res.status(401).json({ message: 'Invalid token' });
 			}
 
 			const user = await authServiceInstance.GetUser(token);
 			if (!user) {
-				return res.status(403).json({ message: messages.UNAUTHORISED });
+				return res.status(401).json({ message: messages.UNAUTHORISED });
 			}
 
 			let file: File | undefined;

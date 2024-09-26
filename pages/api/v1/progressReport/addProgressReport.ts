@@ -29,22 +29,22 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 
 		const token = getTokenFromReq(req);
 		if (!token) {
-			return res.status(400).json({ message: messages.INVALID_JWT });
+			return res.status(401).json({ message: messages.INVALID_JWT });
 		}
 
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) {
-			return res.status(403).json({ message: messages.UNAUTHORISED });
+			return res.status(401).json({ message: messages.UNAUTHORISED });
 		}
 
 		const { postId, proposalType, progress_report } = req.body;
 
 		if (!postId || !proposalType || !progress_report) {
-			return res.status(400).json({ message: messages.INVALID_PARAMS });
+			return res.status(401).json({ message: messages.INVALID_PARAMS });
 		}
 
 		if (!isProposalTypeValid(proposalType)) {
-			return res.status(500).json({ message: messages.INVALID_PARAMS });
+			return res.status(401).json({ message: messages.INVALID_PARAMS });
 		}
 
 		const TreasuryRes = await fetchSubsquid({
@@ -66,12 +66,11 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		}
 
 		const updatedPost: Partial<Post> = {
-			created_at: post?.createdAt,
+			created_at: new Date(post?.createdAt),
 			id: post?.index,
-			last_edited_at: post?.updatedAt,
+			last_edited_at: new Date(post?.updatedAt),
 			progress_report: progress_report,
-			proposer_address: post?.proposer,
-			typeOfReferendum: post?.type
+			proposer_address: post?.proposer
 		};
 
 		await postDocRef.update(updatedPost);
@@ -82,7 +81,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: messages.API_FETCH_ERROR });
 	}
 };
 

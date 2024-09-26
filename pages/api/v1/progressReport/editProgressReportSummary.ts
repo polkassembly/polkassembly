@@ -26,22 +26,22 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 
 		const token = getTokenFromReq(req);
 		if (!token) {
-			return res.status(400).json({ message: messages.INVALID_JWT });
+			return res.status(401).json({ message: messages.INVALID_JWT });
 		}
 
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) {
-			return res.status(403).json({ message: messages.UNAUTHORISED });
+			return res.status(401).json({ message: messages.UNAUTHORISED });
 		}
 
 		const { postId, proposalType, summary } = req.body;
 
 		if (!postId || !proposalType || !summary) {
-			return res.status(400).json({ message: messages.INVALID_PARAMS });
+			return res.status(401).json({ message: messages.INVALID_PARAMS });
 		}
 
 		if (isNaN(postId) || !isProposalTypeValid(proposalType)) {
-			return res.status(500).json({ message: messages.INVALID_PARAMS });
+			return res.status(401).json({ message: messages.INVALID_PARAMS });
 		}
 
 		const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));

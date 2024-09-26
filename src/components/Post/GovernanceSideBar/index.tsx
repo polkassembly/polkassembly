@@ -1004,7 +1004,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{!postData?.progress_report?.progress_file && id !== postData?.userId && (
+						{network === 'rococo' && !postData?.progress_report?.progress_file && id !== postData?.userId && (
 							<Alert
 								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								showIcon

@@ -157,7 +157,7 @@ const ProgressReportInfo = () => {
 				<article className='flex flex-col gap-y-1'>
 					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue dark:text-white'>{postData?.title}</h1>
 					{postData?.progress_report?.progress_summary && (
-						<p className='m-0 mt-2 p-0 text-sm text-bodyBlue dark:text-white'>
+						<p className='m-0 mt-1 p-0 text-sm text-bodyBlue dark:text-white'>
 							<Markdown
 								className='post-content m-0 p-0'
 								md={postData?.progress_report?.progress_summary}

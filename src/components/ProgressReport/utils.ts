@@ -9,30 +9,32 @@ import { ProposalType } from '~src/global/proposalType';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 export const showProgressReportUploadFlow = (network: string, trackName: string | undefined, proposalType: ProposalType, postData: IPostData) => {
-	if (isOpenGovSupported(network)) {
-		const allowedTracks = [];
-		for (const key in networkTrackInfo[network] as NetworkTrackInfo) {
-			if (networkTrackInfo[network]) {
-				const group = networkTrackInfo[network][key].group;
-				if (group === 'Treasury') {
-					allowedTracks.push(
-						networkTrackInfo[network][key].name
-							?.split('_')
-							.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-							.join('')
-					);
+	// remove this rococo check
+	if (network === 'rococo') {
+		if (isOpenGovSupported(network)) {
+			const allowedTracks = [];
+			for (const key in networkTrackInfo[network] as NetworkTrackInfo) {
+				if (networkTrackInfo[network]) {
+					const group = networkTrackInfo[network][key].group;
+					if (group === 'Treasury') {
+						allowedTracks.push(
+							networkTrackInfo[network][key].name
+								?.split('_')
+								.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+								.join('')
+						);
+					}
 				}
 			}
-		}
-		const allowedStatus = ['Executed', 'Passed', 'Confirmed', 'Approved'];
-		if (proposalType === ProposalType.OPEN_GOV && allowedTracks.includes(trackName) && allowedStatus.includes(postData?.status)) {
-			return true;
-		}
-	} else {
-		if ([ProposalType.TREASURY_PROPOSALS].includes(proposalType)) {
-			return true;
+			const allowedStatus = ['Executed', 'Passed', 'Confirmed', 'Approved'];
+			if (proposalType === ProposalType.OPEN_GOV && allowedTracks.includes(trackName) && allowedStatus.includes(postData?.status)) {
+				return true;
+			}
+		} else {
+			if ([ProposalType.TREASURY_PROPOSALS].includes(proposalType)) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 };

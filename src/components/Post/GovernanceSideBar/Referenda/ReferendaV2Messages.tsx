@@ -149,7 +149,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		return startTime;
 	};
 
-	const isDisbursalPeriodCardVisible = isTreasuryProposal ? (requested ? (isTreasuryProposalPresent ? (awardedStatusBlock ? false : true) : false) : false) : false;
+	const isDisbursalPeriodCardVisible = isTreasuryProposal
+		? requested
+			? isTreasuryProposalPresent
+				? awardedStatusBlock?.status == 'Awarded'
+					? false
+					: true
+				: false
+			: false
+		: false;
 
 	return (
 		<>

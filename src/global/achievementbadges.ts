@@ -20,7 +20,16 @@ export const badgeDetails: BadgeDetails[] = [
 	{
 		img: '/assets/badges/decentralised_voice.svg',
 		lockImg: '/assets/badges/decentralised_voice_locked.svg',
-		name: BadgeName.DECENTRALISED_VOICE,
+		name: BadgeName.DECENTRALISED_VOICE_POLKADOT,
+		requirements: {
+			locked: 'You must become a delegate on the polkadot network and aim to receive 1,000,000 tokens with a 6x conviction.',
+			unlocked: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation.'
+		}
+	},
+	{
+		img: '/assets/badges/decentralised_voice.svg',
+		lockImg: '/assets/badges/decentralised_voice_locked.svg',
+		name: BadgeName.DECENTRALISED_VOICE_KUSAMA,
 		requirements: {
 			locked: 'You must become a delegate on the Kusama network and aim to receive 1,000,000 tokens with a 6x conviction.',
 			unlocked: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation.'

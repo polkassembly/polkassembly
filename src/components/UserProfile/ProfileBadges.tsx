@@ -25,7 +25,8 @@ interface Props {
 const defaultLockedBadges = [
 	{ img: '/assets/badges/active_voter_locked.svg', name: BadgeName.ACTIVE_VOTER },
 	{ img: '/assets/badges/council_locked.svg', name: BadgeName.COUNCIL },
-	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE },
+	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_KUSAMA },
+	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_POLKADOT },
 	{ img: '/assets/badges/fellow_locked.svg', name: BadgeName.FELLOW },
 	{ img: '/assets/badges/whalelocked.svg', name: BadgeName.WHALE }
 ];
@@ -37,10 +38,13 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const network = getNetwork();
 
 	const filteredBadgeDetails = badgeDetails.filter((badge) => {
-		if ((badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.POLKADOT) || (badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.KUSAMA)) {
+		if (
+			(badge.name === BadgeName.DECENTRALISED_VOICE_POLKADOT && network === AllNetworks.POLKADOT) ||
+			(badge.name === BadgeName.DECENTRALISED_VOICE_KUSAMA && network === AllNetworks.KUSAMA)
+		) {
 			return true;
 		}
-		return badge.name !== BadgeName.DECENTRALISED_VOICE;
+		return badge.name !== (BadgeName.DECENTRALISED_VOICE_POLKADOT as BadgeName) && badge.name !== (BadgeName.DECENTRALISED_VOICE_KUSAMA as BadgeName);
 	});
 
 	const badgesToShow = filteredBadgeDetails.map((badgeDetail) => {
@@ -144,7 +148,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 								width={132}
 								height={82}
 							/>
-							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.name === BadgeName.DECENTRALISED_VOICE ? 'Decentralised Voice' : item.name}</span>
+							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.name}</span>
 						</div>
 					</Tooltip>
 				))}

@@ -10,45 +10,27 @@ import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatNumberWithSuffix } from '../../Bounties/utils/formatBalanceUsd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
+import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
+import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
+	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
+	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
-	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
-	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
-	const [hydrationApi, setHydrationApi] = useState<ApiPromise | null>(null);
-	const [hydrationApiReady, setHydrationApiReady] = useState<boolean>(false);
-	const [assethubValues, setAssethubValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
-	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
-	});
-	const [hydrationValues, setHydrationValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
-	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
-	});
+
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
@@ -68,99 +50,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				Number(hydrationValues.usdtValue) / 1000000
 		)
 	);
-
-	const fetchAssetsAmount = async () => {
-		if (!assethubApi || !assethubApiReady) return;
-
-		if (assethubApiReady && chainProperties?.[network]?.assetHubTreasuryAddress) {
-			try {
-				// Fetching balance in token (DOT)
-				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
-				if (tokenResult?.data?.free) {
-					const freeTokenBalance = tokenResult.data.free.toBigInt();
-					setAssethubValues((values) => ({ ...values, dotValue: freeTokenBalance.toString() }));
-				}
-
-				// Fetch balance in USDC
-				if (chainProperties[network]?.supportedAssets?.[2].genralIndex) {
-					const usdcResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[2].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
-
-					if (usdcResult.isNone) {
-						console.log('No data found for the USDC assets');
-					} else {
-						const data = usdcResult.unwrap();
-						const freeUSDCBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
-					}
-				}
-
-				// Fetch balance in USDT
-				if (chainProperties[network]?.supportedAssets?.[1].genralIndex) {
-					const usdtResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[1].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
-
-					if (usdtResult.isNone) {
-						console.log('No data found for the USDT assets');
-					} else {
-						const data = usdtResult.unwrap();
-						const freeUSDTBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
-					}
-				}
-				return;
-			} catch (e) {
-				console.error('Error fetching asset balance:', e);
-			}
-		}
-
-		return;
-	};
-
-	const fetchHydrationAssetsAmount = async () => {
-		if (!hydrationApi || !hydrationApiReady) return;
-
-		if (hydrationApiReady && chainProperties?.[network]?.hydrationTreasuryAddress) {
-			if (chainProperties[network]?.hydrationAssets?.[0]?.assetId) {
-				const dotResult = (await hydrationApi?.query?.tokens?.accounts(
-					chainProperties[network].hydrationTreasuryAddress,
-					chainProperties[network]?.hydrationAssets?.[0]?.assetId
-				)) as any;
-
-				const data = dotResult.reserved;
-				const freeDOTBalance = data.toBigInt().toString();
-				setHydrationValues((values) => ({ ...values, dotValue: freeDOTBalance }));
-			}
-
-			// for USDT
-			if (chainProperties[network]?.hydrationAssets?.[1]?.assetId) {
-				const usdtResult = (await hydrationApi?.query?.tokens?.accounts(
-					chainProperties[network].hydrationTreasuryAddress,
-					chainProperties[network]?.hydrationAssets?.[1]?.assetId
-				)) as any;
-
-				const data = usdtResult.free;
-				const freeUSDTBalance = data.toBigInt().toString();
-				setHydrationValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
-			}
-
-			// for USDC
-			if (chainProperties[network]?.hydrationAssets?.[2]?.assetId) {
-				const usdcResult = (await hydrationApi?.query?.tokens?.accounts(
-					chainProperties[network].hydrationTreasuryAddress,
-					chainProperties[network]?.hydrationAssets?.[2]?.assetId
-				)) as any;
-
-				const data = usdcResult.free;
-				const freeUSDCBalance = data.toBigInt().toString();
-				setHydrationValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
-			}
-		}
-	};
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -200,60 +89,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	};
 
 	useEffect(() => {
-		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setAssethubApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-					setAssethubApiReady(true);
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
-		})();
-		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[network]?.hydrationEndpoints?.[0]);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setHydrationApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-					setHydrationApiReady(true);
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
-		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
 		fetchDataFromApi();
 		getGraphData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	useEffect(() => {
-		if (!assethubApi || !assethubApiReady) return;
-		fetchAssetsAmount();
-		if (!hydrationApi || !hydrationApiReady) return;
-		fetchHydrationAssetsAmount();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [assethubApi, assethubApiReady, hydrationApi, hydrationApiReady]);
+		if (assethubApiReady) {
+			fetchAssetsAmount();
+		}
+		if (hydrationApiReady) {
+			fetchHydrationAssetsAmount();
+		}
+	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
 
 	return (
 		<div
@@ -325,7 +173,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
 						<div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='flex flex-col justify-between gap-2 xl:flex-row'>
+								<div className='flex flex-col items-center justify-between gap-2 xl:flex-row'>
 									<div className='flex items-baseline justify-start font-medium xl:justify-between'>
 										{available.value ? (
 											<div className='flex items-center'>
@@ -333,7 +181,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
 													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
 													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
-													<span className='text-[12px] text-blue-light-high dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+													<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>
 											</div>
 										) : (
@@ -342,41 +190,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									</div>
 
 									{chainProperties[network]?.assetHubTreasuryAddress && (
-										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
-											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-												<AssethubIcon />
-												Asset Hub
-											</span>
-											<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-												<div className='text-xs'>
-													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
-												</div>
-												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{assetValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
-														</div>
-													</>
-												)}
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{assetValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
-											</div>
-										</div>
+										<TreasuryAssetDisplay
+											title='Asset Hub'
+											icon={<AssethubIcon />}
+											value={assetValue}
+											unit={unit}
+											valueUSDT={assetValueUSDT}
+											valueUSDC={assetValueUSDC}
+											isLoading={!assethubApiReady}
+											supportedAssets={chainProperties[network]?.supportedAssets}
+										/>
 									)}
 								</div>
 							) : (
@@ -387,41 +210,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 								<div className='mt-2 flex flex-col xl:items-end'>
 									{chainProperties[network]?.hydrationTreasuryAddress && (
-										<div className={`${poppins.className} ${poppins.variable} flex items-center `}>
-											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-												<HydrationIcon />
-												Hydration
-											</span>
-											<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-												<div className='text-xs'>
-													{formatUSDWithUnits(hydrationValue)} <span className='ml-[2px] font-normal'>{unit}</span>
-												</div>
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{hydrationValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
-														</div>
-													</>
-												)}
-												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{hydrationValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
-											</div>
-										</div>
+										<TreasuryAssetDisplay
+											title='Hydration'
+											icon={<HydrationIcon />}
+											value={hydrationValue}
+											unit={unit}
+											valueUSDT={hydrationValueUSDT}
+											valueUSDC={hydrationValueUSDC}
+											isLoading={!hydrationApiReady}
+											supportedAssets={chainProperties[network]?.supportedAssets}
+										/>
 									)}
 								</div>
 							) : (
@@ -465,33 +263,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 
 										{chainProperties[network]?.assetHubTreasuryAddress && (
-											<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
-												<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-													<AssethubIcon />
-													Asset Hub
-												</span>
-												<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-													<div className=''>
-														{formatNumberWithSuffix(Number(assetValue))} <span className='ml-[2px] font-normal'>{unit}</span>
-													</div>
-													<Divider
-														className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-														type='vertical'
-													/>
-													<div className=''>
-														{assetValueUSDC}
-														<span className='ml-[3px] font-normal'>USDC</span>
-													</div>
-													<Divider
-														className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-														type='vertical'
-													/>
-													<div className=''>
-														{assetValueUSDT}
-														<span className='ml-[3px] font-normal'>USDT</span>
-													</div>
-												</div>
-											</div>
+											<TreasuryAssetDisplay
+												title='Asset Hub'
+												icon={<AssethubIcon />}
+												value={assetValue}
+												unit={unit}
+												valueUSDT={assetValueUSDT}
+												valueUSDC={assetValueUSDC}
+												isLoading={!assethubApiReady}
+												supportedAssets={chainProperties[network]?.supportedAssets}
+											/>
 										)}
 									</div>
 								) : (

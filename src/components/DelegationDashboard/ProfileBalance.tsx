@@ -92,8 +92,8 @@ const ProfileBalances = ({ className }: Props) => {
 	return (
 		<div className={'flex w-full items-center justify-between pl-[26px] max-md:pl-4 '}>
 			{/* for small screen */}
-			<div className='flex w-full items-center justify-between'>
-				<div className='flex items-center space-x-2 pt-1 sm:hidden'>
+			<div className='flex w-full items-center justify-between sm:hidden'>
+				<div className='flex items-center space-x-2 pt-1 '>
 					{balancesArr.slice(0, 1).map((balance) => (
 						<div
 							key={balance?.label}

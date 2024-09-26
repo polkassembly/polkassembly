@@ -8,6 +8,7 @@ import striptags from 'striptags';
 import removeMd from 'remove-markdown';
 
 export function removeSymbols(input: string) {
+	if (!input) return;
 	return removeMd(striptags(String(input)));
 }
 

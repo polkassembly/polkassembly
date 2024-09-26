@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button, Divider, Modal } from 'antd';
@@ -45,6 +44,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [address, setAddress] = useState<string>('');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const [isMobile, setIsMobile] = useState<boolean>(false);
 
 	const handleClick = () => {
 		// GAEvent for delegate CTA clicked
@@ -61,8 +61,17 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 
 	const getTrimmedBio = (bio: string) => {
+		if (!bio) return 'No Bio';
 		return bio.length > 100 ? `${bio.slice(0, 100)}...` : bio;
 	};
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 640);
+		handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	return (
 		<div
@@ -83,17 +92,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							<div className='flex items-center space-x-1'>
 								<Image
 									src={'/assets/delegation-tracks/pa-logo-small-delegate.svg'}
-									height={20}
-									width={20}
+									height={isMobile ? 20 : 22}
+									width={isMobile ? 20 : 22}
 									alt=''
-									className={'sm:hidden'}
-								/>
-								<Image
-									src={'/assets/delegation-tracks/pa-logo-small-delegate.svg'}
-									height={22}
-									width={22}
-									alt=''
-									className={'hidden sm:block'}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Polkassembly</span>
 							</div>
@@ -109,17 +110,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							<div className='flex items-center space-x-1'>
 								<Image
 									src={'/assets/profile/w3f.svg'}
-									height={20}
-									width={20}
+									height={isMobile ? 20 : 22}
+									width={isMobile ? 20 : 22}
 									alt=''
-									className={'sm:hidden'}
-								/>
-								<Image
-									src={'/assets/profile/w3f.svg'}
-									height={22}
-									width={22}
-									alt=''
-									className={'hidden sm:block'}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>W3f</span>
 							</div>
@@ -134,17 +127,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							<div className='flex items-center space-x-[6px]'>
 								<Image
 									src={'/assets/icons/polkadot-logo.svg'}
-									height={18}
-									width={18}
+									height={isMobile ? 18 : 22}
+									width={isMobile ? 18 : 22}
 									alt=''
-									className={'sm:hidden'}
-								/>
-								<Image
-									src={'/assets/icons/polkadot-logo.svg'}
-									height={22}
-									width={22}
-									alt=''
-									className={'hidden sm:block'}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Polkadot</span>
 							</div>
@@ -160,17 +145,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='flex items-center space-x-1 '>
 							<Image
 								src={'/assets/delegation-tracks/nova-wallet.svg'}
-								height={20}
-								width={20}
+								height={isMobile ? 20 : 22}
+								width={isMobile ? 20 : 22}
 								alt=''
-								className={'sm:hidden'}
-							/>
-							<Image
-								src={'/assets/delegation-tracks/nova-wallet.svg'}
-								height={22}
-								width={22}
-								alt=''
-								className={'hidden sm:block'}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Nova Wallet</span>
 						</div>
@@ -182,17 +159,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-8 items-center gap-1 rounded-t-md bg-[#272525] px-3 sm:px-5'>
 							<Image
 								src={'/assets/profile/w3f.svg'}
-								height={20}
-								width={20}
+								height={isMobile ? 20 : 22}
+								width={isMobile ? 20 : 22}
 								alt=''
-								className={'sm:hidden'}
-							/>
-							<Image
-								src={'/assets/profile/w3f.svg'}
-								height={22}
-								width={22}
-								alt=''
-								className={'hidden sm:block'}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-blue-dark-high sm:text-xs`}>W3F Delegate</span>
 						</div>
@@ -201,17 +170,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-8 items-center gap-1 rounded-t-md border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
 							<Image
 								src={'/assets/delegation-tracks/nova-wallet.svg'}
-								height={20}
-								width={20}
+								height={isMobile ? 20 : 22}
+								width={isMobile ? 20 : 22}
 								alt=''
-								className={'sm:hidden'}
-							/>
-							<Image
-								src={'/assets/delegation-tracks/nova-wallet.svg'}
-								height={22}
-								width={22}
-								alt=''
-								className={'hidden sm:block'}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Nova Wallet Delegate</span>
 						</div>
@@ -220,17 +181,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-8 items-center space-x-[6px] rounded-t-md border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-3 dark:bg-[#25203D] sm:px-5'>
 							<Image
 								src={'/assets/icons/polkadot-logo.svg'}
-								height={18}
-								width={18}
+								height={isMobile ? 18 : 22}
+								width={isMobile ? 18 : 22}
 								alt=''
-								className={'sm:hidden'}
-							/>
-							<Image
-								src={'/assets/icons/polkadot-logo.svg'}
-								height={22}
-								width={22}
-								alt=''
-								className={'hidden sm:block'}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Polkadot Delegate</span>
 						</div>
@@ -239,17 +192,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-8 items-center gap-1 rounded-t-md border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
 							<Image
 								src={'/assets/delegation-tracks/pa-logo-small-delegate.svg'}
-								height={20}
-								width={20}
+								height={isMobile ? 20 : 22}
+								width={isMobile ? 20 : 22}
 								alt=''
-								className={'sm:hidden'}
-							/>
-							<Image
-								src={'/assets/delegation-tracks/pa-logo-small-delegate.svg'}
-								height={22}
-								width={22}
-								alt=''
-								className={'hidden sm:block'}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Polkassembly Delegate</span>
 						</div>
@@ -258,17 +203,10 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-8 items-center gap-1 rounded-t-md border-[1px] border-solid bg-[#FCE5F2] px-3 dark:bg-section-dark-background sm:px-5'>
 							<Image
 								src={'/assets/icons/individual-filled.svg'}
-								height={19}
-								width={19}
+								height={isMobile ? 19 : 20}
+								width={isMobile ? 19 : 20}
 								alt=''
-								className={theme == 'dark' ? 'dark-icons sm:hidden' : ' sm:hidden'}
-							/>
-							<Image
-								src={'/assets/icons/individual-filled.svg'}
-								height={20}
-								width={20}
-								alt=''
-								className={theme == 'dark' ? 'dark-icons hidden sm:block' : 'hidden sm:block'}
+								className={theme == 'dark' ? 'dark-icons' : ''}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal tracking-wide text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>Individual</span>
 						</div>

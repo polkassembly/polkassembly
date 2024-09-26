@@ -46,6 +46,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
 	const [isAbstain, setIsAbstain] = useState<boolean>(false);
+	const [isMobile, setIsMobile] = useState<boolean>(false);
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
 
@@ -76,6 +77,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	const remainingTime = convertRemainingTime(decision.periodEndsAt);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 640);
+		handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	useEffect(() => {
 		if (!network) return;
@@ -142,25 +151,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							<div className='flex shrink-0 flex-wrap items-center justify-between max-sm:w-full'>
 								<div className='flex shrink-0 flex-wrap items-center gap-[2px] sm:gap-1'>
 									By:
-									<span className='sm:hidden'>
-										<Address
-											address={String(proposal?.proposer)}
-											className='address ml-1 shrink-0 break-words'
-											displayInline
-											iconSize={18}
-											usernameClassName='text-xs font-normal shrink-0'
-											isTruncateUsername={false}
-										/>
-									</span>
-									<span className='hidden sm:block'>
-										<Address
-											address={String(proposal?.proposer)}
-											className='address ml-1.5 flex shrink-0 items-center break-words'
-											displayInline
-											usernameClassName='text-xs font-medium shrink-0'
-											isTruncateUsername={false}
-										/>
-									</span>
+									<Address
+										address={String(proposal?.proposer)}
+										className='address ml-1.5 flex shrink-0 items-center break-words'
+										displayInline
+										usernameClassName='text-xs font-medium shrink-0'
+										isTruncateUsername={!isMobile}
+										iconSize={isMobile ? 18 : 24}
+									/>
 									{relativeCreatedAt && (
 										<div className='flex shrink-0 items-center justify-center sm:hidden'>
 											<Divider
@@ -228,25 +226,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
 						{status.includes(ETrackDelegationStatus.DELEGATED) && (
-							<>
-								{' '}
-								<Address
-									usernameClassName='text-xs font-medium'
-									address={String(delegatedTo)}
-									displayInline
-									isTruncateUsername={false}
-									className='hidden sm:flex'
-								/>
-								<Address
-									address={String(delegatedTo)}
-									usernameMaxLength={5}
-									usernameClassName='text-xs font-medium'
-									isTruncateUsername={true}
-									destroyTooltipOnHide={true}
-									displayInline
-									className='text-xs sm:hidden'
-								/>
-							</>
+							<Address
+								address={String(delegatedTo)}
+								usernameClassName='text-xs font-medium'
+								isTruncateUsername={!isMobile}
+								iconSize={isMobile ? 18 : 24}
+								displayInline
+								className='text-xs sm:hidden'
+							/>
 						)}
 						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
 						{!isAbstain ? (
@@ -270,24 +257,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					votingData && (
 						<div className='flex rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] py-1 dark:bg-[#1D160E] sm:gap-2 sm:px-6 sm:py-2'>
 							{status.includes(ETrackDelegationStatus.DELEGATED) && (
-								<>
-									<Address
-										address={String(delegatedTo)}
-										usernameClassName='text-xs font-medium'
-										displayInline
-										isTruncateUsername={false}
-										className='hidden sm:flex'
-									/>
-									<Address
-										address={String(delegatedTo)}
-										usernameMaxLength={5}
-										isTruncateUsername={true}
-										usernameClassName='text-xs font-medium'
-										destroyTooltipOnHide={true}
-										displayInline
-										className='text-xs sm:hidden'
-									/>
-								</>
+								<Address
+									address={String(delegatedTo)}
+									usernameClassName='text-xs font-medium'
+									isTruncateUsername={!isMobile}
+									iconSize={isMobile ? 18 : 24}
+									displayInline
+									className='text-xs sm:hidden'
+								/>
 							)}
 							<div className='flex items-center justify-center text-[10px] text-lightBlue dark:text-blue-dark-medium max-sm:pl-[10px] sm:text-xs'>
 								Not Voted yet <CautionIcon className='ml-1' />

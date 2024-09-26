@@ -58,7 +58,15 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const [rowsData, setRowsData] = useState<ITrackDataType[]>([]);
 	const [data, setData] = useState<ITrackDataType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [isMobile, setIsMobile] = useState<boolean>(false);
 	const router = useRouter();
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 640);
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	const handleRowClick = (row: ITrackDataType) => {
 		router.push(`/delegation/${row?.track?.split(' ')?.join('-')?.toLowerCase() || row.track.toLowerCase()}`);
@@ -187,8 +195,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className={`flex items-center justify-between gap-2 border-l-0 border-r-0 border-t-0 text-xl font-medium text-sidebarBlue dark:text-white max-lg:gap-0 max-sm:justify-between lg:px-8 lg:py-6 ${
-					showTable && 'sm:border-b-[1px] sm:border-solid sm:border-[#e7ebf0] sm:dark:text-blue-dark-high'
+				className={`flex items-center justify-between gap-2 border-l-0 border-r-0 border-t-0 text-xl font-medium text-sidebarBlue dark:text-white max-lg:gap-0 max-sm:justify-between sm:mb-5 sm:pb-1 lg:px-8 lg:py-6 ${
+					showTable && 'sm:border-b-[1px] sm:border-solid sm:border-[#e7ebf0] sm:dark:border-separatorDark sm:dark:text-blue-dark-high'
 				} max-sm:px-4 max-sm:py-5`}
 			>
 				<span className={`${poppins.className} ${poppins.variable} font-semibold text-bodyBlue dark:text-blue-dark-high max-sm:text-xl `}>Tracks</span>
@@ -207,9 +215,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 						<Radio
 							key={key}
 							disabled={loading}
-							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${
-								key === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]' // This will now only apply to the "ALL" status
-							}`}
+							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${key === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'}`}
 							value={key as ETrackDelegationStatus}
 						>
 							{key.charAt(0).toUpperCase() + key.split('_').join(' ').slice(1, key.length)} ({value})
@@ -243,73 +249,75 @@ const DashboardTrackListing = ({ className }: Props) => {
 					</Button>
 				</Dropdown>
 			</div>
-			{showTable && !!status && !!delegationDashboardAddress && (
-				<div className={'grid p-0 dark:bg-section-dark-overlay sm:hidden '}>
-					{rowsData.map((item) => (
-						<div
-							onClick={() => handleRowClick(item)}
-							key={item.index}
-							className=' border-b-0 border-l-0 border-r-0 border-t border-solid border-[#D2D8E0] bg-white p-4 shadow-md dark:border-separatorDark dark:bg-section-dark-overlay'
-						>
-							<div className='mb-[14px] flex items-center justify-between'>
-								<div className='flex items-center '>
-									{item.status?.map((status, index) => (
-										<span
-											key={index}
-											className={`mr-2 rounded-[26px] px-2 py-1 text-center text-xs font-medium ${
-												status === ETrackDelegationStatus.RECEIVED_DELEGATION
-													? 'bg-[#E7DCFF] text-blue-light-high dark:bg-[#6C2CF8] dark:text-blue-dark-high'
-													: status === ETrackDelegationStatus.DELEGATED
-													? 'bg-[#FFFBD8] text-blue-light-high dark:bg-[#69600B] dark:text-blue-dark-high'
-													: status === ETrackDelegationStatus.UNDELEGATED
-													? 'bg-[#FFDAD8] text-blue-light-high dark:bg-[#EF6158] dark:text-blue-dark-high'
-													: 'bg-gray-100 text-gray-800'
-											} ${status === ETrackDelegationStatus.RECEIVED_DELEGATION && item.status && item.status.length > 1 ? 'w-[95px] truncate' : ''}`}
-										>
-											{/* Conditional Text Rendering */}
-											{status === ETrackDelegationStatus.RECEIVED_DELEGATION
-												? "Recv'd Delegation"
-												: status.split('_').join(' ').charAt(0).toUpperCase() + status.split('_').join(' ').slice(1)}
-										</span>
-									))}
+			{showTable &&
+				!!status &&
+				!!delegationDashboardAddress &&
+				(!isMobile ? (
+					<Table
+						className='column hidden sm:block'
+						columns={GetColumns(status)}
+						dataSource={rowsData}
+						rowClassName='cursor-pointer'
+						loading={loading || !delegationDashboardAddress}
+						pagination={false}
+						theme={theme}
+						onRow={(row: ITrackDataType) => {
+							return {
+								onClick: () => {
+									router.push(`/delegation/${row?.track?.split(' ')?.join('-')?.toLowerCase() || row.track.toLowerCase()}`);
+								}
+							};
+						}}
+					/>
+				) : (
+					<div className={'grid p-0 dark:bg-section-dark-overlay sm:hidden '}>
+						{rowsData.map((item) => (
+							<div
+								onClick={() => handleRowClick(item)}
+								key={item.index}
+								className=' border-b-0 border-l-0 border-r-0 border-t border-solid border-[#D2D8E0] bg-white p-4 shadow-md dark:border-separatorDark dark:bg-section-dark-overlay'
+							>
+								<div className='mb-[14px] flex items-center justify-between'>
+									<div className='flex items-center '>
+										{item.status?.map((status, index) => (
+											<span
+												key={index}
+												className={`mr-2 rounded-[26px] px-2 py-1 text-center text-xs font-medium ${
+													status === ETrackDelegationStatus.RECEIVED_DELEGATION
+														? 'bg-[#E7DCFF] text-blue-light-high dark:bg-[#6C2CF8] dark:text-blue-dark-high'
+														: status === ETrackDelegationStatus.DELEGATED
+														? 'bg-[#FFFBD8] text-blue-light-high dark:bg-[#69600B] dark:text-blue-dark-high'
+														: status === ETrackDelegationStatus.UNDELEGATED
+														? 'bg-[#FFDAD8] text-blue-light-high dark:bg-[#EF6158] dark:text-blue-dark-high'
+														: 'bg-gray-100 text-gray-800'
+												} ${status === ETrackDelegationStatus.RECEIVED_DELEGATION && item.status && item.status.length > 1 ? 'w-[95px] truncate' : ''}`}
+											>
+												{/* Conditional Text Rendering */}
+												{status === ETrackDelegationStatus.RECEIVED_DELEGATION
+													? "Recv'd Delegation"
+													: status.split('_').join(' ').charAt(0).toUpperCase() + status.split('_').join(' ').slice(1)}
+											</span>
+										))}
+									</div>
+									<span className={`${poppins.className} ${poppins.variable} text-[10px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
+										{item.active_proposals} Active proposal(s)
+									</span>
 								</div>
-								<span className={`${poppins.className} ${poppins.variable} text-[10px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
-									{item.active_proposals} Active proposal(s)
-								</span>
-							</div>
 
-							<div className='mb-[6px] flex items-center justify-between'>
-								<span
-									className={`${poppins.className} ${poppins.variable} flex items-center gap-1 whitespace-nowrap text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}
-								>
-									#{item.index}
-									<span className='-mb-[2px] sm:hidden'>{handleTracksIcon(capitalizeWords(handleTrack(String(item.track))), 20)}</span>
-									{item.track}
-								</span>
+								<div className='mb-[6px] flex items-center justify-between'>
+									<span
+										className={`${poppins.className} ${poppins.variable} flex items-center gap-1 whitespace-nowrap text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}
+									>
+										#{item.index}
+										<span className='-mb-[2px] sm:hidden'>{handleTracksIcon(capitalizeWords(handleTrack(String(item.track))), 20)}</span>
+										{item.track}
+									</span>
+								</div>
+								<span className={`${poppins.className} ${poppins.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{item.description}</span>
 							</div>
-							<span className={`${poppins.className} ${poppins.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{item.description}</span>
-						</div>
-					))}
-				</div>
-			)}
-			{showTable && !!status && !!delegationDashboardAddress && (
-				<Table
-					className='column hidden sm:block'
-					columns={GetColumns(status)}
-					dataSource={rowsData}
-					rowClassName='cursor-pointer'
-					loading={loading || !delegationDashboardAddress}
-					pagination={false}
-					theme={theme}
-					onRow={(row: ITrackDataType) => {
-						return {
-							onClick: () => {
-								router.push(`/delegation/${row?.track?.split(' ')?.join('-')?.toLowerCase() || row.track.toLowerCase()}`);
-							}
-						};
-					}}
-				/>
-			)}
+						))}
+					</div>
+				))}
 			{status === ETrackDelegationStatus.DELEGATED && !statusCounts.delegated && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-24 text-[258px] dark:bg-section-dark-overlay'>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>

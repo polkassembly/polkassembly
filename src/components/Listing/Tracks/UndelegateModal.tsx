@@ -55,7 +55,16 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const lock = Number(2 ** (conviction - 1));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
+	const [isMobile, setIsMobile] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 640);
+		handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	useEffect(() => {
 		if (!network) return;
@@ -80,17 +89,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			setLoading(false);
 		})();
 	}, [defaultAddress, api, apiReady, balance, trackNum, conviction, network, target]);
-
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultAddress]);
 
 	const onSuccess = () => {
 		queueNotification({
@@ -206,64 +204,42 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					indicator={<LoadingOutlined />}
 				>
 					<div className='flex flex-col border-0'>
-						{
-							<Alert
-								showIcon
-								type='info'
-								className='mt-1 rounded-[4px] text-sm'
-								message={
-									<span className='text-sm dark:text-blue-dark-high sm:text-base'>
-										An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction
-									</span>
-								}
-							/>
-						}
+						<Alert
+							showIcon
+							type='info'
+							className='mt-1 rounded-[4px] text-sm'
+							message={
+								<span className='text-sm dark:text-blue-dark-high sm:text-base'>
+									An approximate fee of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction
+								</span>
+							}
+						/>
 						<Form
 							form={form}
 							disabled={true}
 						>
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-								<div className='rounded-sm px-0 py-[px] text-[#7c899b] sm:h-10'>
-									<Address
-										isTruncateUsername={false}
-										address={defaultAddress}
-										iconSize={24}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-										className='mt-1 sm:hidden'
-									/>
-									<Address
-										isTruncateUsername={false}
-										address={defaultAddress}
-										iconSize={32}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-										className='mt-1 hidden sm:flex'
-									/>
-								</div>
+								<Address
+									isTruncateUsername={false}
+									address={defaultAddress}
+									iconSize={isMobile ? 24 : 32}
+									addressClassName='text-[#7c899b] text-sm'
+									displayInline
+									className={`mt-1 ${isMobile ? '' : 'hidden sm:flex'}`}
+								/>
 							</div>
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
-								<div className='rounded-sm px-0 py-[px] text-bodyBlue dark:text-blue-dark-high sm:h-10'>
-									<Address
-										isTruncateUsername={false}
-										address={defaultTarget}
-										iconSize={24}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-										className='mt-1 sm:hidden'
-									/>
-									<Address
-										isTruncateUsername={false}
-										address={defaultTarget}
-										iconSize={32}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-										className='mt-1 hidden sm:flex'
-									/>
-								</div>
+								<Address
+									isTruncateUsername={false}
+									address={defaultTarget}
+									iconSize={isMobile ? 24 : 32}
+									addressClassName='text-[#7c899b] text-sm'
+									displayInline
+									className={`mt-1 ${isMobile ? '' : 'hidden sm:flex'}`}
+								/>
 							</div>
 
 							<div className='mt-4'>

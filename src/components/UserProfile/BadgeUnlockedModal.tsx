@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { Badge } from '~src/auth/types';
 import { badgeDetails } from '~src/global/achievementbadges';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import getNetwork from '~src/util/getNetwork';
 
 interface Props {
 	className?: string;
@@ -23,11 +24,18 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 	if (!badge) return <></>;
 
 	const matchingBadge = badgeDetails.find((detail) => detail.name === badge.name);
-
+	const network = getNetwork();
 	const isUnlocked = badges?.some((unlockedBadge) => unlockedBadge.name === badge.name);
-
 	const badgeImage = matchingBadge?.img || '/assets/badges/active_voter_locked.svg';
 	const lockedImg = matchingBadge?.lockImg || '/assets/badges/active_voter_locked.svg';
+
+	const getRequirementText = (requirement: string | ((network: string) => string), network: string) => {
+		return typeof requirement === 'function' ? requirement(network) : requirement;
+	};
+
+	const description = isUnlocked
+		? getRequirementText(matchingBadge?.requirements?.unlocked || '', network)
+		: getRequirementText(matchingBadge?.requirements?.locked || '', network);
 
 	return (
 		<Modal
@@ -74,9 +82,10 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 						You Earned <span className='font-semibold text-pink_primary'>{badge.name}</span> Badge
 					</h2>
 				)}
-				<p className='mt-2 text-center text-[16px] font-light dark:text-white'>{badge.check ? matchingBadge?.requirements?.unlocked : matchingBadge?.requirements?.locked} </p>
+				<p className='mt-2 text-center text-[16px] font-light dark:text-white'>{description}</p>
 			</div>
 		</Modal>
 	);
 };
+
 export default BadgeUnlockedModal;

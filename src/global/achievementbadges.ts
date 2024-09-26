@@ -3,14 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { BadgeName } from '~src/auth/types';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 export interface BadgeDetails {
 	img: string;
 	name: BadgeName;
 	lockImg?: string;
 	requirements: {
-		locked: string;
-		unlocked: string;
+		locked: string | ((network: string) => string);
+		unlocked: string | ((network: string) => string);
 	};
 }
 
@@ -20,19 +21,16 @@ export const badgeDetails: BadgeDetails[] = [
 	{
 		img: '/assets/badges/decentralised_voice.svg',
 		lockImg: '/assets/badges/decentralised_voice_locked.svg',
-		name: BadgeName.DECENTRALISED_VOICE_POLKADOT,
+		name: BadgeName.DECENTRALISED_VOICE,
 		requirements: {
-			locked: 'You must become a delegate on the polkadot network and aim to receive 1,000,000 tokens with a 6x conviction.',
-			unlocked: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation.'
-		}
-	},
-	{
-		img: '/assets/badges/decentralised_voice.svg',
-		lockImg: '/assets/badges/decentralised_voice_locked.svg',
-		name: BadgeName.DECENTRALISED_VOICE_KUSAMA,
-		requirements: {
-			locked: 'You must become a delegate on the Kusama network and aim to receive 1,000,000 tokens with a 6x conviction.',
-			unlocked: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation.'
+			locked: (network: string) =>
+				network === AllNetworks.KUSAMA
+					? 'You must become a delegate on the Kusama network and aim to receive 1,000,000 tokens with a 6x conviction.'
+					: 'You must become a delegate on the Polkadot network and aim to receive 1,000,000 tokens with a 6x conviction.',
+			unlocked: (network: string) =>
+				network === AllNetworks.KUSAMA
+					? 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation on the Kusama network.'
+					: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation on the Polkadot network.'
 		}
 	},
 	{

@@ -6,7 +6,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { Badge, BadgeName, ProfileDetailsResponse } from '~src/auth/types';
 import styled from 'styled-components';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
@@ -25,8 +24,7 @@ interface Props {
 const defaultLockedBadges = [
 	{ img: '/assets/badges/active_voter_locked.svg', name: BadgeName.ACTIVE_VOTER },
 	{ img: '/assets/badges/council_locked.svg', name: BadgeName.COUNCIL },
-	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_KUSAMA },
-	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_POLKADOT },
+	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE },
 	{ img: '/assets/badges/fellow_locked.svg', name: BadgeName.FELLOW },
 	{ img: '/assets/badges/whalelocked.svg', name: BadgeName.WHALE }
 ];
@@ -35,33 +33,39 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
-	const network = getNetwork();
+	const network = getNetwork(); // Get the current network
 
-	const filteredBadgeDetails = badgeDetails.filter((badge) => {
-		if (
-			(badge.name === BadgeName.DECENTRALISED_VOICE_POLKADOT && network === AllNetworks.POLKADOT) ||
-			(badge.name === BadgeName.DECENTRALISED_VOICE_KUSAMA && network === AllNetworks.KUSAMA)
-		) {
-			return true;
-		}
-		return badge.name !== (BadgeName.DECENTRALISED_VOICE_POLKADOT as BadgeName) && badge.name !== (BadgeName.DECENTRALISED_VOICE_KUSAMA as BadgeName);
-	});
+	// Helper function to process the requirements
+	const getRequirementText = (requirement: string | ((network: string) => string), network: string) => {
+		return typeof requirement === 'function' ? requirement(network) : requirement;
+	};
 
-	const badgesToShow = filteredBadgeDetails.map((badgeDetail) => {
+	// Map through badges and prepare them for display
+	const badgesToShow = badgeDetails.map((badgeDetail) => {
 		const unlockedBadge = badges?.find((unlocked) => unlocked.name === badgeDetail.name && unlocked.check);
 
+		// Prepare the badge for display, handling locked/unlocked cases
 		if (unlockedBadge) {
 			return {
 				...badgeDetail,
 				isUnlocked: true,
+				requirements: {
+					locked: getRequirementText(badgeDetail.requirements.locked, network),
+					unlocked: getRequirementText(badgeDetail.requirements.unlocked, network)
+				},
 				unlockedAt: unlockedBadge.unlockedAt
 			};
 		} else {
+			// Get the locked badge image and details
 			const lockedBadge = defaultLockedBadges.find((locked) => locked.name === badgeDetail.name);
 			return {
 				...badgeDetail,
 				img: lockedBadge ? lockedBadge.img : badgeDetail.img,
-				isUnlocked: false
+				isUnlocked: false,
+				requirements: {
+					locked: getRequirementText(badgeDetail.requirements.locked, network),
+					unlocked: getRequirementText(badgeDetail.requirements.unlocked, network)
+				}
 			};
 		}
 	});

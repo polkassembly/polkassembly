@@ -215,12 +215,12 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 						post={post}
 						reactionState={reactionState}
 						setReactionState={setReactionState}
-						disableComments={isUserNotAllowedToComment}
+						isUserNotAllowedToComment={isUserNotAllowedToComment}
 					/>
 					<PostCommentSection
 						post={post}
 						reasonForNoComment={reasonForNoComment}
-						disableComments={isUserNotAllowedToComment}
+						isUserNotAllowedToComment={isUserNotAllowedToComment}
 					/>
 					{isMobile && (
 						<div
@@ -307,10 +307,8 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
-	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
-	const [identity, setIdentity] = useState<boolean>(true);
 	const modalWrapperRef = useRef<HTMLDivElement>(null);
+	const { resolvedTheme: theme } = useTheme();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const openModal = () => {
 		if (userid) {

@@ -51,9 +51,8 @@ export const PostActions: React.FC<{
 	const { resolvedTheme: theme } = useTheme();
 
 	const renderUsernames = (reaction: '👍' | '👎') => {
-		const reactionsData = post_reactions[reaction];
-		const usernames = reactionsData?.usernames || [];
-		const userImages = reactionsData?.images || [];
+		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
+		const userImages = reaction === '👍' ? reactionState.likesImages : reactionState.dislikesImages;
 
 		return usernames?.length ? (
 			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>
@@ -120,6 +119,12 @@ export const PostActions: React.FC<{
 							post_reactions['👍'].userIds.push(userid);
 							post_reactions['👍'].images.push(image);
 							post_reactions['👍'].count += 1;
+
+							setReactionState({
+								...newState,
+								likesImages: post_reactions['👍'].images,
+								likesUsernames: post_reactions['👍'].usernames
+							});
 						});
 					}
 				} else {
@@ -127,6 +132,12 @@ export const PostActions: React.FC<{
 					post_reactions['👍'].userIds = post_reactions['👍'].userIds?.filter((id: number) => id !== userid);
 					post_reactions['👍'].images = post_reactions['👍'].images?.filter((img: string, idx: number) => post_reactions['👍'].usernames[idx] !== username);
 					post_reactions['👍'].count -= 1;
+
+					setReactionState({
+						...newState,
+						likesImages: post_reactions['👍'].images,
+						likesUsernames: post_reactions['👍'].usernames
+					});
 				}
 			} else if (reaction === '👎') {
 				if (!post_reactions['👎'].images) {
@@ -151,13 +162,25 @@ export const PostActions: React.FC<{
 							post_reactions['👎'].userIds.push(userid);
 							post_reactions['👎'].images.push(image);
 							post_reactions['👎'].count += 1;
+
+							setReactionState({
+								...newState,
+								dislikesImages: post_reactions['👎'].images,
+								dislikesUsernames: post_reactions['👎'].usernames
+							});
 						});
 					}
 				} else {
 					post_reactions['👎'].usernames = post_reactions['👎'].usernames?.filter((name: string) => name !== username);
-					post_reactions['👎'].userIds = post_reactions['👎'].userIds?.filter((id: number) => id !== userid); // Remove user ID
+					post_reactions['👎'].userIds = post_reactions['👎'].userIds?.filter((id: number) => id !== userid);
 					post_reactions['👎'].images = post_reactions['👎'].images?.filter((img: string, idx: number) => post_reactions['👎'].usernames[idx] !== username);
 					post_reactions['👎'].count -= 1;
+
+					setReactionState({
+						...newState,
+						dislikesImages: post_reactions['👎'].images,
+						dislikesUsernames: post_reactions['👎'].usernames
+					});
 				}
 			}
 

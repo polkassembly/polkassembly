@@ -48,13 +48,11 @@ export const PostReactions: React.FC<{
 	const username = reactionState?.likesUsernames?.[0] || '';
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
-	const { post_reactions } = post;
 	const { network } = useNetworkSelector();
 
 	const renderUsernames = (reaction: '👍' | '👎') => {
-		const reactionsData = post_reactions[reaction];
-		const usernames = reactionsData?.usernames || [];
-		const userImages = reactionsData?.images || [];
+		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
+		const userImages = reaction === '👍' ? reactionState.likesImages : reactionState.dislikesImages;
 
 		return usernames?.length ? (
 			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>

@@ -17,10 +17,13 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import { getReactions } from '../posts/on-chain-post';
+import { getDefaultReactionObj, getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { getProposerAddressFromFirestorePostData, IPostListing } from '../listing/on-chain-posts';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { IActivityFeedPost } from './explore-posts';
+import { EAllowedCommentor } from '~src/types';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
 
 interface ISubscribedPost {
 	network: string;
@@ -41,6 +44,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 	const userId = user?.id;
 	try {
+		const apiKey = String(req.headers['x-ai-summary-api-key']);
+
 		const userRef = await firestore_db.collection('users').doc(String(userId)).get();
 		const userData = userRef?.data();
 
@@ -162,11 +167,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			}
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(postId));
 
-			const post_reactions = {
-				'👍': 0,
-				'👎': 0
-			};
-
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 			const postDoc = await postDocRef.get();
@@ -186,10 +186,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 					const reactions = getReactions(post_reactionsQuerySnapshot);
-					const post_reactions = {
-						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0
-					};
 
 					const sentiments: { [key: number]: number } = {};
 					const commentsQueryDocs = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
@@ -220,10 +216,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					const commentsCountQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
-
-					return {
+					const post: IActivityFeedPost = {
+						allowedCommentors: data?.allowedCommentors?.[0] || EAllowedCommentor.ALL,
 						assetId: assetId || null,
-						comments_count: commentsCount || 0,
+						commentsCount: commentsCount || 0,
 						content: data.content || subsquareContent || '',
 						created_at: createdAt,
 						curator,
@@ -238,7 +234,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
-						post_reactions,
+						post_reactions: reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
 						requestedAmount: requested ? requested.toString() : undefined,
@@ -246,6 +242,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						status,
 						status_history: statusHistory,
+						summary: data?.summary || '',
 						tags: data?.tags || [],
 						tally,
 						timeline: proposalTimeline,
@@ -262,6 +259,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1
 					};
+					await getContentSummary(post, network, true);
+
+					delete post?.content;
+
+					if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+						delete post?.summary;
+					}
+
+					return post;
 				}
 			}
 			let subsquareTitle = '';
@@ -270,9 +276,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			subsquareTitle = res?.title;
 			subsquareContent = res?.content;
 
-			return {
+			const post: IActivityFeedPost = {
+				allowedCommentors: EAllowedCommentor.ALL,
 				assetId: assetId || null,
-				comments_count: commentsQuerySnapshot.data()?.count || 0,
+				commentsCount: commentsQuerySnapshot.data()?.count || 0,
 				content: subsquareContent || '',
 				created_at: createdAt,
 				curator,
@@ -284,7 +291,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				method: subsquidPost?.preimage?.method,
 				parent_bounty_index: parentBountyIndex || null,
 				post_id: postId,
-				post_reactions,
+				post_reactions: getDefaultReactionObj(),
 				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
 				requestedAmount: requested ? requested.toString() : undefined,
@@ -298,11 +305,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				type: type,
 				user_id: 1
 			};
+			await getContentSummary(post, network, true);
+
+			delete post?.content;
+
+			if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+				delete post?.summary;
+			}
+
+			return post;
 		});
 
 		const resolvedPromises = await Promise.allSettled(allPromises);
 
-		const results: IPostListing[] = [];
+		const results: IActivityFeedPost[] = [];
 		resolvedPromises?.map((promise) => {
 			if (promise.status == 'fulfilled') {
 				results.push(promise.value);

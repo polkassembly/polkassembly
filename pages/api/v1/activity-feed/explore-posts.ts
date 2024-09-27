@@ -12,30 +12,61 @@ import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } fr
 import { GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED, GET_TOTAL_VOTE_COUNT_ON_PROPOSAL, VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS } from '~src/queries';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getReactions } from '../posts/on-chain-post';
+import { getReactions, IPIPsVoting, IReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
-import { getProposerAddressFromFirestorePostData, IPostListing } from '../listing/on-chain-posts';
 import { getTimeline } from '~src/util/getTimeline';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { EAllowedCommentor, IBeneficiary, IPostHistory } from '~src/types';
 
-const updateNonVotedProposals = (proposals: IPostListing[]) => {
+export interface IActivityFeedPost {
+	allowedCommentors: EAllowedCommentor;
+	assetId?: string | null;
+	post_reactions?: IReactions;
+	commentsCount: any;
+	content?: string;
+	end?: number;
+	delay?: number;
+	vote_threshold?: any;
+	created_at?: string;
+	tippers?: any[];
+	topic: {
+		id: number;
+		name: string;
+	};
+	decision?: string;
+	last_edited_at?: string | Date;
+	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
+	beneficiaries?: IBeneficiary[];
+	[key: string]: any;
+	preimageHash?: string;
+	summary?: string;
+}
+
+const updateNonVotedProposals = (proposals: IActivityFeedPost[]) => {
 	//sort by votes Count
 	const proposalsByVotesCountSorted = proposals.sort((a, b) => (b?.votesCount || 0) - (a?.votesCount || 0));
 
 	//sort by comments count
-	const proposalsWithoutComments: IPostListing[] = [];
-	const proposalsWithComments: IPostListing[] = [];
+	const proposalsWithoutComments: IActivityFeedPost[] = [];
+	const proposalsWithComments: IActivityFeedPost[] = [];
 	proposalsByVotesCountSorted.map((proposal) => {
-		if (proposal?.comments_count) {
+		if (proposal?.commentsCount) {
 			proposalsWithComments.push(proposal);
 		} else {
 			proposalsWithoutComments.push(proposal);
 		}
 	});
 
-	const proposalsByCommentSorted = proposalsWithComments.sort((a, b) => b?.comments_count - a?.comments_count);
+	const proposalsByCommentSorted = proposalsWithComments.sort((a, b) => b?.commentsCount - a?.commentsCount);
 
 	const combineProposals = [...proposalsByCommentSorted, ...proposalsWithoutComments];
 	return combineProposals;
@@ -49,6 +80,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (userAddresses?.length && userAddresses?.filter((addr: string) => !getEncodedAddress(addr, network))?.length) {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
+
+	const apiKey = String(req.headers['x-ai-summary-api-key']);
 
 	try {
 		const subsquidRes = await fetchSubsquid({
@@ -191,10 +224,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(postId));
 			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 			const reactions = getReactions(post_reactionsQuerySnapshot);
-			const post_reactions = {
-				'👍': reactions['👍']?.count || 0,
-				'👎': reactions['👎']?.count || 0
-			};
 
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
@@ -212,13 +241,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
 					const topic_id = data?.topic_id;
-
-					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
-					const reactions = getReactions(post_reactionsQuerySnapshot);
-					const post_reactions = {
-						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0
-					};
 
 					const sentiments: { [key: number]: number } = {};
 					const commentsQueryDocs = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
@@ -249,9 +271,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
 
-					return {
+					const post: IActivityFeedPost = {
+						allowedCommentors: data?.allowedCommentors?.[0] || EAllowedCommentor.ALL,
 						assetId: assetId || null,
-						comments_count: commentsCount || 0,
+						commentsCount: commentsCount || 0,
 						content: data.content || subsquareContent || '',
 						created_at: createdAt,
 						curator,
@@ -266,7 +289,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
-						post_reactions,
+						post_reactions: reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
 						requestedAmount: requested ? requested.toString() : undefined,
@@ -274,6 +297,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						status,
 						status_history: statusHistory,
+						summary: data?.summary || '',
 						tags: data?.tags || [],
 						tally,
 						timeline: proposalTimeline,
@@ -291,6 +315,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1
 					};
+
+					await getContentSummary(post, network, true);
+
+					delete post?.content;
+
+					if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+						delete post?.summary;
+					}
+
+					return post;
 				}
 			}
 			let subsquareTitle = '';
@@ -299,9 +333,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			subsquareTitle = res?.title;
 			subsquareContent = res?.content;
 
-			return {
+			const post: IActivityFeedPost = {
+				allowedCommentors: EAllowedCommentor.ALL,
 				assetId: assetId || null,
-				comments_count: commentsQuerySnapshot.data()?.count || 0,
+				commentsCount: commentsQuerySnapshot.data()?.count || 0,
 				content: subsquareContent || '',
 				created_at: createdAt,
 				curator,
@@ -313,12 +348,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				method: subsquidPost?.preimage?.method,
 				parent_bounty_index: parentBountyIndex || null,
 				post_id: postId,
-				post_reactions,
+				post_reactions: reactions,
 				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
 				requestedAmount: requested ? requested.toString() : undefined,
 				status: status,
 				status_history: statusHistory,
+				summary: '',
 				tally,
 				timeline: proposalTimeline,
 				title: subsquareTitle || 'Untitled',
@@ -327,11 +363,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type
 			};
+
+			await getContentSummary(post, network, true);
+
+			delete post?.content;
+
+			if (apiKey !== process.env.API_SUMMARY_PROVIDER && post?.summary?.length) {
+				delete post?.summary;
+			}
+
+			return post;
 		});
 
 		const resolvedPromises = await Promise.allSettled(allPromises);
 
-		const results: IPostListing[] = [];
+		const results: IActivityFeedPost[] = [];
 		resolvedPromises?.map((promise) => {
 			if (promise.status == 'fulfilled') {
 				results.push(promise.value);

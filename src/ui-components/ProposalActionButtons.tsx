@@ -142,7 +142,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{(pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />}
 
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>

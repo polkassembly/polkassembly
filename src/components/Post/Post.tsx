@@ -129,8 +129,9 @@ const Post: FC<IPostProps> = (props) => {
 		const { post_id, proposer } = post;
 
 		setCanEdit(post.user_id === id);
+		const substrateAddress = getSubstrateAddress(proposer);
 
-		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		let isProposer = proposer && addresses?.includes(substrateAddress || proposer);
 		const network = getNetwork();
 		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
@@ -139,9 +140,8 @@ const Post: FC<IPostProps> = (props) => {
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
-		const substrateAddress = getSubstrateAddress(proposer);
 		if (!isProposer) {
-			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			isProposer = await checkIsProposer(substrateAddress || proposer, [...(addresses || loginAddress)]);
 			if (isProposer) {
 				setCanEdit(true);
 				return;

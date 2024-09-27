@@ -69,21 +69,31 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 		global.window.open(url);
 	};
 
-	const shareOnDiscord = () => {
-		// eslint-disable-next-line
-		const discordMessage = `${message} \nCheck out this proposal: ${global.window.location.href}`;
-		const discordInviteLink = socialsData?.discord || 'https://discord.com/invite/CYmYWHgPha';
-		global.window.open(discordInviteLink);
+	const onShareDiscord = () => {
+		const text = message;
+		navigator.clipboard.writeText(decodeURIComponent(text));
+		antdMessage.success('Proposal details copied to clipboard. You can paste it in Discord.');
+		setTimeout(() => {
+			window.open('https://discord.com/channels/@me', '_blank')?.focus();
+		}, 3000);
+	};
+
+	const shareOnElement = () => {
+		const text = message;
+		navigator.clipboard.writeText(decodeURIComponent(text));
+		antdMessage.success('Proposal details copied to clipboard. You can paste it in Discord.');
+		setTimeout(() => {
+			window.open('https://riot.im/app/#/user', '_blank')?.focus();
+		}, 3000);
 	};
 
 	const copyLinkToClipboard = () => {
 		const link = global.window.location.href;
-		const textMessage = message || 'Hey, check out this proposal and help me make a decision.'; // Default message if no input
+		const textMessage = message || 'Hey, check out this proposal and help me make a decision.';
 		const finalMessage = `${textMessage}\n${link}`;
 		navigator.clipboard.writeText(finalMessage);
 		antdMessage.success('Link and message copied to clipboard!');
 	};
-	const shareOnElement = async () => {};
 
 	return (
 		<StyledModal
@@ -127,7 +137,6 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 					</div>
 				</div>
 				<div className='mt-24 flex justify-center gap-5'>
-					{/* Twitter Icon */}
 					<div onClick={shareOnTwitter}>
 						<ImageIcon
 							src='/assets/confusionmodal/x.svg'
@@ -135,7 +144,7 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 							className='h-auto w-auto cursor-pointer'
 						/>
 					</div>
-					<div onClick={shareOnDiscord}>
+					<div onClick={onShareDiscord}>
 						<ImageIcon
 							src='/assets/confusionmodal/discord.svg'
 							alt='Share on Discord'

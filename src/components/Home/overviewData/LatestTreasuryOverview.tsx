@@ -34,7 +34,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
-	const BN_DECIMAL = new BN(10).pow(new BN(10));
 	const BN_MILLION = new BN(10).pow(new BN(6));
 
 	const assetValue = formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);

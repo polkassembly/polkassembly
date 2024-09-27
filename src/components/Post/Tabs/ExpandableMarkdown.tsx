@@ -1,3 +1,6 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider } from 'antd';
 import React, { useState, useEffect, useRef } from 'react';
 import Markdown from 'src/ui-components/Markdown';
@@ -13,7 +16,6 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		// Check if the content is overflowing beyond 301px
 		if (contentRef.current) {
 			setIsContentOverflowing(contentRef.current.scrollHeight > 301);
 		}
@@ -50,7 +52,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 					</p>
 				</div>
 			)}
-			<Divider className='border-1 mt-1 my-0 -mr-4 bg-[#f4f5f6] text-lightBlue dark:bg-separatorDark' />
+			<Divider className='border-1 my-0 -mr-4 mt-1 bg-[#f4f5f6] text-lightBlue dark:bg-separatorDark' />
 		</div>
 	);
 };

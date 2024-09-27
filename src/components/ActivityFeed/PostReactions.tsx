@@ -43,7 +43,7 @@ export const PostReactions: React.FC<{
 	reactionState: any;
 	post: any;
 }> = ({ reactionState, post }: { reactionState: any; post: any }) => {
-	const { firstVoterProfileImg, comments_count } = post;
+	const { firstVoterProfileImg, commentsCount } = post;
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const username = reactionState?.likesUsernames?.[0] || '';
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
@@ -87,9 +87,9 @@ export const PostReactions: React.FC<{
 							alt='Voter Profile'
 							className='h-6 w-6 rounded-full'
 						/>
-						<div className='text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
+						<div className='ml-1 text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
 							{reactionState.likesCount === 1 ? (
-								<p className='-mt-2'>{`${displayUsername} has liked this post`}</p>
+								<p className='md:-mt-2'>{`${displayUsername} has liked this post`}</p>
 							) : (
 								<Popover
 									placement='bottom'
@@ -97,7 +97,9 @@ export const PostReactions: React.FC<{
 									content={<>{renderUsernames('👍')}</>}
 									arrow={true}
 								>
-									<p className='-mt-2 cursor-pointer text-[10px] hover:underline md:text-[12px]'>{`${displayUsername} & ${reactionState.likesCount - 1} others liked this post`}</p>
+									<p className='cursor-pointer text-[10px] hover:underline md:-mt-2 md:text-[12px]'>{`${displayUsername} & ${
+										reactionState.likesCount - 1
+									} others liked this post`}</p>
 								</Popover>
 							)}
 						</div>
@@ -121,7 +123,7 @@ export const PostReactions: React.FC<{
 					</span>
 				</div>
 				<p className='pt-1 text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
-				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
+				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{commentsCount || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block  lg:hidden'>
 					<div className='mt-2 flex items-center space-x-1 md:mt-5'>

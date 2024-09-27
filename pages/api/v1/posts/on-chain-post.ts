@@ -22,8 +22,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
@@ -42,6 +40,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getTimeline } from '~src/util/getTimeline';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);

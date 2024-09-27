@@ -37,8 +37,19 @@ const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 export const PostActions: React.FC<{
 	post: any;
 	reactionState: any;
+	isUserNotAllowedToComment: boolean;
 	setReactionState: React.Dispatch<React.SetStateAction<any>>;
-}> = ({ post, reactionState, setReactionState }: { post: any; reactionState: any; setReactionState: React.Dispatch<React.SetStateAction<any>> }) => {
+}> = ({
+	post,
+	reactionState,
+	setReactionState,
+	isUserNotAllowedToComment
+}: {
+	post: any;
+	reactionState: any;
+	isUserNotAllowedToComment: boolean;
+	setReactionState: React.Dispatch<React.SetStateAction<any>>;
+}) => {
 	const currentUserdata = useUserDetailsSelector();
 	const { post_id, track_no } = post;
 	const userid = currentUserdata?.id;
@@ -334,13 +345,17 @@ export const PostActions: React.FC<{
 
 					<div
 						onClick={() => {
-							if (userid) {
-								openModal();
-							} else {
-								setOpenLoginModal(true);
+							if (!isUserNotAllowedToComment) {
+								if (userid) {
+									openModal();
+								} else {
+									setOpenLoginModal(true);
+								}
 							}
 						}}
-						className='flex w-[60px] items-center justify-center pl-1 transition-transform hover:scale-105 md:w-[80px]'
+						className={`flex w-[60px] items-center justify-center pl-1 transition-transform ${
+							!isUserNotAllowedToComment ? 'hover:scale-105' : 'cursor-not-allowed opacity-80'
+						} md:w-[80px]`}
 					>
 						<div className='flex items-center gap-2'>
 							<span>
@@ -350,7 +365,7 @@ export const PostActions: React.FC<{
 									className='-mt-1 mr-1 h-4 w-4 dark:mr-0 dark:mt-1'
 								/>
 							</span>
-							<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
+							<p className='pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
 						</div>
 					</div>
 

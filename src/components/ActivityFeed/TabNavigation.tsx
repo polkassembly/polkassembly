@@ -277,7 +277,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						) : (
 							<p
 								className={`flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-									isTabSelected(category) ? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530d32] ' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									isTrackDropdownOpen || isTabSelected(category)
+										? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530d32] '
+										: 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
@@ -304,8 +306,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 					>
 						<div className='relative flex '>
 							<p
-								className={`flex cursor-pointer items-center justify-between gap-2 px-2 text-sm font-medium ${
-									isTrackDropdownOpen ? 'rounded-lg bg-[#F2F4F7] p-1 text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+								className={`flex h-9 cursor-pointer items-center justify-between gap-2 rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
+									isTabSelected('Treasury') ? 'rounded-lg bg-[#ffe6ef] p-1 text-[#E5007A] dark:bg-[#530d32] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick('Treasury')}
 							>

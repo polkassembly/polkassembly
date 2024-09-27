@@ -24,7 +24,6 @@ import {
 import { ESentiments, IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
@@ -36,6 +35,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getTimeline } from '~src/util/getTimeline';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -141,27 +141,6 @@ interface IGetOnChainPostsParams {
 	proposalStatus?: string | string[];
 	includeContent?: boolean;
 	getBountyReward?: boolean;
-}
-
-export function getProposerAddressFromFirestorePostData(data: any, network: string) {
-	let proposer_address = '';
-	if (data) {
-		if (Array.isArray(data?.proposer_address)) {
-			if (data.proposer_address.length > 0) {
-				proposer_address = data?.proposer_address?.[0];
-			}
-		} else if (typeof data.proposer_address === 'string') {
-			proposer_address = data.proposer_address;
-		}
-		if (data?.default_address && !proposer_address) {
-			proposer_address = data?.default_address;
-		}
-	}
-
-	if (proposer_address.startsWith('0x')) {
-		return proposer_address;
-	}
-	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {

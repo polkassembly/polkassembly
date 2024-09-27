@@ -3,19 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
+
+const ZERO_BN = new BN(0);
 
 const useAssetHubApi = (network: string) => {
 	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
 	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
 	const [assethubValues, setAssethubValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
+		dotValue: BN;
+		usdcValue: BN;
+		usdtValue: BN;
 	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
+		dotValue: ZERO_BN,
+		usdcValue: ZERO_BN,
+		usdtValue: ZERO_BN
 	});
 
 	useEffect(() => {
@@ -61,7 +64,10 @@ const useAssetHubApi = (network: string) => {
 				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
 				if (tokenResult?.data?.free) {
 					const freeTokenBalance = tokenResult.data.free.toBigInt();
-					setAssethubValues((values) => ({ ...values, dotValue: freeTokenBalance.toString() }));
+					setAssethubValues((values) => ({
+						...values,
+						dotValue: new BN(freeTokenBalance)
+					}));
 				}
 
 				// Fetch balance in USDC
@@ -75,8 +81,11 @@ const useAssetHubApi = (network: string) => {
 						console.log('No data found for the USDC assets');
 					} else {
 						const data = usdcResult.unwrap();
-						const freeUSDCBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
+						const freeUSDCBalance = data.balance.toBigInt();
+						setAssethubValues((values) => ({
+							...values,
+							usdcValue: new BN(freeUSDCBalance)
+						}));
 					}
 				}
 
@@ -91,8 +100,11 @@ const useAssetHubApi = (network: string) => {
 						console.log('No data found for the USDT assets');
 					} else {
 						const data = usdtResult.unwrap();
-						const freeUSDTBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
+						const freeUSDTBalance = data.balance.toBigInt();
+						setAssethubValues((values) => ({
+							...values,
+							usdtValue: new BN(freeUSDTBalance)
+						}));
 					}
 				}
 			} catch (e) {

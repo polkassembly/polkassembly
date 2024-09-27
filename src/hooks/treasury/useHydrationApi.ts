@@ -3,19 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
+
+const ZERO_BN = new BN(0);
 
 const useHydrationApi = (network: string) => {
 	const [hydrationApi, setHydrationApi] = useState<ApiPromise | null>(null);
 	const [hydrationApiReady, setHydrationApiReady] = useState<boolean>(false);
 	const [hydrationValues, setHydrationValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
+		dotValue: BN;
+		usdcValue: BN;
+		usdtValue: BN;
 	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
+		dotValue: ZERO_BN,
+		usdcValue: ZERO_BN,
+		usdtValue: ZERO_BN
 	});
 
 	useEffect(() => {
@@ -63,7 +66,7 @@ const useHydrationApi = (network: string) => {
 					chainProperties[network]?.hydrationAssets?.[0]?.assetId
 				)) as any;
 
-				const freeDOTBalance = dotResult.reserved.toBigInt().toString();
+				const freeDOTBalance = new BN(dotResult.reserved.toBigInt());
 				setHydrationValues((values) => ({ ...values, dotValue: freeDOTBalance }));
 
 				// Fetch balance in USDT
@@ -73,7 +76,7 @@ const useHydrationApi = (network: string) => {
 						chainProperties[network]?.hydrationAssets?.[1]?.assetId
 					)) as any;
 
-					const freeUSDTBalance = usdtResult.free.toBigInt().toString();
+					const freeUSDTBalance = new BN(usdtResult.free.toBigInt());
 					setHydrationValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
 				}
 
@@ -84,7 +87,7 @@ const useHydrationApi = (network: string) => {
 						chainProperties[network]?.hydrationAssets?.[2]?.assetId
 					)) as any;
 
-					const freeUSDCBalance = usdcResult.free.toBigInt().toString();
+					const freeUSDCBalance = new BN(usdcResult.free.toBigInt());
 					setHydrationValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
 				}
 			} catch (e) {

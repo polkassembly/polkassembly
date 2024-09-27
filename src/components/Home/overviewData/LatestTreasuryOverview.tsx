@@ -22,6 +22,7 @@ import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import TreasuryAssetDisplay from './TreasuryAssetDisplay';
+import BN from 'bn.js';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -33,17 +34,21 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
-	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
-	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
+	const BN_DECIMAL = new BN(10).pow(new BN(10));
+	const BN_MILLION = new BN(10).pow(new BN(6));
 
-	const hydrationValue = formatBnBalance(hydrationValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const hydrationValueUSDC = formatUSDWithUnits(String(Number(hydrationValues.usdcValue) / 1000000));
-	const hydrationValueUSDT = formatUSDWithUnits(String(Number(hydrationValues.usdtValue) / 1000000));
+	const assetValue = formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const assetValueUSDC = formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString());
+	const assetValueUSDT = formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString());
+
+	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
+	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
 
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + parseFloat(hydrationValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
+			(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
+				parseFloat(currentTokenPrice.value) +
 				Number(assethubValues.usdcValue) / 1000000 +
 				Number(assethubValues.usdtValue) / 1000000 +
 				Number(hydrationValues.usdcValue) / 1000000 +

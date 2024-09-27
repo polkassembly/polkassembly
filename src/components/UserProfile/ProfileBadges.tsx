@@ -95,7 +95,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 					<p className='m-0 mt-2 font-light'>Unlock, receive and earn badges as you engage in polkassembly</p>
 				</div>
 				<p
-					className='m-0 mt-2 w-[90px] cursor-pointer text-xs font-medium text-pink_primary'
+					className='m-0 mt-2 w-[90px] cursor-pointer whitespace-nowrap text-xs font-medium text-pink_primary'
 					onClick={() => setShowMore(!showMore)}
 				>
 					{showMore ? 'Show Less' : 'Show More'}

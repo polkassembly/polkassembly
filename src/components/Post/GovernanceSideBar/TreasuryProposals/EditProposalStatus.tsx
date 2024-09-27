@@ -175,7 +175,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					</div>
 				</div>
 			) : (
-				<div className='flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay dark:text-white'>
+				<div className='dark:text-lightblue flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay'>
 					Deadline: Not Set
 				</div>
 			)}
@@ -183,8 +183,8 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={modalOpen}
-				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				title={'Set Deadline Date'}
+				className={`${className} dark:text-lightblue dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				title={<span className='dark:text-white'>Set Deadline Date</span>}
 				centered
 				footer={[
 					<div
@@ -246,14 +246,14 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 						</Form.Item>
 
 						<Form.Item className='status-input-form-field'>
-							<label className=' text-md flex items-center font-medium text-sidebarBlue'>Status</label>
+							<label className=' text-md flex items-center font-medium text-sidebarBlue dark:text-sidebarBlue'>Status</label>
 
 							{canEdit ? (
 								// eslint-disable-next-line sort-keys
 								<>
 									<Dropdown
 										theme={theme}
-										className='status-dropdown'
+										className='status-dropdown text-sidebarBlue'
 										overlayClassName='z-[1056]'
 										disabled={loading}
 										menu={{ items: statusOptions, onClick: onStatusChange }}

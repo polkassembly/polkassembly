@@ -1213,12 +1213,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
-			if (post.content === '' || post.title === '' || post.title === undefined || post.content === undefined) {
+			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
 
-				if (!post.content && !post.title && (res.title || res.content)) {
+				if (res.title || res.content) {
 					post.dataSource = 'subsquare';
 				}
 

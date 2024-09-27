@@ -63,7 +63,7 @@ const LegendContainer = styled.div`
 const AnalyticsReferendumOutcome = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1260;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
 	const [trackIds, setTrackIds] = useState<number[]>([]);

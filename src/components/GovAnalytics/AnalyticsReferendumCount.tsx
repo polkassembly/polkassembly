@@ -61,7 +61,7 @@ const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1260;
 	const [categoryInfo, setCategoryInfo] = useState<Record<string, number>>({
 		governance: 0,
 		main: 0,

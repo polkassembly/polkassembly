@@ -9,7 +9,8 @@ import { useRouter } from 'next/router';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import Image from 'next/image';
+import useImagePreloader from '~src/hooks/useImagePreloader';
 
 interface Props {
 	setIsSuperSearch: (pre: boolean) => void;
@@ -37,16 +38,20 @@ const SearchErrorsCard = ({
 	setPeoplePage
 }: Props) => {
 	const router = useRouter();
+	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 	const { network } = useNetworkSelector();
 
 	return ((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0) || (filterBy === EFilterBy.People && peopleResultsCounts === 0) ? (
 		<div className='mb-5 mt-6 flex flex-col items-center justify-center'>
 			<div className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 				<div className='mt-5 flex flex-col items-center justify-center'>
-					{/* <EmptyResultsIcon /> */}
-					<ImageIcon
-						src='/assets/search/empty-search.svg'
-						alt='empty search icon'
+					<Image
+						src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
+						alt='search-icon'
+						width={274}
+						height={274}
+						className='-my-[40px]'
+						priority={true}
 					/>
 					<span className='mt-6 text-center text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 						{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}
@@ -68,7 +73,7 @@ const SearchErrorsCard = ({
 					<span>Use Super Search</span>
 				</CustomButton>
 			)}
-			<div className='my-4 w-[50%] max-md:w-[80%]'>
+			<div className='w-[50%] max-md:w-[80%]'>
 				<Divider className='border-[1px] text-[#90A0B7]'>
 					<span className='text-[10px] font-medium'>OR</span>
 				</Divider>

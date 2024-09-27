@@ -1,7 +1,10 @@
-import { FormInstance } from "antd";
-import BN from "bn.js";
-import { ProposalType } from "~src/global/proposalType";
-import { ILastVote } from "~src/types";
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import { FormInstance } from 'antd';
+import BN from 'bn.js';
+import { ProposalType } from '~src/global/proposalType';
+import { ILastVote } from '~src/types';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',

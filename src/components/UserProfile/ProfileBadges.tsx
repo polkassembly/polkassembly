@@ -11,6 +11,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
 import getNetwork from '~src/util/getNetwork';
 import { badgeDetails } from './utils/GetAchievementBadgesText';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -38,8 +39,14 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const getRequirementText = (requirement: string | ((network: string) => string), network: string) => {
 		return typeof requirement === 'function' ? requirement(network) : requirement;
 	};
+	const filteredBadgeDetails = badgeDetails.filter((badge) => {
+		if ((badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.POLKADOT) || (badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.KUSAMA)) {
+			return true;
+		}
+		return badge.name !== BadgeName.DECENTRALISED_VOICE;
+	});
 
-	const badgesToShow = badgeDetails.map((badgeDetail) => {
+	const badgesToShow = filteredBadgeDetails.map((badgeDetail) => {
 		const unlockedBadge = badges?.find((unlocked) => unlocked.name === badgeDetail.name && unlocked.check);
 
 		if (unlockedBadge) {

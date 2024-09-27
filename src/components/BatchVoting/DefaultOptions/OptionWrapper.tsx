@@ -6,7 +6,7 @@ import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented, Slider, SliderSingleProps } from 'antd';
 import BN from 'bn.js';
 import React, { useState } from 'react';
-import { EVoteDecisionType, ILastVote } from 'src/types';
+import { EVoteDecisionType } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
@@ -31,25 +31,7 @@ import { useAppDispatch } from '~src/redux/store';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/PostInfoComponents/VotingFormCard';
 import AbstainOptions from './AbstainOptions';
-
-interface Props {
-	className?: string;
-	referendumId?: number | null | undefined;
-	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: (pre: ILastVote) => void;
-	proposalType: ProposalType;
-	address: string;
-	theme?: string;
-	trackNumber?: number;
-	forSpecificPost?: boolean;
-	postEdit?: any;
-}
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
-}
+import { IOptionsWrapper } from '../types';
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
@@ -95,7 +77,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
+const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;

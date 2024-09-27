@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-// import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { Spin } from 'antd';
@@ -21,14 +20,8 @@ const SwipableVotingCards = () => {
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
-	// const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
-
-	// const updateCurrentIndex = (val: any) => {
-	// setCurrentIndex(val);
-	// currentIndexRef.current = val;
-	// };
 
 	const getVoteCartData = async () => {
 		setIsLoading(true);

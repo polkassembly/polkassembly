@@ -86,16 +86,6 @@ const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, aye
 				<span className='text-[24px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
 				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
 			</div>
-			{/* {
-				turnoutPercentage?
-					<div className='absolute top-6 z-50 w-full flex items-center justify-center flex-col'>
-						<p className='m-0 p-0 text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[22px]'>
-					Threshold {turnoutPercentage?.toFixed(1)}%
-						</p>
-						<div className='h-[43px] border border-dashed border-navBlue'></div>
-					</div>
-					: null
-			} */}
 			<>
 				<PieChart
 					className='w-[47%] xl:w-[49%]'

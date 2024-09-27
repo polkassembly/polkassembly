@@ -11,10 +11,9 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 	const { currentIndex, trackPosts, onSwipeAction, className } = props;
 	const canSwipe = currentIndex >= 0;
 
-	// Trigger the swipe action (without animation)
 	const handleAction = (direction: string) => {
 		if (canSwipe && currentIndex < trackPosts?.length) {
-			onSwipeAction(direction, currentIndex); // Call the action handler with the current index and direction
+			onSwipeAction(direction, currentIndex);
 		}
 	};
 

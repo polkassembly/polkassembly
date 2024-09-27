@@ -64,7 +64,6 @@ const BatchVotingWeb = () => {
 					<p className={`m-0 p-0 text-base ${!is_default_selected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Vote</p>
 				</div>
 			</article>
-			{/* <DefaultOptions /> */}
 			{is_default_selected ? <DefaultOptions /> : <VotingOptions />}
 		</section>
 	);

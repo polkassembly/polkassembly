@@ -15,12 +15,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useApiContext } from '~src/context';
-
-interface IDefaultOptions {
-	theme?: string;
-	forSpecificPost?: boolean;
-	postEdit?: any;
-}
+import { IDefaultOptions } from '../types';
 
 const DefaultOptions: FC<IDefaultOptions> = (props) => {
 	const { forSpecificPost, postEdit } = props;

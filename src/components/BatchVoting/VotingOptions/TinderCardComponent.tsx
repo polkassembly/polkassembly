@@ -37,7 +37,6 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						onClick={() => onSkip(proposal.id)}
 					>
 						Skip &gt;
-						{/* <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> */}
 					</Button>
 				</div>
 				<Divider

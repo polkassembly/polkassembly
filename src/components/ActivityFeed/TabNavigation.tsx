@@ -18,7 +18,7 @@ import {
 	WishForChangeIcon
 } from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-import { TabItem, TabNavigationProps } from './utils/types';
+import { TabItem, TabNavigationProps } from './types/types';
 import Popover from '~src/basic-components/Popover';
 import { useGlobalSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';

@@ -7,7 +7,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import TabNavigation from './TabNavigation';
 import PostList from './PostList';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IPostData } from './utils/types';
+import { IPostData } from './types/types';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -188,7 +188,7 @@ const LatestActivityFollowing: React.FC = () => {
 	useEffect(() => {
 		const fetchPostUpdates = async () => {
 			try {
-				setLoading(true); // Start loading
+				setLoading(true);
 				const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
 				const posts = Array.isArray(responseData?.data) ? responseData.data : [];
 				const detailedPosts = await Promise.all(

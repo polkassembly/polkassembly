@@ -2,6 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { IPIPsVoting, IReactions } from 'pages/api/v1/posts/on-chain-post';
+import { EAllowedCommentor, IBeneficiary, IPostHistory } from '~src/types';
+
 export interface IPostData {
 	post_id: number;
 	created_at: string;
@@ -38,4 +41,33 @@ export interface TabItem {
 	label: string;
 	posts: number;
 	group: string;
+}
+
+export interface IActivityFeedPost {
+	allowedCommentors: EAllowedCommentor;
+	assetId?: string | null;
+	post_reactions?: IReactions;
+	commentsCount: any;
+	content?: string;
+	end?: number;
+	delay?: number;
+	vote_threshold?: any;
+	created_at?: string;
+	tippers?: any[];
+	topic: {
+		id: number;
+		name: string;
+	};
+	decision?: string;
+	last_edited_at?: string | Date;
+	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
+	beneficiaries?: IBeneficiary[];
+	[key: string]: any;
+	preimageHash?: string;
+	summary?: string;
 }

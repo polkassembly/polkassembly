@@ -21,9 +21,9 @@ import { getDefaultReactionObj, getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
-import { IActivityFeedPost } from './explore-posts';
 import { EAllowedCommentor } from '~src/types';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
 
 interface ISubscribedPost {
 	network: string;
@@ -256,7 +256,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							  }
 							: topicFromType,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
-						type: type || ProposalType.REFERENDUM_V2
+						type: type || ProposalType.REFERENDUM_V2,
+						user_id: data?.user_id || 1
 					};
 					await getContentSummary(post, network, true);
 
@@ -301,7 +302,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
-				type: type
+				type: type,
+				user_id: 1
 			};
 			await getContentSummary(post, network, true);
 

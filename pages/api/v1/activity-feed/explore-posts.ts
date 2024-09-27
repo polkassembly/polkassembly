@@ -12,7 +12,7 @@ import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } fr
 import { GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED, GET_TOTAL_VOTE_COUNT_ON_PROPOSAL, VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS } from '~src/queries';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getReactions, IPIPsVoting, IReactions } from '../posts/on-chain-post';
+import { getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
@@ -20,36 +20,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
-import { EAllowedCommentor, IBeneficiary, IPostHistory } from '~src/types';
-
-export interface IActivityFeedPost {
-	allowedCommentors: EAllowedCommentor;
-	assetId?: string | null;
-	post_reactions?: IReactions;
-	commentsCount: any;
-	content?: string;
-	end?: number;
-	delay?: number;
-	vote_threshold?: any;
-	created_at?: string;
-	tippers?: any[];
-	topic: {
-		id: number;
-		name: string;
-	};
-	decision?: string;
-	last_edited_at?: string | Date;
-	gov_type?: 'gov_1' | 'open_gov';
-	proposalHashBlock?: string | null;
-	tags?: string[] | [];
-	history?: IPostHistory[];
-	pips_voters?: IPIPsVoting[];
-	title?: string;
-	beneficiaries?: IBeneficiary[];
-	[key: string]: any;
-	preimageHash?: string;
-	summary?: string;
-}
+import { EAllowedCommentor } from '~src/types';
+import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
 
 const updateNonVotedProposals = (proposals: IActivityFeedPost[]) => {
 	//sort by votes Count
@@ -224,6 +196,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(postId));
 			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 			const reactions = getReactions(post_reactionsQuerySnapshot);
+
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 			const postDoc = await postDocRef.get();
@@ -385,11 +358,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const votedProposals = votedProposalsIndexes?.length ? results.filter((data) => votedProposalsIndexes.includes(Number(data?.post_id))) : [];
 		const nonVotedProposals = votedProposals?.length ? results.filter((data) => !votedProposalsIndexes.includes(Number(data?.post_id))) : results;
 		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
+
 		const combineProposals = [
 			...updatedNonVotedProposals.map((proposal) => ({ ...proposal, isVoted: false })),
 			...votedProposals.map((proposal) => ({ ...proposal, isVoted: true }))
 		];
-
 		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
 		console.error('Error fetching subscribed posts:', err);

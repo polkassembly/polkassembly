@@ -171,8 +171,7 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 						/>
 
 						<PostReactions
-							likes={{ count: reactionState.likesCount, usernames: reactionState.likesUsernames }}
-							dislikes={{ count: reactionState.dislikesCount, usernames: reactionState.dislikesUsernames }}
+							reactionState={reactionState}
 							post={post}
 						/>
 					</Link>

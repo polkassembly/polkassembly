@@ -168,7 +168,7 @@ export const PostActions: React.FC<{
 			};
 		});
 
-		if (showGif.reaction !== reaction) {
+		if ((reaction === '👍' && !isLiked) || (reaction === '👎' && !isDisliked)) {
 			setShowGif({ reaction });
 			setTimeout(() => setShowGif({ reaction: null }), 1000);
 		}

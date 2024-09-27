@@ -511,9 +511,9 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 			/>
 			<div className=' w-full font-poppins  '>
 				<div className='flex w-full justify-between lg:mt-3 xl:items-center'>
-					<div className='flex flex-col lg:flex-row xl:h-12 xl:gap-5'>
+					<div className='flex flex-col lg:flex-row  xl:h-12 xl:gap-2'>
 						<div>
-							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-2 lg:text-2xl'>Activity Feed</h1>
+							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-3 lg:text-2xl'>Activity Feed</h1>
 						</div>
 						<div className='mt-2 flex h-9 items-center gap-1 rounded-lg bg-[#ECECEC] p-2 dark:bg-white dark:bg-opacity-[12%] md:gap-2 md:p-2  md:pt-5'>
 							<p

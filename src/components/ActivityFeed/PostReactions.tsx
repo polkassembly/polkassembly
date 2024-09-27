@@ -14,6 +14,11 @@ import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import ImageComponent from '../ImageComponent';
+import Popover from '~src/basic-components/Popover';
+import Link from 'next/link';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
@@ -35,38 +40,88 @@ export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode
 };
 
 export const PostReactions: React.FC<{
-	likes: { count: number; usernames: string[] };
-	dislikes: { count: number; usernames: string[] };
+	reactionState: any;
 	post: any;
-}> = ({ likes, dislikes, post }: { likes: { count: number; usernames: string[] }; dislikes: { count: number; usernames: string[] }; post: any }) => {
+}> = ({ reactionState, post }: { reactionState: any; post: any }) => {
 	const { firstVoterProfileImg, comments_count } = post;
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-	const username = likes?.usernames?.[0] || '';
+	const username = reactionState?.likesUsernames?.[0] || '';
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
+	const { post_reactions } = post;
+	const { network } = useNetworkSelector();
+
+	const renderUsernames = (reaction: '👍' | '👎') => {
+		const reactionsData = post_reactions[reaction];
+		const usernames = reactionsData?.usernames || [];
+		const userImages = reactionsData?.images || [];
+
+		return usernames?.length ? (
+			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>
+				{usernames.map((name: string, index: number) => (
+					<Link
+						href={`https://${network}.polkassembly.io/user/${name}`}
+						key={index}
+						target='_blank'
+						className='mb-[6px] flex items-center gap-[6px]'
+					>
+						<ImageComponent
+							src={userImages[index] || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							alt='User Picture'
+							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
+						/>
+						<span className='pt-1 text-sm text-gray-600 dark:text-gray-300'>{name}</span>
+					</Link>
+				))}
+			</div>
+		) : (
+			<p className='text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+		);
+	};
 	return (
 		<div className='flex items-center justify-between  text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
-				{likes.count > 0 && likes?.usernames?.length > 0 && (
-					<div className='flex items-center'>
+				{reactionState.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
+					<div className='mt-1 flex items-center'>
 						<ImageComponent
 							src={firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
 							alt='Voter Profile'
 							className='h-6 w-6 rounded-full'
 						/>
-						<p className='text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
-							{likes.count > 0 && (
-								<div>
-									<p>{likes.count === 1 ? `${displayUsername} has liked this post` : `${displayUsername} & ${likes.count - 1} others liked this post`}</p>
-								</div>
-							)}{' '}
-						</p>
+						<div className='text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
+							{reactionState.likesCount === 1 ? (
+								<p className='-mt-2'>{`${displayUsername} has liked this post`}</p>
+							) : (
+								<Popover
+									placement='bottom'
+									trigger='hover'
+									content={<>{renderUsernames('👍')}</>}
+									arrow={true}
+								>
+									<p className='-mt-2 cursor-pointer text-[10px] hover:underline md:text-[12px]'>{`${displayUsername} & ${reactionState.likesCount - 1} others liked this post`}</p>
+								</Popover>
+							)}
+						</div>
 					</div>
 				)}
 			</div>
 
 			<div className='flex items-center gap-1 md:gap-3'>
-				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{dislikes.count} dislikes</p>
+				<div className='flex items-center gap-2'>
+					<span>
+						<Popover
+							placement='bottom'
+							trigger='hover'
+							content={<>{renderUsernames('👎')}</>}
+							arrow={true}
+						>
+							<p className='cursor-pointer whitespace-nowrap text-[10px] text-gray-600 hover:underline dark:text-[#9E9E9E] md:text-[12px]'>
+								{reactionState.dislikesCount} dislikes
+							</p>
+						</Popover>
+					</span>
+				</div>
 				<p className='pt-1 text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{comments_count || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}

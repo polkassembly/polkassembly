@@ -9,8 +9,8 @@ import styled from 'styled-components';
 import { Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
-import { badgeDetails } from '~src/global/achievementbadges';
 import getNetwork from '~src/util/getNetwork';
+import { badgeDetails } from './utils/GetAchievementBadgesText';
 
 interface Props {
 	className?: string;

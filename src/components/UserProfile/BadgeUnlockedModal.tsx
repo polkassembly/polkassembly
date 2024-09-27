@@ -8,9 +8,9 @@ import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import { Badge } from '~src/auth/types';
-import { badgeDetails } from '~src/global/achievementbadges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { badgeDetails } from './utils/GetAchievementBadgesText';
 
 interface Props {
 	className?: string;

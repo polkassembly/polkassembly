@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Badge } from '~src/auth/types';
 import { badgeDetails } from '~src/global/achievementbadges';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import getNetwork from '~src/util/getNetwork';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -21,10 +21,11 @@ interface Props {
 }
 
 const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) => {
+	const { network } = useNetworkSelector();
+
 	if (!badge) return <></>;
 
 	const matchingBadge = badgeDetails.find((detail) => detail.name === badge.name);
-	const network = getNetwork();
 	const isUnlocked = badges?.some((unlockedBadge) => unlockedBadge.name === badge.name);
 	const badgeImage = matchingBadge?.img || '/assets/badges/active_voter_locked.svg';
 	const lockedImg = matchingBadge?.lockImg || '/assets/badges/active_voter_locked.svg';

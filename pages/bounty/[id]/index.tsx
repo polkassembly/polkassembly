@@ -23,6 +23,10 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useGlobalSelector } from '~src/redux/selectors';
+import ConfusionModal from '~src/ui-components/ConfusionModal';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const proposalType = ProposalType.BOUNTIES;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -52,13 +56,27 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
+	const { is_sidebar_collapsed } = useGlobalSelector();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+	const [isModalOpen, setModalOpen] = useState(false);
+	const [isContentVisible, setContentVisible] = useState(true);
+	const [isNudgeVisible, setNudgeVisible] = useState(false);
+
+	const handleToggleContent = () => {
+		setContentVisible(false);
+	};
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		if (post?.status == 'Active') {
+			const nudgeTimeout = setTimeout(() => {
+				setNudgeVisible(true);
+			}, 180000);
+
+			return () => clearTimeout(nudgeTimeout);
+		}
+	}, [dispatch, post?.status, props.network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {
@@ -93,15 +111,55 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
+				{isNudgeVisible && (
+					<div
+						className={`transition-opacity duration-100 ${
+							isContentVisible ? 'opacity-100' : 'opacity-0'
+						} absolute left-0 top-0 flex w-full justify-between bg-gradient-to-r from-[#D80676] to-[#FF778F] pr-10 ${
+							is_sidebar_collapsed ? 'pl-28' : 'pl-[265px]'
+						} font-poppins text-[12px] font-medium text-white`}
+					>
+						<div className='flex gap-2'>
+							<p className='pt-3 '>Confused about making a decision?</p>
+							<div
+								onClick={() => setModalOpen(true)}
+								className='mt-2 flex h-6 cursor-pointer gap-2 rounded-md bg-[#0000004D] bg-opacity-[30%] px-2 pt-1'
+							>
+								<ImageIcon
+									src='/assets/icons/transformedshare.svg'
+									alt='share icon'
+									className='h-4 w-4'
+								/>
+								<p className=''>Share proposal</p>
+							</div>
+							<p className='pt-3'>with a friend to get their opinion!</p>
+						</div>
+						<div onClick={handleToggleContent}>
+							<CloseIcon className='cursor-pointer pt-[10px] text-2xl' />
+						</div>
+					</div>
+				)}
 
-				<BackToListingView postCategory={PostCategory.BOUNTY} />
-
-				<div className='mt-6'>
-					<Post
-						post={post}
-						proposalType={proposalType}
-					/>
+				<div className={`transition-opacity duration-500 ${isContentVisible ? 'mt-7' : 'mt-0'}`}>
+					<BackToListingView postCategory={PostCategory.BOUNTY} />
+					<div className='mt-6'>
+						<Post
+							post={post}
+							proposalType={proposalType}
+						/>
+					</div>
 				</div>
+
+				{isModalOpen && (
+					<ConfusionModal
+						modalOpen={isModalOpen}
+						setModalOpen={setModalOpen}
+						className='w-[600px]'
+						postId={post.id}
+						proposalType={proposalType}
+						title={post.title}
+					/>
+				)}
 			</>
 		);
 

@@ -46,7 +46,7 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 		if (data) {
 			setSocialsData(data);
 		}
-		if (error) console.log(error);
+		if (error) antdMessage.error('Failed to load social media data. Please try again later.');
 	};
 
 	useEffect(() => {
@@ -62,7 +62,7 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
+		const twitterHandle = socialsData?.twitter && socialsData.twitter.length > 0 ? socialsData.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1) : 'polk_gov';
 		const tweetMessage = `${message} \nCheck out this proposal here: ${global.window.location.href}`;
 		const twitterParameters = [`text=${encodeURI(tweetMessage)}`, 'via=' + encodeURI(twitterHandle || 'polk_gov')];
 		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');

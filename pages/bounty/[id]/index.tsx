@@ -69,12 +69,16 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		if (post?.status == 'Active') {
+		if (post?.status === 'Active') {
 			const nudgeTimeout = setTimeout(() => {
 				setNudgeVisible(true);
 			}, 180000);
 
-			return () => clearTimeout(nudgeTimeout);
+			return () => {
+				if (nudgeTimeout) {
+					clearTimeout(nudgeTimeout);
+				}
+			};
 		}
 	}, [dispatch, post?.status, props.network]);
 
@@ -130,7 +134,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 									alt='share icon'
 									className='h-4 w-4'
 								/>
-								<p className=''>Share proposal</p>
+								<p>Share proposal</p>
 							</div>
 							<p className='pt-3'>with a friend to get their opinion!</p>
 						</div>

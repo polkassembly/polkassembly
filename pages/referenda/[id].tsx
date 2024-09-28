@@ -61,12 +61,16 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		if (post?.status == 'Deciding') {
+		if (post?.status === 'Deciding') {
 			const nudgeTimeout = setTimeout(() => {
 				setNudgeVisible(true);
 			}, 180000);
 
-			return () => clearTimeout(nudgeTimeout);
+			return () => {
+				if (nudgeTimeout) {
+					clearTimeout(nudgeTimeout);
+				}
+			};
 		}
 	}, [dispatch, post?.status, props.network]);
 
@@ -105,7 +109,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 									alt='share icon'
 									className='h-4 w-4'
 								/>
-								<p className=''>Share proposal</p>
+								<p>Share proposal</p>
 							</div>
 							<p className='pt-3'>with a friend to get their opinion!</p>
 						</div>

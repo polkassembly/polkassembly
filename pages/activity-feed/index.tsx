@@ -595,7 +595,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 							/>
 						) : (
 							<div className='relative mt-5 rounded-xxl text-[13px]'>
-								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>Rank {userRank ? userRank : '#00'}</p>
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>Rank {userRank ?? '#00'}</p>
 								<div className='relative h-full w-full'>
 									<Image
 										src='/assets/rankcard1.svg'

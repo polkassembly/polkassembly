@@ -8,7 +8,7 @@ import getNetwork from './getNetwork';
 import messages from './messages';
 import reAuthClient from './reAuthClient';
 
-async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any; aiSiummaryKey?: boolean }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any; aiSummaryKey?: boolean }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);
@@ -27,7 +27,7 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any; a
 		'x-network': network
 	};
 
-	if (data?.aiSiummaryKey) {
+	if (data?.aiSummaryKey === true) {
 		Payload['x-ai-summary-key'] = process.env.API_SUMMARY_PROVIDER;
 	}
 	try {

@@ -19,6 +19,7 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useEffect, useState } from 'react';
 
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
@@ -44,12 +45,16 @@ export const PostReactions: React.FC<{
 	post: any;
 }> = ({ reactionState, post }: { reactionState: any; post: any }) => {
 	const { firstVoterProfileImg, commentsCount } = post;
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const [isMobile, setIsMobile] = useState(false);
 	const username = reactionState?.likesUsernames?.[0] || '';
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			setIsMobile(window.screen.width < 1024);
+		}
+	}, []);
 	const renderUsernames = (reaction: '👍' | '👎') => {
 		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
 		const userImages = reaction === '👍' ? reactionState.likesImages : reactionState.dislikesImages;
@@ -94,7 +99,7 @@ export const PostReactions: React.FC<{
 								<Popover
 									placement='bottom'
 									trigger='hover'
-									content={<>{renderUsernames('👍')}</>}
+									content={renderUsernames('👍')}
 									arrow={true}
 								>
 									<p className='cursor-pointer text-[10px] hover:underline md:-mt-2 md:text-[12px]'>{`${displayUsername} & ${
@@ -113,7 +118,7 @@ export const PostReactions: React.FC<{
 						<Popover
 							placement='bottom'
 							trigger='hover'
-							content={<>{renderUsernames('👎')}</>}
+							content={renderUsernames('👎')}
 							arrow={true}
 						>
 							<p className='cursor-pointer whitespace-nowrap text-[10px] text-gray-600 hover:underline dark:text-[#9E9E9E] md:text-[12px]'>

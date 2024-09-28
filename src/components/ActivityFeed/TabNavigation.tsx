@@ -81,7 +81,10 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const filteredGroups = tabItems.reduce(
 		(acc: { [key: string]: string[] }, item) => {
 			if (dynamicGroups.includes(item.group)) {
-				(acc[item.group] = acc[item.group] || []).push(item.key);
+				if (!acc[item.group]) {
+					acc[item.group] = [];
+				}
+				acc[item.group].push(item.key);
 			}
 			return acc;
 		},
@@ -149,7 +152,6 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const isTabSelected = (category: string) => {
 		return tabCategories[category].some((tabKey) => tabKey === currentTab);
 	};
-	console.log(currentCategory);
 
 	const popoverContent = (
 		<div className='left-2 w-40 pt-1 text-sm text-gray-700 dark:text-gray-200'>
@@ -161,7 +163,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							<div className='w-44 pt-2 text-sm text-gray-700 dark:text-gray-200'>
 								{tabCategories[category].map((tabKey) => {
 									const tabItem = tabItems.find((item) => item.key === tabKey);
-									const normalizedLabel = tabItem?.label.replace(/\s+/g, '');
+									const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
 									return (
 										tabItem && (
 											<p
@@ -228,7 +230,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 										<div className='w-full pt-2 text-sm text-gray-700 dark:text-gray-200'>
 											{tabCategories[category].map((tabKey) => {
 												const tabItem = tabItems.find((item) => item.key === tabKey);
-												const normalizedLabel = tabItem?.label.replace(/\s+/g, '');
+												const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
 
 												return (
 													tabItem && (
@@ -330,7 +332,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 									<div className='w-full pt-2 text-sm text-gray-700 dark:text-gray-200'>
 										{tabCategories[category].map((tabKey) => {
 											const tabItem = tabItems.find((item) => item.key === tabKey);
-											const normalizedLabel = tabItem?.label.replace(/\s+/g, '');
+											const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
 
 											return (
 												tabItem && (

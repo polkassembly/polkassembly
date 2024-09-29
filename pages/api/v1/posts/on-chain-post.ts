@@ -66,9 +66,9 @@ export const getTimeline = (
 		proposals?.map((obj: any) => {
 			const statuses = obj?.statusHistory as { status: string }[];
 			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
+				const index = statuses?.findIndex((v) => v.status === 'DecisionDepositPlaced');
 				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
+					const decidingIndex = statuses?.findIndex((v) => v.status === 'Deciding');
 					if (decidingIndex >= 0) {
 						const obj = statuses[index];
 						statuses.splice(index, 1);

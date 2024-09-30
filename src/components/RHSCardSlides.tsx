@@ -40,8 +40,8 @@ enum cardTags {
 	ADD_PROGRESS_REPORT = 'add'
 }
 
-type props = { status: string; canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
-const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, status }: props) => {
+type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
+const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { api, apiReady } = useApiContext();
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
@@ -147,7 +147,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 	}, [api, apiReady, postIndex, statusHistory]);
 
 	useEffect(() => {
-		if (showRefundDeposit?.show && status !== 'Executed') {
+		if (showRefundDeposit?.show && postData?.status !== 'Executed') {
 			trackEvent('refund_card_clicked', 'clicked_refund_card', {
 				loginAddress: loginAddress || '',
 				userId: id || '',
@@ -166,7 +166,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 				return newCards;
 			});
 		}
-		if (showDecisionDeposit && status !== 'Executed') {
+		if (showDecisionDeposit && postData?.status !== 'Executed') {
 			trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_card', {
 				loginAddress: loginAddress || '',
 				userId: id || '',

@@ -67,7 +67,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: error || 'An error occurred while processing the request.' });
 	}
 };
 

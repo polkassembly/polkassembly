@@ -63,11 +63,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 			progress_summary: summary
 		};
 
-		const updatedPost: Partial<Post> = {
-			progress_report: updatedProgressReport
-		};
-
-		await postDocRef.update(updatedPost).catch((error) => {
+		await postDocRef.update({ progress_report: updatedProgressReport }).catch((error) => {
 			console.error('Error updating the post document:', error);
 			throw new Error('Failed to update the post document.');
 		});
@@ -78,7 +74,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		});
 	} catch (error) {
 		console.error('Error in updating progress summary:', error);
-		return res.status(500).json({ message: 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: error || 'An error occurred while processing the request.' });
 	}
 };
 

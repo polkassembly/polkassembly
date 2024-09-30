@@ -51,6 +51,7 @@ import { progressReportActions } from '~src/redux/progressReport';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import ProgressReportRatingModal from './ProgressReport/RatingModal';
+import { gov2ReferendumStatus } from '~src/global/statuses';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -380,7 +381,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{(status === 'Executed' || status === 'Passed' || status === 'Confirmed' || status === 'Approved') && progress_report?.progress_file && (
+							{status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progress_report?.progress_file && (
 								<Tooltip
 									color='#363636'
 									title='Rate Progress Report'
@@ -860,7 +861,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				title={
 					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<StarFilled className='mr-2' />
-						Rate Delievery of Progress Report
+						Rate Delivery of Progress Report
 					</div>
 				}
 			>

@@ -27,7 +27,9 @@ const SuccessModal = () => {
 					className='m-0 mb-4 mt-1 cursor-pointer p-0 text-sm font-normal text-pink_primary'
 					onClick={() => {
 						dispatch(progressReportActions.setOpenSuccessModal(false));
-						router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);
+						if (postData?.postIndex) {
+							router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);
+						}
 					}}
 				>
 					View on Proposal Page <ExportOutlined className='m-0 p-0' />

@@ -143,6 +143,7 @@ import DownArrowSVG from '~assets/icons/down-arrow.svg';
 import DollarSVG from '~assets/profile/dollar.svg';
 import RemoveVoteSVG from '~assets/profile/remove-vote.svg';
 import ClipboardSVG from '~assets/profile/profile-clipboard.svg';
+import AstralSVG from '~assets/profile/profile-astrals.svg';
 import VotesSVG from '~assets/profile/profile-votes.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
@@ -1120,6 +1121,13 @@ export const RemoveVoteIcon = (props: Partial<CustomIconComponentProps>) => (
 export const ClipboardIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ClipboardSVG}
+		{...props}
+	/>
+);
+
+export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSVG}
 		{...props}
 	/>
 );

@@ -110,7 +110,7 @@ const Web3Login: FC<Props> = ({
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<void> => {
-		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
+		if (['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network)) {
 			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
 				if (!extensionNotFound) {

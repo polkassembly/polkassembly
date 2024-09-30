@@ -393,6 +393,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
+	progress_report?: IProgressReport;
 }
 
 export interface IPostTag {
@@ -586,6 +587,18 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+}
+
+export interface IRating {
+	rating: number;
+	user_id: string;
+}
+export interface IProgressReport {
+	progress_addedOn?: Date;
+	progress_file?: string;
+	progress_name?: string;
+	progress_summary?: string;
+	ratings?: IRating[];
 }
 
 export interface IVotesCount {

@@ -43,6 +43,8 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
+import PostProgressReport from '../ProgressReport/PostProgressReport';
+import { useRouter } from 'next/router';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -122,8 +124,30 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const router = useRouter();
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const [selectedTabKey, setSelectedTabKey] = useState<string>('description');
+
+	useEffect(() => {
+		const { tab } = router.query;
+		if (tab && typeof tab === 'string') {
+			setSelectedTabKey(tab);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.query]);
+
+	const handleTabChange = (key: string) => {
+		setSelectedTabKey(key);
+		router.push(
+			{
+				pathname: router.pathname,
+				query: { ...router.query, tab: key }
+			},
+			undefined,
+			{ shallow: true }
+		);
+	};
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -465,15 +489,18 @@ const Post: FC<IPostProps> = (props) => {
 	const tabItems: any[] = [
 		{
 			children: (
-				<PostDescription
-					id={id}
-					isEditing={isEditing}
-					canEdit={canEdit}
-					toggleEdit={toggleEdit}
-					isOnchainPost={isOnchainPost}
-					TrackerButtonComp={TrackerButtonComp}
-					Sidebar={() => <Sidebar />}
-				/>
+				<>
+					{post?.progress_report?.progress_file && <PostProgressReport />}
+					<PostDescription
+						id={id}
+						isEditing={isEditing}
+						canEdit={canEdit}
+						toggleEdit={toggleEdit}
+						isOnchainPost={isOnchainPost}
+						TrackerButtonComp={TrackerButtonComp}
+						Sidebar={() => <Sidebar />}
+					/>
+				</>
 			),
 			key: 'description',
 			label: 'Description'
@@ -505,6 +532,7 @@ const Post: FC<IPostProps> = (props) => {
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',
+					progress_report: post?.progress_report,
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,
@@ -586,6 +614,8 @@ const Post: FC<IPostProps> = (props) => {
 												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
+												activeKey={selectedTabKey} // This sets the currently active tab
+												onChange={handleTabChange}
 											/>
 										</>
 									)}

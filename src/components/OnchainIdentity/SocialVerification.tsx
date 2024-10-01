@@ -181,10 +181,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		}
 		setFieldLoading({ ...fieldLoading, matrix: true });
 
-		if (matrixDisplayName?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
+		if (`@${matrixDisplayName}`?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
 			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
-				matrixHandle: matrix?.value || '',
-				verified: true
+				matrixHandle: matrix?.value || ''
 			});
 
 			if (data?.message == messages.SUCCESS) {
@@ -236,8 +235,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			handleNewStateUpdation({ twitter: { ...twitter, verified: verifiedField } }, true);
 		} else if (ESocials.MATRIX == fieldName) {
 			isMatrixVerified.current = verifiedField;
-			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
-			handleNewStateUpdation({ twitter: { ...twitter, verified: verifiedField } }, true);
+			!noStatusUpdate && setStatus({ ...status, matrix: verificationStatus });
+			handleNewStateUpdation({ matrix: { ...matrix, verified: verifiedField } }, true);
 		}
 	};
 

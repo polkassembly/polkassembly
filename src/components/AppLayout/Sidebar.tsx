@@ -142,6 +142,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen, archivedDropdownOpen]);
+	const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+	const onOpenChange = (keys: string[]) => {
+		const filteredKeys = keys.filter((key) => key !== '');
+		setOpenKeys(filteredKeys);
+
+		if (!sidebarCollapsed) {
+			localStorage.setItem('openKeys', JSON.stringify(filteredKeys));
+		}
+	};
+
+	const handleSidebarToggle = () => {
+		if (sidebarCollapsed) {
+			setOpenKeys([]);
+		} else {
+			const storedKeys = JSON.parse(localStorage.getItem('openKeys') || '[]');
+			setOpenKeys(storedKeys);
+		}
+	};
+	useEffect(() => {
+		handleSidebarToggle();
+	}, [sidebarCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		const currentPath = router.pathname;
@@ -1699,7 +1721,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', 'group', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
 
@@ -1920,11 +1942,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 												onClick={(e) => {
 													e.stopPropagation();
 													e.preventDefault();
-													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-														userId: currentUser?.id || '',
-														userName: currentUser?.username || ''
-													});
-													handleIdentityButtonClick();
+													if (typeof currentUser?.id === 'number' && !Number.isNaN(currentUser.id) && currentUser?.username) {
+														trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+															userId: currentUser.id.toString(),
+															userName: currentUser.username
+														});
+														handleIdentityButtonClick();
+													} else {
+														setLoginOpen(true);
+													}
 												}}
 											>
 												<Image
@@ -2012,11 +2038,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 											onClick={(e) => {
 												e.stopPropagation();
 												e.preventDefault();
-												trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-													userId: currentUser?.id || '',
-													userName: currentUser?.username || ''
-												});
-												handleIdentityButtonClick();
+												if (typeof currentUser?.id === 'number' && !Number.isNaN(currentUser.id) && currentUser?.username) {
+													trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+														userId: currentUser.id.toString(),
+														userName: currentUser.username
+													});
+													handleIdentityButtonClick();
+												} else {
+													setLoginOpen(true);
+												}
 											}}
 											className='activeborderhover group relative w-10'
 										>
@@ -2109,6 +2139,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<Menu
 						theme={theme as any}
 						mode='inline'
+						openKeys={openKeys}
+						onOpenChange={onOpenChange}
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}

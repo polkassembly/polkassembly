@@ -125,7 +125,8 @@ const messages = {
 	VOTE_NOT_FOUND: 'Vote not found.',
 	METHOD_NOT_ALLOWED: 'Method not allowed.',
 	ERROR_IN_UPDATING_BADGES: 'Error in updating badges.',
-	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.'
+	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.',
+	PROGRESS_REPORT_UPDATED_SUCCESSFULLY: 'Progress report updated successfully.'
 };
 
 export default messages;

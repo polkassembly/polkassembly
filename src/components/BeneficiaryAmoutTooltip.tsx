@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
@@ -38,7 +38,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
-	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;

@@ -110,6 +110,11 @@ export interface IAssets {
 	genralIndex: string;
 }
 
+interface Asset {
+	label: string;
+	assetId: number;
+}
+
 export interface ChainProps {
 	peopleChainRpcEndpoint?: string;
 	peopleChainParachain?: string;
@@ -137,6 +142,9 @@ export interface ChainProps {
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
 	supportedAssets?: IAssets[];
+	hydrationTreasuryAddress?: string;
+	hydrationEndpoints?: string[];
+	hydrationAssets?: Asset[];
 }
 
 export type TRPCEndpoint = {
@@ -385,6 +393,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
+	progress_report?: IProgressReport;
 }
 
 export interface IPostTag {
@@ -555,11 +564,12 @@ export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	PLEASE_VERIFY_MATRIX = 'Please verify matrix account',
 	NOT_VERIFIED = 'Not verified'
 }
 export enum ESocials {
 	EMAIL = 'email',
-	RIOT = 'riot',
+	MATRIX = 'matrix',
 	TWITTER = 'twitter',
 	WEB = 'web'
 }
@@ -578,6 +588,18 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+}
+
+export interface IRating {
+	rating: number;
+	user_id: string;
+}
+export interface IProgressReport {
+	progress_addedOn?: Date;
+	progress_file?: string;
+	progress_name?: string;
+	progress_summary?: string;
+	ratings?: IRating[];
 }
 
 export interface IVotesCount {
@@ -951,4 +973,5 @@ export enum EDelegationSourceFilters {
 export interface ICommentsSummary {
 	summary_negative: string;
 	summary_positive: string;
+	summary_neutral: string;
 }

@@ -49,7 +49,7 @@ export const scoringData: IScoringSection[] = [
 			{ label: 'Link Discussion to Proposal', points: 20, type: 'on-chain' },
 			{ label: 'Create Discussion', points: 5, type: 'off-chain' },
 			{ label: 'Received a like on your discussions', points: 10, type: 'off-chain' },
-			{ label: 'Received a like on your comment / reply', points: 25, type: 'on-chain' }
+			{ label: 'Received a like on your comment / reply', points: 25, type: 'off-chain' }
 		],
 		title: 'Discussions'
 	},

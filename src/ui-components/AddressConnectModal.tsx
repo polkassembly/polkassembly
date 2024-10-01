@@ -40,8 +40,6 @@ import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import Skeleton from '~src/basic-components/Skeleton';
-
 interface Props {
 	className?: string;
 	open: boolean;
@@ -49,7 +47,7 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
-	onConfirm?: (pre?: any, sec?: any) => void;
+	onConfirm?: (pre?: any, sec?: any, th?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
 	walletAlertTitle?: string;
@@ -98,7 +96,7 @@ const AddressConnectModal = ({
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const substrate_address = getSubstrateAddress(loginAddress);
-	const substrate_addresses = (addresses || []).map((address) => (getSubstrateAddress(address) || address || '').toLowerCase());
+	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
@@ -122,17 +120,16 @@ const AddressConnectModal = ({
 	}, [api, apiReady]);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
-		const account_substrate_address = getSubstrateAddress(account?.address || '') || account?.address || '';
-		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || loginAddress || '').toLowerCase();
-
+		const account_substrate_address = getSubstrateAddress(account?.address || '');
+		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil || false) {
 			if (isConnected) {
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected && substrate_addresses.includes(account_substrate_address.toLowerCase())) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		} else if (substrate_addresses.includes(account_substrate_address.toLowerCase())) {
+		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		} else {
 			return EAddressOtherTextType.UNLINKED_ADDRESS;
@@ -148,22 +145,20 @@ const AddressConnectModal = ({
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
 
-			if (!wallet) {
-				throw new Error('Wallet not found!');
-			}
+			if (!wallet) return;
 
 			const injected = wallet && wallet.enable && (await wallet.enable(APPNAME));
 
 			const signRaw = injected && injected.signer && injected.signer.signRaw;
-			if (!signRaw) {
-				throw new Error('Signer not available');
-			}
+			if (!signRaw) return console.error('Signer not available');
 
 			let substrate_address: string | null;
 			if (!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
 				if (!substrate_address) {
-					throw new Error('Invalid Address!');
+					console.error('Invalid address');
+					setLoading(false);
+					return;
 				}
 			} else {
 				substrate_address = address;
@@ -190,20 +185,11 @@ const AddressConnectModal = ({
 				const method = 'personal_sign';
 
 				let sendAsyncQuery;
-				switch (chosenWallet) {
-					case Wallet.TALISMAN:
-						sendAsyncQuery = (window as any).talismanEth;
-						break;
-					case Wallet.SUBWALLET:
-						sendAsyncQuery = (window as any).SubWallet;
-						break;
-					case Wallet.NOVAWALLET:
-						sendAsyncQuery = (window as any)?.ethereum;
-						break;
-					default:
-						sendAsyncQuery = (window as any).web3.currentProvider;
+				if (isMetamaskWallet) {
+					sendAsyncQuery = (window as any).ethereum;
+				} else {
+					sendAsyncQuery = (window as any).web3.currentProvider;
 				}
-
 				sendAsyncQuery.sendAsync(
 					{
 						from,
@@ -254,7 +240,7 @@ const AddressConnectModal = ({
 					const { data: confirmData, error: confirmError } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/addressLinkConfirm', {
 						address: substrate_address,
 						signature,
-						wallet: chosenWallet
+						wallet
 					});
 
 					if (confirmError) {
@@ -297,12 +283,12 @@ const AddressConnectModal = ({
 			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
 			localStorageAddressKeyName && localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
-			localStorage.setItem('delegationDashboardAddress', address);
-			localStorage.setItem('multisigDelegationAssociatedAddress', address);
+			localStorage.setItem('delegationDashboardAddress', showMultisig ? multisig : address);
+			localStorage.setItem('multisigDelegationAssociatedAddress', showMultisig ? multisig : address);
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
-			setMultisig('');
-			onConfirm?.(address, wallet);
+			// setMultisig('');
+			onConfirm?.(showMultisig ? multisig : address, wallet, address);
 			setOpen(false);
 			setLoading(false);
 			dispatch(setConnectAddress(address));
@@ -382,10 +368,8 @@ const AddressConnectModal = ({
 				setTotalDeposit(ZERO_BN);
 			} finally {
 				//initiator balance
-				if (multisig) {
-					const initiatorBalance = await (usedInIdentityFlow ? peopleChainApi ?? api : api)?.query?.system?.account(address);
-					setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
-				}
+				const initiatorBalance = await api?.query?.system?.account(address);
+				setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -445,196 +429,190 @@ const AddressConnectModal = ({
 			onCancel={() => setOpen(false)}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
-			{!api || !apiReady ? (
-				<div className='flex h-[160px] items-center justify-center '>
-					<Skeleton className='mt-10 w-full' />
-				</div>
-			) : (
-				<Spin
-					spinning={loading}
-					indicator={<LoadingOutlined />}
-					className='min-h-[180px]'
-				>
-					<div className='flex flex-col'>
-						{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
-							<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
-								<ImageIcon
-									src='/assets/icons/connect-address.svg'
-									imgWrapperClassName='ml-10 -mt-4'
-									alt='connect address Icon'
-								/>
-								<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
-									Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
-								</span>
-							</div>
-						)}
-						{Object.keys(availableWallets || {}).length !== 0 && !loading && (
-							<h3 className='text-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</h3>
-						)}{' '}
-						<AvailableWallets
-							className='flex items-center justify-center gap-x-4'
-							handleWalletClick={handleWalletClick}
-							availableWallets={availableWallets}
-							isMetamaskWallet={isMetamaskWallet}
-							wallet={wallet}
-						/>
-						{usingMultisig && (
-							<div>
-								{canUsePolkasafe(network) && !showMultisig && usingMultisig && (
-									<div className='m-auto mb-6 mt-3 flex w-[50%] flex-col gap-3'>
-										<Divider className='m-0 dark:text-blue-dark-high'>OR</Divider>
-										<div className='flex w-full justify-center'>
-											<WalletButton
-												className='border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
-												onClick={() => {
-													setShowMultisig(!showMultisig);
-												}}
-												name='Polkasafe'
-												icon={
-													<WalletIcon
-														which={Wallet.POLKASAFE}
-														className='h-6 w-6'
-													/>
-												}
-												text={'Use a multisig'}
-											/>
-										</div>
+			<Spin
+				spinning={loading}
+				indicator={<LoadingOutlined />}
+				className='min-h-[180px]'
+			>
+				<div className='flex flex-col'>
+					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
+						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
+							<ImageIcon
+								src='/assets/icons/connect-address.svg'
+								imgWrapperClassName='ml-10 -mt-4'
+								alt='connect address Icon'
+							/>
+							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
+								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
+							</span>
+						</div>
+					)}
+					{Object.keys(availableWallets || {}).length !== 0 && !loading && (
+						<h3 className='text-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</h3>
+					)}{' '}
+					<AvailableWallets
+						className='flex items-center justify-center gap-x-4'
+						handleWalletClick={handleWalletClick}
+						availableWallets={availableWallets}
+						isMetamaskWallet={isMetamaskWallet}
+						wallet={wallet}
+					/>
+					{usingMultisig && (
+						<div>
+							{canUsePolkasafe(network) && !showMultisig && usingMultisig && (
+								<div className='m-auto mb-6 mt-3 flex w-[50%] flex-col gap-3'>
+									<Divider className='m-0 dark:text-blue-dark-high'>OR</Divider>
+									<div className='flex w-full justify-center'>
+										<WalletButton
+											className='border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+											onClick={() => {
+												setShowMultisig(!showMultisig);
+											}}
+											name='Polkasafe'
+											icon={
+												<WalletIcon
+													which={Wallet.POLKASAFE}
+													className='h-6 w-6'
+												/>
+											}
+											text={'Use a multisig'}
+										/>
 									</div>
-								)}
+								</div>
+							)}
 
-								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
-									<Alert
-										message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
-											totalDeposit,
-											{ numberAfterComma: 3, withUnit: true },
-											network
-										)} required to create a Transaction.`}
-										showIcon
-										className='mb-6'
-									/>
-								)}
-							</div>
-						)}
-						{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
-							<Alert
-								message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
-								description={
-									<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
-										<li>Give access to Polkassembly on your selected wallet.</li>
-										<li>Add an address to the selected wallet.</li>
-									</ul>
-								}
-								showIcon
-								className='mt-4'
-								type='info'
-							/>
-						)}
-						{Object.keys(availableWallets || {}).length === 0 && !loading && (
-							<Alert
-								message={<div className='mt-1 text-[13px] font-medium text-lightBlue dark:text-blue-dark-high'>{accountAlertTitle}</div>}
-								description={
-									<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
-										{linkAddressNeeded
-											? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
-											: 'Please login with a web3 wallet to access this feature.'}
-									</div>
-								}
-								type='info'
-								showIcon
-								className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
-							/>
-						)}
-						<Form
-							form={form}
-							disabled={loading}
-						>
-							{accounts.length > 0 ? (
-								showMultisig ? (
-									<MultisigAccountSelectionForm
-										multisigBalance={multisigBalance}
-										setMultisigBalance={setMultisigBalance}
-										title='Select Address'
-										accounts={accounts}
-										address={address}
-										withBalance
-										onAccountChange={(address) => {
-											setAddress(address);
-											setMultisig('');
-										}}
-										onBalanceChange={handleOnBalanceChange}
-										className='text-sm text-lightBlue dark:text-blue-dark-medium'
-										walletAddress={multisig}
-										setWalletAddress={setMultisig}
-										containerClassName='gap-[20px]'
-										showMultisigBalance={true}
-										canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
-										linkAddressTextDisabled={false}
-									/>
-								) : (
-									<AccountSelectionForm
-										isBalanceUpdated={isBalanceUpdated}
-										isTruncateUsername={false}
-										title={accountSelectionFormTitle}
-										accounts={accounts}
-										address={address}
-										withBalance={true}
-										onAccountChange={(address) => setAddress(address)}
-										onBalanceChange={handleOnBalanceChange}
-										className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
-										inputClassName='rounded-[4px] px-3 py-1'
-										usedInIdentityFlow={usedInIdentityFlow}
-									/>
-								)
-							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
+							{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
 								<Alert
-									type='info'
-									className='mt-4 rounded-[4px]'
+									message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
+										totalDeposit,
+										{ numberAfterComma: 3, withUnit: true },
+										network
+									)} required to create a Transaction.`}
 									showIcon
-									message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+									className='mb-6'
 								/>
-							) : null}
-						</Form>
-					</div>
-					{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
+							)}
+						</div>
+					)}
+					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							className='mt-6 rounded-[4px]'
-							type='info'
-							showIcon
-							message={
-								<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-									Please maintain minimum {formatedBalance(String(baseDeposit.add(submissionDeposite).toString()), unit)} {unit} balance for these transactions:
-									<span
-										className='ml-1 cursor-pointer text-xs text-pink_primary'
-										onClick={() => setHideDetails(!hideDetails)}
-									>
-										{hideDetails ? 'Show' : 'Hide'}
-									</span>
-								</span>
-							}
+							message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								hideDetails ? (
-									''
-								) : (
-									<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-										<li className='flex w-full justify-between'>
-											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
-											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-												{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
-											</span>
-										</li>
-										<li className='mt-0 flex w-full justify-between'>
-											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-												{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-											</span>
-										</li>
-									</div>
-								)
+								<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
+									<li>Give access to Polkassembly on your selected wallet.</li>
+									<li>Add an address to the selected wallet.</li>
+								</ul>
 							}
+							showIcon
+							className='mt-4'
+							type='info'
 						/>
 					)}
-				</Spin>
-			)}
+					{Object.keys(availableWallets || {}).length === 0 && !loading && (
+						<Alert
+							message={<div className='mt-1 text-[13px] font-medium text-lightBlue dark:text-blue-dark-high'>{accountAlertTitle}</div>}
+							description={
+								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
+									{linkAddressNeeded
+										? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+										: 'Please login with a web3 wallet to access this feature.'}
+								</div>
+							}
+							type='info'
+							showIcon
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
+						/>
+					)}
+					<Form
+						form={form}
+						disabled={loading}
+					>
+						{accounts.length > 0 ? (
+							showMultisig ? (
+								<MultisigAccountSelectionForm
+									multisigBalance={multisigBalance}
+									setMultisigBalance={setMultisigBalance}
+									title='Select Address'
+									accounts={accounts}
+									address={address}
+									withBalance
+									onAccountChange={(address) => {
+										setAddress(address);
+										setMultisig('');
+									}}
+									onBalanceChange={handleOnBalanceChange}
+									className='text-sm text-lightBlue dark:text-blue-dark-medium'
+									walletAddress={multisig}
+									setWalletAddress={setMultisig}
+									containerClassName='gap-[20px]'
+									showMultisigBalance={true}
+									canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
+									linkAddressTextDisabled={false}
+								/>
+							) : (
+								<AccountSelectionForm
+									isBalanceUpdated={isBalanceUpdated}
+									isTruncateUsername={false}
+									title={accountSelectionFormTitle}
+									accounts={accounts}
+									address={address}
+									withBalance={true}
+									onAccountChange={(address) => setAddress(address)}
+									onBalanceChange={handleOnBalanceChange}
+									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
+									inputClassName='rounded-[4px] px-3 py-1'
+									usedInIdentityFlow={usedInIdentityFlow}
+								/>
+							)
+						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
+							<Alert
+								type='info'
+								className='mt-4 rounded-[4px]'
+								showIcon
+								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+							/>
+						) : null}
+					</Form>
+				</div>
+				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
+					<Alert
+						className='mt-6 rounded-[4px]'
+						type='info'
+						showIcon
+						message={
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+								Please maintain minimum {formatedBalance(String(baseDeposit.add(submissionDeposite).toString()), unit)} {unit} balance for these transactions:
+								<span
+									className='ml-1 cursor-pointer text-xs text-pink_primary'
+									onClick={() => setHideDetails(!hideDetails)}
+								>
+									{hideDetails ? 'Show' : 'Hide'}
+								</span>
+							</span>
+						}
+						description={
+							hideDetails ? (
+								''
+							) : (
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
+									<li className='flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
+										</span>
+									</li>
+									<li className='mt-0 flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+										</span>
+									</li>
+								</div>
+							)
+						}
+					/>
+				)}
+			</Spin>
 		</Modal>
 	);
 };

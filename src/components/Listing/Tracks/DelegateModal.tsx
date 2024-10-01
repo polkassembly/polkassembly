@@ -39,6 +39,7 @@ import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import userProfileBalances from '~src/util/userProfileBalances';
+import { getAllSignatories } from '~src/components/DelegationDashboard/utils/getAllSignatories';
 
 const ZERO_BN = new BN(0);
 
@@ -79,6 +80,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [days, setDays] = useState<number>(0);
+	const [multisigs, setMultisigs] = useState();
+
 	const isTargetAddressSame =
 		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
 	const delegateButtonDisable =
@@ -91,6 +94,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		availableBalance.lte(txFee.add(bnBalance)) ||
 		(checkedTrack == null && !checkedList?.length);
 
+	const handleGetMultisig = async (address: string) => {
+		// setLoader(true);
+		const multisigsDetails = await getAllSignatories(address);
+		setMultisigs(multisigsDetails);
+		// setLoader(false);
+	};
+
+	console.log({ multisigs });
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -102,6 +114,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			form.setFieldValue('targetAddress', defaultTarget);
 			setTarget(defaultTarget);
 		}
+
+		handleGetMultisig(delegationDashboardAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, defaultTarget]);
 

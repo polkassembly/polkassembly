@@ -102,8 +102,7 @@ const AddressDropdown = ({
 		}
 	});
 
-	isSwitchButton &&
-		setSwitchModalOpen &&
+	if (isSwitchButton && setSwitchModalOpen) {
 		addressItems.push({
 			key: 1,
 			label: (
@@ -117,6 +116,8 @@ const AddressDropdown = ({
 				</div>
 			)
 		});
+	}
+
 	return (
 		<Dropdown
 			theme={theme}

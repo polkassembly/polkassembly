@@ -146,6 +146,7 @@ const ProfileBalances = ({ className }: Props) => {
 				open={openModal}
 				setOpen={setOpenModal}
 				walletAlertTitle={'Delegation'}
+				usingMultisig
 				closable={true}
 				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
 				usedInIdentityFlow={false}

@@ -8,6 +8,6 @@ const isAnalyticsSupportedNetwork = (network: string) => {
 	return !AnalyticsUnsupportedNetworks.includes(network);
 };
 
-export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
+export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT, AllNetworks.ROCOCO];
 
 export default isAnalyticsSupportedNetwork;

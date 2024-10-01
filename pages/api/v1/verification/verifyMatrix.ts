@@ -17,7 +17,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 
 	const network = String(req.headers['x-network']);
 
-	const { matrixHandle, verified } = req.body;
+	const { matrixHandle } = req.body;
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
@@ -38,7 +38,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 				created_at: new Date(),
 				matrix_handle: matrixHandle?.[0] == '@' ? matrixHandle : `@${matrixHandle}`,
 				user_id: userId,
-				verified: verified
+				verified: true
 			},
 			{ merge: true }
 		);

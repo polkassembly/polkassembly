@@ -183,8 +183,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 
 		if (`@${matrixDisplayName}`?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
 			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
-				matrixHandle: matrix?.value || '',
-				verified: true
+				matrixHandle: matrix?.value || ''
 			});
 
 			if (data?.message == messages.SUCCESS) {

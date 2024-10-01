@@ -11,8 +11,8 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import ReferendaScoring from './ReferendaScoring';
 import ScoringDetails from './ScoringDetails';
+import { scoringData } from './utils';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -67,8 +67,8 @@ const AstralScoring = (props: { network: string; className: string }) => {
 					</div>
 					<p className='m-0 p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium'>See how you can earn more points!</p>
 					<div className='mt-2 grid w-full gap-x-6 gap-y-4 md:grid-cols-2'>
-						<ReferendaScoring />
-						<ScoringDetails />
+						<ScoringDetails scoringData={scoringData.slice(0, 3)} />
+						<ScoringDetails scoringData={scoringData.slice(3)} />
 					</div>
 				</article>
 			</section>

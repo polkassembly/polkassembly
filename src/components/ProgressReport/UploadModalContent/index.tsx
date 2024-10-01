@@ -119,6 +119,7 @@ const UploadModalContent = () => {
 			if (status === 'done') {
 				setFileName(info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
+				dispatch(progressReportActions.setFileName(info.file.name));
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
 				message.error(`${info.file.name} file upload failed.`);

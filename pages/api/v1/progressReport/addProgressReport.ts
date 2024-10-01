@@ -12,7 +12,8 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
 import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getSubsquidProposalType } from '~src/global/proposalType';
+import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 
 const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
@@ -74,6 +75,13 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		};
 
 		await postDocRef.update(updatedPost);
+		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
+			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post?.trackNumber}_*`;
+			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+			await deleteKeys(trackListingKey);
+			await redisDel(referendumDetailsKey);
+		}
 
 		return res.status(200).json({
 			message: 'Progress report added and post updated successfully.',

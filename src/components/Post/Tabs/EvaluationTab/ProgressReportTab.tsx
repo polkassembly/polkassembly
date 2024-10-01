@@ -177,7 +177,7 @@ const ProgressReportTab = ({ className }: Props) => {
 					key='1'
 				>
 					{/* change !== to === */}
-					{postData.userId !== currentUser?.id && (
+					{postData.userId !== currentUser?.id ? (
 						<>
 							<UploadModalContent />
 							<div className='mt-4 flex justify-end'>
@@ -198,10 +198,7 @@ const ProgressReportTab = ({ className }: Props) => {
 								/>
 							</div>
 						</>
-					)}
-
-					{/* change === to !== */}
-					{postData.userId === currentUser?.id && postData?.progress_report?.progress_file ? (
+					) : postData?.progress_report?.progress_file ? (
 						<ProgressReportInfo />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>

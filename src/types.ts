@@ -223,6 +223,7 @@ export enum Wallet {
 }
 
 export const PostOrigin = {
+	ASTRAL_SCORECARD: 'AstralScorcard',
 	AUCTION_ADMIN: 'AuctionAdmin',
 	BIG_SPENDER: 'BigSpender',
 	BIG_TIPPER: 'BigTipper',

@@ -142,7 +142,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 
 		const matrix = matrixVerificationDoc.data();
 
-		if (`${matrix?.matrix_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Twitter handle does not match' });
+		if (`${matrix?.matrix_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Matrix handle does not match' });
 
 		if (matrix?.verified && matrix?.user_id === userId) {
 			return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });

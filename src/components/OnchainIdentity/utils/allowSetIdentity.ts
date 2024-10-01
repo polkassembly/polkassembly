@@ -4,11 +4,15 @@
 
 import { IAllowSetIdentity } from '../types';
 
-const allowSetIdentity = ({ identityInfo, displayName, email, legalName, twitter }: IAllowSetIdentity) => {
-	const condition = displayName === identityInfo?.displayName && email?.value.toLowerCase() === identityInfo?.email.toLowerCase() && legalName === identityInfo?.legalName;
+const allowSetIdentity = ({ identityInfo, displayName, email, legalName, twitter, matrix }: IAllowSetIdentity) => {
+	let condition = displayName === identityInfo?.displayName && email?.value.toLowerCase() === identityInfo?.email.toLowerCase() && legalName === identityInfo?.legalName;
 
 	if (identityInfo.twitter?.length || twitter.value?.length) {
-		return twitter.value.toLowerCase() === identityInfo?.twitter.toLowerCase() && condition;
+		condition = twitter.value.toLowerCase() === identityInfo?.twitter.toLowerCase() && condition;
+	}
+
+	if (identityInfo?.matrix?.length || matrix?.value.length) {
+		condition = matrix.value.toLowerCase() === identityInfo?.matrix.toLowerCase() && condition;
 	}
 	return condition;
 };

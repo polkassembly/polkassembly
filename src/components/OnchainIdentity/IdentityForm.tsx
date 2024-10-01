@@ -20,7 +20,7 @@ import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionF
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import { poppins } from 'pages/_app';
-import { EmailIcon, InfoIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, InfoIcon, RiotIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
@@ -65,7 +65,7 @@ const IdentityForm = ({
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
-	const { email, twitter } = socials;
+	const { email, twitter, matrix } = socials;
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
@@ -129,7 +129,7 @@ const IdentityForm = ({
 			await handleIdentityHashSave(identityHash);
 		};
 
-		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -227,7 +227,7 @@ const IdentityForm = ({
 		}
 
 		if (identityInfo.isIdentitySet) {
-			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
+			if (allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && requestJudgementTx) {
 				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			} else {
@@ -255,11 +255,12 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = (form.getFieldValue('twitter') || '').trim();
+		const matrixVal = (form.getFieldValue('matrix') || '').trim();
 
 		const okDisplay = checkIdentityFieldsValidity(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkIdentityFieldsValidity(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkIdentityFieldsValidity(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
-		// const okRiot = checkIdentityFieldsValidity((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
+		const okMatrix = checkIdentityFieldsValidity(matrixVal.length > 0, matrixVal, 6, [':', '.org'], WHITESPACE, []);
 		const okTwitter = checkIdentityFieldsValidity(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
@@ -278,14 +279,20 @@ const IdentityForm = ({
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				github: { [identityInfo?.github.length > 0 ? 'raw' : 'none']: identityInfo?.github.length > 0 ? identityInfo?.github : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
-				matrix: { [identityInfo?.matrix.length > 0 ? 'raw' : 'none']: identityInfo?.matrix.length > 0 ? identityInfo?.matrix : null },
-				riot: { [identityInfo?.riot.length > 0 ? 'raw' : 'none']: identityInfo?.riot.length > 0 ? identityInfo?.riot : null },
+				matrix: { [okMatrix && matrixVal.length > 0 ? 'raw' : 'none']: okMatrix && matrixVal.length > 0 ? (matrixVal?.[0] === '@' ? matrixVal : `@${matrixVal}`) : null },
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
 				web: { [identityInfo?.web.length > 0 ? 'raw' : 'none']: identityInfo?.web.length > 0 ? identityInfo?.web : null }
 			},
-			okAll: twitterVal.length
-				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
-				: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal
+			okAll:
+				okDisplay &&
+				okEmail &&
+				okLegal &&
+				okTwitter &&
+				okMatrix &&
+				displayNameVal?.length > 1 &&
+				!!emailVal &&
+				(twitterVal?.length ? !!twitterVal : true) &&
+				(matrixVal?.length ? !!matrixVal : true)
 		});
 		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -322,7 +329,7 @@ const IdentityForm = ({
 
 				{!!totalFee.gt(ZERO_BN) &&
 					isPeopleChainSupportedNetwork(network) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
 					availableBalance &&
 					availableBalance.lt(totalFee) &&
 					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
@@ -347,7 +354,7 @@ const IdentityForm = ({
 					/>
 				)}
 				{!!totalFee.gt(ZERO_BN) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
 					availableBalance &&
 					availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
 						<Alert
@@ -357,7 +364,7 @@ const IdentityForm = ({
 							message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
 						/>
 					)}
-				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
+				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
 						type='success'
@@ -368,7 +375,7 @@ const IdentityForm = ({
 				{!!identityInfo?.email &&
 					!!identityInfo?.displayName &&
 					!identityInfo.verifiedByPolkassembly &&
-					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
+					allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) &&
 					availableBalance &&
 					availableBalance.add(defaultChainUserBalance).gt(totalFee) && (
 						<Alert
@@ -628,6 +635,48 @@ const IdentityForm = ({
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									handleInfo();
+								}}
+							/>
+						</Form.Item>
+					</div>
+
+					<div className='mt-1 flex items-center  '>
+						<span className='mb-6 flex w-[150px] items-center gap-2'>
+							<RiotIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Matrix</span>
+						</span>
+						<Form.Item
+							name='matrix'
+							className='w-full'
+							rules={[
+								{
+									message: 'Invalid matrix address',
+									validator(rule, value, callback) {
+										if (
+											callback &&
+											value.length > 0 &&
+											!checkIdentityFieldsValidity(form.getFieldValue('matrix')?.trim()?.length > 0, form.getFieldValue('matrix')?.trim(), 3, [':', '.org'], WHITESPACE, [])
+										) {
+											callback(rule?.message?.toString());
+										} else {
+											callback();
+										}
+									}
+								}
+							]}
+						>
+							<Input
+								onBlur={() => getGasFee()}
+								addonAfter={
+									!!identityInfo?.matrix && !!identityInfo.alreadyVerified && identityInfo?.matrix === form?.getFieldValue('matrix') && <VerifiedIcon className='text-xl' />
+								}
+								name='matrix'
+								value={email?.value}
+								placeholder='Enter your matrix id ex:(alex:matrix.org)'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+								onChange={(e) => {
+									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, matrix: { ...matrix, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>

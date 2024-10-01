@@ -135,6 +135,28 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			});
 		}
 		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
+	} else if (type === 'matrix') {
+		const matrixVerificationDoc = await firestore.collection('matrix_verification_tokens').doc(String(userId)).get();
+
+		if (!matrixVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
+
+		const matrix = matrixVerificationDoc.data();
+
+		if (`${matrix?.matrix_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Twitter handle does not match' });
+
+		if (matrix?.verified && matrix?.user_id === userId) {
+			return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
+		} else if (checkingVerified === true) {
+			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
+		} else {
+			await matrixVerificationDoc.ref.set({
+				created_at: new Date(),
+				matrix_handle: matrix?.matrix_handle,
+				user_id: userId,
+				verified: false
+			});
+		}
+		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
 	}
 };
 

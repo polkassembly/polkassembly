@@ -568,7 +568,7 @@ export enum VerificationStatus {
 }
 export enum ESocials {
 	EMAIL = 'email',
-	RIOT = 'riot',
+	MATRIX = 'matrix',
 	TWITTER = 'twitter',
 	WEB = 'web'
 }

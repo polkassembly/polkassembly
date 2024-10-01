@@ -14,10 +14,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { poppins } from 'pages/_app';
 import { Form, Modal, Spin } from 'antd';
 import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
-import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
-import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
 import { ILoading } from '~src/types';
-import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
 import IdentityForm from './IdentityForm';
@@ -33,7 +30,6 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 const ZERO_BN = new BN(0);
 
 const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnChainIdentity) => {
-	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
@@ -108,7 +104,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (!api || !apiReady) return;
 
 		try {
-			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
+			const { discord, display, email, isVerified, isIdentitySet, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
 				api: peopleChainApi ?? api,
 				network: network
@@ -122,6 +118,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			form.setFieldValue('legalName', legal || '');
 			form.setFieldValue('email', email || '');
 			form.setFieldValue('twitter', twitter || '');
+			form.setFieldValue('matrix', matrix || '');
 
 			const infoCall = judgements?.filter(([, judgement]: any[]): boolean => {
 				return !!judgement?.FeePaid;
@@ -147,7 +144,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						isIdentitySet: isIdentitySet,
 						legalName: legal || '',
 						matrix: matrix || '',
-						riot: riot || '',
 						twitter: twitter || '',
 						verifiedByPolkassembly: verifiedByPolkassembly || false,
 						web: web || ''
@@ -156,6 +152,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 					socials: {
 						...socials,
 						email: { ...socials.email, value: email || '' },
+						matrix: { ...socials.matrix, value: matrix || '' },
 						twitter: { ...socials.twitter, value: twitter || '' }
 					},
 					userId: userId || null
@@ -267,12 +264,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								/>
 							</div>
 						) : null}
-						{!identityInfo.alreadyVerified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
-								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>
-								In Progress
-							</span>
-						)}
 					</div>
 				}
 			>

@@ -21,7 +21,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		if (!matrixHandle || typeof matrixHandle !== 'string') return res.status(400).json({ message: 'Invalid Matrix handle' });
+		if (!matrixHandle?.length || typeof matrixHandle !== 'string') return res.status(400).json({ message: 'Invalid Matrix handle' });
 
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(403).json({ message: messages.UNAUTHORISED });

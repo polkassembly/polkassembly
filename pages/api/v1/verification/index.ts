@@ -140,23 +140,23 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 
 		if (!matrixVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
 
-		const matrix = matrixVerificationDoc.data();
+		const matrixData = matrixVerificationDoc.data();
 
-		if (`${matrix?.matrix_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Matrix handle does not match' });
+		if (`${matrixData?.matrix_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Matrix handle does not match' });
 
-		if (matrix?.verified && matrix?.user_id === userId) {
+		if (matrixData?.verified && matrixData?.user_id === userId) {
 			return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 		} else if (checkingVerified === true) {
 			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 		} else {
 			await matrixVerificationDoc.ref.set({
 				created_at: new Date(),
-				matrix_handle: matrix?.matrix_handle,
+				matrix_handle: account,
 				user_id: userId,
 				verified: false
 			});
 		}
-		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
+		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_MATRIX });
 	}
 };
 

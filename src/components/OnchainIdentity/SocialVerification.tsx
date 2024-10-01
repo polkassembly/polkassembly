@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { message, Timeline, TimelineItemProps, Tooltip } from 'antd';
 import styled from 'styled-components';
-import { CopyIcon, EmailIcon, RiotIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { CopyIcon, EmailIcon, MatrixIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
@@ -38,9 +38,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const isMatrixVerified = useRef(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const success = (message: string) => {
+	const success = (msg: string) => {
 		messageApi.open({
-			content: message,
+			content: msg,
 			duration: 10,
 			type: 'success'
 		});
@@ -49,8 +49,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const items: TimelineItemProps[] = [];
 
 	const handleUpdatedUserName = (name: string) => {
-		if (!name?.length) return '';
-		const updatedUsername = `${name?.split(':')[0]}_${identityAddress?.slice(0, 5)}`;
+		if (!name?.length || !identityAddress) return '';
+		const updatedUsername = `${name.split(':')[0]}_${identityAddress.slice(0, 5)}`;
 		return updatedUsername;
 	};
 
@@ -118,6 +118,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					title='Matrix'
 					description={
 						<div className='mt-0.5 text-xs tracking-wide'>
+							{contextHolder}
+
 							<Tooltip
 								title={
 									<div
@@ -134,7 +136,6 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 							>
 								To verify your Matrix ID, please set your Element username to {handleUpdatedUserName(matrix?.value || '')}. Make sure to follow this format for successful
 								verification.
-								{contextHolder}
 							</Tooltip>
 						</div>
 					}
@@ -147,25 +148,40 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				/>
 			),
 			dot: (
-				<RiotIcon
+				<MatrixIcon
 					className={`${isMatrixVerified?.current ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`}
 				/>
 			),
-			key: 2
+			key: 3
 		});
 	}
 
 	const handleMatrixVerificationClick = async () => {
 		if (!matrix?.value?.length) return;
+		let matrixDisplayName = '';
+		try {
+			const homeUrl = matrix.value.split(':')[1];
+
+			const response = await fetch(`https://${homeUrl}/_matrix/client/v3/profile/${matrix?.value?.[0] !== '@' ? `@${matrix?.value}` : matrix.value}`, {
+				headers: {
+					Accept: 'application/json'
+				}
+			});
+
+			const resJSON = await response.json();
+			matrixDisplayName = resJSON?.displayname || '';
+		} catch (err) {
+			queueNotification({
+				header: 'Error!',
+				message: err || '',
+				status: NotificationStatus.ERROR
+			});
+
+			return;
+		}
 		setFieldLoading({ ...fieldLoading, matrix: true });
-		const homeUrl = matrix.value.split(':')[1];
-		const response = await fetch(`https://${homeUrl}/_matrix/client/v3/profile/${matrix?.value?.[0] !== '@' ? `@${matrix?.value}` : matrix.value}`, {
-			headers: {
-				Accept: 'application/json'
-			}
-		});
-		const resJSON = await response.json();
-		if (resJSON?.displayname?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
+
+		if (matrixDisplayName?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
 			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
 				matrixHandle: matrix?.value || '',
 				verified: true

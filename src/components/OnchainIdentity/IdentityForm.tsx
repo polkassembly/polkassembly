@@ -20,7 +20,7 @@ import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionF
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import { poppins } from 'pages/_app';
-import { EmailIcon, InfoIcon, RiotIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, InfoIcon, MatrixIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
@@ -58,7 +58,7 @@ const IdentityForm = ({
 	form,
 	setOpenIdentitySuccessModal
 }: IIdentityForm) => {
-	const dispach = useDispatch();
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -125,7 +125,7 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
 			setOpenIdentitySuccessModal(true);
-			dispach(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
 			await handleIdentityHashSave(identityHash);
 		};
 
@@ -507,7 +507,7 @@ const IdentityForm = ({
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
@@ -541,7 +541,7 @@ const IdentityForm = ({
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
@@ -592,7 +592,7 @@ const IdentityForm = ({
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -634,7 +634,7 @@ const IdentityForm = ({
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -643,7 +643,7 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<RiotIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<MatrixIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Matrix</span>
 						</span>
 						<Form.Item
@@ -656,7 +656,7 @@ const IdentityForm = ({
 										if (
 											callback &&
 											value.length > 0 &&
-											!checkIdentityFieldsValidity(form.getFieldValue('matrix')?.trim()?.length > 0, form.getFieldValue('matrix')?.trim(), 3, [':', '.org'], WHITESPACE, [])
+											!checkIdentityFieldsValidity(form.getFieldValue('matrix')?.trim()?.length > 0, form.getFieldValue('matrix')?.trim(), 6, [':', '.org'], WHITESPACE, [])
 										) {
 											callback(rule?.message?.toString());
 										} else {
@@ -672,11 +672,11 @@ const IdentityForm = ({
 									!!identityInfo?.matrix && !!identityInfo.alreadyVerified && identityInfo?.matrix === form?.getFieldValue('matrix') && <VerifiedIcon className='text-xl' />
 								}
 								name='matrix'
-								value={email?.value}
+								value={matrix?.value}
 								placeholder='Enter your matrix id ex:(alex:matrix.org)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, matrix: { ...matrix, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, matrix: { ...matrix, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>

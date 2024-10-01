@@ -564,6 +564,7 @@ export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	PLEASE_VERIFY_MATRIX = 'Please verify matrix account',
 	NOT_VERIFIED = 'Not verified'
 }
 export enum ESocials {

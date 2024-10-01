@@ -36,7 +36,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 		await matrixVerificationDoc.set(
 			{
 				created_at: new Date(),
-				matrix_handle: matrixHandle,
+				matrix_handle: matrixHandle?.[0] == '@' ? matrixHandle : `@${matrixHandle}`,
 				user_id: userId,
 				verified: verified
 			},

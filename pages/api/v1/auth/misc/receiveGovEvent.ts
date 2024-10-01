@@ -6,12 +6,17 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import { _processIdentityCleared } from '~src/api-utils/reputationEventsUtils/__processIdentityCleared';
 import { _processBountyClaimed } from '~src/api-utils/reputationEventsUtils/_processBountyClaimed';
+import { _processCompleteJudgement } from '~src/api-utils/reputationEventsUtils/_processCompleteJudgement';
 import { _processDecisionDepositPlaced } from '~src/api-utils/reputationEventsUtils/_processDecisionDepositPlaced';
+import { _processDelegated } from '~src/api-utils/reputationEventsUtils/_processDelegated';
+import { _processIdentityVerificationSignUp } from '~src/api-utils/reputationEventsUtils/_processIdentityVerificationSignUp';
 import { _processProposalCreated } from '~src/api-utils/reputationEventsUtils/_processProposalCreated';
 import { _processProposalEnded } from '~src/api-utils/reputationEventsUtils/_processProposalEnded';
 import { _processRemovedVote } from '~src/api-utils/reputationEventsUtils/_processRemovedVote';
 import { _processTipped } from '~src/api-utils/reputationEventsUtils/_processTipped';
+import { _processUndelegated } from '~src/api-utils/reputationEventsUtils/_processUndelegated';
 import { _processVoted } from '~src/api-utils/reputationEventsUtils/_processVoted';
 import { MessageType } from '~src/auth/types';
 import { isValidSubsquidProposalType, TSubsquidProposalType } from '~src/global/proposalType';
@@ -31,7 +36,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		return res.status(401).json({ message: 'Unauthorized' });
 	}
 
-	const { event, address, proposalIndex, proposalType } = req.body as { event: EReputationEvent; address: string; proposalIndex: string; proposalType: TSubsquidProposalType };
+	const { event, address, proposalIndex, proposalType, addressTo } = req.body as {
+		event: EReputationEvent;
+		address: string;
+		proposalIndex: string;
+		proposalType: TSubsquidProposalType;
+		addressTo: string;
+	};
 
 	if (!event) return res.status(400).json({ message: 'Missing event in request body' });
 
@@ -131,6 +142,81 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 				proposalIndex,
 				proposalType,
 				voterAddress: address // sending non substrate address to query subsquid
+			});
+
+			return res.status(200).json({ message: 'Success' });
+		}
+
+		case EReputationEvent.DELEGATED: {
+			if (!substrateAddress || !addressTo) {
+				return res.status(400).json({ message: 'Missing parameters in request body' });
+			}
+
+			const substrateAddressTo = getSubstrateAddress(addressTo);
+
+			if (!substrateAddressTo) {
+				return res.status(400).json({ message: 'Invalid addressTo in request body' });
+			}
+
+			await _processDelegated({
+				delegateAddress: substrateAddressTo,
+				delegatorAddress: substrateAddress
+			});
+
+			return res.status(200).json({ message: 'Success' });
+		}
+
+		case EReputationEvent.UNDELEGATED: {
+			if (!substrateAddress || !addressTo) {
+				return res.status(400).json({ message: 'Missing parameters in request body' });
+			}
+
+			const substrateAddressTo = getSubstrateAddress(addressTo);
+
+			if (!substrateAddressTo) {
+				return res.status(400).json({ message: 'Invalid addressTo in request body' });
+			}
+
+			await _processUndelegated({
+				delegateAddress: substrateAddressTo,
+				delegatorAddress: substrateAddress
+			});
+
+			return res.status(200).json({ message: 'Success' });
+		}
+
+		case EReputationEvent.IDENTITY_VERIFICATION_SIGN_UP: {
+			if (!substrateAddress) {
+				return res.status(400).json({ message: 'Missing parameters in request body' });
+			}
+
+			await _processIdentityVerificationSignUp({
+				address: substrateAddress
+			});
+
+			return res.status(200).json({ message: 'Success' });
+		}
+
+		case EReputationEvent.COMPLETE_JUDGEMENT: {
+			if (!substrateAddress) {
+				return res.status(400).json({ message: 'Missing parameters in request body' });
+			}
+
+			await _processCompleteJudgement({
+				address: substrateAddress
+			});
+
+			return res.status(200).json({ message: 'Success' });
+		}
+
+		case EReputationEvent.IDENTITY_CLEARED:
+		case EReputationEvent.IDENTITY_KILLED: {
+			if (!substrateAddress) {
+				return res.status(400).json({ message: 'Missing parameters in request body' });
+			}
+
+			await _processIdentityCleared({
+				address: substrateAddress
 			});
 
 			return res.status(200).json({ message: 'Success' });

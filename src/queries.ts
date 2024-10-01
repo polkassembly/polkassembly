@@ -2913,3 +2913,12 @@ query GetFirstAndCurrentVoteTimestamp($index_eq: Int!, $type_eq: ProposalType!, 
   }
 }
 `;
+
+export const GET_PROPOSAL_ENDED_INFO = `
+query GetProposalStatus($index_eq: Int!, $type_eq: ProposalType!) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    status,
+    endedAt
+  }
+}
+`;

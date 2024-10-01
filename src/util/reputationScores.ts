@@ -134,6 +134,11 @@ const REPUTATION_SCORES = {
 		first: -10,
 		second: -20,
 		third_or_more: -50
+	},
+	passed_proposal: {
+		first: 10,
+		second: 20,
+		third_or_more: 50
 	}
 };
 

@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import Link from 'next/link';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
@@ -78,7 +78,7 @@ const TreasuryProposalSuccessPopup = ({
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, selectedTrack));

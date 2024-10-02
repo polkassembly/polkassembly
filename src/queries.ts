@@ -810,10 +810,10 @@ export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalBy
 
 export const GET_CHILD_BOUNTIES_BY_PARENT_INDEX = `
 query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $offset: Int) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
     totalCount
   }  
-	proposals(orderBy: createdAtBlock_DESC, limit: $limit, offset: $offset, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+	proposals(orderBy: createdAtBlock_DESC, limit: $limit, offset: $offset, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
     description
     index
     status
@@ -823,10 +823,10 @@ query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $
 `;
 
 export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
     totalCount
   }  
-	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
     description
     index
     status
@@ -2633,6 +2633,29 @@ query BountyProposals($status_in: [ProposalStatus!] = []) {
 }
 `;
 
+export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! = 10,$offset:Int =1) {
+ bounties: proposals(where: {type_eq: Bounty}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
+    index
+    proposer
+    reward
+    createdAt
+    updatedAt
+    curator
+    hash
+    status
+    preimage {
+      proposedCall {
+        args
+      }
+    }
+      payee
+  }
+  
+ totalBounties: proposalsConnection(where: {type_eq: Bounty}, orderBy: createdAtBlock_DESC) {
+   totalCount
+  }
+}`;
+
 export const GET_BOUNTY_REWARDS_BY_IDS = `
 query Rewards($index_in: [Int!] = []) {
   proposals(where: {type_eq: Bounty, index_in: $index_in}) {
@@ -2768,6 +2791,16 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
     to
     from
 }
+}`;
+
+export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExists ($proposalIndex: Int!, $type_eq: ProposalType){
+  proposals(orderBy: id_ASC, where:{index_eq: $proposalIndex, type_eq: $type_eq}){
+    proposer
+    index
+    createdAt
+    updatedAt
+    type
+  }
 }`;
 
 export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String!], $startDate: DateTime!) {

@@ -46,12 +46,13 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	});
 
 	const emailVerificationDoc = firestore.collection('email_verification_tokens').doc(String(userId));
-
 	batch.delete(emailVerificationDoc);
 
 	const twitterVerificationDoc = firestore.collection('twitter_verification_tokens').doc(String(userId));
-
 	batch.delete(twitterVerificationDoc);
+
+	const matrixVerificationDoc = firestore.collection('matrix_verification_tokens').doc(String(userId));
+	batch.delete(matrixVerificationDoc);
 
 	await batch.commit();
 

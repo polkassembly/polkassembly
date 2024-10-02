@@ -17,7 +17,6 @@ const initialState: IOnChainIdentityStore = {
 		isIdentitySet: false,
 		legalName: '',
 		twitter: '',
-		riot: '',
 		web: '',
 		discord: '',
 		github: '',
@@ -29,7 +28,7 @@ const initialState: IOnChainIdentityStore = {
 	isIdentityVerified: false,
 	identityAddress: null,
 	legalName: '',
-	socials: { email: { value: '', verified: false }, riot: { value: '', verified: false }, twitter: { value: '', verified: false }, web: { value: '', verified: false } },
+	socials: { email: { value: '', verified: false }, matrix: { value: '', verified: false }, twitter: { value: '', verified: false }, web: { value: '', verified: false } },
 	userId: null,
 	wallet: null
 };

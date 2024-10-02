@@ -11,8 +11,8 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import ScoringDetails from './ScoringDetails';
-import { scoringData } from './utils';
+import ScoringDetails from '../../src/components/AstralScoring/ScoringDetails';
+import { scoringData } from '../../src/components/AstralScoring/utils';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

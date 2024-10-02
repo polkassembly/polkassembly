@@ -621,10 +621,14 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 														className='h-10 w-10 rounded-full'
 														alt='rankcard3'
 													/>
-													<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{username}</p>
+													<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{(username ?? '').length > 10 ? `${(username ?? '').substring(0, 10)}...` : username}</p>
 												</div>
 												<div className='flex items-center gap-4'>
-													<ScoreTag score={currentUserdata?.profile_score} />
+													<ScoreTag
+														className='h-7  py-2'
+														score={currentUserdata?.profile_score}
+														iconWrapperClassName='ml-1.5 mt-[5.5px]'
+													/>
 												</div>
 											</div>
 										) : (

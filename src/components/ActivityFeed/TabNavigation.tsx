@@ -239,12 +239,12 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 													tabItem && (
 														<div
 															key={tabItem.key}
-															className={`block cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
+															className={`block cursor-pointer rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
 																currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
 															}`}
 															onClick={() => handleTabClick(tabItem.key)}
 														>
-															<span className='flex w-full items-center justify-between p-1'>
+															<span className='flex w-full items-center justify-between py-1'>
 																<div>
 																	{tabIcons[tabItem.key.toLowerCase()]}
 																	<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>

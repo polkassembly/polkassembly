@@ -38,6 +38,15 @@ interface ISubsquidBounty {
 }
 const ZERO_BN = new BN(0);
 const BOUNTIES_LISTING_LIMIT = 10;
+const bountyStatuses = [
+	bountyStatus.ACTIVE,
+	bountyStatus.AWARDED,
+	bountyStatus.CANCELLED,
+	bountyStatus.CLAIMED,
+	bountyStatus.EXTENDED,
+	bountyStatus.PROPOSED,
+	bountyStatus.REJECTED
+];
 
 const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -46,26 +55,56 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { page = 1 } = req.body;
+		const { page = 1, statuses = ['Active'], categories } = req.body;
 
-		if (Number.isNaN(page)) return res.status(400).json({ message: messages.INVALID_PARAMS });
+		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
+			return res.status(400).json({ message: messages.INVALID_PARAMS });
 
+		const bountiesIndexes: number[] = [];
+		let totalBounties = 0;
+		let bountiesDocs: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData> | null = null;
+
+		if (categories?.length && Array.isArray(categories)) {
+			bountiesDocs = await postsByTypeRef(network, ProposalType.BOUNTIES)
+				.where('tags', 'array-contains-any', categories)
+				.limit(Number(BOUNTIES_LISTING_LIMIT))
+				.offset((Number(page) - 1) * Number(BOUNTIES_LISTING_LIMIT))
+				.get();
+
+			bountiesDocs?.docs?.map((doc: any) => {
+				if (doc.exists) {
+					const data = doc.data();
+					bountiesIndexes.push(Number(data?.id));
+				}
+			});
+
+			totalBounties = (await postsByTypeRef(network, ProposalType.BOUNTIES).where('tags', 'array-contains-any', categories).count().get()).data().count;
+		}
+
+		const variables: any = {
+			limit: 10,
+			offset: BOUNTIES_LISTING_LIMIT * (page - 1)
+		};
+		if (statuses.length) {
+			variables.status_in = statuses;
+		}
+		if (bountiesIndexes?.length) {
+			variables.index_in = bountiesIndexes;
+		}
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES,
-			variables: {
-				limit: 10,
-				offset: BOUNTIES_LISTING_LIMIT * (page - 1)
-			}
+			variables: variables
 		});
+
 		if (!subsquidBountiesRes?.data?.bounties?.length) return res.status(200).json({ message: 'No bounty data found' });
 
-		const subsquidBountiesData = subsquidBountiesRes?.data?.bounties;
-		const totalBounties = subsquidBountiesRes?.data?.totalBounties?.totalCount || 0;
+		const subsquidBountiesData = subsquidBountiesRes?.data?.bounties || [];
+		totalBounties = totalBounties > 0 ? totalBounties : subsquidBountiesRes?.data?.totalBounties?.totalCount || 0;
 
-		const bountiesIndexes = subsquidBountiesData.map((bounty: { index: number }) => bounty?.index);
+		const subsquidbountiesIndexes = subsquidBountiesData.map((bounty: { index: number }) => bounty?.index);
 
-		const bountiesDocs = await postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', bountiesIndexes).get();
+		bountiesDocs = bountiesDocs ? bountiesDocs : await postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', subsquidbountiesIndexes).get();
 
 		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidBounty) => {
 			const subsquidChildBountiesRes = await fetchSubsquid({

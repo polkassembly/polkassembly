@@ -10,7 +10,6 @@ import { ESocials, ILoading, VerificationStatus } from '~src/types';
 export interface IAmountBreakDown {
 	className?: string;
 	txFee: ITxFee;
-	perSocialBondFee: BN;
 	loading: boolean;
 	setStartLoading: (pre: ILoading) => void;
 	changeStep: (pre: ESetIdentitySteps) => void;
@@ -23,7 +22,6 @@ export enum ESetIdentitySteps {
 }
 
 export interface ITxFee {
-	bondFee: BN;
 	gasFee: BN;
 	registerarFee: BN;
 	minDeposite: BN;
@@ -67,7 +65,6 @@ export interface IIdentityForm {
 	setTxFee: (pre: ITxFee) => void;
 	setStartLoading: (pre: ILoading) => void;
 	onCancel: () => void;
-	perSocialBondFee: BN;
 	closeModal: (pre: boolean) => void;
 	setAddressChangeModalOpen: () => void;
 	form: FormInstance;
@@ -89,7 +86,6 @@ export interface IIdentitySocialVerifications {
 	startLoading: (pre: ILoading) => void;
 	onCancel: () => void;
 	closeModal: (pre: boolean) => void;
-	perSocialBondFee: BN;
 	setOpenSuccessModal: (pre: boolean) => void;
 	changeStep: (pre: ESetIdentitySteps) => void;
 }

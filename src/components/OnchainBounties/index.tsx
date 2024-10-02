@@ -2,55 +2,151 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
 import { spaceGrotesk } from 'pages/_app';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
-import All from './Components/All';
+import BountiesTable from './Components/BountiesTable';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import FilterByTags from './Components/FilterByTags';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { bountyStatus } from '~src/global/statuses';
 
 function OnchainBounties() {
 	const { resolvedTheme: theme } = useTheme();
+	const [loading, setLoading] = useState<boolean>(true);
+	const [totalBountiesCount, setTotalBountiesCount] = useState<number>(0);
+	const [activeTabKey, setActiveTabKey] = useState('all');
+	const [currentPage, setCurrentPage] = useState<number>(1);
+
+	const [bounties, setBounties] = useState<any[]>([]);
+	const onPaginationChange = (page: number) => {
+		setCurrentPage(page);
+	};
 	const tabItems = [
 		{
-			children: <All />,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'all',
 			label: <p>All</p>
 		},
 		{
-			children: <p>Proposed</p>,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'proposed',
 			label: <p>Proposed</p>
 		},
 		{
-			children: <p>Active</p>,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'active',
 			label: <p>Active</p>
 		},
 		{
-			children: <p>Payout Pending</p>,
-			key: 'payout-pending',
-			label: <p>Payout Pending</p>
-		},
-		{
-			children: <p>Claimed</p>,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'claimed',
 			label: <p>Claimed</p>
 		},
 		{
-			children: <p>Cancelled</p>,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'cancelled',
 			label: <p>Cancelled</p>
 		},
 		{
-			children: <p>Rejected</p>,
+			children: (
+				<BountiesTable
+					loading={loading}
+					bounties={bounties}
+					onPaginationChange={onPaginationChange}
+					totalBountiesCount={totalBountiesCount}
+					currentPage={currentPage}
+				/>
+			),
 			key: 'rejected',
 			label: <p>Rejected</p>
 		}
 	];
+
+	const statusMapping: { [key: string]: string[] } = {
+		active: [bountyStatus.ACTIVE, bountyStatus.EXTENDED],
+		all: [],
+		cancelled: [bountyStatus.CANCELLED],
+		claimed: [bountyStatus.CLAIMED, bountyStatus.AWARDED],
+		proposed: [bountyStatus.PROPOSED],
+		rejected: [bountyStatus.REJECTED]
+	};
+
+	const fetchBounties = async (page = 1) => {
+		try {
+			setLoading(true);
+			const statuses = statusMapping[activeTabKey] || [];
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/bountyDashboard/getAllBounties', {
+				page,
+				statuses
+			});
+
+			if (error) {
+				console.error('Error fetching bounties:', error);
+				setLoading(false);
+				return;
+			}
+
+			setBounties(data?.bounties || []);
+			setTotalBountiesCount(data?.totalBountiesCount || 0);
+			setLoading(false);
+		} catch (err) {
+			console.error('An unexpected error occurred:', err);
+			setLoading(false);
+		}
+	};
+	const onTabChange = (key: string) => {
+		setActiveTabKey(key);
+		setCurrentPage(1);
+	};
+	useEffect(() => {
+		fetchBounties(currentPage);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeTabKey, currentPage]);
+
 	return (
 		<div>
 			<Link
@@ -99,6 +195,8 @@ function OnchainBounties() {
 						defaultActiveKey='2'
 						theme={theme}
 						type='card'
+						onChange={onTabChange}
+						activeKey={activeTabKey}
 						className='ant-tabs-tab-bg-white pt-5 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
 						items={tabItems}
 					/>

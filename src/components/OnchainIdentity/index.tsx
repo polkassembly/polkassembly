@@ -45,9 +45,8 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const [openIdentitySuccessModal, setOpenIdentitySuccessModal] = useState<boolean>(false);
 	const [step, setStep] = useState<ESetIdentitySteps>(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
-	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
 	const [isRequestedJudgmentFromPolkassembly, setIsRequestedJudgmentFromPolkassembly] = useState<boolean>(false);
-	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
+	const [txFee, setTxFee] = useState<ITxFee>({ gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
 		if (loginAddress && !identityAddress) {
@@ -59,14 +58,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;
-		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
 		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
 		const registerarIndex = getIdentityRegistrarIndex({ network });
 		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
 		const minDeposite = (peopleChainApi ?? api)?.consts?.identity?.basicDeposit || ZERO_BN;
-		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
-		setPerSocialBondFee(bondFee as any);
+		setTxFee({ ...txFee, minDeposite, registerarFee: bnRegisterarFee });
 		setLoading({ ...loading, isLoading: false });
 	};
 
@@ -276,7 +273,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						<TotalAmountBreakdown
 							loading={loading?.isLoading}
 							txFee={txFee}
-							perSocialBondFee={perSocialBondFee}
 							setStartLoading={setLoading}
 							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 						/>
@@ -289,7 +285,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							setTxFee={setTxFee}
 							setStartLoading={setLoading}
 							onCancel={handleCancel}
-							perSocialBondFee={perSocialBondFee}
 							closeModal={(open) => setOpen(!open)}
 							setOpenIdentitySuccessModal={setOpenIdentitySuccessModal}
 							setAddressChangeModalOpen={() => (setOpenAddressModal ? setOpenAddressModal(true) : setOpenAddressSelectModal(true))}
@@ -300,7 +295,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						<SocialVerification
 							startLoading={setLoading}
 							onCancel={handleCancel}
-							perSocialBondFee={perSocialBondFee}
 							closeModal={(open) => setOpen(!open)}
 							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 							setOpenSuccessModal={setOpenJudgementSuccessModal}

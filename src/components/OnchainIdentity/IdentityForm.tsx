@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Divider, Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
 import { trackEvent } from 'analytics';
@@ -26,7 +26,6 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { checkIdentityFieldsValidity } from './utils/checkIdentityFieldsValidity';
-import { BN_ONE } from '@polkadot/util';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
@@ -46,18 +45,7 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
-const IdentityForm = ({
-	closeModal,
-	onCancel,
-	perSocialBondFee,
-	setAddressChangeModalOpen,
-	setStartLoading,
-	setTxFee,
-	txFee,
-	className,
-	form,
-	setOpenIdentitySuccessModal
-}: IIdentityForm) => {
+const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -66,7 +54,7 @@ const IdentityForm = ({
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { email, twitter, matrix } = socials;
-	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
+	const { gasFee, registerarFee, minDeposite } = txFee;
 	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
@@ -76,7 +64,7 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultChainUserBalance, setDefaultChainUserBalance] = useState<BN>(ZERO_BN);
 	const totalFee = gasFee
-		.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)))
+		.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite))
 		.add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))));
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
@@ -264,14 +252,6 @@ const IdentityForm = ({
 		const okTwitter = checkIdentityFieldsValidity(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
-		let okSocials = 1;
-		if (okEmail && emailVal.length > 0 && identityInfo?.email !== emailVal) {
-			okSocials += 1;
-		}
-		if (okTwitter && twitterVal.length > 0 && identityInfo?.twitter !== twitterVal) {
-			okSocials += 1;
-		}
-
 		setInfo({
 			info: {
 				discord: { [identityInfo?.discord.length > 0 ? 'raw' : 'none']: identityInfo?.discord.length > 0 ? identityInfo?.discord : null },
@@ -294,11 +274,8 @@ const IdentityForm = ({
 				(twitterVal?.length ? !!twitterVal : true) &&
 				(matrixVal?.length ? !!matrixVal : true)
 		});
-		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
-		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
-		setTxFee(fee);
 		if (initialLoading) {
-			getGasFee(true, fee);
+			getGasFee(true);
 		}
 	};
 
@@ -547,7 +524,6 @@ const IdentityForm = ({
 						/>
 					</Form.Item>
 				</div>
-				<Divider />
 				<div>
 					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 						Socials{' '}
@@ -688,7 +664,6 @@ const IdentityForm = ({
 			{/* tx amount breakdown */}
 			<IdentityTxBreakdown
 				loading={loading}
-				perSocialBondFee={perSocialBondFee}
 				txFee={txFee}
 			/>
 			<IdentityFormActionButtons

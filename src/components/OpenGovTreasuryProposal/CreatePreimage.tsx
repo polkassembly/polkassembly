@@ -39,7 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -139,7 +139,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 

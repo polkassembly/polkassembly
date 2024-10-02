@@ -187,7 +187,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					/>
 					<div className='mr-2 flex items-center gap-2'>
 						<SocialsHandle
-							address={address}
+							address={delegate?.address}
 							onchainIdentity={delegate?.identityInfo || null}
 							socials={[]}
 							iconSize={18}

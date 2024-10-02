@@ -66,6 +66,7 @@ export const LatestActivity = ({ currentTab }: { currentTab: string }) => {
 };
 
 const LatestActivityExplore: React.FC = () => {
+	const { addresses } = useUserDetailsSelector();
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [postData, setPostData] = useState<any[]>([]);
 	const { network } = useNetworkSelector();
@@ -75,7 +76,9 @@ const LatestActivityExplore: React.FC = () => {
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-			const { data: responseData } = await nextApiClientFetch<any>(`/api/v1/activity-feed/explore-posts?network=${network}`);
+			const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/explore-posts', {
+				userAddresses: addresses || []
+			});
 
 			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
 			const detailedPosts = await Promise.all(

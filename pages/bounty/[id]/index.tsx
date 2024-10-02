@@ -8,7 +8,7 @@ import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState } from 'src/ui-components/UIStates';
+import { FrownOutlined } from '@ant-design/icons';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
@@ -82,10 +82,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 		);
 	}
 
-	if (error) return <ErrorState errorMessage={error} />;
-	if (!post) return null;
-
-	if (post)
+	if (post) {
 		return (
 			<>
 				<SEOHead
@@ -104,6 +101,19 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 				</div>
 			</>
 		);
+	} else if (error) {
+		return (
+			<div className='mt-20 flex flex-col items-center justify-center'>
+				<div className='flex items-center gap-5'>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+				</div>
+				<p className='mt-2 text-lg text-gray-500'>Post not found. If you just created a post, it might take up to a minute to appear.</p>
+				<div className='mt-5'>
+					<BackToListingView postCategory={PostCategory.BOUNTY} />
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className='mt-16'>

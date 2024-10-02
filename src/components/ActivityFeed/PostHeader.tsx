@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILastVote, IPeriod } from '~src/types';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -141,7 +141,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
-	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
 	const fetchUSDValue = async () => {
 		setLoading(true);

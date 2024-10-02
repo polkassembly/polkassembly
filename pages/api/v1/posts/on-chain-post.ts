@@ -40,6 +40,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { getTimeline } from '~src/util/getTimeline';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -52,40 +53,6 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	} catch (error) {
 		return [];
 	}
-};
-
-export const getTimeline = (
-	proposals: any,
-	isStatus?: {
-		swap: boolean;
-	}
-) => {
-	return (
-		proposals?.map((obj: any) => {
-			const statuses = obj?.statusHistory as { status: string }[];
-			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses?.findIndex((v) => v.status === 'DecisionDepositPlaced');
-				if (index >= 0) {
-					const decidingIndex = statuses?.findIndex((v) => v.status === 'Deciding');
-					if (decidingIndex >= 0) {
-						const obj = statuses[index];
-						statuses.splice(index, 1);
-						statuses.splice(decidingIndex, 0, obj);
-						if (isStatus) {
-							isStatus.swap = true;
-						}
-					}
-				}
-			}
-			return {
-				created_at: obj?.createdAt,
-				hash: obj?.hash,
-				index: obj?.index,
-				statuses,
-				type: obj?.type
-			};
-		}) || []
-	);
 };
 
 export interface IReactions {

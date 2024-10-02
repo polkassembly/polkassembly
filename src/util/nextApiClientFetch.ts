@@ -8,37 +8,27 @@ import getNetwork from './getNetwork';
 import messages from './messages';
 import reAuthClient from './reAuthClient';
 
-async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any; aiSummaryKey?: boolean }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknown } | FormData | any, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);
 	const token = currentURL.searchParams.get('token') || (await reAuthClient()) || getLocalStorageToken();
 
-	const Payload: {
-		Authorization: string;
-		'Content-Type': string;
-		'x-api-key': string;
-		'x-network': string;
-		'x-ai-summary-key'?: string;
-	} = {
+	const headers: Record<string, string> = {
 		Authorization: `Bearer ${token}`,
-		'Content-Type': 'application/json',
-		'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY ?? '',
+		'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY || '',
 		'x-network': network
 	};
 
-	if (data?.aiSummaryKey === true) {
-		Payload['x-ai-summary-key'] = process.env.API_SUMMARY_PROVIDER;
-	}
 	if (!(data instanceof FormData)) {
-		Payload['Content-Type'] = 'application/json';
+		headers['Content-Type'] = 'application/json';
 	}
 
 	const response = await fetch(`${window.location.origin}/${url}`, {
 		body: data instanceof FormData ? data : JSON.stringify(data),
 		credentials: 'include',
-		headers: Payload,
-		method: method ?? 'POST'
+		headers,
+		method: method || 'POST'
 	});
 
 	const resJSON = await response.json();

@@ -360,7 +360,7 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 						<ImageIcon
 							src={`${currentUserdata?.picture ? currentUserdata?.picture : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 							alt=''
-							className='h-6 w-6 rounded-full xl:h-10 xl:w-10'
+							className='h-6 w-6 rounded-full lg:h-10 lg:w-10'
 						/>
 					)}
 
@@ -369,9 +369,9 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 						type='text'
 						value={''}
 						placeholder={COMMENT_PLACEHOLDER}
-						className={` h-9 w-full rounded-l-lg border-y border-l border-r-0 border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 ${
-							!isMobile ? 'ml-3' : ''
-						}`}
+						className={
+							'h-9 w-full rounded-l-lg border-y border-l border-r-0 border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 lg:ml-4 xl:ml-3 '
+						}
 						onClick={openModal}
 					/>
 					<button

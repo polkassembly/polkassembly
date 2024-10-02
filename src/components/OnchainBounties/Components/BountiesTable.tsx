@@ -164,9 +164,9 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 
 				return (
 					<div style={{ display: 'flex', gap: '5px' }}>
-						{firstCategory && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>{firstCategory}</span>}
-						{secondCategory && remainingCategoriesCount === 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>{secondCategory}</span>}
-						{remainingCategoriesCount > 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCategoriesCount}</span>}
+						{firstCategory && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#4800ff]'>{firstCategory}</span>}
+						{secondCategory && remainingCategoriesCount === 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#4800ff]'>{secondCategory}</span>}
+						{remainingCategoriesCount > 0 && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCategoriesCount}</span>}
 					</div>
 				);
 			},

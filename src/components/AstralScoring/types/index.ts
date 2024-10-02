@@ -5,7 +5,7 @@
 export interface IScoringItem {
 	label: string;
 	points: string;
-	type?: string;
+	type?: EActionType;
 }
 
 export interface IScoringSection {

@@ -183,93 +183,88 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
-			{isLoading ? (
-				<>
-					<Skeleton active />
-				</>
-			) : (
-				<>
-					<PostHeader
+			<>
+				<PostHeader
+					post={post}
+					tallyData={tallyData}
+					updateTally={updateTally}
+					isLoading={isLoading}
+					setUpdateTally={setUpdateTally}
+				/>
+				<Link
+					href={`/referenda/${post?.post_id}`}
+					passHref
+				>
+					<PostContent
 						post={post}
-						tallyData={tallyData}
-						updateTally={updateTally}
-						setUpdateTally={setUpdateTally}
+						content={fullContent}
+						isCommentPost={false}
 					/>
-					<Link
-						href={`/referenda/${post?.post_id}`}
-						passHref
-					>
-						<PostContent
+					{(reactionState.likesCount > 0 || reactionState.dislikesCount > 0 || post?.commentsCount > 0) && (
+						<PostReactions
+							reactionState={reactionState}
 							post={post}
-							content={fullContent}
-							isCommentPost={false}
-						/>
-						{(reactionState.likesCount > 0 || reactionState.dislikesCount > 0 || post?.commentsCount > 0) && (
-							<PostReactions
-								reactionState={reactionState}
-								post={post}
-							/>
-						)}
-					</Link>
-					<Divider
-						className={`m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B] ${
-							reactionState.likesCount === 0 && reactionState.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
-						}`}
-					/>
-					<PostActions
-						post={post}
-						reactionState={reactionState}
-						setReactionState={setReactionState}
-						isUserNotAllowedToComment={isUserNotAllowedToComment}
-					/>
-					<PostCommentSection
-						post={post}
-						reasonForNoComment={reasonForNoComment}
-						isUserNotAllowedToComment={isUserNotAllowedToComment}
-					/>
-					{isMobile && (
-						<div
-							onClick={() => {
-								if (currentUserdata && currentUserdata?.id) {
-									setShowModal(true);
-								} else {
-									setModalOpen(true);
-								}
-							}}
-							className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
-						>
-							<ImageIcon
-								src='/assets/Vote.svg'
-								alt=''
-								className='m-0 h-6 w-6 p-0'
-							/>
-							<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
-						</div>
-					)}
-					{showModal && (
-						<VoteReferendumModal
-							onAccountChange={onAccountChange}
-							address={address}
-							proposalType={ProposalType.REFERENDUM_V2}
-							setLastVote={setLastVote}
-							setShowModal={setShowModal}
-							showModal={showModal}
-							referendumId={post?.post_id}
-							trackNumber={post?.track_no}
-							setUpdateTally={setUpdateTally}
-							updateTally={updateTally}
 						/>
 					)}
-					<ReferendaLoginPrompts
-						theme={theme}
-						modalOpen={modalOpen}
-						setModalOpen={setModalOpen}
-						image='/assets/Gifs/login-vote.gif'
-						title={'Join Polkassembly to Vote on this proposal.'}
-						subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				</Link>
+				<Divider
+					className={`m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B] ${
+						reactionState.likesCount === 0 && reactionState.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
+					}`}
+				/>
+				<PostActions
+					post={post}
+					reactionState={reactionState}
+					setReactionState={setReactionState}
+					isUserNotAllowedToComment={isUserNotAllowedToComment}
+				/>
+				<PostCommentSection
+					post={post}
+					reasonForNoComment={reasonForNoComment}
+					isUserNotAllowedToComment={isUserNotAllowedToComment}
+				/>
+				{isMobile && (
+					<div
+						onClick={() => {
+							if (currentUserdata && currentUserdata?.id) {
+								setShowModal(true);
+							} else {
+								setModalOpen(true);
+							}
+						}}
+						className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
+					>
+						<ImageIcon
+							src='/assets/Vote.svg'
+							alt=''
+							className='m-0 h-6 w-6 p-0'
+						/>
+						<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
+					</div>
+				)}
+				{showModal && (
+					<VoteReferendumModal
+						onAccountChange={onAccountChange}
+						address={address}
+						proposalType={ProposalType.REFERENDUM_V2}
+						setLastVote={setLastVote}
+						setShowModal={setShowModal}
+						showModal={showModal}
+						referendumId={post?.post_id}
+						trackNumber={post?.track_no}
+						setUpdateTally={setUpdateTally}
+						updateTally={updateTally}
 					/>
-				</>
-			)}
+				)}
+				<ReferendaLoginPrompts
+					theme={theme}
+					modalOpen={modalOpen}
+					setModalOpen={setModalOpen}
+					image='/assets/Gifs/login-vote.gif'
+					title={'Join Polkassembly to Vote on this proposal.'}
+					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				/>
+			</>
 		</div>
 	);
 };

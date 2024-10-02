@@ -27,7 +27,7 @@ import StatusTag from '~src/ui-components/StatusTag';
 import NameLabel from '~src/ui-components/NameLabel';
 import TopicTag from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { Divider, Tooltip } from 'antd';
+import { Divider, Spin, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import ActivityProgressinlisting from './ActivityProgressinlisting';
@@ -48,18 +48,21 @@ export interface PostHeaderProps {
 	tallyData: ITallyData;
 	setUpdateTally: React.Dispatch<React.SetStateAction<boolean>>;
 	updateTally: boolean;
+	isLoading: boolean;
 }
 
 export const PostHeader: React.FC<PostHeaderProps> = ({
 	post,
 	tallyData,
 	setUpdateTally,
-	updateTally
+	updateTally,
+	isLoading
 }: {
 	post: any;
 	tallyData: ITallyData;
 	setUpdateTally: React.Dispatch<React.SetStateAction<boolean>>;
 	updateTally: boolean;
+	isLoading: boolean;
 }) => {
 	const currentUserdata = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -336,16 +339,21 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 										/>
 									</div>
 								)}
-								<div className='hover:cursor-pointer'>
-									<ActivityProgressinlisting
-										index={0}
-										proposalType={ProposalType.REFERENDUM_V2}
-										votesData={votesData}
-										onchainId={post?.post_id}
-										status={post?.status}
-										tally={tallyData}
-									/>
-								</div>
+								<Spin
+									spinning={isLoading}
+									size='small'
+								>
+									<div className='hover:cursor-pointer'>
+										<ActivityProgressinlisting
+											index={0}
+											proposalType={ProposalType.REFERENDUM_V2}
+											votesData={votesData}
+											onchainId={post?.post_id}
+											status={post?.status}
+											tally={tallyData}
+										/>
+									</div>
+								</Spin>
 							</div>
 						</div>
 					)}

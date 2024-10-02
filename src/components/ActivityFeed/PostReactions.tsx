@@ -21,8 +21,6 @@ import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
-
 export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => {
 	return (
 		<Tooltip
@@ -69,12 +67,12 @@ export const PostReactions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages[index] || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							src={userImages[index]}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
-						<span className='pt-1 text-sm text-gray-600 dark:text-gray-300'>{name}</span>
+						<span className=' text-sm text-gray-600 dark:text-gray-300'>{name}</span>
 					</Link>
 				))}
 			</div>
@@ -88,9 +86,10 @@ export const PostReactions: React.FC<{
 				{reactionState.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
 					<div className='mt-1 flex items-center'>
 						<ImageComponent
-							src={firstVoterProfileImg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-							alt='Voter Profile'
-							className='h-6 w-6 rounded-full'
+							src={firstVoterProfileImg}
+							alt='User Picture'
+							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
 						<div className='ml-1 text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
 							{reactionState.likesCount === 1 ? (

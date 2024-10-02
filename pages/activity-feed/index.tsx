@@ -52,7 +52,7 @@ import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import Image from 'next/image';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import NameLabel from '~src/ui-components/NameLabel';
 
 const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
 	loading: () => <Skeleton active />,
@@ -614,18 +614,18 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 											height={340}
 										/>
 										{currentUser?.username && currentUser?.id ? (
-											<div className='absolute bottom-3 left-0 right-0 flex items-center justify-between p-3'>
+											<div className='absolute bottom-5 left-0 right-0 flex items-center justify-between p-3'>
 												<div className='flex items-center gap-2'>
-													<ImageIcon
-														src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
-														className='h-10 w-10 rounded-full'
-														alt='rankcard3'
+													<NameLabel
+														defaultAddress={currentUser?.defaultAddress}
+														username={currentUser?.username}
+														usernameClassName='text-lg text-ellipsis overflow-hidden'
+														truncateUsername={true}
 													/>
-													<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{(username ?? '').length > 10 ? `${(username ?? '').substring(0, 10)}...` : username}</p>
 												</div>
 												<div className='flex items-center gap-4'>
 													<ScoreTag
-														className='h-7  py-2'
+														className='  pt-1'
 														score={currentUserdata?.profile_score}
 													/>
 												</div>

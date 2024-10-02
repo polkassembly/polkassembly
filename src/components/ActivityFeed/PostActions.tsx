@@ -32,7 +32,6 @@ import Link from 'next/link';
 import ImageComponent from '../ImageComponent';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
 export const PostActions: React.FC<{
 	post: any;
@@ -75,12 +74,12 @@ export const PostActions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages[index] || FIRST_VOTER_PROFILE_IMG_FALLBACK}
+							src={userImages[index]}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
-						<span className='pt-1 text-sm text-gray-600 dark:text-gray-300'>{name}</span>
+						<span className='text-sm text-gray-600 dark:text-gray-300'>{name}</span>
 					</Link>
 				))}
 			</div>
@@ -101,7 +100,7 @@ export const PostActions: React.FC<{
 
 		const fetchAndUpdateImage = async (userId: number) => {
 			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds: [userId] });
-			return data?.[0]?.image || FIRST_VOTER_PROFILE_IMG_FALLBACK;
+			return data?.[0]?.image;
 		};
 
 		setReactionState((prevState: any) => {

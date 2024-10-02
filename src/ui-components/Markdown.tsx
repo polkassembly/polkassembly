@@ -194,36 +194,21 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		ol {
-			counter-reset: item;
-			list-style-type: none;
+			list-style-type: decimal;
 
 			> li {
-				counter-increment: item;
 				margin-bottom: 0.5rem;
 
-				&::before {
-					content: counter(item) '. ';
+				&::marker {
 					font-weight: bold;
 				}
 			}
 
 			ul {
-				list-style-type: none;
-				counter-reset: sub-item 'a';
+				list-style-type: disc;
 
-				li {
-					display: list-item;
-					counter-increment: sub-item;
-					margin-bottom: 0.5rem;
-
-					&::before {
-						content: counter(sub-item, lower-alpha) '. ';
-						margin-right: 5px;
-					}
-
-					&::marker {
-						content: '';
-					}
+				li::marker {
+					font-weight: normal;
 				}
 			}
 		}

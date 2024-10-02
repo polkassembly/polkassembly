@@ -25,6 +25,7 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
+import { poppins } from 'pages/_app';
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -154,7 +155,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	};
 
 	const popoverContent = (
-		<div className='left-2 w-40 pt-1 text-sm text-gray-700 dark:text-gray-200'>
+		<div className='left-2 w-40 pt-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
 			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>
 			{['Treasury', 'Whitelist'].map((category) => (
 				<>
@@ -176,11 +177,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 												<span className='flex w-full items-center justify-between'>
 													<div>
 														{tabIcons[tabItem.key.toLowerCase()]}
-														<span className='ml-2'>{tabItem.label} </span>
+														<span className={`ml-2 ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
 													</div>
-													<span className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}>
-														{tabItem.posts}
-													</span>
+													{tabItem.posts > 0 && (
+														<span className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}>
+															{tabItem.posts}
+														</span>
+													)}
 												</span>
 											</p>
 										)
@@ -201,7 +204,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						>
 							<span className='flex items-center'>
 								{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
-								<span className='ml-2 whitespace-nowrap'>{category}</span>
+								<span className={`ml-2 ${poppins.className} ${poppins.variable} whitespace-nowrap`}>{category}</span>
 							</span>
 							{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 -rotate-90 transform transition-transform'} />}
 						</p>
@@ -212,7 +215,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 
 	return (
-		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 font-poppins dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object.keys(tabCategories)
 				.filter((category) => !['Treasury', 'Whitelist'].includes(category))
 				.map((category, index) => (
@@ -241,16 +244,18 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 															}`}
 															onClick={() => handleTabClick(tabItem.key)}
 														>
-															<span className='flex w-full items-center justify-between'>
+															<span className='flex w-full items-center justify-between p-1'>
 																<div>
 																	{tabIcons[tabItem.key.toLowerCase()]}
-																	<span className='ml-2 whitespace-nowrap'>{tabItem.label} </span>
+																	<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
 																</div>
-																<span
-																	className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
-																>
-																	{tabItem.posts}
-																</span>
+																{tabItem.posts > 0 && (
+																	<span
+																		className={`w-5 rounded-md  text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
+																	>
+																		{tabItem.posts}
+																	</span>
+																)}
 															</span>
 														</div>
 													)
@@ -272,7 +277,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 									<span className='flex items-center'>
 										{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 										<span className='ml-2 whitespace-nowrap'>{category}</span>
-										{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
+										{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 transform transition-transform'} />}
 									</span>
 								</p>
 							</Popover>
@@ -346,13 +351,15 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 														<span className='flex w-full items-center justify-between'>
 															<div>
 																{tabIcons[tabItem.key.toLowerCase()]}
-																<span className='ml-2'>{tabItem.label} </span>
+																<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
 															</div>
-															<span
-																className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
-															>
-																{tabItem.posts}
-															</span>
+															{tabItem.posts > 0 && (
+																<span
+																	className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
+																>
+																	{tabItem.posts}
+																</span>
+															)}
 														</span>
 													</div>
 												)
@@ -366,7 +373,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							arrow={false}
 						>
 							<p
-								className={`-mt-[6px] flex h-9 cursor-pointer items-center justify-between px-2 text-sm font-medium ${
+								className={`-mt-[6px] flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
 									isTabSelected(category) ? ' rounded-lg bg-[#ffe6ef] font-medium text-[#E5007A] dark:bg-[#530d32] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
@@ -374,7 +381,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 								<span className='flex items-center'>
 									{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
 									<span className='ml-2 whitespace-nowrap'>{category}</span>
-									{tabCategories[category].length > 1 && <ArrowDownIcon className={`ml-1 transform transition-transform ${currentCategory === category ? 'rotate-180' : ''}`} />}
+									{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 transform transition-transform'} />}
 								</span>
 							</p>
 						</Popover>

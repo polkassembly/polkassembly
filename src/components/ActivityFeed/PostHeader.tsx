@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILastVote, IPeriod } from '~src/types';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -141,7 +141,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
-	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
 	const fetchUSDValue = async () => {
 		setLoading(true);
@@ -252,7 +252,6 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 							<NameLabel
 								defaultAddress={post?.proposer}
 								username={post.proposerProfile?.username}
-								truncateUsername={true}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
 							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
@@ -297,7 +296,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 										setShowModal(true);
 									}
 								}}
-								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-[1px] border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
 								<ImageIcon
 									src='/assets/Vote.svg'

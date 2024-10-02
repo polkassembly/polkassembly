@@ -52,6 +52,7 @@ import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import Image from 'next/image';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
 	loading: () => <Skeleton active />,
@@ -615,12 +616,10 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 										{currentUser?.username && currentUser?.id ? (
 											<div className='absolute bottom-3 left-0 right-0 flex items-center justify-between p-3'>
 												<div className='flex items-center gap-2'>
-													<Image
+													<ImageIcon
 														src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
 														className='h-10 w-10 rounded-full'
 														alt='rankcard3'
-														width={40}
-														height={40}
 													/>
 													<p className='mt-2 font-semibold text-[#243A57] dark:text-white'>{username}</p>
 												</div>

@@ -131,12 +131,10 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 							className='h-10 rounded-sm border-l-2 border-l-[#D2D8E0] dark:border-[#4B4B4B]'
 						/>
 						<div>
-							<Image
+							<ImageIcon
 								src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
 								alt=''
 								className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
-								width={40}
-								height={40}
 							/>
 						</div>
 					</div>

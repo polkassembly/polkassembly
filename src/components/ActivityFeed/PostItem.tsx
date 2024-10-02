@@ -204,13 +204,18 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 							content={fullContent}
 							isCommentPost={false}
 						/>
-
-						<PostReactions
-							reactionState={reactionState}
-							post={post}
-						/>
+						{(reactionState.likesCount > 0 || reactionState.dislikesCount > 0 || post?.commentsCount > 0) && (
+							<PostReactions
+								reactionState={reactionState}
+								post={post}
+							/>
+						)}
 					</Link>
-					<Divider className='m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B]' />
+					<Divider
+						className={`m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B] ${
+							reactionState.likesCount === 0 && reactionState.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
+						}`}
+					/>
 					<PostActions
 						post={post}
 						reactionState={reactionState}
@@ -342,7 +347,7 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 	}, [isModalOpen]);
 
 	return (
-		<div className='mt-3 flex items-center'>
+		<div className='mt-1 flex items-center'>
 			{isUserNotAllowedToComment ? (
 				<Alert
 					message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}

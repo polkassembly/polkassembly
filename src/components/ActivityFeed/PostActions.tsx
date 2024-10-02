@@ -85,7 +85,7 @@ export const PostActions: React.FC<{
 				))}
 			</div>
 		) : (
-			<p className='text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
 		);
 	};
 
@@ -104,13 +104,16 @@ export const PostActions: React.FC<{
 			return data?.[0]?.image || FIRST_VOTER_PROFILE_IMG_FALLBACK;
 		};
 
-		setReactionState((prevState: typeof reactionState) => {
+		setReactionState((prevState: any) => {
 			const newState = { ...prevState };
 
+			// Handle like reaction
 			if (reaction === '👍') {
 				if (!post_reactions['👍'].images) {
 					post_reactions['👍'].images = [];
 				}
+
+				// Remove user from dislikes if they disliked earlier
 				if (prevState.userDisliked) {
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
@@ -120,6 +123,7 @@ export const PostActions: React.FC<{
 					post_reactions['👎'].images = post_reactions['👎'].images?.filter((img: string, idx: number) => post_reactions['👎'].usernames[idx] !== username);
 				}
 
+				// Toggle like state
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
 
@@ -133,6 +137,8 @@ export const PostActions: React.FC<{
 
 							setReactionState({
 								...newState,
+								dislikesImages: post_reactions['👎'].images,
+								dislikesUsernames: post_reactions['👎'].usernames,
 								likesImages: post_reactions['👍'].images,
 								likesUsernames: post_reactions['👍'].usernames
 							});
@@ -146,14 +152,21 @@ export const PostActions: React.FC<{
 
 					setReactionState({
 						...newState,
+						dislikesImages: post_reactions['👎'].images,
+						dislikesUsernames: post_reactions['👎'].usernames,
 						likesImages: post_reactions['👍'].images,
 						likesUsernames: post_reactions['👍'].usernames
 					});
 				}
-			} else if (reaction === '👎') {
+			}
+
+			// Handle dislike reaction
+			else if (reaction === '👎') {
 				if (!post_reactions['👎'].images) {
 					post_reactions['👎'].images = [];
 				}
+
+				// Remove user from likes if they liked earlier
 				if (prevState.userLiked) {
 					newState.likesCount -= 1;
 					newState.userLiked = false;
@@ -163,6 +176,7 @@ export const PostActions: React.FC<{
 					post_reactions['👍'].images = post_reactions['👍'].images?.filter((img: string, idx: number) => post_reactions['👍'].usernames[idx] !== username);
 				}
 
+				// Toggle dislike state
 				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
 				newState.userDisliked = !isDisliked;
 
@@ -177,7 +191,9 @@ export const PostActions: React.FC<{
 							setReactionState({
 								...newState,
 								dislikesImages: post_reactions['👎'].images,
-								dislikesUsernames: post_reactions['👎'].usernames
+								dislikesUsernames: post_reactions['👎'].usernames,
+								likesImages: post_reactions['👍'].images,
+								likesUsernames: post_reactions['👍'].usernames
 							});
 						});
 					}
@@ -190,7 +206,9 @@ export const PostActions: React.FC<{
 					setReactionState({
 						...newState,
 						dislikesImages: post_reactions['👎'].images,
-						dislikesUsernames: post_reactions['👎'].usernames
+						dislikesUsernames: post_reactions['👎'].usernames,
+						likesImages: post_reactions['👍'].images,
+						likesUsernames: post_reactions['👍'].usernames
 					});
 				}
 			}
@@ -256,7 +274,7 @@ export const PostActions: React.FC<{
 	return (
 		<>
 			<div className='flex justify-between'>
-				<div className='mt-1 flex items-center space-x-5 md:space-x-2'>
+				<div className='-mt-1 flex items-center space-x-5 md:space-x-2'>
 					<div
 						onClick={() => handleReactionClick('👍')}
 						className='flex w-[60px] cursor-pointer items-center justify-center transition-transform hover:scale-105'
@@ -357,7 +375,7 @@ export const PostActions: React.FC<{
 							!isUserNotAllowedToComment ? 'hover:scale-105' : 'cursor-not-allowed opacity-80'
 						} md:w-[80px]`}
 					>
-						<div className='flex items-center gap-2'>
+						<div className='flex cursor-pointer items-center gap-2'>
 							<span>
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/commentdark.svg' : '/assets/icons/comment-pink.svg'}`}

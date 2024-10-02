@@ -79,11 +79,11 @@ export const PostReactions: React.FC<{
 				))}
 			</div>
 		) : (
-			<p className='text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
 		);
 	};
 	return (
-		<div className='flex items-center justify-between  text-sm text-gray-500 dark:text-[#9E9E9E]'>
+		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
 				{reactionState.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
 					<div className='mt-1 flex items-center'>
@@ -102,9 +102,11 @@ export const PostReactions: React.FC<{
 									content={renderUsernames('👍')}
 									arrow={true}
 								>
-									<p className='cursor-pointer text-[10px] hover:underline md:-mt-2 md:text-[12px]'>{`${displayUsername} & ${
-										reactionState.likesCount - 1
-									} others liked this post`}</p>
+									<p className='cursor-pointer text-[10px] md:-mt-2 md:text-[12px]'>
+										{`${displayUsername} & `}
+										<span className='text-pink_primary underline'>{`${reactionState.likesCount - 1} others`}</span>
+										{' liked this post'}
+									</p>
 								</Popover>
 							)}
 						</div>

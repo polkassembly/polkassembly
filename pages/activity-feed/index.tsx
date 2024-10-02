@@ -627,7 +627,6 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 													<ScoreTag
 														className='h-7  py-2'
 														score={currentUserdata?.profile_score}
-														iconWrapperClassName='ml-1.5 mt-[5.5px]'
 													/>
 												</div>
 											</div>

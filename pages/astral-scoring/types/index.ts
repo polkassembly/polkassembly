@@ -4,7 +4,7 @@
 
 export interface IScoringItem {
 	label: string;
-	points: number;
+	points: string;
 	type?: string;
 }
 
@@ -12,4 +12,9 @@ export interface IScoringSection {
 	icon: string;
 	items: IScoringItem[];
 	title: string;
+}
+
+export enum EActionType {
+	OnChain = 'on-chain',
+	OffChain = 'off-chain'
 }

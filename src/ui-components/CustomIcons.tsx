@@ -121,7 +121,7 @@ import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 import Comments from '~assets/icons/chat-icon.svg';
 import ForumComments from '~assets/icons/forum-chat-icon.svg';
-import RiotSVG from '~assets/icons/riot.svg';
+import MatrixSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
 import WebSVG from '~assets/profile/web-icon.svg';
@@ -576,9 +576,9 @@ export const EmailIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const RiotIcon = (props: Partial<CustomIconComponentProps>) => (
+export const MatrixIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={RiotSVG}
+		component={MatrixSVG}
 		{...props}
 	/>
 );

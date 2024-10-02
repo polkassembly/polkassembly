@@ -16,7 +16,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -39,7 +39,6 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
-import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 export const isDataExist = (data: any) => {
@@ -53,6 +52,40 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	} catch (error) {
 		return [];
 	}
+};
+
+export const getTimeline = (
+	proposals: any,
+	isStatus?: {
+		swap: boolean;
+	}
+) => {
+	return (
+		proposals?.map((obj: any) => {
+			const statuses = obj?.statusHistory as { status: string }[];
+			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
+				const index = statuses?.findIndex((v) => v.status === 'DecisionDepositPlaced');
+				if (index >= 0) {
+					const decidingIndex = statuses?.findIndex((v) => v.status === 'Deciding');
+					if (decidingIndex >= 0) {
+						const obj = statuses[index];
+						statuses.splice(index, 1);
+						statuses.splice(decidingIndex, 0, obj);
+						if (isStatus) {
+							isStatus.swap = true;
+						}
+					}
+				}
+			}
+			return {
+				created_at: obj?.createdAt,
+				hash: obj?.hash,
+				index: obj?.index,
+				statuses,
+				type: obj?.type
+			};
+		}) || []
+	);
 };
 
 export interface IReactions {
@@ -101,6 +134,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
+	progress_report?: IProgressReport;
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -251,6 +285,9 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.created_at && !newData.created_at) {
 								newData.created_at = data.created_at;
+							}
+							if (data.progress_report) {
+								newData.progress_report = data.progress_report;
 							}
 							if (!newData.topic_id) {
 								newData.topic_id = getTopicFromFirestoreData(data, proposalType)?.id || null;
@@ -1142,6 +1179,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
+				post.progress_report = data?.progress_report;
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;

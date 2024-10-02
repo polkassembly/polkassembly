@@ -30,30 +30,28 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any; a
 	if (data?.aiSummaryKey === true) {
 		Payload['x-ai-summary-key'] = process.env.API_SUMMARY_PROVIDER;
 	}
-	try {
-		const response = await fetch(`${window.location.origin}/${url}`, {
-			body: JSON.stringify(data),
-			credentials: 'include',
-			headers: Payload,
-			method: method ?? 'POST'
-		});
+	if (!(data instanceof FormData)) {
+		Payload['Content-Type'] = 'application/json';
+	}
 
-		const resJSON = await response.json();
+	const response = await fetch(`${window.location.origin}/${url}`, {
+		body: data instanceof FormData ? data : JSON.stringify(data),
+		credentials: 'include',
+		headers: Payload,
+		method: method ?? 'POST'
+	});
 
-		if (response.status === 200) {
-			return {
-				data: resJSON as T
-			};
-		}
+	const resJSON = await response.json();
 
+	if (response.status === 200) {
 		return {
-			error: resJSON.message || messages.API_FETCH_ERROR
-		};
-	} catch (error) {
-		return {
-			error: error.message || messages.API_FETCH_ERROR
+			data: resJSON as T
 		};
 	}
+
+	return {
+		error: resJSON.message || messages.API_FETCH_ERROR
+	};
 }
 
 export default nextApiClientFetch;

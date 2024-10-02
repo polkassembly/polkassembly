@@ -8,6 +8,10 @@ if (!process.env.FIREBASE_SERVICE_ACC_CONFIG) {
 	throw new Error('Internal Error: FIREBASE_SERVICE_ACC_CONFIG missing.');
 }
 
+if (!process.env.FIREBASE_STORAGE_BUCKET) {
+	throw new Error('Internal Error: FIREBASE_STORAGE_BUCKET missing.');
+}
+
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACC_CONFIG) as firebaseAdmin.ServiceAccount;
 
 try {
@@ -22,6 +26,8 @@ try {
 	}
 }
 
+// Accessing the firestore and storage services
 export const firestore_db = firebaseAdmin.firestore();
+export const firebaseStorageBucket = firebaseAdmin.storage().bucket(process.env.FIREBASE_STORAGE_BUCKET);
 
 export default firebaseAdmin;

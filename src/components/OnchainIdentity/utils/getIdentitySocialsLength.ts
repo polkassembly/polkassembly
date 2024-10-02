@@ -5,7 +5,7 @@
 import { IIdentityInfo } from '../types';
 
 const getIdentitySocialsLength = (alreadySetIdentityCredentials: IIdentityInfo) => {
-	const credentials = [alreadySetIdentityCredentials.email, alreadySetIdentityCredentials.riot, alreadySetIdentityCredentials.twitter, alreadySetIdentityCredentials.web];
+	const credentials = [alreadySetIdentityCredentials.email, alreadySetIdentityCredentials.matrix, alreadySetIdentityCredentials.twitter, alreadySetIdentityCredentials.web];
 	return credentials.filter((cred: string) => !!cred.length)?.length || 0;
 };
 

@@ -306,7 +306,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 
 				{!!totalFee.gt(ZERO_BN) &&
 					isPeopleChainSupportedNetwork(network) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+					(!identityInfo?.alreadyVerified || !allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
 					availableBalance &&
 					availableBalance.lt(totalFee) &&
 					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (

@@ -9,7 +9,6 @@ import { spaceGrotesk } from 'pages/_app';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import BountiesTable from './Components/BountiesTable';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import FilterByTags from './Components/FilterByTags';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { bountyStatus } from '~src/global/statuses';
@@ -162,27 +161,6 @@ function OnchainBounties() {
 				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} dark:text-blue-dark-high' text-[32px] font-bold text-blue-light-high`}>On-chain Bounties</span>
 				<div className='flex items-center gap-2'>
 					<BountyProposalActionButton className='hidden md:block' />
-					<div
-						className='flex items-center gap-2'
-						style={{
-							background:
-								'radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%), radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%), radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)',
-							boxShadow: '1px 1px 4px 0px rgba(255, 255, 255, 0.50) inset',
-							color: '#fff',
-							padding: '14px 20px',
-							// eslint-disable-next-line sort-keys
-							borderRadius: '8px',
-							display: 'inline-block',
-							// eslint-disable-next-line sort-keys
-							cursor: 'pointer'
-						}}
-					>
-						Curator Dashboard{' '}
-						<ImageIcon
-							src='/assets/icons/outlinearrow.svg'
-							alt='arrow right'
-						/>
-					</div>
 				</div>
 			</div>
 			<div className='relative'>

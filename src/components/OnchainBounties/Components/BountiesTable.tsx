@@ -140,20 +140,36 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 		{
 			dataIndex: 'categories',
 			key: 'categories',
-			render: (categories: string[]) => (
-				<div style={{ display: 'flex', gap: '8px' }}>
-					{categories && categories.length > 0
-						? categories.map((category, index) => (
-								<span
-									key={index}
-									className='rounded-full bg-[#FF6C1A] bg-opacity-[24%] px-4 py-2'
-								>
-									{category}
-								</span>
-						  ))
-						: '-'}
-				</div>
-			),
+			render: (categories: string[]) => {
+				const maxLength = 15;
+				let firstCategory = '';
+				let secondCategory = '';
+				let remainingCategoriesCount = 0;
+
+				if (categories.length > 0) {
+					firstCategory = categories[0];
+
+					if (categories.length > 1) {
+						secondCategory = categories[1];
+					}
+
+					const totalLength = firstCategory.length + secondCategory.length;
+
+					if (totalLength > maxLength) {
+						remainingCategoriesCount = categories.length - 1;
+					} else {
+						remainingCategoriesCount = categories.length - 2;
+					}
+				}
+
+				return (
+					<div style={{ display: 'flex', gap: '5px' }}>
+						{firstCategory && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>{firstCategory}</span>}
+						{secondCategory && remainingCategoriesCount === 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>{secondCategory}</span>}
+						{remainingCategoriesCount > 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCategoriesCount}</span>}
+					</div>
+				);
+			},
 			title: 'Categories'
 		}
 	];

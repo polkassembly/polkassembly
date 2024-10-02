@@ -4,6 +4,7 @@
 
 import { FormInstance } from 'antd';
 import BN from 'bn.js';
+import { ReactNode } from 'react';
 import { ESocials, ILoading, VerificationStatus } from '~src/types';
 
 export interface IAmountBreakDown {
@@ -37,14 +38,13 @@ export interface IIdentitySocials {
 	web: { value: string; verified: boolean };
 	email: { value: string; verified: boolean };
 	twitter: { value: string; verified: boolean };
-	riot: { value: string; verified: boolean };
+	matrix: { value: string; verified: boolean };
 }
 export interface IIdentityInfo {
 	displayName: string;
 	legalName: string;
 	alreadyVerified: boolean;
 	isIdentitySet: boolean;
-	riot: string;
 	email: string;
 	twitter: string;
 	web: string;
@@ -95,7 +95,7 @@ export interface IIdentitySocialVerifications {
 }
 export interface ISocialLayout {
 	title: string;
-	description: string;
+	description: string | ReactNode;
 	value: string | null;
 	onVerify: () => void;
 	verified?: boolean;
@@ -144,4 +144,5 @@ export interface IAllowSetIdentity {
 	email: { value: string; verified: boolean };
 	legalName: string;
 	twitter: { value: string; verified: boolean };
+	matrix: { value: string; verified: boolean };
 }

@@ -2770,6 +2770,16 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
 }
 }`;
 
+export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExists ($proposalIndex: Int!, $type_eq: ProposalType){
+  proposals(orderBy: id_ASC, where:{index_eq: $proposalIndex, type_eq: $type_eq}){
+    proposer
+    index
+    createdAt
+    updatedAt
+    type
+  }
+}`;
+
 export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String!], $startDate: DateTime!) {
         flattenedConvictionVotes(
             where: { voter_in: $voterAddresses, removedAtBlock_isNull: true, createdAt_gte: $startDate }

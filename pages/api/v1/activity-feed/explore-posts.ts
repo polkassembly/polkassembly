@@ -81,8 +81,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
-	const apiKey = String(req.headers['x-ai-summary-api-key']);
-
 	try {
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -320,7 +318,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					delete post?.content;
 
-					if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+					if (!process.env.AI_SUMMARY_API_KEY) {
 						delete post?.summary;
 					}
 
@@ -368,7 +366,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 			delete post?.content;
 
-			if (apiKey !== process.env.API_SUMMARY_PROVIDER && post?.summary?.length) {
+			if (!process.env.AI_SUMMARY_API_KEY && post?.summary?.length) {
 				delete post?.summary;
 			}
 

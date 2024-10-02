@@ -44,8 +44,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 	const userId = user?.id;
 	try {
-		const apiKey = String(req.headers['x-ai-summary-api-key']);
-
 		const userRef = await firestore_db.collection('users').doc(String(userId)).get();
 		const userData = userRef?.data();
 
@@ -263,7 +261,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					delete post?.content;
 
-					if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+					if (!process.env.AI_SUMMARY_API_KEY) {
 						delete post?.summary;
 					}
 
@@ -309,7 +307,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 			delete post?.content;
 
-			if (apiKey !== process.env.API_SUMMARY_PROVIDER) {
+			if (!process.env.AI_SUMMARY_API_KEY) {
 				delete post?.summary;
 			}
 

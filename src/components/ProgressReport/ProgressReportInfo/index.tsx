@@ -185,8 +185,8 @@ const ProgressReportInfo = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replace(
-								/_/g,
+							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replaceAll(
+								'_',
 								' '
 							)} - ${postData?.postIndex}`}</p>
 						</div>

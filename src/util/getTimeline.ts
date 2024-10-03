@@ -1,12 +1,28 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+interface TimelineItemResults {
+	created_at: string;
+	hash: string;
+	index: number;
+	statuses: { status: string }[];
+	type?: string;
+}
+
+interface Proposal {
+	type?: string;
+	statusHistory: { status: string }[];
+	createdAt: string;
+	hash: string;
+	index: number;
+}
+
 export const getTimeline = (
-	proposals: any,
+	proposals: Proposal[] | any,
 	isStatus?: {
 		swap: boolean;
 	}
-) => {
+): TimelineItemResults[] => {
 	return (
 		proposals?.map((obj: any) => {
 			const statuses = obj?.statusHistory as { status: string }[];

@@ -2986,7 +2986,7 @@ export const GET_SUBSCRIBED_POSTS = `query Subscribed_Posts($type_eq: ProposalTy
 `;
 
 export const GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType=ReferendumV2, $status_in: [ProposalStatus!]=[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted]) {
-  proposals(where: {type_eq: $type_eq,, status_in: $status_in}) {
+  proposals(where: {type_eq: $type_eq,status_in: $status_in}) {
     proposer
     curator
     createdAt
@@ -3063,7 +3063,7 @@ flattenedConvictionVotesConnection(where:{type_eq:$type_eq , proposalIndex_eq: $
 `;
 
 export const ACTIVE_PROPOSALS_FROM_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType=ReferendumV2, $status_in: [ProposalStatus!]=[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted], $indexes_in:[Int!]) {
-  proposals(where: {type_eq: $type_eq,, status_in: $status_in, index_in: $indexes_in}) {
+  proposals(where: {type_eq: $type_eq, status_in: $status_in, index_in: $indexes_in}) {
     proposer
     curator
     createdAt

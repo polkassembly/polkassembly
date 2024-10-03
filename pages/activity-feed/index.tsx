@@ -5,20 +5,16 @@
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import type { Balance } from '@polkadot/types/interfaces';
-import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-posts';
-import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
-import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
+import { EGovType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
-import { redisGet, redisSet } from '~src/auth/redis';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -30,7 +26,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import { network as AllNetworks } from '~src/global/networkConstants';
-
 import { chainProperties } from '~src/global/networkConstants';
 import dayjs from 'dayjs';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
@@ -64,15 +59,8 @@ const LatestActivity = dynamic(() => import('~src/components/ActivityFeed/Latest
 	ssr: false
 });
 
-interface Gov2LatestPosts {
-	allGov2Posts: any;
-	discussionPosts: any;
-	[key: string]: any;
-}
-
 interface Props {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
-	gov2LatestPosts: Gov2LatestPosts;
 	network: string;
 	error: string;
 }
@@ -80,71 +68,18 @@ interface Props {
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const LATEST_POSTS_LIMIT = 8;
-
 	const network = getNetworkFromReqHeaders(req.headers);
-
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-
-	if (process.env.IS_CACHING_ALLOWED == '1') {
-		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
-		if (redisData) {
-			const props = JSON.parse(redisData);
-			if (!props.error) {
-				return { props };
-			}
-		}
-	}
 	const networkSocialsData = await getNetworkSocials({ network });
-
 	if (!networkTrackInfo[network]) {
 		return { props: { error: 'Network does not support OpenGov yet.' } };
 	}
-
-	const fetches = {
-		allGov2Posts: getLatestActivityAllPosts({
-			govType: EGovType.OPEN_GOV,
-			listingLimit: LATEST_POSTS_LIMIT,
-			network
-		}),
-		discussionPosts: getLatestActivityOffChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: OffChainProposalType.DISCUSSIONS
-		})
-	};
-
-	for (const trackName of Object.keys(networkTrackInfo[network])) {
-		fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: networkTrackInfo[network][trackName]?.fellowshipOrigin ? ProposalType.FELLOWSHIP_REFERENDUMS : ProposalType.OPEN_GOV,
-			trackNo: networkTrackInfo[network][trackName].trackId
-		});
-	}
-
-	const responseArr = await Promise.all(Object.values(fetches));
-
-	const gov2LatestPosts = {
-		allGov2Posts: responseArr[Object.keys(fetches).indexOf('allGov2Posts')],
-		discussionPosts: responseArr[Object.keys(fetches).indexOf('discussionPosts')]
-	};
-
-	for (const trackName of Object.keys(networkTrackInfo[network])) {
-		(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
-	}
-
 	const props: Props = {
 		error: '',
-		gov2LatestPosts,
 		network,
 		networkSocialsData
 	};
-
-	if (process.env.IS_CACHING_ALLOWED == '1') {
-		await redisSet(`${network}_latestActivity_OpenGov`, JSON.stringify(props));
-	}
 
 	return { props };
 };

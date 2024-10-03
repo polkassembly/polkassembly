@@ -63,7 +63,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 			progress_report: progressReport
 		});
 
-		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+		const subsquidProposalType = getSubsquidProposalType(proposalType);
 		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
 			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
 			await redisDel(referendumDetailsKey);

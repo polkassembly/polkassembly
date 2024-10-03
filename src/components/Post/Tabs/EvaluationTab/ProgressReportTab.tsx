@@ -108,6 +108,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	};
 
 	const editProgressReport = async () => {
+		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
 			postId: postIndex,
 			proposalType,
@@ -115,6 +116,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		});
 
 		if (editError || !data) {
+			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
@@ -124,6 +126,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		}
 
 		if (data) {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post is now edited',
@@ -136,6 +139,7 @@ const ProgressReportTab = ({ className }: Props) => {
 				...prev,
 				progress_report
 			}));
+			router.reload();
 		} else {
 			console.log('failed to save report');
 		}
@@ -187,11 +191,11 @@ const ProgressReportTab = ({ className }: Props) => {
 									buttonsize='sm'
 									loading={loading}
 									className={`${loading ? 'opacity-60' : ''} ${
-										(postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
+										(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
 											? 'opacity-60'
 											: ''
 									} `}
-									disabled={postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
+									disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
 									onClick={() => {
 										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 									}}

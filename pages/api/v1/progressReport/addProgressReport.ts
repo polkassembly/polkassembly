@@ -75,7 +75,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		};
 
 		await postDocRef.update(updatedPost);
-		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+		const subsquidProposalType = getSubsquidProposalType(proposalType);
 		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
 			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post?.trackNumber}_*`;
 			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
@@ -89,7 +89,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: messages.API_FETCH_ERROR });
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 };
 

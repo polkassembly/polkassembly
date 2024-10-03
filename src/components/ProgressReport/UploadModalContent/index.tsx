@@ -8,7 +8,6 @@ import { PlusCircleOutlined, ExportOutlined } from '@ant-design/icons';
 import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
-import ContentForm from '~src/components/ContentForm';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import SuccessModal from './SuccessModal';
@@ -21,6 +20,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import SummaryContentForm from '~src/components/SummaryContentForm';
 
 const { Dragger } = Upload;
 
@@ -28,17 +28,15 @@ const UploadModalContent = () => {
 	const dispatch = useDispatch();
 	const [fileLink, setFileLink] = useState<string>('');
 	const [fileName, setFileName] = useState<string>('');
-	const [summary, setSummary] = useState<string>('');
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const { postIndex } = postData;
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (postData?.progress_report?.progress_file) {
-			setSummary(postData?.progress_report?.progress_summary || '');
 			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
 			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
 		}
@@ -50,14 +48,11 @@ const UploadModalContent = () => {
 		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
 			setFileLink(progress_report.url);
 			setFileName(progress_report.url.split('/').pop());
-			setSummary(progress_report.summary);
 			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
 		}
 	};
-
-	console.log('summary: ', summary);
 
 	useEffect(() => {
 		checkAndRestoreProgressReport();
@@ -193,10 +188,9 @@ const UploadModalContent = () => {
 				</a>
 			)}
 			{add_summary_cta_clicked && (
-				<ContentForm
+				<SummaryContentForm
 					onChange={(content: string) => {
 						console.log('summaryc', content);
-						setSummary(content);
 						dispatch(progressReportActions.setSummaryContent(content));
 						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 						progress_report.summary = content;
@@ -204,7 +198,7 @@ const UploadModalContent = () => {
 					}}
 					autofocus={true}
 					height={200}
-					// value={summary}
+					value={summary_content || ''}
 				/>
 			)}
 			{!report_uploaded && !postData?.progress_report?.progress_file ? (

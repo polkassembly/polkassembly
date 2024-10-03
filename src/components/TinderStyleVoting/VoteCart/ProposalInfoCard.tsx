@@ -54,18 +54,21 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			if (item.id === voteInfo.id) {
 				return {
 					...item,
-					abstainBalance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
+					abstainBalance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0.1',
 					ayeBalance:
 						edit_vote_details?.voteOption === 'aye'
 							? edit_vote_details.ayeVoteBalance
 							: edit_vote_details?.voteOption === 'abstain'
 							? edit_vote_details.abstainAyeVoteBalance
-							: '0',
+							: '0.1',
 					conviction: edit_vote_details.conviction,
 					decision: edit_vote_details.voteOption,
-
 					nayBalance:
-						edit_vote_details?.voteOption === 'nay' ? edit_vote_details.nyeVoteBalance : edit_vote_details?.voteOption === 'abstain' ? edit_vote_details.abstainNyeVoteBalance : '0'
+						edit_vote_details?.voteOption === 'nay'
+							? edit_vote_details.nyeVoteBalance
+							: edit_vote_details?.voteOption === 'abstain'
+							? edit_vote_details.abstainNyeVoteBalance
+							: '0.1'
 				};
 			}
 			return item;
@@ -152,7 +155,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 							voteInfo?.decision === 'aye'
 								? 'text-aye_green dark:text-aye_green_Dark'
 								: voteInfo?.decision === 'nay'
-								? 'text-nye_red dark:text-nay_red_Dark'
+								? 'text-nay_red dark:text-nay_red_Dark'
 								: 'text-bodyBlue dark:text-blue-dark-medium'
 						} text-capitalize m-0 p-0 text-xs`}
 					>
@@ -215,17 +218,23 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 									console.log('checking field: ', edit_vote_details?.conviction);
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
-											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
-											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainNyeVoteBalance,
+											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0.1' : edit_vote_details?.abstainAyeVoteBalance,
+											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0.1' : edit_vote_details?.abstainNyeVoteBalance,
 											decision: edit_vote_details?.voteOption || batch_vote_details?.voteOption || 'aye',
 											post_id: voteInfo.post_id,
 											post_title: voteInfo.post_title,
 											voteBalance:
 												edit_vote_details?.voteOption === 'aye'
 													? edit_vote_details?.ayeVoteBalance
+														? edit_vote_details?.ayeVoteBalance
+														: '0.1'
 													: edit_vote_details?.voteOption === 'nay'
 													? edit_vote_details?.nyeVoteBalance
-													: edit_vote_details?.abstainVoteBalance,
+														? edit_vote_details?.nyeVoteBalance
+														: '0.1'
+													: edit_vote_details?.abstainVoteBalance
+													? edit_vote_details?.abstainVoteBalance
+													: '0.1',
 											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);
@@ -252,6 +261,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				>
 					<DefaultVotingOptionsModal
 						theme={theme}
+						currentDecision={voteInfo?.decision}
 						forSpecificPost={true}
 						postEdit={voteInfo.post_id}
 					/>

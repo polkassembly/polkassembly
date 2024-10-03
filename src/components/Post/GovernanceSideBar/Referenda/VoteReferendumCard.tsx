@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -44,6 +44,7 @@ interface Props {
 	trackNumber?: number;
 	forSpecificPost?: boolean;
 	postEdit?: any;
+	currentDecision?: string;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -95,7 +96,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost, currentDecision }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
@@ -106,8 +107,19 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [vote, setVote] = useState<string | EVoteDecisionType>(currentDecision || EVoteDecisionType.AYE);
+
+	useEffect(() => {
+		if (currentDecision && !forSpecificPost) {
+			dispatch(
+				editCartPostValueChanged({
+					values: {
+						voteOption: currentDecision || 'aye'
+					}
+				})
+			);
+		}
+	}, [currentDecision, dispatch, forSpecificPost]);
 
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
@@ -249,7 +261,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										ayeVoteBalance: balance?.toString() || '0'
+										ayeVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);
@@ -278,7 +290,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										nyeVoteBalance: balance?.toString() || '0'
+										nyeVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);
@@ -308,7 +320,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString() || '0'
+										abstainVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);
@@ -328,7 +340,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainAyeVoteBalance: balance?.toString() || '0'
+										abstainAyeVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);
@@ -348,7 +360,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainNyeVoteBalance: balance?.toString() || '0'
+										abstainNyeVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);
@@ -368,7 +380,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString() || '0'
+										abstainVoteBalance: balance?.toString() || '0.1'
 									}
 								})
 							);

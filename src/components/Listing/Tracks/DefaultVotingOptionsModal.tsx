@@ -12,10 +12,11 @@ interface IDefaultVotingOptionsModal {
 	theme?: string;
 	forSpecificPost?: boolean;
 	postEdit?: any;
+	currentDecision?: string;
 }
 
 const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
-	const { forSpecificPost, postEdit } = props;
+	const { forSpecificPost, postEdit, currentDecision } = props;
 	const { loginAddress } = useUserDetailsSelector();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [address, setAddress] = useState<string>(loginAddress);
@@ -40,6 +41,7 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 				setLastVote={setLastVote}
 				forSpecificPost={forSpecificPost}
 				postEdit={postEdit}
+				currentDecision={currentDecision}
 			/>
 		</section>
 	);

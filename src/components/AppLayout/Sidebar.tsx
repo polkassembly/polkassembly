@@ -39,7 +39,8 @@ import {
 	SelectedDiscussions,
 	SelectedPreimages,
 	AnalyticsSVGIcon,
-	AllPostIcon
+	AllPostIcon,
+	AstralIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -1123,6 +1124,22 @@ const Sidebar: React.FC<SidebarProps> = ({
 					>
 						NEW
 					</div>
+				</div>
+			)
+		);
+	}
+
+	if (isOpenGovSupported(network)) {
+		gov2OverviewItems.splice(
+			5,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Astral Scoresheet</span>
+				</div>,
+				'/astral-scoring',
+				<div className='relative -ml-2'>
+					<AstralIcon className='scale-80 -mt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>
 			)
 		);

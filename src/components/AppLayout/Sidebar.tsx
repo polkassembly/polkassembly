@@ -846,7 +846,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+						} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 					>
 						{activeProposal && activeProposal > 9 ? (
 							<>
@@ -1721,7 +1721,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', 'group', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
 

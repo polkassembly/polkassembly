@@ -644,4 +644,9 @@ export default styled(AppLayout)`
 		scrollbar-width: none; /* For Firefox */
 		overflow: hidden; /* Ensures no scrollbars for other browsers */
 	}
+
+	.width-content{
+	@media (max-width: 1532px and min-width: 1700px) {
+		margin-left: 0px;
+	}
 `;

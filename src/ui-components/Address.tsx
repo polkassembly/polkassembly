@@ -19,13 +19,13 @@ import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { Space } from 'antd';
+import { message, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
-import { VerifiedIcon } from './CustomIcons';
+import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
@@ -34,6 +34,7 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import copyToClipboard from '~src/util/copyToClipboard';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -139,6 +140,7 @@ const Address = (props: Props) => {
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState(false);
+	const [messageApi] = message.useMessage();
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -313,6 +315,17 @@ const Address = (props: Props) => {
 		shortenUsername(username, usernameMaxLength);
 	const addressSuffix = extensionName || mainDisplay;
 
+	const success = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
+	const copyLink = (address: string) => {
+		copyToClipboard(address);
+	};
+
 	return (
 		<>
 			<Tooltip
@@ -475,11 +488,12 @@ const Address = (props: Props) => {
 										<Space className={'header'}>
 											<div
 												onClick={(e) => handleClick(e)}
-												className={`flex items-center font-semibold text-bodyBlue ${
-													!disableAddressClick && 'cursor-pointer hover:underline'
+												className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick && 'cursor-pointer hover:underline'} ${
+													isUsedInDelegationProfile && 'gap-2'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
 												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
+												{isUsedInDelegationProfile && (!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 											</div>
 										</Space>
 									</div>
@@ -488,10 +502,21 @@ const Address = (props: Props) => {
 							<div
 								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
 									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] text-base font-normal'}`}
+								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
 								onClick={(e) => handleClick(e)}
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+								{isUsedInDelegationProfile && (
+									<span
+										className='flex cursor-pointer items-center text-base'
+										onClick={(e) => {
+											copyLink(encodedAddr || '');
+											success();
+										}}
+									>
+										<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+									</span>
+								)}
 							</div>
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}

@@ -6,14 +6,12 @@ import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import copyToClipboard from '~src/util/copyToClipboard';
-import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
+import { EditIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from '../../ui-components/SocialsHandle';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Markdown from '../../ui-components/Markdown';
 import Image from 'next/image';
@@ -43,7 +41,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	const { delegationDashboardAddress: address } = userProfile;
 	const { network } = useNetworkSelector();
 	const { image, social_links, username, bio } = profileDetails;
-	const [messageApi, contextHolder] = message.useMessage();
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -64,17 +61,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 		handleData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
-
-	const success = () => {
-		messageApi.open({
-			content: 'Address copied to clipboard',
-			duration: 10,
-			type: 'success'
-		});
-	};
-	const copyLink = (address: string) => {
-		copyToClipboard(address);
-	};
 
 	return (
 		<Spin
@@ -138,17 +124,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 									isTruncateUsername={false}
 									passedUsername={identity?.display || identity?.legal || username}
 								/>
-								<span
-									className='flex cursor-pointer items-center text-base'
-									onClick={(e) => {
-										isSearch && e.preventDefault();
-										copyLink(getEncodedAddress(address, network) || '');
-										success();
-									}}
-								>
-									{contextHolder}
-									<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
-								</span>
 							</div>
 							{userBio || bio ? (
 								<h2 className={'mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high sm:ml-1 sm:mt-1.5'}>

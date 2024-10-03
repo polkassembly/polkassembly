@@ -57,7 +57,6 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		const htmlTagRegex = /<\/?[^>]+(>|$)/g;
 		const unwantedContents = [
 			'Please consider this a temporary notification after our vote has gone on chain. If you would like additional feedback on our rationale for this vote, please join our OpenGov Public Forum on Telegram here:'
 		];

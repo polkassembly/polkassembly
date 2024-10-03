@@ -37,10 +37,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: messages.INVALID_JWT });
+	if (!token) return res.status(401).json({ message: messages.INVALID_JWT });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || Number.isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const userId = user?.id;
 	try {
@@ -106,10 +106,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					if (calls && Array.isArray(calls) && calls.length > 0) {
 						calls.forEach((call) => {
-							if (call && call.amount) {
+							if (call?.amount) {
 								requested += BigInt(call.amount);
 							}
-							if (call && call?.value?.amount) {
+							if (call?.value?.amount) {
 								requested += BigInt(call?.value?.amount);
 							}
 						});
@@ -168,7 +168,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
+			if (postDoc?.exists) {
 				const data = postDoc.data();
 				if (data) {
 					let subsquareTitle = '';
@@ -191,7 +191,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					commentsQueryDocs.docs.map((doc) => {
 						if (doc.exists) {
 							const data = doc.data();
-							if (!isNaN(data?.sentiment)) {
+							if (!Number.isNaN(data?.sentiment)) {
 								if (sentiments[data?.sentiment]) {
 									sentiments[data?.sentiment] += 1;
 								} else {
@@ -253,16 +253,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: topicFromType,
-						track_no: !isNaN(trackNumber) ? trackNumber : null,
+						track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1
 					};
 					await getContentSummary(post, network, true);
 
-					delete post?.content;
+					post.content = '';
 
 					if (!process.env.AI_SUMMARY_API_KEY) {
-						delete post?.summary;
+						post.summary = '';
 					}
 
 					return post;
@@ -299,16 +299,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				timeline: proposalTimeline,
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
-				track_no: !isNaN(trackNumber) ? trackNumber : null,
+				track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
 				type: type,
 				user_id: 1
 			};
 			await getContentSummary(post, network, true);
 
-			delete post?.content;
+			post.content = '';
 
 			if (!process.env.AI_SUMMARY_API_KEY) {
-				delete post?.summary;
+				post.summary = '';
 			}
 
 			return post;

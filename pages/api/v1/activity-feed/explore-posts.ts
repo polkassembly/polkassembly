@@ -56,15 +56,21 @@ const updateNonVotedProposals = (proposals: IActivityFeedPost[]) => {
 	const proposalsByVotesCountSorted = proposals.sort((a, b) => (b?.votesCount || 0) - (a?.votesCount || 0));
 
 	//sort by comments count
-	const proposalsWithoutComments: IActivityFeedPost[] = [];
-	const proposalsWithComments: IActivityFeedPost[] = [];
-	proposalsByVotesCountSorted.map((proposal) => {
-		if (proposal?.commentsCount) {
-			proposalsWithComments.push(proposal);
-		} else {
-			proposalsWithoutComments.push(proposal);
-		}
-	});
+
+	const { proposalsWithComments = [], proposalsWithoutComments = [] } = proposalsByVotesCountSorted.reduce<{
+		proposalsWithoutComments: IActivityFeedPost[];
+		proposalsWithComments: IActivityFeedPost[];
+	}>(
+		(acc, proposal) => {
+			if (proposal?.commentsCount) {
+				acc.proposalsWithComments.push(proposal);
+			} else {
+				acc.proposalsWithoutComments.push(proposal);
+			}
+			return acc;
+		},
+		{ proposalsWithComments: [], proposalsWithoutComments: [] }
+	);
 
 	const proposalsByCommentSorted = proposalsWithComments.sort((a, b) => b?.commentsCount - a?.commentsCount);
 
@@ -224,6 +230,36 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			const reactions = getReactions(post_reactionsQuerySnapshot);
 
 			const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
+			const post: IActivityFeedPost = {
+				allowedCommentors: EAllowedCommentor.ALL,
+				assetId: assetId || null,
+				commentsCount: commentsQuerySnapshot.data()?.count || 0,
+				content: '',
+				created_at: createdAt,
+				curator,
+				description: description || '',
+				end: end,
+				hash: hash || null,
+				highestSentiment: null,
+				identity,
+				method: subsquidPost?.preimage?.method,
+				parent_bounty_index: parentBountyIndex || null,
+				post_id: postId,
+				post_reactions: reactions,
+				proposalHashBlock: proposalHashBlock || null,
+				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
+				requestedAmount: requested ? requested.toString() : undefined,
+				status: status,
+				status_history: statusHistory,
+				summary: '',
+				tally,
+				timeline: proposalTimeline,
+				title: 'Untitled',
+				topic: topicFromType,
+				totalVotes: totalVotes || 0,
+				track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
+				type: type
+			};
 
 			const postDoc = await postDocRef.get();
 			if (postDoc && postDoc.exists) {
@@ -231,7 +267,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				if (data) {
 					let subsquareTitle = '';
 					let subsquareContent = '';
-					if (data?.title === '' || data?.title === undefined) {
+					if (!data?.title?.length || !data?.content?.length) {
 						const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
 						subsquareTitle = res?.title;
 						subsquareContent = res?.content;
@@ -246,7 +282,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					commentsQueryDocs.docs.map((doc) => {
 						if (doc.exists) {
 							const data = doc.data();
-							if (!isNaN(data?.sentiment)) {
+							if (!Number.isNaN(data?.sentiment)) {
 								if (sentiments[data?.sentiment]) {
 									sentiments[data?.sentiment] += 1;
 								} else {
@@ -269,105 +305,39 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
 
-					const post: IActivityFeedPost = {
-						allowedCommentors: data?.allowedCommentors?.[0] || EAllowedCommentor.ALL,
-						assetId: assetId || null,
-						commentsCount: commentsCount || 0,
-						content: data.content || subsquareContent || '',
-						created_at: createdAt,
-						curator,
-						description: description || '',
-						end,
-						gov_type: data.gov_type,
-						hash,
-						highestSentiment: maxSentiment ? { percentage: Math.floor((maxSentimentCount * 100) / totalSentiments), sentiment: maxSentiment } : null,
-						identity,
-						isSpam: data?.isSpam || false,
-						isSpamReportInvalid: data?.isSpamReportInvalid || false,
-						method: subsquidPost?.preimage?.method,
-						parent_bounty_index: parentBountyIndex || null,
-						post_id: postId,
-						post_reactions: reactions,
-						proposalHashBlock: proposalHashBlock || null,
-						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-						requestedAmount: requested ? requested.toString() : undefined,
-						spam_users_count:
-							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
-						status,
-						status_history: statusHistory,
-						summary: data?.summary || '',
-						tags: data?.tags || [],
-						tally,
-						timeline: proposalTimeline,
-						title: data?.title || subsquareTitle || null,
-						topic: topic
-							? topic
-							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: topicFromType,
-						totalVotes: totalVotes || 0,
-						track_no: !isNaN(trackNumber) ? trackNumber : null,
-						type: type || ProposalType.REFERENDUM_V2,
-						user_id: data?.user_id || 1
-					};
-
-					await getContentSummary(post, network, true);
-
-					delete post?.content;
-
-					if (!process.env.AI_SUMMARY_API_KEY) {
-						delete post?.summary;
-					}
-
-					return post;
+					post.allowedCommentors = data?.allowedCommentors?.[0] || EAllowedCommentor.ALL;
+					post.commentsCount = commentsCount || 0;
+					post.content = data.content || subsquareContent || '';
+					post.gov_type = data.gov_type;
+					post.highestSentiment = maxSentiment ? { percentage: Math.floor((maxSentimentCount * 100) / totalSentiments), sentiment: maxSentiment } : null;
+					post.isSpam = data?.isSpam || false;
+					post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
+					post.post_reactions = reactions;
+					post.spam_users_count =
+						data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0;
+					post.proposer = proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator;
+					post.summary = data?.summary || '';
+					post.tags = data?.tags || [];
+					post.title = data?.title || subsquareTitle || null;
+					post.topic = topic
+						? topic
+						: isTopicIdValid(topic_id)
+						? {
+								id: topic_id,
+								name: getTopicNameFromTopicId(topic_id)
+						  }
+						: topicFromType;
+					post.totalVotes = totalVotes || 0;
+					post.user_id = data?.user_id || 0;
 				}
 			}
-			let subsquareTitle = '';
-			let subsquareContent = '';
-			const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-			subsquareTitle = res?.title;
-			subsquareContent = res?.content;
-
-			const post: IActivityFeedPost = {
-				allowedCommentors: EAllowedCommentor.ALL,
-				assetId: assetId || null,
-				commentsCount: commentsQuerySnapshot.data()?.count || 0,
-				content: subsquareContent || '',
-				created_at: createdAt,
-				curator,
-				description: description || '',
-				end: end,
-				hash: hash || null,
-				highestSentiment: null,
-				identity,
-				method: subsquidPost?.preimage?.method,
-				parent_bounty_index: parentBountyIndex || null,
-				post_id: postId,
-				post_reactions: reactions,
-				proposalHashBlock: proposalHashBlock || null,
-				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-				requestedAmount: requested ? requested.toString() : undefined,
-				status: status,
-				status_history: statusHistory,
-				summary: '',
-				tally,
-				timeline: proposalTimeline,
-				title: subsquareTitle || 'Untitled',
-				topic: topicFromType,
-				totalVotes: totalVotes || 0,
-				track_no: !isNaN(trackNumber) ? trackNumber : null,
-				type: type
-			};
 
 			await getContentSummary(post, network, true);
 
-			delete post?.content;
+			post.content = '';
 
 			if (!process.env.AI_SUMMARY_API_KEY && post?.summary?.length) {
-				delete post?.summary;
+				post.summary = '';
 			}
 
 			return post;

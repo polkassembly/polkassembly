@@ -60,7 +60,11 @@ export const getCommentsAISummaryByPost = async ({
 		}
 
 		const unwantedContents = [
-			'Please consider this a temporary notification after our vote has gone on chain. If you would like additional feedback on our rationale for this vote, please join our OpenGov Public Forum on Telegram here:'
+			{
+				content:
+					'Please consider this a temporary notification after our vote has gone on chain. If you would like additional feedback on our rationale for this vote, please join our OpenGov Public Forum on Telegram here:',
+				id: 19585
+			}
 		];
 
 		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
@@ -72,7 +76,9 @@ export const getCommentsAISummaryByPost = async ({
 				id: commentData.user_id || 'unknown'
 			};
 
-			if (unwantedContents.some((unwantedText) => commentObj.content.includes(unwantedText))) return '';
+			if (unwantedContents.some((unwanted) => commentObj.content.includes(unwanted.content) && commentObj.id === unwanted.id)) {
+				return '';
+			}
 
 			const repliesRef = commentDoc.ref.collection('replies');
 			const repliesSnapshot = await repliesRef.get();
@@ -85,7 +91,9 @@ export const getCommentsAISummaryByPost = async ({
 						id: replyData.user_id || 'unknown'
 					};
 
-					if (unwantedContents.some((unwantedText) => replyObj.content.includes(unwantedText))) return '';
+					if (unwantedContents.some((unwanted) => replyObj.content.includes(unwanted.content) && replyObj.id === unwanted.id)) {
+						return '';
+					}
 
 					return replyObj;
 				}

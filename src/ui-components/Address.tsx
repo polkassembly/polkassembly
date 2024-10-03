@@ -509,7 +509,7 @@ const Address = (props: Props) => {
 								{isUsedInDelegationProfile && (
 									<span
 										className='flex cursor-pointer items-center text-base'
-										onClick={(e) => {
+										onClick={() => {
 											copyLink(encodedAddr || '');
 											success();
 										}}

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Spin, message } from 'antd';
+import { Button, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from '../../ui-components/SocialsHandle';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Markdown from '../../ui-components/Markdown';
 import Image from 'next/image';
@@ -39,7 +39,6 @@ interface Props {
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress: address } = userProfile;
-	const { network } = useNetworkSelector();
 	const { image, social_links, username, bio } = profileDetails;
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);

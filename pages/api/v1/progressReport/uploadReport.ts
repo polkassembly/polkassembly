@@ -12,6 +12,7 @@ import messages from '~src/auth/utils/messages';
 import { firebaseStorageBucket } from '~src/services/firebaseInit';
 import { isValidNetwork } from '~src/api-utils';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import dayjs from 'dayjs';
 
 export const config = {
 	api: {
@@ -71,7 +72,7 @@ const handler: NextApiHandler<IUploadResponseType | MessageType> = async (req: N
 			const postIndex = fields.postIndex;
 			const postType = fields.postType;
 
-			const fileName = `${network}_${postIndex}_${postType}_${user?.id}`;
+			const fileName = `${network}_${postType}_${postIndex}_${user?.id}_${dayjs().unix}`;
 			const filePath = `user-uploads/${user?.id}/${fileName}`;
 			const bucketFile = firebaseStorageBucket.file(filePath);
 

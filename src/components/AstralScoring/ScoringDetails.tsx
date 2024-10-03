@@ -44,7 +44,7 @@ const ScoringDetails = (props: { scoringData: IScoringSection[] }) => {
 								{section.items.map((item, idx) => (
 									<div
 										key={idx}
-										className='flex items-center justify-between rounded-lg bg-[#F7F7F7] px-3 py-2 dark:bg-highlightBg'
+										className='flex items-center justify-between rounded-lg bg-[#F7F7F7] px-3 py-2 dark:bg-inactiveIconDark'
 									>
 										<div className='flex items-center gap-x-2'>
 											<p className='m-0 w-[150px] p-0 text-[12px] font-normal text-bodyBlue dark:text-white md:w-[300px] md:text-sm'>{item.label}</p>

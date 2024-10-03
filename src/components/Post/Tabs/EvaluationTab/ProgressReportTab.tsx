@@ -138,7 +138,6 @@ const ProgressReportTab = ({ className }: Props) => {
 				...prev,
 				progress_report
 			}));
-			router.reload();
 		} else {
 			console.log('failed to save report');
 		}

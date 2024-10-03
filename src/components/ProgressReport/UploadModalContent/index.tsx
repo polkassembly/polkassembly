@@ -46,7 +46,7 @@ const UploadModalContent = () => {
 		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
 			setFileLink(progress_report.url);
-			dispatch(progressReportActions.setFileName(progress_report.url.split('/').pop()));
+			dispatch(progressReportActions.setFileName(progress_report?.report_name?.split('-').pop()));
 			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
@@ -106,6 +106,7 @@ const UploadModalContent = () => {
 					const progress_report = {
 						post_id: postIndex,
 						proposalType: postData?.postType,
+						report_name: file_name,
 						summary: '',
 						url: sharableLink,
 						user_id: id
@@ -219,12 +220,10 @@ const UploadModalContent = () => {
 			{!report_uploaded && !postData?.progress_report?.progress_file ? (
 				<Dragger {...props}>
 					<div className='flex flex-row items-center justify-center gap-x-3'>
-						<p className='ant-upload-drag-icon'>
-							<ImageIcon
-								src='/assets/icons/upload-icon.svg'
-								alt='upload-icon'
-							/>
-						</p>
+						<ImageIcon
+							src='/assets/icons/upload-icon.svg'
+							alt='upload-icon'
+						/>
 						<div className='flex flex-col items-start justify-start gap-y-2'>
 							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>Upload</p>
 							<p className='ant-upload-hint m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Drag and drop your files here.</p>

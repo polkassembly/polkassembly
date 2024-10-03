@@ -47,8 +47,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const handleRemove = (postId: number) => {
 		setDeletedPostId(postId);
 		setOpenDeleteModal(true);
-		// dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
-		// deletePostDetails();
 	};
 
 	const editPostVoteDetails = async () => {
@@ -94,7 +92,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			console.error(error);
 			return;
 		}
-
 		reloadBatchCart();
 	};
 

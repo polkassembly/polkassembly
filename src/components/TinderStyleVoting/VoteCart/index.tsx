@@ -53,6 +53,10 @@ const VoteCart: React.FC = () => {
 		}
 	};
 
+	const reloadBatchCart = () => {
+		getVoteCartData();
+	};
+
 	useEffect(() => {
 		getVoteCartData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,6 +182,7 @@ const VoteCart: React.FC = () => {
 								key={index}
 								voteInfo={voteCardInfo}
 								index={index}
+								reloadBatchCart={reloadBatchCart}
 							/>
 						))}
 					</Spin>

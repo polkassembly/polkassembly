@@ -27,6 +27,7 @@ import { useGlobalSelector } from '~src/redux/selectors';
 import ConfusionModal from '~src/ui-components/ConfusionModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { bountyStatus } from '~src/global/statuses';
 
 const proposalType = ProposalType.BOUNTIES;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -61,26 +62,26 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	const { id } = router.query;
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [isContentVisible, setContentVisible] = useState(true);
-	const [isNudgeVisible, setNudgeVisible] = useState(false);
+	const [isNudgeVisible, setNudgeVisible] = useState(true);
 
 	const handleToggleContent = () => {
 		setContentVisible(false);
 	};
 
-	useEffect(() => {
-		dispatch(setNetwork(props.network));
-		if (post?.status === 'Active') {
-			const nudgeTimeout = setTimeout(() => {
-				setNudgeVisible(true);
-			}, 180000);
+	// useEffect(() => {
+	// 	dispatch(setNetwork(props.network));
+	// 	if (post?.status === bountyStatus.ACTIVE || bountyStatus.EXTENDED) {
+	// 		const nudgeTimeout = setTimeout(() => {
+	// 			setNudgeVisible(true);
+	// 		}, 180000);
 
-			return () => {
-				if (nudgeTimeout) {
-					clearTimeout(nudgeTimeout);
-				}
-			};
-		}
-	}, [dispatch, post?.status, props.network]);
+	// 		return () => {
+	// 			if (nudgeTimeout) {
+	// 				clearTimeout(nudgeTimeout);
+	// 			}
+	// 		};
+	// 	}
+	// }, [dispatch, post?.status, props.network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {

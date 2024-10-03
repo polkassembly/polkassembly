@@ -13,7 +13,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { noTitle } from '~src/global/noTitle';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { ProposalType } from '~src/global/proposalType';
+import { getStatusesFromCustomStatus, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { useGlobalSelector } from '~src/redux/selectors';
@@ -22,6 +22,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { PostCategory } from '~src/global/post_categories';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -61,7 +62,7 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
-		if (post?.status === 'Deciding') {
+		if (post?.status === getStatusesFromCustomStatus(CustomStatus.Active)) {
 			const nudgeTimeout = setTimeout(() => {
 				setNudgeVisible(true);
 			}, 180000);

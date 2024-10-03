@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC } from 'react';
-import { Table, Progress } from 'antd';
+import React, { FC, useState } from 'react';
+import { Progress } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
@@ -16,10 +16,12 @@ import { chainProperties } from '~src/global/networkConstants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { Pagination } from '~src/ui-components/Pagination';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-
+import { useRouter } from 'next/navigation';
+import Table from '~src/basic-components/Tables/Table';
+import { useTheme } from 'next-themes';
 interface DataType {
 	key: React.Key;
-	id: number;
+	index: number;
 	curator: string;
 	title: string;
 	reward: string;
@@ -27,7 +29,9 @@ interface DataType {
 	date: string;
 	status: string;
 	categories: string[];
+	totalChildBountiesCount?: number;
 	children?: DataType;
+	childbounties?: any;
 }
 
 interface OnchainBountiesProps {
@@ -39,8 +43,20 @@ interface OnchainBountiesProps {
 }
 
 const BountiesTable: FC<OnchainBountiesProps> = (props) => {
+	const { resolvedTheme: theme = 'light' } = useTheme();
+	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
+	const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
+	const handleRowClick = (record: DataType) => {
+		router.push(`/bounty/${record.index}`);
+	};
+	const handleExpand = (expanded: boolean, record: DataType) => {
+		// Ensure only one row is expanded at a time
+		const newExpandedRowKeys = expanded ? [record.key] : [];
+		setExpandedRowKeys(newExpandedRowKeys);
+	};
 
 	const columns: TableColumnsType<DataType> = [
 		{
@@ -72,7 +88,11 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 		{
 			dataIndex: 'title',
 			key: 'title',
-			render: (title: string) => (title ? title : '-'),
+			render: (title: string) => {
+				const maxLength = 22;
+				const truncatedTitle = title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
+				return title ? truncatedTitle : '-';
+			},
 			title: 'Title'
 		},
 		{
@@ -171,6 +191,20 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 				);
 			},
 			title: 'Categories'
+		},
+
+		{
+			dataIndex: 'children',
+			key: '',
+			render: (date: string) =>
+				date ? (
+					<span>
+						<ClockCircleOutlined /> {date}
+					</span>
+				) : (
+					'-'
+				),
+			title: 'Date'
 		}
 	];
 	const handlePageChange = (page: number) => {
@@ -178,7 +212,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 	};
 
 	return (
-		<StyledTableContainer>
+		<StyledTableContainer themeMode={theme}>
 			<div>
 				{props.loading ? (
 					<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
@@ -186,35 +220,72 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 					</div>
 				) : (
 					<>
-						<Table<DataType>
+						<Table
+							theme={theme}
 							columns={columns}
-							rowClassName={`${(record: DataType) => (record.children ? 'parent-row' : 'no-children')} `}
+							onRow={(record) => ({
+								onClick: () => handleRowClick(record)
+							})}
+							rowClassName={(record) => (record.childbounties ? 'parent-row' : 'no-children') + ' hover-row'}
 							expandable={{
 								expandIcon: ({ expanded, onExpand, record }) =>
-									record.children ? (
+									record.totalChildBountiesCount > 0 ? (
 										expanded ? (
 											<CaretUpOutlined
 												className='pr-3 text-[#E5007A]'
-												onClick={(e) => onExpand(record, e)}
+												onClick={(e) => {
+													e.stopPropagation();
+													onExpand(record, e);
+												}}
 											/>
 										) : (
 											<Popover
-												content='Expand to view this'
+												content='Expand to view child bounties'
 												placement='top'
-												arrow={true}
 											>
 												<CaretDownOutlined
 													className='pr-3'
-													onClick={(e) => onExpand(record, e)}
+													onClick={(e) => {
+														e.stopPropagation();
+														onExpand(record, e);
+													}}
 												/>
 											</Popover>
 										)
 									) : null,
-								rowExpandable: (record) => !!record.children
+								expandedRowKeys: expandedRowKeys,
+								expandedRowRender: (record) => (
+									<div>
+										{record.childbounties && record.childbounties.length > 0 ? (
+											<div>
+												{record.childbounties.map((childBounty: any) => {
+													const maxLength = 22;
+													const truncatedTitle = childBounty.title.length > maxLength ? `${childBounty.title.substring(0, maxLength)}...` : childBounty.title;
+													const childbountytitle = childBounty.title ? truncatedTitle : '-';
+													return (
+														<div
+															className='flex justify-between'
+															key={childBounty.index}
+														>
+															<p>{childBounty.index}</p>
+															<p>{childbountytitle}</p>
+															<p>{childBounty.reward}</p>
+															<p>{childBounty.status}</p>
+														</div>
+													);
+												})}
+											</div>
+										) : (
+											<p>No child bounties available.</p>
+										)}
+									</div>
+								),
+								onExpand: handleExpand
 							}}
 							dataSource={props.bounties}
 							pagination={false}
 						/>
+
 						<div className='mb-5 mt-3 flex justify-end'>
 							{props?.totalBountiesCount > 0 && props?.totalBountiesCount > VOTES_LISTING_LIMIT && (
 								<Pagination
@@ -225,6 +296,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 									hideOnSinglePage={true}
 									onChange={handlePageChange}
 									responsive={true}
+									theme={theme}
 								/>
 							)}
 						</div>
@@ -235,7 +307,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 	);
 };
 
-const StyledTableContainer = styled.div`
+const StyledTableContainer = styled.div<{ themeMode: string }>`
 	.ant-table-wrapper .ant-table-thead > tr > th {
 		border-width: 1px 0px 1px 0px;
 		border-style: solid;
@@ -256,6 +328,15 @@ const StyledTableContainer = styled.div`
 	/* Padding for expanded child rows */
 	.ant-table-wrapper .ant-table-tbody > tr.ant-table-expanded-row > td:first-child {
 		padding-left: 25px !important;
+	}
+	.ant-table-wrapper .hover-row:hover {
+		transform: scale(1.009);
+		cursor: pointer;
+		transition: transform 0.2s ease-in-out;
+	}
+
+	.ant-table-wrapper .ant-table-tbody > tr > td {
+		color: ${(props) => (props.themeMode == 'dark' ? 'white' : 'black')};
 	}
 `;
 

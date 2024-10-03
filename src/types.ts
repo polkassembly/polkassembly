@@ -975,3 +975,9 @@ export interface ICommentsSummary {
 	summary_positive: string;
 	summary_neutral: string;
 }
+
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}

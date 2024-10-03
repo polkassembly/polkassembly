@@ -44,11 +44,6 @@ interface Props {
 	forSpecificPost?: boolean;
 	postEdit?: any;
 }
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
-}
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {

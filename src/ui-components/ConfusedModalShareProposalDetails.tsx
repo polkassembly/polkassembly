@@ -23,7 +23,7 @@ interface Props {
 	title?: string;
 }
 
-const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalType, title }: Props) => {
+const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className, postId, proposalType, title }: Props) => {
 	const [message, setMessage] = useState<string>('');
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -100,7 +100,7 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 				<div className='mx-auto -mt-3'>
 					<div className='relative h-12 w-[480px]'>
 						<ImageIcon
-							src='/assets/confusionmodal/comment.svg'
+							src='/assets/confusedmodalShareProposalDetails/comment.svg'
 							alt='Confusion Icon'
 							className=' -ml-5  w-[520px] '
 						/>
@@ -121,14 +121,14 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 				<div className='mt-24 flex justify-center gap-5'>
 					<div onClick={shareOnTwitter}>
 						<ImageIcon
-							src='/assets/confusionmodal/x.svg'
+							src='/assets/confusedmodalShareProposalDetails/x.svg'
 							alt='Share on Twitter'
 							className='h-auto w-auto cursor-pointer'
 						/>
 					</div>
 					<div onClick={copyLinkToClipboard}>
 						<ImageIcon
-							src='/assets/confusionmodal/link.svg'
+							src='/assets/confusedmodalShareProposalDetails/link.svg'
 							alt='Copy Link'
 							className='h-auto w-auto cursor-pointer'
 						/>
@@ -141,4 +141,4 @@ const ConfusionModal = ({ modalOpen, setModalOpen, className, postId, proposalTy
 
 const StyledModal = styled(Modal)``;
 
-export default ConfusionModal;
+export default ConfusedModalShareProposalDetails;

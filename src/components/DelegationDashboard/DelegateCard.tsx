@@ -213,6 +213,44 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					)}
 				</>
 			)}
+			<div className='flex items-center justify-between px-5 pt-4'>
+				<div className='flex items-center gap-2 max-lg:justify-start'>
+					{!!delegate?.image?.length && (
+						<ImageComponent
+							src={delegate?.image || ''}
+							alt=''
+							className='h-8 w-8'
+						/>
+					)}
+					<Address
+						address={delegate?.address}
+						displayInline
+						destroyTooltipOnHide
+						disableIdenticon={Boolean(delegate?.image?.length)}
+						iconSize={26}
+						usernameClassName='font-semibold'
+						isTruncateUsername={false}
+						className='flex items-center'
+					/>
+					<div className='mr-2 flex items-center gap-2'>
+						<SocialsHandle
+							address={delegate?.address}
+							onchainIdentity={delegate?.identityInfo || null}
+							socials={[]}
+							iconSize={18}
+							boxSize={32}
+						/>
+					</div>
+				</div>
+				<Button
+					disabled={disabled}
+					onClick={handleClick}
+					className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
+				>
+					<DelegatesProfileIcon />
+					<span className='text-sm font-medium text-pink_primary max-sm:hidden'>Delegate</span>
+				</Button>
+			</div>
 
 			{/* For Small Screen */}
 			<div className='px-[10px] py-[5px] sm:hidden'>

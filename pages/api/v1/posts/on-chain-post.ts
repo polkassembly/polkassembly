@@ -17,7 +17,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -66,9 +66,9 @@ export const getTimeline = (
 		proposals?.map((obj: any) => {
 			const statuses = obj?.statusHistory as { status: string }[];
 			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
+				const index = statuses?.findIndex((v) => v.status === 'DecisionDepositPlaced');
 				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
+					const decidingIndex = statuses?.findIndex((v) => v.status === 'Deciding');
 					if (decidingIndex >= 0) {
 						const obj = statuses[index];
 						statuses.splice(index, 1);
@@ -136,6 +136,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
+	progress_report?: IProgressReport;
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -286,6 +287,9 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.created_at && !newData.created_at) {
 								newData.created_at = data.created_at;
+							}
+							if (data.progress_report) {
+								newData.progress_report = data.progress_report;
 							}
 							if (!newData.topic_id) {
 								newData.topic_id = getTopicFromFirestoreData(data, proposalType)?.id || null;
@@ -1177,6 +1181,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
+				post.progress_report = data?.progress_report;
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1218,7 +1223,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.content = res.content;
 				post.title = res.title;
 
-				if (!post.content && !post.title && (res.title || res.content)) {
+				if (res.title || res.content) {
 					post.dataSource = 'subsquare';
 				}
 

@@ -8,7 +8,7 @@ import React, { FC, memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState } from 'src/ui-components/UIStates';
+import { FrownOutlined } from '@ant-design/icons';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { noTitle } from '~src/global/noTitle';
@@ -17,6 +17,7 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { PostCategory } from '~src/global/post_categories';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -42,24 +43,23 @@ interface IReferendaPostProps {
 	status?: number;
 }
 
-const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { post, error, network } = props;
+const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(setNetwork(props.network));
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
-	if (error) return <ErrorState errorMessage={error} />;
+	// Calculate trackName outside of the conditional blocks
+	let trackName = '';
+	for (const key of Object.keys(networkTrackInfo[network])) {
+		if (post && networkTrackInfo[network][key].trackId === post.track_number && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
+			trackName = key;
+		}
+	}
 
 	if (post) {
-		let trackName = '';
-		for (const key of Object.keys(networkTrackInfo[props.network])) {
-			if (networkTrackInfo[props.network][key].trackId == post.track_number && !('fellowshipOrigin' in networkTrackInfo[props.network][key])) {
-				trackName = key;
-			}
-		}
 		return (
 			<>
 				<SEOHead
@@ -78,6 +78,18 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 					/>
 				</div>
 			</>
+		);
+	} else if (error) {
+		return (
+			<div className='mt-20 flex flex-col items-center justify-center'>
+				<div className='flex items-center gap-5'>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+				</div>
+				<p className='mt-2 text-lg text-gray-500'>Post not found in the {trackName || 'specified'} category. If you just created a post, it might take up to a minute to appear.</p>
+				<div className='mt-5'>
+					<BackToListingView postCategory={PostCategory.REFERENDA} />
+				</div>
+			</div>
 		);
 	}
 

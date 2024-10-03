@@ -206,7 +206,6 @@ const UploadModalContent = () => {
 			{add_summary_cta_clicked && (
 				<SummaryContentForm
 					onChange={(content: string) => {
-						console.log('summaryc', content);
 						dispatch(progressReportActions.setSummaryContent(content));
 						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 						progress_report.summary = content;

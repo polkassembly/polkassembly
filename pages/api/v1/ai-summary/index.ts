@@ -21,11 +21,13 @@ interface GetCommentsAISummaryResponse {
 
 const cleanContentForSummary = (content: string): string => {
 	const htmlTagRegex = /<\/?[^>]+(>|$)/g;
-	const codeRegex = /```[\s\S]*?```|`[^`]*`/g;
+	const imgTagRegex = /<img[^>]*>/g;
+
 	return removeSymbols(
 		content
+			.replace(imgTagRegex, '')
 			.replace(htmlTagRegex, '')
-			.replace(codeRegex, '')
+			.replace(/```[\s\S]*?```|`[^`]*`/g, '') // Removes code blocks and inline code
 			.replace(/&nbsp;/g, ' ')
 			.replace(/\n/g, ' ')
 			.replace(/\+/g, ' ')

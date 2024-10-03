@@ -19,6 +19,8 @@ const SwipableVotingCards = () => {
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isVoteLoading, setIsVoteLoading] = useState(false);
+	const [decision, setDecision] = useState<string>('');
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
@@ -41,7 +43,8 @@ const SwipableVotingCards = () => {
 	};
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		console.log('postId: ', postId);
+		setIsVoteLoading(true);
+		setDecision(direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'abstain');
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
@@ -55,9 +58,11 @@ const SwipableVotingCards = () => {
 			}
 		});
 		if (error) {
+			setIsVoteLoading(false);
 			console.error(error);
 			return;
 		}
+		setIsVoteLoading(false);
 		getVoteCartData();
 	};
 
@@ -80,7 +85,7 @@ const SwipableVotingCards = () => {
 			if (callingFirstTime) {
 				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
 				setActiveProposals(data);
-				setCurrentIndex(data.length - 1); // Update current index on initial load
+				setCurrentIndex(data.length - 1);
 			} else {
 				setTempActiveProposals(data);
 			}
@@ -126,13 +131,11 @@ const SwipableVotingCards = () => {
 			})
 		);
 
-		// Call the DB update function
 		await addVotedPostToDB(postId, direction);
 
-		// Remove the current proposal from the list
 		const updatedProposals = activeProposal.filter((_, i) => i !== index);
 		setActiveProposals(updatedProposals);
-		setCurrentIndex(updatedProposals.length - 1); // Update the current index
+		setCurrentIndex(updatedProposals.length - 1);
 	};
 
 	useEffect(() => {
@@ -143,7 +146,7 @@ const SwipableVotingCards = () => {
 
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
-			<div className='relative z-[100] h-[527px] w-full'>
+			<div className='relative h-[527px] w-full'>
 				{!isLoading && activeProposal.length <= 0 && (
 					<div className='flex h-[600px] items-center justify-center'>
 						<PostEmptyState
@@ -169,29 +172,29 @@ const SwipableVotingCards = () => {
 				{!isLoading && (
 					<div className={'relative h-full w-full'}>
 						{activeProposal?.map((proposal: any) => (
-							<div
+							<article
 								className='absolute h-full w-full'
-								key={proposal.name}
+								key={proposal?.id}
 							>
-								{/* Render TinderCardComponent */}
 								<TinderCardsComponent
 									onSkip={handleSkipProposalCard}
 									proposal={proposal}
 									isUsedInWebView={true}
 								/>
-							</div>
+							</article>
 						))}
 					</div>
 				)}
 			</div>
 
-			{/* Swipe buttons */}
 			<SwipeBtns
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}
-				childRefs={null} // No need for child refs now
-				className={'bottom-1 mt-8'}
-				onSwipeAction={handleSwipeAction} // Pass the handler to swipe buttons
+				childRefs={null}
+				className={'-bottom-[2px] mt-9'}
+				isLoading={isVoteLoading}
+				decision={decision}
+				onSwipeAction={handleSwipeAction}
 			/>
 		</div>
 	);

@@ -25,13 +25,13 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/PostInfoComponents/VotingFormCard';
 import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
+import Image from 'next/image';
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
@@ -159,7 +159,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		{
 			label: (
 				<div
-					className={`flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`flex h-8 w-full items-center justify-center rounded text-textGreyColor ${
 						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
 					}`}
 				>
@@ -178,7 +178,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		{
 			label: (
 				<div
-					className={`flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`flex h-8 w-full items-center justify-center rounded text-textGreyColor ${
 						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
 					}`}
 				>
@@ -202,7 +202,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-full items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={`flex h-8 w-full items-center  justify-center rounded text-textGreyColor ${
 								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
@@ -218,7 +218,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const VoteUI = (
 		<>
 			{/* aye nye split abstain buttons */}
-			<h3 className={` ${className} inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium`}>Choose your vote</h3>
+			<h3 className={` ${className} inner-headings mb-0.5 mt-6 dark:text-blue-dark-medium`}>Choose your vote</h3>
 			<div className='flex items-start justify-between'>
 				<Segmented
 					block
@@ -234,7 +234,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 					<VotingFormCard
 						form={ayeNayForm}
-						className='-mt-[20px] w-[48%]'
+						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
 						onBalanceChange={(balance: BN) => {
 							if (!forSpecificPost) {
@@ -263,7 +263,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 					<VotingFormCard
 						form={ayeNayForm}
-						className='-mt-[20px] w-[48%]'
+						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
 						onBalanceChange={(balance: BN) => {
 							if (!forSpecificPost) {
@@ -294,7 +294,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					<VotingFormCard
 						form={abstainFrom}
 						isUsedInTinderWebView={true}
-						className='-mt-[20px] w-[48%]'
+						className='-mt-5 w-[48%]'
 						formName={EFormType.ABSTAIN_FORM}
 						onBalanceChange={(balance: BN) => {
 							if (!forSpecificPost) {
@@ -496,15 +496,18 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					</label>
 				</div>
 
-				<div className='flex h-[46px] w-[48%] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
+				<div className='flex h-[46px] w-[48%] items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
 					<div className='flex items-center gap-x-1'>
-						<ImageIcon
+						<Image
 							src='/assets/icons/lock-icon.svg'
 							alt='lock-icon'
+							width={24}
+							height={24}
+							className={theme === 'dark' ? 'dark-icons' : ''}
 						/>
-						<p className='m-0 p-0 text-sm text-lightBlue'>Locking period</p>
+						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 					</div>
-					<p className='m-0 p-0 text-sm text-lightBlue'>No lockup period</p>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>No lockup period</p>
 				</div>
 			</article>
 		</>
@@ -711,5 +714,8 @@ export default styled(OptionWrapper)`
 		height: 12px !important;
 		margin-top: -2px !important;
 		border-radius: 0 !important;
+	}
+	.ant-slider .ant-slider-rail {
+		background-color: #f6f7f9 !important;
 	}
 `;

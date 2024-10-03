@@ -112,7 +112,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	return (
 		<section
 			key={index}
-			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-blue-dark-medium dark:bg-transparent'
+			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'
 		>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
@@ -134,7 +134,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			</article>
 			<Divider
 				type='horizontal'
-				className='border-l-1 my-0 border-grey_border dark:border-icon-dark-inactive'
+				className='border-l-1 my-0 border-grey_border dark:border-separatorDark'
 			/>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<div className='mr-auto flex items-center gap-x-1'>

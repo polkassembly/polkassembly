@@ -40,6 +40,8 @@ export interface ISwipeActionButtons {
 	childRefs: any;
 	className?: string;
 	onSwipeAction?: any;
+	decision?: string;
+	isLoading?: boolean;
 }
 
 export interface ITinderCardsComponent {

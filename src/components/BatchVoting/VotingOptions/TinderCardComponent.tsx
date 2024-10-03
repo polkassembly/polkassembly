@@ -4,7 +4,6 @@
 import React, { FC, useState } from 'react';
 import { Button, Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
-// import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
 import Link from 'next/link';
 import { ITinderCardsComponent } from '~src/components/TinderStyleVoting/types';
@@ -22,8 +21,8 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	};
 
 	return (
-		<section className='flex overflow-x-hidden'>
-			<div className='overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+		<div className='flex overflow-x-hidden'>
+			<div className='overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}
@@ -41,7 +40,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</div>
 				<Divider
 					type='horizontal'
-					className='border-l-1 -mt-4 mb-4 border-[#D2D8E0] dark:border-icon-dark-inactive'
+					className='border-l-1 -mt-4 mb-4 border-[#D2D8E0] dark:border-separatorDark'
 				/>
 				<div className='max-h-[246px] overflow-y-auto'>
 					<div className='flex w-full justify-start overflow-hidden text-ellipsis'>
@@ -60,7 +59,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					{proposal?.comments?.length > 0 && <CardComments proposal={proposal} />}
 					<Divider
 						type='horizontal'
-						className='border-l-1 my-2 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:inline-block'
+						className='border-l-1 my-2 border-[#D2D8E0] dark:border-separatorDark max-lg:hidden xs:inline-block'
 					/>
 					<ReferendumV2CardInfo
 						className='shadow-none'
@@ -73,7 +72,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					/>
 				</div>
 			</div>
-		</section>
+		</div>
 	);
 };
 

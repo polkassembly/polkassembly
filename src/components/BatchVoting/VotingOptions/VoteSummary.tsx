@@ -81,10 +81,10 @@ const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, aye
 	const ayeColor = theme === 'dark' ? '#64A057' : '#2ED47A';
 	const nayColor = theme === 'dark' ? '#BD2020' : '#E84865';
 	return (
-		<div className={`${className} relative -mt-7 flex items-end justify-center gap-x-2`}>
+		<div className={`${className} -mt-[48px] flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[24px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
-				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
+				<span className='text-[24px] font-semibold leading-6 text-aye_green dark:text-aye_green_Dark'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
+				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>Aye</span>
 			</div>
 			<>
 				<PieChart
@@ -101,8 +101,8 @@ const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, aye
 				/>
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[24px] font-semibold leading-6 text-[#E84865] dark:text-[#BD2020]'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
-				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
+				<span className='text-[24px] font-semibold leading-6 text-nay_red dark:text-nay_red_Dark'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
+				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>Nay</span>
 			</div>
 		</div>
 	);

@@ -6,9 +6,10 @@ import { StopOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { ISwipeActionButtons } from '~src/components/TinderStyleVoting/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { Button } from 'antd';
 
 const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
-	const { currentIndex, trackPosts, onSwipeAction, className } = props;
+	const { currentIndex, trackPosts, onSwipeAction, className, decision, isLoading } = props;
 	const canSwipe = currentIndex >= 0;
 
 	const handleAction = (direction: string) => {
@@ -19,34 +20,46 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 
 	return (
 		<section className={classNames(className, 'fixed z-[1000] flex w-full flex-col gap-y-2 rounded-lg bg-white shadow-inner dark:bg-highlightBg')}>
-			<div className='flex items-center justify-center gap-x-6 p-4'>
-				<button
-					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent'
+			<div className='flex h-[76px] items-center justify-center gap-x-6 p-4'>
+				<Button
+					className={`${
+						isLoading ? 'opacity-60' : ''
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent`}
 					onClick={() => handleAction('left')}
+					loading={decision === 'nay' ? isLoading : false}
+					disabled={isLoading}
 				>
 					<ImageIcon
 						src='/assets/icons/red-dislike-icon.svg'
 						alt='dislike-icon'
 					/>
 					<p className='m-0 p-0 text-[#F53C3C]'>Nay</p>
-				</button>
-				<button
-					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent'
+				</Button>
+				<Button
+					className={`${
+						isLoading ? 'opacity-60' : ''
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent`}
 					onClick={() => handleAction('up')}
+					loading={decision === 'abstain' ? isLoading : false}
+					disabled={isLoading}
 				>
 					<StopOutlined className={'text-base text-[#407BFF]'} />
 					<p className='m-0 p-0 text-[#407BFF]'>Abstain</p>
-				</button>
-				<button
-					className='flex h-[32px] w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent'
+				</Button>
+				<Button
+					className={`${
+						isLoading ? 'opacity-60' : ''
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent`}
 					onClick={() => handleAction('right')}
+					loading={decision === 'aye' ? isLoading : false}
+					disabled={isLoading}
 				>
 					<ImageIcon
 						src='/assets/icons/green-like-icon.svg'
 						alt='dislike-icon'
 					/>
 					<p className='m-0 p-0 text-[#2ED47A]'>Aye</p>
-				</button>
+				</Button>
 			</div>
 		</section>
 	);

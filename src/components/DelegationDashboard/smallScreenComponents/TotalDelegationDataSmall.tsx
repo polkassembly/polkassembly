@@ -8,12 +8,12 @@ import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { poppins } from 'pages/_app';
+import Image from 'next/image';
 
 const ZERO_BN = new BN(0);
 
@@ -78,9 +78,11 @@ const TotalDelegationDataSmall = ({
 						<div className='flex items-center justify-between'>
 							{/* Total Delegatees */}
 							<div className='flex flex-col items-center gap-[6px]'>
-								<ImageIcon
-									src='/assets/delegation-tracks/small-total-delegatees.svg'
+								<Image
+									src='/assets/delegation-tracks/total-delegatees.svg'
 									alt='Total delegatees icon'
+									height={24}
+									width={24}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegatees</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
@@ -92,9 +94,11 @@ const TotalDelegationDataSmall = ({
 
 							{/* Total Supply */}
 							<div className='flex flex-col items-center gap-[6px]'>
-								<ImageIcon
-									src='/assets/delegation-tracks/small-polkadot-delegation.svg'
+								<Image
+									src='/assets/delegation-tracks/polkadot-delegation.svg'
 									alt='polkadot delegation icon'
+									height={24}
+									width={24}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Supply</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
@@ -108,9 +112,11 @@ const TotalDelegationDataSmall = ({
 
 							{/* Total Delegates */}
 							<div className='flex flex-col items-center gap-[6px]'>
-								<ImageIcon
-									src='/assets/delegation-tracks/small-total-delegates.svg'
+								<Image
+									src='/assets/delegation-tracks/total-delegates.svg'
 									alt='Total delegate icon'
+									height={24}
+									width={24}
 								/>
 								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegates</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
@@ -125,9 +131,11 @@ const TotalDelegationDataSmall = ({
 					<div className='flex items-center justify-evenly'>
 						{/* Total Delegated Votes */}
 						<div className='flex flex-col items-center gap-[6px]'>
-							<ImageIcon
-								src='/assets/delegation-tracks/small-total-delegated-tokens.svg'
+							<Image
+								src='/assets/delegation-tracks/total-delegated-tokens.svg'
 								alt='Total delegate tokens icon'
+								height={24}
+								width={24}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegated Votes</span>
 							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
@@ -139,9 +147,11 @@ const TotalDelegationDataSmall = ({
 
 						{/* Delegated tokens */}
 						<div className='flex flex-col items-center gap-[6px]'>
-							<ImageIcon
-								src='/assets/delegation-tracks/small-delegate-tokens.svg'
+							<Image
+								src='/assets/delegation-tracks/delegate-tokens.svg'
 								alt='delegate tokens icon'
+								height={24}
+								width={24}
 							/>
 							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Delegated Tokens</span>
 							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>

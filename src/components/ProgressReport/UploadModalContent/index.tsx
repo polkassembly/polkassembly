@@ -27,12 +27,11 @@ const { Dragger } = Upload;
 const UploadModalContent = () => {
 	const dispatch = useDispatch();
 	const [fileLink, setFileLink] = useState<string>('');
-	const [fileName, setFileName] = useState<string>('');
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const { postIndex } = postData;
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content, file_name } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -47,7 +46,7 @@ const UploadModalContent = () => {
 		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
 			setFileLink(progress_report.url);
-			setFileName(progress_report.url.split('/').pop());
+			dispatch(progressReportActions.setFileName(progress_report.url.split('/').pop()));
 			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
@@ -69,7 +68,7 @@ const UploadModalContent = () => {
 			formData.append('media', file);
 			const { data, error } = await nextApiClientFetch<IUploadResponseType>('/api/v1/progressReport/uploadReport', formData);
 			if (data) {
-				setFileLink(data?.displayUrl);
+				dispatch(progressReportActions.setFileName(data?.displayUrl));
 				sharableLink = data.displayUrl;
 			} else {
 				console.error('Upload error:', error);
@@ -78,6 +77,23 @@ const UploadModalContent = () => {
 			console.error('Unexpected error:', err);
 		}
 		return sharableLink;
+	};
+
+	const handleReplace = async () => {
+		try {
+			// Make the API call to remove the last uploaded file
+			const { data, error } = await nextApiClientFetch<{ message: string }>('/api/v1/progressReport/removeReport');
+			if (data) {
+				message.success('Last uploaded file removed successfully');
+				dispatch(progressReportActions.setReportUploaded(false));
+			} else {
+				console.error('Error removing last uploaded file:', error);
+				message.error('Failed to remove last uploaded file');
+			}
+		} catch (error) {
+			console.error('Unexpected error:', error);
+			message.error('An unexpected error occurred');
+		}
 	};
 
 	const props: UploadProps = {
@@ -112,7 +128,6 @@ const UploadModalContent = () => {
 		onChange(info) {
 			const { status } = info.file;
 			if (status === 'done') {
-				setFileName(info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
 				dispatch(progressReportActions.setFileName(info.file.name));
 				message.success(`${info.file.name} file uploaded successfully.`);
@@ -124,7 +139,7 @@ const UploadModalContent = () => {
 	};
 
 	return (
-		<article className='mt-2 flex flex-col gap-y-1'>
+		<article className='mt-[6px] flex flex-col gap-y-1'>
 			{!report_uploaded && !postData?.progress_report && (
 				<Alert
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
@@ -153,7 +168,7 @@ const UploadModalContent = () => {
 								src='/assets/icons/edit-pencil.svg'
 								alt='edit-icon'
 							/>{' '}
-							Edit summary
+							{postData?.progress_report?.progress_summary ? 'Edit Summary' : 'Add Summary'}
 						</Button>
 						{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 					</div>
@@ -233,13 +248,18 @@ const UploadModalContent = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{fileName?.length > 20 ? `${fileName?.slice(0, 20)}` : fileName}</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>
+								{(postData?.progress_report?.progress_name || file_name)?.length > 20
+									? `${(postData?.progress_report?.progress_name || file_name)?.slice(0, 20)}`
+									: postData?.progress_report?.progress_name || file_name}
+							</p>
 						</div>
 						{!postData?.progress_report?.progress_file && (
 							<div
 								className='flex cursor-pointer items-center justify-end'
 								onClick={() => {
 									dispatch(progressReportActions.setReportUploaded(false));
+									handleReplace();
 								}}
 							>
 								<ImageIcon

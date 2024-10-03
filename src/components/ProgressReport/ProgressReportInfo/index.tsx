@@ -151,7 +151,7 @@ const ProgressReportInfo = () => {
 						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
-					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.progress_addedOn).format('DD MMM YYYY')}</p>
+					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.created_at).format('DD MMM YYYY')}</p>
 					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 				</header>
 				<article className='flex flex-col gap-y-1'>

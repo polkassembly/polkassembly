@@ -38,9 +38,8 @@ const UploadReport = () => {
 
 	const addProgressReport = async () => {
 		const progress_report = {
-			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
-			progress_name: `${file_name}-${Date.now()}`,
+			progress_name: `${file_name}`,
 			progress_summary: summary_content,
 			ratings: []
 		};

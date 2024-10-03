@@ -61,9 +61,8 @@ const ProgressReportTab = ({ className }: Props) => {
 
 	const addProgressReport = async () => {
 		const progress_report = {
-			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
-			progress_name: `${Date.now()}-${file_name}`,
+			progress_name: `${file_name}`,
 			progress_summary: summary_content,
 			ratings: []
 		};
@@ -187,7 +186,7 @@ const ProgressReportTab = ({ className }: Props) => {
 							<div className='mt-4 flex justify-end'>
 								<CustomButton
 									variant='primary'
-									text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
+									text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
 									buttonsize='sm'
 									loading={loading}
 									className={`${loading ? 'opacity-60' : ''} ${

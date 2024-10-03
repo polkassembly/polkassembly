@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-export const getIsSwapStatus = (statusHistory: string[]) => {
-	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
+export const getIsSwapStatus = (statusHistory: { status: string }[]) => {
+	const index = statusHistory.findIndex((v: { status: string }) => v.status === 'DecisionDepositPlaced');
 	if (index >= 0) {
-		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
+		const decidingIndex = statusHistory.findIndex((v: { status: string }) => v.status === 'Deciding');
 		if (decidingIndex >= 0) {
 			const obj = statusHistory[index];
 			statusHistory.splice(index, 1);

@@ -258,7 +258,10 @@ const UploadModalContent = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType} - ${postData?.postIndex}`}</p>
+							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replace(
+								/_/g,
+								' '
+							)} - ${postData?.postIndex}`}</p>
 						</div>
 						{!postData?.progress_report?.progress_file && (
 							<div

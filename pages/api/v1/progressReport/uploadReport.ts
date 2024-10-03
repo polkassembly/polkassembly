@@ -68,8 +68,10 @@ const handler: NextApiHandler<IUploadResponseType | MessageType> = async (req: N
 			if (!allowedTypes.includes(file.mimetype || '')) {
 				return res.status(400).json({ message: 'Unsupported file type. Only PDF files are allowed.' });
 			}
+			const postIndex = fields.postIndex;
+			const postType = fields.postType;
 
-			const fileName = `${Date.now()}-${file.originalFilename}`;
+			const fileName = `${network}_${postIndex}_${postType}_${user?.id}`;
 			const filePath = `user-uploads/${user?.id}/${fileName}`;
 			const bucketFile = firebaseStorageBucket.file(filePath);
 

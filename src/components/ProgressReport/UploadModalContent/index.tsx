@@ -26,12 +26,13 @@ const { Dragger } = Upload;
 
 const UploadModalContent = () => {
 	const dispatch = useDispatch();
-	const [fileLink, setFileLink] = useState<string>('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [canUpload, setCanUpload] = useState(true);
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const { postIndex } = postData;
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content, file_name } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content, progress_report_link } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -45,8 +46,6 @@ const UploadModalContent = () => {
 	const checkAndRestoreProgressReport = () => {
 		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
-			setFileLink(progress_report.url);
-			dispatch(progressReportActions.setFileName(progress_report?.report_name?.split('-').pop()));
 			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
@@ -59,59 +58,70 @@ const UploadModalContent = () => {
 	}, [postIndex, id]);
 
 	const handleUpload = async (file: File) => {
-		dispatch(progressReportActions.setFileName(file.name));
 		if (!file) return '';
 		let sharableLink = '';
 
 		try {
+			setIsLoading(true);
 			const formData = new FormData();
 			formData.append('media', file);
+			formData.append('postIndex', postData?.postIndex as any);
+			formData.append('postType', postData?.postType);
 			const { data, error } = await nextApiClientFetch<IUploadResponseType>('/api/v1/progressReport/uploadReport', formData);
+			setIsLoading(false);
 			if (data) {
-				dispatch(progressReportActions.setFileName(data?.displayUrl));
 				sharableLink = data.displayUrl;
 			} else {
 				console.error('Upload error:', error);
 			}
 		} catch (err) {
+			setIsLoading(false);
 			console.error('Unexpected error:', err);
 		}
 		return sharableLink;
 	};
 
 	const handleReplace = async () => {
+		setIsLoading(true);
 		try {
-			// Make the API call to remove the last uploaded file
 			const { data, error } = await nextApiClientFetch<{ message: string }>('/api/v1/progressReport/removeReport');
 			if (data) {
 				message.success('Last uploaded file removed successfully');
 				dispatch(progressReportActions.setReportUploaded(false));
+				setCanUpload(true);
 			} else {
 				console.error('Error removing last uploaded file:', error);
 				message.error('Failed to remove last uploaded file');
+				setCanUpload(false);
 			}
 		} catch (error) {
 			console.error('Unexpected error:', error);
 			message.error('An unexpected error occurred');
+			setCanUpload(false);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const props: UploadProps = {
 		action: window.location.href,
 		customRequest: async ({ file, onSuccess, onError }) => {
+			if (!canUpload) {
+				message.error('Cannot upload a new file until the previous one is removed.');
+				return;
+			}
 			try {
+				setIsLoading(true);
 				const sharableLink = await handleUpload(file as File);
 				if (sharableLink) {
 					dispatch(progressReportActions.setProgressReportLink(sharableLink));
 					const progress_report = {
 						post_id: postIndex,
 						proposalType: postData?.postType,
-						report_name: file_name,
 						summary: '',
 						url: sharableLink,
 						user_id: id
 					};
-
 					localStorage.setItem('progress_report', JSON.stringify(progress_report));
 					onSuccess?.({}, file as any);
 				} else {
@@ -122,15 +132,17 @@ const UploadModalContent = () => {
 			} catch (error) {
 				console.error('Custom request error:', error);
 				onError?.(error);
+			} finally {
+				setIsLoading(false);
 			}
 		},
+		disabled: isLoading || !canUpload,
 		multiple: false,
 		name: 'file',
 		onChange(info) {
 			const { status } = info.file;
 			if (status === 'done') {
 				dispatch(progressReportActions.setReportUploaded(true));
-				dispatch(progressReportActions.setFileName(info.file.name));
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
 				message.error(`${info.file.name} file upload failed.`);
@@ -224,7 +236,7 @@ const UploadModalContent = () => {
 							alt='upload-icon'
 						/>
 						<div className='flex flex-col items-start justify-start gap-y-2'>
-							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>Upload</p>
+							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>{isLoading ? 'Uploading...' : 'Upload'}</p>
 							<p className='ant-upload-hint m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Drag and drop your files here.</p>
 						</div>
 					</div>
@@ -232,7 +244,7 @@ const UploadModalContent = () => {
 			) : (
 				<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
 					<iframe
-						src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileLink || postData?.progress_report?.progress_file)}&embedded=true`}
+						src={`https://docs.google.com/viewer?url=${encodeURIComponent(progress_report_link || postData?.progress_report?.progress_file)}&embedded=true`}
 						width='100%'
 						height='180px'
 						title='PDF Preview'
@@ -246,11 +258,7 @@ const UploadModalContent = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>
-								{(postData?.progress_report?.progress_name || file_name)?.length > 20
-									? `${(postData?.progress_report?.progress_name || file_name)?.slice(0, 20)}`
-									: postData?.progress_report?.progress_name || file_name}
-							</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{`progressReport_post_${postData?.postIndex}`}</p>
 						</div>
 						{!postData?.progress_report?.progress_file && (
 							<div

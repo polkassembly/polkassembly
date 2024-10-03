@@ -5,7 +5,6 @@ import { Button, Divider, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import classNames from 'classnames';
@@ -24,6 +23,7 @@ import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import dayjs from 'dayjs';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -151,7 +151,7 @@ const ProgressReportInfo = () => {
 						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
-					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.created_at?._seconds * 1000).format('DD MMM YYYY')}</p>
+					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.created_at).format('DD MMM YYYY')}</p>
 					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 				</header>
 				<article className='flex flex-col gap-y-1'>
@@ -185,7 +185,7 @@ const ProgressReportInfo = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{`progressReport_post_${postData?.postIndex}`}</p>
 						</div>
 					</div>
 				</article>

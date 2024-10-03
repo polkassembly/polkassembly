@@ -36,7 +36,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const [loading, setLoading] = useState<boolean>(false);
-	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
+	const { report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
 	const [originalSummary, setOriginalSummary] = useState<string>(summary_content);
 
 	useEffect(() => {
@@ -62,7 +62,6 @@ const ProgressReportTab = ({ className }: Props) => {
 	const addProgressReport = async () => {
 		const progress_report = {
 			progress_file: progress_report_link,
-			progress_name: file_name,
 			progress_summary: summary_content,
 			ratings: []
 		};

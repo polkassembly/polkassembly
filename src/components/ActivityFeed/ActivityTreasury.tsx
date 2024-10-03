@@ -5,6 +5,8 @@ import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { poppins } from 'pages/_app';
+import type { Balance } from '@polkadot/types/interfaces';
+import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -15,11 +17,203 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import { useApiContext } from '~src/context';
+import { subscanApiHeaders } from '~src/global/apiHeaders';
+import dayjs from 'dayjs';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useDispatch } from 'react-redux';
+import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
+import { BN } from 'bn.js';
 
-const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nextBurn, tokenValue }: IOverviewProps) => {
+interface TokenPrice {
+	value: string;
+	isLoading: boolean;
+}
+
+interface PriceWeeklyChange {
+	isLoading: boolean;
+	value: string;
+}
+
+const ActivityTreasury = () => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
+	const dispatch = useDispatch();
+
+	const [available, setAvailable] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [nextBurn, setNextBurn] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
+	});
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
+		isLoading: true,
+		value: ''
+	});
+
+	const [tokenValue, setTokenValue] = useState<number>(0);
+
+	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		const EMPTY_U8A_32 = new Uint8Array(32);
+
+		const treasuryAccount = u8aConcat(
+			'modl',
+			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
+			EMPTY_U8A_32
+		);
+
+		const fetchTreasuryData = async () => {
+			setAvailable({ isLoading: true, value: '', valueUSD: '' });
+			setNextBurn({ isLoading: true, value: '', valueUSD: '' });
+
+			try {
+				const treasuryBalance = await api.derive.balances?.account(u8aToHex(treasuryAccount));
+				const accountData = await api.query.system.account(treasuryAccount);
+
+				const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
+				treasuryBalance.freeBalance = freeBalance as Balance;
+
+				updateBurnValue(treasuryBalance);
+				updateAvailableValue(treasuryBalance);
+			} catch (error) {
+				console.error(error);
+				setAvailable({ isLoading: false, value: '', valueUSD: '' });
+				setNextBurn({ isLoading: false, value: '', valueUSD: '' });
+			}
+		};
+
+		const updateBurnValue = (treasuryBalance: any) => {
+			let valueUSD = '';
+			let value = '';
+			const burn =
+				treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
+
+			if (burn) {
+				const nextBurnValueUSD = parseFloat(formatBnBalance(burn.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+
+				if (nextBurnValueUSD && currentTokenPrice?.value) {
+					valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+				}
+
+				value = formatUSDWithUnits(formatBnBalance(burn.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			}
+
+			setNextBurn({ isLoading: false, value, valueUSD });
+		};
+
+		const updateAvailableValue = (treasuryBalance: any) => {
+			let valueUSD = '';
+			let value = '';
+			const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
+
+			if (freeBalance) {
+				const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+
+				setTokenValue(availableValueUSD);
+
+				if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
+					valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+				}
+
+				value = formatUSDWithUnits(formatBnBalance(freeBalance.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			}
+
+			setAvailable({ isLoading: false, value, valueUSD });
+		};
+
+		fetchTreasuryData();
+
+		if (currentTokenPrice?.value !== 'N/A') {
+			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, currentTokenPrice, network]);
+
+	useEffect(() => {
+		if (!network) return;
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+	}, [network]);
+
+	let cancel = false;
+
+	// Function to fetch the price from a week ago
+	async function fetchWeekAgoTokenPrice(currentTokenPrice: TokenPrice, network: string, setPriceWeeklyChange: (change: PriceWeeklyChange) => void) {
+		if (cancel) return;
+		const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
+		try {
+			const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
+				body: JSON.stringify({
+					end: weekAgoDate,
+					start: weekAgoDate
+				}),
+				headers: subscanApiHeaders,
+				method: 'POST'
+			});
+			const responseJSON = await response.json();
+			if (responseJSON['message'] === 'Success') {
+				const weekAgoPrice = responseJSON['data']['ema7_average'];
+				const currentTokenPriceNum = parseFloat(currentTokenPrice.value);
+				const weekAgoPriceNum = parseFloat(weekAgoPrice);
+				if (weekAgoPriceNum === 0) {
+					setPriceWeeklyChange({
+						isLoading: false,
+						value: 'N/A'
+					});
+					return;
+				}
+				const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: percentChange.toFixed(2)
+				});
+				return;
+			}
+			setPriceWeeklyChange({
+				isLoading: false,
+				value: 'N/A'
+			});
+		} catch (err) {
+			setPriceWeeklyChange({
+				isLoading: false,
+				value: 'N/A'
+			});
+		}
+	}
+	useEffect(() => {
+		setPriceWeeklyChange({
+			isLoading: true,
+			value: ''
+		});
+
+		if (!currentTokenPrice.value || currentTokenPrice.isLoading || !network) {
+			setPriceWeeklyChange({
+				isLoading: false,
+				value: 'N/A'
+			});
+			return;
+		}
+
+		fetchWeekAgoTokenPrice(currentTokenPrice, network, setPriceWeeklyChange);
+
+		return () => {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			cancel = true;
+		};
+	}, [currentTokenPrice, network, setPriceWeeklyChange]);
+
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
 	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);

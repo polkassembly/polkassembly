@@ -187,42 +187,40 @@ const LatestActivityFollowing: React.FC = () => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [loading, setLoading] = useState<boolean>(false); // Loading state
 	const { network } = useNetworkSelector();
-
-	useEffect(() => {
-		const fetchPostUpdates = async () => {
-			try {
-				setLoading(true);
-				const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
-				const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-				const detailedPosts = await Promise.all(
-					posts.map(async (post: IPostData) => {
-						try {
-							let firstVoterProfileImg = null;
-							if (post?.post_reactions?.['👍']?.usernames?.[0]) {
-								const username = post.post_reactions['👍'].usernames[0];
-								firstVoterProfileImg = await fetchVoterProfileImage(username);
-							}
-							const proposerProfile = await fetchUserProfile(post.proposer || '');
-							return {
-								...post,
-								firstVoterProfileImg,
-								proposerProfile
-							};
-						} catch (error) {
-							console.error('Error processing post', error);
-							return { ...post, error: true };
+	const fetchPostUpdates = async () => {
+		try {
+			setLoading(true);
+			const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
+			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
+			const detailedPosts = await Promise.all(
+				posts.map(async (post: IPostData) => {
+					try {
+						let firstVoterProfileImg = null;
+						if (post?.post_reactions?.['👍']?.usernames?.[0]) {
+							const username = post.post_reactions['👍'].usernames[0];
+							firstVoterProfileImg = await fetchVoterProfileImage(username);
 						}
-					})
-				);
+						const proposerProfile = await fetchUserProfile(post.proposer || '');
+						return {
+							...post,
+							firstVoterProfileImg,
+							proposerProfile
+						};
+					} catch (error) {
+						console.error('Error processing post', error);
+						return { ...post, error: true };
+					}
+				})
+			);
 
-				setSubscribedPosts(detailedPosts.filter((post) => !post.error));
-			} catch (err) {
-				console.error('Failed to fetch subscribed posts:', err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
+			setSubscribedPosts(detailedPosts.filter((post) => !post.error));
+		} catch (err) {
+			console.error('Failed to fetch subscribed posts:', err);
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
 		fetchPostUpdates();
 	}, [currentTab, network]);
 

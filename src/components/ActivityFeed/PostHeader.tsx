@@ -126,18 +126,17 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [votesData, setVotesData] = useState(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	useEffect(() => {
-		const fetchData = async () => {
-			if (network && post.post_id) {
-				const votesResponse = await getReferendumVotes(network, post.post_id);
-				if (votesResponse.data) {
-					setVotesData(votesResponse.data);
-				} else {
-					console.error(votesResponse.error);
-				}
+	const fetchData = async () => {
+		if (network && post.post_id) {
+			const votesResponse = await getReferendumVotes(network, post.post_id);
+			if (votesResponse.data) {
+				setVotesData(votesResponse.data);
+			} else {
+				console.error(votesResponse.error);
 			}
-		};
-
+		}
+	};
+	useEffect(() => {
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post.post_id, network]);

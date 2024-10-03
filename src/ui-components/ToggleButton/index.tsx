@@ -12,7 +12,7 @@ const ToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 
 	return (
-		<div className='flex items-center justify-center pb-[15px]'>
+		<div>
 			<button
 				onClick={(e) => {
 					e.preventDefault();
@@ -23,7 +23,7 @@ const ToggleButton = () => {
 					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
 				})}
 			>
-				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}
+				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}{' '}
 			</button>
 		</div>
 	);

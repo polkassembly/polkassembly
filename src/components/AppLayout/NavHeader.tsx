@@ -433,7 +433,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							</AuthDropdown>
 						)}
 					</Space>
-					<div className='mr-2 mt-[12px] hidden md:block lg:mr-0'>
+					<div className='mr-2 hidden md:block lg:mr-0'>
 						<ToggleButton />
 					</div>
 					{open ? (

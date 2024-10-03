@@ -28,10 +28,11 @@ interface IProposalInfoCard {
 	voteInfo: any;
 	index: number;
 	key?: number;
+	reloadBatchCart: () => void;
 }
 
 const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
-	const { index, voteInfo } = props;
+	const { index, voteInfo, reloadBatchCart } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const user = useUserDetailsSelector();
@@ -93,6 +94,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			console.error(error);
 			return;
 		}
+
+		reloadBatchCart();
 	};
 
 	const deletePostDetails = async () => {
@@ -212,6 +215,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								className={`${!is_field_edited ? 'opacity-50' : ''}`}
 								disabled={!is_field_edited}
 								onClick={() => {
+									console.log('checking field: ', edit_vote_details?.conviction);
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
 											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
@@ -228,7 +232,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);
-									// dispatch(batchVotesActions.setIsFieldEdited(true));
 									setOpenEditModal(false);
 									editPostVoteDetails();
 								}}

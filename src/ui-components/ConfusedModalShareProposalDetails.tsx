@@ -81,7 +81,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 		<StyledModal
 			open={modalOpen}
 			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon className='text-lightBlue' />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-white' />}
 			centered
 			zIndex={1002}
 			className={className}
@@ -95,7 +95,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						width={320}
 						height={320}
 					/>
-					<p className='-mt-4 text-xl font-semibold text-[#243A57]'>Confusion everywhere, It&apos;s a Menace!</p>
+					<p className='-mt-4 text-xl font-semibold text-[#243A57] dark:text-blue-dark-high'>Confusion everywhere, It&apos;s a Menace!</p>
 				</div>
 				<div className='mx-auto -mt-3'>
 					<div className='relative h-12 w-[480px]'>
@@ -106,7 +106,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 						<div className='absolute inset-0 left-5 top-5 z-10 '>
 							<div className=''>
-								<p className='font-poppins text-[14px] text-[#485F7D]'>Add a message</p>
+								<p className='font-poppins text-[14px]  text-[#485F7D]'>Add a message</p>
 							</div>
 							<input
 								type='text'

@@ -62,26 +62,26 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	const { id } = router.query;
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [isContentVisible, setContentVisible] = useState(true);
-	const [isNudgeVisible, setNudgeVisible] = useState(true);
+	const [isNudgeVisible, setNudgeVisible] = useState(false);
 
 	const handleToggleContent = () => {
 		setContentVisible(false);
 	};
 
-	// useEffect(() => {
-	// 	dispatch(setNetwork(props.network));
-	// 	if (post?.status === bountyStatus.ACTIVE || bountyStatus.EXTENDED) {
-	// 		const nudgeTimeout = setTimeout(() => {
-	// 			setNudgeVisible(true);
-	// 		}, 180000);
+	useEffect(() => {
+		dispatch(setNetwork(props.network));
+		if (post?.status === bountyStatus.ACTIVE || bountyStatus.EXTENDED) {
+			const nudgeTimeout = setTimeout(() => {
+				setNudgeVisible(true);
+			}, 180000);
 
-	// 		return () => {
-	// 			if (nudgeTimeout) {
-	// 				clearTimeout(nudgeTimeout);
-	// 			}
-	// 		};
-	// 	}
-	// }, [dispatch, post?.status, props.network]);
+			return () => {
+				if (nudgeTimeout) {
+					clearTimeout(nudgeTimeout);
+				}
+			};
+		}
+	}, [dispatch, post?.status, props.network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {

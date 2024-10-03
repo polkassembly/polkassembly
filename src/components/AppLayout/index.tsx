@@ -260,7 +260,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
 														className={`${
-															!is_sidebar_collapsed && 'pl-32 2xl:pl-0'
+															!is_sidebar_collapsed && '3xl:pl-0 pl-28'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
 														<Component {...pageProps} />
@@ -304,7 +304,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 													<Content
 														className={`${
-															!is_sidebar_collapsed && 'pl-28 2xl:pl-0'
+															!is_sidebar_collapsed && '3xl:pl-0 pl-28'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
 														<Component {...pageProps} />
@@ -643,5 +643,10 @@ export default styled(AppLayout)`
 		-ms-overflow-style: none; /* For Internet Explorer and Edge */
 		scrollbar-width: none; /* For Firefox */
 		overflow: hidden; /* Ensures no scrollbars for other browsers */
+	}
+
+	.width-content{
+	@media (max-width: 1532px and min-width: 1700px) {
+		margin-left: 0px;
 	}
 `;

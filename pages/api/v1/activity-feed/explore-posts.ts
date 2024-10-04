@@ -140,10 +140,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 					if (calls && Array.isArray(calls) && calls.length > 0) {
 						calls.forEach((call) => {
-							if (call && call.amount) {
+							if (call?.amount) {
 								requested += BigInt(call.amount);
 							}
-							if (call && call?.value?.amount) {
+							if (call?.value?.amount) {
 								requested += BigInt(call?.value?.amount);
 							}
 						});
@@ -234,7 +234,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			};
 
 			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
+			if (postDoc?.exists) {
 				const data = postDoc.data();
 				if (data) {
 					let subsquareTitle = '';
@@ -263,16 +263,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							}
 						}
 					});
-					let maxSentiment = null;
-					let maxSentimentCount = 0;
-					let totalSentiments = 0;
-					Object.entries(sentiments).map(([key, value]) => {
-						totalSentiments += value;
-						if (maxSentimentCount < value) {
-							maxSentimentCount = value;
-							maxSentiment = key;
-						}
-					});
+					const { totalSentiments, maxSentiment, maxSentimentCount } = Object.entries(sentiments).reduce(
+						(acc, [key, value]) => {
+							acc.totalSentiments += value;
+							if (acc.maxSentimentCount < value) {
+								acc.maxSentimentCount = value;
+								acc.maxSentiment = key as string;
+							}
+							return acc;
+						},
+						{ maxSentiment: null as string | null, maxSentimentCount: 0, totalSentiments: 0 }
+					);
 					const commentsCountQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
@@ -333,7 +334,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		];
 		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
-		console.error('Error fetching subscribed posts:', err);
+		console.error('Error fetching explore posts:', err);
 		return res.status(500).json({ message: messages.API_FETCH_ERROR });
 	}
 }

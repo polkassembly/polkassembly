@@ -29,23 +29,10 @@ const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
 		const fifteenDaysAgo = dayjs().subtract(15, 'days').toISOString();
 
 		try {
-			let encodedAddresses;
-			if (Array.isArray(currentUser.addresses)) {
-				encodedAddresses = currentUser.addresses
-					.map((address: string) => {
-						if (typeof address === 'string') {
-							return getEncodedAddress(address, network);
-						} else {
-							console.error('Address is not a string:', address);
-							return null;
-						}
-					})
-					.filter(Boolean);
-			} else if (typeof currentUser?.addresses === 'string') {
-				encodedAddresses = [getEncodedAddress(currentUser.addresses, network)];
-			} else {
-				console.error('Unexpected address format:', currentUser?.addresses);
-				encodedAddresses = null;
+			const addresses = Array.isArray(currentUser.addresses) ? currentUser.addresses : typeof currentUser.addresses === 'string' ? [currentUser.addresses] : [];
+			const encodedAddresses = addresses.map((address) => getEncodedAddress(address, network)).filter(Boolean);
+			if (encodedAddresses.length === 0) {
+				throw new Error('No valid addresses provided');
 			}
 
 			if (!encodedAddresses || encodedAddresses.length === 0) {
@@ -71,6 +58,9 @@ const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
 			if (error) {
 				throw new Error(error);
 			}
+			if (!data) {
+				throw new Error('Data is undefined');
+			}
 			setProposalData({
 				proposals: data.proposals || 0,
 				votes: voteCount
@@ -81,9 +71,13 @@ const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
 	}
 
 	useEffect(() => {
-		getProposalData();
+		const fetchData = async () => {
+			await getProposalData();
+		};
+		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser, network]);
+
 	return (
 		<div>
 			<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>

@@ -14,27 +14,17 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Skeleton from '~src/basic-components/Skeleton';
 
-const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | null> => {
+const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
 	try {
 		const { data } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`/api/v1/auth/data/profileWithAddress?address=${address}`);
-
 		if (data) {
 			const { custom_username, user_id, username, web3Signup, profile } = data;
-			return {
-				custom_username,
-				profile: {
-					achievement_badges: [],
-					image: profile?.image || '/assets/rankcard3.svg'
-				},
-				user_id,
-				username,
-				web3Signup
-			};
+			return { custom_username, profile: { achievement_badges: [], image: profile?.image || '/assets/rankcard3.svg' }, user_id, username, web3Signup };
 		}
-		return null;
+		return { error: 'User profile not found' };
 	} catch (error) {
 		console.error(`Error fetching user profile for address ${address}:`, error);
-		return null;
+		return { error: 'Failed to fetch user profile' };
 	}
 };
 
@@ -50,7 +40,12 @@ const fetchVoterProfileImage = async (username: string): Promise<string | null> 
 		return null;
 	}
 };
-export const LatestActivity = ({ currentTab }: { currentTab: string }) => {
+
+interface LatestActivityProps {
+	currentTab: 'explore' | 'following';
+}
+
+export const LatestActivity: React.FC<LatestActivityProps> = ({ currentTab }) => {
 	const renderTabContent = () => {
 		switch (currentTab) {
 			case 'explore':
@@ -122,7 +117,8 @@ const LatestActivityExplore: React.FC = () => {
 		currentTab === 'all'
 			? postData
 			: postData.filter((post) => {
-					const trackName = Object.keys(networkTrackInfo[network] || {}).find((key) => networkTrackInfo[network][key].trackId === post?.track_no);
+					const networkInfo = networkTrackInfo[network] || {};
+					const trackName = Object.keys(networkInfo).find((key) => networkInfo[key]?.trackId === post?.track_no);
 
 					const formattedTrackName = trackName
 						?.replace(/([a-z])([A-Z])/g, '$1-$2')
@@ -185,7 +181,7 @@ const LatestActivityFollowing: React.FC = () => {
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const [subscribedPosts, setSubscribedPosts] = useState<IPostData[]>([]);
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
-	const [loading, setLoading] = useState<boolean>(false); // Loading state
+	const [loading, setLoading] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const fetchPostUpdates = async () => {
 		try {
@@ -242,7 +238,7 @@ const LatestActivityFollowing: React.FC = () => {
 				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />
 				</div>
-			) : currentuser && currentuser?.id && currentuser?.username ? (
+			) : currentuser?.id && currentuser?.username ? (
 				subscribedPosts.length > 0 ? (
 					<div>
 						<div>

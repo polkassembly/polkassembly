@@ -26,6 +26,7 @@ import { getSpanStyle } from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
+import styled from 'styled-components';
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -391,4 +392,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 };
 
-export default TabNavigation;
+export default styled(TabNavigation)`
+	.selected-icon {
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
+`;

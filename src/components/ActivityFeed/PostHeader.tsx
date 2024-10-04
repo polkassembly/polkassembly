@@ -5,7 +5,7 @@ import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from '~src/global/networkConstants';
 import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILastVote, IPeriod } from '~src/types';
@@ -69,15 +69,17 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const userid = currentUserdata?.id;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
-	const requestedAmountFormatted = post?.requestedAmount ? new BN(post?.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
+	const requestedAmountFormatted = useMemo(() => {
+		return post?.requestedAmount ? new BN(post.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
+	}, [post?.requestedAmount, network]);
 	const ayes = tallyData.ayes;
 	const nays = tallyData.nays;
 	const [decision, setDecision] = useState<IPeriod>();
 	const router = useRouter();
 	const ayesNumber = Number(ayes.toString());
 	const naysNumber = Number(nays.toString());
-	const convertRemainingTime = (preiodEndsAt: any) => {
-		const diffMilliseconds = preiodEndsAt.diff();
+	const convertRemainingTime = (periodEndsAt: any) => {
+		const diffMilliseconds = periodEndsAt.diff();
 
 		const diffDuration = dayjs.duration(diffMilliseconds);
 		const diffDays = diffDuration.days();
@@ -93,7 +95,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [remainingTime, setRemainingTime] = useState<string>('');
 
 	useEffect(() => {
-		if (!window || post?.track_no === null) return;
+		if (typeof window === 'undefined' || post?.track_no === null) return;
 		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 		if (!trackDetails) {
 			trackDetails = getTrackData(network, '', post?.track_no);
@@ -102,18 +104,19 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 
 		const prepare = getPeriodData(network, dayjs(post?.created_at), trackDetails, 'preparePeriod');
 
-		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
+		const decisionPeriodStartsAt = decidingStatusBlock?.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const totalVotes = ayesNumber + naysNumber;
-	const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
-	const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
-	const isAyeNaN = isNaN(ayesPercentage);
-	const isNayNaN = isNaN(naysPercentage);
+	const { ayesPercentage, naysPercentage, isAyeNaN, isNayNaN } = useMemo(() => {
+		const totalVotes = ayesNumber + naysNumber;
+		const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
+		const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
+		return { ayesPercentage, isAyeNaN: Number.isNaN(ayesPercentage), isNayNaN: Number.isNaN(naysPercentage), naysPercentage };
+	}, [ayesNumber, naysNumber]);
 	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(post?.status || '');
@@ -126,57 +129,58 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [votesData, setVotesData] = useState(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	const fetchData = async () => {
+	const fetchData = useCallback(async () => {
 		if (network && post.post_id) {
 			const votesResponse = await getReferendumVotes(network, post.post_id);
 			if (votesResponse.data) {
 				setVotesData(votesResponse.data);
 			} else {
-				console.error(votesResponse.error);
+				console.error('Error fetching votes:', votesResponse.error);
 			}
 		}
-	};
+	}, [network, post.post_id]);
+
 	useEffect(() => {
 		fetchData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [post.post_id, network]);
+	}, [fetchData]);
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
-	const fetchUSDValue = async () => {
-		setLoading(true);
+	const fetchUSDValue = useCallback(async () => {
 		if (!post?.created_at || dayjs(post?.created_at).isSame(dayjs())) return;
-		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
-		let proposalClosedStatusDetails: any = null;
-		post?.timeline?.[0]?.statuses.map((status: any) => {
-			if (passedProposalStatuses.includes(status.status)) {
-				proposalClosedStatusDetails = status;
-			}
+
+		setLoading(true);
+		try {
+			const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
+			const proposalClosedStatusDetails = post?.timeline?.[0]?.statuses.find((status: any) => passedProposalStatuses.includes(status.status));
 			setIsProposalClosed(!!proposalClosedStatusDetails);
-		});
 
-		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
-			closedStatus: proposalClosedStatusDetails || null,
-			postId: post?.post_id,
-			proposalCreatedAt: post?.created_at || null
-		});
+			const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
+				closedStatus: proposalClosedStatusDetails || null,
+				postId: post?.post_id,
+				proposalCreatedAt: post?.created_at || null
+			});
 
-		if (data) {
-			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
-			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
-			setBnUsdValueOnClosed(bnClosed);
-			setLoading(false);
-		} else if (error) {
-			console.log(error);
+			if (error) throw new Error(error);
+
+			if (data) {
+				const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
+				setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
+				setBnUsdValueOnClosed(bnClosed);
+			}
+		} catch (error) {
+			console.error('Error fetching USD value:', error);
+		} finally {
 			setLoading(false);
 		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [post, network, inputToBn]);
+
 	useEffect(() => {
 		fetchUSDValue();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [fetchUSDValue]);
 
 	return (
 		<>

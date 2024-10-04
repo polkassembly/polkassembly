@@ -49,7 +49,6 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 	}, [network]);
 
 	const share = () => {
-		// GAEvent for post sharing
 		trackEvent('post_share_clicked', 'share_post', {
 			postId: postId,
 			postTitle: title,
@@ -57,13 +56,9 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
-
-		let message = `The referendum ${title ? `for ${title}` : ''} is now live for @${twitterHandle} \n`;
-		message += `Cast your vote here: ${global.window.location.href}`;
-
-		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polk_gov')];
-
+		const twitterHandle = socialsData?.twitter ? socialsData.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1) : 'unknown_handle';
+		const message = `The referendum${title ? ` for ${title}` : ''} is now live for @${twitterHandle}\nCast your vote here: ${global.window.location.href}`;
+		const twitterParameters = [`text=${encodeURIComponent(message)}`, `via=${encodeURIComponent('polk_gov')}`];
 		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
 		global.window.open(url);
 	};

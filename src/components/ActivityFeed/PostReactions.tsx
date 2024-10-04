@@ -21,22 +21,21 @@ import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 
-export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => {
-	return (
-		<Tooltip
-			color='#363636'
-			title={`${title}${percentage ? ` - ${percentage}%` : ''}`}
-			placement='top'
+export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => (
+	<Tooltip
+		color='#363636'
+		title={`${title}${percentage !== null ? ` - ${percentage}%` : ''}`}
+		placement='top'
+	>
+		<div
+			className='-mt-[10px] flex items-center justify-center gap-2 rounded-full border-none bg-transparent text-2xl transition-all duration-200 hover:scale-110'
+			style={{ cursor: 'pointer' }}
 		>
-			<div
-				className='-mt-[10px] flex items-center justify-center gap-2 rounded-full border-none bg-transparent text-2xl transition-all duration-200 hover:scale-110'
-				style={{ cursor: 'pointer' }}
-			>
-				{icon} {percentage ? <span className='text-[10px] text-[#d12274]'>{percentage}%</span> : ''}
-			</div>
-		</Tooltip>
-	);
-};
+			{icon}
+			{percentage !== null && <span className='text-[10px] text-[#d12274]'>{percentage}%</span>}
+		</div>
+	</Tooltip>
+);
 
 export const PostReactions: React.FC<{
 	reactionState: any;
@@ -80,6 +79,19 @@ export const PostReactions: React.FC<{
 			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
 		);
 	};
+	const renderSentimentIcon = (sentiment: number) => {
+		const sentimentIcons: Record<number, React.ReactNode> = {
+			0: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			1: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			2: theme === 'dark' ? <DarkSentiment2 /> : <SadIcon />,
+			3: theme === 'dark' ? <DarkSentiment3 /> : <NeutralIcon />,
+			4: theme === 'dark' ? <DarkSentiment4 /> : <SmileIcon />,
+			5: theme === 'dark' ? <DarkSentiment5 /> : <SmileDizzyIcon />
+		};
+
+		return sentimentIcons[sentiment] || null;
+	};
+
 	return (
 		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
@@ -131,71 +143,13 @@ export const PostReactions: React.FC<{
 				<p className='pt-1 text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{commentsCount || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
-				<div className='block  lg:hidden'>
+				<div className='block lg:hidden'>
 					<div className='mt-2 flex items-center space-x-1 md:mt-5'>
-						{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
+						{post.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment1 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SadDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Completely Against'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 2 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment2 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SadIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Slightly Against'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 3 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment3 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<NeutralIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Neutral'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 4 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment4 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SmileIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Slightly For'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 5 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment5 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SmileDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Completely For'}
-								percentage={post?.highestSentiment?.percentage || null}
+								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
+								title={['Completely Against', 'Slightly Against', 'Neutral', 'Slightly For', 'Completely For'][post.highestSentiment.sentiment]}
+								percentage={post.highestSentiment?.percentage || null}
 							/>
 						)}
 					</div>

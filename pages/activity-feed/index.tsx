@@ -47,20 +47,40 @@ interface Props {
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-	const networkRedirect = checkRouteNetworkWithRedirect(network);
-	if (networkRedirect) return networkRedirect;
-	const networkSocialsData = await getNetworkSocials({ network });
-	if (!networkTrackInfo[network]) {
-		return { props: { error: 'Network does not support OpenGov yet.' } };
-	}
-	const props: Props = {
-		error: '',
-		network,
-		networkSocialsData
-	};
+	try {
+		const network = getNetworkFromReqHeaders(req.headers);
+		const networkRedirect = checkRouteNetworkWithRedirect(network);
+		if (networkRedirect) return networkRedirect;
 
-	return { props };
+		if (!networkTrackInfo[network]) {
+			return {
+				props: {
+					error: `Network '${network}' does not support OpenGov yet.`,
+					network,
+					networkSocialsData: null
+				}
+			};
+		}
+
+		const networkSocialsData = await getNetworkSocials({ network });
+
+		return {
+			props: {
+				error: '',
+				network,
+				networkSocialsData
+			}
+		};
+	} catch (error) {
+		console.error('Error in getServerSideProps:', error);
+		return {
+			props: {
+				error: 'An unexpected error occurred. Please try again later.',
+				network: '',
+				networkSocialsData: null
+			}
+		};
+	}
 };
 
 const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
@@ -226,7 +246,6 @@ export default styled(ActivityFeed)`
 		z-index: 1 !important;
 		margin-right: 250px !important;
 		pointer-events: none !important;
-		background-color: red;
 	}
 	.ant-float-btn-group-circle {
 		display: none !important;

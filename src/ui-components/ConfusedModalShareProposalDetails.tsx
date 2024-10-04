@@ -65,19 +65,26 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		const twitterHandle = socialsData?.twitter && socialsData.twitter.length > 0 ? socialsData.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1) : 'polk_gov';
-		const tweetMessage = `${message} \nCheck out this proposal here: ${global.window.location.href}`;
+
+		const twitterHandle = socialsData?.twitter ? new URL(socialsData.twitter).pathname.replace('/', '') || 'polk_gov' : 'polk_gov';
+		const tweetMessage = `${message} \nCheck out this proposal here: ${window.location.href}`;
 		const twitterParameters = [`text=${encodeURI(tweetMessage)}`, 'via=' + encodeURI(twitterHandle || 'polk_gov')];
-		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
-		global.window.open(url);
+		const url = `https://twitter.com/intent/tweet?${twitterParameters.join('&')}`;
+		window.open(url);
 	};
 
 	const copyLinkToClipboard = () => {
-		const link = global.window.location.href;
+		const link = window.location.href;
 		const textMessage = message || 'Hey, check out this proposal and help me make a decision.';
 		const finalMessage = `${textMessage} \n${link}`;
-		navigator.clipboard.writeText(finalMessage);
-		antdMessage.success('Link and message copied to clipboard!');
+		navigator.clipboard
+			.writeText(finalMessage)
+			.then(() => {
+				antdMessage.success('Link and message copied to clipboard!');
+			})
+			.catch(() => {
+				antdMessage.error('Failed to copy link to clipboard. Please try again.');
+			});
 	};
 
 	return (

@@ -21,7 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	// userId to follow
 	const { userId } = req.body;
-	if (Number.isNaN(userId)) return res.status(400).json({ message: 'Missing or invalid user id in request body' });
+	if (isNaN(Number(userId)) || userId === null || userId === undefined) return res.status(400).json({ message: 'Missing or invalid user id in request body' });
 
 	const userIdToFollow = Number(userId);
 

@@ -122,7 +122,7 @@ import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 import Comments from '~assets/icons/chat-icon.svg';
 import ForumComments from '~assets/icons/forum-chat-icon.svg';
-import RiotSVG from '~assets/icons/riot.svg';
+import MatrixSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
 import WebSVG from '~assets/profile/web-icon.svg';
@@ -189,6 +189,7 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
+import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
@@ -583,9 +584,9 @@ export const EmailIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const RiotIcon = (props: Partial<CustomIconComponentProps>) => (
+export const MatrixIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={RiotSVG}
+		component={MatrixSVG}
 		{...props}
 	/>
 );
@@ -1405,6 +1406,13 @@ export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) 
 export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AllpostIcon}
+		{...props}
+	/>
+);
+
+export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSVG}
 		{...props}
 	/>
 );

@@ -71,7 +71,7 @@ const OverviewDataGraph = ({
 	}
 
 	return (
-		<div style={{ height: '80px' }}>
+		<div style={{ height: '75px' }}>
 			<ResponsiveLine
 				data={formattedData}
 				margin={{ bottom: 40, left: 0, right: 0, top: 15 }}

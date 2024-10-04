@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Divider, Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
 import { trackEvent } from 'analytics';
@@ -20,13 +20,12 @@ import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionF
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import { poppins } from 'pages/_app';
-import { EmailIcon, InfoIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, InfoIcon, MatrixIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { checkIdentityFieldsValidity } from './utils/checkIdentityFieldsValidity';
-import { BN_ONE } from '@polkadot/util';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
@@ -46,27 +45,16 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
-const IdentityForm = ({
-	closeModal,
-	onCancel,
-	perSocialBondFee,
-	setAddressChangeModalOpen,
-	setStartLoading,
-	setTxFee,
-	txFee,
-	className,
-	form,
-	setOpenIdentitySuccessModal
-}: IIdentityForm) => {
-	const dispach = useDispatch();
+const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
-	const { email, twitter } = socials;
-	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
+	const { email, twitter, matrix } = socials;
+	const { gasFee, registerarFee, minDeposite } = txFee;
 	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
@@ -76,7 +64,7 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultChainUserBalance, setDefaultChainUserBalance] = useState<BN>(ZERO_BN);
 	const totalFee = gasFee
-		.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)))
+		.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite))
 		.add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))));
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
@@ -125,11 +113,11 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
 			setOpenIdentitySuccessModal(true);
-			dispach(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
 			await handleIdentityHashSave(identityHash);
 		};
 
-		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -227,7 +215,7 @@ const IdentityForm = ({
 		}
 
 		if (identityInfo.isIdentitySet) {
-			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
+			if (allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && requestJudgementTx) {
 				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			} else {
@@ -255,21 +243,14 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = (form.getFieldValue('twitter') || '').trim();
+		const matrixVal = (form.getFieldValue('matrix') || '').trim();
 
 		const okDisplay = checkIdentityFieldsValidity(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkIdentityFieldsValidity(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkIdentityFieldsValidity(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
-		// const okRiot = checkIdentityFieldsValidity((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
+		const okMatrix = checkIdentityFieldsValidity(matrixVal.length > 0, matrixVal, 6, [':', '.org'], WHITESPACE, []);
 		const okTwitter = checkIdentityFieldsValidity(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
-
-		let okSocials = 1;
-		if (okEmail && emailVal.length > 0 && identityInfo?.email !== emailVal) {
-			okSocials += 1;
-		}
-		if (okTwitter && twitterVal.length > 0 && identityInfo?.twitter !== twitterVal) {
-			okSocials += 1;
-		}
 
 		setInfo({
 			info: {
@@ -278,20 +259,23 @@ const IdentityForm = ({
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				github: { [identityInfo?.github.length > 0 ? 'raw' : 'none']: identityInfo?.github.length > 0 ? identityInfo?.github : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
-				matrix: { [identityInfo?.matrix.length > 0 ? 'raw' : 'none']: identityInfo?.matrix.length > 0 ? identityInfo?.matrix : null },
-				riot: { [identityInfo?.riot.length > 0 ? 'raw' : 'none']: identityInfo?.riot.length > 0 ? identityInfo?.riot : null },
+				matrix: { [okMatrix && matrixVal.length > 0 ? 'raw' : 'none']: okMatrix && matrixVal.length > 0 ? (matrixVal?.[0] === '@' ? matrixVal : `@${matrixVal}`) : null },
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
 				web: { [identityInfo?.web.length > 0 ? 'raw' : 'none']: identityInfo?.web.length > 0 ? identityInfo?.web : null }
 			},
-			okAll: twitterVal.length
-				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
-				: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal
+			okAll:
+				okDisplay &&
+				okEmail &&
+				okLegal &&
+				okTwitter &&
+				okMatrix &&
+				displayNameVal?.length > 1 &&
+				!!emailVal &&
+				(twitterVal?.length ? !!twitterVal : true) &&
+				(matrixVal?.length ? !!matrixVal : true)
 		});
-		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
-		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
-		setTxFee(fee);
 		if (initialLoading) {
-			getGasFee(true, fee);
+			getGasFee(true);
 		}
 	};
 
@@ -322,7 +306,7 @@ const IdentityForm = ({
 
 				{!!totalFee.gt(ZERO_BN) &&
 					isPeopleChainSupportedNetwork(network) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					(!identityInfo?.alreadyVerified || !allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
 					availableBalance &&
 					availableBalance.lt(totalFee) &&
 					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
@@ -347,7 +331,7 @@ const IdentityForm = ({
 					/>
 				)}
 				{!!totalFee.gt(ZERO_BN) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
 					availableBalance &&
 					availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
 						<Alert
@@ -357,7 +341,7 @@ const IdentityForm = ({
 							message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
 						/>
 					)}
-				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
+				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
 						type='success'
@@ -368,7 +352,7 @@ const IdentityForm = ({
 				{!!identityInfo?.email &&
 					!!identityInfo?.displayName &&
 					!identityInfo.verifiedByPolkassembly &&
-					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
+					allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) &&
 					availableBalance &&
 					availableBalance.add(defaultChainUserBalance).gt(totalFee) && (
 						<Alert
@@ -500,7 +484,7 @@ const IdentityForm = ({
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
@@ -534,13 +518,12 @@ const IdentityForm = ({
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
 					</Form.Item>
 				</div>
-				<Divider />
 				<div>
 					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 						Socials{' '}
@@ -585,7 +568,7 @@ const IdentityForm = ({
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -627,7 +610,49 @@ const IdentityForm = ({
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									handleInfo();
+								}}
+							/>
+						</Form.Item>
+					</div>
+
+					<div className='mt-1 flex items-center  '>
+						<span className='mb-6 flex w-[150px] items-center gap-2'>
+							<MatrixIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Matrix</span>
+						</span>
+						<Form.Item
+							name='matrix'
+							className='w-full'
+							rules={[
+								{
+									message: 'Invalid matrix address',
+									validator(rule, value, callback) {
+										if (
+											callback &&
+											value.length > 0 &&
+											!checkIdentityFieldsValidity(form.getFieldValue('matrix')?.trim()?.length > 0, form.getFieldValue('matrix')?.trim(), 6, [':', '.org'], WHITESPACE, [])
+										) {
+											callback(rule?.message?.toString());
+										} else {
+											callback();
+										}
+									}
+								}
+							]}
+						>
+							<Input
+								onBlur={() => getGasFee()}
+								addonAfter={
+									!!identityInfo?.matrix && !!identityInfo.alreadyVerified && identityInfo?.matrix === form?.getFieldValue('matrix') && <VerifiedIcon className='text-xl' />
+								}
+								name='matrix'
+								value={matrix?.value}
+								placeholder='Enter your matrix id ex:(alex:matrix.org)'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+								onChange={(e) => {
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, matrix: { ...matrix, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -639,7 +664,6 @@ const IdentityForm = ({
 			{/* tx amount breakdown */}
 			<IdentityTxBreakdown
 				loading={loading}
-				perSocialBondFee={perSocialBondFee}
 				txFee={txFee}
 			/>
 			<IdentityFormActionButtons

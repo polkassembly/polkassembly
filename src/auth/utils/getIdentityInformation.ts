@@ -15,7 +15,6 @@ interface Args {
 interface IIdentityInfo {
 	display: string;
 	legal: string;
-	riot: string;
 	email: string;
 	twitter: string;
 	web: string;
@@ -44,7 +43,6 @@ const result: IIdentityInfo = {
 	legal: '',
 	matrix: '',
 	nickname: '',
-	riot: '',
 	twitter: '',
 	verifiedByPolkassembly: false,
 	web: ''
@@ -87,9 +85,8 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 		isVerified: !unverified,
 		judgements: identityInfo?.judgements || [],
 		legal: isHex(identity?.legal?.Raw || '') ? hexToString(identity?.legal?.Raw) || identity?.legal?.Raw || '' : identity?.legal?.Raw || '',
-		matrix: identity?.matrix?.Raw || '',
+		matrix: identity?.matrix?.Raw || identity?.riot?.Raw || '',
 		nickname: identity?.nickname?.Raw || '',
-		riot: identity?.riot?.Raw || '',
 		twitter: identity?.twitter?.Raw || '',
 		verifiedByPolkassembly: verifiedByPolkassembly || false,
 		web: identity?.web?.Raw || ''

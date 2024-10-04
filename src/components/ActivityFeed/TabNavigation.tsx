@@ -109,9 +109,16 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		treasury: <TreasuryIconNew className='-mt-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		whitelist: <FellowshipIconNew className=' scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 	};
+	const SelectedAllPostIcon = styled(AllPostIcon)`
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	`;
 
 	const selectedtabIcons: { [key: string]: JSX.Element } = {
-		all: <AllPostIcon className='selected-icon mt-0.5 scale-90 text-2xl font-medium ' />,
+		all: (
+			<div className='selected-icon mt-0.5 scale-90 text-2xl font-medium '>
+				<SelectedAllPostIcon />
+			</div>
+		),
 		root: <SelectedRoot className='selected-icon  mt-0.5 scale-90 text-2xl font-medium ' />,
 		// eslint-disable-next-line sort-keys
 		'wish-for-change': <SelectedWishForChange className='selected-icon -mr-1 scale-90  text-2xl font-medium ' />,
@@ -392,8 +399,4 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 };
 
-export default styled(TabNavigation)`
-	.selected-icon {
-		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
-	}
-`;
+export default TabNavigation;

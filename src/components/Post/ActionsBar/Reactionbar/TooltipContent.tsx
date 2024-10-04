@@ -21,6 +21,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 	const { network } = useNetworkSelector();
 
 	const filteredUsers = users.filter((_, index) => usernames[index] !== undefined);
+
 	const allUsers = filteredUsers.map((user) => ({
 		id: user?.id,
 		image: user?.image || '',

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal, message as antdMessage } from 'antd';
+import { Button, Modal, message as antdMessage } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -111,33 +111,40 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 						<div className='absolute inset-0 left-5 top-5 z-10 '>
 							<div className=''>
-								<p className='font-poppins text-[14px] text-[#485F7D]  dark:text-white'>Add a message</p>
+								<p className='font-poppins text-[14px] text-[#485F7D]  dark:text-[#7D7C81]'>Add a message</p>
 							</div>
-							<input
-								type='text'
+							<textarea
+								name='content'
+								className={
+									'suffixColor input-container -mt-1 max-h-10  w-[450px] flex-1 resize-none rounded-[4px] border-[1px] text-sm outline-none hover:border-pink_primary focus:border-pink_primary dark:border-[#3B444F] dark:text-blue-dark-high'
+								}
 								value={message}
 								onChange={(e) => setMessage(e.target.value)}
-								placeholder='Hey check out this proposal and help me make a decision.'
-								className=' h-8 w-[450px] rounded-sm border-[1px] border-[#D2D8E0] px-5 py-2.5 outline-none dark:border-none dark:bg-[#07183D] dark:text-white dark:placeholder:text-white'
+								placeholder={'Hey check out this proposal and help me make a decision.'}
+								style={{ border: '1px solid #D2D8E0', padding: '8px 8px' }}
 							/>
 						</div>
 					</div>
 				</div>
 				<div className='mt-24 flex justify-center gap-5'>
-					<div onClick={shareOnTwitter}>
+					<Button
+						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						onClick={shareOnTwitter}
+					>
 						<ImageIcon
-							src='/assets/confusedmodalShareProposalDetails/x.svg'
-							alt='Share on Twitter'
-							className='h-auto w-auto cursor-pointer'
+							src={theme === 'dark' ? '/assets/icons/x-icon-pink-dark.svg' : '/assets/icons/x-icon-pink.svg'}
+							alt='twitter-icon'
 						/>
-					</div>
-					<div onClick={copyLinkToClipboard}>
+					</Button>
+					<Button
+						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						onClick={copyLinkToClipboard}
+					>
 						<ImageIcon
-							src='/assets/confusedmodalShareProposalDetails/link.svg'
-							alt='Copy Link'
-							className='h-auto w-auto cursor-pointer'
+							src={theme === 'dark' ? '/assets/icons/copy-pink-dark.svg' : '/assets/icons/copy-pink.svg'}
+							alt='copy-icon'
 						/>
-					</div>
+					</Button>
 				</div>
 			</div>
 		</StyledModal>

@@ -831,6 +831,7 @@ export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByPare
     index
     status
     reward
+    createdAt
   }
 }`;
 

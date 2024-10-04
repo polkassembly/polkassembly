@@ -140,6 +140,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		} else {
 			console.log('failed to save report');
 		}
+		dispatch(progressReportActions.setAddSummaryCTAClicked(false));
 	};
 
 	return (

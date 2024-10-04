@@ -976,3 +976,11 @@ export interface ICommentsSummary {
 	summary_positive: string;
 	summary_neutral: string;
 }
+
+export interface IFollowEntry {
+	id: string;
+	created_at: Date;
+	follower_user_id: number;
+	followed_user_id: number;
+	updated_at: Date;
+}

@@ -169,35 +169,6 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 				bounties.push(bounty?.value);
 			}
 		});
-		bounties[0].childbounties = [
-			{
-				description:
-					'0x48656c696b6f6e20426f756e7479203530207061796f7574732068747470733a2f2f6769746875622e636f6d2f6962702d6e6574776f726b2f4368696c64426f756e74696573202d2050362041756775737420323032342020636f6d70656e736174696f6e',
-				index: 2251,
-				reward: '7258500000000',
-				status: 'Claimed',
-				title: 'Helikon Bounty 50 payouts https://github.com/ibp-network/ChildBounties - P6 August 2024  compensation'
-			},
-			{
-				description: '0x52616469756d426c6f636b20426f756e7479203530207061796f7574732068747470733a2f2f6769746875622e636f6d2f6962702d6e6574776f726b2f4368696c64426f756e74696573',
-				index: 2246,
-				reward: '36308900000000',
-				status: 'Claimed',
-				title: 'RadiumBlock Bounty 50 payouts https://github.com/ibp-network/ChildBounties'
-			}
-		];
-		bounties[1].childbounties = [
-			{
-				description:
-					'0x48656c696b6f6e20426f756e7479203530207061796f7574732068747470733a2f2f6769746875622e636f6d2f6962702d6e6574776f726b2f4368696c64426f756e74696573202d2050362041756775737420323032342020636f6d70656e736174696f6e',
-				index: 2251,
-				reward: '7258500000000',
-				status: 'Claimed',
-				title: 'Love you macha https://github.com/ibp-network/ChildBounties - P6 August 2024  compensation'
-			}
-		];
-		bounties[0].totalChildBountiesCount = 2;
-		bounties[1].totalChildBountiesCount = 1;
 		return res.status(200).json({ bounties: bounties || [], totalBountiesCount: totalBounties });
 	} catch (error) {
 		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });

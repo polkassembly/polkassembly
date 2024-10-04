@@ -1,17 +1,17 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
-import { spaceGrotesk } from 'pages/_app';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import BountiesTable from './Components/BountiesTable';
 import FilterByTags from './Components/FilterByTags';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { bountyStatus } from '~src/global/statuses';
+import { spaceGrotesk } from 'pages/_app';
 
 function OnchainBounties() {
 	const { resolvedTheme: theme } = useTheme();
@@ -21,15 +21,18 @@ function OnchainBounties() {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 
 	const [bounties, setBounties] = useState<any[]>([]);
+	const [filteredBounties, setFilteredBounties] = useState<any[]>([]);
+
 	const onPaginationChange = (page: number) => {
 		setCurrentPage(page);
 	};
+
 	const tabItems = [
 		{
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -42,7 +45,7 @@ function OnchainBounties() {
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -55,7 +58,7 @@ function OnchainBounties() {
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -68,7 +71,7 @@ function OnchainBounties() {
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -81,7 +84,7 @@ function OnchainBounties() {
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -94,7 +97,7 @@ function OnchainBounties() {
 			children: (
 				<BountiesTable
 					loading={loading}
-					bounties={bounties}
+					bounties={filteredBounties.length ? filteredBounties : bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -130,6 +133,7 @@ function OnchainBounties() {
 			}
 
 			setBounties(data?.bounties || []);
+			setFilteredBounties([]);
 			setTotalBountiesCount(data?.totalBountiesCount || 0);
 			setLoading(false);
 		} catch (err) {
@@ -137,12 +141,15 @@ function OnchainBounties() {
 			setLoading(false);
 		}
 	};
+
 	const onTabChange = (key: string) => {
 		setActiveTabKey(key);
 		setCurrentPage(1);
 	};
+
 	useEffect(() => {
 		fetchBounties(currentPage);
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeTabKey, currentPage]);
 
@@ -157,15 +164,20 @@ function OnchainBounties() {
 					<span className='text-sm font-medium'>Back to Bounty Dashboard</span>
 				</div>
 			</Link>
+
 			<div className='flex items-center justify-between pt-4'>
 				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} dark:text-blue-dark-high' text-[32px] font-bold text-blue-light-high`}>On-chain Bounties</span>
 				<div className='flex items-center gap-2'>
 					<BountyProposalActionButton className='hidden md:block' />
 				</div>
 			</div>
+
 			<div className='relative'>
 				<div className='absolute right-5 top-8 z-50'>
-					<FilterByTags />
+					<FilterByTags
+						bounties={bounties}
+						setFilteredBounties={setFilteredBounties}
+					/>
 				</div>
 
 				<div>

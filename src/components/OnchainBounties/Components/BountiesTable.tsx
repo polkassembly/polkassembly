@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
-import { Progress } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
+import { Progress, Spin } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
@@ -19,8 +19,10 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/navigation';
 import Table from '~src/basic-components/Tables/Table';
 import { useTheme } from 'next-themes';
+import { IChildBountiesResponse } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import ImageIcon from '~src/ui-components/ImageIcon';
 interface DataType {
-	key: React.Key;
 	index: number;
 	curator: string;
 	title: string;
@@ -44,18 +46,47 @@ interface OnchainBountiesProps {
 
 const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 	const { resolvedTheme: theme = 'light' } = useTheme();
+	console.log('props', props.bounties);
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
-	const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
-
+	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
+	const [bounties, setBounties] = useState<DataType[]>(props.bounties);
+	useEffect(() => {
+		setBounties(props.bounties);
+	}, [props.bounties]);
 	const handleRowClick = (record: DataType) => {
 		router.push(`/bounty/${record.index}`);
 	};
-	const handleExpand = (expanded: boolean, record: DataType) => {
-		// Ensure only one row is expanded at a time
-		const newExpandedRowKeys = expanded ? [record.key] : [];
+	const handleExpand = async (expanded: boolean, record: DataType) => {
+		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
+
 		setExpandedRowKeys(newExpandedRowKeys);
+
+		if (expanded && (!record.childbounties || record.childbounties.length === 0)) {
+			setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: true }));
+
+			try {
+				const { data, error } = await nextApiClientFetch<IChildBountiesResponse>(
+					`/api/v1/child_bounties?page=${props.currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${record.index}`
+				);
+
+				if (error) {
+					console.error('Error fetching child bounties:', error);
+					setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));
+					return;
+				}
+				setBounties((prevBounties) => {
+					const updatedBounties = prevBounties.map((bounty) => (bounty.index === record.index ? { ...bounty, childbounties: data?.child_bounties || [] } : bounty));
+					return updatedBounties;
+				});
+			} catch (err) {
+				console.error('An unexpected error occurred:', err);
+			} finally {
+				setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));
+			}
+		}
 	};
 
 	const columns: TableColumnsType<DataType> = [
@@ -191,20 +222,6 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 				);
 			},
 			title: 'Categories'
-		},
-
-		{
-			dataIndex: 'children',
-			key: '',
-			render: (date: string) =>
-				date ? (
-					<span>
-						<ClockCircleOutlined /> {date}
-					</span>
-				) : (
-					'-'
-				),
-			title: 'Date'
 		}
 	];
 	const handlePageChange = (page: number) => {
@@ -222,17 +239,17 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 					<>
 						<Table
 							theme={theme}
+							rowKey={(record) => record.index}
 							columns={columns}
 							onRow={(record) => ({
 								onClick: () => handleRowClick(record)
 							})}
-							rowClassName={(record) => (record.childbounties ? 'parent-row' : 'no-children') + ' hover-row'}
 							expandable={{
 								expandIcon: ({ expanded, onExpand, record }) =>
 									record.totalChildBountiesCount > 0 ? (
 										expanded ? (
 											<CaretUpOutlined
-												className='pr-3 text-[#E5007A]'
+												className=' text-[#E5007A]'
 												onClick={(e) => {
 													e.stopPropagation();
 													onExpand(record, e);
@@ -244,7 +261,6 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 												placement='top'
 											>
 												<CaretDownOutlined
-													className='pr-3'
 													onClick={(e) => {
 														e.stopPropagation();
 														onExpand(record, e);
@@ -253,36 +269,61 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 											</Popover>
 										)
 									) : null,
-								expandedRowKeys: expandedRowKeys,
+								expandedRowKeys,
 								expandedRowRender: (record) => (
-									<div>
-										{record.childbounties && record.childbounties.length > 0 ? (
+									<div className='bg-[#fcebf5]'>
+										{record.totalChildBountiesCount && record.totalChildBountiesCount > 0 ? (
 											<div>
-												{record.childbounties.map((childBounty: any) => {
-													const maxLength = 22;
-													const truncatedTitle = childBounty.title.length > maxLength ? `${childBounty.title.substring(0, maxLength)}...` : childBounty.title;
-													const childbountytitle = childBounty.title ? truncatedTitle : '-';
-													return (
-														<div
-															className='flex justify-between'
-															key={childBounty.index}
-														>
-															<p>{childBounty.index}</p>
-															<p>{childbountytitle}</p>
-															<p>{childBounty.reward}</p>
-															<p>{childBounty.status}</p>
-														</div>
-													);
-												})}
+												{loadingChildBounties[record.index] ? (
+													<div className='my-1 flex justify-center'>
+														<Spin />
+													</div>
+												) : record?.childbounties?.length > 0 ? (
+													<div className=''>
+														{record.childbounties.map((childBounty: any, index: number) => (
+															<div
+																key={childBounty.index}
+																className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'
+															>
+																{index === record.childbounties.length - 1 ? (
+																	<ImageIcon
+																		src='/assets/childlevel0.svg'
+																		className='-mt-5 h-5 w-5'
+																		alt='Last child level'
+																	/>
+																) : (
+																	<ImageIcon
+																		src='/assets/childlevel1.svg'
+																		className='-mt-5 h-5 w-5'
+																		alt='Child level'
+																	/>
+																)}
+
+																<div className='ml-4 mt-5 w-1/4'>{childBounty.index}</div>
+																<div className='mt-5 w-1/4'>-</div>
+																<div className='mt-5 w-1/4 '>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
+																<div className='mt-5 w-1/4'>
+																	{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+																</div>
+																<div className='mt-5 w-1/4'>-</div>
+																<div className=' mt-5 w-1/4'>-</div>
+																<div className='mt-5 w-1/4'>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
+															</div>
+														))}
+													</div>
+												) : (
+													<p>No child bounties available.</p>
+												)}
 											</div>
 										) : (
 											<p>No child bounties available.</p>
 										)}
 									</div>
 								),
-								onExpand: handleExpand
+								onExpand: (expanded, record) => handleExpand(expanded, record),
+								rowExpandable: (record) => record.totalChildBountiesCount > 0
 							}}
-							dataSource={props.bounties}
+							dataSource={bounties}
 							pagination={false}
 						/>
 
@@ -308,36 +349,23 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 };
 
 const StyledTableContainer = styled.div<{ themeMode: string }>`
-	.ant-table-wrapper .ant-table-thead > tr > th {
+	.ant-table-thead .ant-table-cell {
+		background-color: ${(props) => (props.themeMode == 'dark' ? '#1b1d1f' : '#f9fcfb')} !important;
 		border-width: 1px 0px 1px 0px;
 		border-style: solid;
 		border-color: #d2d8e0;
-		padding-left: 35px;
-	}
-
-	/* Default padding for all rows without children */
-	.ant-table-wrapper .ant-table-tbody > tr.no-children > td:first-child {
-		padding-left: 45px;
-	}
-
-	/* Padding for parent rows that have children */
-	.ant-table-wrapper .ant-table-tbody > tr.parent-row > td:first-child {
-		padding-left: 20px;
-	}
-
-	/* Padding for expanded child rows */
-	.ant-table-wrapper .ant-table-tbody > tr.ant-table-expanded-row > td:first-child {
-		padding-left: 25px !important;
 	}
 	.ant-table-wrapper .hover-row:hover {
 		transform: scale(1.009);
 		cursor: pointer;
 		transition: transform 0.2s ease-in-out;
 	}
+	.ant-table-expanded-row .ant-table-expanded-row-level-1 {
+		background-color: #fcebf5 !important;
+	}
 
 	.ant-table-wrapper .ant-table-tbody > tr > td {
 		color: ${(props) => (props.themeMode == 'dark' ? 'white' : 'black')};
 	}
 `;
-
 export default BountiesTable;

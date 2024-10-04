@@ -94,7 +94,8 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 			dataIndex: 'index',
 			key: 'index',
 			render: (index: number) => (index ? index : '-'),
-			title: '#'
+			title: '#',
+			width: 160
 		},
 		{
 			dataIndex: 'curator',
@@ -114,7 +115,8 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 					)}
 				</div>
 			),
-			title: 'Curator'
+			title: 'Curator',
+			width: 200
 		},
 		{
 			dataIndex: 'title',
@@ -124,7 +126,8 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 				const truncatedTitle = title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
 				return title ? truncatedTitle : '-';
 			},
-			title: 'Title'
+			title: 'Title',
+			width: 300
 		},
 		{
 			dataIndex: 'reward',
@@ -244,6 +247,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 							onRow={(record) => ({
 								onClick: () => handleRowClick(record)
 							})}
+							scroll={{ x: 1000 }}
 							expandable={{
 								expandIcon: ({ expanded, onExpand, record }) =>
 									record.totalChildBountiesCount > 0 ? (

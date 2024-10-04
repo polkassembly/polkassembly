@@ -189,6 +189,7 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
+import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
@@ -1405,6 +1406,13 @@ export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) 
 export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AllpostIcon}
+		{...props}
+	/>
+);
+
+export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSVG}
 		{...props}
 	/>
 );

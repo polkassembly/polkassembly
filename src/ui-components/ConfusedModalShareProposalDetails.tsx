@@ -113,7 +113,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 								value={message}
 								onChange={(e) => setMessage(e.target.value)}
 								placeholder='Hey check out this proposal and help me make a decision.'
-								className=' h-8 w-[450px] rounded-sm border-[1px] border-[#D2D8E0] px-5 py-2.5 outline-none'
+								className=' h-8 w-[450px] rounded-sm border-[1px] border-[#D2D8E0] px-5 py-2.5 outline-none dark:text-white'
 							/>
 						</div>
 					</div>

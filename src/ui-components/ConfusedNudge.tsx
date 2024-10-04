@@ -15,10 +15,10 @@ interface Props {
 	postIndex: number;
 	postType: ProposalType;
 	title: string;
-	serOpenNudge: (pre: boolean) => void;
+	setOpenNudge: (pre: boolean) => void;
 }
 
-const ConfusedNudge = ({ postIndex, postType, status, title, serOpenNudge }: Props) => {
+const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Props) => {
 	const { is_sidebar_collapsed } = useGlobalSelector();
 
 	const [isNudgeVisible, setNudgeVisible] = useState(false);
@@ -27,7 +27,7 @@ const ConfusedNudge = ({ postIndex, postType, status, title, serOpenNudge }: Pro
 	useEffect(() => {
 		if (!getStatusesFromCustomStatus(CustomStatus.Active).includes(status)) return;
 		const nudgeTimeout = setTimeout(() => {
-			serOpenNudge(true);
+			setOpenNudge(true);
 			setNudgeVisible(true);
 		}, 180000);
 
@@ -66,7 +66,7 @@ const ConfusedNudge = ({ postIndex, postType, status, title, serOpenNudge }: Pro
 				<div
 					onClick={() => {
 						setNudgeVisible(false);
-						serOpenNudge(false);
+						setOpenNudge(false);
 					}}
 				>
 					<CloseIcon className='cursor-pointer pt-[10px] text-2xl' />

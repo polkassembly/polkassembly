@@ -46,7 +46,7 @@ interface IReferendaPostProps {
 
 const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 	const dispatch = useDispatch();
-	const [openNudge, serOpenNudge] = useState(false);
+	const [openNudge, setOpenNudge] = useState(false);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -74,7 +74,7 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 					postType={proposalType}
 					status={post?.status}
 					title={post?.title || ''}
-					serOpenNudge={serOpenNudge}
+					setOpenNudge={setOpenNudge}
 				/>
 				{/* Main content */}
 				<div className={`transition-opacity duration-500 ${openNudge ? 'mt-7' : 'mt-0'}`}>

@@ -42,7 +42,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					type='horizontal'
 					className='border-l-1 -mt-4 mb-4 border-[#D2D8E0] dark:border-separatorDark'
 				/>
-				<div className='max-h-[246px] overflow-y-auto'>
+				<div className='max-h-[316px] overflow-y-auto'>
 					<div className='flex w-full justify-start overflow-hidden text-ellipsis'>
 						<Markdown
 							className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'

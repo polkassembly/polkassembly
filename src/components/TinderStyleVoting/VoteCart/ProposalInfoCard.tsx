@@ -264,6 +264,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						currentDecision={voteInfo?.decision}
 						forSpecificPost={true}
 						postEdit={voteInfo.post_id}
+						voteInfo={voteInfo}
 					/>
 				</Modal>
 				<Modal

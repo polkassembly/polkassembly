@@ -406,7 +406,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mr-1 '>Based on all comments and replies</span>
 							</span>
 						</div>
-						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 30 && (
+						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 20 && (
 							<div className='mt-2 flex items-start gap-4'>
 								<span className='mt-2'>
 									<GreenTickIcon />
@@ -425,7 +425,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</div>
 						)}
 
-						{aiContentSummary?.summary_neutral && aiContentSummary.summary_neutral.split(' ').length > 30 && (
+						{aiContentSummary?.summary_neutral && aiContentSummary.summary_neutral.split(' ').length > 20 && (
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<MinusSignIcon />
@@ -444,7 +444,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</div>
 						)}
 
-						{aiContentSummary?.summary_negative && aiContentSummary.summary_negative.split(' ').length > 30 && (
+						{aiContentSummary?.summary_negative && aiContentSummary.summary_negative.split(' ').length > 20 && (
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<CrossSignIcon />

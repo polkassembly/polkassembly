@@ -61,6 +61,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	await newFollowDoc.set(newFollow);
 
+	//TODO: create activity for the user followed
+	//TODO: send notification to the user followed
+
 	return res.status(200).json({ message: 'User followed' });
 }
 

@@ -596,7 +596,7 @@ export interface IRating {
 	user_id: string;
 }
 export interface IProgressReport {
-	progress_addedOn?: Date;
+	created_at?: Date;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;

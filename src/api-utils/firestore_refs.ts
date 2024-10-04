@@ -13,3 +13,5 @@ export const activityCollRef = (networkName: string) => networkDocRef(networkNam
 export const activityDocRef = (networkName: string, activityId: string) => activityCollRef(networkName).doc(activityId);
 export const activityReactionCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('reactions');
 export const activityViewsCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('views');
+
+export const followsCollRef = () => firestore_db.collection('follows');

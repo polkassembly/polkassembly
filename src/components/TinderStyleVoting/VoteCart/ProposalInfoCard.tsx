@@ -3,10 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Button, Divider, Modal } from 'antd';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { StopOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DefaultVotingOptionsModal from '../../Listing/Tracks/DefaultVotingOptionsModal';
@@ -23,6 +22,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import Image from 'next/image';
 import { IDeleteBatchVotes, IupdateBatchVotes } from '../types';
 import DeletedModalContent from './DeletedModalContent';
+import { useAppDispatch } from '~src/redux/store';
+import { editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -33,7 +34,7 @@ interface IProposalInfoCard {
 
 const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo, reloadBatchCart } = props;
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -49,26 +50,28 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		setOpenDeleteModal(true);
 	};
 
+	useEffect(() => {
+		if (openEditModal) {
+			dispatch(batchVotesActions.setVote(voteInfo.decision));
+		}
+	}, [openEditModal, dispatch, voteInfo.decision]);
+
 	const editPostVoteDetails = async () => {
 		const updatedCartVotes: any[] = vote_cart_data.map((item) => {
 			if (item.id === voteInfo.id) {
 				return {
 					...item,
-					abstainBalance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0.1',
+					abstainBalance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
 					ayeBalance:
 						edit_vote_details?.voteOption === 'aye'
 							? edit_vote_details.ayeVoteBalance
 							: edit_vote_details?.voteOption === 'abstain'
 							? edit_vote_details.abstainAyeVoteBalance
-							: '0.1',
+							: '0',
 					conviction: edit_vote_details.conviction,
 					decision: edit_vote_details.voteOption,
 					nayBalance:
-						edit_vote_details?.voteOption === 'nay'
-							? edit_vote_details.nyeVoteBalance
-							: edit_vote_details?.voteOption === 'abstain'
-							? edit_vote_details.abstainNyeVoteBalance
-							: '0.1'
+						edit_vote_details?.voteOption === 'nay' ? edit_vote_details.nyeVoteBalance : edit_vote_details?.voteOption === 'abstain' ? edit_vote_details.abstainNyeVoteBalance : '0'
 				};
 			}
 			return item;
@@ -205,6 +208,20 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								text='Cancel'
 								buttonsize='sm'
 								onClick={() => {
+									dispatch(batchVotesActions.setVote(voteInfo.decision));
+									dispatch(
+										editCartPostValueChanged({
+											values: {
+												abstainAyeVoteBalance: voteInfo?.ayeBalance || '0',
+												abstainNyeVoteBalance: voteInfo?.nayBalance || '0',
+												abstainVoteBalance: voteInfo?.abstainBalance || '0',
+												ayeVoteBalance: voteInfo.ayeBalance || '0',
+												conviction: voteInfo?.lockedPeriod || '0.1',
+												nyeVoteBalance: voteInfo.nayBalance || '0',
+												voteOption: voteInfo?.decision || 'aye'
+											}
+										})
+									);
 									setOpenEditModal(false);
 								}}
 							/>
@@ -215,11 +232,10 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								className={`${!is_field_edited ? 'opacity-50' : ''}`}
 								disabled={!is_field_edited}
 								onClick={() => {
-									console.log('checking field: ', edit_vote_details?.conviction);
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
-											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0.1' : edit_vote_details?.abstainAyeVoteBalance,
-											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0.1' : edit_vote_details?.abstainNyeVoteBalance,
+											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
+											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainNyeVoteBalance,
 											decision: edit_vote_details?.voteOption || batch_vote_details?.voteOption || 'aye',
 											post_id: voteInfo.post_id,
 											post_title: voteInfo.post_title,
@@ -227,14 +243,14 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 												edit_vote_details?.voteOption === 'aye'
 													? edit_vote_details?.ayeVoteBalance
 														? edit_vote_details?.ayeVoteBalance
-														: '0.1'
+														: '0'
 													: edit_vote_details?.voteOption === 'nay'
 													? edit_vote_details?.nyeVoteBalance
 														? edit_vote_details?.nyeVoteBalance
-														: '0.1'
+														: '0'
 													: edit_vote_details?.abstainVoteBalance
 													? edit_vote_details?.abstainVoteBalance
-													: '0.1',
+													: '0',
 											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);

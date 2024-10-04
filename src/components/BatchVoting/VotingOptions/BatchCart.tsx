@@ -121,7 +121,7 @@ const BatchCart: React.FC = () => {
 		vote_cart_data.map((vote: any) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
-				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
+				const balance = vote?.decision === 'aye' ? vote?.ayeBalance.toString() : vote?.nayBalance.toString();
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
 					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
 				});

@@ -34,12 +34,12 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 			dispatch(
 				editCartPostValueChanged({
 					values: {
-						abstainAyeVoteBalance: voteInfo?.ayeBalance || '0.1',
-						abstainNyeVoteBalance: voteInfo?.nayBalance || '0.1',
-						abstainVoteBalance: voteInfo?.abstainBalance || '0.1',
-						ayeVoteBalance: voteInfo.ayeBalance || '0.1',
-						conviction: voteInfo?.lockedPeriod || 0.1,
-						nyeVoteBalance: voteInfo.nayBalance || '0.1',
+						abstainAyeVoteBalance: voteInfo?.ayeBalance || '0',
+						abstainNyeVoteBalance: voteInfo?.nayBalance || '0',
+						abstainVoteBalance: voteInfo?.abstainBalance || '0',
+						ayeVoteBalance: voteInfo.ayeBalance || '0',
+						conviction: voteInfo?.lockedPeriod || '0.1',
+						nyeVoteBalance: voteInfo.nayBalance || '0',
 						voteOption: voteInfo?.decision || 'aye'
 					}
 				})

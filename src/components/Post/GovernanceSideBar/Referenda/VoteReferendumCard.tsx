@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -22,7 +22,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
@@ -96,7 +96,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost, currentDecision }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
@@ -107,19 +107,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const [vote, setVote] = useState<string | EVoteDecisionType>(currentDecision || EVoteDecisionType.AYE);
-
-	useEffect(() => {
-		if (currentDecision && !forSpecificPost) {
-			dispatch(
-				editCartPostValueChanged({
-					values: {
-						voteOption: currentDecision || 'aye'
-					}
-				})
-			);
-		}
-	}, [currentDecision, dispatch, forSpecificPost]);
+	const { vote } = useBatchVotesSelector();
 
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
@@ -135,7 +123,8 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	};
 
 	const handleOnVoteChange = (value: any) => {
-		setVote(value as EVoteDecisionType);
+		// setVote(value as EVoteDecisionType);
+		dispatch(batchVotesActions.setVote(value));
 		if (!forSpecificPost) {
 			dispatch(
 				editBatchValueChanged({
@@ -229,7 +218,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 
 	const VoteUI = (
 		<>
-			{/* aye nye split abstain buttons */}
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
 				block
@@ -261,7 +249,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										ayeVoteBalance: balance?.toString() || '0.1'
+										ayeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -290,7 +278,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										nyeVoteBalance: balance?.toString() || '0.1'
+										nyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -320,7 +308,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString() || '0.1'
+										abstainVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -340,7 +328,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainAyeVoteBalance: balance?.toString() || '0.1'
+										abstainAyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -360,7 +348,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainNyeVoteBalance: balance?.toString() || '0.1'
+										abstainNyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -380,7 +368,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString() || '0.1'
+										abstainVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);

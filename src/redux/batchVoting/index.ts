@@ -5,6 +5,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IBatchVotesDetails, IBatchVoteStore, IVoteCardInfo } from './@types';
 import { HYDRATE } from 'next-redux-wrapper';
+import { EVoteDecisionType } from '~src/types';
 
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {
@@ -25,6 +26,7 @@ const initialState: IBatchVoteStore = {
 		nyeVoteBalance: '0',
 		voteOption: 'aye'
 	},
+	is_cancel_button_clicked: false,
 	is_default_selected: true,
 	is_field_edited: false,
 	post_ids_array: [],
@@ -32,6 +34,7 @@ const initialState: IBatchVoteStore = {
 	show_default_options_modal: false,
 	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
+	vote: EVoteDecisionType.AYE,
 	vote_card_info: {
 		abstainAyeBalance: '0',
 		abstainNayBalance: '0',
@@ -79,6 +82,7 @@ export const batchVoteStore = createSlice({
 			state = {
 				batch_vote_details: {},
 				edit_vote_details: {},
+				is_cancel_button_clicked: false,
 				is_default_selected: true,
 				is_field_edited: false,
 				post_ids_array: [],
@@ -86,6 +90,7 @@ export const batchVoteStore = createSlice({
 				show_default_options_modal: false,
 				total_active_posts: 0,
 				total_proposals_added_in_Cart: 0,
+				vote: EVoteDecisionType.AYE,
 				vote_card_info: {
 					abstainAyeBalance: '',
 					abstainNayBalance: '',
@@ -159,6 +164,9 @@ export const batchVoteStore = createSlice({
 				}
 			}
 		},
+		setIsCancelButtonClicked: (state, action: PayloadAction<boolean>) => {
+			state.is_default_selected = action.payload;
+		},
 		setIsDefaultSelected: (state, action: PayloadAction<boolean>) => {
 			state.is_default_selected = action.payload;
 		},
@@ -186,6 +194,9 @@ export const batchVoteStore = createSlice({
 		},
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
+		},
+		setVote: (state, action: PayloadAction<string | EVoteDecisionType>) => {
+			state.vote = action.payload;
 		},
 		setVoteCartData: (state, action: PayloadAction<any[]>) => {
 			state.vote_cart_data = action.payload;

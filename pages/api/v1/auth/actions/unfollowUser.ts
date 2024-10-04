@@ -30,6 +30,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
+	if (user.id === userIdToUnfollow) {
+		return res.status(400).json({ message: 'Cannot unfollow yourself' });
+	}
+
 	const userRef = firestore_db.collection('users').doc(String(userIdToUnfollow));
 	const userDoc = await userRef.get();
 

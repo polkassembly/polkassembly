@@ -21,8 +21,8 @@ interface Props {
 const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Props) => {
 	const { is_sidebar_collapsed } = useGlobalSelector();
 
-	const [isNudgeVisible, setNudgeVisible] = useState(true);
-	const [isModalOpen, setModalOpen] = useState(true);
+	const [isNudgeVisible, setNudgeVisible] = useState(false);
+	const [isModalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (!getStatusesFromCustomStatus(CustomStatus.Active).includes(status)) return;

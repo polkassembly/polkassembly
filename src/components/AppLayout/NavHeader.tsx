@@ -72,6 +72,9 @@ const CreateProxyModal = dynamic(() => import('~src/components/createProxy/Creat
 const CreateProxyMainModal = dynamic(() => import('~src/components/createProxy/CreateProxyMainModal'), {
 	ssr: false
 });
+const CreateProxySuccessModal = dynamic(() => import('~src/components/createProxy/CreateProxySuccessModal'), {
+	ssr: false
+});
 
 interface Props {
 	className?: string;

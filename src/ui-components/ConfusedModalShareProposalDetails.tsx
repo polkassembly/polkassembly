@@ -75,8 +75,9 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 
 	const copyLinkToClipboard = () => {
 		const link = window.location.href;
-		const textMessage = message || 'Hey, check out this proposal and help me make a decision.';
-		const finalMessage = `${textMessage} \n${link}`;
+		const textMessage = message;
+		const finalMessage = `${textMessage}\n 'Check out this proposal here:' \n${link}`;
+
 		navigator.clipboard
 			.writeText(finalMessage)
 			.then(() => {

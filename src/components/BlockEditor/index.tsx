@@ -21,7 +21,6 @@ const EDITOR_TOOLS = {
 };
 
 const BlockEditor = ({ data, onChange }: { data?: any; onChange?: (data: any) => void }) => {
-	console.log('data 1 :', data);
 	const ref = useRef<EditorJS>();
 
 	const edjsParser = EdJsHTML({
@@ -37,9 +36,7 @@ const BlockEditor = ({ data, onChange }: { data?: any; onChange?: (data: any) =>
 				tools: EDITOR_TOOLS,
 				data: data,
 				onReady: async () => {
-					console.log('data: ', data);
 					if (data) {
-						console.log('gets here');
 						await editor.blocks.renderFromHTML(data);
 					}
 				},
@@ -63,7 +60,7 @@ const BlockEditor = ({ data, onChange }: { data?: any; onChange?: (data: any) =>
 
 	return (
 		<div
-			className='rounded-md border border-solid border-gray-300 dark:text-white'
+			className='rounded-md border border-solid border-gray-600 dark:text-white'
 			id='block-editor'
 		/>
 	);

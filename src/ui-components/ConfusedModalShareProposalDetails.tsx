@@ -13,6 +13,8 @@ import { NetworkSocials } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ProposalType } from '~src/global/proposalType';
 import { trackEvent } from 'analytics';
+import { useTheme } from 'next-themes';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	modalOpen: boolean;
@@ -26,6 +28,7 @@ interface Props {
 const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className, postId, proposalType, title }: Props) => {
 	const [message, setMessage] = useState<string>('');
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [socialsData, setSocialsData] = useState<NetworkSocials>({
 		block_explorer: '',
@@ -81,7 +84,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 		<StyledModal
 			open={modalOpen}
 			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-white' />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-[#9E9E9E]' />}
 			centered
 			zIndex={1002}
 			className={className}
@@ -95,25 +98,27 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						width={320}
 						height={320}
 					/>
-					<p className='-mt-4 text-xl font-semibold text-[#243A57] dark:text-blue-dark-high'>Confusion everywhere, It&apos;s a Menace!</p>
+					<p className={`-mt-4 text-xl ${poppins.className} ${poppins.variable} font-semibold text-[#243A57] dark:text-blue-dark-high`}>
+						Confusion everywhere, It&apos;s a Menace!
+					</p>
 				</div>
 				<div className='mx-auto -mt-3'>
 					<div className='relative h-12 w-[480px]'>
 						<ImageIcon
-							src='/assets/confusedmodalShareProposalDetails/comment.svg'
+							src={`${theme === 'dark' ? '/assets/confusedmodalShareProposalDetails/dark-comment.svg' : '/assets/confusedmodalShareProposalDetails/comment.svg'}`}
 							alt='Confusion Icon'
 							className=' -ml-5  w-[520px] '
 						/>
 						<div className='absolute inset-0 left-5 top-5 z-10 '>
 							<div className=''>
-								<p className='font-poppins text-[14px]  text-[#485F7D]'>Add a message</p>
+								<p className='font-poppins text-[14px] text-[#485F7D]  dark:text-white'>Add a message</p>
 							</div>
 							<input
 								type='text'
 								value={message}
 								onChange={(e) => setMessage(e.target.value)}
 								placeholder='Hey check out this proposal and help me make a decision.'
-								className=' h-8 w-[450px] rounded-sm border-[1px] border-[#D2D8E0] px-5 py-2.5 outline-none dark:text-white'
+								className=' h-8 w-[450px] rounded-sm border-[1px] border-[#D2D8E0] px-5 py-2.5 outline-none dark:border-none dark:bg-[#07183D] dark:text-white dark:placeholder:text-white'
 							/>
 						</div>
 					</div>

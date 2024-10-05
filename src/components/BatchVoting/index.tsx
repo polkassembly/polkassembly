@@ -6,12 +6,15 @@ import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector } from '~src/redux/selectors';
-import VotingOptions from './VotingOptions/VotingOptions';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 const DefaultOptions = dynamic(() => import('./DefaultOptions/DefaultOptions'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const VotingOptions = dynamic(() => import('./VotingOptions/VotingOptions'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

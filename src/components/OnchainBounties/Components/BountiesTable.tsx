@@ -46,7 +46,6 @@ interface OnchainBountiesProps {
 
 const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 	const { resolvedTheme: theme = 'light' } = useTheme();
-	console.log('props', props.bounties);
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
@@ -69,7 +68,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 
 			try {
 				const { data, error } = await nextApiClientFetch<IChildBountiesResponse>(
-					`/api/v1/child_bounties?page=${props.currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${record.index}`
+					`/api/v1/child_bounties?page=${props.currentPage}&listingLimit=${record.totalChildBountiesCount}&postId=${record.index}`
 				);
 
 				if (error) {

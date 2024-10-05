@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes';
 import { IChildBountiesResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import dayjs from 'dayjs';
 interface DataType {
 	index: number;
 	curator: string;
@@ -170,17 +171,29 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 			title: 'Claimed'
 		},
 		{
-			dataIndex: 'date',
-			key: 'date',
-			render: (date: string) =>
-				date ? (
-					<span>
-						<ClockCircleOutlined /> {date}
-					</span>
-				) : (
-					'-'
-				),
-			title: 'Date'
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			render: (createdAt: string) => {
+				const relativeCreatedAt = createdAt
+					? dayjs(createdAt).isBefore(dayjs().subtract(1, 'w'))
+						? dayjs(createdAt).format("Do MMM 'YY")
+						: dayjs(createdAt).startOf('day').fromNow()
+					: null;
+
+				return (
+					<>
+						{relativeCreatedAt ? (
+							<span>
+								<ClockCircleOutlined /> {relativeCreatedAt}
+							</span>
+						) : (
+							'-'
+						)}
+					</>
+				);
+			},
+			title: 'Date',
+			width: 340
 		},
 
 		{
@@ -261,6 +274,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 											<Popover
 												content='Expand to view child bounties'
 												placement='top'
+												trigger='hover'
 											>
 												<CaretDownOutlined
 													onClick={(e) => {
@@ -273,7 +287,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 									) : null,
 								expandedRowKeys,
 								expandedRowRender: (record) => (
-									<div className='bg-[#fcebf5]'>
+									<div className='m-0 p-0'>
 										{record.totalChildBountiesCount && record.totalChildBountiesCount > 0 ? (
 											<div>
 												{loadingChildBounties[record.index] ? (
@@ -304,17 +318,17 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 																<div className='ml-4 mt-5 w-1/4'>{childBounty.index}</div>
 																<div className='mt-5 w-1/4'>-</div>
 																<div className='mt-5 w-1/4 '>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
+																<div className='mt-5 w-1/4'>-</div>
 																<div className='mt-5 w-1/4'>
 																	{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 																</div>
-																<div className='mt-5 w-1/4'>-</div>
 																<div className=' mt-5 w-1/4'>-</div>
 																<div className='mt-5 w-1/4'>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
 															</div>
 														))}
 													</div>
 												) : (
-													<p>No child bounties available.</p>
+													<p className='pl-4 pt-4'>No child bounties available.</p>
 												)}
 											</div>
 										) : (
@@ -357,13 +371,22 @@ const StyledTableContainer = styled.div<{ themeMode: string }>`
 		border-style: solid;
 		border-color: #d2d8e0;
 	}
+
 	.ant-table-wrapper .hover-row:hover {
 		transform: scale(1.009);
 		cursor: pointer;
 		transition: transform 0.2s ease-in-out;
 	}
-	.ant-table-expanded-row .ant-table-expanded-row-level-1 {
+
+	.ant-table .ant-table-tbody .ant-table-expanded-row.ant-table-expanded-row-level-1 td {
 		background-color: #fcebf5 !important;
+	}
+
+	.ant-table-expanded-row.ant-table-expanded-row-level-1 .ant-table-cell {
+		padding-left: 0px !important;
+		padding-right: 0px !important;
+		padding-bottom: 0px !important;
+		padding-top: 0px !important;
 	}
 
 	.ant-table-wrapper .ant-table-tbody > tr > td {

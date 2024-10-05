@@ -172,8 +172,8 @@ function OnchainBounties() {
 				</div>
 			</div>
 
-			<div className='relative'>
-				<div className='absolute right-5 top-8 z-50'>
+			<div className='relative mt-5 md:mt-0'>
+				<div className='absolute -top-2 right-5 z-50 md:top-8'>
 					<FilterByTags
 						bounties={bounties}
 						setFilteredBounties={setFilteredBounties}

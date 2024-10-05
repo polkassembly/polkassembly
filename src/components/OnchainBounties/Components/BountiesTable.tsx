@@ -272,7 +272,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 											/>
 										) : (
 											<Popover
-												content='Expand to view child bounties'
+												content='Expand to view Child Bounties'
 												placement='top'
 												trigger='hover'
 											>

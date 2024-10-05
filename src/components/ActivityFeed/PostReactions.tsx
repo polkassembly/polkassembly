@@ -66,7 +66,7 @@ export const PostReactions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages[index]}
+							src={userImages && userImages[index] && userImages[index]}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'

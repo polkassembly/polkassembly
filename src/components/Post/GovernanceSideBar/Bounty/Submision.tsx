@@ -7,7 +7,8 @@ import { Modal, Button, Select, Form } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Input from '~src/basic-components/Input';
-import InputTextarea from '~src/basic-components/Input/InputTextarea';
+import BalanceInput from '~src/ui-components/BalanceInput';
+import TextEditor from '~src/ui-components/TextEditor';
 
 const { Option } = Select;
 
@@ -17,21 +18,14 @@ interface IBountyChildBountiesProps {
 
 const Submision: FC<IBountyChildBountiesProps> = (props) => {
 	const { bountyId } = props;
-
-	// State to control modal visibility
 	const [isModalVisible, setIsModalVisible] = useState(false);
-
-	// Open Modal
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
-
-	// Close Modal
 	const handleCancel = () => {
 		setIsModalVisible(false);
 	};
 
-	// Handle form submission
 	const handleOk = (values: any) => {
 		console.log('Submitted Values:', values);
 		setIsModalVisible(false);
@@ -44,7 +38,7 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 			<h4 className='dashboard-heading mb-4 dark:text-white'>Submissions (0)</h4>
 
 			<div
-				className='flex cursor-pointer items-center justify-center gap-2 rounded-md border-[0.7px] border-solid border-[#D2D8E0] bg-[#E5007A] px-2 py-1 dark:border-separatorDark'
+				className='flex cursor-pointer items-center justify-center rounded-md border-[0.7px] border-solid border-[#D2D8E0] bg-[#E5007A] px-2 py-1 dark:border-separatorDark'
 				onClick={showModal}
 			>
 				<ImageIcon
@@ -60,6 +54,7 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 				visible={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
+				className='-mt-16'
 				destroyOnClose
 			>
 				<Form
@@ -69,7 +64,7 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					<Form.Item
 						label='Select Account'
 						name='account'
-						rules={[{ required: true, message: 'Please select an account' }]}
+						rules={[{ message: 'Please select an account', required: true }]}
 					>
 						<Select placeholder='Select an account'>
 							<Option value='account1'>Account 1</Option>
@@ -80,6 +75,7 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					<Form.Item
 						label='Propose Curator'
 						name='curator'
+						className='-mt-3'
 					>
 						<Input placeholder='Enter curator' />
 					</Form.Item>
@@ -87,25 +83,25 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					<Form.Item
 						label='Title'
 						name='title'
-						rules={[{ required: true, message: 'Please enter a title' }]}
+						className='-mt-3'
+						rules={[{ message: 'Please enter a title', required: true }]}
 					>
 						<Input placeholder='Enter title' />
 					</Form.Item>
 
-					<Form.Item
-						label='Request Amount'
-						name='amount'
-						rules={[{ required: true, message: 'Please enter the amount requested' }]}
-					>
-						<Input
-							placeholder='Enter requested amount'
-							type='number'
-						/>
-					</Form.Item>
+					<BalanceInput
+						label={'Request Amount'}
+						helpText={'Enter an amount for your request'}
+						placeholder={'Enter an amount for your request '}
+						// onChange={onBalanceChange}
+						className='-mt-3 border-section-light-container text-sm font-medium dark:border-[#3B444F]'
+						// theme={theme}
+					/>
 
 					<Form.Item
 						label='Links'
 						name='links'
+						className='-mt-3'
 					>
 						<Input placeholder='Add relevant links' />
 					</Form.Item>
@@ -113,19 +109,25 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					<Form.Item
 						label='Tags'
 						name='tags'
+						className='-mt-3'
 					>
 						<Input placeholder='Add tags (comma separated)' />
 					</Form.Item>
-
 					<Form.Item
 						label='Description'
 						name='description'
-						rules={[{ required: true, message: 'Please provide a description' }]}
+						className='-mt-3'
 					>
-						<InputTextarea
-							rows={4}
-							placeholder='Enter a detailed description'
-						/>
+						<TextEditor
+							name='content'
+							value='hello'
+							// value={value}
+							// theme={theme}
+							height={150}
+							onChange={() => {}}
+							// onChange={onChangeWrapper}
+							autofocus={false}
+						/>{' '}
 					</Form.Item>
 
 					<Form.Item>

@@ -51,6 +51,7 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import ProxyMain from '../createProxy';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -64,15 +65,6 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	ssr: false
 });
 const Identity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	ssr: false
-});
-const CreateProxyModal = dynamic(() => import('~src/components/createProxy/CreateProxyModal'), {
-	ssr: false
-});
-const CreateProxyMainModal = dynamic(() => import('~src/components/createProxy/CreateProxyMainModal'), {
-	ssr: false
-});
-const CreateProxySuccessModal = dynamic(() => import('~src/components/createProxy/CreateProxySuccessModal'), {
 	ssr: false
 });
 
@@ -97,7 +89,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const [openProxyModal, setOpenProxyModal] = useState<boolean>(false);
-	const [openProxyMainModal, setOpenProxyMainModal] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
@@ -587,16 +578,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<RemoveIdentity />
 				</>
 			)}
-			<CreateProxyModal
-				openModal={openProxyModal}
-				setOpenModal={setOpenProxyModal}
-				className=''
-				setOpenProxyMainModal={setOpenProxyMainModal}
-			/>
-			<CreateProxyMainModal
-				openModal={openProxyMainModal}
-				setOpenModal={setOpenProxyMainModal}
-				className=''
+			<ProxyMain
+				openProxyModal={openProxyModal}
+				setOpenProxyModal={setOpenProxyModal}
 			/>
 		</Header>
 	);

@@ -8,8 +8,6 @@ import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { Collapse } from '../Settings/Notifications/common-ui/Collapse';
-import { useTheme } from 'next-themes';
 
 interface Props {
 	openModal: boolean;
@@ -18,11 +16,7 @@ interface Props {
 	className: string;
 }
 
-const { Panel } = Collapse;
-
 const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMainModal }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
-
 	return (
 		<Modal
 			title={
@@ -80,43 +74,6 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 						<span>Rather than using funds in a single account, smaller accounts with unique roles can complete tasks on behalf of the main stash account.</span>
 					</div>
 				</div>
-				<Collapse
-					size='large'
-					theme={theme as any}
-					className='mt-3 w-full border-none bg-[#F6F7F9] dark:bg-section-dark-overlay'
-					expandIconPosition='end'
-					expandIcon={({ isActive }) =>
-						isActive ? (
-							<Image
-								src={'/assets/icons/expand.svg'}
-								height={20}
-								width={20}
-								alt=''
-								className={theme == 'dark' ? 'dark-icons' : ''}
-							/>
-						) : (
-							<Image
-								src={'/assets/icons/collapse.svg'}
-								height={20}
-								width={20}
-								alt=''
-								className={theme == 'dark' ? 'dark-icons' : ''}
-							/>
-						)
-					}
-					defaultActiveKey={['1']}
-				>
-					<Panel
-						header={
-							<div className='flex w-full items-center space-x-4 border-none bg-[#F6F7F9]'>
-								<span className='text-sm'>Total Amount Required </span>
-							</div>
-						}
-						key='1'
-					>
-						<div className=' border-none bg-[#F6F7F9]'>Here</div>
-					</Panel>
-				</Collapse>
 			</div>
 		</Modal>
 	);

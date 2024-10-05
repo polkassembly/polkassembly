@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Modal, Checkbox, Input, Radio, Form } from 'antd';
+import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
@@ -9,7 +9,7 @@ import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import DownArrow from '~assets/icons/down-icon.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { EEnactment, IEnactment } from '../OpenGovTreasuryProposal';
 import { IAdvancedDetails } from '../OpenGovTreasuryProposal/CreatePreimage';
@@ -32,31 +32,32 @@ import executeTx from '~src/util/executeTx';
 interface Props {
 	openModal: boolean;
 	setOpenModal: (pre: boolean) => void;
+	setOpenProxySuccessModal: (pre: boolean) => void;
+	setAddress: (pre: string) => void;
+	address: string;
 	className: string;
 }
 
 const ZERO_BN = new BN(0);
 
-const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => {
+const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, setOpenModal, setAddress, address }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
-	const { availableBalance } = useInitialConnectAddress();
-	const availableBalanceBN = new BN(availableBalance || '0');
 	const { loginAddress, loginWallet } = userDetails;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [form] = Form.useForm();
 	const [createPureProxy, setCreatePureProxy] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
-	const [gasFee, setGasFee] = useState(ZERO_BN);
+	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [proxyAddress, setProxyAddress] = useState<string>('');
 	const [proxyType, setProxyType] = useState<any>('Any');
-	const [address, setAddress] = useState<string>('');
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
 
@@ -82,7 +83,44 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails]);
+	}, [userDetails, proxyAddress]);
+
+	const fetchFees = async () => {
+		setLoadingStatus({ isLoading: true, message: '' });
+		try {
+			let proxyTx;
+			if (createPureProxy) {
+				proxyTx = api?.tx?.proxy?.createPure(proxyType as any, 0, 0);
+			}
+			if (proxyAddress && !createPureProxy) {
+				proxyTx = api?.tx?.proxy?.addProxy(proxyAddress, proxyType as any, 0);
+			}
+
+			const balanceStr = (await api?.query?.system?.account(address))?.data?.free.toString();
+
+			if (balanceStr) {
+				const availableBalance = new BN(balanceStr);
+				setAvailableBalance(availableBalance);
+			} else {
+				console.log('Failed to retrieve balance');
+			}
+
+			setAvailableBalance(availableBalance);
+			if (!proxyTx) return;
+			const gasFee = (await proxyTx?.paymentInfo(address || proxyAddress))?.toJSON();
+			setGasFee(new BN(String(gasFee?.partialFee)));
+			setLoadingStatus({ isLoading: false, message: '' });
+		} catch (error) {
+			console.error('Failed to fetch fees:', error);
+			setLoadingStatus({ isLoading: false, message: '' });
+		}
+	};
+
+	useEffect(() => {
+		if (!api && !apiReady) return;
+		fetchFees();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [createPureProxy, apiReady, api, proxyAddress, address]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -110,32 +148,33 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 		}
 		let txn;
 		if (createPureProxy) {
-			txn = api.tx.proxy.createPure(proxyType as any, 100, 12);
+			txn = api?.tx?.proxy?.createPure(proxyType as any, 0, 0);
 		}
 		if (proxyAddress && !createPureProxy) {
-			txn = api.tx.proxy.addProxy(proxyAddress, proxyType as any, 100);
+			txn = api?.tx?.proxy?.addProxy(proxyAddress, proxyType as any, 0);
 		}
 		if (!txn) return;
 		const { partialFee: txGasFee } = (await txn.paymentInfo(address || loginAddress)).toJSON();
 		setGasFee(new BN(String(txGasFee)));
 
 		const onFailed = (message: string) => {
-			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 			queueNotification({
 				header: 'Failed!',
 				message,
 				status: NotificationStatus.ERROR
 			});
+			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 		};
 
 		const onSuccess = async () => {
-			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 			queueNotification({
 				header: 'Success!',
 				message: 'Proposal created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
+			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 			setOpenModal(false);
+			setOpenProxySuccessModal(true);
 		};
 
 		await executeTx({
@@ -178,7 +217,7 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={getSubstrateAddress(address || loginAddress) == getSubstrateAddress(proxyAddress) || availableBalanceBN.lt(gasFee)}
+						disabled={getSubstrateAddress(address || loginAddress) == getSubstrateAddress(proxyAddress) || availableBalance.lt(gasFee)}
 						height={40}
 						width={145}
 						text='Create Proxy'
@@ -192,203 +231,213 @@ const CreateProxyMainModal = ({ openModal, setOpenModal, className }: Props) => 
 			onCancel={() => setOpenModal(false)}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
-			<div className='px-6 py-3'>
-				<Form
-					form={form}
-					disabled={loadingStatus.isLoading}
-					initialValues={{ loginAddress: loginAddress }}
-					onFinish={handleSubmit}
-				>
-					<div className=''>
-						<AccountSelectionForm
-							title='Your Address'
-							isTruncateUsername={false}
-							accounts={accounts}
-							address={loginAddress}
-							withBalance={false}
-							onAccountChange={onAccountChange}
-							className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-							inputClassName='rounded-[4px] px-3 py-1'
-							withoutInfo={true}
-							linkAddressTextDisabled
-							theme={theme}
-							isVoting
-						/>
-					</div>
-					<div className='mt-5'>
-						<AccountSelectionForm
-							title='Proxy Address'
-							isTruncateUsername={false}
-							accounts={accounts}
-							address={proxyAddress || loginAddress}
-							withBalance={false}
-							onAccountChange={(address) => setProxyAddress(address)}
-							className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-							inputClassName='rounded-[4px] px-3 py-1'
-							withoutInfo={true}
-							linkAddressTextDisabled
-							theme={theme}
-							isDisabled={createPureProxy}
-							isVoting
-						/>
-						<div className='mt-1'>
-							<Checkbox
-								checked={createPureProxy}
-								onChange={(e) => setCreatePureProxy(e.target.checked)}
-								className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
-							>
-								Create Pure Proxy
-							</Checkbox>
+			<Spin spinning={loadingStatus.isLoading}>
+				<div className='px-6 py-3'>
+					<Form
+						form={form}
+						disabled={loadingStatus.isLoading}
+						initialValues={{ loginAddress: loginAddress }}
+						onFinish={handleSubmit}
+					>
+						<div className=''>
+							<AccountSelectionForm
+								title='Your Address'
+								isTruncateUsername={false}
+								accounts={accounts}
+								address={loginAddress}
+								withBalance={false}
+								onAccountChange={onAccountChange}
+								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-1'
+								withoutInfo={true}
+								linkAddressTextDisabled
+								theme={theme}
+								isVoting
+							/>
 						</div>
-					</div>
-					<div className='mt-5'>
-						<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Proxy Type</label>
-						<Select
-							className='w-full rounded-[4px] py-1'
-							style={{ width: '100%' }}
-							value={proxyType}
-							size='large'
-							suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
-							onChange={(value) => setProxyType(value)}
-							defaultValue={'Any'}
-							options={[
-								{ label: 'Any', value: 'Any' },
-								{ label: 'Auction', value: 'Auction' },
-								{ label: 'Cancel Proxy', value: 'CancelProxy' },
-								{ label: 'Governance', value: 'Governance' },
-								{ label: 'Identity Judgment', value: 'IdentityJudgement' },
-								{ label: 'Non Transfer', value: 'NonTransfer' },
-								{ label: 'On Demand Ordering', value: 'OnDemandOrdering' },
-								{ label: 'Society', value: 'Society' }
-							]}
-						/>
-					</div>
-					{proxyType && (
-						<div
-							className='mt-6 flex cursor-pointer items-center gap-2'
-							onClick={() => setOpenAdvanced(!openAdvanced)}
-						>
-							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
-							<DownArrow className='down-icon' />
-						</div>
-					)}
-					{openAdvanced && (
-						<div className='preimage mt-3 flex flex-col'>
-							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Enactment{' '}
-								<span>
-									<HelperTooltip
-										text='A custom delay can be set for enactment of approved proposals.'
-										className='ml-1'
-									/>
-								</span>
-							</label>
-							<Radio.Group
-								className='enactment mt-1 flex flex-col gap-2'
-								value={enactment.key}
-								onChange={(e) => {
-									setEnactment({ ...enactment, key: e.target.value });
-								}}
-							>
-								<Radio
-									value={EEnactment.At_Block_No}
-									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+						<div className='mt-5'>
+							<AccountSelectionForm
+								title='Proxy Address'
+								isTruncateUsername={false}
+								accounts={accounts}
+								address={proxyAddress || loginAddress}
+								withBalance={false}
+								onAccountChange={(address) => setProxyAddress(address)}
+								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-1'
+								withoutInfo={true}
+								linkAddressTextDisabled
+								theme={theme}
+								isDisabled={createPureProxy}
+								isVoting
+							/>
+							<div className='mt-1'>
+								<Checkbox
+									checked={createPureProxy}
+									onChange={(e) => setCreatePureProxy(e.target.checked)}
+									className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
 								>
-									<div className='flex h-10 items-center gap-4'>
-										<span>
-											At Block no.
-											<HelperTooltip
-												className='ml-1'
-												text='Allows you to choose a custom block number for enactment.'
-											/>
-										</span>
-										<span>
-											{enactment.key === EEnactment.At_Block_No && (
-												<Form.Item
-													name='at_block'
-													rules={[
-														{
-															message: 'Invalid Block no.',
-															validator(rule, value, callback) {
-																const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
-
-																if (callback && value?.length > 0 && ((currentBlock && bnValue?.lt(currentBlock)) || (value?.length && Number(value) <= 0))) {
-																	callback(rule.message?.toString());
-																} else {
-																	callback();
-																}
-															}
-														}
-													]}
-												>
-													<Input
+									Create Pure Proxy
+								</Checkbox>
+							</div>
+						</div>
+						<div className='mt-5'>
+							<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Proxy Type</label>
+							<Select
+								className='w-full rounded-[4px] py-1'
+								style={{ width: '100%' }}
+								value={proxyType}
+								size='large'
+								suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
+								onChange={(value) => setProxyType(value)}
+								defaultValue={'Any'}
+								options={[
+									{ label: 'Any', value: 'Any' },
+									{ label: 'Auction', value: 'Auction' },
+									{ label: 'Cancel Proxy', value: 'CancelProxy' },
+									{ label: 'Governance', value: 'Governance' },
+									{ label: 'Identity Judgment', value: 'IdentityJudgement' },
+									{ label: 'Non Transfer', value: 'NonTransfer' },
+									{ label: 'On Demand Ordering', value: 'OnDemandOrdering' },
+									{ label: 'Society', value: 'Society' }
+								]}
+							/>
+						</div>
+						{proxyType && (
+							<div
+								className='mt-6 flex cursor-pointer items-center gap-2'
+								onClick={() => setOpenAdvanced(!openAdvanced)}
+							>
+								<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+								<DownArrow className='down-icon' />
+							</div>
+						)}
+						{openAdvanced && (
+							<div className='preimage mt-3 flex flex-col'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+									Enactment{' '}
+									<span>
+										<HelperTooltip
+											text='A custom delay can be set for enactment of approved proposals.'
+											className='ml-1'
+										/>
+									</span>
+								</label>
+								<Radio.Group
+									className='enactment mt-1 flex flex-col gap-2'
+									value={enactment.key}
+									onChange={(e) => {
+										setEnactment({ ...enactment, key: e.target.value });
+									}}
+								>
+									<Radio
+										value={EEnactment.At_Block_No}
+										className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+									>
+										<div className='flex h-10 items-center gap-4'>
+											<span>
+												At Block no.
+												<HelperTooltip
+													className='ml-1'
+													text='Allows you to choose a custom block number for enactment.'
+												/>
+											</span>
+											<span>
+												{enactment.key === EEnactment.At_Block_No && (
+													<Form.Item
 														name='at_block'
-														value={String(advancedDetails.atBlockNo?.toString())}
-														className='w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
-													/>
-												</Form.Item>
-											)}
-										</span>
-									</div>
-								</Radio>
-								<Radio
-									value={EEnactment.After_No_Of_Blocks}
-									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
-								>
-									<div className='flex h-[30px] items-center gap-2'>
-										<span className='w-[150px]'>
-											After no. of Blocks
-											<HelperTooltip
-												text='Allows you to choose a custom delay in terms of blocks for enactment.'
-												className='ml-1'
-											/>
-										</span>
-										<span>
-											{enactment.key === EEnactment.After_No_Of_Blocks && (
-												<Form.Item
-													name='after_blocks'
-													rules={[
-														{
-															message: 'Invalid no. of Blocks',
-															validator(rule, value, callback) {
-																const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
-																if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
-																	callback(rule.message?.toString());
-																} else {
-																	callback();
+														rules={[
+															{
+																message: 'Invalid Block no.',
+																validator(rule, value, callback) {
+																	const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
+
+																	if (callback && value?.length > 0 && ((currentBlock && bnValue?.lt(currentBlock)) || (value?.length && Number(value) <= 0))) {
+																		callback(rule.message?.toString());
+																	} else {
+																		callback();
+																	}
 																}
 															}
-														}
-													]}
-												>
-													<Input
+														]}
+													>
+														<Input
+															name='at_block'
+															value={String(advancedDetails.atBlockNo?.toString())}
+															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
+														/>
+													</Form.Item>
+												)}
+											</span>
+										</div>
+									</Radio>
+									<Radio
+										value={EEnactment.After_No_Of_Blocks}
+										className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+									>
+										<div className='flex h-[30px] items-center gap-2'>
+											<span className='w-[150px]'>
+												After no. of Blocks
+												<HelperTooltip
+													text='Allows you to choose a custom delay in terms of blocks for enactment.'
+													className='ml-1'
+												/>
+											</span>
+											<span>
+												{enactment.key === EEnactment.After_No_Of_Blocks && (
+													<Form.Item
 														name='after_blocks'
-														className='w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
-													/>
-												</Form.Item>
-											)}
-										</span>
+														rules={[
+															{
+																message: 'Invalid no. of Blocks',
+																validator(rule, value, callback) {
+																	const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
+																	if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
+																		callback(rule.message?.toString());
+																	} else {
+																		callback();
+																	}
+																}
+															}
+														]}
+													>
+														<Input
+															name='after_blocks'
+															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
+														/>
+													</Form.Item>
+												)}
+											</span>
+										</div>
+									</Radio>
+								</Radio.Group>
+							</div>
+						)}
+						{gasFee && gasFee != ZERO_BN && (
+							<Alert
+								type='info'
+								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
+								showIcon
+								description={
+									<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
+										Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
 									</div>
-								</Radio>
-							</Radio.Group>
-						</div>
-					)}
-					{gasFee && gasFee != ZERO_BN && (
-						<Alert
-							type='info'
-							className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
-							showIcon
-							description={
-								<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
-									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
-								</div>
-							}
-						/>
-					)}
-				</Form>
-			</div>
+								}
+							/>
+						)}
+						{availableBalance.lt(gasFee) && (
+							<Alert
+								type='info'
+								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
+								showIcon
+								description={<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>Insufficient Balance</div>}
+							/>
+						)}
+					</Form>
+				</div>
+			</Spin>
 		</Modal>
 	);
 };

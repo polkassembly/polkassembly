@@ -24,6 +24,7 @@ export interface IBounty {
 	title: string;
 	curator: string;
 	totalChildBountiesCount: number;
+	createdAt: string;
 	claimedAmount: string;
 	categories: string[];
 	childbounties?: any[];
@@ -36,9 +37,13 @@ interface ISubsquidBounty {
 	reward: string;
 	payee: string;
 	curator: string;
+	createdAt: string;
 }
+
 const ZERO_BN = new BN(0);
+
 const BOUNTIES_LISTING_LIMIT = 10;
+
 const bountyStatuses = [
 	bountyStatus.ACTIVE,
 	bountyStatus.AWARDED,
@@ -132,6 +137,7 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 			const payload: IBounty = {
 				categories: [],
 				claimedAmount: claimedAmount.toString(),
+				createdAt: subsquidBounty?.createdAt,
 				curator: subsquidBounty?.curator,
 				index: subsquidBounty.index,
 				payee: subsquidBounty?.payee,

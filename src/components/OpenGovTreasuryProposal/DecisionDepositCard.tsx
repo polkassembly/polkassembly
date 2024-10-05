@@ -161,7 +161,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 					api.setSigner(injected.signer);
 				}
 
-				setAddress(accounts[0].address);
+				setAddress(accounts[0]?.address);
 				if (defaultWalletAddress) {
 					const matchingAccount = accounts?.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0];
 					if (matchingAccount) {

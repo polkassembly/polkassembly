@@ -267,9 +267,12 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					}}
 					title={
 						<div className='-mx-6 flex items-center gap-x-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-							<ImageIcon
-								src='/assets/icons/edit-option-icon.svg'
+							<Image
+								src={'/assets/icons/edit-option-icon.svg'}
 								alt='edit-icon'
+								height={20}
+								width={20}
+								className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 							/>
 							Edit Vote Details
 						</div>

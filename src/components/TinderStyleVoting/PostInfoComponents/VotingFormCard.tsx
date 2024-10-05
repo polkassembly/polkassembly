@@ -249,4 +249,7 @@ export default styled(VotingFormCard)`
 		margin-top: -2px !important;
 		border-radius: 0 !important;
 	}
+	.ant-slider .ant-slider-rail {
+		background-color: #f6f7f9 !important;
+	}
 `;

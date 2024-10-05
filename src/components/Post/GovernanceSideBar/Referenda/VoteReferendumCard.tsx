@@ -27,10 +27,10 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoComponents/VotingFormCard';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 import { batchVotesActions } from '~src/redux/batchVoting';
+import Image from 'next/image';
 
 interface Props {
 	className?: string;
@@ -380,15 +380,18 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				/>
 			)}
 
-			<div className='mt-[40px] flex h-[46px] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
+			<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
 				<div className='flex items-center gap-x-1'>
-					<ImageIcon
+					<Image
 						src='/assets/icons/lock-icon.svg'
 						alt='lock-icon'
+						width={24}
+						height={24}
+						className={theme === 'dark' ? 'dark-icons' : ''}
 					/>
-					<p className='m-0 p-0 text-sm text-lightBlue'>Locking period</p>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 				</div>
-				<p className='m-0 p-0 text-sm text-lightBlue'>No lockup period</p>
+				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>No lockup period</p>
 			</div>
 		</>
 	);

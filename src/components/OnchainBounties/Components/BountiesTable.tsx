@@ -315,15 +315,15 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 																	/>
 																)}
 
-																<div className='ml-4 mt-5 w-1/4'>{childBounty.index}</div>
-																<div className='mt-5 w-1/4'>-</div>
-																<div className='mt-5 w-1/4 '>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
-																<div className='mt-5 w-1/4'>-</div>
-																<div className='mt-5 w-1/4'>
+																<div className='ml-4 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
+																<div className='mt-5 w-1/4 dark:text-black'>-</div>
+																<div className='mt-5 w-1/4 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
+																<div className='mt-5 w-1/4 dark:text-black'>-</div>
+																<div className='mt-5 w-1/4 dark:text-black'>
 																	{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 																</div>
-																<div className=' mt-5 w-1/4'>-</div>
-																<div className='mt-5 w-1/4'>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
+																<div className=' mt-5 w-1/4 dark:text-black'>-</div>
+																<div className='mt-5 w-1/4 '>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
 															</div>
 														))}
 													</div>

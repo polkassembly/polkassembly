@@ -67,10 +67,9 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 			setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: true }));
 
 			try {
-				const { data, error } = await nextApiClientFetch<IChildBountiesResponse>(
-					`/api/v1/child_bounties?page=${props.currentPage}&listingLimit=${record.totalChildBountiesCount}&postId=${record.index}`
-				);
-
+				const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+					parentBountyIndex: record.index
+				});
 				if (error) {
 					console.error('Error fetching child bounties:', error);
 					setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));

@@ -8,9 +8,8 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
-import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED, GET_TOTAL_VOTE_COUNT_ON_PROPOSAL, VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS } from '~src/queries';
-import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getReactions, IPIPsVoting, IReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -20,13 +19,14 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
-import { EAllowedCommentor, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, EGovType, IBeneficiary, IPostHistory } from '~src/types';
+import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
 
 export interface IActivityFeedPost {
 	allowedCommentors: EAllowedCommentor;
 	assetId?: string | null;
 	post_reactions?: IReactions;
-	commentsCount: any;
+	commentsCount: number;
 	content?: string;
 	end?: number;
 	delay?: number;
@@ -39,7 +39,7 @@ export interface IActivityFeedPost {
 	};
 	decision?: string;
 	last_edited_at?: string | Date;
-	gov_type?: 'gov_1' | 'open_gov';
+	gov_type?: EGovType;
 	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];
@@ -84,7 +84,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const { userAddresses } = req.body;
 
 	if (userAddresses?.length && userAddresses?.filter((addr: string) => !getEncodedAddress(addr, network))?.length) {
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_PARAMS });
+		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
 	try {
@@ -97,7 +97,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			}
 		});
 		const subsquidData = subsquidRes?.['data']?.proposals;
-		if (!subsquidData?.length) res.status(400).json({ message: messages.NO_ACTIVE_PROPOSAL_FOUND });
+		if (!subsquidData?.length) return res.status(400).json({ message: messages.NO_ACTIVE_PROPOSAL_FOUND });
 		const activeProposalIndexes = subsquidData.map((item: any) => item?.index);
 
 		let votedProposalsIndexes: number[] = [];
@@ -142,42 +142,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				};
 				subsquidPost.proposalArguments = null;
 			}
+			const args = subsquidPost?.preimage?.proposedCall?.args;
 
-			let requested = BigInt(0);
-			let assetId: null | string = null;
-			let args = subsquidPost?.preimage?.proposedCall?.args;
-
-			if (args) {
-				if (
-					args?.assetKind?.assetId?.value?.interior ||
-					args?.assetKind?.assetId?.interior?.value ||
-					args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
-				) {
-					const call =
-						args?.assetKind?.assetId?.value?.interior?.value ||
-						args?.assetKind?.assetId?.interior?.value ||
-						args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
-					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-				}
-
-				args = convertAnyHexToASCII(args, network);
-				if (args?.amount) {
-					requested = args.amount;
-				} else {
-					const calls = args.calls;
-
-					if (calls && Array.isArray(calls) && calls.length > 0) {
-						calls.forEach((call) => {
-							if (call && call.amount) {
-								requested += BigInt(call.amount);
-							}
-							if (call && call?.value?.amount) {
-								requested += BigInt(call?.value?.amount);
-							}
-						});
-					}
-				}
-			}
+			const { assetId, requestedAmt } = getBeneficiaryDetails({ network, preimageArgs: args });
 
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
@@ -248,7 +215,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				post_reactions: reactions,
 				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-				requestedAmount: requested ? requested.toString() : undefined,
+				requestedAmount: requestedAmt ? requestedAmt.toString() : undefined,
 				status: status,
 				status_history: statusHistory,
 				summary: '',
@@ -257,7 +224,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				title: 'Untitled',
 				topic: topicFromType,
 				totalVotes: totalVotes || 0,
-				track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
+				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type
 			};
 
@@ -268,9 +235,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					let subsquareTitle = '';
 					let subsquareContent = '';
 					if (!data?.title?.length || !data?.content?.length) {
-						const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-						subsquareTitle = res?.title;
-						subsquareContent = res?.content;
+						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
+						subsquareTitle = subsqaureRes?.title;
+						subsquareContent = subsqaureRes?.content;
 					}
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
@@ -282,7 +249,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					commentsQueryDocs.docs.map((doc) => {
 						if (doc.exists) {
 							const data = doc.data();
-							if (!Number.isNaN(data?.sentiment)) {
+							if (!isNaN(data?.sentiment)) {
 								if (sentiments[data?.sentiment]) {
 									sentiments[data?.sentiment] += 1;
 								} else {
@@ -332,13 +299,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				}
 			}
 
+			if (!post?.content?.length) {
+				if (proposer) {
+					post.content = `This is a ${getProposalTypeTitle(
+						ProposalType.REFERENDUM_V2
+					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				} else {
+					post.content = `This is a ${getProposalTypeTitle(
+						ProposalType.REFERENDUM_V2
+					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				}
+			}
+
 			await getContentSummary(post, network, true);
 
-			post.content = '';
-
-			if (!process.env.AI_SUMMARY_API_KEY && post?.summary?.length) {
-				post.summary = '';
+			if (!process.env.AI_SUMMARY_API_KEY) {
+				post.summary = post?.content;
 			}
+			if (!post?.title?.length) {
+				post.title = 'Untitled';
+			}
+			post.content = '';
 
 			return post;
 		});

@@ -10,6 +10,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
+import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { redisDel } from '~src/auth/redis';
 
 const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
@@ -60,6 +62,12 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		await postDocRef.update({
 			progress_report: progressReport
 		});
+
+		const subsquidProposalType = getSubsquidProposalType(proposalType);
+		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
+			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+			await redisDel(referendumDetailsKey);
+		}
 
 		return res.status(200).json({
 			message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY,

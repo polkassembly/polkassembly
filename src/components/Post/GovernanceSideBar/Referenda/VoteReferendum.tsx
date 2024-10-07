@@ -25,11 +25,6 @@ interface Props {
 	setUpdateTally?: (pre: boolean) => void;
 	updateTally?: boolean;
 }
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
-}
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally, updateTally }: Props) => {
 	const { network } = useNetworkSelector();
@@ -84,7 +79,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!api || !apiReady) return;
 		checkIfFellowshipMember();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api]);
+	}, [network, api, apiReady]);
 
 	useEffect(() => {}, []);
 
@@ -147,7 +142,7 @@ export default React.memo(styled(VoteReferendum)`
 		margin-top: 4px;
 	}
 	.vote-referendum .ant-select-selector {
-		border: 1px soild !important;
+		border: 1px solid !important;
 		border-color: #d2d8e0 !important;
 		height: 40px;
 		border-radius: 4px !important;

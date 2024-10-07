@@ -41,6 +41,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [currentUserData, setCurrentUserData] = useState<any>();
 	const { username } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [baseUrl, setBaseUrl] = useState<string>('');
 	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
@@ -59,6 +60,11 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady, searchedUsername, username]);
+
+	useEffect(() => {
+		const url = new URL(window.location.href);
+		setBaseUrl(`${url.origin}`);
+	}, []);
 
 	const getCurrentuserData = async () => {
 		if (username) {
@@ -102,7 +108,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 								className='ml-[2px] text-pink_primary'
 								target='_blank'
 								rel='noreferrer'
-								href='https://docs.google.com/spreadsheets/u/2/d/1Yqqjsg9d1VYl4Da8Hz8hYX24cKgAlqfa_dPnT7C6AcU/htmlview#gid=0'
+								href={`${baseUrl}/astral-scoring`}
 							>
 								Learn more{' '}
 								<Image

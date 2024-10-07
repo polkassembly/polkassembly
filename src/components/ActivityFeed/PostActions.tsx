@@ -74,7 +74,7 @@ export const PostActions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages[index]}
+							src={userImages && userImages[index] && userImages[index]}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
@@ -105,14 +105,10 @@ export const PostActions: React.FC<{
 
 		setReactionState((prevState: any) => {
 			const newState = { ...prevState };
-
-			// Handle like reaction
 			if (reaction === '👍') {
 				if (!post_reactions['👍'].images) {
 					post_reactions['👍'].images = [];
 				}
-
-				// Remove user from dislikes if they disliked earlier
 				if (prevState.userDisliked) {
 					newState.dislikesCount -= 1;
 					newState.userDisliked = false;
@@ -121,8 +117,6 @@ export const PostActions: React.FC<{
 					post_reactions['👎'].usernames = post_reactions['👎'].usernames?.filter((name: string) => name !== username);
 					post_reactions['👎'].images = post_reactions['👎'].images?.filter((img: string, idx: number) => post_reactions['👎'].usernames[idx] !== username);
 				}
-
-				// Toggle like state
 				newState.likesCount = isLiked ? prevState.likesCount - 1 : prevState.likesCount + 1;
 				newState.userLiked = !isLiked;
 
@@ -157,15 +151,10 @@ export const PostActions: React.FC<{
 						likesUsernames: post_reactions['👍'].usernames
 					});
 				}
-			}
-
-			// Handle dislike reaction
-			else if (reaction === '👎') {
+			} else if (reaction === '👎') {
 				if (!post_reactions['👎'].images) {
 					post_reactions['👎'].images = [];
 				}
-
-				// Remove user from likes if they liked earlier
 				if (prevState.userLiked) {
 					newState.likesCount -= 1;
 					newState.userLiked = false;
@@ -174,11 +163,8 @@ export const PostActions: React.FC<{
 					post_reactions['👍'].usernames = post_reactions['👍'].usernames?.filter((name: string) => name !== username);
 					post_reactions['👍'].images = post_reactions['👍'].images?.filter((img: string, idx: number) => post_reactions['👍'].usernames[idx] !== username);
 				}
-
-				// Toggle dislike state
 				newState.dislikesCount = isDisliked ? prevState.dislikesCount - 1 : prevState.dislikesCount + 1;
 				newState.userDisliked = !isDisliked;
-
 				if (!isDisliked) {
 					if (username && !post_reactions['👎'].usernames.includes(username)) {
 						fetchAndUpdateImage(userid).then((image) => {

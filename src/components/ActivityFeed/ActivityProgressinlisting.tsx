@@ -52,61 +52,66 @@ const ActivityProgressinlisting = ({ tally, onchainId, status, proposalType, vot
 
 	const ayeVotesNumber = usingTallyForAyeNayVotes ? ayes : bnToIntBalance(tallyData.ayes || ZERO);
 	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData.ayes?.add(tallyData.nays || ZERO) || ZERO);
-	const ayePercent = (ayeVotesNumber / totalVotesNumber) * 100;
+	const ayePercent = totalVotesNumber > 0 ? (ayeVotesNumber / totalVotesNumber) * 100 : 0;
 	const nayPercent = 100 - ayePercent;
-	const isAyeNaN = isNaN(ayePercent);
-	const isNayNaN = isNaN(nayPercent);
+	const isAyeNaN = Number.isNaN(ayePercent);
+	const isNayNaN = Number.isNaN(nayPercent);
 	const getReferendumVoteInfo = async () => {
 		if (!onchainId || !votesData) return;
 		if (network === 'cere') {
 			(async () => {
-				const res = await fetchSubsquid({
-					network,
-					query: GET_TOTAL_VOTES_COUNT,
-					variables: {
-						index_eq: onchainId,
-						type_eq: 'Referendum'
-					}
-				});
-				const totalCount = res?.data?.votesConnection?.totalCount;
-				if (totalCount) {
+				try {
 					const res = await fetchSubsquid({
 						network,
-						query: GET_VOTES_WITH_LIMIT_IS_NULL_TRUE,
+						query: GET_TOTAL_VOTES_COUNT,
 						variables: {
 							index_eq: onchainId,
-							limit: totalCount,
 							type_eq: 'Referendum'
 						}
 					});
-					if (res && res.data && res.data.votes && Array.isArray(res.data.votes)) {
-						const voteInfo = {
-							ayes: ZERO,
-							nays: ZERO
-						};
-						res.data.votes.forEach((vote: any) => {
-							if (vote) {
-								const { balance, lockPeriod, decision } = vote;
-								if (decision === 'yes') {
-									if (lockPeriod === 0) {
-										voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).div(new BN(10)));
-									} else {
-										voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).mul(new BN(lockPeriod)));
-									}
-								} else {
-									if (lockPeriod === 0) {
-										voteInfo.nays = voteInfo.nays.add(new BN(balance.value).div(new BN(10)));
-									} else {
-										voteInfo.nays = voteInfo.nays.add(new BN(balance.value).mul(new BN(lockPeriod)));
-									}
-								}
+					const totalCount = res?.data?.votesConnection?.totalCount;
+					if (totalCount) {
+						const res = await fetchSubsquid({
+							network,
+							query: GET_VOTES_WITH_LIMIT_IS_NULL_TRUE,
+							variables: {
+								index_eq: onchainId,
+								limit: totalCount,
+								type_eq: 'Referendum'
 							}
 						});
-						setTallyData(voteInfo);
+						if (Array.isArray(res?.data?.votes)) {
+							const voteInfo = {
+								ayes: ZERO,
+								nays: ZERO
+							};
+							res.data.votes.forEach((vote: any) => {
+								if (vote) {
+									const { balance, lockPeriod, decision } = vote;
+									if (decision === 'yes') {
+										if (lockPeriod === 0) {
+											voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).div(new BN(10)));
+										} else {
+											voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).mul(new BN(lockPeriod)));
+										}
+									} else {
+										if (lockPeriod === 0) {
+											voteInfo.nays = voteInfo.nays.add(new BN(balance.value).div(new BN(10)));
+										} else {
+											voteInfo.nays = voteInfo.nays.add(new BN(balance.value).mul(new BN(lockPeriod)));
+										}
+									}
+								}
+							});
+							setTallyData(voteInfo);
+						}
 					}
+				} catch (error) {
+					console.error('Error fetching referendum votes:', error);
+				} finally {
+					setLoading(false);
 				}
 			})();
-			setLoading(false);
 		} else if (votesData && !votesData.error && votesData.data) {
 			setLoading(true);
 
@@ -176,8 +181,8 @@ const ActivityProgressinlisting = ({ tally, onchainId, status, proposalType, vot
 					});
 				} else {
 					setTallyData({
-						ayes: new BN(tally?.ayes || 0, 'hex'),
-						nays: new BN(tally?.nays || 0, 'hex')
+						ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+						nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
 					});
 				}
 				setLoading(false);

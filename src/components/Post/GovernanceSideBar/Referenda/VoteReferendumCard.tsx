@@ -10,7 +10,7 @@ import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-import LoginToVote from '../LoginToVoteOrEndorse';
+// import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
@@ -96,8 +96,9 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 
 const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
 	const userDetails = useUserDetailsSelector();
+	console.log(userDetails);
 	const dispatch = useAppDispatch();
-	const { id } = userDetails;
+	// const { id } = userDetails;
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -108,9 +109,9 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-	if (!id) {
-		return <LoginToVote isUsedInDefaultValueModal={true} />;
-	}
+	// if (!id) {
+	// return <LoginToVote isUsedInDefaultValueModal={true} />;
+	// }
 
 	const handleModalReset = () => {
 		ayeNayForm.setFieldValue('balance', '');

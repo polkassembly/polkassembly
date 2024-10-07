@@ -1241,7 +1241,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip' ? timeline.hash : timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
-					return { ...timeline, commentsCount };
+					return { ...timeline, commentsCount, index: postId };
 				});
 				const timelines: Array<any> = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map((timeline) => timeline.value);
@@ -1253,7 +1253,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					date: dayjs(currentTimelineObj?.created_at),
 					firstCommentId: '',
 					id: 1,
-					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash || postId,
 					status: getStatus(currentTimelineObj?.type),
 					type: currentTimelineObj?.type
 				};

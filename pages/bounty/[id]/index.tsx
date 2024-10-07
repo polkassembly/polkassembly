@@ -58,7 +58,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [props.network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {
@@ -90,14 +90,14 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
-
-				<BackToListingView postCategory={PostCategory.BOUNTY} />
-
-				<div className='mt-6'>
-					<Post
-						post={post}
-						proposalType={proposalType}
-					/>
+				<div className={'transition-opacity duration-500'}>
+					<BackToListingView postCategory={PostCategory.BOUNTY} />
+					<div className='mt-6'>
+						<Post
+							post={post}
+							proposalType={proposalType}
+						/>
+					</div>
 				</div>
 			</>
 		);

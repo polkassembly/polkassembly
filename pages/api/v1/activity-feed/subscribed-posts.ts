@@ -9,11 +9,10 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
-import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { ACTIVE_PROPOSALS_FROM_INDEXES } from '~src/queries';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCardAll';
-import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -24,6 +23,7 @@ import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAd
 import { EAllowedCommentor } from '~src/types';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
+import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
 
 interface ISubscribedPost {
 	network: string;
@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (!token) return res.status(401).json({ message: messages.INVALID_JWT });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user || Number.isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const userId = user?.id;
 	try {
@@ -80,42 +80,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				};
 				subsquidPost.proposalArguments = null;
 			}
+			const args = subsquidPost?.preimage?.proposedCall?.args;
 
-			let requested = BigInt(0);
-			let assetId: null | string = null;
-			let args = subsquidPost?.preimage?.proposedCall?.args;
-
-			if (args) {
-				if (
-					args?.assetKind?.assetId?.value?.interior ||
-					args?.assetKind?.assetId?.interior?.value ||
-					args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
-				) {
-					const call =
-						args?.assetKind?.assetId?.value?.interior?.value ||
-						args?.assetKind?.assetId?.interior?.value ||
-						args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
-					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-				}
-
-				args = convertAnyHexToASCII(args, network);
-				if (args?.amount) {
-					requested = args.amount;
-				} else {
-					const calls = args.calls;
-
-					if (calls && Array.isArray(calls) && calls.length > 0) {
-						calls.forEach((call) => {
-							if (call?.amount) {
-								requested += BigInt(call.amount);
-							}
-							if (call?.value?.amount) {
-								requested += BigInt(call?.value?.amount);
-							}
-						});
-					}
-				}
-			}
+			const { assetId, requestedAmt } = getBeneficiaryDetails({ network, preimageArgs: args });
 
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
@@ -191,7 +158,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					commentsQueryDocs.docs.map((doc) => {
 						if (doc.exists) {
 							const data = doc.data();
-							if (!Number.isNaN(data?.sentiment)) {
+							if (!isNaN(data?.sentiment)) {
 								if (sentiments[data?.sentiment]) {
 									sentiments[data?.sentiment] += 1;
 								} else {
@@ -235,7 +202,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						post_reactions: reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-						requestedAmount: requested ? requested.toString() : undefined,
+						requestedAmount: requestedAmt ? requestedAmt.toString() : undefined,
 						spam_users_count:
 							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						status,
@@ -253,17 +220,29 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: topicFromType,
-						track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
+						track_no: !isNaN(trackNumber) ? trackNumber : null,
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1
 					};
+
 					await getContentSummary(post, network, true);
 
-					post.content = '';
+					if (!post?.content?.length) {
+						if (proposer) {
+							post.content = `This is a ${getProposalTypeTitle(
+								ProposalType.REFERENDUM_V2
+							)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+						} else {
+							post.content = `This is a ${getProposalTypeTitle(
+								ProposalType.REFERENDUM_V2
+							)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+						}
+					}
 
 					if (!process.env.AI_SUMMARY_API_KEY) {
-						post.summary = '';
+						post.summary = post?.content;
 					}
+					post.content = '';
 
 					return post;
 				}
@@ -292,24 +271,35 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				post_reactions: getDefaultReactionObj(),
 				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-				requestedAmount: requested ? requested.toString() : undefined,
+				requestedAmount: requestedAmt ? requestedAmt.toString() : undefined,
 				status: status,
 				status_history: statusHistory,
 				tally,
 				timeline: proposalTimeline,
 				title: subsquareTitle || 'Untitled',
 				topic: topicFromType,
-				track_no: !Number.isNaN(trackNumber) ? trackNumber : null,
+				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type,
 				user_id: 1
 			};
 			await getContentSummary(post, network, true);
 
-			post.content = '';
+			if (!post?.content?.length) {
+				if (proposer) {
+					post.content = `This is a ${getProposalTypeTitle(
+						ProposalType.REFERENDUM_V2
+					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				} else {
+					post.content = `This is a ${getProposalTypeTitle(
+						ProposalType.REFERENDUM_V2
+					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				}
+			}
 
 			if (!process.env.AI_SUMMARY_API_KEY) {
-				post.summary = '';
+				post.summary = post?.content;
 			}
+			post.content = '';
 
 			return post;
 		});

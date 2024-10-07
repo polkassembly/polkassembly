@@ -274,15 +274,15 @@ const CreatePreimage = ({
 		}
 	};
 
-	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
+	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean, generalInd: string | null) => {
 		let selectedTrack = '';
 
-		if (generalIndex) {
+		if (generalInd) {
 			const dotAmount =
 				getUsdValueFromAsset({
 					currentTokenPrice: currentTokenPrice || '0',
 					dedTokenUsdPrice: dedTokenUsdPrice || '0',
-					generalIndex,
+					generalIndex: generalInd,
 					inputAmountValue: inputAmountValue || '0',
 					network
 				}) || 0;
@@ -622,7 +622,7 @@ const CreatePreimage = ({
 					setFundingAmount(balance);
 					onChangeLocalStorageSet({ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100, step: 1 });
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 				} else {
 					setPreimageLength(0);
 					queueNotification({
@@ -706,7 +706,7 @@ const CreatePreimage = ({
 						Boolean(isPreimage)
 					);
 					//select track
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 
 					setSteps({ percent: 100, step: 1 });
 				}
@@ -871,7 +871,7 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
 
-		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage), generalIndex);
 		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
@@ -901,7 +901,7 @@ const CreatePreimage = ({
 
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
-		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+		handleSelectTrack(ZERO_BN, Boolean(isPreimage), generalIndex);
 	};
 
 	const fundingAmtToBN = () => {
@@ -1108,7 +1108,10 @@ const CreatePreimage = ({
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												onAssetConfirm={setGeneralIndex}
+												onAssetConfirm={(index: string | null) => {
+													setGeneralIndex(index);
+													handleSelectTrack(fundingAmount, isPreimage, index);
+												}}
 											/>
 										</div>
 									</div>

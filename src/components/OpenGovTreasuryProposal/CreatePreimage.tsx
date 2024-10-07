@@ -277,6 +277,19 @@ const CreatePreimage = ({
 	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
 		let selectedTrack = '';
 
+		if (generalIndex) {
+			const dotAmount =
+				getUsdValueFromAsset({
+					currentTokenPrice: currentTokenPrice || '0',
+					dedTokenUsdPrice: dedTokenUsdPrice || '0',
+					generalIndex,
+					inputAmountValue: inputAmountValue || '0',
+					network
+				}) || 0;
+
+			fundingAmount = new BN(dotAmount || '0').mul(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)));
+		}
+
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if (maxSpend.gte(fundingAmount)) {
@@ -607,7 +620,7 @@ const CreatePreimage = ({
 					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
 
 					setFundingAmount(balance);
-					onChangeLocalStorageSet({ beneficiaryAddresses: [newBeneficiaryAddress] || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
+					onChangeLocalStorageSet({ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100, step: 1 });
 					handleSelectTrack(balance, isPreimage);
 				} else {
@@ -689,7 +702,7 @@ const CreatePreimage = ({
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet(
-						{ beneficiaryAddresses: [newBeneficiaryAddress] || [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
+						{ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
 						Boolean(isPreimage)
 					);
 					//select track

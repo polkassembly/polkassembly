@@ -24,7 +24,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 
 	return (
 		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
-			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}
@@ -59,7 +59,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</Link>
 				{proposal?.comments?.length > 0 && <CardComments proposal={proposal} />}
 			</div>
-			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
 				<ReferendumV2CardInfo
 					ayeNayAbstainCounts={ayeNayAbstainCounts}
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}

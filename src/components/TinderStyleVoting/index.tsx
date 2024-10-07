@@ -208,7 +208,7 @@ const VotingCards = () => {
 							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 							preventSwipe={['down']}
 						>
-							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
+							<div className='h-full overflow-y-auto rounded-2xl bg-[#f4f5f7] dark:bg-black'>
 								<TinderCardsComponent
 									proposal={proposal}
 									onSkip={handleSkipProposalCard}

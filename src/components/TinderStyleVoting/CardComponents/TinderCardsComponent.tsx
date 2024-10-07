@@ -23,7 +23,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	};
 
 	return (
-		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
+		<section className='flex flex-col gap-y-4 overflow-x-hidden p-1.5'>
 			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading

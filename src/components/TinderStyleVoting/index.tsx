@@ -196,7 +196,7 @@ const VotingCards = () => {
 			)}
 
 			{!isLoading && (
-				<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
+				<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} flex w-full max-w-sm justify-center `}>
 					{activeProposal?.map((proposal: any, index: number) => (
 						<TinderCard
 							ref={childRefs[index]}
@@ -208,7 +208,7 @@ const VotingCards = () => {
 							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 							preventSwipe={['down']}
 						>
-							<div className='h-full overflow-y-auto rounded-2xl bg-[#f4f5f7] dark:bg-black'>
+							<div className='h-full overflow-y-auto rounded-2xl bg-[#f4f5f7] dark:bg-black '>
 								<TinderCardsComponent
 									proposal={proposal}
 									onSkip={handleSkipProposalCard}

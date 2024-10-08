@@ -255,7 +255,18 @@ export const PostActions: React.FC<{
 	const { network } = useNetworkSelector();
 
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
+	const renderSentimentIcon = (sentiment: number) => {
+		const sentimentIcons: Record<number, React.ReactNode> = {
+			0: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			1: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			2: theme === 'dark' ? <DarkSentiment2 /> : <SadIcon />,
+			3: theme === 'dark' ? <DarkSentiment3 /> : <NeutralIcon />,
+			4: theme === 'dark' ? <DarkSentiment4 /> : <SmileIcon />,
+			5: theme === 'dark' ? <DarkSentiment5 /> : <SmileDizzyIcon />
+		};
 
+		return sentimentIcons[sentiment] || null;
+	};
 	return (
 		<>
 			<div className='flex justify-between'>
@@ -383,69 +394,11 @@ export const PostActions: React.FC<{
 
 				<div className='hidden  lg:block'>
 					<div className='mt-5 flex items-center space-x-1'>
-						{(post?.highestSentiment?.sentiment == 0 || post?.highestSentiment?.sentiment == 1) && (
+						{post.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment1 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SadDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Completely Against'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 2 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment2 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SadIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Slightly Against'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 3 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment3 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<NeutralIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Neutral'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 4 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment4 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SmileIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Slightly For'}
-								percentage={post?.highestSentiment?.percentage || null}
-							/>
-						)}
-						{post?.highestSentiment?.sentiment == 5 && (
-							<EmojiOption
-								icon={
-									theme === 'dark' ? (
-										<DarkSentiment5 style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									) : (
-										<SmileDizzyIcon style={{ border: 'none', color: '#667589', transform: 'scale(1.2)' }} />
-									)
-								}
-								title={'Completely For'}
-								percentage={post?.highestSentiment?.percentage || null}
+								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
+								title={['Completely Against', 'Slightly Against', 'Neutral', 'Slightly For', 'Completely For'][post.highestSentiment.sentiment]}
+								percentage={post.highestSentiment?.percentage || null}
 							/>
 						)}
 					</div>

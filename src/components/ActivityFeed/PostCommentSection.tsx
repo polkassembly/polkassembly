@@ -1,26 +1,31 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Alert, Modal } from 'antd';
 import { useTheme } from 'next-themes';
-import { useRef } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { CommentModal } from './CommentModal';
+import { PostType } from '~src/auth/types';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
 
-const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserNotAllowedToComment: any }> = ({
+interface PostCommentSectionProps {
+	post: PostType;
+	reasonForNoComment: string;
+	isUserNotAllowedToComment: boolean;
+}
+const PostCommentSection: React.FC<PostCommentSectionProps> = ({
 	post,
 	reasonForNoComment,
 	isUserNotAllowedToComment
 }: {
-	post: any;
-	reasonForNoComment: any;
-	isUserNotAllowedToComment: any;
+	post: PostType;
+	reasonForNoComment: string;
+	isUserNotAllowedToComment: boolean;
 }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const currentUserdata = useUserDetailsSelector();
@@ -50,10 +55,9 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 				closeModal();
 			}
 		};
+
 		if (isModalOpen) {
 			document.addEventListener('mousedown', handleOutsideClick);
-		} else {
-			document.removeEventListener('mousedown', handleOutsideClick);
 		}
 
 		return () => {
@@ -80,16 +84,15 @@ const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserN
 						/>
 					)}
 
-					<input
+					<div
 						ref={inputRef}
-						type='text'
-						value={''}
-						placeholder={COMMENT_PLACEHOLDER}
 						className={
 							'h-9 w-full rounded-l-lg border-y border-l border-r-0 border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 lg:ml-4 xl:ml-3 '
 						}
 						onClick={openModal}
-					/>
+					>
+						{COMMENT_PLACEHOLDER}{' '}
+					</div>
 					<button
 						onClick={openModal}
 						className='h-9 w-28 cursor-pointer rounded-r-lg  border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'

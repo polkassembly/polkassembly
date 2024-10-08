@@ -218,7 +218,7 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 				/>
 				<PostCommentSection
 					post={post}
-					reasonForNoComment={reasonForNoComment}
+					reasonForNoComment={reasonForNoComment || ''}
 					isUserNotAllowedToComment={isUserNotAllowedToComment}
 				/>
 				{isMobile && (

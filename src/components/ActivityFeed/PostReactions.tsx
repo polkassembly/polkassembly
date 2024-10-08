@@ -1,8 +1,17 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { Tooltip } from 'antd';
+import classNames from 'classnames';
+
+import { useNetworkSelector } from '~src/redux/selectors';
+import { poppins } from 'pages/_app';
+import ImageComponent from '../ImageComponent';
+import Popover from '~src/basic-components/Popover';
+
 import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
 import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
@@ -13,13 +22,6 @@ import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
-import ImageComponent from '../ImageComponent';
-import Popover from '~src/basic-components/Popover';
-import Link from 'next/link';
-import classNames from 'classnames';
-import { poppins } from 'pages/_app';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { useEffect, useState } from 'react';
 
 export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => (
 	<Tooltip

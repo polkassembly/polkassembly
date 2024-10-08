@@ -2476,7 +2476,7 @@ query polymeshActiveProposalsCount {
 }
 `;
 export const GET_TRACK_LEVEL_ANALYTICS_STATS = `
-query getTrackLevelAnalyticsStats($track_num: Int! = 0, $before: DateTime ="2024-02-01T13:21:30.000000Z") {
+query getTrackLevelAnalyticsStats($track_num: Int! = 0, $before: DateTime) {
 diffActiveProposals: proposalsConnection(where: { trackNumber_eq: $track_num, status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before }, orderBy: id_ASC){
     totalCount
 }
@@ -3125,3 +3125,21 @@ method
     status
   }
 }`;
+
+export const GET_ACTIVE_PROPOSAL_INDEXES_FOR_TIMESPAN = `query MyQuery($createdAt_gte: DateTime!, $type: ProposalType, $status_in: [ProposalStatus!]) {
+  proposals(where: {status_in: $status_in, createdAt_gte:  $createdAt_gte, type_eq: $type}){
+    index
+  }
+}
+`;
+
+export const GET_VOTE_COUNT_FROM_PROPOSAL_INDEXES = `
+query MyQuery($type: VoteType, $voter_in:[String!], $proposalIndexes: [Int!] ) {
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where:
+    {proposal:{index_in: $proposalIndexes},
+    type_eq: $type, removedAtBlock_isNull: true,
+    voter_in: $voter_in}) {
+    totalCount
+  }
+}
+`;

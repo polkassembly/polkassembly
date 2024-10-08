@@ -50,7 +50,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const router = useRouter();
-	const isRelevantPath = ['/activity-feed', '/opengov', '/'].includes(pathname);
+	const isRelevantPath = ['/activity-feed', '/opengov'].includes(pathname);
 	const isActivityFeedSupported = isActivitySupportedNetwork(network.POLKADOT);
 
 	const handleClick = (num: number) => {

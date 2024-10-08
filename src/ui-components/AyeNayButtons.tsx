@@ -6,9 +6,7 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Button } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
-import Alert from '~src/basic-components/Alert';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
@@ -50,20 +48,12 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 					className={`flex items-center justify-center rounded-md border-nay_red bg-nay_red text-white hover:bg-red_primary hover:text-white dark:border-nay_red_Dark dark:bg-nay_red_Dark ${customWidth} max-[370px]:w-[120px]`}
 					disabled={disabled}
 					size={size}
-					onClick={onClickNay}
+					onClick={!id ? openModal : onClickNay}
 				>
 					<DislikeFilled className='mr-1' />
 					Nay
 				</Button>
 			</div>
-			{!id && (
-				<Alert
-					type='info'
-					className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
-					showIcon
-					message={<span className='dark:text-blue-dark-high'>Please login to vote.</span>}
-				/>
-			)}
 			<RefendaLoginPrompts
 				theme={theme}
 				modalOpen={openLoginModal}

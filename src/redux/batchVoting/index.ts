@@ -28,6 +28,7 @@ const initialState: IBatchVoteStore = {
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
+	show_post_info: false,
 	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
@@ -80,6 +81,7 @@ export const batchVoteStore = createSlice({
 				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
+				show_post_info: false,
 				total_active_posts: 0,
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
@@ -170,6 +172,9 @@ export const batchVoteStore = createSlice({
 		},
 		setShowDefaultOptionsModal: (state, action: PayloadAction<boolean>) => {
 			state.show_default_options_modal = action.payload;
+		},
+		setShowPostInfo: (state, action: PayloadAction<boolean>) => {
+			state.show_post_info = action.payload;
 		},
 		setTotalActivePosts: (state, action: PayloadAction<number>) => {
 			state.total_active_posts = action.payload;

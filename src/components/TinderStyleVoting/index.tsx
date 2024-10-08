@@ -8,7 +8,6 @@ import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import SwipeActionButtons from './CardComponents/SwipeActionButtons';
-import TinderCardsComponent from './CardComponents/TinderCardsComponent';
 import dynamic from 'next/dynamic';
 import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -17,6 +16,10 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IAddBatchVotes } from './types';
 
 const CartOptionMenu = dynamic(() => import('./CardComponents/CartOptionMenu'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const TinderCards = dynamic(() => import('./CardComponents/TinderCard'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -70,12 +73,12 @@ const VotingCards = () => {
 
 	const getActiveProposals = async (callingFirstTime?: boolean) => {
 		setIsLoading(callingFirstTime === true);
-
+		const skippedIndexes = [...(voted_post_ids_array || []), ...(skippedProposals || [])];
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
 			isExternalApiCall: true,
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
-			skippedIndexes: [...voted_post_ids_array, ...skippedProposals] || [],
+			skippedIndexes: skippedIndexes,
 			userAddress: user?.loginAddress,
 			userId: user?.id
 		});
@@ -196,11 +199,11 @@ const VotingCards = () => {
 			)}
 
 			{!isLoading && (
-				<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
+				<div className={'relative  w-full max-w-sm'}>
 					{activeProposal?.map((proposal: any, index: number) => (
 						<TinderCard
 							ref={childRefs[index]}
-							className='absolute h-full w-full'
+							className='absolute w-full'
 							key={proposal.name}
 							onSwipe={(dir) => {
 								swiped(dir, index, proposal?.id, proposal?.title);
@@ -208,9 +211,10 @@ const VotingCards = () => {
 							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 							preventSwipe={['down']}
 						>
-							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
-								<TinderCardsComponent
-									proposal={proposal}
+							<div className='rounded-2xl bg-[#f4f5f7] dark:bg-black'>
+								<TinderCards
+									post={proposal}
+									proposalType={proposal?.postType}
 									onSkip={handleSkipProposalCard}
 								/>
 							</div>

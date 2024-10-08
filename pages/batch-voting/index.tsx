@@ -58,7 +58,7 @@ const BatchVoting: FC<IBatchVoting> = (props) => {
 				network={network}
 			/>
 			{network === 'polkadot' && (
-				<div className='batch-voting-mobile-container block sm:hidden'>
+				<div className='batch-voting-mobile-container block px-3 sm:hidden'>
 					<VotingCards />
 				</div>
 			)}

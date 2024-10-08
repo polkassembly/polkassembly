@@ -40,7 +40,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</div>
 				<Divider
 					type='horizontal'
-					className='border-l-1 -mt-4 mb-4 border-[#D2D8E0] dark:border-separatorDark'
+					className='border-l-1 border-grey_stroke -mt-4 mb-4 dark:border-separatorDark'
 				/>
 				<div className='max-h-[316px] overflow-y-auto'>
 					<div className='flex w-full justify-start overflow-hidden text-ellipsis'>

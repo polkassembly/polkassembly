@@ -17,12 +17,10 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useApiContext } from '~src/context';
 import { IDefaultOptions } from '../types';
 
-const DefaultOptions: FC<IDefaultOptions> = (props) => {
-	const { forSpecificPost, postEdit } = props;
+const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const dispatch = useAppDispatch();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	const userDetails = useUserDetailsSelector();
-	const { loginAddress, loginWallet } = userDetails;
+	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -67,12 +65,7 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails]);
-
-	useEffect(() => {
-		if (extensionNotFound) return;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [loginAddress]);
 
 	return (
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
@@ -90,11 +83,25 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 					/>
 				)}
 				<div className='mt-8'>
-					<AddressDropdown
-						accounts={accounts}
-						defaultAddress={address}
-						onAccountChange={onAccountChange}
-					/>
+					{!extensionNotFound && !accounts.length ? (
+						<Alert
+							description={
+								<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
+									<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your wallet</h3>
+									<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
+								</div>
+							}
+							showIcon
+							className='mb-2 mt-1 p-3'
+							type='info'
+						/>
+					) : (
+						<AddressDropdown
+							accounts={accounts}
+							defaultAddress={address}
+							onAccountChange={onAccountChange}
+						/>
+					)}
 				</div>
 
 				<OptionWrapper

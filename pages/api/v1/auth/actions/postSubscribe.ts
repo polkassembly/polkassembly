@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	postSubs.push(Number(user.id));
 
 	try {
-		await postRef.set({ subscribers: postSubs }, { merge: true });
+		await postRef.update({ subscribers: postSubs });
 
 		// Update user document with subscribed post
 		const userRef = firestore_db.collection('users').doc(String(user.id));
@@ -69,8 +69,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 			(post, index, self) => index === self.findIndex((p) => p.post_id === post.post_id && p.post_type === post.post_type)
 		);
 
-		// Update user document
-		await userRef.set({ subscribed_posts: updatedSubscribedPosts }, { merge: true });
+		// Use Firestore's update method to update the subscribed_posts field
+		await userRef.update({ subscribed_posts: updatedSubscribedPosts });
 
 		return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
 	} catch (err) {

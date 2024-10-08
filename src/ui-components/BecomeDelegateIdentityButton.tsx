@@ -26,7 +26,7 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 
 	return (
 		<>
-			<span className='text-sm text-blue-light-medium dark:text-blue-dark-high'>
+			<span className='text-xs text-blue-light-medium dark:text-blue-dark-high sm:text-sm'>
 				To add socials to your delegate profile{' '}
 				<span
 					onClick={() => {

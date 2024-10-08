@@ -36,7 +36,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const [loading, setLoading] = useState<boolean>(false);
-	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
+	const { report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
 	const [originalSummary, setOriginalSummary] = useState<string>(summary_content);
 
 	useEffect(() => {
@@ -61,9 +61,7 @@ const ProgressReportTab = ({ className }: Props) => {
 
 	const addProgressReport = async () => {
 		const progress_report = {
-			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
-			progress_name: `${Date.now()}-${file_name}`,
 			progress_summary: summary_content,
 			ratings: []
 		};
@@ -108,6 +106,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	};
 
 	const editProgressReport = async () => {
+		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
 			postId: postIndex,
 			proposalType,
@@ -115,6 +114,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		});
 
 		if (editError || !data) {
+			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
@@ -124,6 +124,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		}
 
 		if (data) {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post is now edited',
@@ -139,6 +140,7 @@ const ProgressReportTab = ({ className }: Props) => {
 		} else {
 			console.log('failed to save report');
 		}
+		dispatch(progressReportActions.setAddSummaryCTAClicked(false));
 	};
 
 	return (
@@ -176,32 +178,28 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{/* change !== to === */}
-					{postData.userId !== currentUser?.id && (
+					{postData.userId === currentUser?.id ? (
 						<>
 							<UploadModalContent />
 							<div className='mt-4 flex justify-end'>
 								<CustomButton
 									variant='primary'
-									text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
+									text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
 									buttonsize='sm'
 									loading={loading}
 									className={`${loading ? 'opacity-60' : ''} ${
-										(postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
+										(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
 											? 'opacity-60'
 											: ''
 									} `}
-									disabled={postData?.progress_report?.progress_file ? originalSummary !== summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
+									disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
 									onClick={() => {
 										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
 									}}
 								/>
 							</div>
 						</>
-					)}
-
-					{/* change === to !== */}
-					{postData.userId === currentUser?.id && postData?.progress_report?.progress_file ? (
+					) : postData?.progress_report?.progress_file ? (
 						<ProgressReportInfo />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>

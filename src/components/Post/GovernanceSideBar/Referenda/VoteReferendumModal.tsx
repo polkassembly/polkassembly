@@ -7,7 +7,7 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ETrackDelegationStatus, EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
+import { ETrackDelegationStatus, EVoteDecisionType, ILastVote, INetworkWalletErr, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
@@ -79,11 +79,6 @@ interface Props {
 	showModal: boolean;
 	setShowModal: (pre: boolean) => void;
 }
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
-}
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
@@ -91,7 +86,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const res = api.consts.convictionVoting.voteLockingPeriod;
 			const num = res.toJSON();
 			const days = blockToDays(num, network);
-			if (days && !isNaN(Number(days))) {
+			if (days && !Number.isNaN(Number(days))) {
 				return [
 					<SelectOption
 						className={`text-bodyBlue  ${poppins.variable}`}
@@ -219,10 +214,10 @@ const VoteReferendumModal = ({
 			address: address,
 			track: trackNumber
 		});
-		if (data && data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))?.length) {
-			const delegated = data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))[0];
-			delegated?.delegations.map((item) => {
-				if (getEncodedAddress(item.from, network) === getEncodedAddress(loginAddress, network)) {
+		if (data?.filter((item) => item?.status?.includes(ETrackDelegationStatus.DELEGATED))?.length) {
+			const delegated = data?.filter((item) => item?.status?.includes(ETrackDelegationStatus.DELEGATED))?.[0];
+			delegated?.delegations?.map((item) => {
+				if (getEncodedAddress(item.from, network) === getEncodedAddress(address, network)) {
 					setDelegatedTo(item?.to);
 				} else {
 					setDelegatedTo(null);
@@ -242,42 +237,25 @@ const VoteReferendumModal = ({
 
 	useEffect(() => {
 		getWallet();
-		if (!api || !apiReady) return;
-		if (loginWallet) {
-			setWallet(loginWallet);
-			const injectedWindow = window as Window & InjectedWindow;
-			const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-			if (!extensionAvailable) {
-				setExtensionNotFound(true);
-			} else {
-				setExtensionNotFound(false);
-			}
-			(async () => {
-				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-				setAccounts(accountsData?.accounts || []);
-				onAccountChange(accountsData?.account || '');
-				setLoadingStatus({ isLoading: false, message: '' });
-			})();
+		if (!api || !apiReady || !loginWallet) return;
+
+		setWallet(loginWallet);
+
+		const injectedWindow = window as Window & InjectedWindow;
+		const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+		if (!extensionAvailable) {
+			setExtensionNotFound(true);
 		} else {
-			if (!window) return;
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				setWallet(loginWallet as Wallet);
-				const injectedWindow = window as Window & InjectedWindow;
-				const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-				if (!extensionAvailable) {
-					setExtensionNotFound(true);
-				} else {
-					setExtensionNotFound(false);
-				}
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-					onAccountChange(accountsData?.account || '');
-				})();
-			}
+			setExtensionNotFound(false);
 		}
+		(async () => {
+			setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
+			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
+			setAccounts(accountsData?.accounts || []);
+			onAccountChange(accountsData?.account || '');
+			setLoadingStatus({ isLoading: false, message: '' });
+		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails]);
 
@@ -388,9 +366,7 @@ const VoteReferendumModal = ({
 		if (!api || !apiReady) return;
 		setWalletErr(checkWalletForSubstrateNetwork(network) as INetworkWalletErr);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, availableWallets]);
-
-	useEffect(() => {}, []);
+	}, [network, api, availableWallets, apiReady]);
 
 	if (!id) {
 		return <LoginToVote />;
@@ -720,7 +696,7 @@ const VoteReferendumModal = ({
 									<div className='mt-1 flex items-center justify-center gap-x-2'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
-												className={`${wallet === Wallet.POLKADOT ? ' h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.POLKADOT ? 'h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
 												name='Polkadot'
@@ -734,7 +710,7 @@ const VoteReferendumModal = ({
 										)}
 										{availableWallets[Wallet.TALISMAN] && (
 											<WalletButton
-												className={`${wallet === Wallet.TALISMAN ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.TALISMAN ? 'h-[48px] w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
 												name='Talisman'
@@ -748,7 +724,7 @@ const VoteReferendumModal = ({
 										)}
 										{availableWallets[Wallet.SUBWALLET] && (
 											<WalletButton
-												className={`${wallet === Wallet.SUBWALLET ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.SUBWALLET ? 'h-[48px] w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
 												name='Subwallet'
@@ -762,7 +738,7 @@ const VoteReferendumModal = ({
 										)}
 										{availableWallets[Wallet.POLKAGATE] && (
 											<WalletButton
-												className={`${wallet === Wallet.POLKAGATE ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.POLKAGATE ? 'h-[48px] w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
 												name='PolkaGate'
@@ -777,7 +753,7 @@ const VoteReferendumModal = ({
 										{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
 											<WalletButton
 												disabled={!apiReady}
-												className={`${wallet === Wallet.NOVAWALLET ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.NOVAWALLET ? 'h-[48px] w-16 border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
 												name='Nova Wallet'
 												icon={
@@ -792,7 +768,7 @@ const VoteReferendumModal = ({
 											<WalletButton
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}
-												className={`${wallet === Wallet.POLYWALLET ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												className={`${wallet === Wallet.POLYWALLET ? 'h-[48px] w-16 border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												name='PolyWallet'
 												icon={
 													<WalletIcon
@@ -806,7 +782,7 @@ const VoteReferendumModal = ({
 											<div className='flex-col'>
 												<div className='flex w-full justify-center'>
 													<WalletButton
-														className='h-[50px] w-[64px] !border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+														className='h-[50px] w-16 !border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 														onClick={() => {
 															setShowMultisig(!showMultisig);
 														}}
@@ -1159,7 +1135,7 @@ export default React.memo(styled(VoteReferendumModal)`
 		margin-top: 4px;
 	}
 	.vote-referendum .ant-select-selector {
-		border: 1px soild !important;
+		border: 1px solid !important;
 		border-color: #d2d8e0 !important;
 		height: 40px;
 		border-radius: 4px !important;

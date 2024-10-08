@@ -8,7 +8,6 @@ import { PlusCircleOutlined, ExportOutlined } from '@ant-design/icons';
 import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
-import ContentForm from '~src/components/ContentForm';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import SuccessModal from './SuccessModal';
@@ -21,24 +20,23 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import SummaryContentForm from '~src/components/SummaryContentForm';
 
 const { Dragger } = Upload;
 
 const UploadModalContent = () => {
 	const dispatch = useDispatch();
-	const [fileLink, setFileLink] = useState<string>('');
-	const [fileName, setFileName] = useState<string>('');
-	const [summary, setSummary] = useState<string>('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [canUpload, setCanUpload] = useState(true);
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const { postIndex } = postData;
-	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content, progress_report_link } = useProgressReportSelector();
 	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (postData?.progress_report?.progress_file) {
-			setSummary(postData?.progress_report?.progress_summary || '');
 			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
 			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
 		}
@@ -48,16 +46,11 @@ const UploadModalContent = () => {
 	const checkAndRestoreProgressReport = () => {
 		const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 		if (progress_report.post_id === postIndex && progress_report.user_id === id) {
-			setFileLink(progress_report.url);
-			setFileName(progress_report.url.split('/').pop());
-			setSummary(progress_report.summary);
 			dispatch(progressReportActions.setProgressReportLink(progress_report.url));
 			dispatch(progressReportActions.setReportUploaded(true));
 			dispatch(progressReportActions.setSummaryContent(progress_report.summary));
 		}
 	};
-
-	console.log('summary: ', summary);
 
 	useEffect(() => {
 		checkAndRestoreProgressReport();
@@ -65,30 +58,60 @@ const UploadModalContent = () => {
 	}, [postIndex, id]);
 
 	const handleUpload = async (file: File) => {
-		dispatch(progressReportActions.setFileName(file.name));
 		if (!file) return '';
 		let sharableLink = '';
 
 		try {
+			setIsLoading(true);
 			const formData = new FormData();
 			formData.append('media', file);
+			formData.append('postIndex', postData?.postIndex as any);
+			formData.append('postType', postData?.postType);
 			const { data, error } = await nextApiClientFetch<IUploadResponseType>('/api/v1/progressReport/uploadReport', formData);
+			setIsLoading(false);
 			if (data) {
-				setFileLink(data?.displayUrl);
 				sharableLink = data.displayUrl;
 			} else {
 				console.error('Upload error:', error);
 			}
 		} catch (err) {
+			setIsLoading(false);
 			console.error('Unexpected error:', err);
 		}
 		return sharableLink;
 	};
 
+	const handleReplace = async () => {
+		setIsLoading(true);
+		try {
+			const { data, error } = await nextApiClientFetch<{ message: string }>('/api/v1/progressReport/removeReport');
+			if (data) {
+				message.success('Last uploaded file removed successfully');
+				dispatch(progressReportActions.setReportUploaded(false));
+				setCanUpload(true);
+			} else {
+				console.error('Error removing last uploaded file:', error);
+				message.error('Failed to remove last uploaded file');
+				setCanUpload(false);
+			}
+		} catch (error) {
+			console.error('Unexpected error:', error);
+			message.error('An unexpected error occurred');
+			setCanUpload(false);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const props: UploadProps = {
 		action: window.location.href,
 		customRequest: async ({ file, onSuccess, onError }) => {
+			if (!canUpload) {
+				message.error('Cannot upload a new file until the previous one is removed.');
+				return;
+			}
 			try {
+				setIsLoading(true);
 				const sharableLink = await handleUpload(file as File);
 				if (sharableLink) {
 					dispatch(progressReportActions.setProgressReportLink(sharableLink));
@@ -99,7 +122,6 @@ const UploadModalContent = () => {
 						url: sharableLink,
 						user_id: id
 					};
-
 					localStorage.setItem('progress_report', JSON.stringify(progress_report));
 					onSuccess?.({}, file as any);
 				} else {
@@ -110,14 +132,16 @@ const UploadModalContent = () => {
 			} catch (error) {
 				console.error('Custom request error:', error);
 				onError?.(error);
+			} finally {
+				setIsLoading(false);
 			}
 		},
+		disabled: isLoading || !canUpload,
 		multiple: false,
 		name: 'file',
 		onChange(info) {
 			const { status } = info.file;
 			if (status === 'done') {
-				setFileName(info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
@@ -128,7 +152,7 @@ const UploadModalContent = () => {
 	};
 
 	return (
-		<article className='mt-2 flex flex-col gap-y-1'>
+		<article className='mt-[6px] flex flex-col gap-y-1'>
 			{!report_uploaded && !postData?.progress_report && (
 				<Alert
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
@@ -157,7 +181,7 @@ const UploadModalContent = () => {
 								src='/assets/icons/edit-pencil.svg'
 								alt='edit-icon'
 							/>{' '}
-							Edit summary
+							{postData?.progress_report?.progress_summary ? 'Edit Summary' : 'Add Summary'}
 						</Button>
 						{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 					</div>
@@ -192,10 +216,8 @@ const UploadModalContent = () => {
 				</a>
 			)}
 			{add_summary_cta_clicked && (
-				<ContentForm
+				<SummaryContentForm
 					onChange={(content: string) => {
-						console.log('summaryc', content);
-						setSummary(content);
 						dispatch(progressReportActions.setSummaryContent(content));
 						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 						progress_report.summary = content;
@@ -203,20 +225,18 @@ const UploadModalContent = () => {
 					}}
 					autofocus={true}
 					height={200}
-					// value={summary}
+					value={summary_content || ''}
 				/>
 			)}
 			{!report_uploaded && !postData?.progress_report?.progress_file ? (
 				<Dragger {...props}>
 					<div className='flex flex-row items-center justify-center gap-x-3'>
-						<p className='ant-upload-drag-icon'>
-							<ImageIcon
-								src='/assets/icons/upload-icon.svg'
-								alt='upload-icon'
-							/>
-						</p>
+						<ImageIcon
+							src='/assets/icons/upload-icon.svg'
+							alt='upload-icon'
+						/>
 						<div className='flex flex-col items-start justify-start gap-y-2'>
-							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>Upload</p>
+							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>{isLoading ? 'Uploading...' : 'Upload'}</p>
 							<p className='ant-upload-hint m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Drag and drop your files here.</p>
 						</div>
 					</div>
@@ -224,7 +244,7 @@ const UploadModalContent = () => {
 			) : (
 				<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
 					<iframe
-						src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileLink || postData?.progress_report?.progress_file)}&embedded=true`}
+						src={`https://docs.google.com/viewer?url=${encodeURIComponent(progress_report_link || postData?.progress_report?.progress_file)}&embedded=true`}
 						width='100%'
 						height='180px'
 						title='PDF Preview'
@@ -238,13 +258,17 @@ const UploadModalContent = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>{fileName?.length > 20 ? `${fileName?.slice(0, 20)}` : fileName}</p>
+							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replaceAll(
+								'_',
+								' '
+							)} - ${postData?.postIndex}`}</p>
 						</div>
 						{!postData?.progress_report?.progress_file && (
 							<div
 								className='flex cursor-pointer items-center justify-end'
 								onClick={() => {
 									dispatch(progressReportActions.setReportUploaded(false));
+									handleReplace();
 								}}
 							>
 								<ImageIcon

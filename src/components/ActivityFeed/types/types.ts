@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { IPIPsVoting, IReactions } from 'pages/api/v1/posts/on-chain-post';
-import { EAllowedCommentor, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, EGovType, IBeneficiary, IPostHistory } from '~src/types';
 
 export interface IPostData {
 	post_id: number;
@@ -60,7 +60,7 @@ export interface IActivityFeedPost {
 	};
 	decision?: string;
 	last_edited_at?: string | Date;
-	gov_type?: 'gov_1' | 'open_gov';
+	gov_type?: EGovType;
 	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];

@@ -12,6 +12,7 @@ import messages from '~src/auth/utils/messages';
 import { firebaseStorageBucket } from '~src/services/firebaseInit';
 import { isValidNetwork } from '~src/api-utils';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import dayjs from 'dayjs';
 
 export const config = {
 	api: {
@@ -68,8 +69,10 @@ const handler: NextApiHandler<IUploadResponseType | MessageType> = async (req: N
 			if (!allowedTypes.includes(file.mimetype || '')) {
 				return res.status(400).json({ message: 'Unsupported file type. Only PDF files are allowed.' });
 			}
+			const postIndex = fields.postIndex;
+			const postType = fields.postType;
 
-			const fileName = `${Date.now()}-${file.originalFilename}`;
+			const fileName = `${network}_${postType}_${postIndex}_${user?.id}_${dayjs().unix}`;
 			const filePath = `user-uploads/${user?.id}/${fileName}`;
 			const bucketFile = firebaseStorageBucket.file(filePath);
 

@@ -83,7 +83,7 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 
 	const { postId, postType } = req.body;
 
-	if (!postId || !postType) {
+	if (Number.isNaN(postId) || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

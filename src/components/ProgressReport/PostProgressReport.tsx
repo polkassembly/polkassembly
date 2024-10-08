@@ -66,11 +66,10 @@ const PostProgressReport = ({ className }: Props) => {
 										alt='pdf.icon'
 									/>
 								</div>
-								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium '>
-									{postData?.progress_report?.progress_name?.length > 20
-										? `${postData?.progress_report?.progress_name?.slice(0, 20)}...`
-										: postData?.progress_report?.progress_name || 'Progress Report'}
-								</p>
+								<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replaceAll(
+									'_',
+									' '
+								)} - ${postData?.postIndex}`}</p>
 							</div>
 						</div>
 						<p

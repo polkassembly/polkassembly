@@ -10,11 +10,11 @@ import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_ACTIVE_PROPOSAL_INDEXES_FOR_TIMESPAN, GET_VOTE_COUNT_FROM_PROPOSAL_INDEXES } from '~src/queries';
-import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingStatusTabs';
-import { getSubsquidLikeProposalType, ProposalType } from '~src/global/proposalType';
+import { getStatusesFromCustomStatus, getSubsquidLikeProposalType, ProposalType } from '~src/global/proposalType';
 import dayjs from 'dayjs';
 import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCardAll';
 
 const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -38,7 +38,7 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 			query: GET_ACTIVE_PROPOSAL_INDEXES_FOR_TIMESPAN,
 			variables: {
 				createdAt_gte: dayjs().subtract(15, 'days').toISOString(),
-				status_in: CustomStatus.Active,
+				status_in: getStatusesFromCustomStatus(CustomStatus.Active),
 				type: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)
 			}
 		});
@@ -46,7 +46,7 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 		const allActiveProposals = subsquidRes?.data?.proposals || [];
 
 		if (!allActiveProposals?.length) {
-			return res.status(500).json({ message: messages.INVALID_PARAMS });
+			return res.status(500).json({ message: messages.NO_ACTIVE_PROPOSAL_FOUND });
 		}
 		const activeProposalIndexes: number[] = allActiveProposals?.map((proposal: { index: number }) => proposal?.index) || [];
 

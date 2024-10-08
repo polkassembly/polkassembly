@@ -24,6 +24,7 @@ import { EAllowedCommentor } from '~src/types';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
 import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
+import { getDefaultContent } from '~src/util/getDefaultContent';
 
 interface ISubscribedPost {
 	network: string;
@@ -141,9 +142,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					let subsquareTitle = '';
 					let subsquareContent = '';
 					if (data?.title === '' || data?.title === undefined) {
-						const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-						subsquareTitle = res?.title;
-						subsquareContent = res?.content;
+						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
+						subsquareTitle = subsqaureRes?.title || '';
+						subsquareContent = subsqaureRes?.content || '';
 					}
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
@@ -211,7 +212,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						tags: data?.tags || [],
 						tally,
 						timeline: proposalTimeline,
-						title: data?.title || subsquareTitle || null,
+						title: data?.title || subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 						topic: topic
 							? topic
 							: isTopicIdValid(topic_id)
@@ -228,15 +229,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					await getContentSummary(post, network, true);
 
 					if (!post?.content?.length) {
-						if (proposer) {
-							post.content = `This is a ${getProposalTypeTitle(
-								ProposalType.REFERENDUM_V2
-							)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-						} else {
-							post.content = `This is a ${getProposalTypeTitle(
-								ProposalType.REFERENDUM_V2
-							)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-						}
+						post.content = getDefaultContent({ proposalType: ProposalType.REFERENDUM_V2, proposer });
 					}
 
 					if (!process.env.AI_SUMMARY_API_KEY) {
@@ -276,7 +269,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				status_history: statusHistory,
 				tally,
 				timeline: proposalTimeline,
-				title: subsquareTitle || 'Untitled',
+				title: subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 				topic: topicFromType,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type,
@@ -285,15 +278,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			await getContentSummary(post, network, true);
 
 			if (!post?.content?.length) {
-				if (proposer) {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				} else {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				}
+				post.content = getDefaultContent({ proposalType: ProposalType.REFERENDUM_V2, proposer });
 			}
 
 			if (!process.env.AI_SUMMARY_API_KEY) {

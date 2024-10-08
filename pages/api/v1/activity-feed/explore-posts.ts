@@ -11,7 +11,7 @@ import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_ALL_ACTIVE_PROPOSAL_FOR_EXPLORE_FEED, GET_TOTAL_VOTE_COUNT_ON_PROPOSAL, VOTED_PROPOSAL_BY_PROPOSAL_INDEX_AND_VOTERS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getReactions } from '../posts/on-chain-post';
+import { getReactions, IPIPsVoting, IReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
@@ -19,9 +19,38 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
-import { EAllowedCommentor } from '~src/types';
+import { EAllowedCommentor, EGovType, IBeneficiary, IPostHistory } from '~src/types';
 import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
-import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
+import { getDefaultContent } from '~src/util/getDefaultContent';
+
+export interface IActivityFeedPost {
+	allowedCommentors: EAllowedCommentor;
+	assetId?: string | null;
+	post_reactions?: IReactions;
+	commentsCount: number;
+	content?: string;
+	end?: number;
+	delay?: number;
+	vote_threshold?: any;
+	created_at?: string;
+	tippers?: any[];
+	topic: {
+		id: number;
+		name: string;
+	};
+	decision?: string;
+	last_edited_at?: string | Date;
+	gov_type?: EGovType;
+	proposalHashBlock?: string | null;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
+	beneficiaries?: IBeneficiary[];
+	[key: string]: any;
+	preimageHash?: string;
+	summary?: string;
+}
 
 const updateNonVotedProposals = (proposals: IActivityFeedPost[]) => {
 	//sort by votes Count
@@ -193,7 +222,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				summary: '',
 				tally,
 				timeline: proposalTimeline,
-				title: 'Untitled',
+				title: getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 				topic: topicFromType,
 				totalVotes: totalVotes || 0,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
@@ -201,15 +230,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			};
 
 			const postDoc = await postDocRef.get();
-			if (postDoc?.exists) {
+			if (postDoc && postDoc.exists) {
 				const data = postDoc.data();
 				if (data) {
 					let subsquareTitle = '';
 					let subsquareContent = '';
 					if (!data?.title?.length || !data?.content?.length) {
 						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-						subsquareTitle = subsqaureRes?.title;
-						subsquareContent = subsqaureRes?.content;
+						subsquareTitle = subsqaureRes?.title || post?.title;
+						subsquareContent = subsqaureRes?.content || post?.content;
 					}
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
@@ -230,17 +259,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 							}
 						}
 					});
-					const { totalSentiments, maxSentiment, maxSentimentCount } = Object.entries(sentiments).reduce(
-						(acc, [key, value]) => {
-							acc.totalSentiments += value;
-							if (acc.maxSentimentCount < value) {
-								acc.maxSentimentCount = value;
-								acc.maxSentiment = key as string;
-							}
-							return acc;
-						},
-						{ maxSentiment: null as string | null, maxSentimentCount: 0, totalSentiments: 0 }
-					);
+					let maxSentiment = null;
+					let maxSentimentCount = 0;
+					let totalSentiments = 0;
+					Object.entries(sentiments).map(([key, value]) => {
+						totalSentiments += 1;
+						if (maxSentimentCount < value) {
+							maxSentimentCount = value;
+							maxSentiment = key;
+						}
+					});
 					const commentsCountQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 					const commentsCount = commentsCountQuerySnapshot.data()?.count || 0;
@@ -258,7 +286,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					post.proposer = proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator;
 					post.summary = data?.summary || '';
 					post.tags = data?.tags || [];
-					post.title = data?.title || subsquareTitle || null;
+					post.title = data?.title || subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2);
 					post.topic = topic
 						? topic
 						: isTopicIdValid(topic_id)
@@ -273,15 +301,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			}
 
 			if (!post?.content?.length) {
-				if (proposer) {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				} else {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				}
+				post.content = getDefaultContent({ proposalType: ProposalType.REFERENDUM_V2, proposer });
 			}
 
 			await getContentSummary(post, network, true);
@@ -310,12 +330,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const updatedNonVotedProposals = updateNonVotedProposals(nonVotedProposals);
 
 		const combineProposals = [
-			...updatedNonVotedProposals.map((proposal) => ({ ...proposal, isVoted: false })),
-			...votedProposals.map((proposal) => ({ ...proposal, isVoted: true }))
+			...updatedNonVotedProposals,
+			...(votedProposals || []).map((proposal) => {
+				return { ...proposal, isVoted: true };
+			})
 		];
 		return res.status(200).json({ data: combineProposals });
 	} catch (err) {
-		console.error('Error fetching explore posts:', err);
+		console.error('Error fetching subscribed posts:', err);
 		return res.status(500).json({ message: messages.API_FETCH_ERROR });
 	}
 }

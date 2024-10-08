@@ -31,7 +31,7 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 	const { addresses } = req.body;
 	console.log('addresses', addresses);
 
-	if (!addresses?.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
+	if (!addresses?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
 		const subsquidRes = await fetchSubsquid({

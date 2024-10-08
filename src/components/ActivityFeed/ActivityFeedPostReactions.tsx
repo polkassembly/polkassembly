@@ -76,6 +76,10 @@ export const ActivityFeedPostReactions: React.FC<{
 			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
 		);
 	};
+	const percentage = Math.min(post.highestSentiment?.percentage || 0, 100);
+	const sentimentTitle =
+		percentage <= 20 ? 'Completely Against' : percentage <= 40 ? 'Slightly Against' : percentage <= 60 ? 'Neutral' : percentage <= 80 ? 'Slightly For' : 'Completely For';
+
 	const renderSentimentIcon = (sentiment: number) => {
 		const sentimentIcons: Record<number, React.ReactNode> = {
 			0: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
@@ -145,8 +149,8 @@ export const ActivityFeedPostReactions: React.FC<{
 						{post.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
 								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
-								title={['Completely Against', 'Slightly Against', 'Neutral', 'Slightly For', 'Completely For'][post.highestSentiment.sentiment]}
-								percentage={post.highestSentiment?.percentage || null}
+								title={sentimentTitle}
+								percentage={percentage}
 							/>
 						)}
 					</div>

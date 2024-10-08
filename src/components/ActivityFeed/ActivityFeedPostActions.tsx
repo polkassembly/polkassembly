@@ -250,7 +250,9 @@ export const ActivityFeedPostActions: React.FC<{
 
 		return sentimentIcons[sentiment] || null;
 	};
-
+	const percentage = Math.min(post.highestSentiment?.percentage || 0, 100);
+	const sentimentTitle =
+		percentage <= 20 ? 'Completely Against' : percentage <= 40 ? 'Slightly Against' : percentage <= 60 ? 'Neutral' : percentage <= 80 ? 'Slightly For' : 'Completely For';
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
@@ -399,8 +401,8 @@ export const ActivityFeedPostActions: React.FC<{
 						{post.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
 								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
-								title={['Completely Against', 'Slightly Against', 'Neutral', 'Slightly For', 'Completely For'][post.highestSentiment.sentiment]}
-								percentage={post.highestSentiment?.percentage || null}
+								title={sentimentTitle}
+								percentage={percentage}
 							/>
 						)}
 					</div>

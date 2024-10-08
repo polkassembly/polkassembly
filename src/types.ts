@@ -976,3 +976,8 @@ export interface ICommentsSummary {
 	summary_positive: string;
 	summary_neutral: string;
 }
+
+export interface LeaderboardPointsResponse {
+	count: number;
+	data: any[];
+}

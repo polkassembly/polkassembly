@@ -26,7 +26,7 @@ import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
 import PolyWalletIcon from '~assets/wallet/poly-wallet.svg';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
-import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
+import { IAuthResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
@@ -40,6 +40,7 @@ import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -188,22 +189,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 		try {
 			setLoading(true);
 
-			const { data: loginStartData, error: loginStartError } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressLoginStart', { address });
-
-			if (loginStartError) {
-				console.log('Error in address login start', loginStartError);
-				setError(loginStartError);
-				setLoading(false);
-				return;
-			}
-
-			const signMessage = loginStartData?.signMessage;
-
-			if (!signMessage) {
-				throw new Error('Challenge message not found');
-			}
-
-			const msg = stringToHex(signMessage);
+			const msg = stringToHex(SIGN_MESSAGE);
 			const from = address;
 
 			const params = [msg, from];
@@ -237,21 +223,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 
 							try {
 								setLoading(true);
-								const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
-								if (error || !data) {
-									setError(error || 'Something went wrong');
-									setLoading(false);
-									return;
-								}
-
-								const signMessage = data?.signMessage;
-								if (!signMessage) {
-									setError('Challenge message not found');
-									setLoading(false);
-									return;
-								}
-
-								const msg = stringToHex(signMessage);
+								const msg = stringToHex(SIGN_MESSAGE);
 								const from = address;
 
 								const params = [msg, from];
@@ -270,7 +242,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 											return;
 										}
 
-										const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
+										const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignup', {
 											address,
 											signature: result.result,
 											wallet: Wallet.METAMASK

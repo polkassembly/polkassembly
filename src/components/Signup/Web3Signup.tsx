@@ -20,7 +20,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 
-import { ChallengeMessage, JWTPayloadType, TokenType } from '~src/auth/types';
+import { JWTPayloadType, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -39,6 +39,7 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -243,27 +244,14 @@ const Web3Signup: FC<Props> = ({
 			}
 
 			setLoading(true);
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address: substrate_address, multisig: multiWallet });
-			if (error || !data) {
-				setErr(error || 'Something went wrong');
-				setLoading(false);
-				return;
-			}
-
-			const signMessage = data?.signMessage;
-			if (!signMessage) {
-				setErr('Challenge message not found');
-				setLoading(false);
-				return;
-			}
 
 			const { signature } = await signRaw({
 				address: substrate_address,
-				data: stringToHex(signMessage),
+				data: stringToHex(SIGN_MESSAGE),
 				type: 'bytes'
 			});
 
-			const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
+			const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignup', {
 				address: substrate_address,
 				multisig: multiWallet,
 				signature,

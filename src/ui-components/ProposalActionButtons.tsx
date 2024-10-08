@@ -144,8 +144,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />}
-
+			{/* {isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />} */}
+			{isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (

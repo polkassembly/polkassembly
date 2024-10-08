@@ -11,11 +11,11 @@ import TinderPostDescription from '../PostInfoComponents/TinderPostDescription';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import { Divider, Modal } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useBatchVotesSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons';
 import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
 import Link from 'next/link';
@@ -112,12 +112,15 @@ const TinderCards: FC<ITinderCards> = (props) => {
 
 	return (
 		<div className='flex h-[650px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
-			<p
-				className='m-0 ml-auto cursor-pointer p-0 text-[10px] font-semibold text-pink_primary'
-				onClick={() => onSkip(post.id)}
+			<Button
+				className='ml-auto border-none bg-transparent p-0'
+				onClick={() => {
+					console.log('skip clicked');
+					onSkip(post.id);
+				}}
 			>
-				skip &gt;&gt;
-			</p>
+				<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+			</Button>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -134,14 +137,18 @@ const TinderCards: FC<ITinderCards> = (props) => {
 					items={tabItems}
 				/>
 			</div>
-			<CustomButton
-				variant='default'
-				className='mt-6 w-full '
-				text='show more'
+			<Button
+				className='mt-6 flex h-[40px] w-full items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
 				onClick={() => {
+					console.log('btn clicked');
 					dispatch(batchVotesActions.setShowPostInfo(true));
 				}}
-			/>
+			>
+				<div className='flex items-center gap-x-2'>
+					<InfoIcon className='text-2xl text-pink_primary' />
+					<DetailsIcon className='mt-[82px] text-8xl' />
+				</div>
+			</Button>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}

@@ -28,6 +28,7 @@ const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
+	console.log('i am user: ', user);
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -79,8 +80,8 @@ const VotingCards = () => {
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
 			skippedIndexes: skippedIndexes,
-			userAddress: user?.loginAddress,
-			userId: user?.id
+			userAddress: user?.loginAddress || '5E2QZ75WX5sU79ZfjZJ5ZC85H7gP1pYEmp68u74yUnzmwp1q',
+			userId: user?.id || 6876
 		});
 		if (error) {
 			console.error(error);
@@ -115,7 +116,7 @@ const VotingCards = () => {
 	};
 
 	useEffect(() => {
-		if (!network || !user?.loginAddress?.length) return;
+		// if (!network || !user?.loginAddress?.length) return;
 		getActiveProposals(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, user?.loginAddress]);

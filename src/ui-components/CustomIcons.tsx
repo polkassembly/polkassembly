@@ -162,6 +162,7 @@ import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
 import DiscordIconSVG from '~assets/icons/discord-notification.svg';
 import TipIconSVG from '~assets/icons/tip-title.svg';
 import InfoIconSVG from '~assets/info.svg';
+import DetailsIconSVG from '~assets/icons/details-icons.svg';
 import DollarIconSVG from '~assets/icons/dollar-icon.svg';
 import ReferandumSVG from '~assets/icons/referendum-canceller.svg';
 import AuctionAdminIconSVG from '~assets/icons/action-admin.svg';
@@ -1235,6 +1236,13 @@ export const TipIcon = (props: Partial<CustomIconComponentProps>) => (
 export const InfoIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={InfoIconSVG}
+		{...props}
+	/>
+);
+
+export const DetailsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DetailsIconSVG}
 		{...props}
 	/>
 );

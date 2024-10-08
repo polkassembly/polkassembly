@@ -50,6 +50,9 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const router = useRouter();
+	const isRelevantPath = ['/activity-feed', '/opengov', '/'].includes(pathname);
+	const isActivityFeedSupported = isActivitySupportedNetwork(network.POLKADOT);
+
 	const handleClick = (num: number) => {
 		if (id) {
 			if (proposerAddress.length > 0) {
@@ -144,8 +147,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{/* {isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />} */}
-			{isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && isActivityFeedSupported && isRelevantPath && <SwitchViewButton pathname={pathname} />}
+
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (

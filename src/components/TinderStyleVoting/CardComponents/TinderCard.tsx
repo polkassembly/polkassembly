@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import PostOnChainInfo from '../../Post/Tabs/PostOnChainInfo';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import { useTheme } from 'next-themes';
@@ -9,12 +9,9 @@ import { Tabs } from '~src/ui-components/Tabs';
 import CardPostHeading from '../PostInfoComponents/CardPostHeading';
 import TinderPostDescription from '../PostInfoComponents/TinderPostDescription';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useDispatch } from 'react-redux';
-import { batchVotesActions } from '~src/redux/batchVoting';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { useBatchVotesSelector } from '~src/redux/selectors';
 import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import InfoModalContent from './InfoModalContent';
@@ -29,8 +26,9 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	const { post, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const dispatch = useDispatch();
-	const { show_post_info } = useBatchVotesSelector();
+
+	// Local state to control the modal visibility for this specific card
+	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];
@@ -99,6 +97,14 @@ const TinderCards: FC<ITinderCards> = (props) => {
 		...getOnChainTabs()
 	];
 
+	const handleModalOpen = () => {
+		setIsModalVisible(true);
+	};
+
+	const handleModalClose = () => {
+		setIsModalVisible(false);
+	};
+
 	return (
 		<div className='flex h-[420px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 			<CardPostHeading
@@ -120,9 +126,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 			</div>
 			<Button
 				className='mt-6 flex h-[20px] w-full items-center justify-center  border-none bg-transparent text-sm text-pink_primary'
-				onClick={() => {
-					dispatch(batchVotesActions.setShowPostInfo(true));
-				}}
+				onClick={handleModalOpen}
 			>
 				<div className='flex items-center gap-x-2'>
 					<InfoIcon className='text-2xl text-pink_primary' />
@@ -132,7 +136,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'z-100000 w-full dark:bg-black')}
-				open={show_post_info}
+				open={isModalVisible}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
@@ -142,16 +146,14 @@ const TinderCards: FC<ITinderCards> = (props) => {
 							buttonsize='sm'
 							onClick={() => {
 								router.push(`/referenda/${post?.id}`);
-								dispatch(batchVotesActions.setShowPostInfo(false));
+								handleModalClose();
 							}}
 						/>
 					</div>
 				}
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				onCancel={() => {
-					dispatch(batchVotesActions.setShowPostInfo(false));
-				}}
+				onCancel={handleModalClose}
 			>
 				<InfoModalContent post={post} />
 			</Modal>

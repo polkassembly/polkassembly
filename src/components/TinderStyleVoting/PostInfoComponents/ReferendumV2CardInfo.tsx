@@ -33,11 +33,22 @@ interface IReferendumV2CardInfoProps {
 	updateTally?: boolean;
 	post?: any;
 	hideInfo?: boolean;
+	isUsedInBatchVoting?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
+	isUsedInBatchVoting,
+	className,
+	tally,
+	ayeNayAbstainCounts,
+	setAyeNayAbstainCounts,
+	setUpdatetally,
+	updateTally,
+	post,
+	hideInfo
+}) => {
 	const { network } = useNetworkSelector();
 	const { status } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
@@ -171,7 +182,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Summary</h6>
+					<h6 className={`m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high ${isUsedInBatchVoting ? 'mb-8' : ''}`}>Summary</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag

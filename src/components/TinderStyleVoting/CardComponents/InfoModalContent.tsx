@@ -52,13 +52,14 @@ const InfoModalContent: FC<IInfoModalContent> = (props) => {
 					Read Full post
 				</Link>
 				{post?.comments?.length > 0 && <CardComments proposal={post} />}
-				<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
+				<div className='h-[300px] overflow-y-auto rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
 					<ReferendumV2CardInfo
 						ayeNayAbstainCounts={ayeNayAbstainCounts}
 						setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 						tally={post?.tally}
 						post={post}
 						hideInfo={true}
+						isUsedInBatchVoting={true}
 					/>
 				</div>
 			</div>

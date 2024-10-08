@@ -24,6 +24,7 @@ import { IActivityFeedPost } from './explore-posts';
 import { EAllowedCommentor } from '~src/types';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
+import { getDefaultContent } from '~src/util/getDefaultContent';
 
 interface ISubscribedPost {
 	network: string;
@@ -228,15 +229,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					await getContentSummary(post, network, true);
 
 					if (!post?.content?.length) {
-						if (proposer) {
-							post.content = `This is a ${getProposalTypeTitle(
-								ProposalType.REFERENDUM_V2
-							)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-						} else {
-							post.content = `This is a ${getProposalTypeTitle(
-								ProposalType.REFERENDUM_V2
-							)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-						}
+						post.content = getDefaultContent({ proposalType: ProposalType.REFERENDUM_V2, proposer });
 					}
 
 					if (!process.env.AI_SUMMARY_API_KEY) {
@@ -285,15 +278,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			await getContentSummary(post, network, true);
 
 			if (!post?.content?.length) {
-				if (proposer) {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				} else {
-					post.content = `This is a ${getProposalTypeTitle(
-						ProposalType.REFERENDUM_V2
-					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-				}
+				post.content = getDefaultContent({ proposalType: ProposalType.REFERENDUM_V2, proposer });
 			}
 
 			if (!process.env.AI_SUMMARY_API_KEY) {

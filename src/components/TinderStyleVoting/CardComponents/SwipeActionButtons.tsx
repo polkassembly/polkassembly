@@ -9,12 +9,15 @@ import classNames from 'classnames';
 import { ISwipeActionButtons } from '../types';
 
 const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
-	const { currentIndex, trackPosts, childRefs, className } = props;
+	const { currentIndex, trackPosts, childRefs, className, onSwipe } = props;
 	const canSwipe = currentIndex >= 0;
 
 	const swipe = async (dir: any) => {
 		if (canSwipe && currentIndex < trackPosts?.length) {
-			await childRefs[currentIndex].current.swipe(dir);
+			onSwipe(dir);
+			setTimeout(async () => {
+				await childRefs[currentIndex].current.swipe(dir);
+			}, 300);
 		}
 	};
 

@@ -106,7 +106,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	};
 
 	return (
-		<div className='flex h-[420px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+		<div className='flex h-[380px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -115,7 +115,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				post={post}
 				isUsedInMainDisplay={true}
 			/>
-			<div className='h-[160px] overflow-y-hidden py-2'>
+			<div className='h-[120px] overflow-y-hidden py-2'>
 				<Tabs
 					theme={theme}
 					type='card'

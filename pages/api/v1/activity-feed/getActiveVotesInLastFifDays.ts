@@ -14,7 +14,7 @@ import { getStatusesFromCustomStatus, getSubsquidLikeProposalType, ProposalType 
 import dayjs from 'dayjs';
 import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
-import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCardAll';
 
 const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -48,7 +48,7 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 		const allActiveProposals = subsquidRes?.data?.proposals || [];
 
 		if (!allActiveProposals?.length) {
-			return res.status(500).json({ message: messages.NO_ACTIVE_PROPOSALS });
+			return res.status(500).json({ message: messages.NO_ACTIVE_PROPOSAL_FOUND });
 		}
 		const activeProposalIndexes: number[] = allActiveProposals?.map((proposal: { index: number }) => proposal?.index) || [];
 

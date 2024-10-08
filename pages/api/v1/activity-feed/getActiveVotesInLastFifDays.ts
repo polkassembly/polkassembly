@@ -28,7 +28,7 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { addresses = [] } = req.body;
+	const { addresses } = req.body;
 
 	if (!addresses?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 

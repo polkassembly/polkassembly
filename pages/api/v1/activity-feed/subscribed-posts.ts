@@ -20,9 +20,9 @@ import { getDefaultReactionObj, getReactions } from '../posts/on-chain-post';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
-import { IActivityFeedPost } from './explore-posts';
 import { EAllowedCommentor } from '~src/types';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import { IActivityFeedPost } from '~src/components/ActivityFeed/types/types';
 import getBeneficiaryDetails from '~src/util/getBeneficiaryDetails';
 import { getDefaultContent } from '~src/util/getDefaultContent';
 

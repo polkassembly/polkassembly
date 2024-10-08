@@ -77,8 +77,15 @@ export const ActivityFeedPostReactions: React.FC<{
 		);
 	};
 	const percentage = Math.min(post.highestSentiment?.percentage || 0, 100);
-	const sentimentTitle =
-		percentage <= 20 ? 'Completely Against' : percentage <= 40 ? 'Slightly Against' : percentage <= 60 ? 'Neutral' : percentage <= 80 ? 'Slightly For' : 'Completely For';
+	const sentimentLevels = [
+		{ threshold: 20, title: 'Completely Against' },
+		{ threshold: 40, title: 'Slightly Against' },
+		{ threshold: 60, title: 'Neutral' },
+		{ threshold: 80, title: 'Slightly For' },
+		{ threshold: 100, title: 'Completely For' }
+	];
+
+	const sentimentTitle = sentimentLevels.find((level) => percentage <= level.threshold)?.title || 'Completely For';
 
 	const renderSentimentIcon = (sentiment: number) => {
 		const sentimentIcons: Record<number, React.ReactNode> = {

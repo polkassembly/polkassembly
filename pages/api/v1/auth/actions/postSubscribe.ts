@@ -58,6 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		const existingSubscribedPosts = (userDoc.data()?.subscribed_posts || []) as { post_id: number; post_type: string; network: string }[];
 
 		const subscribedPost = {
+			created_at: new Date(),
 			network,
 			post_id: Number(post_id),
 			post_type: strProposalType

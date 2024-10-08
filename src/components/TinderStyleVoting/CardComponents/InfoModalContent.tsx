@@ -23,8 +23,8 @@ const InfoModalContent: FC<IInfoModalContent> = (props) => {
 		return newMd;
 	};
 	return (
-		<section className='flex flex-col gap-y-4  overflow-x-hidden bg-white p-4 dark:bg-transparent'>
-			<div className='overflow-y-auto rounded-2xl shadow-md'>
+		<section className='mt-6 flex h-[500px] flex-col  gap-y-4 overflow-y-auto overflow-x-hidden bg-white dark:bg-transparent'>
+			<div className='overflow-y-auto rounded-2xl px-4 shadow-md'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={post?.method}
@@ -52,15 +52,15 @@ const InfoModalContent: FC<IInfoModalContent> = (props) => {
 					Read Full post
 				</Link>
 				{post?.comments?.length > 0 && <CardComments proposal={post} />}
-			</div>
-			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
-				<ReferendumV2CardInfo
-					ayeNayAbstainCounts={ayeNayAbstainCounts}
-					setAyeNayAbstainCounts={setAyeNayAbstainCounts}
-					tally={post?.tally}
-					post={post}
-					hideInfo={true}
-				/>
+				<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
+					<ReferendumV2CardInfo
+						ayeNayAbstainCounts={ayeNayAbstainCounts}
+						setAyeNayAbstainCounts={setAyeNayAbstainCounts}
+						tally={post?.tally}
+						post={post}
+						hideInfo={true}
+					/>
+				</div>
 			</div>
 		</section>
 	);

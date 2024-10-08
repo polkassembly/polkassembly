@@ -26,7 +26,7 @@ interface ITinderCards {
 }
 
 const TinderCards: FC<ITinderCards> = (props) => {
-	const { post, proposalType, onSkip } = props;
+	const { post, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const dispatch = useDispatch();
@@ -100,24 +100,16 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	];
 
 	return (
-		<div className='flex h-[600px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
-			<Button
-				className='ml-auto border-none bg-transparent p-0'
-				onClick={() => {
-					console.log('skip clicked');
-					onSkip(post.id);
-				}}
-			>
-				<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-			</Button>
+		<div className='flex h-[420px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
 				postArguments={post?.proposed_call?.args}
 				className=''
 				post={post}
+				isUsedInMainDisplay={true}
 			/>
-			<div className='h-[250px] overflow-y-hidden py-2'>
+			<div className='h-[160px] overflow-y-hidden py-2'>
 				<Tabs
 					theme={theme}
 					type='card'
@@ -127,9 +119,8 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				/>
 			</div>
 			<Button
-				className='mt-6 flex h-[40px] w-full items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
+				className='mt-6 flex h-[20px] w-full items-center justify-center  border-none bg-transparent text-sm text-pink_primary'
 				onClick={() => {
-					console.log('btn clicked');
 					dispatch(batchVotesActions.setShowPostInfo(true));
 				}}
 			>
@@ -140,9 +131,8 @@ const TinderCards: FC<ITinderCards> = (props) => {
 			</Button>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(poppins.className, poppins.variable, 'z-100000 w-full dark:bg-black')}
 				open={show_post_info}
-				// open={true}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton

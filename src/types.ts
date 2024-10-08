@@ -981,3 +981,9 @@ export interface LeaderboardPointsResponse {
 	count: number;
 	data: any[];
 }
+
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}

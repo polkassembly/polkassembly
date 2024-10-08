@@ -15,12 +15,6 @@ interface Props {
 	theme?: string;
 }
 
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
-}
-
 const IdentityBadge = ({ className, identity, flags }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));

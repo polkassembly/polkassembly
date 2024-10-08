@@ -12,13 +12,14 @@ const ActivityFeedPostContent: React.FC<{
 	isCommentPost?: boolean;
 }> = ({ post, content }: { post: any; content: string; isCommentPost?: boolean }) => {
 	const trimmedContentForComment = content?.length > 250 ? content?.slice(0, 200) + '...' : content;
+	const startsWithBulletPoint = trimmedContentForComment.trim().startsWith('•') || trimmedContentForComment.trim().startsWith('-');
 	return (
 		<>
 			<p className='xl:text-md pt-2 text-[15px] font-semibold text-[#243A57] dark:text-white'>
 				#{post?.post_id} {post?.title || 'Untitled Post'}
 			</p>
 			<Markdown
-				className='xl:text-md -ml-8 text-[14px] text-[#243A57]'
+				className={`xl:text-md text-[14px] text-[#243A57] ${startsWithBulletPoint ? '-ml-8' : ''}`}
 				md={trimmedContentForComment}
 			/>
 			<Link

@@ -976,3 +976,34 @@ export interface ICommentsSummary {
 	summary_positive: string;
 	summary_neutral: string;
 }
+
+interface IProxyAccount {
+	account_display: {
+		address: string;
+	};
+	proxy_type: string;
+}
+
+interface IProxy {
+	proxy_account: IProxyAccount[];
+	real_account: IProxyAccount[];
+}
+
+interface IMultisigAccount {
+	address: string;
+}
+
+interface IMultisig {
+	multi_account: IMultisigAccount[];
+}
+
+export interface IAccountData {
+	address: string;
+	balance: string;
+	balance_lock: string;
+	lock: string;
+	multisig: IMultisig;
+	proxy: IProxy;
+	nft_amount: string;
+	nonce: number;
+}

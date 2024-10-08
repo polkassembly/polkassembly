@@ -55,12 +55,12 @@ const handler: NextApiHandler = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const { address } = req.body;
-	// const network = String(req.headers['x-network']);
-	const network = 'polkadot';
+	const network = String(req.headers['x-network']);
+	// const network = 'polkadot';
 
-	// if (!network || !isValidNetwork(network)) {
-	// 	return res.status(400).json({ message: messages.INVALID_NETWORK });
-	// }
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 	if (!address || typeof address !== 'string') {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}

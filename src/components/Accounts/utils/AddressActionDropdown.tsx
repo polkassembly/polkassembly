@@ -29,19 +29,19 @@ const AddressActionDropdown = () => {
 	];
 
 	return (
-		<div className='-mt-1'>
+		<div className='rounded-lg border border-solid border-[#F5F5F5] dark:border-separatorDark'>
 			<Dropdown
 				theme={theme}
 				overlayStyle={{ marginTop: '20px' }}
-				className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
+				className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-solid border-section-light-container dark:border-separatorDark ${
 					theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 				}`}
-				overlayClassName='z-[1056'
+				overlayClassName='z-[1056]'
 				placement='bottomRight'
 				menu={{ items }}
 				onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
 			>
-				<span className='ml-1 mt-1'>
+				<span className=' dark:bg-section-dark-background'>
 					<ThreeDotsIcon />
 				</span>
 			</Dropdown>

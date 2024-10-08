@@ -26,7 +26,7 @@ const BalanceDetails = () => {
 			</div>
 			<Divider
 				type='vertical'
-				className='border-l-1 h-10 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+				className='border-l-1 h-10 border-[#D2D8E0] dark:border-separatorDark max-lg:hidden xs:mt-0.5 xs:inline-block'
 			/>
 			<div className='flex flex-col items-center '>
 				<div className='flex items-center gap-[6px]'>
@@ -43,7 +43,7 @@ const BalanceDetails = () => {
 			</div>
 			<Divider
 				type='vertical'
-				className='border-l-1 h-10 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+				className='border-l-1 h-10 border-[#D2D8E0] dark:border-separatorDark max-lg:hidden xs:mt-0.5 xs:inline-block'
 			/>
 			<div className='flex flex-col items-center '>
 				<div className='flex items-center gap-[6px]'>

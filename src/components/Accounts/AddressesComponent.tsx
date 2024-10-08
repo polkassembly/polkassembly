@@ -9,8 +9,11 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IAccountData } from '~src/types';
 import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
+import AddressComponent from './utils/AddressComponent';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const AddressesComponent = () => {
+	const { loginAddress } = useUserDetailsSelector();
 	const [accountData, setAccountData] = useState<IAccountData | null>(null);
 
 	const fetchData = async () => {
@@ -46,60 +49,47 @@ const AddressesComponent = () => {
 						<BalanceDetails />
 					</div>
 					<div className='flex items-center gap-2'>
-						<SendFundsComponent />
+						{accountData?.address && loginAddress != accountData?.address && <SendFundsComponent proxyAddress={accountData?.address} />}
 						<AddressActionDropdown />
 					</div>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] bg-[#F6F8FA] p-2 dark:bg-section-dark-overlay lg:p-4`}>
+				<div
+					className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] p-2 dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
+				>
 					<h3 className=' text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Proxy</h3>
 
 					{accountData?.proxy && (
-						<div className='flex w-full flex-col gap-4'>
-							{accountData?.proxy?.proxy_account?.length > 0 && (
-								<div className='w-full rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-4'>
-									<h3 className='mb-2 font-bold'>Proxy Accounts</h3>
-									{accountData.proxy.proxy_account.map((proxyAccount, index) => (
-										<div
-											key={index}
-											className='mb-2 flex items-center justify-between'
-										>
-											<div>
-												{proxyAccount.account_display?.address && (
-													<Address
-														address={proxyAccount.account_display.address}
-														displayInline
-														iconSize={18}
-														isTruncateUsername={false}
-													/>
-												)}
+						<div className='flex w-full flex-col '>
+							{/* Pure Proxy Addresses */}
+							{accountData?.proxy?.real_account?.length > 0 && (
+								<div>
+									{accountData.proxy.real_account.map((realAccount, index) => {
+										return (
+											<div key={index}>
+												<AddressComponent
+													proxyAddress={realAccount?.account_display?.address}
+													proxyType={realAccount?.proxy_type}
+													isPureProxy={true}
+												/>
 											</div>
-											<BalanceDetails />
-										</div>
-									))}
+										);
+									})}
 								</div>
 							)}
 
-							{accountData?.proxy?.real_account?.length > 0 && (
-								<div className='w-full rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-4'>
-									<h3 className='mb-2 font-bold'>Real Accounts</h3>
-									{accountData.proxy.real_account.map((realAccount, index) => (
-										<div
-											key={index}
-											className='mb-2 flex items-center justify-between'
-										>
-											<div>
-												{realAccount.account_display?.address && (
-													<Address
-														address={realAccount.account_display.address}
-														displayInline
-														iconSize={18}
-														isTruncateUsername={false}
-													/>
-												)}
+							{/* Proxy Addresses */}
+							{accountData?.proxy?.proxy_account?.length > 0 && (
+								<div>
+									{accountData.proxy.proxy_account.map((proxyAccount, index) => {
+										return (
+											<div key={index}>
+												<AddressComponent
+													proxyAddress={proxyAccount?.account_display?.address}
+													proxyType={proxyAccount?.proxy_type}
+												/>
 											</div>
-											<BalanceDetails />
-										</div>
-									))}
+										);
+									})}
 								</div>
 							)}
 						</div>
@@ -113,27 +103,19 @@ const AddressesComponent = () => {
 					/>
 				</div>
 			</div>
-
 			<h3 className='mt-5 text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Multisigs</h3>
-			<div
-				className={`${poppins.className} ${poppins.variable} mt-5 flex w-full items-center justify-between rounded-[14px] bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-4`}
-			>
-				<div>
-					<span> Multisig Address</span>
-					{accountData?.multisig?.multi_account?.[0].address && (
-						<Address
-							address={accountData?.multisig?.multi_account?.[0].address}
-							displayInline
-							iconSize={18}
-							isTruncateUsername={false}
-						/>
-					)}
-					<BalanceDetails />
-				</div>
-				<div className='flex items-center gap-2'>
-					<SendFundsComponent />
-					<AddressActionDropdown />
-				</div>
+			<div>
+				{accountData?.multisig?.multi_account && accountData?.multisig?.multi_account.length > 0 && (
+					<div>
+						{accountData?.multisig?.multi_account.map((multisigAddress, index) => {
+							return (
+								<div key={index}>
+									<AddressComponent proxyAddress={multisigAddress?.address} />
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		</section>
 	);

@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	postSubs.push(Number(user.id));
 
 	try {
-		await postRef.update({ subscribers: postSubs });
+		await postRef.set({ subscribers: postSubs }, { merge: true });
 
 		// Update user document with subscribed post
 		const userRef = firestore_db.collection('users').doc(String(user.id));

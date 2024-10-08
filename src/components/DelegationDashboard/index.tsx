@@ -80,8 +80,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	return (
 		<div className={`${className} delegation-dashboard`}>
-			{isLoggedOut ? (
-				<div className='wallet-info-board mt-[-25px] flex h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20'>
+			{isLoggedOut || !userDetails.loginAddress ? (
+				<div className='wallet-info-board mt-[-25px] flex h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-6 max-sm:absolute max-sm:left-0 max-sm:top-20'>
 					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
 					<Button
 						onClick={() => {
@@ -97,9 +97,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					<ProfileBalances />
 				</div>
 			)}
-			{(isLoggedOut || !userDetails.loginAddress) && (
-				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
-			)}
+			<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high md:mb-5'>Delegation </h2>
 
 			{(isLoggedOut || !userDetails.loginAddress) && (
 				<>

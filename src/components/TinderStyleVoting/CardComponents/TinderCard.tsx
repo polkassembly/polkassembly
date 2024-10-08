@@ -14,7 +14,7 @@ import { batchVotesActions } from '~src/redux/batchVoting';
 import { Divider, Modal } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-// import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
@@ -35,7 +35,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	const router = useRouter();
 	console.log(post);
 	const dispatch = useDispatch();
-	// const { show_post_info } = useBatchVotesSelector();
+	const { show_post_info } = useBatchVotesSelector();
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
@@ -145,8 +145,8 @@ const TinderCards: FC<ITinderCards> = (props) => {
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
-				// open={show_post_info}
-				open={true}
+				open={show_post_info}
+				// open={true}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton

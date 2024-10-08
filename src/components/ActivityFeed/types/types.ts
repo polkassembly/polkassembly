@@ -71,3 +71,8 @@ export interface IActivityFeedPost {
 	preimageHash?: string;
 	summary?: string;
 }
+
+export enum Tab {
+	Explore = 'explore',
+	Following = 'following'
+}

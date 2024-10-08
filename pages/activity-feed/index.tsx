@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
@@ -21,17 +20,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
-import AboutActivity from '~src/components/ActivityFeed/AboutActivity';
-import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
-import RankCard from '~src/components/ActivityFeed/RankCard';
-import ProposalCard from '~src/components/ActivityFeed/ProposalCard';
-
-const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+import TopToggleButton from '~src/components/ActivityFeed/TopToggleButton';
+import ActivitySidebar from '~src/components/ActivityFeed/ActivitySidebar';
+import { Tab } from '~src/components/ActivityFeed/types/types';
 
 const LatestActivity = dynamic(() => import('~src/components/ActivityFeed/LatestActivity'), {
 	loading: () => <Skeleton active />,
@@ -134,7 +125,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 		dispatch(setNetwork(network));
 	}, [network, dispatch]);
 
-	const [activeTab, setActiveTab] = useState('explore');
+	const [activeTab, setActiveTab] = useState<Tab>('explore' as Tab);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
@@ -153,24 +144,10 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 						<div>
 							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-3 lg:text-2xl'>Activity Feed</h1>
 						</div>
-						<div className='mt-2 flex h-9 items-center gap-1 rounded-lg bg-[#ECECEC] p-2 dark:bg-white dark:bg-opacity-[12%] md:gap-2 md:p-2  md:pt-5'>
-							<p
-								onClick={() => setActiveTab('explore')}
-								className={`mt-4 cursor-pointer rounded-md px-2 py-[3px] text-[15px] font-semibold  md:mt-1 md:px-4 md:py-[5px] md:text-[16px] ${
-									activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
-								}`}
-							>
-								Explore
-							</p>
-							<p
-								onClick={() => setActiveTab('following')}
-								className={`mt-4 cursor-pointer rounded-lg px-2 py-[3px] text-[15px] font-semibold md:mt-1 md:px-4 md:py-[5px] md:text-[16px] ${
-									activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A] dark:bg-[#0D0D0D]' : 'text-[#485F7D] dark:text-[#DADADA]'
-								}`}
-							>
-								Subscribed
-							</p>
-						</div>
+						<TopToggleButton
+							activeTab={activeTab}
+							setActiveTab={setActiveTab}
+						/>
 					</div>
 					<div className='flex flex-col items-end gap-2 lg:flex-row xl:mr-[6px] xl:justify-end'>
 						<ProposalActionButtons isUsedInHomePage={true} />
@@ -178,56 +155,21 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				</div>
 
 				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
-					{/* Main content */}
 					<div className='mx-1 mt-[26px] flex-grow'>
 						<div className=''>{activeTab === 'explore' ? <LatestActivity currentTab='explore' /> : <LatestActivity currentTab='following' />}</div>
 					</div>
-
-					{/* Sidebar */}
-					<div className='hidden shrink-0 xl:block xl:max-w-[270px] 2xl:max-w-[305px]'>
-						{/* About Activity Section */}
-						<div className='mx-1 mt-2 md:mt-6'>
-							{networkSocialsData && (
-								<AboutActivity
-									networkSocialsData={networkSocialsData?.data}
-									showGov2Links
-								/>
-							)}
-						</div>
-
-						{/* Proposal Section */}
-						{currentUser?.username && currentUser?.id && <ProposalCard currentUser={currentUser} />}
-
-						{/* Rank Section */}
-						<RankCard
-							userRank={userRank}
-							currentUser={currentUser}
-							currentUserdata={currentUserdata}
-							setLoginOpen={setLoginOpen}
-						/>
-
-						{/* Features Section */}
-						<div>
-							<FeaturesSection />
-						</div>
-
-						{/* Treasury Section */}
-						{isAssetHubNetwork.includes(network) && <ActivityTreasury />}
-					</div>
+					<ActivitySidebar
+						network={network}
+						networkSocialsData={networkSocialsData || { data: null, error: '', status: 500 }}
+						currentUser={currentUser}
+						userRank={userRank}
+						currentUserdata={currentUserdata}
+						setLoginOpen={setLoginOpen}
+						openLogin={openLogin}
+						setSignupOpen={setSignupOpen}
+						openSignup={openSignup}
+					/>
 				</div>
-
-				<SignupPopup
-					setLoginOpen={setLoginOpen}
-					modalOpen={openSignup}
-					setModalOpen={setSignupOpen}
-					isModal={true}
-				/>
-				<LoginPopup
-					setSignupOpen={setSignupOpen}
-					modalOpen={openLogin}
-					setModalOpen={setLoginOpen}
-					isModal={true}
-				/>
 			</div>
 		</>
 	);

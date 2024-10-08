@@ -1,19 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Markdown from '~src/ui-components/Markdown';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { Divider, Modal } from 'antd';
+import { Divider } from 'antd';
 import { EAllowedCommentor, ILastVote } from '~src/types';
 import { ProposalType } from '~src/global/proposalType';
 import dynamic from 'next/dynamic';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { PostHeader } from './PostHeader';
-import { CommentModal } from './CommentModal';
 import { PostReactions } from './PostReactions';
 import { PostActions } from './PostActions';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -21,9 +18,12 @@ import { useApiContext } from '~src/context';
 import { BN } from 'bn.js';
 import _ from 'lodash';
 import Skeleton from '~src/basic-components/Skeleton';
-import Alert from '~src/basic-components/Alert';
 import getCommentDisabledMessage from '../Post/Comment/utils/getCommentDisabledMessage';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import PostCommentSection from './PostCommentSection';
+import PostContent from './PostContent';
+import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
+import styled from 'styled-components';
 
 const ZERO = new BN(0);
 
@@ -33,9 +33,6 @@ const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Refe
 });
 
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
-const COMMENT_PLACEHOLDER = 'Type your comment here';
-const POST_LABEL = 'Post';
 
 const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const currentUserdata = useUserDetailsSelector();
@@ -70,17 +67,12 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 		setIdentity(verifiedIdentity);
 	};
 
-	useEffect(() => {
-		if (currentUserdata?.addresses) {
-			handleIdentityInfo();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUserdata, apiReady, api, network]);
-
 	const allowedCommentorsFromPost = post?.allowedCommentors || EAllowedCommentor.ALL;
 	const isUserNotAllowedToComment = allowedCommentorsFromPost === EAllowedCommentor.NONE || (allowedCommentorsFromPost === EAllowedCommentor.ONCHAIN_VERIFIED && !identity);
 	const reasonForNoComment = getCommentDisabledMessage(allowedCommentorsFromPost, identity);
-
+	const VoteIcon = styled(DarkCastVoteIcon)`
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	`;
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [reactionState, setReactionState] = useState({
 		dislikesCount: post_reactions?.['👎']?.count || 0,
@@ -173,13 +165,19 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const handleDebounceTallyData = useCallback(_.debounce(handleSummaryReload, 10000), [updateTally]);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		setIsLoading(true);
 		handleDebounceTallyData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [updateTally]);
+
+	useEffect(() => {
+		if (currentUserdata?.addresses) {
+			handleIdentityInfo();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUserdata, apiReady, api, network]);
 
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
@@ -234,11 +232,7 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 						}}
 						className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
 					>
-						<ImageIcon
-							src='/assets/Vote.svg'
-							alt=''
-							className='m-0 h-6 w-6 p-0'
-						/>
+						<VoteIcon className=' mt-[1px]' />
 						<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
 					</div>
 				)}
@@ -265,155 +259,6 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 				/>
 			</>
-		</div>
-	);
-};
-
-const PostContent: React.FC<{
-	post: any;
-	content: string;
-	isCommentPost?: boolean;
-}> = ({ post, content }) => {
-	const trimmedContentForComment = content?.length > 200 ? content?.slice(0, 150) + '...' : content;
-
-	return (
-		<>
-			<p className='xl:text-md pt-2 text-[15px] font-semibold text-[#243A57] dark:text-white'>
-				#{post?.post_id} {post?.title || 'Untitled Post'}
-			</p>
-			<Markdown
-				className='xl:text-md text-[14px] text-[#243A57]'
-				md={trimmedContentForComment}
-			/>
-			<Link
-				className='flex cursor-pointer gap-1 text-[12px] font-medium text-[#E5007A] hover:underline'
-				href={`/referenda/${post?.post_id}`}
-			>
-				Read More{' '}
-				<ImageIcon
-					src='/assets/more.svg'
-					alt=''
-					className='-mt-0.5 h-4 w-4'
-				/>
-			</Link>
-		</>
-	);
-};
-
-const PostCommentSection: React.FC<{ post: any; reasonForNoComment: any; isUserNotAllowedToComment: any }> = ({ post, reasonForNoComment, isUserNotAllowedToComment }) => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const currentUserdata = useUserDetailsSelector();
-	const userid = currentUserdata?.id;
-	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const inputRef = useRef<HTMLInputElement>(null);
-	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
-	const modalWrapperRef = useRef<HTMLDivElement>(null);
-	const { resolvedTheme: theme } = useTheme();
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-	const openModal = () => {
-		if (userid) {
-			setIsModalOpen(true);
-		} else {
-			setOpenLoginModal(true);
-		}
-	};
-
-	const closeModal = () => {
-		global.window.localStorage.removeItem(commentKey());
-		setIsModalOpen(false);
-	};
-
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
-				closeModal();
-			}
-		};
-		if (isModalOpen) {
-			document.addEventListener('mousedown', handleOutsideClick);
-		} else {
-			document.removeEventListener('mousedown', handleOutsideClick);
-		}
-
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick);
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isModalOpen]);
-
-	return (
-		<div className='mt-1 flex items-center'>
-			{isUserNotAllowedToComment ? (
-				<Alert
-					message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}
-					type='info'
-					showIcon
-				/>
-			) : (
-				<>
-					{!isMobile && (
-						<ImageIcon
-							src={`${currentUserdata?.picture ? currentUserdata?.picture : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-							alt=''
-							className='h-6 w-6 rounded-full lg:h-10 lg:w-10'
-						/>
-					)}
-
-					<input
-						ref={inputRef}
-						type='text'
-						value={''}
-						placeholder={COMMENT_PLACEHOLDER}
-						className={
-							'h-9 w-full rounded-l-lg border-y border-l border-r-0 border-solid border-[#D2D8E0] p-2 outline-none dark:border dark:border-solid dark:border-[#4B4B4B] md:p-2 lg:ml-4 xl:ml-3 '
-						}
-						onClick={openModal}
-					/>
-					<button
-						onClick={openModal}
-						className='h-9 w-28 cursor-pointer rounded-r-lg  border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
-					>
-						{POST_LABEL}
-					</button>
-
-					<ReferendaLoginPrompts
-						theme={theme}
-						modalOpen={openLoginModal}
-						setModalOpen={setOpenLoginModal}
-						image='/assets/Gifs/login-discussion.gif'
-						title='Join Polkassembly to Comment on this proposal.'
-						subtitle='Discuss, contribute and get regular updates from Polkassembly.'
-					/>
-
-					{isModalOpen && (
-						<>
-							<div
-								className='fixed inset-0 z-40 bg-black bg-opacity-30'
-								onClick={closeModal}
-							/>
-							<Modal
-								visible={isModalOpen}
-								onCancel={closeModal}
-								footer={null}
-								centered
-								className='z-50 w-[90%] lg:w-[650px]'
-							>
-								<div
-									className='w-[90%] lg:w-[600px]'
-									ref={modalWrapperRef}
-								>
-									<CommentModal
-										post={post}
-										isModalOpen={isModalOpen}
-										onclose={closeModal}
-										currentUserdata={currentUserdata}
-									/>
-								</div>
-							</Modal>
-						</>
-					)}
-				</>
-			)}
 		</div>
 	);
 };

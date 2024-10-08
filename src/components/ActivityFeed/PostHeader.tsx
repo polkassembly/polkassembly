@@ -35,6 +35,9 @@ import { ProposalType } from '~src/global/proposalType';
 import VoteReferendumModal from '../Post/GovernanceSideBar/Referenda/VoteReferendumModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
+import styled from 'styled-components';
+
 const ZERO_BN = new BN(0);
 
 export interface ITallyData {
@@ -77,10 +80,11 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [decision, setDecision] = useState<IPeriod>();
 	const router = useRouter();
 	const ayesNumber = Number(ayes.toString());
+	const { resolvedTheme: theme } = useTheme();
+	const [remainingTime, setRemainingTime] = useState<string>('');
 	const naysNumber = Number(nays.toString());
 	const convertRemainingTime = (periodEndsAt: any) => {
 		const diffMilliseconds = periodEndsAt.diff();
-
 		const diffDuration = dayjs.duration(diffMilliseconds);
 		const diffDays = diffDuration.days();
 		const diffHours = diffDuration.hours();
@@ -90,27 +94,6 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
-	const { resolvedTheme: theme } = useTheme();
-
-	const [remainingTime, setRemainingTime] = useState<string>('');
-
-	useEffect(() => {
-		if (typeof window === 'undefined' || post?.track_no === null) return;
-		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
-		if (!trackDetails) {
-			trackDetails = getTrackData(network, '', post?.track_no);
-		}
-		if (!post?.created_at || !trackDetails) return;
-
-		const prepare = getPeriodData(network, dayjs(post?.created_at), trackDetails, 'preparePeriod');
-
-		const decisionPeriodStartsAt = decidingStatusBlock?.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
-		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
-		setDecision(decision);
-		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 	const { ayesPercentage, naysPercentage, isAyeNaN, isNayNaN } = useMemo(() => {
 		const totalVotes = ayesNumber + naysNumber;
 		const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
@@ -124,7 +107,6 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-
 	const onAccountChange = (address: string) => setAddress(address);
 	const [votesData, setVotesData] = useState(null);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -140,14 +122,13 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 		}
 	}, [network, post.post_id]);
 
-	useEffect(() => {
-		fetchData();
-	}, [fetchData]);
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
-
+	const VoteIcon = styled(DarkCastVoteIcon)`
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	`;
 	const fetchUSDValue = useCallback(async () => {
 		if (!post?.created_at || dayjs(post?.created_at).isSame(dayjs())) return;
 
@@ -181,6 +162,26 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 	useEffect(() => {
 		fetchUSDValue();
 	}, [fetchUSDValue]);
+
+	useEffect(() => {
+		if (typeof window === 'undefined' || post?.track_no === null) return;
+		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
+		if (!trackDetails) {
+			trackDetails = getTrackData(network, '', post?.track_no);
+		}
+		if (!post?.created_at || !trackDetails) return;
+		const prepare = getPeriodData(network, dayjs(post?.created_at), trackDetails, 'preparePeriod');
+		const decisionPeriodStartsAt = decidingStatusBlock?.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
+		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
+		setDecision(decision);
+		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		fetchData();
+	}, [fetchData]);
 
 	return (
 		<>
@@ -304,11 +305,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 								}}
 								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-[1px] border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
 							>
-								<ImageIcon
-									src='/assets/Vote.svg'
-									alt=''
-									className='m-0 h-6 w-6 p-0'
-								/>
+								<VoteIcon className=' mt-[1px]' />
 								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
 							</div>
 

@@ -47,11 +47,7 @@ export const PostReactions: React.FC<{
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			setIsMobile(window.screen.width < 1024);
-		}
-	}, []);
+
 	const renderUsernames = (reaction: '👍' | '👎') => {
 		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
 		const userImages = reaction === '👍' ? reactionState.likesImages : reactionState.dislikesImages;
@@ -91,6 +87,12 @@ export const PostReactions: React.FC<{
 
 		return sentimentIcons[sentiment] || null;
 	};
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			setIsMobile(window.screen.width < 1024);
+		}
+	}, []);
 
 	return (
 		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>

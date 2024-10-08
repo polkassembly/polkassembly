@@ -54,11 +54,12 @@ export const PostActions: React.FC<{
 	const userid = currentUserdata?.id;
 	const username = currentUserdata?.username;
 	const { post_reactions } = post;
-
+	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
 	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
 	const [showGif, setShowGif] = useState<{ reaction: '👍' | '👎' | null }>({ reaction: null });
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 
 	const renderUsernames = (reaction: '👍' | '👎') => {
 		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
@@ -236,6 +237,20 @@ export const PostActions: React.FC<{
 	const closeModal = () => {
 		setIsModalOpen(false);
 	};
+
+	const renderSentimentIcon = (sentiment: number) => {
+		const sentimentIcons: Record<number, React.ReactNode> = {
+			0: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			1: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
+			2: theme === 'dark' ? <DarkSentiment2 /> : <SadIcon />,
+			3: theme === 'dark' ? <DarkSentiment3 /> : <NeutralIcon />,
+			4: theme === 'dark' ? <DarkSentiment4 /> : <SmileIcon />,
+			5: theme === 'dark' ? <DarkSentiment5 /> : <SmileDizzyIcon />
+		};
+
+		return sentimentIcons[sentiment] || null;
+	};
+
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
@@ -252,21 +267,6 @@ export const PostActions: React.FC<{
 			document.removeEventListener('mousedown', handleOutsideClick);
 		};
 	}, [isModalOpen]);
-	const { network } = useNetworkSelector();
-
-	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const renderSentimentIcon = (sentiment: number) => {
-		const sentimentIcons: Record<number, React.ReactNode> = {
-			0: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
-			1: theme === 'dark' ? <DarkSentiment1 /> : <SadDizzyIcon />,
-			2: theme === 'dark' ? <DarkSentiment2 /> : <SadIcon />,
-			3: theme === 'dark' ? <DarkSentiment3 /> : <NeutralIcon />,
-			4: theme === 'dark' ? <DarkSentiment4 /> : <SmileIcon />,
-			5: theme === 'dark' ? <DarkSentiment5 /> : <SmileDizzyIcon />
-		};
-
-		return sentimentIcons[sentiment] || null;
-	};
 	return (
 		<>
 			<div className='flex justify-between'>

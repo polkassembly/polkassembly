@@ -216,9 +216,6 @@ const LatestActivityFollowing: React.FC = () => {
 			setLoading(false);
 		}
 	};
-	useEffect(() => {
-		fetchPostUpdates();
-	}, [currentTab, network]);
 
 	const filteredPosts =
 		currentTab === 'all'
@@ -232,6 +229,9 @@ const LatestActivityFollowing: React.FC = () => {
 					return formattedTrackName === currentTab;
 			  });
 
+	useEffect(() => {
+		fetchPostUpdates();
+	}, [currentTab, network]);
 	return (
 		<div className=''>
 			{loading ? (

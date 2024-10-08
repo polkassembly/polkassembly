@@ -16,10 +16,6 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { network as AllNetworks } from '~src/global/networkConstants';
-import { useUserDetailsSelector } from '~src/redux/selectors';
-import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import TopToggleButton from '~src/components/ActivityFeed/TopToggleButton';
 import ActivitySidebar from '~src/components/ActivityFeed/ActivitySidebar';
 import { Tab } from '~src/components/ActivityFeed/types/types';
@@ -34,8 +30,6 @@ interface Props {
 	network: string;
 	error: string;
 }
-
-export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	try {
@@ -76,59 +70,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
-	const currentUser = useUserDetailsSelector();
-	const { username } = currentUser;
-
-	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
-	const [userRank, setUserRank] = useState<number | 0>(0);
-	const getUserProfile = async (username: string) => {
-		try {
-			const { data: userProfileData, error: userProfileError } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
-			if (userProfileError) {
-				console.error('Error fetching user profile:', userProfileError);
-				return;
-			}
-			if (userProfileData) {
-				setCurrentUserdata(userProfileData);
-
-				const { data: leaderboardData, error: leaderboardError } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
-				if (leaderboardError) {
-					console.error('Error fetching leaderboard data:', leaderboardError);
-					return;
-				}
-
-				if (leaderboardData && leaderboardData?.data && leaderboardData?.data?.length > 0) {
-					const userRank = leaderboardData.data[0].rank;
-					setUserRank(userRank);
-					setCurrentUserdata((prevData: any) => ({
-						...prevData
-					}));
-				} else {
-					console.log('User rank not found.');
-				}
-			}
-		} catch (err) {
-			console.error('An unexpected error occurred:', err);
-		}
-	};
-
-	useEffect(() => {
-		if (username) {
-			getUserProfile(username.toString());
-		} else {
-			console.error('Username is not available');
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username, network]);
+	const [activeTab, setActiveTab] = useState<Tab>('explore' as Tab);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
 	}, [network, dispatch]);
-
-	const [activeTab, setActiveTab] = useState<Tab>('explore' as Tab);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
-
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
@@ -158,17 +104,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 					<div className='mx-1 mt-[26px] flex-grow'>
 						<div className=''>{activeTab === 'explore' ? <LatestActivity currentTab='explore' /> : <LatestActivity currentTab='following' />}</div>
 					</div>
-					<ActivitySidebar
-						network={network}
-						networkSocialsData={networkSocialsData || { data: null, error: '', status: 500 }}
-						currentUser={currentUser}
-						userRank={userRank}
-						currentUserdata={currentUserdata}
-						setLoginOpen={setLoginOpen}
-						openLogin={openLogin}
-						setSignupOpen={setSignupOpen}
-						openSignup={openSignup}
-					/>
+					<ActivitySidebar networkSocialsData={networkSocialsData || { data: null, error: '', status: 500 }} />
 				</div>
 			</div>
 		</>

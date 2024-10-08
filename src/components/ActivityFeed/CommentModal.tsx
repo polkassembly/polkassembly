@@ -29,6 +29,7 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 	isModalOpen: boolean;
 	onclose: () => void;
 }) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
 	const [content, setContent] = useState(typeof window !== 'undefined' ? window.localStorage.getItem(commentKey()) || '' : '');
@@ -50,14 +51,6 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 		if (error) console.error('Error subscribing to post', error);
 		if (data) console.log(data.message);
 	};
-
-	useEffect(() => {
-		if (!isModalOpen) {
-			form.resetFields();
-			setContent('');
-			global.window.localStorage.removeItem(commentKey());
-		}
-	}, [isModalOpen, form]);
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -103,7 +96,14 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 		}
 	};
 
-	const { resolvedTheme: theme } = useTheme();
+	useEffect(() => {
+		if (!isModalOpen) {
+			form.resetFields();
+			setContent('');
+			global.window.localStorage.removeItem(commentKey());
+		}
+	}, [isModalOpen, form]);
+
 	return (
 		<>
 			<Form

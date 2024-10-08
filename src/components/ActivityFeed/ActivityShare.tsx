@@ -43,11 +43,6 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 		if (error) console.log(error);
 	};
 
-	useEffect(() => {
-		getSocials();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
-
 	const share = () => {
 		trackEvent('post_share_clicked', 'share_post', {
 			postId: postId,
@@ -63,6 +58,10 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 		global.window.open(url);
 	};
 
+	useEffect(() => {
+		getSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 	return (
 		<>
 			<div

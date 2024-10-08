@@ -2,25 +2,23 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IUserDetailsStore } from '~src/redux/userDetails/@types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { RightOutlined } from '@ant-design/icons';
 
 interface RankCardProps {
 	currentUser: IUserDetailsStore | null;
 }
 const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
-	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-
 	const [proposaldata, setProposalData] = useState<{ totalVotes: number; activeProposals: number }>({
 		activeProposals: 0,
 		totalVotes: 0
 	});
+
 	async function getProposalData() {
 		if (!currentUser) return;
 
@@ -36,7 +34,7 @@ const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
 			}
 
 			const { data, error } = await nextApiClientFetch<any>('/api/v1/activity-feed/getActiveVotesInLastFifDays', {
-				addressesa: encodedAddresses
+				addresses: encodedAddresses
 			});
 			if (error) {
 				return console.error(error);
@@ -67,13 +65,7 @@ const ProposalCard: React.FC<RankCardProps> = ({ currentUser }) => {
 						<div>
 							<p className='whitespace-nowrap pt-3  font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
 						</div>
-						<Image
-							src={`${theme === 'dark' ? '/assets/activityfeed/arrow-dark.svg' : '/assets/activityfeed/arrow.svg'}`}
-							alt=''
-							className=' -mt-[4px] h-3 w-3 p-0 pl-1 text-[#485F7D] dark:text-[#9E9E9E]'
-							width={1}
-							height={1}
-						/>
+						<RightOutlined className=' -mt-[4px] h-3 w-4 p-0 pl-1 text-xl text-[#485F7D] dark:text-[#9E9E9E]' />
 					</div>
 					<div className='mt-[7px]'>
 						<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] text-[#485F7DCC] text-opacity-[80%] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>

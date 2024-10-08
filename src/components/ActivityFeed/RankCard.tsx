@@ -4,24 +4,62 @@
 
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import React from 'react';
-import { IUserDetailsStore } from '~src/redux/userDetails/@types';
+import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
+import React, { useEffect, useState } from 'react';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import NameLabel from '~src/ui-components/NameLabel';
 import ScoreTag from '~src/ui-components/ScoreTag';
-
-interface CurrentUserdata {
-	profile_score: number;
-}
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface RankCardProps {
-	currentUser: IUserDetailsStore | null;
-	currentUserdata: CurrentUserdata | null;
 	setLoginOpen: (open: boolean) => void;
-	userRank: number;
 }
 
-const RankCard: React.FC<RankCardProps> = ({ currentUser, currentUserdata, setLoginOpen, userRank }) => {
+const RankCard: React.FC<RankCardProps> = ({ setLoginOpen }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const currentUser = useUserDetailsSelector();
+	const username = currentUser?.username;
+	const [profilescore, setProfileScore] = useState<number | null>(null);
+	const { network } = useNetworkSelector();
+	const [userRank, setUserRank] = useState<number | 0>(0);
+
+	const getUserProfile = async (username: string) => {
+		try {
+			const { data: userProfileData, error: userProfileError } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+			if (userProfileError) {
+				console.error('Error fetching user profile:', userProfileError);
+				return;
+			}
+			if (userProfileData) {
+				setProfileScore(userProfileData.profile_score);
+
+				const { data: leaderboardData, error: leaderboardError } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
+				if (leaderboardError) {
+					console.error('Error fetching leaderboard data:', leaderboardError);
+					return;
+				}
+
+				if (leaderboardData && leaderboardData?.data && leaderboardData?.data?.length > 0) {
+					const userRank = leaderboardData.data[0].rank;
+					setUserRank(userRank);
+				} else {
+					console.log('User rank not found.');
+				}
+			}
+		} catch (err) {
+			console.error('An unexpected error occurred:', err);
+		}
+	};
+
+	useEffect(() => {
+		if (username) {
+			getUserProfile(username.toString());
+		} else {
+			console.error('Username is not available');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [username, network]);
+
 	return (
 		<div>
 			<div className='relative mt-5 rounded-xxl text-[13px]'>
@@ -55,7 +93,7 @@ const RankCard: React.FC<RankCardProps> = ({ currentUser, currentUserdata, setLo
 								<div className='flex items-center gap-4'>
 									<ScoreTag
 										className='  pt-1'
-										score={currentUserdata?.profile_score || 0}
+										score={profilescore || 0}
 									/>
 								</div>
 							</div>

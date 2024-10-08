@@ -1,30 +1,29 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Divider } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
+import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import dayjs from 'dayjs';
+import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { chainProperties } from '~src/global/networkConstants';
+import { subscanApiHeaders } from '~src/global/apiHeaders';
+import formatBnBalance from '~src/util/formatBnBalance';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import OverviewDataGraph from './OverviewDataGraph';
+import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
+import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { poppins } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
-import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
-import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
-import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
-import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector } from '~src/redux/selectors';
-import formatBnBalance from '~src/util/formatBnBalance';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import OverviewDataGraph from './OverviewDataGraph';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-import { useApiContext } from '~src/context';
-import { subscanApiHeaders } from '~src/global/apiHeaders';
-import dayjs from 'dayjs';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useDispatch } from 'react-redux';
-import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
-import { BN } from 'bn.js';
 
 interface TokenPrice {
 	value: string;
@@ -40,118 +39,94 @@ const ActivityTreasury = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
-
-	const [available, setAvailable] = useState({
-		isLoading: true,
-		value: '',
-		valueUSD: ''
-	});
-	const [nextBurn, setNextBurn] = useState({
-		isLoading: true,
-		value: '',
-		valueUSD: ''
-	});
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
-	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
-		isLoading: true,
-		value: ''
-	});
-
+	const [available, setAvailable] = useState({ isLoading: true, value: '', valueUSD: '' });
+	const [nextBurn, setNextBurn] = useState({ isLoading: true, value: '', valueUSD: '' });
+	const [currentTokenPrice, setCurrentTokenPrice] = useState<TokenPrice>({ isLoading: true, value: '' });
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState<PriceWeeklyChange>({ isLoading: true, value: '' });
 	const [tokenValue, setTokenValue] = useState<number>(0);
+	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
+	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
+	const [assethubValues, setAssethubValues] = useState({
+		dotValue: '',
+		usdcValue: '',
+		usdtValue: ''
+	});
+	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
+	const unit = chainProperties?.[network]?.tokenSymbol;
+	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
+	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
+	const totalTreasuryValueUSD = formatUSDWithUnits(
+		String(
+			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
+				Number(assethubValues.usdcValue) / 1000000 +
+				Number(assethubValues.usdtValue) / 1000000
+		)
+	);
 
-	useEffect(() => {
-		if (!api || !apiReady) {
-			return;
-		}
-
-		const EMPTY_U8A_32 = new Uint8Array(32);
-
+	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: TokenPrice, setAvailable: Function, setNextBurn: Function) => {
 		const treasuryAccount = u8aConcat(
 			'modl',
 			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
-			EMPTY_U8A_32
+			new Uint8Array(32)
 		);
 
-		const fetchTreasuryData = async () => {
-			setAvailable({ isLoading: true, value: '', valueUSD: '' });
-			setNextBurn({ isLoading: true, value: '', valueUSD: '' });
+		setAvailable({ isLoading: true, value: '', valueUSD: '' });
+		setNextBurn({ isLoading: true, value: '', valueUSD: '' });
 
-			try {
-				const treasuryBalance = await api.derive.balances?.account(u8aToHex(treasuryAccount));
-				const accountData = await api.query.system.account(treasuryAccount);
+		try {
+			const accountData = await api.query.system.account(treasuryAccount);
+			const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
+			const treasuryBalance = { freeBalance: freeBalance as Balance };
 
-				const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
-				treasuryBalance.freeBalance = freeBalance as Balance;
-
-				updateBurnValue(treasuryBalance);
-				updateAvailableValue(treasuryBalance);
-			} catch (error) {
-				console.error(error);
-				setAvailable({ isLoading: false, value: '', valueUSD: '' });
-				setNextBurn({ isLoading: false, value: '', valueUSD: '' });
-			}
-		};
-
-		const updateBurnValue = (treasuryBalance: any) => {
-			let valueUSD = '';
-			let value = '';
-			const burn =
-				treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
-
-			if (burn) {
-				const nextBurnValueUSD = parseFloat(formatBnBalance(burn.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
-
-				if (nextBurnValueUSD && currentTokenPrice?.value) {
-					valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
-				}
-
-				value = formatUSDWithUnits(formatBnBalance(burn.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
-			}
-
-			setNextBurn({ isLoading: false, value, valueUSD });
-		};
-
-		const updateAvailableValue = (treasuryBalance: any) => {
-			let valueUSD = '';
-			let value = '';
-			const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
-
-			if (freeBalance) {
-				const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
-
-				setTokenValue(availableValueUSD);
-
-				if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
-					valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
-				}
-
-				value = formatUSDWithUnits(formatBnBalance(freeBalance.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
-			}
-
-			setAvailable({ isLoading: false, value, valueUSD });
-		};
-
-		fetchTreasuryData();
-
-		if (currentTokenPrice?.value !== 'N/A') {
-			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+			updateBurnValue(treasuryBalance, currentTokenPrice, setNextBurn);
+			updateAvailableValue(treasuryBalance, currentTokenPrice, network, setAvailable);
+		} catch (error) {
+			console.error(error);
+			setAvailable({ isLoading: false, value: '', valueUSD: '' });
+			setNextBurn({ isLoading: false, value: '', valueUSD: '' });
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, currentTokenPrice, network]);
+	};
 
-	useEffect(() => {
-		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
-	}, [network]);
+	const updateBurnValue = (treasuryBalance: any, currentTokenPrice: TokenPrice, setNextBurn: Function) => {
+		const burn =
+			treasuryBalance.freeBalance.gt(BN_ZERO) && api && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
 
-	let cancel = false;
+		let valueUSD = '';
+		let value = '';
 
-	// Function to fetch the price from a week ago
-	async function fetchWeekAgoTokenPrice(currentTokenPrice: TokenPrice, network: string, setPriceWeeklyChange: (change: PriceWeeklyChange) => void) {
-		if (cancel) return;
+		if (burn && currentTokenPrice?.value) {
+			const nextBurnValueUSD = parseFloat(formatBnBalance(burn.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+			valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+			value = formatUSDWithUnits(formatBnBalance(burn.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+		}
+
+		setNextBurn({ isLoading: false, value, valueUSD });
+	};
+
+	const updateAvailableValue = (treasuryBalance: any, currentTokenPrice: TokenPrice, network: string, setAvailable: Function) => {
+		const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
+		let valueUSD = '';
+		let value = '';
+
+		if (freeBalance) {
+			const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+			setTokenValue(availableValueUSD);
+			if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
+				valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+			}
+			value = formatUSDWithUnits(formatBnBalance(freeBalance.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+		}
+
+		setAvailable({ isLoading: false, value, valueUSD });
+	};
+
+	const fetchWeekAgoTokenPrice = async (currentTokenPrice: TokenPrice, network: string, setPriceWeeklyChange: (change: PriceWeeklyChange) => void) => {
+		if (!currentTokenPrice.value || currentTokenPrice.isLoading) {
+			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
+			return;
+		}
+
 		const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
 		try {
 			const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
@@ -162,129 +137,80 @@ const ActivityTreasury = () => {
 				headers: subscanApiHeaders,
 				method: 'POST'
 			});
+
 			const responseJSON = await response.json();
 			if (responseJSON['message'] === 'Success') {
 				const weekAgoPrice = responseJSON['data']['ema7_average'];
 				const currentTokenPriceNum = parseFloat(currentTokenPrice.value);
 				const weekAgoPriceNum = parseFloat(weekAgoPrice);
+
 				if (weekAgoPriceNum === 0) {
-					setPriceWeeklyChange({
-						isLoading: false,
-						value: 'N/A'
-					});
+					setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
 					return;
 				}
+
 				const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-				setPriceWeeklyChange({
-					isLoading: false,
-					value: percentChange.toFixed(2)
-				});
+				setPriceWeeklyChange({ isLoading: false, value: percentChange.toFixed(2) });
 				return;
 			}
-			setPriceWeeklyChange({
-				isLoading: false,
-				value: 'N/A'
-			});
+
+			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
 		} catch (err) {
-			setPriceWeeklyChange({
-				isLoading: false,
-				value: 'N/A'
-			});
+			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
 		}
-	}
-	useEffect(() => {
-		setPriceWeeklyChange({
-			isLoading: true,
-			value: ''
-		});
+	};
 
-		if (!currentTokenPrice.value || currentTokenPrice.isLoading || !network) {
-			setPriceWeeklyChange({
-				isLoading: false,
-				value: 'N/A'
-			});
-			return;
-		}
-
-		fetchWeekAgoTokenPrice(currentTokenPrice, network, setPriceWeeklyChange);
-
-		return () => {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			cancel = true;
-		};
-	}, [currentTokenPrice, network, setPriceWeeklyChange]);
-
-	const unit = chainProperties?.[network]?.tokenSymbol;
-	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
-	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
-	const [assethubValues, setAssethubValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
-	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
-	});
-	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
-
-	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
-	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
-
-	const totalTreasuryValueUSD = formatUSDWithUnits(
-		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
-				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000
-		)
-	);
-
-	const fetchAssetsAmount = async () => {
+	const fetchAssetsAmount = async (assethubApi: ApiPromise, assethubApiReady: boolean, network: string, setAssethubValues: Function) => {
 		if (!assethubApi || !assethubApiReady) return;
 
-		if (assethubApiReady && chainProperties?.[network]?.assetHubTreasuryAddress) {
-			try {
+		try {
+			if (chainProperties?.[network]?.assetHubTreasuryAddress) {
 				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
 				if (tokenResult?.data?.free) {
 					const freeTokenBalance = tokenResult.data.free.toBigInt();
-					setAssethubValues((values) => ({ ...values, dotValue: freeTokenBalance.toString() }));
+					setAssethubValues((values: any) => ({ ...values, dotValue: freeTokenBalance.toString() }));
 				}
-				if (chainProperties[network]?.supportedAssets?.[2].genralIndex) {
-					const usdcResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[2].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
 
-					if (usdcResult.isNone) {
-						console.log('No data found for the USDC assets');
-					} else {
-						const data = usdcResult.unwrap();
-						const freeUSDCBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
-					}
+				const usdcResult = (await assethubApi.query.assets.account(
+					chainProperties[network]?.supportedAssets?.[2].genralIndex,
+					chainProperties[network].assetHubTreasuryAddress
+				)) as any;
+				if (!usdcResult.isNone) {
+					const data = usdcResult.unwrap();
+					const freeUSDCBalance = data.balance.toBigInt().toString();
+					setAssethubValues((values: { dotValue: string; usdcValue: string; usdtValue: string }) => ({ ...values, usdcValue: freeUSDCBalance }));
 				}
-				if (chainProperties[network]?.supportedAssets?.[1].genralIndex) {
-					const usdtResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[1].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
 
-					if (usdtResult.isNone) {
-						console.log('No data found for the USDT assets');
-					} else {
-						const data = usdtResult.unwrap();
-						const freeUSDTBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
-					}
+				const usdtResult = (await assethubApi.query.assets.account(
+					chainProperties[network]?.supportedAssets?.[1].genralIndex,
+					chainProperties[network].assetHubTreasuryAddress
+				)) as any;
+				if (!usdtResult.isNone) {
+					const data = usdtResult.unwrap();
+					const freeUSDTBalance = data.balance.toBigInt().toString();
+					setAssethubValues((values: { dotValue: string; usdcValue: string; usdtValue: string }) => ({ ...values, usdtValue: freeUSDTBalance }));
 				}
-				return;
-			} catch (e) {
-				console.error('Error fetching asset balance:', e);
 			}
+		} catch (e) {
+			console.error('Error fetching asset balance:', e);
 		}
+	};
 
-		return;
+	const initAssetHubApi = async (network: string, setAssethubApi: Function, setAssethubApiReady: Function) => {
+		const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
+		const apiPromise = await ApiPromise.create({ provider: wsProvider });
+		setAssethubApi(apiPromise);
+
+		apiPromise?.isReady
+			.then(() => setAssethubApiReady(true))
+			.catch(async (error) => {
+				await apiPromise.disconnect();
+				console.error(error);
+			});
+
+		setTimeout(async () => {
+			await apiPromise.disconnect();
+		}, 60000);
 	};
 
 	const fetchDataFromApi = async () => {
@@ -294,28 +220,22 @@ const ActivityTreasury = () => {
 				console.error('Error fetching old treasury data:', oldTreasuryError);
 				return;
 			}
+			if (oldTreasuryData) return oldTreasuryData;
 
-			if (oldTreasuryData) {
-				return oldTreasuryData;
-			}
 			const { data: dailyTreasuryData, error: dailyTreasuryError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally');
 			if (dailyTreasuryError) {
 				console.error('Error fetching daily treasury data:', dailyTreasuryError);
 				return;
 			}
-
-			if (dailyTreasuryData) {
-				return dailyTreasuryData;
-			}
+			return dailyTreasuryData;
 		} catch (error) {
 			console.error('Unexpected error:', error);
 		}
 	};
 
-	const getGraphData = async () => {
+	const getGraphData = async (setGraphData: Function) => {
 		try {
 			const { data, error } = await nextApiClientFetch<IMonthlyTreasuryTally[]>('/api/v1/treasury-amount-history');
-
 			if (error) {
 				console.error('Error fetching data:', error);
 			}
@@ -328,39 +248,33 @@ const ActivityTreasury = () => {
 	};
 
 	useEffect(() => {
-		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setAssethubApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
+		if (!api || !apiReady) return;
+		fetchTreasuryData(api, network, currentTokenPrice, setAvailable, setNextBurn);
 
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-					setAssethubApiReady(true);
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
-		})();
+		if (currentTokenPrice?.value !== 'N/A') {
+			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [api, apiReady, network, currentTokenPrice, dispatch]);
 
 	useEffect(() => {
+		fetchWeekAgoTokenPrice(currentTokenPrice, network, setPriceWeeklyChange);
+	}, [currentTokenPrice, network]);
+
+	useEffect(() => {
+		if (assethubApi) {
+			fetchAssetsAmount(assethubApi, assethubApiReady, network, setAssethubValues);
+		}
+	}, [assethubApi, assethubApiReady, network]);
+
+	useEffect(() => {
+		if (!network) return;
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		fetchDataFromApi();
-		getGraphData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		getGraphData(setGraphData);
+		initAssetHubApi(network, setAssethubApi, setAssethubApiReady);
 	}, [network]);
-
-	useEffect(() => {
-		if (!assethubApi || !assethubApiReady) return;
-		fetchAssetsAmount();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [assethubApi, assethubApiReady]);
 
 	return (
 		<div
@@ -369,7 +283,7 @@ const ActivityTreasury = () => {
 			} mt-5 grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
 		>
 			<div className='dark:bg-section-dark-overlaysm:my-0 flex w-full flex-1 flex-col rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay lg:px-6 lg:py-4'>
-				<div className=''>
+				<div>
 					<div>
 						{!available.isLoading ? (
 							<>
@@ -466,8 +380,6 @@ const ActivityTreasury = () => {
 											</div>
 										)}
 									</div>
-
-									{/* */}
 								</div>
 							</>
 						) : (
@@ -477,7 +389,6 @@ const ActivityTreasury = () => {
 						)}
 					</div>
 				</div>
-				{/* graph */}
 				<div>
 					<OverviewDataGraph
 						graphData={graphData}
@@ -494,22 +405,23 @@ const ActivityTreasury = () => {
 								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
 							) : null}
 						</div>
-						<div className='-mb-[2px] ml-2 flex items-center'>
-							<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
-								{Math.abs(Number(priceWeeklyChange.value))}%
-							</span>
-							<span>
-								{Number(priceWeeklyChange.value) < 0 ? (
-									<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
-								) : (
-									<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
-								)}
-							</span>
-						</div>
+						{priceWeeklyChange.value !== 'N/A' && (
+							<div className='-mb-[2px] ml-2 flex items-center'>
+								<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+									{Math.abs(Number(priceWeeklyChange.value))}%
+								</span>
+								<span>
+									{Number(priceWeeklyChange.value) < 0 ? (
+										<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
+									) : (
+										<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
+									)}
+								</span>
+							</div>
+						)}
 					</div>
 				</div>
 				<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-
 				{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
 					<div>
 						<div className='w-full gap-x-0 lg:flex'>

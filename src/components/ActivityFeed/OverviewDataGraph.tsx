@@ -34,13 +34,9 @@ const OverviewDataGraph = ({
 }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-
-	// Ensure the months are abbreviated properly in sorting and filtering
 	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0).sort((a, b) => monthOrder.indexOf(a.month.slice(0, 3)) - monthOrder.indexOf(b.month.slice(0, 3)));
-
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData.length - 1]?.month;
-
 	const formattedData = [
 		{
 			id: 'balance',

@@ -34,18 +34,6 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const { resolvedTheme: theme } = useTheme();
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-				setCurrentCategory(null);
-				setIsTrackDropdownOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, []);
 
 	const tabItems: TabItem[] = [
 		{
@@ -162,6 +150,18 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 		return tabCategories[category].some((tabKey) => tabKey === currentTab);
 	};
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setCurrentCategory(null);
+				setIsTrackDropdownOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 	const popoverContent = (
 		<div className='left-2 w-40 pt-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
 			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>

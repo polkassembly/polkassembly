@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 
 function FeaturesSection() {
 	const [currentIndex, setCurrentIndex] = useState(0);
-
 	const features = [
 		{
 			description: 'Delegate your vote and catchup with Delegation Dashboard',
@@ -31,6 +30,10 @@ function FeaturesSection() {
 		}
 	];
 
+	const handleDotClick = (index: number) => {
+		setCurrentIndex(index);
+	};
+
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
@@ -38,10 +41,6 @@ function FeaturesSection() {
 
 		return () => clearInterval(interval);
 	}, [features.length]);
-
-	const handleDotClick = (index: number) => {
-		setCurrentIndex(index);
-	};
 
 	return (
 		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>

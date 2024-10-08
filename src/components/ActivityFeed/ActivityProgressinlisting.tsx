@@ -32,23 +32,22 @@ interface Props {
 const ActivityProgressinlisting = ({ tally, onchainId, status, proposalType, votesData }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const [loading, setLoading] = useState<boolean>(true);
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
+	const usingTallyForAyeNayVotes = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(
+		proposalType as TSubsquidProposalType
+	);
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO,
 		nays: ZERO
 	});
-	const [loading, setLoading] = useState<boolean>(true);
 	const [tallyAyeNayVotes, setTallyAyeNayVotes] = useState({
 		ayes: 0,
 		nays: 0
 	});
 	const { ayes, nays } = tallyAyeNayVotes;
-	const bnToIntBalance = function (bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-
-	const usingTallyForAyeNayVotes = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(
-		proposalType as TSubsquidProposalType
-	);
 
 	const ayeVotesNumber = usingTallyForAyeNayVotes ? ayes : bnToIntBalance(tallyData.ayes || ZERO);
 	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData.ayes?.add(tallyData.nays || ZERO) || ZERO);

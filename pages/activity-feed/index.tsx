@@ -16,11 +16,11 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
-import TopToggleButton from '~src/components/ActivityFeed/TopToggleButton';
-import ActivitySidebar from '~src/components/ActivityFeed/ActivitySidebar';
-import { Tab } from '~src/components/ActivityFeed/types/types';
+import ActivityFeeToggleButton from '~src/components/ActivityFeed/ActivityFeeToggleButton';
+import ActivityFeedSidebar from '~src/components/ActivityFeed/ActivityFeedSidebar';
+import { EActivityFeedTab } from '~src/components/ActivityFeed/types/types';
 
-const LatestActivity = dynamic(() => import('~src/components/ActivityFeed/LatestActivity'), {
+const LatestActivity = dynamic(() => import('~src/components/ActivityFeed'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
-	const [activeTab, setActiveTab] = useState<Tab>('explore' as Tab);
+	const [activeTab, setActiveTab] = useState<EActivityFeedTab>(EActivityFeedTab.EXPLORE as EActivityFeedTab);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -80,17 +80,17 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	return (
 		<>
 			<SEOHead
-				title='OpenGov'
+				title='Activity Feed'
 				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
-			<div className=' w-full font-poppins  '>
+			<div className='w-full'>
 				<div className='flex w-full justify-between lg:mt-3 xl:items-center'>
 					<div className='flex flex-col lg:flex-row  xl:h-12 xl:gap-2'>
 						<div>
 							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-3 lg:text-2xl'>Activity Feed</h1>
 						</div>
-						<TopToggleButton
+						<ActivityFeeToggleButton
 							activeTab={activeTab}
 							setActiveTab={setActiveTab}
 						/>
@@ -102,9 +102,11 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 
 				<div className='flex flex-col justify-between gap-5 xl:flex-row'>
 					<div className='mx-1 mt-[26px] flex-grow'>
-						<div className=''>{activeTab === 'explore' ? <LatestActivity currentTab='explore' /> : <LatestActivity currentTab='following' />}</div>
+						<div className=''>
+							{activeTab === EActivityFeedTab.EXPLORE ? <LatestActivity currentTab={EActivityFeedTab.EXPLORE} /> : <LatestActivity currentTab={EActivityFeedTab.FOLLOWING} />}
+						</div>
 					</div>
-					<ActivitySidebar networkSocialsData={networkSocialsData || { data: null, error: '', status: 500 }} />
+					<ActivityFeedSidebar networkSocialsData={networkSocialsData || { data: null, error: '', status: 500 }} />
 				</div>
 			</div>
 		</>

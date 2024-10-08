@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import AboutActivity from '~src/components/ActivityFeed/AboutActivity';
-import RankCard from '~src/components/ActivityFeed/RankCard';
-import ProposalCard from '~src/components/ActivityFeed/ProposalCard';
-import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
+import ActivityFeedAbout from '~src/components/ActivityFeed/ActivityFeedAbout';
+import ActivityFeedRankCard from '~src/components/ActivityFeed/ActivityFeedRankCard';
+import ActivityFeedProposalCard from '~src/components/ActivityFeed/ActivityFeedProposalCard';
+import ActivityFeedFeaturesSection from '~src/components/ActivityFeed/ActivityFeedFeaturesSection';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -14,16 +14,16 @@ import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
 
-const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
+const ActivityFeedTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityFeedTreasury'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-interface ActivitySidebarProps {
+interface IActivitySidebarProps {
 	networkSocialsData: IApiResponse<NetworkSocials>;
 }
 
-const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ networkSocialsData }) => {
+const ActivityFeedSidebar: React.FC<IActivitySidebarProps> = ({ networkSocialsData }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
@@ -33,18 +33,18 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ networkSocialsData })
 		<div className='hidden shrink-0 xl:block xl:max-w-[270px] 2xl:max-w-[305px]'>
 			<div className='mx-1 mt-2 md:mt-6'>
 				{networkSocialsData && (
-					<AboutActivity
+					<ActivityFeedAbout
 						networkSocialsData={networkSocialsData.data}
 						showGov2Links
 					/>
 				)}
 			</div>
-			{currentUser?.username && (currentUser?.id || '') && <ProposalCard currentUser={currentUser} />}
-			<RankCard setLoginOpen={setLoginOpen} />
+			{currentUser?.username && (currentUser?.id || '') && <ActivityFeedProposalCard currentUser={currentUser} />}
+			<ActivityFeedRankCard setLoginOpen={setLoginOpen} />
 			<div>
-				<FeaturesSection />
+				<ActivityFeedFeaturesSection />
 			</div>
-			{isAssetHubSupportedNetwork(network) && <ActivityTreasury />}
+			{isAssetHubSupportedNetwork(network) && <ActivityFeedTreasury />}
 			<SignupPopup
 				setLoginOpen={setLoginOpen}
 				modalOpen={openSignup}
@@ -61,4 +61,4 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ networkSocialsData })
 	);
 };
 
-export default ActivitySidebar;
+export default ActivityFeedSidebar;

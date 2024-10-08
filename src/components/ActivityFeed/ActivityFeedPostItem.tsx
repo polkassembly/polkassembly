@@ -10,9 +10,9 @@ import { EAllowedCommentor, ILastVote } from '~src/types';
 import { ProposalType } from '~src/global/proposalType';
 import dynamic from 'next/dynamic';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { PostHeader } from './PostHeader';
-import { PostReactions } from './PostReactions';
-import { PostActions } from './PostActions';
+import { ActivityFeedPostHeader } from './ActivityFeedPostHeader';
+import { ActivityFeedPostReactions } from './ActivityFeedPostReactions';
+import { ActivityFeedPostActions } from './ActivityFeedPostActions';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext } from '~src/context';
 import { BN } from 'bn.js';
@@ -20,8 +20,8 @@ import _ from 'lodash';
 import Skeleton from '~src/basic-components/Skeleton';
 import getCommentDisabledMessage from '../Post/Comment/utils/getCommentDisabledMessage';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import PostCommentSection from './PostCommentSection';
-import PostContent from './PostContent';
+import ActivityFeedCommentSection from './ActivityFeedCommentSection';
+import ActivityFeedPostContent from './ActivityFeedPostContent';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import styled from 'styled-components';
 
@@ -34,7 +34,7 @@ const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Refe
 
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
 
-const PostItem: React.FC<any> = ({ post }: { post: any }) => {
+const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const currentUserdata = useUserDetailsSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const fullContent = post?.summary || NO_CONTENT_FALLBACK;
@@ -182,7 +182,7 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-poppins  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
 			<>
-				<PostHeader
+				<ActivityFeedPostHeader
 					post={post}
 					tallyData={tallyData}
 					updateTally={updateTally}
@@ -193,13 +193,13 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 					href={`/referenda/${post?.post_id}`}
 					passHref
 				>
-					<PostContent
+					<ActivityFeedPostContent
 						post={post}
 						content={fullContent}
 						isCommentPost={false}
 					/>
 					{(reactionState.likesCount > 0 || reactionState.dislikesCount > 0 || post?.commentsCount > 0) && (
-						<PostReactions
+						<ActivityFeedPostReactions
 							reactionState={reactionState}
 							post={post}
 						/>
@@ -210,13 +210,13 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 						reactionState.likesCount === 0 && reactionState.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
 					}`}
 				/>
-				<PostActions
+				<ActivityFeedPostActions
 					post={post}
 					reactionState={reactionState}
 					setReactionState={setReactionState}
 					isUserNotAllowedToComment={isUserNotAllowedToComment}
 				/>
-				<PostCommentSection
+				<ActivityFeedCommentSection
 					post={post}
 					reasonForNoComment={reasonForNoComment || ''}
 					isUserNotAllowedToComment={isUserNotAllowedToComment}
@@ -230,7 +230,7 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 								setModalOpen(true);
 							}
 						}}
-						className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-[#E5007A]'
+						className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-pink_primary'
 					>
 						<VoteIcon className=' mt-[1px]' />
 						<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
@@ -263,4 +263,4 @@ const PostItem: React.FC<any> = ({ post }: { post: any }) => {
 	);
 };
 
-export default PostItem;
+export default ActivityFeedPostItem;

@@ -29,7 +29,6 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const { addresses } = req.body;
-	console.log('addresses', addresses);
 
 	if (!addresses?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
@@ -43,7 +42,6 @@ const handler: NextApiHandler<{ totalVotes: number; activeProposals: number } | 
 				type: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)
 			}
 		});
-		console.log('subsquidRes', subsquidRes?.data);
 
 		const allActiveProposals = subsquidRes?.data?.proposals || [];
 

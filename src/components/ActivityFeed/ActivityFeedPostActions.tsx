@@ -10,7 +10,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { EmojiOption } from './PostReactions';
+import { EmojiOption } from './ActivityFeedPostReactions';
 const COMMENT_LABEL = 'Comment';
 import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
 import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
@@ -22,9 +22,9 @@ import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
-import ActivityShare from './ActivityShare';
+import ActivityFeedShare from './ActivityFeedShare';
 import { Modal } from 'antd';
-import { CommentModal } from './CommentModal';
+import { ActivityFeedCommentModal } from './ActivityFeedCommentModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import Popover from '~src/basic-components/Popover';
 import _ from 'lodash';
@@ -33,7 +33,7 @@ import ImageComponent from '../ImageComponent';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
 
-export const PostActions: React.FC<{
+export const ActivityFeedPostActions: React.FC<{
 	post: any;
 	reactionState: any;
 	isUserNotAllowedToComment: boolean;
@@ -308,7 +308,7 @@ export const PostActions: React.FC<{
 										/>
 									)}
 								</span>
-								<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userLiked ? 'Liked' : 'Like'}</p>
+								<p className='cursor-pointer pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userLiked ? 'Liked' : 'Like'}</p>
 							</div>
 						</Popover>
 					</div>
@@ -352,7 +352,9 @@ export const PostActions: React.FC<{
 										/>
 									)}
 								</span>
-								<p className='cursor-pointer pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userDisliked ? 'Disliked' : 'Dislike'}</p>
+								<p className='cursor-pointer pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>
+									{reactionState.userDisliked ? 'Disliked' : 'Dislike'}
+								</p>
 							</div>
 						</Popover>
 					</div>
@@ -379,12 +381,12 @@ export const PostActions: React.FC<{
 									className='-mt-1 mr-1 h-4 w-4 dark:mr-0 dark:mt-1'
 								/>
 							</span>
-							<p className='pt-3 text-[10px] text-[#E5007A] dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
+							<p className='pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
 						</div>
 					</div>
 
 					<div className='transition-transform hover:scale-105 md:pl-2'>
-						<ActivityShare
+						<ActivityFeedShare
 							title={post?.title}
 							postId={post?.post_id}
 							proposalType={ProposalType.REFERENDUM_V2}
@@ -421,9 +423,8 @@ export const PostActions: React.FC<{
 							className='w-[90%] lg:w-[600px]'
 							ref={modalWrapperRef}
 						>
-							<CommentModal
+							<ActivityFeedCommentModal
 								post={post}
-								isModalOpen={isModalOpen}
 								onclose={closeModal}
 								currentUserdata={currentUserdata}
 							/>

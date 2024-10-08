@@ -30,7 +30,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { Divider, Spin, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
-import ActivityProgressinlisting from './ActivityProgressinlisting';
+import ActivityFeedProgressinlisting from './ActivityFeedProgressinlisting';
 import { ProposalType } from '~src/global/proposalType';
 import VoteReferendumModal from '../Post/GovernanceSideBar/Referenda/VoteReferendumModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
@@ -46,7 +46,7 @@ export interface ITallyData {
 	support: BN;
 }
 
-export interface PostHeaderProps {
+export interface IPostHeaderProps {
 	post: any;
 	tallyData: ITallyData;
 	setUpdateTally: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,7 +54,7 @@ export interface PostHeaderProps {
 	isLoading: boolean;
 }
 
-export const PostHeader: React.FC<PostHeaderProps> = ({
+export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 	post,
 	tallyData,
 	setUpdateTally,
@@ -194,7 +194,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 						<div className='flex items-center gap-1 md:gap-2'>
 							{post?.requestedAmount && post?.requestedAmount !== '0' ? (
 								<>
-									<p className='text-[16px] font-bold text-[#485F7D] dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
+									<p className='text-[16px] font-bold text-blue-light-medium dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
 										{post?.assetId ? (
 											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
 										) : (
@@ -204,7 +204,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 										)}
 									</p>
 									<div>
-										<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-[#485F7D] dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
+										<p className='xl:text-md rounded-lg bg-[#F3F4F6] p-2 text-[12px] text-blue-light-medium dark:bg-[#3F3F40] dark:text-[#9E9E9E]'>
 											{loading ? (
 												<SkeletonInput className='w-5' />
 											) : (
@@ -261,20 +261,20 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 								username={post.proposerProfile?.username}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
-							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>in</span>
 							<TopicTag
 								topic={post?.topic?.name}
 								className={post?.topic?.name}
 								theme={theme as any}
 							/>
-							<p className='pt-[14px] text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
+							<p className='pt-[14px] text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 							<div className='flex '>
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
 									alt='timer'
-									className=' h-4 w-4 pt-2 text-[#485F7D] dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[10px]'
+									className=' h-4 w-4 pt-2 text-blue-light-medium dark:text-[#9E9E9E] xl:h-5 xl:w-5 xl:pt-[10px]'
 								/>
-								<p className='pt-3 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='pt-3 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
 						</div>
 					</div>
@@ -284,13 +284,13 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 						<div className='flex items-center gap-5'>
 							<div className='flex flex-col justify-center'>
 								<span className='text-[20px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayesPercentage.toFixed(1)}%</span>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-blue-light-medium dark:text-blue-dark-medium'>Aye</span>
 							</div>
 							<div className='h-10 border-l-[0.01px]  border-solid border-[#D2D8E0]'></div>
 
 							<div className=' flex flex-col justify-center'>
 								<span className='text-[20px] font-semibold leading-6 text-[#E84865] dark:text-[#BD2020]'>{isNayNaN ? 50 : naysPercentage.toFixed(1)}%</span>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-blue-light-medium dark:text-blue-dark-medium'>Nay</span>
 							</div>
 						</div>
 					) : (
@@ -303,7 +303,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 										setShowModal(true);
 									}
 								}}
-								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-[1px] border-solid border-[#E5007A] p-0 px-3 text-[#E5007A]'
+								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-[1px] border-solid border-[#E5007A] p-0 px-3 text-pink_primary'
 							>
 								<VoteIcon className=' mt-[1px]' />
 								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
@@ -344,7 +344,7 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
 									size='small'
 								>
 									<div className='hover:cursor-pointer'>
-										<ActivityProgressinlisting
+										<ActivityFeedProgressinlisting
 											index={0}
 											proposalType={ProposalType.REFERENDUM_V2}
 											votesData={votesData}

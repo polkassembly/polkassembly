@@ -1,24 +1,24 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Alert, Modal } from 'antd';
 import { useTheme } from 'next-themes';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { CommentModal } from './CommentModal';
+import { ActivityFeedCommentModal } from './ActivityFeedCommentModal';
 import { PostType } from '~src/auth/types';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
 
-interface PostCommentSectionProps {
+interface IPostCommentSectionProps {
 	post: PostType;
 	reasonForNoComment: string;
 	isUserNotAllowedToComment: boolean;
 }
-const PostCommentSection: React.FC<PostCommentSectionProps> = ({
+const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 	post,
 	reasonForNoComment,
 	isUserNotAllowedToComment
@@ -48,23 +48,6 @@ const PostCommentSection: React.FC<PostCommentSectionProps> = ({
 		global.window.localStorage.removeItem(commentKey());
 		setIsModalOpen(false);
 	};
-
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
-				closeModal();
-			}
-		};
-
-		if (isModalOpen) {
-			document.addEventListener('mousedown', handleOutsideClick);
-		}
-
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick);
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isModalOpen]);
 
 	return (
 		<div className='mt-1 flex items-center'>
@@ -118,6 +101,7 @@ const PostCommentSection: React.FC<PostCommentSectionProps> = ({
 							<Modal
 								visible={isModalOpen}
 								onCancel={closeModal}
+								maskClosable={true}
 								footer={null}
 								centered
 								className='z-50 w-[90%] lg:w-[650px]'
@@ -126,9 +110,8 @@ const PostCommentSection: React.FC<PostCommentSectionProps> = ({
 									className='w-[90%] lg:w-[600px]'
 									ref={modalWrapperRef}
 								>
-									<CommentModal
+									<ActivityFeedCommentModal
 										post={post}
-										isModalOpen={isModalOpen}
 										onclose={closeModal}
 										currentUserdata={currentUserdata}
 									/>
@@ -142,4 +125,4 @@ const PostCommentSection: React.FC<PostCommentSectionProps> = ({
 	);
 };
 
-export default PostCommentSection;
+export default ActivityFeedCommentSection;

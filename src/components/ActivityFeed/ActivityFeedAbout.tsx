@@ -136,7 +136,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 	);
 };
 
-interface AboutActivityProps {
+interface IAboutActivityProps {
 	className?: string;
 	networkSocialsData: NetworkSocials | null;
 	showGov2Links?: boolean;
@@ -144,7 +144,7 @@ interface AboutActivityProps {
 	knowMoreText?: string;
 }
 
-const AboutActivity: React.FC<AboutActivityProps> = ({ className, networkSocialsData, knowMoreLink = '#', knowMoreText = 'Know More' }) => {
+const ActivityFeedAbout: React.FC<IAboutActivityProps> = ({ className, networkSocialsData, knowMoreLink = '#', knowMoreText = 'Know More' }) => {
 	return (
 		<section className={`${className} rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-6`}>
 			{' '}
@@ -167,7 +167,7 @@ const AboutActivity: React.FC<AboutActivityProps> = ({ className, networkSocials
 	);
 };
 
-export default styled(AboutActivity)`
+export default styled(ActivityFeedAbout)`
 	.anticon:hover {
 		path {
 			fill: var(--pink_primary) !important;

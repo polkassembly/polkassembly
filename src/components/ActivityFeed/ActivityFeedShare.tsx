@@ -16,7 +16,7 @@ interface IShareButtonProps {
 	proposalType: ProposalType;
 	title?: string;
 }
-const ActivityShare: FC<IShareButtonProps> = (props) => {
+const ActivityFeedShare: FC<IShareButtonProps> = (props) => {
 	const { postId, proposalType, title } = props;
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -74,11 +74,11 @@ const ActivityShare: FC<IShareButtonProps> = (props) => {
 						alt='share icon'
 						className='-mt-[2px] h-5 w-5  dark:-mr-1 dark:mt-1'
 					/>
-					<span className='dark:[#FF4098] pt-1 text-[10px] font-medium text-[#E5007A] dark:-mr-1  md:text-[12px]'>Share</span>
+					<span className='dark:[#FF4098] pt-1 text-[10px] font-medium text-pink_primary dark:-mr-1 dark:text-[#FF4098]  md:text-[12px]'>Share</span>
 				</span>
 			</div>
 		</>
 	);
 };
 
-export default ActivityShare;
+export default ActivityFeedShare;

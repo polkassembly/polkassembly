@@ -18,7 +18,7 @@ import {
 	WishForChangeIcon
 } from '~src/ui-components/CustomIcons';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-import { TabItem, TabNavigationProps } from './types/types';
+import { ITabItem, ITabNavigationProps } from './types/types';
 import Popover from '~src/basic-components/Popover';
 import { useGlobalSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
@@ -28,35 +28,21 @@ import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 
-const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
+const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const [isTrackDropdownOpen, setIsTrackDropdownOpen] = useState<boolean>(false);
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const { resolvedTheme: theme } = useTheme();
 
-	const tabItems: TabItem[] = [
-		{
-			group: 'Other',
-			key: 'all',
-			label: 'All',
-			posts: gov2LatestPosts.length
-		},
-		{
-			group: 'Other',
-			key: 'wish-for-change',
-			label: 'Wish For Change',
-			posts: gov2LatestPosts.filter((post: any) => post.track_no === 2).length
-		}
-	];
+	const tabItems: ITabItem[] = Object.keys(networkTrackInfo[network] || {}).reduce((acc: ITabItem[], trackName) => {
+		const trackInfo = networkTrackInfo[network][trackName];
+		const trackId = trackInfo.trackId;
 
-	if (network && networkTrackInfo[network]) {
-		Object.keys(networkTrackInfo[network]).forEach((trackName) => {
-			const trackInfo = networkTrackInfo[network][trackName];
-			const trackId = trackInfo.trackId;
+		if (!trackInfo?.fellowshipOrigin) {
 			const postsCount = gov2LatestPosts.filter((post: { track_no: number }) => post.track_no === trackId).length;
 
-			tabItems.push({
+			acc.push({
 				group: trackInfo.group || 'Other',
 				key: trackName
 					.split(/(?=[A-Z])/)
@@ -65,8 +51,11 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 				label: trackName.split(/(?=[A-Z])/).join(' '),
 				posts: postsCount
 			});
-		});
-	}
+		}
+
+		return acc;
+	}, []);
+
 	const dynamicGroups = ['Governance', 'Treasury', 'Whitelist'];
 	const filteredGroups = tabItems.reduce(
 		(acc: { [key: string]: string[] }, item) => {
@@ -100,6 +89,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	const SelectedAllPostIcon = styled(AllPostIcon)`
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	`;
+	const SelectedRootIcon = styled(SelectedRoot)`
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	`;
+
+	const SelectedWishForChangeIcon = styled(SelectedWishForChange)`
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	`;
 
 	const selectedtabIcons: { [key: string]: JSX.Element } = {
 		all: (
@@ -107,9 +103,17 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 				<SelectedAllPostIcon />
 			</div>
 		),
-		root: <SelectedRoot className='selected-icon  mt-0.5 scale-90 text-2xl font-medium ' />,
+		root: (
+			<div className='selected-icon mt-0.5 scale-90 text-2xl font-medium '>
+				<SelectedRootIcon />
+			</div>
+		),
 		// eslint-disable-next-line sort-keys
-		'wish-for-change': <SelectedWishForChange className='selected-icon -mr-1 scale-90  text-2xl font-medium ' />,
+		'wish-for-change': (
+			<div className='selected-icon -mr-1 scale-90 text-2xl font-medium '>
+				<SelectedWishForChangeIcon />
+			</div>
+		),
 		// eslint-disable-next-line sort-keys
 		admin: (
 			<ImageIcon
@@ -206,7 +210,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						<p
 							key={category}
 							className={` flex cursor-pointer justify-between rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-								isTabSelected(category) ? 'bg-[#ffe6ef] font-medium text-[#E5007A] dark:bg-[#530d32] ' : ''
+								isTabSelected(category) ? 'bg-[#ffe6ef] font-medium text-pink_primary dark:bg-[#530d32] ' : ''
 							}`}
 							onClick={() => handleCategoryClick(category)}
 						>
@@ -278,7 +282,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							>
 								<p
 									className={`flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-										isTabSelected(category) ? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530d32] ' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+										isTabSelected(category) ? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-pink_primary dark:bg-[#530d32] ' : 'text-blue-light-medium dark:text-[#9E9E9E]'
 									}`}
 									onClick={() => handleCategoryClick(category)}
 								>
@@ -293,8 +297,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 							<p
 								className={`flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
 									isTrackDropdownOpen || isTabSelected(category)
-										? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-[#E5007A] dark:bg-[#530d32] '
-										: 'text-[#485F7D] dark:text-[#9E9E9E]'
+										? 'rounded-lg bg-[#ffe6ef] p-1 font-medium text-pink_primary dark:bg-[#530d32] '
+										: 'text-blue-light-medium dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
@@ -322,7 +326,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						<div className='relative flex '>
 							<p
 								className={`flex h-9 cursor-pointer items-center justify-between gap-2 rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-									isTabSelected('Treasury') ? 'rounded-lg bg-[#ffe6ef] p-1 text-[#E5007A] dark:bg-[#530d32] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									isTabSelected('Treasury') ? 'rounded-lg bg-[#ffe6ef] p-1 text-pink_primary dark:bg-[#530d32] dark:text-white' : 'text-blue-light-medium dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick('Treasury')}
 							>
@@ -382,7 +386,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 						>
 							<p
 								className={`-mt-[6px] flex h-9 cursor-pointer items-center justify-between rounded-lg px-2 text-sm font-medium hover:bg-[#F2F4F7] dark:hover:bg-[#9E9E9E] dark:hover:bg-opacity-10 ${
-									isTabSelected(category) ? ' rounded-lg bg-[#ffe6ef] font-medium text-[#E5007A] dark:bg-[#530d32] dark:text-white' : 'text-[#485F7D] dark:text-[#9E9E9E]'
+									isTabSelected(category)
+										? ' rounded-lg bg-[#ffe6ef] font-medium text-pink_primary dark:bg-[#530d32] dark:text-white'
+										: 'text-blue-light-medium dark:text-[#9E9E9E]'
 								}`}
 								onClick={() => handleCategoryClick(category)}
 							>
@@ -399,4 +405,4 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setCurrentTab
 	);
 };
 
-export default TabNavigation;
+export default ActivityFeedTabNavigation;

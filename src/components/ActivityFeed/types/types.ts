@@ -25,18 +25,18 @@ export interface IPostData {
 	error?: boolean;
 }
 
-export interface TabNavigationProps {
+export interface ITabNavigationProps {
 	currentTab: string | null;
 	setCurrentTab: (tab: string) => void;
 	gov2LatestPosts: any;
 	network: string;
 }
 
-export interface PostListProps {
+export interface IPostListProps {
 	postData: IPostData[];
 }
 
-export interface TabItem {
+export interface ITabItem {
 	key: string;
 	label: string;
 	posts: number;
@@ -72,7 +72,7 @@ export interface IActivityFeedPost {
 	summary?: string;
 }
 
-export enum Tab {
-	Explore = 'explore',
-	Following = 'following'
+export enum EActivityFeedTab {
+	EXPLORE = 'explore',
+	FOLLOWING = 'following'
 }

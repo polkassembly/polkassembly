@@ -6,7 +6,7 @@ import Link from 'next/link';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 
-const PostContent: React.FC<{
+const ActivityFeedPostContent: React.FC<{
 	post: any;
 	content: string;
 	isCommentPost?: boolean;
@@ -22,7 +22,7 @@ const PostContent: React.FC<{
 				md={trimmedContentForComment}
 			/>
 			<Link
-				className='flex cursor-pointer gap-1 text-[12px] font-medium text-[#E5007A] hover:underline'
+				className='flex cursor-pointer gap-1 text-[12px] font-medium text-pink_primary hover:underline'
 				href={`/referenda/${post?.post_id}`}
 			>
 				Read More{' '}
@@ -36,4 +36,4 @@ const PostContent: React.FC<{
 	);
 };
 
-export default PostContent;
+export default ActivityFeedPostContent;

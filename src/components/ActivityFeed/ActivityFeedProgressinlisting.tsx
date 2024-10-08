@@ -20,7 +20,7 @@ import { PieChart } from 'react-minimal-pie-chart';
 
 const ZERO = new BN(0);
 
-interface Props {
+interface IProps {
 	tally: any;
 	onchainId?: number | string | null;
 	status?: string | null;
@@ -29,7 +29,7 @@ interface Props {
 	votesData: any;
 }
 
-const ActivityProgressinlisting = ({ tally, onchainId, status, proposalType, votesData }: Props) => {
+const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType, votesData }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [loading, setLoading] = useState<boolean>(true);
@@ -260,4 +260,4 @@ const ActivityProgressinlisting = ({ tally, onchainId, status, proposalType, vot
 		</>
 	);
 };
-export default ActivityProgressinlisting;
+export default ActivityFeedProgressinlisting;

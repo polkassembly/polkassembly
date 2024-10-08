@@ -5,7 +5,7 @@ import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChangeResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
@@ -18,15 +18,13 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 
-export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOpen: boolean; onclose: () => void }> = ({
+export const ActivityFeedCommentModal: React.FC<{ post: any; currentUserdata: any; onclose: () => void }> = ({
 	post,
 	currentUserdata,
-	isModalOpen,
 	onclose
 }: {
 	post: any;
 	currentUserdata: any;
-	isModalOpen: boolean;
 	onclose: () => void;
 }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -91,18 +89,17 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 		} catch (error) {
 			console.error('Error while saving comment:', error);
 		} finally {
-			onclose();
 			setLoading(false);
+			onCloseHandler();
 		}
 	};
 
-	useEffect(() => {
-		if (!isModalOpen) {
-			form.resetFields();
-			setContent('');
-			global.window.localStorage.removeItem(commentKey());
-		}
-	}, [isModalOpen, form]);
+	const onCloseHandler = () => {
+		form.resetFields();
+		setContent('');
+		global.window.localStorage.removeItem(commentKey());
+		onclose();
+	};
 
 	return (
 		<>
@@ -146,26 +143,26 @@ export const CommentModal: React.FC<{ post: any; currentUserdata: any; isModalOp
 								truncateUsername={true}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
-							<span className='xl:text-md text-[12px] text-[#485F7D] dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>in</span>
 							<TopicTag
 								topic={post?.topic?.name}
 								className='m-0 p-0 text-[10px]'
 								theme={theme as any}
 							/>
-							<p className='pt-3 text-[#485F7D]'>|</p>
+							<p className='pt-3 text-blue-light-medium'>|</p>
 							<div className='flex gap-[2px]'>
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
 									alt='timer'
-									className=' h-4 w-4 pt-1 text-[#485F7D] dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
+									className=' h-4 w-4 pt-1 text-blue-light-medium dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
-								<p className='whitespace-nowrap pt-2 text-[10px] text-[#485F7D] dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='font-poppins text-[12px]  font-medium text-[#E5007A]'>Commenting on proposal</p>
+						<p className='font-poppins text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
 						<div className='w-[250px] md:w-[500px]  md:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}

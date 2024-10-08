@@ -23,7 +23,7 @@ const CustomTooltip = ({ point }: any) => {
 	);
 };
 
-const OverviewDataGraph = ({
+const ActivityFeedDataGraph = ({
 	graphData
 }: {
 	graphData: IMonthlyTreasuryTally[];
@@ -140,4 +140,4 @@ const OverviewDataGraph = ({
 	);
 };
 
-export default OverviewDataGraph;
+export default ActivityFeedDataGraph;

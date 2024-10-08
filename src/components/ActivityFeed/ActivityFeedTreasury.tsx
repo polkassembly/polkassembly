@@ -17,7 +17,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import OverviewDataGraph from './OverviewDataGraph';
+import ActivityFeedDataGraph from './ActivityFeedDataGraph';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -25,24 +25,24 @@ import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { poppins } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
 
-interface TokenPrice {
+interface ITokenPrice {
 	value: string;
 	isLoading: boolean;
 }
 
-interface PriceWeeklyChange {
+interface IPriceWeeklyChange {
 	isLoading: boolean;
 	value: string;
 }
 
-const ActivityTreasury = () => {
+const ActivityFeedSidebar = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const [available, setAvailable] = useState({ isLoading: true, value: '', valueUSD: '' });
 	const [nextBurn, setNextBurn] = useState({ isLoading: true, value: '', valueUSD: '' });
-	const [currentTokenPrice, setCurrentTokenPrice] = useState<TokenPrice>({ isLoading: true, value: '' });
-	const [priceWeeklyChange, setPriceWeeklyChange] = useState<PriceWeeklyChange>({ isLoading: true, value: '' });
+	const [currentTokenPrice, setCurrentTokenPrice] = useState<ITokenPrice>({ isLoading: true, value: '' });
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState<IPriceWeeklyChange>({ isLoading: true, value: '' });
 	const [tokenValue, setTokenValue] = useState<number>(0);
 	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
 	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const ActivityTreasury = () => {
 		)
 	);
 
-	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: TokenPrice, setAvailable: Function, setNextBurn: Function) => {
+	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: ITokenPrice, setAvailable: Function, setNextBurn: Function) => {
 		const treasuryAccount = u8aConcat(
 			'modl',
 			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
@@ -88,7 +88,7 @@ const ActivityTreasury = () => {
 		}
 	};
 
-	const updateBurnValue = (treasuryBalance: any, currentTokenPrice: TokenPrice, setNextBurn: Function) => {
+	const updateBurnValue = (treasuryBalance: any, currentTokenPrice: ITokenPrice, setNextBurn: Function) => {
 		const burn =
 			treasuryBalance.freeBalance.gt(BN_ZERO) && api && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
 
@@ -104,7 +104,7 @@ const ActivityTreasury = () => {
 		setNextBurn({ isLoading: false, value, valueUSD });
 	};
 
-	const updateAvailableValue = (treasuryBalance: any, currentTokenPrice: TokenPrice, network: string, setAvailable: Function) => {
+	const updateAvailableValue = (treasuryBalance: any, currentTokenPrice: ITokenPrice, network: string, setAvailable: Function) => {
 		const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
 		let valueUSD = '';
 		let value = '';
@@ -121,7 +121,7 @@ const ActivityTreasury = () => {
 		setAvailable({ isLoading: false, value, valueUSD });
 	};
 
-	const fetchWeekAgoTokenPrice = async (currentTokenPrice: TokenPrice, network: string, setPriceWeeklyChange: (change: PriceWeeklyChange) => void) => {
+	const fetchWeekAgoTokenPrice = async (currentTokenPrice: ITokenPrice, network: string, setPriceWeeklyChange: (change: IPriceWeeklyChange) => void) => {
 		if (!currentTokenPrice.value || currentTokenPrice.isLoading) {
 			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
 			return;
@@ -390,7 +390,7 @@ const ActivityTreasury = () => {
 					</div>
 				</div>
 				<div>
-					<OverviewDataGraph
+					<ActivityFeedDataGraph
 						graphData={graphData}
 						currentTokenPrice={currentTokenPrice}
 					/>
@@ -461,4 +461,4 @@ const ActivityTreasury = () => {
 	);
 };
 
-export default ActivityTreasury;
+export default ActivityFeedSidebar;

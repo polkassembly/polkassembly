@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { Tooltip } from 'antd';
@@ -39,13 +38,13 @@ export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode
 	</Tooltip>
 );
 
-export const PostReactions: React.FC<{
+export const ActivityFeedPostReactions: React.FC<{
 	reactionState: any;
 	post: any;
 }> = ({ reactionState, post }: { reactionState: any; post: any }) => {
 	const { firstVoterProfileImg, commentsCount } = post;
-	const [isMobile, setIsMobile] = useState(false);
 	const username = reactionState?.likesUsernames?.[0] || '';
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -89,12 +88,6 @@ export const PostReactions: React.FC<{
 
 		return sentimentIcons[sentiment] || null;
 	};
-
-	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			setIsMobile(window.screen.width < 1024);
-		}
-	}, []);
 
 	return (
 		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
@@ -144,9 +137,9 @@ export const PostReactions: React.FC<{
 						</Popover>
 					</span>
 				</div>
-				<p className='pt-1 text-[#485F7D] dark:text-[#9E9E9E]'>|</p>
+				<p className='pt-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{commentsCount || 0} Comments</p>
-				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-[#485F7D] dark:text-[#9E9E9E]  lg:hidden'>|</p>}
+				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-blue-light-medium dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
 					<div className='mt-2 flex items-center space-x-1 md:mt-5'>
 						{post.highestSentiment?.sentiment >= 0 && (

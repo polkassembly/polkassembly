@@ -4,10 +4,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import TabNavigation from './TabNavigation';
-import PostList from './PostList';
+import ActivityFeedTabNavigation from './ActivityFeedTabNavigation';
+import ActivityFeedPostList from './ActivityFeedPostList';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IPostData } from './types/types';
+import { EActivityFeedTab, IPostData } from './types/types';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -41,16 +41,16 @@ const fetchVoterProfileImage = async (username: string): Promise<string | null> 
 	}
 };
 
-interface LatestActivityProps {
-	currentTab: 'explore' | 'following';
+interface ILatestActivityProps {
+	currentTab: string;
 }
 
-export const LatestActivity: React.FC<LatestActivityProps> = ({ currentTab }) => {
+export const LatestActivity: React.FC<ILatestActivityProps> = ({ currentTab }) => {
 	const renderTabContent = () => {
 		switch (currentTab) {
-			case 'explore':
+			case EActivityFeedTab.EXPLORE:
 				return <LatestActivityExplore />;
-			case 'following':
+			case EActivityFeedTab.FOLLOWING:
 				return <LatestActivityFollowing />;
 			default:
 				return <LatestActivityExplore />;
@@ -62,54 +62,44 @@ export const LatestActivity: React.FC<LatestActivityProps> = ({ currentTab }) =>
 
 const LatestActivityExplore: React.FC = () => {
 	const { addresses } = useUserDetailsSelector();
-	const [currentTab, setCurrentTab] = useState<string | null>('all');
+	const [currentTab, setCurrentTab] = useState<string>('all');
 	const [postData, setPostData] = useState<any[]>([]);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
 
-	const fetchData = async () => {
-		try {
-			setLoading(true);
-			const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/explore-posts', {
-				userAddresses: addresses || []
-			});
+	const fetchexploreposts = async () => {
+		setLoading(true);
+		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/explore-posts', {
+			userAddresses: addresses || []
+		});
 
-			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-			const detailedPosts = await Promise.all(
-				posts.map(async (post: any) => {
-					try {
-						let firstVoterProfileImg = null;
-						if (post?.post_reactions?.['👍']?.usernames?.[0]) {
-							const username = post.post_reactions['👍'].usernames[0];
-							firstVoterProfileImg = await fetchVoterProfileImage(username);
-						}
+		const posts = Array.isArray(responseData?.data) ? responseData.data : [];
+		const detailedPosts = await Promise.all(
+			posts.map(async (post: any) => {
+				let firstVoterProfileImg = null;
+				if (post?.post_reactions?.['👍']?.usernames?.[0]) {
+					const username = post.post_reactions['👍'].usernames[0];
+					firstVoterProfileImg = await fetchVoterProfileImage(username);
+				}
 
-						const proposerProfile = await fetchUserProfile(post.proposer || '');
+				const proposerProfile = await fetchUserProfile(post.proposer || '');
 
-						return {
-							...post,
-							firstVoterProfileImg,
-							proposerProfile
-						};
-					} catch (error) {
-						console.error('Error processing post', error);
-						return { ...post, error: true };
-					}
-				})
-			);
+				return {
+					...post,
+					firstVoterProfileImg,
+					proposerProfile
+				};
+			})
+		);
 
-			setPostData(detailedPosts.filter((post) => !post.error));
-		} catch (err) {
-			console.error('Failed to fetch posts:', err);
-			setError('Failed to fetch posts. Please try again later.');
-		} finally {
-			setLoading(false);
-		}
+		// Filter out any posts that encountered an error
+		setPostData(detailedPosts.filter((post) => !post.error));
+
+		setLoading(false);
 	};
 
 	useEffect(() => {
-		fetchData();
+		fetchexploreposts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTab, network]);
 
@@ -128,14 +118,6 @@ const LatestActivityExplore: React.FC = () => {
 					return formattedTrackName === currentTab;
 			  });
 
-	if (error) {
-		return (
-			<div className='flex items-center justify-center py-4'>
-				<div className='text-lg text-red-500'>⚠️ An error occurred: {error}. Please try again later.</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className=''>
 			{loading ? (
@@ -144,13 +126,13 @@ const LatestActivityExplore: React.FC = () => {
 				</div>
 			) : (
 				<div className=''>
-					<TabNavigation
+					<ActivityFeedTabNavigation
 						currentTab={currentTab}
 						setCurrentTab={setCurrentTab}
 						gov2LatestPosts={postData}
 						network={network}
 					/>
-					<PostList postData={filteredPosts} />
+					<ActivityFeedPostList postData={filteredPosts} />
 				</div>
 			)}
 		</div>
@@ -169,7 +151,7 @@ const LoginButton = ({ onClick }: { onClick: () => void }) => (
 const SignupButton = ({ onClick }: { onClick: () => void }) => (
 	<p
 		onClick={onClick}
-		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-[14px] text-[#E5007A] lg:w-[400px] lg:border'
+		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-[14px] text-pink_primary lg:w-[400px] lg:border'
 	>
 		Sign Up
 	</p>
@@ -183,38 +165,32 @@ const LatestActivityFollowing: React.FC = () => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [loading, setLoading] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
-	const fetchPostUpdates = async () => {
-		try {
-			setLoading(true);
-			const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
-			const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-			const detailedPosts = await Promise.all(
-				posts.map(async (post: IPostData) => {
-					try {
-						let firstVoterProfileImg = null;
-						if (post?.post_reactions?.['👍']?.usernames?.[0]) {
-							const username = post.post_reactions['👍'].usernames[0];
-							firstVoterProfileImg = await fetchVoterProfileImage(username);
-						}
-						const proposerProfile = await fetchUserProfile(post.proposer || '');
-						return {
-							...post,
-							firstVoterProfileImg,
-							proposerProfile
-						};
-					} catch (error) {
-						console.error('Error processing post', error);
-						return { ...post, error: true };
+	const fecthAllSubscribedPosts = async () => {
+		setLoading(true);
+		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
+		const posts = Array.isArray(responseData?.data) ? responseData.data : [];
+		const detailedPosts = await Promise.all(
+			posts.map(async (post: IPostData) => {
+				try {
+					let firstVoterProfileImg = null;
+					if (post?.post_reactions?.['👍']?.usernames?.[0]) {
+						const username = post.post_reactions['👍'].usernames[0];
+						firstVoterProfileImg = await fetchVoterProfileImage(username);
 					}
-				})
-			);
-
-			setSubscribedPosts(detailedPosts.filter((post) => !post.error));
-		} catch (err) {
-			console.error('Failed to fetch subscribed posts:', err);
-		} finally {
-			setLoading(false);
-		}
+					const proposerProfile = await fetchUserProfile(post.proposer || '');
+					return {
+						...post,
+						firstVoterProfileImg,
+						proposerProfile
+					};
+				} catch (error) {
+					console.error('Error processing post', error);
+					return { ...post, error: true };
+				}
+			})
+		);
+		setSubscribedPosts(detailedPosts.filter((post) => !post.error));
+		setLoading(false);
 	};
 
 	const filteredPosts =
@@ -230,7 +206,7 @@ const LatestActivityFollowing: React.FC = () => {
 			  });
 
 	useEffect(() => {
-		fetchPostUpdates();
+		fecthAllSubscribedPosts();
 	}, [currentTab, network]);
 	return (
 		<div className=''>
@@ -242,14 +218,14 @@ const LatestActivityFollowing: React.FC = () => {
 				subscribedPosts.length > 0 ? (
 					<div>
 						<div>
-							<TabNavigation
+							<ActivityFeedTabNavigation
 								currentTab={currentTab}
 								setCurrentTab={setCurrentTab}
 								gov2LatestPosts={subscribedPosts}
 								network={network}
 							/>
 						</div>
-						<div>{filteredPosts.length > 0 ? <PostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
+						<div>{filteredPosts.length > 0 ? <ActivityFeedPostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
 					</div>
 				) : (
 					<div
@@ -262,7 +238,7 @@ const LatestActivityFollowing: React.FC = () => {
 							width={320}
 							height={320}
 						/>
-						<p className='p-0 text-xl font-medium text-[#243A57]'>No Activity Found</p>
+						<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>No Activity Found</p>
 						<p
 							className='p-0 text-center text-[#243A57] dark:text-white'
 							style={{ lineHeight: '1.8' }}

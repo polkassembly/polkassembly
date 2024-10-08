@@ -11,11 +11,11 @@ import NameLabel from '~src/ui-components/NameLabel';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-interface RankCardProps {
+interface IRankCardProps {
 	setLoginOpen: (open: boolean) => void;
 }
 
-const RankCard: React.FC<RankCardProps> = ({ setLoginOpen }) => {
+const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const username = currentUser?.username;
@@ -102,7 +102,7 @@ const RankCard: React.FC<RankCardProps> = ({ setLoginOpen }) => {
 								<p className='text-center font-poppins text-[16px] font-semibold text-[#243A57] dark:text-white'>
 									<span
 										onClick={() => setLoginOpen(true)}
-										className='cursor-pointer text-[#E5007A] underline'
+										className='cursor-pointer text-pink_primary underline'
 									>
 										Login
 									</span>{' '}
@@ -117,4 +117,4 @@ const RankCard: React.FC<RankCardProps> = ({ setLoginOpen }) => {
 	);
 };
 
-export default RankCard;
+export default ActivityFeedRankCard;

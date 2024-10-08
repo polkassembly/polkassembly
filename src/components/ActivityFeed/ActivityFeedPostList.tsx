@@ -2,17 +2,20 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import PostItem from './PostItem';
-import { PostListProps } from './types/types';
+import ActivityFeedPostItem from './ActivityFeedPostItem';
 
-const PostList: React.FC<PostListProps> = ({ postData }) => {
+interface IPostListProps {
+	postData: any;
+}
+
+const ActivityFeedPostList: React.FC<IPostListProps> = ({ postData }) => {
 	return (
 		<div className='space-y-5'>
 			{postData.length === 0 ? (
 				<p>No posts available</p>
 			) : (
-				postData.map((post, index) => (
-					<PostItem
+				postData.map((post: any, index: number) => (
+					<ActivityFeedPostItem
 						key={index}
 						post={post}
 					/>
@@ -22,4 +25,4 @@ const PostList: React.FC<PostListProps> = ({ postData }) => {
 	);
 };
 
-export default PostList;
+export default ActivityFeedPostList;

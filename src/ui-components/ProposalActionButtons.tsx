@@ -17,6 +17,8 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { isActivitySupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
+import { network } from '~src/global/networkConstants';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -142,7 +144,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{isUsedInHomePage && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />}
 
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>

@@ -32,6 +32,7 @@ import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/Pos
 import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
+import { SegmentedValue } from 'antd/es/segmented';
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
@@ -115,7 +116,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		abstainFrom.setFieldValue('abstainVote', '');
 	};
 
-	const handleOnVoteChange = (value: any) => {
+	const handleOnVoteChange = (value: SegmentedValue) => {
 		setVote(value as EVoteDecisionType);
 		if (!forSpecificPost) {
 			dispatch(

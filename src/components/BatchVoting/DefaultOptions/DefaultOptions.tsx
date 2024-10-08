@@ -101,7 +101,7 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 					address={String(address)}
 					onAccountChange={onAccountChange}
 					proposalType={ProposalType.TREASURY_PROPOSALS}
-					lastVote={lastVote as any}
+					lastVote={lastVote}
 					setLastVote={setLastVote}
 					forSpecificPost={forSpecificPost}
 					postEdit={postEdit}

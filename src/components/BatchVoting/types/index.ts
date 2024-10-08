@@ -29,21 +29,21 @@ export interface IAbstainOptions {
 export interface IDefaultOptions {
 	theme?: string;
 	forSpecificPost?: boolean;
-	postEdit?: any;
+	postEdit?: number;
 }
 
 export interface IOptionsWrapper {
 	className?: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
 	address: string;
 	theme?: string;
 	trackNumber?: number;
 	forSpecificPost?: boolean;
-	postEdit?: any;
+	postEdit?: number;
 }
 export interface INetworkWalletErr {
 	message: string;

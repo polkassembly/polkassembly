@@ -171,7 +171,7 @@ const SwipableVotingCards = () => {
 
 				{!isLoading && (
 					<div className={'relative h-full w-full'}>
-						{activeProposal?.map((proposal: any) => (
+						{activeProposal?.map((proposal) => (
 							<article
 								className='absolute h-full w-full'
 								key={proposal?.id}

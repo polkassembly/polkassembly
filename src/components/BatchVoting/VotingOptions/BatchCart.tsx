@@ -92,7 +92,7 @@ const BatchCart: React.FC = () => {
 	const voteProposals = async () => {
 		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
-		vote_cart_data.map((vote: any) => {
+		vote_cart_data.map((vote) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
@@ -118,7 +118,7 @@ const BatchCart: React.FC = () => {
 	const getGASFees = () => {
 		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
-		vote_cart_data.map((vote: any) => {
+		vote_cart_data.map((vote) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				const balance = vote?.decision === 'aye' ? vote?.ayeBalance.toString() : vote?.nayBalance.toString();
@@ -177,7 +177,7 @@ const BatchCart: React.FC = () => {
 						spinning={isLoading}
 						size='default'
 					>
-						{vote_cart_data.map((voteCardInfo: any, index: number) => (
+						{vote_cart_data.map((voteCardInfo, index: number) => (
 							<ProposalInfoCard
 								key={index}
 								voteInfo={voteCardInfo}

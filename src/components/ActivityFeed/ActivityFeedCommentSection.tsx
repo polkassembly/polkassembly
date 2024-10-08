@@ -53,7 +53,7 @@ const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 		<div className='mt-1 flex items-center'>
 			{isUserNotAllowedToComment ? (
 				<Alert
-					message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}
+					message={<span className='mb-10 text-[12px] dark:text-black'>{reasonForNoComment}</span>}
 					type='info'
 					showIcon
 				/>

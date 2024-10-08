@@ -244,7 +244,9 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 										</p>
 									</div>
 								</>
-							) : null}
+							) : (
+								<div className='mt-6 min-h-[30px]'></div>
+							)}
 
 							{post?.status && (
 								<StatusTag

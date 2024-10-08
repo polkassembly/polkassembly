@@ -29,7 +29,6 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	const { post, proposalType, onSkip } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	console.log(post);
 	const dispatch = useDispatch();
 	const { show_post_info } = useBatchVotesSelector();
 
@@ -101,7 +100,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	];
 
 	return (
-		<div className='flex h-[650px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+		<div className='flex h-[600px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 			<Button
 				className='ml-auto border-none bg-transparent p-0'
 				onClick={() => {
@@ -118,7 +117,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				className=''
 				post={post}
 			/>
-			<div className='h-[300px] overflow-y-hidden py-2'>
+			<div className='h-[250px] overflow-y-hidden py-2'>
 				<Tabs
 					theme={theme}
 					type='card'

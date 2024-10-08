@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import PostOnChainInfo from '../../Post/Tabs/PostOnChainInfo';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import { useTheme } from 'next-themes';
@@ -11,17 +11,13 @@ import TinderPostDescription from '../PostInfoComponents/TinderPostDescription';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import { Button, Divider, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useBatchVotesSelector } from '~src/redux/selectors';
 import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons';
-import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
-import CardComments from './CardComments';
-import Link from 'next/link';
-import Markdown from '~src/ui-components/Markdown';
-import { IVotesCount } from '~src/types';
 import { useRouter } from 'next/router';
+import InfoModalContent from './InfoModalContent';
 
 interface ITinderCards {
 	post: any;
@@ -36,12 +32,6 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	console.log(post);
 	const dispatch = useDispatch();
 	const { show_post_info } = useBatchVotesSelector();
-	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
-
-	const sanitizeSummary = (md: string) => {
-		const newMd = (md || '').trim();
-		return newMd;
-	};
 
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];
@@ -174,46 +164,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 					dispatch(batchVotesActions.setShowPostInfo(false));
 				}}
 			>
-				<section className='flex flex-col gap-y-4  overflow-x-hidden bg-white p-4 dark:bg-transparent'>
-					<div className='overflow-y-auto rounded-2xl shadow-md'>
-						<div className='flex items-start justify-between'>
-							<CardPostHeading
-								method={post?.method}
-								motion_method={post?.motion_method}
-								postArguments={post?.proposed_call?.args}
-								className='mb-5'
-								post={post}
-							/>
-						</div>
-						<Divider
-							type='horizontal'
-							className='border-l-1 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
-						/>
-						<div className='flex w-full justify-start overflow-hidden text-ellipsis'>
-							<Markdown
-								className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
-								md={sanitizeSummary(post?.summary || '')}
-							/>
-						</div>
-						<Link
-							className='m-0 my-4 flex cursor-pointer justify-start p-0 text-xs text-pink_primary'
-							href={`/referenda/${post.id}`}
-							target='_blank'
-						>
-							Read Full post
-						</Link>
-						{post?.comments?.length > 0 && <CardComments proposal={post} />}
-					</div>
-					<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-transparent'>
-						<ReferendumV2CardInfo
-							ayeNayAbstainCounts={ayeNayAbstainCounts}
-							setAyeNayAbstainCounts={setAyeNayAbstainCounts}
-							tally={post?.tally}
-							post={post}
-							hideInfo={true}
-						/>
-					</div>
-				</section>
+				<InfoModalContent post={post} />
 			</Modal>
 		</div>
 	);

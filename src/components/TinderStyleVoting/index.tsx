@@ -80,8 +80,8 @@ const VotingCards = () => {
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
 			skippedIndexes: skippedIndexes,
-			userAddress: user?.loginAddress || '5E2QZ75WX5sU79ZfjZJ5ZC85H7gP1pYEmp68u74yUnzmwp1q',
-			userId: user?.id || 6876
+			userAddress: user?.loginAddress,
+			userId: user?.id
 		});
 		if (error) {
 			console.error(error);

@@ -221,7 +221,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				summary: '',
 				tally,
 				timeline: proposalTimeline,
-				title: 'Untitled',
+				title: getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 				topic: topicFromType,
 				totalVotes: totalVotes || 0,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
@@ -236,8 +236,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					let subsquareContent = '';
 					if (!data?.title?.length || !data?.content?.length) {
 						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-						subsquareTitle = subsqaureRes?.title;
-						subsquareContent = subsqaureRes?.content;
+						subsquareTitle = subsqaureRes?.title || post?.title;
+						subsquareContent = subsqaureRes?.content || post?.content;
 					}
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
@@ -285,7 +285,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					post.proposer = proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator;
 					post.summary = data?.summary || '';
 					post.tags = data?.tags || [];
-					post.title = data?.title || subsquareTitle || null;
+					post.title = data?.title || subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2);
 					post.topic = topic
 						? topic
 						: isTopicIdValid(topic_id)

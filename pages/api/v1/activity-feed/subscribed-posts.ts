@@ -141,9 +141,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					let subsquareTitle = '';
 					let subsquareContent = '';
 					if (data?.title === '' || data?.title === undefined) {
-						const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
-						subsquareTitle = res?.title;
-						subsquareContent = res?.content;
+						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, postId);
+						subsquareTitle = subsqaureRes?.title || '';
+						subsquareContent = subsqaureRes?.content || '';
 					}
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
@@ -211,7 +211,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						tags: data?.tags || [],
 						tally,
 						timeline: proposalTimeline,
-						title: data?.title || subsquareTitle || null,
+						title: data?.title || subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 						topic: topic
 							? topic
 							: isTopicIdValid(topic_id)
@@ -276,7 +276,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 				status_history: statusHistory,
 				tally,
 				timeline: proposalTimeline,
-				title: subsquareTitle || 'Untitled',
+				title: subsquareTitle || getProposalTypeTitle(ProposalType.REFERENDUM_V2),
 				topic: topicFromType,
 				track_no: !isNaN(trackNumber) ? trackNumber : null,
 				type: type,

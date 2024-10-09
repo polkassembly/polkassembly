@@ -1,3 +1,9 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
+/* eslint-disable sort-keys */
+
 import React from 'react';
 
 interface ProxyTypeBadgesProps {
@@ -62,7 +68,7 @@ const ProxyTypeBadges: React.FC<ProxyTypeBadgesProps> = ({ text }) => {
 
 	return (
 		<div
-			className={`h-min rounded-[5px] border border-solid px-3 py-[2px] text-xs font-medium`}
+			className={'h-min rounded-[5px] border border-solid px-3 py-[2px] text-xs font-medium'}
 			style={{
 				color: textColor,
 				backgroundColor: bgColor,

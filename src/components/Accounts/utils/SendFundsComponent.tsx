@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from 'antd';
 import { poppins } from 'pages/_app';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import Tipping from '~src/components/Tipping';
+import dynamic from 'next/dynamic';
+import Skeleton from '~src/basic-components/Skeleton';
+
+const Tipping = dynamic(() => import('src/components/Tipping'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 interface Props {
 	proxyAddress: string;
@@ -22,7 +31,7 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 		username: ''
 	});
 
-	const getData = async () => {
+	const getData = async (proxyAddress: string) => {
 		try {
 			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${proxyAddress}`, undefined, 'GET');
 			if (error || !data || !data.username || !data.user_id) {
@@ -36,6 +45,11 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 		}
 	};
 
+	useEffect(() => {
+		getData(proxyAddress);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [proxyAddress]);
+
 	return (
 		<div>
 			<Button
@@ -46,7 +60,7 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 				// disabled={}
 				// loading={loading}
 				htmlType='submit'
-				className={`my-0 flex h-8 items-center rounded-md border-none bg-[#E5007A] pl-[10px] text-white hover:bg-pink_secondary `}
+				className={'my-0 flex h-8 items-center rounded-md border-none bg-[#E5007A] pl-[10px] text-white hover:bg-pink_secondary '}
 			>
 				<div>
 					<Image
@@ -61,7 +75,7 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 			</Button>
 			{proxyAddress && (
 				<Tipping
-					username={profileDetails?.username || ''}
+					username={profileDetails?.username || tippingUser || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={proxyAddress}

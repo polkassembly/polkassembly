@@ -1,8 +1,9 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import BalanceDetails from './utils/BalanceDetails';
-import Image from 'next/image';
-import { Button } from 'antd';
 import SendFundsComponent from './utils/SendFundsComponent';
 import AddressActionDropdown from './utils/AddressActionDropdown';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -54,7 +55,7 @@ const AddressesComponent = () => {
 					</div>
 				</div>
 				<div
-					className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] p-2 dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
+					className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-2 dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
 				>
 					<h3 className=' text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Proxy</h3>
 

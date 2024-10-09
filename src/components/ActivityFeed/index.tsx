@@ -19,7 +19,7 @@ const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddress
 		const { data } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`/api/v1/auth/data/profileWithAddress?address=${address}`);
 		if (data) {
 			const { custom_username, user_id, username, web3Signup, profile } = data;
-			return { custom_username, profile: { achievement_badges: [], image: profile?.image || '/assets/rankcard3.svg' }, user_id, username, web3Signup };
+			return { custom_username, profile: { achievement_badges: [], image: profile?.image }, user_id, username, web3Signup };
 		}
 		return { error: 'User profile not found' };
 	} catch (error) {

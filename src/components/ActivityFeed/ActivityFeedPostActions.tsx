@@ -435,7 +435,6 @@ export const ActivityFeedPostActions: React.FC<{
 							<ActivityFeedCommentModal
 								post={post}
 								onclose={closeModal}
-								currentUserdata={currentUserdata}
 							/>
 						</div>
 					</Modal>

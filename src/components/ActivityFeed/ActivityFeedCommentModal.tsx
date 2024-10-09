@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { useState } from 'react';
 import { ChangeResponseType } from '~src/auth/types';
@@ -16,18 +15,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import ImageComponent from '../ImageComponent';
 
-export const ActivityFeedCommentModal: React.FC<{ post: any; currentUserdata: any; onclose: () => void }> = ({
-	post,
-	currentUserdata,
-	onclose
-}: {
-	post: any;
-	currentUserdata: any;
-	onclose: () => void;
-}) => {
+export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const currentUserdata = useUserDetailsSelector();
 	const [form] = Form.useForm();
 	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
 	const [content, setContent] = useState(typeof window !== 'undefined' ? window.localStorage.getItem(commentKey()) || '' : '');
@@ -116,22 +109,20 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; currentUserdata: an
 			>
 				<div className='flex gap-4 pt-4 font-poppins md:pt-0'>
 					<div className='flex flex-col items-center gap-2   '>
-						<Image
-							src={post.proposerProfile?.profileimg || FIRST_VOTER_PROFILE_IMG_FALLBACK}
-							alt='profile'
-							className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
-							width={40}
-							height={40}
+						<ImageComponent
+							className='mt-1 hidden flex-none md:inline-block'
+							src={post?.proposerProfile?.username || ''}
+							alt='user-avatar'
 						/>
 						<Divider
 							type='vertical'
 							className='h-10 rounded-sm border-l-2 border-l-[#D2D8E0] dark:border-[#4B4B4B]'
 						/>
 						<div>
-							<ImageIcon
-								src={`${currentUserdata?.image ? currentUserdata?.image : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-								alt=''
-								className='mt-2 h-6 w-6 rounded-full xl:h-10 xl:w-10'
+							<ImageComponent
+								className='mt-1 hidden flex-none md:inline-block'
+								src={currentUserdata.picture || ''}
+								alt='user-avatar'
 							/>
 						</div>
 					</div>

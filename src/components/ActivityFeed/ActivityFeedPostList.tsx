@@ -10,7 +10,7 @@ interface IPostListProps {
 
 const ActivityFeedPostList: React.FC<IPostListProps> = ({ postData }) => {
 	return (
-		<div className='space-y-5'>
+		<div className='hide-scrollbar space-y-5 lg:max-h-[1078px] lg:overflow-y-auto'>
 			{postData.length === 0 ? (
 				<p>No posts available</p>
 			) : (

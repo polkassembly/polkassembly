@@ -111,7 +111,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 					<div className='flex flex-col items-center gap-2   '>
 						<ImageComponent
 							className='mt-1 hidden flex-none md:inline-block'
-							src={post?.proposerProfile?.username || ''}
+							src={''}
 							alt='user-avatar'
 						/>
 						<Divider

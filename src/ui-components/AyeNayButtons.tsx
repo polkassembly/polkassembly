@@ -8,7 +8,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 interface Props {
 	className?: string;
@@ -33,7 +33,7 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 			<div className={`${className} flex max-w-[256px] items-center justify-between`}>
 				<Button
 					name='aye'
-					htmlType='submit'
+					htmlType='button'
 					className={`mr-7 flex items-center justify-center rounded-md border-aye_green bg-aye_green text-white hover:border-green-600 hover:bg-green-600 dark:border-aye_green_Dark dark:bg-aye_green_Dark ${customWidth} max-[370px]:w-[120px]`}
 					disabled={disabled}
 					size={size}
@@ -44,7 +44,7 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 				</Button>
 				<Button
 					name='nay'
-					htmlType='submit'
+					htmlType='button'
 					className={`flex items-center justify-center rounded-md border-nay_red bg-nay_red text-white hover:bg-red_primary hover:text-white dark:border-nay_red_Dark dark:bg-nay_red_Dark ${customWidth} max-[370px]:w-[120px]`}
 					disabled={disabled}
 					size={size}
@@ -54,7 +54,7 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 					Nay
 				</Button>
 			</div>
-			<RefendaLoginPrompts
+			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={openLoginModal}
 				setModalOpen={setOpenLoginModal}

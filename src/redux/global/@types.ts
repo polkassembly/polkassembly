@@ -10,6 +10,5 @@ export interface IGlobalStore {
 export enum EAstralInfoTab {
 	ALL_INFO = 'all_info',
 	ON_CHAIN_ACTIVITY = 'on_chain_activity',
-	OFF_CHAIN_ACTIVITY = 'off_chain_activity',
-	PROFILE = 'profile'
+	OFF_CHAIN_ACTIVITY = 'off_chain_activity'
 }

@@ -11,6 +11,7 @@ import { GlobalActions } from '~src/redux/global';
 import { EAstralInfoTab } from '~src/redux/global/@types';
 import { useGlobalSelector } from '~src/redux/selectors';
 import { AstralIcon } from '~src/ui-components/CustomIcons';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -37,7 +38,7 @@ const AstralPoints = ({ className }: Props) => {
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Astrals</div>
 				</div>
 			</header>
-			<article className='flex justify-between'>
+			<article className='flex justify-start gap-x-5'>
 				<div
 					className={`flex h-[74px] flex-col items-start justify-start gap-y-1 rounded-xl border border-solid ${
 						current_astral_info_tab === EAstralInfoTab.ALL_INFO
@@ -57,7 +58,11 @@ const AstralPoints = ({ className }: Props) => {
 						824 <span className='m-0 flex h-7 items-center justify-center rounded-md bg-abstainBlueColor p-0 px-2 text-sm font-semibold text-white'>Rank #49</span>
 					</h1>
 					<p className='m-0 flex items-center justify-start gap-x-1 p-0 text-xs font-medium text-[#98A2B3]  dark:text-blue-dark-medium'>
-						Earned <span className='m-0 p-0 text-sm font-semibold text-[#FFBA03]'>+40</span>in last 90 days
+						Earned <span className='m-0 p-0 text-sm font-semibold text-[#FFBA03]'>+40</span>in last 90 days{' '}
+						<ImageIcon
+							src='/assets/icons/rounded-que-icon.svg'
+							alt='qna-icon'
+						/>
 					</p>
 				</div>
 				<div
@@ -130,45 +135,6 @@ const AstralPoints = ({ className }: Props) => {
 						</div>
 					</div>
 					<p className='m-0 flex items-center justify-start gap-x-1 p-0 text-base font-semibold text-sidebarBlue  dark:text-blue-dark-medium'>Off-chain activity</p>
-					<div
-						className={'flex h-[20px] cursor-pointer items-center justify-start gap-x-1 rounded-md px-1'}
-						style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
-					>
-						<StarIcon />
-						<p className='m-0 p-0 text-sm font-medium text-[#534930]'>300</p>
-					</div>
-				</div>
-				<div
-					className={`flex h-[74px] items-center justify-start gap-x-2 rounded-xl border border-solid ${
-						current_astral_info_tab === EAstralInfoTab.PROFILE
-							? 'dark:border[#FF0088] border-pink_primary bg-[#FEF2F8]'
-							: 'border-[#D2D8E0] bg-transparent dark:border-separatorDark'
-					} cursor-pointer px-5 py-3`}
-					style={{ boxShadow: '0px 4px 6px 0px rgba(0, 0, 0, 0.08)' }}
-					onClick={() => {
-						dispatch(GlobalActions.setCurrentAstralTab(EAstralInfoTab.PROFILE));
-					}}
-				>
-					<div
-						className={`flex h-[40px] w-[40px] items-center justify-center rounded-lg border border-solid bg-transparent ${
-							current_astral_info_tab === EAstralInfoTab.PROFILE ? 'border-pink_primary' : 'border-[#D2D8E0] dark:border-separatorDark '
-						}`}
-					>
-						<div
-							className={`flex h-8 w-8 items-center justify-center rounded ${
-								current_astral_info_tab === EAstralInfoTab.PROFILE ? 'bg-[#FEF2F8]' : ' bg-[#F3F4F6] dark:bg-modalOverlayDark'
-							}`}
-						>
-							<Image
-								src='/assets/icons/profile-box-icon.svg'
-								alt='on-chain'
-								height={20}
-								width={20}
-								className={theme === 'dark' ? `${current_astral_info_tab === EAstralInfoTab.PROFILE ? '' : 'dark-icons'}` : 'text-lightBlue'}
-							/>
-						</div>
-					</div>
-					<p className='m-0 flex items-center justify-start gap-x-1 p-0 text-base font-semibold text-sidebarBlue  dark:text-blue-dark-medium'>Profile</p>
 					<div
 						className={'flex h-[20px] cursor-pointer items-center justify-start gap-x-1 rounded-md px-1'}
 						style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}

@@ -953,3 +953,9 @@ export interface ICommentsSummary {
 	summary_positive: string;
 	summary_neutral: string;
 }
+
+export enum EUserActivityType {
+	ON_CHAIN_ACTIVITY = 'on_chain_activity',
+	OFF_CHAIN_ACTIVITY = 'off_chain_activity',
+	PROFILE_ACTIVITY = 'profile_activity'
+}

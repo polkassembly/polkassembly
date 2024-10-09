@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { noTitle } from '~src/global/noTitle';
-import { getTimeline } from '../posts/on-chain-post';
 import { GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT, GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE, GET_POSTS_LISTING_BY_TYPE, GET_POSTS_LISTING_FOR_POLYMESH } from '~src/queries';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
+import { getTimeline } from '~src/util/getTimeline';
 
 async function queryWithLargeInArray(collection: any, field: any, array: any) {
 	const MAX_IN_SIZE = 30;

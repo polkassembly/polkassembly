@@ -19,7 +19,7 @@ const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 	};
 
 	return (
-		<section className={classNames(className, 'fixed flex w-full flex-col gap-y-2')}>
+		<section className={classNames(className, 'fixed z-[1000] flex w-full flex-col gap-y-2')}>
 			<div className='flex items-center justify-center gap-x-6 p-4'>
 				<button
 					className='flex h-12 w-12 items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'

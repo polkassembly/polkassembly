@@ -25,7 +25,7 @@ const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 });
 
 const UploadReport = () => {
-	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
+	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { postData } = usePostDataContext();
@@ -38,9 +38,7 @@ const UploadReport = () => {
 
 	const addProgressReport = async () => {
 		const progress_report = {
-			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
-			progress_name: `${Date.now()}-${file_name}`,
 			progress_summary: summary_content,
 			ratings: []
 		};

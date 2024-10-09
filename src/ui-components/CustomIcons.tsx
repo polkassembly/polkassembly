@@ -48,6 +48,7 @@ import BountiesSVG from '~assets/sidebar/treasury-bounties-icon.svg';
 import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
 import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
+import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
 import AuctionAdminSVG from '~assets/sidebar/auction.svg';
@@ -188,6 +189,7 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
+import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
@@ -502,6 +504,13 @@ export const ReferendaIcon = (props: Partial<CustomIconComponentProps>) => (
 export const CalendarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={CalendarSVG}
+		{...props}
+	/>
+);
+
+export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BatchVotingSVG}
 		{...props}
 	/>
 );
@@ -1398,6 +1407,13 @@ export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) 
 export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AllpostIcon}
+		{...props}
+	/>
+);
+
+export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSVG}
 		{...props}
 	/>
 );

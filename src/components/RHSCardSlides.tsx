@@ -187,7 +187,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		}
 
 		if (
-			postData?.userId !== id &&
+			postData?.userId === id &&
 			showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
 			!postData?.progress_report?.progress_file &&
 			show_nudge

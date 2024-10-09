@@ -74,7 +74,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			getAccounts();
 		}
 
-		api.query.council.members().then((memberAccounts) => {
+		api.query?.council?.members().then((memberAccounts) => {
 			const members = memberAccounts.map((member) => member.toString());
 			setCurrentCouncil(members.filter((member) => !!member) as string[]);
 		});

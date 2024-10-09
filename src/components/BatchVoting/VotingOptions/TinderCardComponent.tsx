@@ -22,7 +22,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 
 	return (
 		<div className='flex overflow-x-hidden'>
-			<div className='overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+			<div className='h-[500px] overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}

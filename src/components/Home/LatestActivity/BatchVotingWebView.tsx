@@ -10,23 +10,22 @@ const BatchVotingWebView = () => {
 	const router = useRouter();
 	return (
 		<>
-			<section className=''>
+			<section className='relative mb-[70px] '>
 				<ImageIcon
 					src='/assets/icons/tinder-web-banner.svg'
 					alt='vote-badge'
 					imgWrapperClassName='flex justify-center items-center w-full'
-					imgClassName='-mt-1 w-full'
+					imgClassName='relative -mt-1 w-full'
 				/>
-				<div className='relative -top-[152px] z-[100] -ml-[80px] flex w-full justify-end'>
-					<Button
-						className='flex h-[40px] w-[155px] items-center justify-center rounded-[40px] border-none bg-black text-xl text-white'
-						onClick={() => {
-							router.push('/batch-voting');
-						}}
-					>
-						Lets Begin
-					</Button>
-				</div>
+
+				<Button
+					className='absolute right-[132px] top-[48px] flex h-[40px] w-[155px] items-center justify-center rounded-[40px] border-none bg-black text-xl font-semibold text-white'
+					onClick={() => {
+						router.push('/batch-voting');
+					}}
+				>
+					Lets Begin
+				</Button>
 			</section>
 		</>
 	);

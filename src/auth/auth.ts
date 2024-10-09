@@ -312,7 +312,8 @@ class AuthService {
 	}
 
 	public async AddressLoginStart(address: string): Promise<string> {
-		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
+		const timestamp = dayjs().format('DD-MM-YYYY HH:mm:ss');
+		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${timestamp}` : `<Bytes>Login in polkassembly ${timestamp}</Bytes>`;
 
 		await redisSetex(getAddressLoginKey(address), ADDRESS_LOGIN_TTL, signMessage);
 

@@ -18,6 +18,7 @@ import { noTitle } from '~src/global/noTitle';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -57,20 +58,6 @@ export interface IVotesData extends IProfileVoteHistoryRespose {
 	delegatorsCount?: number;
 	delegateCapital?: string;
 }
-
-const getIsSwapStatus = (statusHistory: string[]) => {
-	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
-	if (index >= 0) {
-		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
-		if (decidingIndex >= 0) {
-			const obj = statusHistory[index];
-			statusHistory.splice(index, 1);
-			statusHistory.splice(decidingIndex, 0, obj);
-			return true;
-		}
-	}
-	return false;
-};
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);

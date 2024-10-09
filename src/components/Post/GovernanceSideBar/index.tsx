@@ -79,6 +79,8 @@ import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import Alert from '~src/basic-components/Alert';
+import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -141,13 +143,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses } = useUserDetailsSelector();
-	const {
-		postData: { created_at, track_number, statusHistory, postIndex, postType }
-	} = usePostDataContext();
+	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses, id } = useUserDetailsSelector();
+
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { postData } = usePostDataContext();
+	const { created_at, track_number, statusHistory, postIndex, postType } = postData;
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -1000,6 +1002,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								isReferendaPage
 								referendumIndex={postIndex as number}
 								className='mb-6'
+							/>
+						)}
+
+						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.progress_file && id !== postData?.userId && (
+							<Alert
+								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								showIcon
+								type='info'
+								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
 							/>
 						)}
 						<RHSCardSlides

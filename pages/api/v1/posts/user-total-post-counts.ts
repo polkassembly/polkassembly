@@ -45,8 +45,8 @@ export const getUserPostCount = async (params: Props) => {
 			data: JSON.parse(
 				JSON.stringify({
 					discussions: discussionsCounts || 0,
-					proposals: subsquidRes['data']['totalProposals'].totalCount || 0,
-					votes: subsquidRes['data']['totalVotes'].totalCount || 0
+					proposals: subsquidRes?.['data']?.['totalProposals']?.totalCount || 0,
+					votes: subsquidRes?.['data']?.['totalVotes']?.totalCount || 0
 				})
 			),
 			error: null,

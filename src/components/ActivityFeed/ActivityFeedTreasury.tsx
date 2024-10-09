@@ -345,10 +345,10 @@ const ActivityFeedSidebar = () => {
 																	{chainProperties?.[network]?.supportedAssets?.[1] && (
 																		<>
 																			<Divider
-																				className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0 dark:bg-separatorDark'
+																				className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0  dark:bg-separatorDark'
 																				type='vertical'
 																			/>
-																			<div className='text-xs'>
+																			<div className='text-xs text-blue-light-high dark:text-blue-dark-high'>
 																				{assetValueUSDC}
 																				<span className='ml-[3px] font-normal'>USDC</span>
 																			</div>

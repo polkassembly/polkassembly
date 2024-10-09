@@ -20,6 +20,13 @@ const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 	ssr: false
 });
 
+interface IFeature {
+	title: string;
+	description: string;
+	image: string;
+	path: string;
+}
+
 function FeaturesSection() {
 	const currentUser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState(false);
@@ -29,7 +36,7 @@ function FeaturesSection() {
 	const { network } = useNetworkSelector();
 	const [identityMobileModal, setIdentityMobileModal] = useState(false);
 	const [openSignup, setSignupOpen] = useState(false);
-	const isMobile = false;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const features = [
 		{
 			description: 'Delegate your vote and catchup with Delegation Dashboard',
@@ -61,7 +68,7 @@ function FeaturesSection() {
 		setCurrentIndex(index);
 	};
 
-	const handleFeatureClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, feature: any) => {
+	const handleFeatureClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, feature: IFeature) => {
 		if (feature.title === 'Identity') {
 			e.stopPropagation();
 			e.preventDefault();

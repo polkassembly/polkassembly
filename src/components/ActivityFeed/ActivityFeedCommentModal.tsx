@@ -121,7 +121,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<div>
 							<ImageComponent
 								className='mt-1 hidden flex-none md:inline-block'
-								src={currentUserdata.picture || ''}
+								src={currentUserdata?.picture || ''}
 								alt='user-avatar'
 							/>
 						</div>

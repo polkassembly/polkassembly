@@ -19,7 +19,7 @@ const BatchVotingWebView = () => {
 				/>
 
 				<Button
-					className='absolute right-[100px] top-8 flex h-[40px] w-[155px] items-center justify-center rounded-[40px] border-none bg-black text-xl text-white'
+					className='absolute right-[132px] top-[48px] flex h-[40px] w-[155px] items-center justify-center rounded-[40px] border-none bg-black text-xl font-semibold text-white'
 					onClick={() => {
 						router.push('/batch-voting');
 					}}

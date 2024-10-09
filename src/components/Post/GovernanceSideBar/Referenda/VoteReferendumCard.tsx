@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useState } from 'react';
+import React from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -22,14 +22,15 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoComponents/VotingFormCard';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
+import { batchVotesActions } from '~src/redux/batchVoting';
+import Image from 'next/image';
 
 interface Props {
 	className?: string;
@@ -43,6 +44,7 @@ interface Props {
 	trackNumber?: number;
 	forSpecificPost?: boolean;
 	postEdit?: any;
+	currentDecision?: string;
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -100,8 +102,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { vote } = useBatchVotesSelector();
 
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
@@ -117,7 +118,8 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	};
 
 	const handleOnVoteChange = (value: any) => {
-		setVote(value as EVoteDecisionType);
+		// setVote(value as EVoteDecisionType);
+		dispatch(batchVotesActions.setVote(value));
 		if (!forSpecificPost) {
 			dispatch(
 				editBatchValueChanged({
@@ -211,7 +213,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 
 	const VoteUI = (
 		<>
-			{/* aye nye split abstain buttons */}
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
 				block
@@ -220,6 +221,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				value={vote}
 				onChange={(value) => {
 					handleOnVoteChange(value);
+					dispatch(batchVotesActions.setIsFieldEdited(true));
 				}}
 				options={decisionOptions}
 				disabled={!api || !apiReady}
@@ -227,6 +229,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -245,6 +248,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -254,6 +258,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -272,6 +277,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -282,6 +288,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
 				<VotingFormCard
 					form={abstainFrom}
+					showConvictionBar={true}
 					formName={EFormType.ABSTAIN_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -300,6 +307,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAyeValueChange={(balance: BN) => {
@@ -319,6 +327,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onNayValueChange={(balance: BN) => {
@@ -338,6 +347,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAbstainValueChange={(balance: BN) => {
@@ -357,6 +367,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -364,15 +375,18 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				/>
 			)}
 
-			<div className='mt-[40px] flex h-[46px] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
+			<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
 				<div className='flex items-center gap-x-1'>
-					<ImageIcon
+					<Image
 						src='/assets/icons/lock-icon.svg'
 						alt='lock-icon'
+						width={24}
+						height={24}
+						className={theme === 'dark' ? 'dark-icons' : ''}
 					/>
-					<p className='m-0 p-0 text-sm text-lightBlue'>Locking period</p>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 				</div>
-				<p className='m-0 p-0 text-sm text-lightBlue'>No lockup period</p>
+				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>No lockup period</p>
 			</div>
 		</>
 	);

@@ -166,7 +166,9 @@ function OnchainBounties() {
 			</Link>
 
 			<div className='flex items-center justify-between pt-4'>
-				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} dark:text-blue-dark-high' text-[32px] font-bold text-blue-light-high`}>On-chain Bounties</span>
+				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} dark:text-blue-dark-high' text-[32px] font-bold text-blue-light-high dark:text-lightWhite`}>
+					On-chain Bounties
+				</span>
 				<div className='flex items-center gap-2'>
 					<BountyProposalActionButton className='hidden md:block' />
 				</div>

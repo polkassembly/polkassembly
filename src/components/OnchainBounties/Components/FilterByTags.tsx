@@ -133,7 +133,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			<div className={`flex cursor-pointer items-center font-normal ${openFilter ? 'text-pink_primary' : 'text-bodyBlue'}`}>
-				<span className='text-[16px]'>Filter</span>
+				<span className='text-[16px] dark:text-lightWhite'>Filter</span>
 				<FilterIcon className='ml-1 text-xl' />
 			</div>
 		</Popover>

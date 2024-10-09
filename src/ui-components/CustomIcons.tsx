@@ -189,7 +189,7 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
-import AstralSVG from '~assets/sidebar/astral-points.svg';
+import AstralSidebarSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
@@ -1126,9 +1126,9 @@ export const ClipboardIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+export const AstralSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={AstralSVG}
+		component={AstralSidebarSVG}
 		{...props}
 	/>
 );

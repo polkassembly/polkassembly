@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import StarIcon from '~assets/icons/StarIcon.svg';
@@ -21,6 +22,7 @@ interface Props {
 const AstralPoints = ({ className }: Props) => {
 	const { current_astral_info_tab } = useGlobalSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 	const dispatch = useDispatch();
 
 	console.log('currentAstralTab', current_astral_info_tab);
@@ -59,10 +61,16 @@ const AstralPoints = ({ className }: Props) => {
 					</h1>
 					<p className='m-0 flex items-center justify-start gap-x-1 p-0 text-xs font-medium text-[#98A2B3]  dark:text-blue-dark-medium'>
 						Earned <span className='m-0 p-0 text-sm font-semibold text-[#FFBA03]'>+40</span>in last 90 days{' '}
-						<ImageIcon
-							src='/assets/icons/rounded-que-icon.svg'
-							alt='qna-icon'
-						/>
+						<div
+							onClick={() => {
+								router.push('/astral-scoring');
+							}}
+						>
+							<ImageIcon
+								src='/assets/icons/rounded-que-icon.svg'
+								alt='qna-icon'
+							/>
+						</div>
 					</p>
 				</div>
 				<div

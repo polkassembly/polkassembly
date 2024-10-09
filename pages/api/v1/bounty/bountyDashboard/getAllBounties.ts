@@ -57,12 +57,36 @@ const bountyStatuses = [
 
 interface Args {
 	categories: string[];
-	statuses: string[];
+	status: EBountiesStatuses;
 	page: number;
 	network: string;
 }
-export async function getAllBounties({ categories, page, statuses, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
+
+enum EBountiesStatuses {
+	ACTIVE = 'active',
+	PROPOSED = 'proposed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled',
+	REJECTED = 'rejected'
+}
+
+const getBountyStauses = (status: EBountiesStatuses) => {
+	switch (status) {
+		case EBountiesStatuses.ACTIVE:
+			return [bountyStatus.ACTIVE, bountyStatus.EXTENDED];
+		case EBountiesStatuses.PROPOSED:
+			return [bountyStatus.PROPOSED];
+		case EBountiesStatuses.CANCELLED:
+			return [bountyStatus.CANCELLED];
+		case EBountiesStatuses.REJECTED:
+			return [bountyStatus.REJECTED];
+		case EBountiesStatuses.CLAIMED:
+			return [bountyStatus.AWARDED, bountyStatus.CLAIMED];
+	}
+};
+export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
 	try {
+		const statuses = getBountyStauses(status);
 		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
 			throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
@@ -195,20 +219,20 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	const { page = 1, statuses = ['Active'], categories } = req.body;
+	const { page = 1, status, categories } = req.body;
 
-	const { data, error, status } = await getAllBounties({
+	const { data, error } = await getAllBounties({
 		categories: categories && Array.isArray(JSON.parse(decodeURIComponent(String(categories)))) ? JSON.parse(decodeURIComponent(String(categories))) : [],
 		network: network,
 		page: page || 1,
-		statuses: statuses && Array.isArray(JSON.parse(decodeURIComponent(String(statuses)))) ? JSON.parse(decodeURIComponent(String(statuses))) : []
+		status: status
 	});
 
 	if (data?.bounties) {
-		return res.status(status).json(data);
+		return res.status(200).json(data);
 	}
 	if (error) {
-		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 };
 

@@ -134,7 +134,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 									</div>
 								}
 							>
-								To verify your Matrix ID, please set your Element username to {handleUpdatedUserName(matrix?.value || '')}. Make sure to follow this format for successful
+								To verify your Matrix ID, please set your Element display name to {handleUpdatedUserName(matrix?.value || '')}. Make sure to follow this format for successful
 								verification.
 							</Tooltip>
 						</div>

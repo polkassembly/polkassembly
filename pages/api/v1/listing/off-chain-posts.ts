@@ -18,8 +18,9 @@ import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
 import { getReactions } from '../posts/on-chain-post';
-import { IPostsListingResponse, getProposerAddressFromFirestorePostData, getSpamUsersCountForPosts } from './on-chain-posts';
+import { IPostsListingResponse, getSpamUsersCountForPosts } from './on-chain-posts';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 interface IGetOffChainPostsParams {
 	network: string;

@@ -2,9 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { getTimeline } from './../../posts/on-chain-post';
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -24,6 +22,7 @@ import { deleteKeys, redisDel } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import changeProfileScore from '../../utils/changeProfileScore';
 import REPUTATION_SCORES from '~src/util/reputationScores';
+import { getTimeline } from '~src/util/getTimeline';
 
 interface IUpdatePostLinkInGroupParams {
 	currPostData: any;

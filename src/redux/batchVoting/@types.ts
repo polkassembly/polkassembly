@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+import { EVoteDecisionType } from '~src/types';
 export interface IBatchVoteStore {
 	batch_vote_details: IBatchVotesDetails;
 	edit_vote_details: IBatchVotesDetails;
@@ -14,6 +16,10 @@ export interface IBatchVoteStore {
 	voted_proposal_id: number;
 	post_ids_array: number[];
 	vote_cart_data: any[];
+	is_cancel_button_clicked: boolean;
+	is_default_selected: boolean;
+	is_field_edited: boolean;
+	vote: string | EVoteDecisionType;
 }
 
 export type IVoteCardInfo = {

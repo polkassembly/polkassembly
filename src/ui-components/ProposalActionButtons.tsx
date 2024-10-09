@@ -243,7 +243,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			)}
 			{isUsedInFAB && (
 				<div
-					className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					className='flex cursor-pointer gap-2'
 					onClick={() => handleClick(1)}
 				>
 					{theme == 'dark' ? (
@@ -257,7 +257,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 							alt='Create proposal icon'
 						/>
 					)}
-					<span className=' text-sm font-medium leading-5 tracking-[1.25%] '>Create Proposal</span>
+					<p className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium '>Proposal</p>
 				</div>
 			)}
 

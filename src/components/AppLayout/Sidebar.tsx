@@ -67,6 +67,7 @@ import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
+import CreateProposalDropdown from './CreateProposalDropdown';
 
 const { Sider } = Layout;
 
@@ -209,72 +210,79 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
-			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
+			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px')} !important;
 			margin: ${(props: any) => {
 				if (isMobile) {
-					return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
+					return !props.sidebarCollapsed && props.sidedrawer ? '5px 10px 5px 25px' : '';
 				} else {
 					return props.sidebarCollapsed && !props.sidedrawer ? '3px 13px 3px 15px' : '3px 20px 3px 15px';
 				}
 			}};
 		}
 
-	.ant-menu-submenu-title {
-  ${(props: any) =>
-		!props.sidebarCollapsed && props.sidedrawer
-			? isMobile
-				? `
-        padding-left: 18px !important;  /* Adjust mobile-specific values here */
-        border-right-width: 15px;
-        margin-right: 15px;
-        top: 1px;
-		width:205px;
-        padding-right: 15px;
-        margin-left: 15px;
-
-      `
-				: `
-        padding-left: 16px !important; /* Adjust non-mobile values here */
-        border-right-width: 20px;
-        margin-right: 10px;
-        top: 1px;
-        right: 5px;
-        padding-right: 20px;
-        margin-left: 20px;
-        width: 199px;
-      `
-			: ''}
-}
+		.ant-menu-submenu-title {
+			${(props: any) =>
+				!props.sidebarCollapsed && props.sidedrawer
+					? isMobile
+						? `
+			  padding-left: 18px !important;  /* Adjust mobile-specific values here */
+			  border-right-width: 15px;
+			  margin-right: 15px;
+			  top: 1px;
+			  width: 205px;
+			  padding-right: 15px;
+			  margin-left: 15px;
+			`
+						: `
+			  padding-left: 16px !important; /* Adjust non-mobile values here */
+			  border-right-width: 20px;
+			  margin-right: 10px;
+			  top: 1px;
+			  right: 5px;
+			  padding-right: 20px;
+			  margin-left: 20px;
+			  width: 199px;
+			`
+					: ''}
+		}
 
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-		  ${() => {
+			${() => {
 				if (isMobile) {
-					return `padding-left: 16px !important;
-			margin-left: 25px !important;`;
+					return `
+			padding-left: 16px !important;
+			margin-left: 25px !important;
+		  `;
 				} else {
-					return `padding-left: 16px !important;
-			margin-left: 20px !important;`;
+					return `
+			padding-left: 16px !important;
+			margin-left: 20px !important;
+		  `;
 				}
 			}}
+		}
+
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
+
 		.sidebar-selected-icon {
 			filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 		}
+
 		.ant-menu-inline .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
 			${(props: any) =>
 				!props.sidebarCollapsed && props.sidedrawer
 					? `
-        padding-left: 6px !important;
-        border-right-width: 20px;
-        margin-right: 10px;
-        top: 1px;
-        right: 5px;
-        padding-right: 20px;
-        margin-left: 20px;
-        width: 199px;
-      `
+			padding-left: 6px !important;
+			border-right-width: 20px;
+			margin-right: 10px;
+			top: 1px;
+			right: 5px;
+			padding-right: 20px;
+			margin-left: 20px;
+			width: 199px;
+		  `
 					: ''}
 		}
 	`;
@@ -2131,6 +2139,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
+				<CreateProposalDropdown />
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'

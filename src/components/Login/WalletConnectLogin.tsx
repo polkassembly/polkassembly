@@ -16,7 +16,7 @@ import Loader from 'src/ui-components/Loader';
 import getNetwork from 'src/util/getNetwork';
 import styled from 'styled-components';
 
-import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
+import { IAuthResponse, TokenType } from '~src/auth/types';
 import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
@@ -24,6 +24,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 interface Props {
 	className?: string;
@@ -187,22 +188,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 		try {
 			setLoading(true);
 
-			const { data: loginStartData, error: loginStartError } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressLoginStart', { address });
-			if (loginStartError) {
-				console.log('Error in address login start', loginStartError);
-				setError(loginStartError);
-				setLoading(false);
-				return;
-			}
-
-			const signMessage = loginStartData?.signMessage;
-
-			if (!signMessage) {
-				setLoading(false);
-				throw new Error('Challenge message not found');
-			}
-
-			const msg = stringToHex(signMessage);
+			const msg = stringToHex(SIGN_MESSAGE);
 			const from = address;
 
 			const params = [msg, from];
@@ -231,21 +217,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							if (addressLoginError === 'Login with web3 account failed. Address not linked to any account.') {
 								try {
 									setLoading(true);
-									const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
-									if (error || !data) {
-										setError(error || 'Something went wrong');
-										setLoading(false);
-										return;
-									}
-
-									const signMessage = data?.signMessage;
-									if (!signMessage) {
-										setError('Challenge message not found');
-										setLoading(false);
-										return;
-									}
-
-									const msg = stringToHex(signMessage);
+									const msg = stringToHex(SIGN_MESSAGE);
 									const from = address;
 
 									const params = [msg, from];
@@ -265,7 +237,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 													return;
 												}
 
-												const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
+												const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignup', {
 													address,
 													signature: result.result,
 													wallet: Wallet.WALLETCONNECT

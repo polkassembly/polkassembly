@@ -22,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 
 	if (!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const { token } = await authServiceInstance.AddressSignupConfirm(network, address, signature, wallet, multisig);
+	const { token } = await authServiceInstance.AddressSignup(network, address, signature, wallet, multisig);
 
 	return res.status(200).json({ token });
 }

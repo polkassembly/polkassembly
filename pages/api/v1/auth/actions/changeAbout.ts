@@ -12,6 +12,7 @@ import { MessageType, ProfileDetails } from '~src/auth/types';
 import getUserFromUserId from '~src/auth/utils/getUserFromUserId';
 import messages from '~src/auth/utils/messages';
 import verifySignature from '~src/auth/utils/verifySignature';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { Wallet } from '~src/types';
 
@@ -43,8 +44,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	const addressDoc = await firestore.collection('addresses').doc(address).get();
 	if (!addressDoc.exists) {
-		const signMessage = await authServiceInstance.AddressSignupStart(address);
-		const { user_id } = await authServiceInstance.AddressSignupConfirm(network, address, signMessage, wallet as Wallet);
+		const { user_id } = await authServiceInstance.AddressSignup(network, address, SIGN_MESSAGE, wallet as Wallet);
 		userId = user_id!;
 	} else {
 		userId = addressDoc.data()?.user_id;

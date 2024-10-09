@@ -13,7 +13,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import Loader from 'src/ui-components/Loader';
 import styled from 'styled-components';
 
-import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { TokenType } from '~src/auth/types';
 import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -26,6 +26,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 const NETWORK = getNetwork();
 
@@ -174,29 +175,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 
 		setError('');
 
-		let signMessage: any = '';
-
-		try {
-			setLoading(true);
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
-			if (error || !data) {
-				setError(error || 'Something went wrong');
-				setLoading(false);
-				return;
-			}
-
-			signMessage = data?.signMessage;
-			if (!signMessage) {
-				setError('Challenge message not found');
-				setLoading(false);
-				return;
-			}
-		} catch (error) {
-			setError(error);
-			return;
-		}
-
-		const msg = stringToHex(signMessage);
+		const msg = stringToHex(SIGN_MESSAGE);
 		const from = address;
 
 		const params = [msg, from];
@@ -210,8 +189,9 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 		provider.wc
 			.sendCustomRequest(tx)
 			.then(async (result) => {
+				setLoading(true);
 				try {
-					const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
+					const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignup', {
 						address,
 						signature: result,
 						wallet: Wallet.WALLETCONNECT
@@ -242,6 +222,8 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 					}
 				} catch (error) {
 					setError(error);
+				} finally {
+					setLoading(false);
 				}
 			})
 			.catch((error) => {

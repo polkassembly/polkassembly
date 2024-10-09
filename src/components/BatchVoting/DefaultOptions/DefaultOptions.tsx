@@ -27,6 +27,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	};
 
 	const { api, apiReady } = useApiContext();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -83,25 +84,11 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					/>
 				)}
 				<div className='mt-8'>
-					{!extensionNotFound && !accounts.length ? (
-						<Alert
-							description={
-								<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
-									<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your wallet</h3>
-									<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
-								</div>
-							}
-							showIcon
-							className='mb-2 mt-1 p-3'
-							type='info'
-						/>
-					) : (
-						<AddressDropdown
-							accounts={accounts}
-							defaultAddress={address}
-							onAccountChange={onAccountChange}
-						/>
-					)}
+					<AddressDropdown
+						accounts={accounts}
+						defaultAddress={address}
+						onAccountChange={onAccountChange}
+					/>
 				</div>
 
 				<OptionWrapper

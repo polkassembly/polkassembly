@@ -5,7 +5,7 @@
 import '@polkadot/api-augment';
 
 import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { chainProperties, network, treasuryAssets } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
@@ -187,6 +187,44 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
+
+	const checkAndReconnectApi = useCallback(async () => {
+		if (api?.isConnected) {
+			return;
+		}
+
+		console.log('API disconnected, attempting to reconnect...');
+		setIsApiLoading(true);
+		setApiReady(false);
+		try {
+			await api?.connect();
+			setApiReady(true);
+			console.log('API reconnected successfully');
+		} catch (error) {
+			console.error('Failed to reconnect API:', error);
+			queueNotification({
+				header: 'Error!',
+				message: 'Failed to reconnect to the RPC. Please refresh the page.',
+				status: NotificationStatus.ERROR
+			});
+		} finally {
+			setIsApiLoading(false);
+		}
+	}, [api]);
+
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				checkAndReconnectApi();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [checkAndReconnectApi]);
 
 	return <ApiContext.Provider value={{ api, apiReady, isApiLoading, relayApi, relayApiReady, setWsProvider, wsProvider }}>{children}</ApiContext.Provider>;
 }

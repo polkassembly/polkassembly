@@ -13,8 +13,11 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 	const canSwipe = currentIndex >= 0;
 
 	const handleAction = (direction: string) => {
-		if (canSwipe && currentIndex < trackPosts?.length) {
+		if (canSwipe && trackPosts && currentIndex >= 0 && currentIndex < trackPosts.length) {
+			console.log('condition: ', canSwipe && currentIndex < trackPosts?.length);
 			onSwipeAction(direction, currentIndex);
+		} else {
+			console.warn('Cannot swipe: either no posts left or invalid index');
 		}
 	};
 
@@ -25,7 +28,10 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 					className={`${
 						isLoading ? 'opacity-60' : ''
 					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent`}
-					onClick={() => handleAction('left')}
+					onClick={() => {
+						console.log('hello click');
+						handleAction('left');
+					}}
 					loading={decision === 'nay' ? isLoading : false}
 					disabled={isLoading}
 				>

@@ -22,7 +22,6 @@ const SwipableVotingCards = () => {
 	const [isVoteLoading, setIsVoteLoading] = useState(false);
 	const [decision, setDecision] = useState<string>('');
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
-	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
 
 	const getVoteCartData = async () => {
@@ -86,28 +85,21 @@ const SwipableVotingCards = () => {
 				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
 				setActiveProposals(data);
 				setCurrentIndex(data.length - 1);
-			} else {
-				setTempActiveProposals(data);
 			}
 		}
 	};
 
 	const handleSkipProposalCard = (id: number) => {
-		const updateActiveProposals: any[] = [];
-		activeProposal.map((proposal) => {
-			if (id !== proposal.id) {
-				updateActiveProposals.push(proposal);
-			}
-		});
-		if (activeProposal.length === 5) {
-			getActiveProposals();
-		}
-		if (activeProposal.length < 4) {
-			setActiveProposals([...updateActiveProposals, ...tempActiveProposals]);
-		} else {
-			setActiveProposals(updateActiveProposals);
-		}
+		// Remove skipped proposal from the active list and update currentIndex
+		const updatedProposals = activeProposal.filter((proposal) => proposal.id !== id);
+
+		// Set the new list of proposals and update the current index
+		setActiveProposals(updatedProposals);
+		setCurrentIndex(updatedProposals.length - 1);
+
+		// Update skipped proposals and fetch new proposals if necessary
 		setSkippedProposals([...skippedProposals, id]);
+		getActiveProposals();
 	};
 
 	const handleSwipeAction = async (direction: string, index: number) => {

@@ -57,6 +57,21 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		}
 	};
 
+	const createApiPromise = (provider: WsProvider | ScProvider, network?: string): ApiPromise => {
+		switch (network) {
+			case 'genshiro':
+				return new ApiPromise({ provider, typesBundle: typesBundleGenshiro });
+			case 'crust':
+				return new ApiPromise({ provider, typesBundle: typesBundleCrust });
+			case 'equilibrium':
+				return new ApiPromise({ provider, typesBundle: typesBundleEquilibrium });
+			case 'kilt':
+				return new ApiPromise({ provider, typesBundle });
+			default:
+				return new ApiPromise({ provider });
+		}
+	};
+
 	useEffect(() => {
 		if (!props?.network) return;
 		if (!isMultiassetSupportedNetwork(props?.network)) return;
@@ -99,23 +114,9 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 
 		setApiReady(false);
 		setApi(undefined);
-		let api = undefined;
 		if (!provider.current) return;
-		if (props.network == 'genshiro') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleGenshiro });
-		}
-		if (props.network == 'crust') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleCrust });
-		}
-		if (props.network == 'equilibrium') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleEquilibrium });
-		}
-		if (props.network == 'kilt') {
-			api = new ApiPromise({ provider: provider.current, typesBundle });
-		} else {
-			api = new ApiPromise({ provider: provider.current, typesBundle });
-		}
-		setApi(api);
+		const newApi = createApiPromise(provider.current, props.network);
+		setApi(newApi);
 	}, [props.network, wsProvider]);
 
 	useEffect(() => {
@@ -197,7 +198,15 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		setIsApiLoading(true);
 		setApiReady(false);
 		try {
-			await api?.connect();
+			if (!api) {
+				if (!provider.current) {
+					provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
+				}
+				const newApi = createApiPromise(provider.current, props.network);
+				setApi(newApi);
+			} else {
+				await api.connect();
+			}
 			setApiReady(true);
 			console.log('API reconnected successfully');
 		} catch (error) {
@@ -210,7 +219,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		} finally {
 			setIsApiLoading(false);
 		}
-	}, [api]);
+	}, [api, wsProvider, props.network]);
 
 	useEffect(() => {
 		const handleVisibilityChange = () => {

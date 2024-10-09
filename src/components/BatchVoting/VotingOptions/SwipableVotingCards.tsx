@@ -90,14 +90,11 @@ const SwipableVotingCards = () => {
 	};
 
 	const handleSkipProposalCard = (id: number) => {
-		// Remove skipped proposal from the active list and update currentIndex
 		const updatedProposals = activeProposal.filter((proposal) => proposal.id !== id);
 
-		// Set the new list of proposals and update the current index
 		setActiveProposals(updatedProposals);
 		setCurrentIndex(updatedProposals.length - 1);
 
-		// Update skipped proposals and fetch new proposals if necessary
 		setSkippedProposals([...skippedProposals, id]);
 		getActiveProposals();
 	};

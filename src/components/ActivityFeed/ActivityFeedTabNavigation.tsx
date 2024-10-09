@@ -167,13 +167,13 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 		};
 	}, []);
 	const popoverContent = (
-		<div className='left-2 w-40 pt-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
+		<div className='left-2 w-40 py-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
 			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>
 			{['Treasury', 'Whitelist'].map((category) => (
-				<>
+				<React.Fragment key={category}>
 					<Popover
 						content={
-							<div className='w-44 pt-2 text-sm text-gray-700 dark:text-gray-200'>
+							<div className='w-44 text-sm  text-gray-700 dark:text-gray-200'>
 								{tabCategories[category].map((tabKey) => {
 									const tabItem = tabItems.find((item) => item.key === tabKey);
 									const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
@@ -181,7 +181,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 										tabItem && (
 											<p
 												key={tabItem.key}
-												className={` cursor-pointer rounded-lg  p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
+												className={`m-0 cursor-pointer rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
 													currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
 												}`}
 												onClick={() => handleTabClick(tabItem.key)}
@@ -209,8 +209,8 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 					>
 						<p
 							key={category}
-							className={` flex cursor-pointer justify-between rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-								isTabSelected(category) ? 'bg-[#ffe6ef] font-medium text-pink_primary dark:bg-[#530d32] ' : ''
+							className={`m-0 flex cursor-pointer justify-between rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
+								isTabSelected(category) ? 'bg-[#ffe6ef] font-medium text-pink_primary dark:bg-[#530d32]' : ''
 							}`}
 							onClick={() => handleCategoryClick(category)}
 						>
@@ -221,7 +221,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 							{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 -rotate-90 transform transition-transform'} />}
 						</p>
 					</Popover>
-				</>
+				</React.Fragment>
 			))}
 		</div>
 	);

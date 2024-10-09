@@ -244,12 +244,14 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 										</p>
 									</div>
 								</>
-							) : null}
+							) : (
+								<div className='mt-6 min-h-[30px]'></div>
+							)}
 
 							{post?.status && (
 								<StatusTag
 									theme={theme}
-									className='mb-3'
+									className={`mb-3 ${!post?.requestedAmount || post?.requestedAmount === '0' ? '-ml-3' : ''}`}
 									status={post?.status}
 								/>
 							)}

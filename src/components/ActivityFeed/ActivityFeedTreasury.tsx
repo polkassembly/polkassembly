@@ -332,42 +332,40 @@ const ActivityFeedSidebar = () => {
 														</div>
 														<div>
 															{chainProperties[network]?.assetHubTreasuryAddress && (
-																<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center`}>
-																	<span className='flex items-center gap-2 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-																		<div>
-																			<AssethubIcon />
-																		</div>
-																		<span>Asset Hub</span>
-																	</span>
-																	<div className='ml-2 flex flex-wrap gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-																		<div className='text-xs'>
+																<div className={`${poppins.className} ${poppins.variable} ml-0 flex flex-wrap `}>
+																	<div className='flex items-center gap-2 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
+																		<AssethubIcon />
+																		<span className='whitespace-nowrap'>Asset Hub</span>
+																	</div>
+																	<div className='ml-2 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+																		<div className='whitespace-nowrap text-xs'>
 																			{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 																		</div>
-																		{chainProperties?.[network]?.supportedAssets?.[1] && (
-																			<>
-																				<Divider
-																					className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-																					type='vertical'
-																				/>
-																				<div className='text-xs'>
-																					{assetValueUSDC}
-																					<span className='ml-[3px] font-normal'>USDC</span>
-																				</div>
-																			</>
-																		)}
-																		{chainProperties?.[network]?.supportedAssets?.[2] && (
-																			<>
-																				<Divider
-																					className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-																					type='vertical'
-																				/>
-																				<div className='text-xs'>
-																					{assetValueUSDT}
-																					<span className='ml-[3px] font-normal'>USDT</span>
-																				</div>
-																			</>
-																		)}
 																	</div>
+																	{chainProperties?.[network]?.supportedAssets?.[1] && (
+																		<>
+																			<Divider
+																				className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0  dark:bg-separatorDark'
+																				type='vertical'
+																			/>
+																			<div className='text-xs text-blue-light-high dark:text-blue-dark-high'>
+																				{assetValueUSDC}
+																				<span className='ml-[3px] font-normal'>USDC</span>
+																			</div>
+																		</>
+																	)}
+																	{chainProperties?.[network]?.supportedAssets?.[2] && (
+																		<div className='ml-2 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+																			<Divider
+																				className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
+																				type='vertical'
+																			/>
+																			<div className='text-xs'>
+																				{assetValueUSDT}
+																				<span className='ml-[3px] font-normal'>USDT</span>
+																			</div>
+																		</div>
+																	)}
 																</div>
 															)}
 														</div>

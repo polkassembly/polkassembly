@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import TinderCard from 'react-tinder-card';
 import { LeftOutlined, RightOutlined, StopOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
@@ -17,6 +17,7 @@ import { IAddBatchVotes } from './types';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 
+// Lazy load components
 const CartOptionMenu = dynamic(() => import('./CardComponents/CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -30,7 +31,6 @@ const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
-	console.log('hello user: ', user);
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -48,32 +48,47 @@ const VotingCards = () => {
 		[activeProposal?.length]
 	);
 
-	const updateCurrentIndex = (val: any) => {
+	const updateCurrentIndex = useCallback((val: number) => {
 		setCurrentIndex(val);
 		currentIndexRef.current = val;
-	};
+	}, []);
 
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
-	const addVotedPostToDB = async (postId: number, direction: string) => {
-		const { error } = await nextApiClientFetch<IAddBatchVotes>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
-			vote: {
-				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
-				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
-				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'abstain',
-				locked_period: batch_vote_details.conviction,
-				nay_balance: direction === 'left' ? batch_vote_details.nyeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainNyeVoteBalance || '0' : '0',
-				network: network,
-				referendum_index: postId,
-				user_address: user?.loginAddress
-			}
-		});
-		if (error) {
-			console.error(error);
-			return;
-		}
-		getVoteCartData();
+	// Debounce function to prevent double swipes
+	const debounce = (func: Function, delay: number) => {
+		let timeout: NodeJS.Timeout;
+		return (...args: any[]) => {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				func(...args);
+			}, delay);
+		};
 	};
+
+	// Memoized API call to add a voted post to the DB
+	const addVotedPostToDB = useCallback(
+		debounce(async (postId: number, direction: string) => {
+			const { error } = await nextApiClientFetch<IAddBatchVotes>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
+				vote: {
+					abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
+					aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
+					decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'abstain',
+					locked_period: batch_vote_details.conviction,
+					nay_balance: direction === 'left' ? batch_vote_details.nyeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainNyeVoteBalance || '0' : '0',
+					network: network,
+					referendum_index: postId,
+					user_address: user?.loginAddress
+				}
+			});
+			if (error) {
+				console.error(error);
+				return;
+			}
+			getVoteCartData();
+		}, 300),
+		[batch_vote_details, network, user?.loginAddress]
+	);
 
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {

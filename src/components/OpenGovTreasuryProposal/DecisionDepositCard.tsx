@@ -161,9 +161,9 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 					api.setSigner(injected.signer);
 				}
 
-				setAddress(accounts[0].address);
+				setAddress(accounts[0]?.address);
 				if (defaultWalletAddress) {
-					setAddress(accounts.filter((account) => account.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
+					setAddress(accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0]?.address);
 				}
 			}
 		}

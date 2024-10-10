@@ -9,7 +9,6 @@ import { HYDRATE } from 'next-redux-wrapper';
 const initialState: IProgressReportStore = {
 	add_progress_report_modal_open: false,
 	add_summary_cta_clicked: false,
-	file_name: '',
 	is_summary_edited: false,
 	open_rating_modal: false,
 	open_rating_success_modal: false,
@@ -39,7 +38,6 @@ export const progressReportStore = createSlice({
 			state = {
 				add_progress_report_modal_open: false,
 				add_summary_cta_clicked: false,
-				file_name: '',
 				is_summary_edited: false,
 				open_rating_modal: false,
 				open_rating_success_modal: false,
@@ -56,9 +54,6 @@ export const progressReportStore = createSlice({
 		},
 		setAddSummaryCTAClicked: (state, action: PayloadAction<boolean>) => {
 			state.add_summary_cta_clicked = action.payload;
-		},
-		setFileName: (state, action: PayloadAction<string>) => {
-			state.file_name = action.payload;
 		},
 		setIsSummaryEdited: (state, action: PayloadAction<boolean>) => {
 			state.is_summary_edited = action.payload;

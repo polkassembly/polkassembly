@@ -124,6 +124,8 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
+		const commentsData = [{ network, postId }, ...allCommentsAndReplies];
+
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
 
 		if (!apiUrl) {
@@ -136,7 +138,7 @@ export const getCommentsAISummaryByPost = async ({
 
 		const response = await fetch(apiUrl, {
 			body: JSON.stringify({
-				text: allCommentsAndReplies
+				text: commentsData
 			}),
 			headers: {
 				'Content-Type': 'application/json'

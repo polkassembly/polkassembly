@@ -162,19 +162,21 @@ const VotingFormCard = ({
 				</div>
 			)}
 
-			{showConvictionBar && <div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
-				<div className='flex items-center gap-x-1'>
-					<Image
-						src='/assets/icons/lock-icon.svg'
-						alt='lock-icon'
-						width={24}
-						height={24}
-						className={theme === 'dark' ? 'dark-icons' : ''}
-					/>
-					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
+			{showConvictionBar && (
+				<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
+					<div className='flex items-center gap-x-1'>
+						<Image
+							src='/assets/icons/lock-icon.svg'
+							alt='lock-icon'
+							width={24}
+							height={24}
+							className={theme === 'dark' ? 'dark-icons' : ''}
+						/>
+						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
+					</div>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriod}</p>
 				</div>
-				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriod}</p>
-			</div>}
+			)}
 		</Form>
 	);
 };

@@ -16,6 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 
 export interface IBounty {
 	proposer: string;
@@ -29,7 +30,6 @@ export interface IBounty {
 	createdAt: string;
 	claimedAmount: string;
 	categories: string[];
-	childbounties?: any[];
 }
 
 interface ISubsquidBounty {
@@ -63,14 +63,6 @@ interface Args {
 	network: string;
 }
 
-enum EBountiesStatuses {
-	ACTIVE = 'active',
-	PROPOSED = 'proposed',
-	CLAIMED = 'claimed',
-	CANCELLED = 'cancelled',
-	REJECTED = 'rejected'
-}
-
 const getBountyStauses = (status: EBountiesStatuses) => {
 	switch (status) {
 		case EBountiesStatuses.ACTIVE:
@@ -90,7 +82,6 @@ const getBountyStauses = (status: EBountiesStatuses) => {
 export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-
 		const statuses = getBountyStauses(status);
 		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
 			throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
@@ -125,6 +116,9 @@ export async function getAllBounties({ categories, page, status, network }: Args
 		}
 		if (bountiesIndexes?.length) {
 			variables.index_in = bountiesIndexes;
+		}
+		if (categories?.length) {
+			variables.categories = categories;
 		}
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
@@ -222,7 +216,6 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
-
 	const { page = 1, status, categories } = req.body;
 
 	const { data, error } = await getAllBounties({

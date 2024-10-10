@@ -124,7 +124,7 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		const commentsData = [{ postId, network }, ...allCommentsAndReplies];
+		const commentsData = [{ network, postId }, ...allCommentsAndReplies];
 
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
 

@@ -24,7 +24,7 @@ import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 
-const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
+const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics, tokenPrice }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
@@ -43,17 +43,21 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
 	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
+	const effectiveTokenPrice = currentTokenPrice.value !== 'N/A' ? currentTokenPrice.value : tokenPrice ?? 'N/A';
 
-	const totalTreasuryValueUSD = formatUSDWithUnits(
-		String(
-			(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
-				parseFloat(currentTokenPrice.value) +
-				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000 +
-				Number(hydrationValues.usdcValue) / 1000000 +
-				Number(hydrationValues.usdtValue) / 1000000
-		)
-	);
+	const totalTreasuryValueUSD =
+		effectiveTokenPrice !== 'N/A'
+			? formatUSDWithUnits(
+					String(
+						(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
+							parseFloat(String(effectiveTokenPrice)) +
+							Number(assethubValues.usdcValue) / 1000000 +
+							Number(assethubValues.usdtValue) / 1000000 +
+							Number(hydrationValues.usdcValue) / 1000000 +
+							Number(hydrationValues.usdtValue) / 1000000
+					)
+			  )
+			: 'NA';
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -143,13 +147,13 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 										<div className='flex items-center gap-x-1 text-lg font-semibold'>
 											<div>
-												{currentTokenPrice.value === 'N/A' ? (
-													<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-												) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-													<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-												) : null}
+												{effectiveTokenPrice === 'N/A' ? (
+													<span className='text-bodyBlue dark:text-blue-dark-high'>N/A</span>
+												) : (
+													<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${effectiveTokenPrice}</span>
+												)}
 											</div>
-											{priceWeeklyChange.value !== 'N/A' && (
+											{currentTokenPrice.value !== 'N/A' && priceWeeklyChange.value !== 'N/A' && (
 												<div className='-mb-[2px] ml-2 flex items-center'>
 													<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
 														{Math.abs(Number(priceWeeklyChange.value))}%

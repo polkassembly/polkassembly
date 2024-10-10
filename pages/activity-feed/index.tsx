@@ -19,6 +19,8 @@ import Skeleton from '~src/basic-components/Skeleton';
 import ActivityFeeToggleButton from '~src/components/ActivityFeed/ActivityFeeToggleButton';
 import ActivityFeedSidebar from '~src/components/ActivityFeed/ActivityFeedSidebar';
 import { EActivityFeedTab } from '~src/components/ActivityFeed/types/types';
+import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const LatestActivity = dynamic(() => import('~src/components/ActivityFeed'), {
 	loading: () => <Skeleton active />,
@@ -43,6 +45,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 					error: `Network '${network}' does not support OpenGov yet.`,
 					network,
 					networkSocialsData: null
+				}
+			};
+		}
+		if (!isActivityFeedSupportedNetwork(network)) {
+			return {
+				props: {},
+				redirect: {
+					destination: isOpenGovSupported(network) ? '/opengov' : '/'
 				}
 			};
 		}

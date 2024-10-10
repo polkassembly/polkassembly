@@ -106,7 +106,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	};
 
 	return (
-		<div className='flex h-[380px] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+		<div className='flex h-[65vh] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -115,7 +115,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				post={post}
 				isUsedInMainDisplay={true}
 			/>
-			<div className='h-[200px] overflow-y-hidden py-2'>
+			<div className='h-[50%] overflow-y-hidden py-2'>
 				<Tabs
 					theme={theme}
 					type='card'
@@ -125,7 +125,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				/>
 			</div>
 			<Button
-				className='mt-2 flex h-[36px] w-full items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
+				className='mt-auto flex h-[36px] w-full items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
 				onClick={handleModalOpen}
 			>
 				<div className='flex items-center gap-x-2'>

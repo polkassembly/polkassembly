@@ -30,6 +30,7 @@ const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
+	console.log('hello user: ', user);
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -95,8 +96,8 @@ const VotingCards = () => {
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
 			skippedIndexes: skippedIndexes,
-			userAddress: user?.loginAddress || '5E2QZ75WX5sU79ZfjZJ5ZC85H7gP1pYEmp68u74yUnzmwp1q',
-			userId: user?.id || 6700
+			userAddress: user?.loginAddress || '5G1UmMY6Jip2xXjtHvXoe6DxaMByD7LtRuMjiQHSyfaSVQqD',
+			userId: user?.id || 22318
 		});
 		if (error) {
 			console.error(error);
@@ -276,7 +277,6 @@ const VotingCards = () => {
 										</button>
 									</div>
 								)}
-
 								<TinderCards
 									post={proposal}
 									proposalType={proposal?.postType}
@@ -293,7 +293,7 @@ const VotingCards = () => {
 				currentIndex={currentIndex}
 				childRefs={childRefs}
 				onSwipe={handleSwipe}
-				className={show_cart_menu ? 'bottom-10 mb-1' : 'bottom-1'}
+				className={show_cart_menu ? 'mb-10' : ''}
 			/>
 			{show_cart_menu && <CartOptionMenu />}
 		</div>

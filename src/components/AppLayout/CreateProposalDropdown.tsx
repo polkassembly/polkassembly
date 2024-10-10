@@ -50,6 +50,7 @@ const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
 	padding: 1px;
 	border-radius: 0.465rem;
 	background: ${({ gradient }) => gradient};
+	background-size: 200% 200%;
 	display: inline-block;
 	box-shadow: ${({ shadow }) => shadow};
 	cursor: pointer;
@@ -57,6 +58,26 @@ const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
 	margin-right: 16px;
 	margin-top: 14px;
 	margin-bottom: 6px;
+	animation: gradientMove 3s linear infinite;
+
+	@keyframes gradientMove {
+		0% {
+			background-position: top;
+		}
+		25% {
+			background-position: center;
+		}
+		50% {
+			background-position: bottom;
+		}
+		75% {
+			background-position: center;
+		}
+		100% {
+			background-position: top;
+		}
+	}
+
 	.create-button {
 		display: block;
 		width: 100%;
@@ -64,7 +85,19 @@ const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
 		border-radius: 0.45rem;
 		font-weight: 500;
 		border: none;
-		box-shadow: inset 1px 1px 2px 0 ${(props: any) => (props.theme == 'dark' ? '#2A2D2F' : '#DBE8F9')};
+		box-shadow: inset 1px 1px 2px 0 ${(props: any) => (props.theme === 'dark' ? '#2A2D2F' : '#DBE8F9')};
+		background: ${(props: any) => (props.theme === 'dark' ? '#1A1A1A' : '#FFFFFF')};
+	}
+
+	.gradient-text {
+		background: linear-gradient(180deg, #acceff, #00429b, #001b54);
+		background-size: 200% 200%;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		color: transparent;
+		display: inline-block;
+		animation: gradientMove 3s ease-in-out infinite;
 	}
 `;
 
@@ -127,16 +160,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 					<button className='create-button bg-white dark:bg-section-dark-overlay'>
 						<div className='flex items-center justify-center gap-[6px]'>
 							<CreatePencilIcon />
-							<span
-								style={{
-									background: 'linear-gradient(180deg, #ACCEFF, #00429B)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent'
-								}}
-								className={`${poppins.className} ${poppins.variable} font-medium`}
-							>
-								Create
-							</span>
+							<span className='gradient-text'>Create</span>
 						</div>
 					</button>
 				</StyledButtonContainer>

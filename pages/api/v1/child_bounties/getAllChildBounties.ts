@@ -62,17 +62,17 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 				status: subsquidChildBounty?.status,
 				title: ''
 			};
-			childBountiesDocs?.docs?.map(async (childBounty) => {
+			childBountiesDocs?.docs?.map((childBounty) => {
 				if (childBounty.exists) {
 					const data = childBounty.data();
 					payload.title = data?.title || '';
-					if (!data?.title.length) {
-						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidChildBounty?.index);
-						payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
-					}
 				}
 			});
 
+			if (!payload?.title.length) {
+				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidChildBounty?.index);
+				payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
+			}
 			return payload;
 		});
 

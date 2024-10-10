@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import React, { useEffect, useState } from 'react';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import NameLabel from '~src/ui-components/NameLabel';
+import Address from '~src/ui-components/Address';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -83,11 +83,12 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 						{currentUser?.username && currentUser?.id ? (
 							<div className='absolute bottom-5 left-0 right-0 flex items-center justify-between p-3'>
 								<div className='flex items-center gap-2'>
-									<NameLabel
-										defaultAddress={currentUser?.defaultAddress}
-										username={currentUser?.username}
-										usernameClassName='text-lg text-ellipsis overflow-hidden'
-										truncateUsername={true}
+									<Address
+										iconSize={22}
+										address={currentUser?.defaultAddress || ''}
+										displayInline
+										isTruncateUsername={false}
+										disableTooltip
 									/>
 								</div>
 								<div className='flex items-center gap-4'>

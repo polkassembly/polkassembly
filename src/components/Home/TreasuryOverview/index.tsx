@@ -26,6 +26,7 @@ import CurrentPrice from './CurrentPrice';
 import NextBurn from './NextBurn';
 import SpendPeriod from './SpendPeriod';
 import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -72,6 +73,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	});
 
 	const [tokenValue, setTokenValue] = useState<number>(0);
+	const [tokenPrice, setTokenPrice] = useState<number>(0);
+	console.log('tokenPrice', tokenPrice);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -128,6 +131,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				});
 			});
 	}, [api, apiReady, blockTime, network]);
+
+	const fetchTokenPrice = async () => {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/token-value');
+		if (error) {
+			throw new Error('Error in fetching token price');
+		}
+		if (data) {
+			const price = data?.data[network]?.usd;
+			setTokenPrice(price);
+		}
+	};
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -258,6 +272,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				});
 		});
+		fetchTokenPrice();
 		if (currentTokenPrice.value !== 'N/A') {
 			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
 		}
@@ -342,6 +357,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						spendPeriod={spendPeriod}
 						nextBurn={nextBurn}
 						tokenValue={tokenValue}
+						tokenPrice={tokenPrice}
 					/>
 				</>
 			) : (

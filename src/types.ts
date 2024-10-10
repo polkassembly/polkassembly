@@ -977,6 +977,12 @@ export interface ICommentsSummary {
 	summary_neutral: string;
 }
 
+export enum EUserActivityType {
+	ON_CHAIN_ACTIVITY = 'on_chain_activity',
+	OFF_CHAIN_ACTIVITY = 'off_chain_activity',
+	PROFILE_ACTIVITY = 'profile_activity'
+}
+
 export interface INetworkWalletErr {
 	message: string;
 	description: string;

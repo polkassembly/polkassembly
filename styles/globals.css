@@ -911,6 +911,9 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 		color: #9E9E9E !important;
 }
 
+.ant-tooltip {
+  max-width: 1000px !important
+}
 .dark .ant-upload-list-item,
 .dark .ant-upload-list-item-uploading {
     color: #909090 !important;

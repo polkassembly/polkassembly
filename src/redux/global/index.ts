@@ -3,9 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import { IGlobalStore } from './@types';
+import { EAstralInfoTab, IGlobalStore } from './@types';
 
 const initialState: IGlobalStore = {
+	current_astral_info_tab: EAstralInfoTab.ALL_INFO,
 	is_sidebar_collapsed: false
 };
 
@@ -24,8 +25,12 @@ export const globalStore = createSlice({
 		reset: (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
+				current_astral_info_tab: EAstralInfoTab.ALL_INFO,
 				is_sidebar_collapsed: false
 			};
+		},
+		setCurrentAstralTab: (state, action: PayloadAction<EAstralInfoTab>) => {
+			state.current_astral_info_tab = action.payload;
 		},
 		setIsSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
 			state.is_sidebar_collapsed = action.payload;

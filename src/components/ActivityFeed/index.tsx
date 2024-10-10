@@ -225,7 +225,7 @@ const LatestActivityFollowing: React.FC = () => {
 								network={network}
 							/>
 						</div>
-						<div>{filteredPosts.length > 0 ? <ActivityFeedPostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
+						<div>{filteredPosts.length > 0 ? <ActivityFeedPostList postData={filteredPosts} /> : <p>You&apos;re all catched up here. Check out another track</p>}</div>
 					</div>
 				) : (
 					<div

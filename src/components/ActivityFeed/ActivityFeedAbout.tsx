@@ -8,6 +8,7 @@ import React from 'react';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { NetworkSocials } from '~src/types';
 
 export const socialLinks = (blockchain_socials: NetworkSocials) => {
@@ -145,13 +146,16 @@ interface IAboutActivityProps {
 }
 
 const ActivityFeedAbout: React.FC<IAboutActivityProps> = ({ className, networkSocialsData, knowMoreLink = '#', knowMoreText = 'Know More' }) => {
+	const { network } = useNetworkSelector();
+	const capitalizedNetwork = network.charAt(0).toUpperCase() + network.slice(1);
+
 	return (
 		<section className={`${className} rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-6`}>
 			{' '}
 			<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>{' '}
 			<p className='medium items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				{' '}
-				Polkadot is the all-in-one DeFi hub of Polkadot.{' '}
+				{capitalizedNetwork} is the all-in-one DeFi hub of {capitalizedNetwork}.{' '}
 				<a
 					href={knowMoreLink}
 					className='m-0 cursor-pointer pl-1 text-xs font-semibold text-pink_primary'

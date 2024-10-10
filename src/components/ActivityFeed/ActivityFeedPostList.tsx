@@ -12,7 +12,7 @@ const ActivityFeedPostList: React.FC<IPostListProps> = ({ postData }) => {
 	return (
 		<div className='space-y-5'>
 			{postData.length === 0 ? (
-				<p>No posts available</p>
+				<p>You&apos;re all catched up here. Check out another track</p>
 			) : (
 				postData.map((post: any, index: number) => (
 					<ActivityFeedPostItem

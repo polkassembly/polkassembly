@@ -39,6 +39,7 @@ interface Props {
 
 const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal, isUsedInFAB }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
 	const pathname = usePathname();
@@ -49,7 +50,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const router = useRouter();
-	const { network } = useNetworkSelector();
+	const isRelevantPath = ['/activity-feed', '/opengov'].includes(pathname);
+
 	const handleClick = (num: number) => {
 		if (id) {
 			if (proposerAddress.length > 0) {
@@ -144,7 +146,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (

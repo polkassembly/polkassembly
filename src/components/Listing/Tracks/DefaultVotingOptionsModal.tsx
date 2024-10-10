@@ -28,7 +28,6 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 	const onAccountChange = (address: string) => {
 		setAddress(address);
 	};
-	console.log('voteinfo: ', voteInfo);
 
 	useEffect(() => {
 		if (voteInfo && forSpecificPost) {

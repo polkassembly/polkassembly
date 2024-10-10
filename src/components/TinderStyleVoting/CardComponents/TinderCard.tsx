@@ -108,7 +108,11 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	};
 
 	return (
-		<div className={`flex ${show_cart_menu ? 'h-[calc(80vh-130px)]' : 'h-[calc(80vh-80px)]'}  flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black`}>
+		<div
+			className={`flex ${
+				show_cart_menu ? 'h-[calc(80vh-130px)]' : 'h-[calc(80vh-80px)]'
+			}  flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black`}
+		>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}

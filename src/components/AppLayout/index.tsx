@@ -86,10 +86,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	useEffect(() => {
-		if(router.pathname.includes('/batch-voting')) { 
+		if (router.pathname.includes('/batch-voting')) {
 			setShowFooter(false);
 		}
-	}, []); 
+	}, []);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -273,10 +273,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 														<Component {...pageProps} />
 													</Content>
 												</div>
-												{showFooter && <Footer
-													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-													theme={theme as any}
-												/>}
+												{showFooter && (
+													<Footer
+														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+														theme={theme as any}
+													/>
+												)}
 											</div>
 										) : (
 											<div className='relative mx-auto  w-full'>
@@ -318,10 +320,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
-												{showFooter && <Footer
-													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-													theme={theme as any}
-												/>}
+												{showFooter && (
+													<Footer
+														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+														theme={theme as any}
+													/>
+												)}
 											</div>
 										) : (
 											<div

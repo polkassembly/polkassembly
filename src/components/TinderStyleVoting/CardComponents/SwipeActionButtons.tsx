@@ -25,10 +25,7 @@ const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 
 	return (
 		<section
-			className={classNames(
-				className,
-				`fixed ${show_cart_menu ? 'bottom-3' : 'bottom-3'} h-[80px] left-0 right-0 z-10 flex flex-col gap-y-2 bg-white p-4 dark:bg-transparent`
-			)}
+			className={classNames(className, `fixed ${show_cart_menu ? 'bottom-3' : 'bottom-3'} left-0 right-0 z-10 flex h-[80px] flex-col gap-y-2 bg-white p-4 dark:bg-transparent`)}
 		>
 			<div className='flex items-center justify-center gap-x-6'>
 				<button

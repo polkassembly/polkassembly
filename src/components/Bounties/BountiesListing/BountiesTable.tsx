@@ -343,11 +343,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 												})}
 											</div>
 										) : (
-											<p className='pl-4 pt-4'>No child bounties available.</p>
+											<p className='pl-4 pt-4 dark:text-black'>No child bounties available.</p>
 										)}
 									</div>
 								) : (
-									<p>No child bounties available.</p>
+									<p className='dark:text-black'>No child bounties available.</p>
 								)}
 							</div>
 						),

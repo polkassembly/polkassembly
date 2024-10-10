@@ -62,17 +62,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesR
 		child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
 	};
 
-	for (const childBounty of subsquidData.proposals) {
+	const childBountiesPromises = subsquidData.proposals.map(async (childBounty: any) => {
 		const subsquireRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, childBounty.index);
-
-		resObj.child_bounties.push({
+		return {
 			description: childBounty.description,
 			index: childBounty.index,
 			reward: childBounty?.reward,
 			status: childBounty.status,
 			title: subsquireRes?.title || ''
-		});
-	}
+		};
+	});
+
+	resObj.child_bounties = await Promise.all(childBountiesPromises);
 
 	return res.status(200).json(resObj);
 }

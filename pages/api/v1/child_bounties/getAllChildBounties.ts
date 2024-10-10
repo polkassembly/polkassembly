@@ -11,6 +11,9 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { IChildBountiesResponse } from '~src/types';
 import messages from '~src/auth/utils/messages';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, network }: { parentBountyIndex: number; network: string }) => {
 	if (!network || !isValidNetwork(network)) {
@@ -43,15 +46,43 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 			child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
 		};
 
-		for (const childBounty of subsquidData.proposals) {
-			resObj.child_bounties.push({
-				description: childBounty.description,
-				index: childBounty.index,
-				reward: childBounty?.reward,
-				status: childBounty.status,
+		const childBountiesProposals = subsquidData?.proposals || [];
+
+		const allChildBountiesIndexes = childBountiesProposals.map((childBounty: { index: number }) => childBounty?.index);
+
+		const childBountiesDocs = await postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', allChildBountiesIndexes).get();
+
+		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
+			const payload = {
+				createdAt: subsquidChildBounty?.createdAt,
+				curator: subsquidChildBounty?.curator || '',
+				description: subsquidChildBounty?.description || '',
+				index: subsquidChildBounty?.index,
+				reward: subsquidChildBounty?.reward,
+				status: subsquidChildBounty?.status,
 				title: ''
+			};
+			childBountiesDocs?.docs?.map(async (childBounty) => {
+				if (childBounty.exists) {
+					const data = childBounty.data();
+					payload.title = data?.title || '';
+					if (!data?.title.length) {
+						const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidChildBounty?.index);
+						payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
+					}
+				}
 			});
-		}
+
+			return payload;
+		});
+
+		const resolvedPromises = await Promise.allSettled(childBountiesPromises);
+
+		resolvedPromises.map((promise) => {
+			if (promise?.status == 'fulfilled') {
+				resObj?.child_bounties.push(promise.value);
+			}
+		});
 
 		return {
 			data: resObj,

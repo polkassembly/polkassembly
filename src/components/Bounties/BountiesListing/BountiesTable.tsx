@@ -271,7 +271,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 									/>
 								) : (
 									<Popover
-										content='Expand to view Child Bounties'
+										content={<p className='m-0 dark:text-white'>Expand to view Child Bounties</p>}
 										placement='top'
 										trigger='hover'
 									>
@@ -388,6 +388,10 @@ const StyledTableContainer = styled.div<{ themeMode: string }>`
 	}
 
 	.ant-table-wrapper .ant-table-tbody > tr > td {
+		color: ${(props) => (props.themeMode == 'dark' ? 'white' : 'black')};
+	}
+
+	.ant-popover-content .ant-popover-inner {
 		color: ${(props) => (props.themeMode == 'dark' ? 'white' : 'black')};
 	}
 `;

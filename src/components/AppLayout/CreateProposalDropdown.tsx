@@ -48,7 +48,7 @@ interface IAiChatbotProps {
 
 const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
 	padding: 1px;
-	border-radius: 0.5rem;
+	border-radius: 0.465rem;
 	background: ${({ gradient }) => gradient};
 	display: inline-block;
 	box-shadow: ${({ shadow }) => shadow};

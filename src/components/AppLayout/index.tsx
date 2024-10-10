@@ -71,6 +71,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [showFooter, setShowFooter] = useState<boolean>(true);
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -84,6 +85,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+	useEffect(() => {
+		if(router.pathname.includes('/batch-voting')) { 
+			setShowFooter(false);
+		}
+	}, []); 
+
 	useEffect(() => {
 		const handleResize = () => {
 			const isMobile = window.innerWidth < 1024;
@@ -266,10 +273,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 														<Component {...pageProps} />
 													</Content>
 												</div>
-												<Footer
+												{showFooter && <Footer
 													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
 													theme={theme as any}
-												/>
+												/>}
 											</div>
 										) : (
 											<div className='relative mx-auto  w-full'>
@@ -279,7 +286,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													<Footer theme={theme as any} />
+													{showFooter && <Footer theme={theme as any} />}
 												</div>
 												{sidedrawer && (
 													<div
@@ -311,10 +318,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
-												<Footer
+												{showFooter && <Footer
 													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
 													theme={theme as any}
-												/>
+												/>}
 											</div>
 										) : (
 											<div
@@ -329,7 +336,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													<Footer theme={theme as any} />
+													{showFooter && <Footer theme={theme as any} />}
 												</div>
 												{sidedrawer && (
 													<div

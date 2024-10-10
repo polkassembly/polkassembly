@@ -15,6 +15,7 @@ import { poppins } from 'pages/_app';
 import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import InfoModalContent from './InfoModalContent';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 
 interface ITinderCards {
 	post: any;
@@ -26,6 +27,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	const { post, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
+	const { show_cart_menu } = useBatchVotesSelector();
 
 	// Local state to control the modal visibility for this specific card
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -106,7 +108,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	};
 
 	return (
-		<div className='flex h-[65vh] flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+		<div className={`flex ${show_cart_menu ? 'h-[calc(80vh-130px)]' : 'h-[calc(80vh-80px)]'}  flex-col gap-y-1 rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-separatorDark dark:bg-black`}>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -115,7 +117,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				post={post}
 				isUsedInMainDisplay={true}
 			/>
-			<div className='h-[50%] overflow-y-hidden py-2'>
+			<div className='overflow-y-hidden py-2'>
 				<Tabs
 					theme={theme}
 					type='card'

@@ -977,6 +977,11 @@ export interface ICommentsSummary {
 	summary_neutral: string;
 }
 
+export interface LeaderboardPointsResponse {
+	count: number;
+	data: any[];
+}
+
 export interface INetworkWalletErr {
 	message: string;
 	description: string;

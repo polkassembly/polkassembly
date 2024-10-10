@@ -4,6 +4,7 @@
 
 import { HomeFilled, TwitterOutlined, YoutubeFilled } from '@ant-design/icons';
 import { Space } from 'antd';
+import Link from 'next/link';
 import React from 'react';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -141,29 +142,38 @@ interface IAboutActivityProps {
 	className?: string;
 	networkSocialsData: NetworkSocials | null;
 	showGov2Links?: boolean;
-	knowMoreLink?: string;
 	knowMoreText?: string;
 }
 
+<<<<<<< HEAD
 const ActivityFeedAbout: React.FC<IAboutActivityProps> = ({ className, networkSocialsData, knowMoreLink = '#', knowMoreText = 'Know More' }) => {
 	const { network } = useNetworkSelector();
 	const capitalizedNetwork = network.charAt(0).toUpperCase() + network.slice(1);
 
+=======
+const ActivityFeedAbout: React.FC<IAboutActivityProps> = ({ className, networkSocialsData, knowMoreText = 'Know More' }) => {
+>>>>>>> 841805420b1fecd1e2e7ab5e4d4fa3404d5e3e5b
 	return (
 		<section className={`${className} rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-6`}>
 			{' '}
 			<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>{' '}
 			<p className='medium items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				{' '}
+<<<<<<< HEAD
 				{capitalizedNetwork} is the all-in-one DeFi hub of {capitalizedNetwork}.{' '}
 				<a
 					href={knowMoreLink}
+=======
+				Polkadot is the all-in-one DeFi hub of Polkadot.{' '}
+				<Link
+					href={'/opengov'}
+>>>>>>> 841805420b1fecd1e2e7ab5e4d4fa3404d5e3e5b
 					className='m-0 cursor-pointer pl-1 text-xs font-semibold text-pink_primary'
 					aria-label={`${knowMoreText} about Polkadot`}
 				>
 					{' '}
 					{knowMoreText}{' '}
-				</a>{' '}
+				</Link>{' '}
 				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>{' '}
 			</p>{' '}
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>{' '}

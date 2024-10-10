@@ -8,10 +8,11 @@ import CardPostHeading from './CardPostHeading';
 import { useTheme } from 'next-themes';
 import CardPostDescription from './CardPostDescription';
 import { Tabs } from '~src/ui-components/Tabs';
+import { ProposalType } from '~src/global/proposalType';
 
 interface ICardPostInfo {
 	post: any;
-	proposalType?: any;
+	proposalType?: ProposalType;
 }
 
 const CardPostInfo: FC<ICardPostInfo> = (props) => {
@@ -21,7 +22,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];
 
-		if (!isOffChainProposalTypeValid(proposalType)) {
+		if (proposalType && !isOffChainProposalTypeValid(proposalType)) {
 			tabs.push({
 				children: (
 					<PostOnChainInfo
@@ -80,6 +81,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 		{
 			children: (
 				<CardPostDescription
+					className='max-h-[170px] overflow-y-auto'
 					postContent={post?.content}
 					postId={post?.id}
 				/>
@@ -91,7 +93,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	];
 
 	return (
-		<>
+		<section className='max-h-[400px]'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -106,7 +108,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 				items={tabItems}
 			/>
-		</>
+		</section>
 	);
 };
 

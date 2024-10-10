@@ -19,7 +19,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import ActivityFeeToggleButton from '~src/components/ActivityFeed/ActivityFeeToggleButton';
 import ActivityFeedSidebar from '~src/components/ActivityFeed/ActivityFeedSidebar';
 import { EActivityFeedTab } from '~src/components/ActivityFeed/types/types';
-import { isActivitySupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
+import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const LatestActivity = dynamic(() => import('~src/components/ActivityFeed'), {
@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 				}
 			};
 		}
-		if (!isActivitySupportedNetwork(network)) {
+		if (!isActivityFeedSupportedNetwork(network)) {
 			return {
 				props: {},
 				redirect: {

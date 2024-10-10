@@ -13,6 +13,8 @@ import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Image from 'next/image';
+import CautionIcon from '~assets/icons/caution-icon.svg';
+import { poppins } from 'pages/_app';
 
 export type MenuItem = Required<MenuProps>['items'][number];
 
@@ -214,8 +216,21 @@ export const SidebarFoot1 = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
-		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white pb-4 before:pointer-events-none before:absolute before:left-0 before:right-0 before:top-0 before:z-[1] before:h-[3px] before:shadow-[0px_-2px_6px_rgba(0,0,0,0.08)] before:content-[""] dark:bg-section-dark-overlay md:pb-0 lg:pb-5 xl:h-[5vw]'>
-			<div className='mt-5 flex items-center justify-center gap-2'>
+		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white pb-4 before:pointer-events-none before:absolute before:left-0 before:right-0 before:top-0 before:z-[1] before:h-[3px] before:shadow-[0px_-2px_6px_rgba(0,0,0,0.08)] before:content-[""] dark:bg-section-dark-overlay md:pb-0 lg:pb-[10px] xl:h-[8.5vw]'>
+			<Link
+				href='https://polkassembly.hellonext.co/'
+				target='_blank'
+				rel='noreferrer'
+			>
+				<div className='mx-3 mt-3 flex cursor-pointer items-center justify-center gap-[6px] rounded-xl border border-solid border-[#D2D8E0] bg-[#F8F9FC] px-[6px] py-2 dark:border-separatorDark dark:bg-section-dark-background'>
+					<CautionIcon />
+					<div className={`${poppins.className} ${poppins.variable} flex flex-col`}>
+						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Report an issue</span>
+						<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>Need help with something?</span>
+					</div>
+				</div>
+			</Link>
+			<div className='mt-3 flex items-center justify-center gap-2'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>
 						<Image

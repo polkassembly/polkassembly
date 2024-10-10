@@ -146,7 +146,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (

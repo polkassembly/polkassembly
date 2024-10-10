@@ -22,6 +22,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import { useRouter } from 'next/router';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface BountiesListingProps {
 	data?: any;
@@ -74,74 +75,32 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 
 	const tabItems = [
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: 'all',
 			label: <p>All</p>
 		},
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: EBountiesStatuses.PROPOSED,
 			label: <p>Proposed</p>
 		},
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: EBountiesStatuses.ACTIVE,
 			label: <p>Active</p>
 		},
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: EBountiesStatuses.CLAIMED,
 			label: <p>Claimed</p>
 		},
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: EBountiesStatuses.CANCELLED,
 			label: <p>Cancelled</p>
 		},
 		{
-			children: (
-				<BountiesTable
-					bounties={bounties.length > 0 && bounties}
-					onPaginationChange={onPaginationChange}
-					totalBountiesCount={totalBountiesCount}
-					currentPage={currentPage}
-				/>
-			),
+			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
 			key: EBountiesStatuses.REJECTED,
 			label: <p>Rejected</p>
 		}
@@ -215,6 +174,20 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 							items={tabItems}
 						/>
 					</div>
+				</div>
+				<div className='mb-5 mt-3 flex justify-end'>
+					{totalBountiesCount > 0 && totalBountiesCount > VOTES_LISTING_LIMIT && (
+						<Pagination
+							current={currentPage}
+							pageSize={VOTES_LISTING_LIMIT}
+							total={totalBountiesCount}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={onPaginationChange}
+							responsive={true}
+							theme={theme}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

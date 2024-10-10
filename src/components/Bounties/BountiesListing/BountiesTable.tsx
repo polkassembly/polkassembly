@@ -13,8 +13,6 @@ import StatusTag from '~src/ui-components/StatusTag';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { Pagination } from '~src/ui-components/Pagination';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import Table from '~src/basic-components/Tables/Table';
 import { useTheme } from 'next-themes';
@@ -22,7 +20,6 @@ import { IChildBountiesResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import dayjs from 'dayjs';
-import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 interface IDataType {
 	index: number;
@@ -40,9 +37,6 @@ interface IDataType {
 
 interface IOnchainBountiesProps {
 	bounties: IDataType[];
-	totalBountiesCount: number;
-	onPaginationChange: (page: number) => void;
-	currentPage: number;
 }
 
 const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
@@ -238,15 +232,6 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		}
 	];
 
-	const onPaginationChange = (page: number) => {
-		router.push({
-			query: {
-				page
-			}
-		});
-		handlePaginationChange({ limit: VOTES_LISTING_LIMIT, page });
-	};
-
 	return (
 		<StyledTableContainer themeMode={theme}>
 			<div>
@@ -341,21 +326,6 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					dataSource={bounties}
 					pagination={false}
 				/>
-
-				<div className='mb-5 mt-3 flex justify-end'>
-					{props?.totalBountiesCount > 0 && props?.totalBountiesCount > VOTES_LISTING_LIMIT && (
-						<Pagination
-							current={props.currentPage}
-							pageSize={VOTES_LISTING_LIMIT}
-							total={props?.totalBountiesCount}
-							showSizeChanger={false}
-							hideOnSinglePage={true}
-							onChange={onPaginationChange}
-							responsive={true}
-							theme={theme}
-						/>
-					)}
-				</div>
 			</div>
 		</StyledTableContainer>
 	);

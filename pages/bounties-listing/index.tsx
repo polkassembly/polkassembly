@@ -106,15 +106,13 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 	];
 	const onTabChange = (key: string) => {
 		setActiveTabKey(key);
-		const newQuery = {
-			...router.query,
-			page: '1',
-			status: encodeURIComponent(JSON.stringify(key))
-		};
-		router.push(
+		router.replace(
 			{
-				pathname: router.pathname,
-				query: newQuery
+				pathname: '',
+				query: {
+					...router.query,
+					status: encodeURIComponent(JSON.stringify(key))
+				}
 			},
 			undefined,
 			{ shallow: true }

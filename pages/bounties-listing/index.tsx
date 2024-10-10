@@ -59,7 +59,6 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const [activeTabKey, setActiveTabKey] = useState('all');
-	const [currentPage, setCurrentPage] = useState<number>(1);
 
 	const onPaginationChange = (page: number) => {
 		router.push({
@@ -107,7 +106,6 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 	];
 	const onTabChange = (key: string) => {
 		setActiveTabKey(key);
-		setCurrentPage(1);
 		const newQuery = {
 			...router.query,
 			page: '1',
@@ -178,9 +176,9 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 				<div className='mb-5 mt-3 flex justify-end'>
 					{totalBountiesCount > 0 && totalBountiesCount > VOTES_LISTING_LIMIT && (
 						<Pagination
-							current={currentPage}
+							defaultCurrent={1}
 							pageSize={VOTES_LISTING_LIMIT}
-							total={totalBountiesCount}
+							total={20}
 							showSizeChanger={false}
 							hideOnSinglePage={true}
 							onChange={onPaginationChange}

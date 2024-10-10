@@ -50,7 +50,23 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const allChildBountiesIndexes = childBountiesProposals.map((childBounty: { index: number }) => childBounty?.index);
 
-		const childBountiesDocs = await postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', allChildBountiesIndexes).get();
+		const chunkArray = (arr: any[], chunkSize: number) => {
+			const chunks = [];
+			for (let i = 0; i < arr.length; i += chunkSize) {
+				chunks.push(arr.slice(i, i + chunkSize));
+			}
+			return chunks;
+		};
+
+		const chunks = chunkArray(allChildBountiesIndexes, 30);
+
+		const childBountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', chunk).get());
+
+		const childBountiesDocsSnapshots = await Promise.all(childBountiesDocsPromises);
+
+		const childBountiesDocs = childBountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
+
+		console.log(childBountiesDocs);
 
 		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
 			const payload = {
@@ -62,7 +78,7 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 				status: subsquidChildBounty?.status,
 				title: ''
 			};
-			childBountiesDocs?.docs?.map((childBounty) => {
+			childBountiesDocs?.map((childBounty) => {
 				if (childBounty.exists) {
 					const data = childBounty.data();
 					payload.title = data?.title || '';
@@ -70,7 +86,7 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 			});
 
 			if (!payload?.title.length) {
-				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidChildBounty?.index);
+				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, subsquidChildBounty?.index);
 				payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
 			}
 			return payload;

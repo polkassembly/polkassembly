@@ -28,6 +28,7 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 	const onAccountChange = (address: string) => {
 		setAddress(address);
 	};
+	console.log('voteinfo: ', voteInfo);
 
 	useEffect(() => {
 		if (voteInfo && forSpecificPost) {
@@ -59,6 +60,7 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 			)}
 			<VoteReferendumCard
 				address={String(address)}
+				postData={voteInfo?.proposal}
 				onAccountChange={onAccountChange}
 				proposalType={ProposalType.TREASURY_PROPOSALS}
 				lastVote={lastVote as any}

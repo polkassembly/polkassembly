@@ -48,6 +48,7 @@ const BatchCart: React.FC = () => {
 			return;
 		} else {
 			setIsLoading(false);
+			console.log('apidata', data);
 			dispatch(batchVotesActions.setVoteCartData(data?.votes));
 			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
 		}

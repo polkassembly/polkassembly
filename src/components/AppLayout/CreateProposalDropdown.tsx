@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { Dropdown, Menu } from 'antd';
+import { MenuProps } from 'antd';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
@@ -19,6 +19,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import CreatePencilIcon from '~assets/icons/create-pencil-icon.svg';
 import { poppins } from 'pages/_app';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
+import { Dropdown } from '~src/ui-components/Dropdown';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -58,20 +59,14 @@ const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
 	margin-right: 16px;
 	margin-top: 14px;
 	margin-bottom: 6px;
-	animation: gradientMove 3s linear infinite;
+	animation: gradientMove 1.5s linear infinite;
 
 	@keyframes gradientMove {
 		0% {
 			background-position: top;
 		}
-		25% {
-			background-position: center;
-		}
 		50% {
 			background-position: bottom;
-		}
-		75% {
-			background-position: center;
 		}
 		100% {
 			background-position: top;
@@ -108,7 +103,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const menuItems = [
+	const items: MenuProps['items'] = [
 		{
 			label: (
 				<OpenGovTreasuryProposal
@@ -137,21 +132,24 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 	];
 
 	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
-		menuItems.unshift({
+		items.unshift({
 			label: <Gov1TreasuryProposal />,
 			key: '3'
 		});
 	}
 
-	const gradient = theme === 'light' ? 'linear-gradient(#ACCEFF, #00429B)' : 'linear-gradient(#3C76F4, #0437A7)';
+	const gradient = theme === 'light' ? 'linear-gradient(#ACCEFF, #00429B)' : 'linear-gradient(#4FFAFF, #0437A7)';
 	const shadow = theme === 'light' ? '2px 2px 1.8px -1px #D7DDE3' : '2px 2px 1.8px -1px #2066C7';
 
 	return (
 		<>
 			<Dropdown
-				overlay={<Menu items={menuItems} />}
-				trigger={['click']}
-				placement='bottomLeft'
+				theme={theme}
+				overlayStyle={{ marginTop: '20px' }}
+				className={'flex cursor-pointer items-center justify-center bg-white dark:bg-section-dark-overlay'}
+				overlayClassName='z-[1056]'
+				placement='bottomRight'
+				menu={{ items }}
 			>
 				<StyledButtonContainer
 					gradient={gradient}
@@ -160,7 +158,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 					<button className='create-button bg-white dark:bg-section-dark-overlay'>
 						<div className='flex items-center justify-center gap-[6px]'>
 							<CreatePencilIcon />
-							<span className='gradient-text'>Create</span>
+							<span className={`${poppins.variable} ${poppins.className} gradient-text`}>Create</span>
 						</div>
 					</button>
 				</StyledButtonContainer>

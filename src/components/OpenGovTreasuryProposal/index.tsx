@@ -23,6 +23,7 @@ import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddr
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
 import CreateProposalGrayIcon from '~assets/icons/create-proposal-gray.svg';
+import CreateProposalGrayIconDark from '~assets/icons/create-proposal-gray-dark.svg';
 import { useDispatch } from 'react-redux';
 import {
 	setIdentityCardLoading,
@@ -327,14 +328,18 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					{isUsedInTreasuryTrack ? (
 						<CreateProposalWhiteIcon className='mr-2' />
 					) : isUsedInSidebar ? (
-						<CreateProposalGrayIcon />
+						theme == 'dark' ? (
+							<CreateProposalGrayIconDark />
+						) : (
+							<CreateProposalGrayIcon />
+						)
 					) : (
 						<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
 					)}
 					{isUsedInTreasuryTrack ? (
 						<p className='m-0 p-0'>Create Proposal</p>
 					) : isUsedInSidebar ? (
-						<p className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Treasury Proposal</p>
+						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Treasury Proposal</span>
 					) : (
 						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 					)}

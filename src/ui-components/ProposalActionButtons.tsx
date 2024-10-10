@@ -19,6 +19,8 @@ import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { isActivitySupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
 import { network } from '~src/global/networkConstants';
+import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
+import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -246,18 +248,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					className='flex cursor-pointer gap-2'
 					onClick={() => handleClick(1)}
 				>
-					{theme == 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab-dark.svg'
-							alt='Create proposal icon'
-						/>
-					) : (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab.svg'
-							alt='Create proposal icon'
-						/>
-					)}
-					<p className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium '>Proposal</p>
+					{theme == 'dark' ? <CreateProposalsFabIconDark /> : <CreateProposalsFabIcon />}
+					<span className=' text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium '>Proposal</span>
 				</div>
 			)}
 

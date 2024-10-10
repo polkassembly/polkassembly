@@ -50,7 +50,6 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const allChildBountiesIndexes = childBountiesProposals.map((childBounty: { index: number }) => childBounty?.index);
 
-		// const childBountiesDocs = await postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', allChildBountiesIndexes).get();
 		const chunkArray = (arr: any[], chunkSize: number) => {
 			const chunks = [];
 			for (let i = 0; i < arr.length; i += chunkSize) {
@@ -61,12 +60,10 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const chunks = chunkArray(allChildBountiesIndexes, 30);
 
-		// Perform Firestore queries for each chunk and merge results
 		const childBountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', chunk).get());
 
 		const childBountiesDocsSnapshots = await Promise.all(childBountiesDocsPromises);
 
-		// Combine the documents from all snapshots
 		const childBountiesDocs = childBountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
 
 		console.log(childBountiesDocs);

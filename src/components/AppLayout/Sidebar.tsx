@@ -1140,7 +1140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					<BatchVotingIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<BatchVotingIcon className='text-8xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{

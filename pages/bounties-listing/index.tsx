@@ -12,15 +12,20 @@ import { LeftOutlined } from '@ant-design/icons';
 import BountiesTable from '~src/components/Bounties/BountiesListing/BountiesTable';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
 import SEOHead from '~src/global/SEOHead';
-import { bountyStatus } from '~src/global/statuses';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import FilterByTags from '~src/ui-components/FilterByTags';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import { getAllBounties } from 'pages/api/v1/bounty/bountyDashboard/getAllBounties';
+import { ErrorState } from '~src/ui-components/UIStates';
+import { useRouter } from 'next/router';
+import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
-interface OnchainBountiesProps {
+interface BountiesListingProps {
+	data?: any;
+	error?: string;
 	network: string;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -30,46 +35,48 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const page = Number(query.page) || 1;
 	const filterBy = query.filterBy ? JSON.parse(decodeURIComponent(String(query.filterBy))) : [];
-	const proposalStatus = query.proposalStatus ? JSON.parse(decodeURIComponent(String(query.proposalStatus))) : [];
+	const status = query.status ? JSON.parse(decodeURIComponent(String(query.status))) : '';
 
-	const { data, error } = await getAllBounties({
+	const { data } = await getAllBounties({
 		categories: filterBy,
 		network,
 		page,
-		status: proposalStatus
+		status
 	});
 
 	return {
 		props: {
 			data,
-			error,
 			network
 		}
 	};
 };
 
-const BountiesListing: FC<OnchainBountiesProps> = (props) => {
-	const { network } = props;
+const BountiesListing: FC<BountiesListingProps> = (props) => {
+	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-	const [loading, setLoading] = useState<boolean>(true);
-	const [totalBountiesCount, setTotalBountiesCount] = useState<number>(0);
+	const router = useRouter();
 	const [activeTabKey, setActiveTabKey] = useState('all');
 	const [currentPage, setCurrentPage] = useState<number>(1);
 
-	const [bounties, setBounties] = useState<any[]>([]);
-	const [filteredBounties, setFilteredBounties] = useState<any[]>([]);
-
 	const onPaginationChange = (page: number) => {
-		setCurrentPage(page);
+		router.push({
+			query: {
+				page
+			}
+		});
+		handlePaginationChange({ limit: VOTES_LISTING_LIMIT, page });
 	};
+
+	const bounties = data?.bounties || [];
+	const totalBountiesCount = data?.totalBountiesCount || 0;
 
 	const tabItems = [
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
@@ -81,119 +88,89 @@ const BountiesListing: FC<OnchainBountiesProps> = (props) => {
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
 				/>
 			),
-			key: 'proposed',
+			key: EBountiesStatuses.PROPOSED,
 			label: <p>Proposed</p>
 		},
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
 				/>
 			),
-			key: 'active',
+			key: EBountiesStatuses.ACTIVE,
 			label: <p>Active</p>
 		},
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
 				/>
 			),
-			key: 'claimed',
+			key: EBountiesStatuses.CLAIMED,
 			label: <p>Claimed</p>
 		},
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
 				/>
 			),
-			key: 'cancelled',
+			key: EBountiesStatuses.CANCELLED,
 			label: <p>Cancelled</p>
 		},
 		{
 			children: (
 				<BountiesTable
-					loading={loading}
-					bounties={filteredBounties.length ? filteredBounties : bounties}
+					bounties={bounties.length > 0 && bounties}
 					onPaginationChange={onPaginationChange}
 					totalBountiesCount={totalBountiesCount}
 					currentPage={currentPage}
 				/>
 			),
-			key: 'rejected',
+			key: EBountiesStatuses.REJECTED,
 			label: <p>Rejected</p>
 		}
 	];
-
-	const statusMapping: { [key: string]: string[] } = {
-		active: [bountyStatus.ACTIVE, bountyStatus.EXTENDED],
-		all: [],
-		cancelled: [bountyStatus.CANCELLED],
-		claimed: [bountyStatus.CLAIMED, bountyStatus.AWARDED],
-		proposed: [bountyStatus.PROPOSED],
-		rejected: [bountyStatus.REJECTED]
-	};
-
-	const fetchBounties = async (page = 1) => {
-		try {
-			setLoading(true);
-			const statuses = statusMapping[activeTabKey] || [];
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/bountyDashboard/getAllBounties', {
-				page,
-				statuses
-			});
-
-			if (error) {
-				console.error('Error fetching bounties:', error);
-				setLoading(false);
-				return;
-			}
-
-			setBounties(data?.bounties || []);
-			setFilteredBounties([]);
-			setTotalBountiesCount(data?.totalBountiesCount || 0);
-			setLoading(false);
-		} catch (err) {
-			console.error('An unexpected error occurred:', err);
-			setLoading(false);
-		}
-	};
-
 	const onTabChange = (key: string) => {
 		setActiveTabKey(key);
 		setCurrentPage(1);
+		const newQuery = {
+			...router.query,
+			page: '1',
+			status: encodeURIComponent(JSON.stringify(key))
+		};
+		router.push(
+			{
+				pathname: router.pathname,
+				query: newQuery
+			},
+			undefined,
+			{ shallow: true }
+		);
 	};
-
-	useEffect(() => {
-		fetchBounties(currentPage);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeTabKey, currentPage]);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	if (error) return <ErrorState errorMessage={error} />;
+
 	return (
 		<div>
 			{' '}

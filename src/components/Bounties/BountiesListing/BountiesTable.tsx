@@ -13,7 +13,6 @@ import StatusTag from '~src/ui-components/StatusTag';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import Skeleton from '~src/basic-components/Skeleton';
 import { Pagination } from '~src/ui-components/Pagination';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
@@ -24,7 +23,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import dayjs from 'dayjs';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-interface DataType {
+
+interface IDataType {
 	index: number;
 	curator: string;
 	title: string;
@@ -34,33 +34,32 @@ interface DataType {
 	status: string;
 	categories: string[];
 	totalChildBountiesCount?: number;
-	children?: DataType;
+	children?: IDataType;
 	childbounties?: any;
 }
 
-interface OnchainBountiesProps {
-	bounties: DataType[];
-	loading: boolean;
+interface IOnchainBountiesProps {
+	bounties: IDataType[];
 	totalBountiesCount: number;
 	onPaginationChange: (page: number) => void;
 	currentPage: number;
 }
 
-const BountiesTable: FC<OnchainBountiesProps> = (props) => {
+const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const { resolvedTheme: theme = 'light' } = useTheme();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
-	const [bounties, setBounties] = useState<DataType[]>(props.bounties);
+	const [bounties, setBounties] = useState<IDataType[]>(props.bounties);
 	useEffect(() => {
 		setBounties(props.bounties);
 	}, [props.bounties]);
-	const handleRowClick = (record: DataType) => {
+	const handleRowClick = (record: IDataType) => {
 		router.push(`/bounty/${record.index}`);
 	};
-	const handleExpand = async (expanded: boolean, record: DataType) => {
+	const handleExpand = async (expanded: boolean, record: IDataType) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
 
 		setExpandedRowKeys(newExpandedRowKeys);
@@ -88,7 +87,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 			}
 		}
 	};
-	const columns: TableColumnsType<DataType> = [
+	const columns: TableColumnsType<IDataType> = [
 		{
 			dataIndex: 'index',
 			key: 'index',
@@ -145,7 +144,7 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 		{
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
-			render: (claimed: number, record: DataType) => {
+			render: (claimed: number, record: IDataType) => {
 				const reward = parseFloat(record.reward);
 				const claimedPercentage = reward ? (claimed / reward) * 100 : 0;
 
@@ -251,120 +250,112 @@ const BountiesTable: FC<OnchainBountiesProps> = (props) => {
 	return (
 		<StyledTableContainer themeMode={theme}>
 			<div>
-				{props.loading ? (
-					<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
-						<Skeleton active />
-					</div>
-				) : (
-					<>
-						<Table
-							theme={theme}
-							rowKey={(record) => record.index}
-							columns={columns}
-							onRow={(record) => ({
-								onClick: () => handleRowClick(record)
-							})}
-							scroll={{ x: 1000 }}
-							expandable={{
-								expandIcon: ({ expanded, onExpand, record }) =>
-									record.totalChildBountiesCount > 0 ? (
-										expanded ? (
-											<CaretUpOutlined
-												className=' text-[#E5007A]'
-												onClick={(e) => {
-													e.stopPropagation();
-													onExpand(record, e);
-												}}
-											/>
-										) : (
-											<Popover
-												content='Expand to view Child Bounties'
-												placement='top'
-												trigger='hover'
-											>
-												<CaretDownOutlined
-													onClick={(e) => {
-														e.stopPropagation();
-														onExpand(record, e);
-													}}
-												/>
-											</Popover>
-										)
-									) : null,
-								expandedRowKeys,
-								expandedRowRender: (record) => (
-									<div className='m-0 p-0'>
-										{record.totalChildBountiesCount && record.totalChildBountiesCount > 0 ? (
-											<div>
-												{loadingChildBounties[record.index] ? (
-													<div className='my-1 flex justify-center'>
-														<Spin />
-													</div>
-												) : record?.childbounties?.length > 0 ? (
-													<div className=''>
-														{record.childbounties.map((childBounty: any, index: number) => (
-															<div
-																key={childBounty.index}
-																className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'
-															>
-																{index === record.childbounties.length - 1 ? (
-																	<ImageIcon
-																		src='/assets/childlevel0.svg'
-																		className='-mt-5 h-5 w-5'
-																		alt='Last child level'
-																	/>
-																) : (
-																	<ImageIcon
-																		src='/assets/childlevel1.svg'
-																		className='-mt-5 h-5 w-5'
-																		alt='Child level'
-																	/>
-																)}
+				<Table
+					theme={theme}
+					rowKey={(record) => record.index}
+					columns={columns}
+					onRow={(record) => ({
+						onClick: () => handleRowClick(record)
+					})}
+					scroll={{ x: 1000 }}
+					expandable={{
+						expandIcon: ({ expanded, onExpand, record }) =>
+							record.totalChildBountiesCount > 0 ? (
+								expanded ? (
+									<CaretUpOutlined
+										className=' text-[#E5007A]'
+										onClick={(e) => {
+											e.stopPropagation();
+											onExpand(record, e);
+										}}
+									/>
+								) : (
+									<Popover
+										content='Expand to view Child Bounties'
+										placement='top'
+										trigger='hover'
+									>
+										<CaretDownOutlined
+											onClick={(e) => {
+												e.stopPropagation();
+												onExpand(record, e);
+											}}
+										/>
+									</Popover>
+								)
+							) : null,
+						expandedRowKeys,
+						expandedRowRender: (record) => (
+							<div className='m-0 p-0'>
+								{record.totalChildBountiesCount && record.totalChildBountiesCount > 0 ? (
+									<div>
+										{loadingChildBounties[record.index] ? (
+											<div className='my-1 flex justify-center'>
+												<Spin />
+											</div>
+										) : record?.childbounties?.length > 0 ? (
+											<div className=''>
+												{record.childbounties.map((childBounty: any, index: number) => (
+													<div
+														key={childBounty.index}
+														className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'
+													>
+														{index === record.childbounties.length - 1 ? (
+															<ImageIcon
+																src='/assets/childlevel0.svg'
+																className='-mt-5 h-5 w-5'
+																alt='Last child level'
+															/>
+														) : (
+															<ImageIcon
+																src='/assets/childlevel1.svg'
+																className='-mt-5 h-5 w-5'
+																alt='Child level'
+															/>
+														)}
 
-																<div className='ml-4 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
-																<div className='mt-5 w-1/4 dark:text-black'>-</div>
-																<div className='mt-5 w-1/4 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
-																<div className='mt-5 w-1/4 dark:text-black'>-</div>
-																<div className='mt-5 w-1/4 dark:text-black'>
-																	{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-																</div>
-																<div className=' mt-5 w-1/4 dark:text-black'>-</div>
-																<div className='mt-5 w-1/4 '>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
-															</div>
-														))}
+														<div className='ml-4 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
+														<div className='mt-5 w-1/4 dark:text-black'>-</div>
+														<div className='mt-5 w-1/4 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
+														<div className='mt-5 w-1/4 dark:text-black'>-</div>
+														<div className='mt-5 w-1/4 dark:text-black'>
+															{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+														</div>
+														<div className=' mt-5 w-1/4 dark:text-black'>-</div>
+														<div className='mt-5 w-1/4 '>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
 													</div>
-												) : (
-													<p className='pl-4 pt-4'>No child bounties available.</p>
-												)}
+												))}
 											</div>
 										) : (
-											<p>No child bounties available.</p>
+											<p className='pl-4 pt-4'>No child bounties available.</p>
 										)}
 									</div>
-								),
-								onExpand: (expanded, record) => handleExpand(expanded, record),
-								rowExpandable: (record) => record.totalChildBountiesCount > 0
-							}}
-							dataSource={bounties}
-							pagination={false}
-						/>
+								) : (
+									<p>No child bounties available.</p>
+								)}
+							</div>
+						),
+						onExpand: (expanded, record) => handleExpand(expanded, record),
+						rowExpandable: (record) => record.totalChildBountiesCount > 0
+					}}
+					dataSource={bounties}
+					pagination={false}
+				/>
 
-						<div className='mb-5 mt-3 flex justify-end'>
-							{props?.totalBountiesCount > 0 && props?.totalBountiesCount > VOTES_LISTING_LIMIT && (
-								<Pagination
-									current={props.currentPage}
-									pageSize={VOTES_LISTING_LIMIT}
-									total={props?.totalBountiesCount}
-									showSizeChanger={false}
-									hideOnSinglePage={true}
-									onChange={onPaginationChange}
-									responsive={true}
-									theme={theme}
-								/>
-							)}
-						</div>
-					</>
-				)}
+				<div className='mb-5 mt-3 flex justify-end'>
+					{props?.totalBountiesCount > 0 && props?.totalBountiesCount > VOTES_LISTING_LIMIT && (
+						<Pagination
+							current={props.currentPage}
+							pageSize={VOTES_LISTING_LIMIT}
+							total={props?.totalBountiesCount}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={onPaginationChange}
+							responsive={true}
+							theme={theme}
+						/>
+					)}
+				</div>
 			</div>
 		</StyledTableContainer>
 	);

@@ -16,6 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 
 export interface IBounty {
 	proposer: string;
@@ -29,7 +30,6 @@ export interface IBounty {
 	createdAt: string;
 	claimedAmount: string;
 	categories: string[];
-	childbounties?: any[];
 }
 
 interface ISubsquidBounty {
@@ -61,14 +61,6 @@ interface Args {
 	status: EBountiesStatuses;
 	page: number;
 	network: string;
-}
-
-enum EBountiesStatuses {
-	ACTIVE = 'active',
-	PROPOSED = 'proposed',
-	CLAIMED = 'claimed',
-	CANCELLED = 'cancelled',
-	REJECTED = 'rejected'
 }
 
 const getBountyStauses = (status: EBountiesStatuses) => {

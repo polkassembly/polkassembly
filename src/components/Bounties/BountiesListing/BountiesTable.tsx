@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Progress, Spin } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
@@ -21,7 +21,14 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import dayjs from 'dayjs';
 
-interface IDataType {
+interface IChildBounty {
+	index: number;
+	title: string;
+	reward: string;
+	status: string;
+}
+
+export interface IBountyListing {
 	index: number;
 	curator: string;
 	title: string;
@@ -31,12 +38,12 @@ interface IDataType {
 	status: string;
 	categories: string[];
 	totalChildBountiesCount?: number;
-	children?: IDataType;
-	childbounties?: any;
+	children?: IBountyListing;
+	childbounties?: IChildBounty[];
 }
 
 interface IOnchainBountiesProps {
-	bounties: IDataType[];
+	bounties: IBountyListing[];
 }
 
 const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
@@ -46,14 +53,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
-	const [bounties, setBounties] = useState<IDataType[]>(props.bounties);
-	useEffect(() => {
-		setBounties(props.bounties);
-	}, [props.bounties]);
-	const handleRowClick = (record: IDataType) => {
+	const [bounties, setBounties] = useState<IBountyListing[]>(props.bounties);
+	const handleRowClick = (record: IBountyListing) => {
 		router.push(`/bounty/${record.index}`);
 	};
-	const handleExpand = async (expanded: boolean, record: IDataType) => {
+	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
 
 		setExpandedRowKeys(newExpandedRowKeys);
@@ -81,7 +85,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			}
 		}
 	};
-	const columns: TableColumnsType<IDataType> = [
+	const columns: TableColumnsType<IBountyListing> = [
 		{
 			dataIndex: 'index',
 			key: 'index',
@@ -138,7 +142,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		{
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
-			render: (claimed: number, record: IDataType) => {
+			render: (claimed: number, record: IBountyListing) => {
 				const reward = parseFloat(record.reward);
 				const claimedPercentage = reward ? (claimed / reward) * 100 : 0;
 
@@ -287,13 +291,13 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 													>
 														{index === record.childbounties.length - 1 ? (
 															<ImageIcon
-																src='/assets/childlevel0.svg'
+																src='/assets/bountieslistingchildlevelzero.svg'
 																className='-mt-5 h-5 w-5'
 																alt='Last child level'
 															/>
 														) : (
 															<ImageIcon
-																src='/assets/childlevel1.svg'
+																src='/assets/bountieslistingchildlevelone.svg'
 																className='-mt-5 h-5 w-5'
 																alt='Child level'
 															/>

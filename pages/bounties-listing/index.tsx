@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { LeftOutlined } from '@ant-design/icons';
-import BountiesTable from '~src/components/Bounties/BountiesListing/BountiesTable';
+import BountiesTable, { IBountyListing } from '~src/components/Bounties/BountiesListing/BountiesTable';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
@@ -24,8 +24,11 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { Pagination } from '~src/ui-components/Pagination';
 
-interface BountiesListingProps {
-	data?: any;
+interface IBountiesListingProps {
+	data?: {
+		bounties: IBountyListing[];
+		totalBountiesCount: number;
+	};
 	error?: string;
 	network: string;
 }
@@ -53,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	};
 };
 
-const BountiesListing: FC<BountiesListingProps> = (props) => {
+const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
@@ -69,41 +72,24 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 		handlePaginationChange({ limit: VOTES_LISTING_LIMIT, page });
 	};
 
-	const bounties = data?.bounties || [];
-	const totalBountiesCount = data?.totalBountiesCount || 0;
+	const bounties = data?.bounties ?? [];
+	const totalBountiesCount = data?.totalBountiesCount ?? 0;
 
-	const tabItems = [
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: 'all',
-			label: <p>All</p>
-		},
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: EBountiesStatuses.PROPOSED,
-			label: <p>Proposed</p>
-		},
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: EBountiesStatuses.ACTIVE,
-			label: <p>Active</p>
-		},
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: EBountiesStatuses.CLAIMED,
-			label: <p>Claimed</p>
-		},
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: EBountiesStatuses.CANCELLED,
-			label: <p>Cancelled</p>
-		},
-		{
-			children: <BountiesTable bounties={bounties.length > 0 && bounties} />,
-			key: EBountiesStatuses.REJECTED,
-			label: <p>Rejected</p>
-		}
+	const bountyStatuses = [
+		{ key: 'all', label: 'All' },
+		{ key: EBountiesStatuses.PROPOSED, label: 'Proposed' },
+		{ key: EBountiesStatuses.ACTIVE, label: 'Active' },
+		{ key: EBountiesStatuses.CLAIMED, label: 'Claimed' },
+		{ key: EBountiesStatuses.CANCELLED, label: 'Cancelled' },
+		{ key: EBountiesStatuses.REJECTED, label: 'Rejected' }
 	];
+
+	const tabItems = bountyStatuses.map((status) => ({
+		children: <BountiesTable bounties={bounties.length > 0 ? (bounties as IBountyListing[]) : []} />,
+		key: status.key,
+		label: <p>{status.label}</p>
+	}));
+
 	const onTabChange = (key: string) => {
 		setActiveTabKey(key);
 		router.replace(
@@ -146,7 +132,7 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 				</Link>
 
 				<div className='flex items-center justify-between pt-4'>
-					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} dark:text-blue-dark-high' text-[32px] font-bold text-blue-light-high dark:text-lightWhite`}>
+					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
 						On-chain Bounties
 					</span>
 					<div className='flex items-center gap-2'>
@@ -176,7 +162,7 @@ const BountiesListing: FC<BountiesListingProps> = (props) => {
 						<Pagination
 							defaultCurrent={1}
 							pageSize={VOTES_LISTING_LIMIT}
-							total={20}
+							total={totalBountiesCount}
 							showSizeChanger={false}
 							hideOnSinglePage={true}
 							onChange={onPaginationChange}

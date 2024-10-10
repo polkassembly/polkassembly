@@ -125,7 +125,6 @@ export async function getAllBounties({ categories, page, status, network }: Args
 			query: GET_ALL_BOUNTIES,
 			variables: variables
 		});
-		console.log('subsquidBountiesRes', subsquidBountiesRes);
 
 		if (!subsquidBountiesRes?.data?.bounties?.length) throw apiErrorWithStatusCode('No bounty data found', 400);
 

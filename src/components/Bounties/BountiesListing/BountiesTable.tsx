@@ -295,36 +295,52 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 											</div>
 										) : record?.childbounties?.length > 0 ? (
 											<div className=''>
-												{record.childbounties.map((childBounty: IChildBounty, index: number) => (
-													<div
-														key={childBounty.index}
-														className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'
-													>
-														{index === record.childbounties.length - 1 ? (
-															<ImageIcon
-																src='/assets/bountieslistingchildlevelzero.svg'
-																className='-mt-5 h-5 w-5'
-																alt='Last child level'
-															/>
-														) : (
-															<ImageIcon
-																src='/assets/bountieslistingchildlevelone.svg'
-																className='-mt-5 h-5 w-5'
-																alt='Child level'
-															/>
-														)}
+												{record.childbounties.map((childBounty: IChildBounty, index: number) => {
+													const relativeCreatedAt = childBounty.createdAt
+														? dayjs(childBounty.createdAt).isBefore(dayjs().subtract(1, 'w'))
+															? dayjs(childBounty.createdAt).format("Do MMM 'YY")
+															: dayjs(childBounty.createdAt).startOf('day').fromNow()
+														: null;
+													return (
+														<div
+															key={childBounty.index}
+															className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'
+														>
+															{index === record.childbounties.length - 1 ? (
+																<ImageIcon
+																	src='/assets/bountieslistingchildlevelzero.svg'
+																	className='-mt-5 h-5 w-5'
+																	alt='Last child level'
+																/>
+															) : (
+																<ImageIcon
+																	src='/assets/bountieslistingchildlevelone.svg'
+																	className='-mt-5 h-5 w-5'
+																	alt='Child level'
+																/>
+															)}
 
-														<div className='ml-4 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
-														<div className='mt-5 w-1/4 dark:text-black'>{childBounty.curator}</div>
-														<div className='mt-5 w-1/4 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
-														<div className='mt-5 w-1/4 dark:text-black'>-</div>
-														<div className='mt-5 w-1/4 dark:text-black'>
-															{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+															<div className='ml-8 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
+															<div className='mt-5 w-1/4 dark:text-black'>{childBounty.curator && childBounty.curator !== '' ? childBounty.curator : '-'}</div>
+															<div className='mt-5 w-1/3 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
+															<div className='mt-5 w-1/4 dark:text-black'>
+																{formatedBalance(childBounty.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+															</div>
+															<div className='mt-5 w-1/4 dark:text-black'>-</div>
+															<div className='mt-5 w-1/3 dark:text-black'>
+																{relativeCreatedAt ? (
+																	<span>
+																		<ClockCircleOutlined /> {relativeCreatedAt}
+																	</span>
+																) : (
+																	'-'
+																)}
+															</div>
+															<div className='mt-5 w-1/4 '>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
+															<div className=' mt-5 w-1/3 dark:text-black'>-</div>
 														</div>
-														<div className=' mt-5 w-1/4 dark:text-black'>-</div>
-														<div className='mt-5 w-1/4 '>{childBounty.status ? <StatusTag status={childBounty.status} /> : '-'}</div>
-													</div>
-												))}
+													);
+												})}
 											</div>
 										) : (
 											<p className='pl-4 pt-4'>No child bounties available.</p>

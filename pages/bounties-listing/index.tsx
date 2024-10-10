@@ -40,10 +40,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const filterBy = query.filterBy ? JSON.parse(decodeURIComponent(String(query.filterBy))) : [];
 	const status = query.status ? JSON.parse(decodeURIComponent(String(query.status))) : '';
 
-	console.log('page', page);
-	console.log('filterby', filterBy);
-	console.log('status', status);
-
 	const { data } = await getAllBounties({
 		categories: filterBy,
 		network,

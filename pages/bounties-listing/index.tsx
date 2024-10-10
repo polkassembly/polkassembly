@@ -66,8 +66,6 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const router = useRouter();
 	const initialTabKey = router.query.status && JSON.parse(decodeURIComponent(String(router.query.status).toUpperCase()));
 	const activeTabKey = initialTabKey || 'all';
-	console.log('router.query', data?.bounties);
-
 	const onPaginationChange = (page: number) => {
 		router.push({
 			pathname: router.pathname,

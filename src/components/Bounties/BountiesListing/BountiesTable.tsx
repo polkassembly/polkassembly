@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Progress, Spin } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
@@ -24,6 +24,8 @@ import dayjs from 'dayjs';
 interface IChildBounty {
 	index: number;
 	title: string;
+	curator: string;
+	createdAt: string;
 	reward: string;
 	status: string;
 }
@@ -75,7 +77,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					return;
 				}
 				setBounties((prevBounties) => {
-					const updatedBounties = prevBounties.map((bounty) => (bounty.index === record.index ? { ...bounty, childbounties: data?.child_bounties || [] } : bounty));
+					const updatedBounties = prevBounties.map((bounty) =>
+						bounty.index === record.index
+							? { ...bounty, childbounties: data?.child_bounties.map((childBounty) => ({ ...childBounty, createdAt: childBounty.createdAt.toString() })) || [] }
+							: bounty
+					);
 					return updatedBounties;
 				});
 			} catch (err) {
@@ -237,6 +243,10 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		}
 	];
 
+	useEffect(() => {
+		setBounties(props.bounties);
+	}, [props?.bounties]);
+
 	return (
 		<StyledTableContainer themeMode={theme}>
 			<div>
@@ -305,7 +315,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 														)}
 
 														<div className='ml-4 mt-5 w-1/4 dark:text-black'>{childBounty.index}</div>
-														<div className='mt-5 w-1/4 dark:text-black'>-</div>
+														<div className='mt-5 w-1/4 dark:text-black'>{childBounty.curator}</div>
 														<div className='mt-5 w-1/4 dark:text-black'>{childBounty.title.length > 15 ? `${childBounty.title.slice(0, 15)}...` : childBounty.title}</div>
 														<div className='mt-5 w-1/4 dark:text-black'>-</div>
 														<div className='mt-5 w-1/4 dark:text-black'>

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, FormInstance, Slider, SliderSingleProps } from 'antd';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import BN from 'bn.js';
@@ -10,6 +10,10 @@ import styled from 'styled-components';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 import { batchVotesActions } from '~src/redux/batchVoting';
+import Image from 'next/image';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { useApiContext } from '~src/context';
+import blockToDays from '~src/util/blockToDays';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -46,6 +50,39 @@ const VotingFormCard = ({
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const [lockingPeriod, setLockingPeriod] = useState<string>('No lockup period');
+	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+
+	const calculateLock = (convictionValue: number): number => {
+		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
+		return conviction ? conviction[1] : 0; // Return the lock if found, otherwise 0
+	};
+	const calculateLockingPeriod = (convictionValue: number) => {
+		const lockPeriod = calculateLock(convictionValue);
+
+		if (!api || !apiReady) {
+			return 'No lockup period';
+		}
+
+		const res = api.consts.convictionVoting.voteLockingPeriod;
+		const num = res.toJSON();
+		const days = blockToDays(num, network);
+
+		if (days && !isNaN(Number(days)) && lockPeriod) {
+			return `${convictionValue}x voting balance, locked for ${lockPeriod * days} days`;
+		}
+
+		return 'No lockup period';
+	};
+
+	const handleConvictionChange = (value: string) => {
+		console.log('value: ', value);
+		const lockingPeriodMessage = value === '0.1x' ? 'No lockup period' : calculateLockingPeriod(parseFloat(value));
+		console.log('messagevalue: ', lockingPeriodMessage);
+		setLockingPeriod(lockingPeriodMessage);
+	};
 
 	const marks: SliderSingleProps['marks'] = {
 		0: '0.1x',
@@ -106,6 +143,7 @@ const VotingFormCard = ({
 							className='dark:text-white'
 							rootClassName='dark:text-white'
 							onChange={(value) => {
+								handleConvictionChange(getMarkValue(value as number));
 								const markValue = getMarkValue(value as number);
 								if (!forSpecificPost) {
 									dispatch(editBatchValueChanged({ values: { conviction: parseFloat(markValue.replace('x', '')) } }));
@@ -125,6 +163,20 @@ const VotingFormCard = ({
 					</label>
 				</div>
 			)}
+
+			<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
+				<div className='flex items-center gap-x-1'>
+					<Image
+						src='/assets/icons/lock-icon.svg'
+						alt='lock-icon'
+						width={24}
+						height={24}
+						className={theme === 'dark' ? 'dark-icons' : ''}
+					/>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
+				</div>
+				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriod}</p>
+			</div>
 		</Form>
 	);
 };

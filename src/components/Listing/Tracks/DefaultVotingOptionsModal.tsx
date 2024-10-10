@@ -51,11 +51,21 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 
 	return (
 		<section className='mt-4'>
-			{!forSpecificPost && (
+			{!forSpecificPost ? (
 				<Alert
 					type='info'
 					showIcon
 					message={<span className='text-[13px] dark:text-black'>Select default values for votes. These can be edited before making a final transaction</span>}
+				/>
+			) : (
+				<Alert
+					type='info'
+					showIcon
+					message={
+						<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
+							<p className='m-0 p-0 font-semibold'>Note:</p>All votes in the cart will be made from the selected account
+						</span>
+					}
 				/>
 			)}
 			<VoteReferendumCard

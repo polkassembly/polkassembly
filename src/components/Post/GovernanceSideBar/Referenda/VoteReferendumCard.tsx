@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -112,10 +112,14 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const { loginAddress } = useUserDetailsSelector();
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 
+	useEffect(() => {
+		getDelegateData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
+
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
 	}
-
 
 	const getDelegateData = async () => {
 		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;

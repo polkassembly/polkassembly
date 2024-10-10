@@ -157,7 +157,7 @@ const BatchCart: React.FC = () => {
 	return (
 		<section className='px-4'>
 			<article className=''>
-				<div className={'max-h-[370px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
+				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>

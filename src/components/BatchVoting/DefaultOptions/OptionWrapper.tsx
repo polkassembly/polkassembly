@@ -47,7 +47,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
-		return conviction ? conviction[1] : 0; // Return the lock if found, otherwise 0
+		return conviction ? conviction[1] : 0;
 	};
 
 	if (!id) {
@@ -93,9 +93,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	};
 
 	const handleConvictionChange = (value: string) => {
-		console.log('value: ', value);
 		const lockingPeriodMessage = value === '0.1x' ? 'No lockup period' : calculateLockingPeriod(parseFloat(value));
-		console.log('messagevalue: ', lockingPeriodMessage);
 		setLockingPeriod(lockingPeriodMessage);
 	};
 

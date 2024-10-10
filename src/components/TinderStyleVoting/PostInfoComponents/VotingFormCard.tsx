@@ -57,7 +57,7 @@ const VotingFormCard = ({
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
-		return conviction ? conviction[1] : 0; // Return the lock if found, otherwise 0
+		return conviction ? conviction[1] : 0;
 	};
 	const calculateLockingPeriod = (convictionValue: number) => {
 		const lockPeriod = calculateLock(convictionValue);
@@ -78,9 +78,7 @@ const VotingFormCard = ({
 	};
 
 	const handleConvictionChange = (value: string) => {
-		console.log('value: ', value);
 		const lockingPeriodMessage = value === '0.1x' ? 'No lockup period' : calculateLockingPeriod(parseFloat(value));
-		console.log('messagevalue: ', lockingPeriodMessage);
 		setLockingPeriod(lockingPeriodMessage);
 	};
 
@@ -164,7 +162,7 @@ const VotingFormCard = ({
 				</div>
 			)}
 
-			<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
+			{showConvictionBar && <div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
 				<div className='flex items-center gap-x-1'>
 					<Image
 						src='/assets/icons/lock-icon.svg'
@@ -176,7 +174,7 @@ const VotingFormCard = ({
 					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 				</div>
 				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriod}</p>
-			</div>
+			</div>}
 		</Form>
 	);
 };

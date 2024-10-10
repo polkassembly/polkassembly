@@ -75,10 +75,13 @@ const getBountyStauses = (status: EBountiesStatuses) => {
 			return [bountyStatus.REJECTED];
 		case EBountiesStatuses.CLAIMED:
 			return [bountyStatus.AWARDED, bountyStatus.CLAIMED];
+		default:
+			return [];
 	}
 };
 export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
 	try {
+		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 		const statuses = getBountyStauses(status);
 		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
 			throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
@@ -114,11 +117,15 @@ export async function getAllBounties({ categories, page, status, network }: Args
 		if (bountiesIndexes?.length) {
 			variables.index_in = bountiesIndexes;
 		}
+		if (categories?.length) {
+			variables.categories = categories;
+		}
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES,
 			variables: variables
 		});
+		console.log('subsquidBountiesRes', subsquidBountiesRes);
 
 		if (!subsquidBountiesRes?.data?.bounties?.length) throw apiErrorWithStatusCode('No bounty data found', 400);
 
@@ -210,8 +217,6 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
 	const { page = 1, status, categories } = req.body;
 
 	const { data, error } = await getAllBounties({

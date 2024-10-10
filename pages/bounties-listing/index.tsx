@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { spaceGrotesk } from 'pages/_app';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { LeftOutlined } from '@ant-design/icons';
@@ -21,7 +21,6 @@ import { getAllBounties } from 'pages/api/v1/bounty/bountyDashboard/getAllBounti
 import { ErrorState } from '~src/ui-components/UIStates';
 import { useRouter } from 'next/router';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { Pagination } from '~src/ui-components/Pagination';
 
 interface IBountiesListingProps {
@@ -40,6 +39,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const page = Number(query.page) || 1;
 	const filterBy = query.filterBy ? JSON.parse(decodeURIComponent(String(query.filterBy))) : [];
 	const status = query.status ? JSON.parse(decodeURIComponent(String(query.status))) : '';
+
+	console.log('page', page);
+	console.log('filterby', filterBy);
+	console.log('status', status);
 
 	const { data } = await getAllBounties({
 		categories: filterBy,
@@ -61,27 +64,28 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const [activeTabKey, setActiveTabKey] = useState('all');
+	const initialTabKey = router.query.status && JSON.parse(decodeURIComponent(String(router.query.status).toUpperCase()));
+	const activeTabKey = initialTabKey || 'all';
+	console.log('router.query', data?.bounties);
 
 	const onPaginationChange = (page: number) => {
 		router.push({
+			pathname: router.pathname,
 			query: {
+				...router.query,
 				page
 			}
 		});
-		handlePaginationChange({ limit: VOTES_LISTING_LIMIT, page });
 	};
-
 	const bounties = data?.bounties ?? [];
 	const totalBountiesCount = data?.totalBountiesCount ?? 0;
 
 	const bountyStatuses = [
 		{ key: 'all', label: 'All' },
-		{ key: EBountiesStatuses.PROPOSED, label: 'Proposed' },
-		{ key: EBountiesStatuses.ACTIVE, label: 'Active' },
-		{ key: EBountiesStatuses.CLAIMED, label: 'Claimed' },
-		{ key: EBountiesStatuses.CANCELLED, label: 'Cancelled' },
-		{ key: EBountiesStatuses.REJECTED, label: 'Rejected' }
+		...Object.entries(EBountiesStatuses).map(([key, value]) => ({
+			key,
+			label: value?.[0].toUpperCase() + value?.slice(1)
+		}))
 	];
 
 	const tabItems = bountyStatuses.map((status) => ({
@@ -91,18 +95,15 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	}));
 
 	const onTabChange = (key: string) => {
-		setActiveTabKey(key);
-		router.replace(
-			{
-				pathname: '',
-				query: {
-					...router.query,
-					status: encodeURIComponent(JSON.stringify(key))
-				}
-			},
-			undefined,
-			{ shallow: true }
-		);
+		const status = key === 'all' ? '' : key.toLowerCase();
+		router.push({
+			pathname: router.pathname,
+			query: {
+				...router.query,
+				page: 1,
+				status: encodeURIComponent(JSON.stringify(status))
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -160,8 +161,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 				<div className='mb-5 mt-3 flex justify-end'>
 					{totalBountiesCount > 0 && totalBountiesCount > VOTES_LISTING_LIMIT && (
 						<Pagination
-							defaultCurrent={1}
 							pageSize={VOTES_LISTING_LIMIT}
+							current={Number(router.query.page) || 1}
 							total={totalBountiesCount}
 							showSizeChanger={false}
 							hideOnSinglePage={true}

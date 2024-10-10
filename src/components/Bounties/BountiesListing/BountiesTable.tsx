@@ -204,31 +204,32 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			key: 'categories',
 			render: (categories: string[]) => {
 				const maxLength = 15;
-				let firstCategory = '';
-				let secondCategory = '';
-				let remainingCategoriesCount = 0;
+				const [firstCategory, secondCategory, ...rest] = categories;
 
-				if (categories.length > 0) {
-					firstCategory = categories[0];
+				const displayCategories = [];
+				let remainingCount = 0;
 
-					if (categories.length > 1) {
-						secondCategory = categories[1];
-					}
-
-					const totalLength = firstCategory.length + secondCategory.length;
-
-					if (totalLength > maxLength) {
-						remainingCategoriesCount = categories.length - 1;
+				if (firstCategory) {
+					displayCategories.push(firstCategory);
+					if (secondCategory && firstCategory.length + secondCategory.length <= maxLength) {
+						displayCategories.push(secondCategory);
+						remainingCount = rest.length;
 					} else {
-						remainingCategoriesCount = categories.length - 2;
+						remainingCount = categories.length - 1;
 					}
 				}
 
 				return (
 					<div style={{ display: 'flex', gap: '5px' }}>
-						{firstCategory && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#4800ff]'>{firstCategory}</span>}
-						{secondCategory && remainingCategoriesCount === 0 && <span className='rounded-full bg-[#EFEFEF] px-3 py-1 text-[12px] text-[#4800ff]'>{secondCategory}</span>}
-						{remainingCategoriesCount > 0 && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCategoriesCount}</span>}
+						{displayCategories.map((category, index) => (
+							<span
+								key={index}
+								className={`rounded-full px-3 py-1 text-[12px] ${index === 0 ? 'bg-[#dfd5ff] text-[#4800ff]' : 'bg-[#EFEFEF] text-[#4800ff]'}`}
+							>
+								{category}
+							</span>
+						))}
+						{remainingCount > 0 && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCount}</span>}
 					</div>
 				);
 			},
@@ -284,7 +285,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 											</div>
 										) : record?.childbounties?.length > 0 ? (
 											<div className=''>
-												{record.childbounties.map((childBounty: any, index: number) => (
+												{record.childbounties.map((childBounty: IChildBounty, index: number) => (
 													<div
 														key={childBounty.index}
 														className=' flex items-center justify-between border-[1px] border-y border-solid border-[#D2D8E0] px-4  py-2 pb-4'

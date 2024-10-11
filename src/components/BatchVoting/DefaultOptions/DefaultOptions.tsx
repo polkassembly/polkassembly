@@ -149,8 +149,10 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					form.setFieldValue('address', address);
 					dispatch(onchainIdentityActions.setOnchainIdentityAddress(address));
 					setOpen(true);
+					dispatch(batchVotesActions.setBatchVotingAddress(address));
 					setAddress(address);
 				}}
+				isUsedInBatchVoting={true}
 			/>
 		</section>
 	);

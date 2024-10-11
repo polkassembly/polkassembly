@@ -59,6 +59,7 @@ interface Props {
 	isBalanceUpdated?: boolean;
 	isUsedInDelegationModal?: boolean;
 	usedInIdentityFlow?: boolean;
+	isUsedInBatchVoting?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -78,7 +79,8 @@ const AddressConnectModal = ({
 	accountSelectionFormTitle = 'Select address',
 	isProposalCreation = false,
 	isBalanceUpdated,
-	usedInIdentityFlow = false
+	usedInIdentityFlow = false,
+	isUsedInBatchVoting = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -633,6 +635,16 @@ const AddressConnectModal = ({
 							}
 						/>
 					)}
+					{isUsedInBatchVoting && (<Alert
+					type='info'
+					showIcon
+					className='mt-2'
+					message={
+						<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
+							<p className='m-0 p-0 font-semibold'>Note:</p>All votes in the cart will be made from the selected account
+						</span>
+					}
+				/>)}
 				</Spin>
 			)}
 		</Modal>

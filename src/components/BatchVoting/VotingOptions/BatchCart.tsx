@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, InfoIcon } from '~src/ui-components/CustomIcons';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -22,12 +22,15 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IDeleteBatchVotes } from '~src/components/TinderStyleVoting/types';
 import ProposalInfoCard from '~src/components/TinderStyleVoting/VoteCart/ProposalInfoCard';
 import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuccessModal';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import Address from '~src/ui-components/Address';
 
 const BatchCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
+	const { batch_voting_address } = useBatchVotesSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
@@ -112,7 +115,7 @@ const BatchCart: React.FC = () => {
 		});
 		const tx = api?.tx?.utility?.batchAll(batchCall);
 		// eslint-disable-next-line sort-keys
-		await executeTx({ address: loginAddress, api, apiReady, network, errorMessageFallback: 'error', onFailed: onFailed, onSuccess: onSuccess, tx });
+		await executeTx({ address: batch_voting_address, api, apiReady, network, errorMessageFallback: 'error', onFailed: onFailed, onSuccess: onSuccess, tx });
 	};
 
 	const getGASFees = () => {
@@ -138,7 +141,7 @@ const BatchCart: React.FC = () => {
 		});
 		api?.tx?.utility
 			?.batchAll(batchCall)
-			?.paymentInfo(loginAddress)
+			?.paymentInfo(batch_voting_address)
 			.then((info) => {
 				const gasPrice = new BN(info?.partialFee?.toString() || '0');
 				setGasFees(gasPrice);
@@ -156,7 +159,17 @@ const BatchCart: React.FC = () => {
 	return (
 		<section className='px-4'>
 			<article className=''>
-				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
+				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2 dark:bg-black'}>
+					<div className='bg-pink_primary_transparent border border-solid border-pink_secondary p-2 text-xs rounded-md flex items-start justify-center gap-x-1'>
+						<InfoCircleOutlined className='mt-1'/>
+						<div className='m-0 p-0 flex flex items-center gap-x-1'>
+						All Votes will be made with
+							<Address 
+								address={batch_voting_address}
+								iconSize={20} 
+							/>
+						</div>
+					</div>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>

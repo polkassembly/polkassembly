@@ -8,6 +8,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { EVoteDecisionType } from '~src/types';
 
 const initialState: IBatchVoteStore = {
+	batch_voting_address: '',
 	batch_vote_details: {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
@@ -80,6 +81,7 @@ export const batchVoteStore = createSlice({
 		reset: (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
+				batch_voting_address: '',
 				batch_vote_details: {},
 				edit_vote_details: {},
 				is_cancel_button_clicked: false,
@@ -105,6 +107,9 @@ export const batchVoteStore = createSlice({
 				voted_post_ids_array: [],
 				voted_proposal_id: 0
 			};
+		},
+		setBatchVotingAddress: (state, action: PayloadAction<string>) => {
+			state.batch_voting_address = action.payload;
 		},
 		setBatchVoting_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
 			const obj = action.payload;

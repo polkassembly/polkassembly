@@ -4,6 +4,7 @@
 
 import { EVoteDecisionType } from '~src/types';
 export interface IBatchVoteStore {
+	batch_voting_address: string;
 	batch_vote_details: IBatchVotesDetails;
 	edit_vote_details: IBatchVotesDetails;
 	vote_card_info: IVoteCardInfo;

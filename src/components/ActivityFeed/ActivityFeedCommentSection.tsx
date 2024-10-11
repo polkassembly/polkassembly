@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useRef } from 'react';
-import { Alert, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useTheme } from 'next-themes';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ActivityFeedCommentModal } from './ActivityFeedCommentModal';
 import { PostType } from '~src/auth/types';
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
+import Alert from '~src/basic-components/Alert';
+import ImageComponent from '../ImageComponent';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
 
@@ -52,18 +52,20 @@ const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 	return (
 		<div className='mt-1 flex items-center'>
 			{isUserNotAllowedToComment ? (
-				<Alert
-					message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}
-					type='info'
-					showIcon
-				/>
+				<div className='w-full'>
+					<Alert
+						message={<span className='mb-10  text-[12px] dark:text-blue-dark-high'>{reasonForNoComment}</span>}
+						type='info'
+						showIcon
+					/>
+				</div>
 			) : (
 				<>
 					{!isMobile && (
-						<ImageIcon
-							src={`${currentUserdata?.picture ? currentUserdata?.picture : FIRST_VOTER_PROFILE_IMG_FALLBACK}`}
-							alt=''
-							className='h-6 w-6 rounded-full lg:h-10 lg:w-10'
+						<ImageComponent
+							className='mt-1 hidden flex-none md:inline-block'
+							src={currentUserdata.picture}
+							alt='user-avatar'
 						/>
 					)}
 
@@ -113,7 +115,6 @@ const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 									<ActivityFeedCommentModal
 										post={post}
 										onclose={closeModal}
-										currentUserdata={currentUserdata}
 									/>
 								</div>
 							</Modal>

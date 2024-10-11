@@ -250,7 +250,16 @@ export const ActivityFeedPostActions: React.FC<{
 
 		return sentimentIcons[sentiment] || null;
 	};
+	const percentage = Math.min(post.highestSentiment?.percentage || 0, 100);
+	const sentimentLevels = [
+		{ threshold: 20, title: 'Completely Against' },
+		{ threshold: 40, title: 'Slightly Against' },
+		{ threshold: 60, title: 'Neutral' },
+		{ threshold: 80, title: 'Slightly For' },
+		{ threshold: 100, title: 'Completely For' }
+	];
 
+	const sentimentTitle = sentimentLevels.find((level) => percentage <= level.threshold)?.title || 'Completely For';
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			if (modalWrapperRef.current && !modalWrapperRef.current.contains(event.target as Node)) {
@@ -399,8 +408,8 @@ export const ActivityFeedPostActions: React.FC<{
 						{post.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
 								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
-								title={['Completely Against', 'Slightly Against', 'Neutral', 'Slightly For', 'Completely For'][post.highestSentiment.sentiment]}
-								percentage={post.highestSentiment?.percentage || null}
+								title={sentimentTitle}
+								percentage={percentage}
 							/>
 						)}
 					</div>
@@ -426,7 +435,6 @@ export const ActivityFeedPostActions: React.FC<{
 							<ActivityFeedCommentModal
 								post={post}
 								onclose={closeModal}
-								currentUserdata={currentUserdata}
 							/>
 						</div>
 					</Modal>

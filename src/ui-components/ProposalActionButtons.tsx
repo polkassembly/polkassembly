@@ -9,7 +9,7 @@ import { MenuProps } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
@@ -17,10 +17,9 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { isActivitySupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
-import { network } from '~src/global/networkConstants';
 import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
 import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
+import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -42,6 +41,7 @@ interface Props {
 
 const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal, isUsedInFAB }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
 	const pathname = usePathname();
@@ -52,6 +52,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const router = useRouter();
+	const isRelevantPath = ['/activity-feed', '/opengov'].includes(pathname);
+
 	const handleClick = (num: number) => {
 		if (id) {
 			if (proposerAddress.length > 0) {
@@ -146,8 +148,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{/* {isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && (pathname === '/activity-feed' || pathname === '/opengov') && <SwitchViewButton pathname={pathname} />} */}
-			{isUsedInHomePage && isActivitySupportedNetwork(network.POLKADOT) && pathname === '/activity-feed' && <SwitchViewButton pathname={pathname} />}
+			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
 					{router.pathname === '/activity-feed' ? (

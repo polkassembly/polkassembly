@@ -25,7 +25,7 @@ export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre
 
 			setCurrentTokenPrice({
 				isLoading: false,
-				value: ['cere' || 'picasso', treasuryAssets.DED.name].includes(network) ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
+				value: ['cere', 'picasso', treasuryAssets.DED.name].includes(network) ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
 			});
 		})
 		.catch(() => {

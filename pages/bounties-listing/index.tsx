@@ -35,8 +35,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (networkRedirect) return networkRedirect;
 
 	const page = query?.page || 1;
-	const filterBy = query.filterBy ? JSON.parse(decodeURIComponent(String(query.filterBy))) : [];
-	const status = query.status ? JSON.parse(decodeURIComponent(String(query.status))) : '';
+	const filterBy = query?.filterBy ? JSON.parse(decodeURIComponent(String(query?.filterBy))) : [];
+	const status = query?.status ? JSON.parse(decodeURIComponent(String(query?.status))) : '';
 
 	const { data } = await getAllBounties({
 		categories: filterBy,

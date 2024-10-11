@@ -109,13 +109,17 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Curator'
 		},
 		{
-			className: 'w-[277px]',
+			className: 'max-w-[227px] w-[227px] m-0 p-0 px-5',
 			dataIndex: 'title',
 			key: 'title',
 			render: (title: string) => {
-				const maxLength = 30;
+				const maxLength = 25;
 				const truncatedTitle = title?.length > maxLength ? `${title?.substring(0, maxLength)}...` : title;
-				return title ? truncatedTitle : '-';
+				return (
+					<div className='m-0  p-0 pt-3'>
+						<p>{title ? truncatedTitle : '-'}</p>
+					</div>
+				);
 			},
 			title: 'Title'
 		},
@@ -323,7 +327,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 
 																<div className='ml-7 mt-5'>{childBounty?.index}</div>
 																<div className='ml-2 mt-4 w-[160px] pl-5 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
-																<div className='mt-5 w-[221px] px-5'>{childBounty?.title?.length > 30 ? `${childBounty?.title?.slice(0, 30)}...` : childBounty?.title}</div>
+																<div className='mt-5 w-[227px] px-5'>{childBounty?.title?.length > 25 ? `${childBounty?.title?.slice(0, 25)}...` : childBounty?.title}</div>
 																<div className='mt-5 w-[115px] pl-5'>{parseBalance(childBounty?.reward || '0', 2, true, network)}</div>
 
 																<div className='mt-5 w-[107px] pl-5'>-</div>

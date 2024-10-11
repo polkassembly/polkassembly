@@ -45,6 +45,7 @@ import { verifyMetamaskSignature } from './utils/verifyMetamaskSignature';
 import verifyUserPassword from './utils/verifyUserPassword';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { REFRESH_TOKEN_LIFE_IN_SECONDS } from '~src/global/refreshToken';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 process.env.JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY && process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
 process.env.JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY && process.env.JWT_PUBLIC_KEY.replace(/\\n/gm, '\n');
@@ -311,21 +312,9 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressLoginStart(address: string): Promise<string> {
-		const timestamp = dayjs().format('DD-MM-YYYY HH:mm:ss');
-		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${timestamp}` : `<Bytes>Login in polkassembly ${timestamp}</Bytes>`;
-
-		await redisSetex(getAddressLoginKey(address), ADDRESS_LOGIN_TTL, signMessage);
-
-		return signMessage;
-	}
-
 	public async AddressLogin(address: string, signature: string, wallet: Wallet, multisigAddress?: string): Promise<IAuthResponse> {
-		const signMessage = await redisGet(getAddressLoginKey(address));
-		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED, 401);
-
 		const isValidSr =
-			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(SIGN_MESSAGE, address, signature) : verifySignature(SIGN_MESSAGE, address, signature);
 
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_INVALID_SIGNATURE, 401);
 
@@ -344,8 +333,6 @@ class AuthService {
 
 		const user = await getUserFromUserId(addressObj.user_id);
 		if (!user) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_NOT_FOUND, 404);
-
-		await redisDel(getAddressLoginKey(address));
 
 		const isTFAEnabled = user.two_factor_auth?.enabled || false;
 
@@ -369,21 +356,6 @@ class AuthService {
 				login_wallet: wallet
 			})
 		};
-	}
-
-	public async AddressSignupStart(address: string, multisigAddress?: string): Promise<string> {
-		const addressDoc = await firebaseAdmin
-			.firestore()
-			.collection('addresses')
-			.doc(!multisigAddress ? address : multisigAddress)
-			.get();
-		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_ALREADY_EXISTS, 401);
-
-		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
-
-		await redisSetex(getAddressSignupKey(address), ADDRESS_LOGIN_TTL, signMessage);
-
-		return signMessage;
 	}
 
 	public async LinkProxyAddress(token: string, network: Network, proxied: string, proxy: string, message: string, signature: string): Promise<string> {
@@ -454,12 +426,9 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressSignupConfirm(network: Network, address: string, signature: string, wallet: Wallet, multisigAddress?: string): Promise<AuthObjectType> {
-		const signMessage = await redisGet(getAddressSignupKey(address));
-		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_SIGN_MESSAGE_EXPIRED, 403);
-
+	public async AddressSignup(network: Network, address: string, signature: string, wallet: Wallet, multisigAddress?: string): Promise<AuthObjectType> {
 		const isValidSr =
-			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(SIGN_MESSAGE, address, signature) : verifySignature(SIGN_MESSAGE, address, signature);
 
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_INVALID_SIGNATURE, 400);
 
@@ -473,7 +442,6 @@ class AuthService {
 		const user = await this.createUser('', password, username, true, network, false);
 
 		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet, !multisigAddress ? false : true);
-		await redisDel(getAddressSignupKey(address));
 
 		return {
 			token: await this.getSignedToken(user),

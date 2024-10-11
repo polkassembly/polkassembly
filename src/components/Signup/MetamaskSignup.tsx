@@ -17,7 +17,7 @@ import Loader from 'src/ui-components/Loader';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import LoginLogo from '~assets/icons/login-logo.svg';
 
-import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { TokenType } from '~src/auth/types';
 import addEthereumChain from '~src/util/addEthereumChain';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { SIGN_MESSAGE } from '~src/global/signMessage';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -118,21 +119,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 	const handleSignup: (values: React.BaseSyntheticEvent<object, any, any> | undefined) => void = async () => {
 		try {
 			setLoading(true);
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
-			if (error || !data) {
-				setErr(error || 'Something went wrong');
-				setLoading(false);
-				return;
-			}
-
-			const signMessage = data?.signMessage;
-			if (!signMessage) {
-				setErr('Challenge message not found');
-				setLoading(false);
-				return;
-			}
-
-			const msg = stringToHex(signMessage);
+			const msg = stringToHex(SIGN_MESSAGE);
 			const from = address;
 
 			const params = [msg, from];
@@ -151,7 +138,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						return;
 					}
 
-					const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
+					const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignup', {
 						address,
 						signature: result.result,
 						wallet: Wallet.METAMASK

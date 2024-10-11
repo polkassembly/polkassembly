@@ -493,8 +493,7 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
 `;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE = `
-
-query ProposalByIndexAndType($index_eq: Int=1103, $hash_eq: String, $type_eq: ProposalType = ReferendumV2, $voter_eq: String = "", $vote_type_eq: VoteType = ReferendumV2) {
+query ProposalByIndexAndType($index_eq: Int=1103, $hash_eq: String, $type_eq: ProposalType = ReferendumV2, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
     index
     proposer

@@ -58,7 +58,7 @@ const CreateProposalDropdownButton: FC = () => (
 		<div className='card mx-4'>
 			<div className='flex items-center justify-center gap-[6px] rounded-[10.5px] bg-white py-[2px] dark:bg-section-dark-background'>
 				<CreatePencilIcon />
-				<span className={`${poppins.variable} ${poppins.className}`}>Create</span>
+				<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
 			</div>
 		</div>
 	</StyledButtonContainer>

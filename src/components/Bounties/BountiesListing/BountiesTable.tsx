@@ -329,7 +329,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 															<div className='mt-5 w-1/4 dark:text-black'>-</div>
 															<div className='mt-5 w-1/3 dark:text-black'>
 																{relativeCreatedAt ? (
-																	<span>
+																	<span className='text-[#485F7D]'>
 																		<ClockCircleOutlined /> {relativeCreatedAt}
 																	</span>
 																) : (
@@ -367,7 +367,7 @@ const StyledTableContainer = styled.div<{ themeMode: string }>`
 		background-color: ${(props) => (props.themeMode == 'dark' ? '#1b1d1f' : '#f9fcfb')} !important;
 		border-width: 1px 0px 1px 0px;
 		border-style: solid;
-		border-color: #d2d8e0;
+		border-color: ${(props) => (props.themeMode == 'dark' ? '#323232' : '#d2d8e0')};
 	}
 
 	.ant-table-wrapper .hover-row:hover {

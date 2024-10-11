@@ -9,18 +9,18 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { LeftOutlined } from '@ant-design/icons';
-import BountiesTable, { IBountyListing } from '~src/components/Bounties/BountiesListing/BountiesTable';
+import BountiesTable from '~src/components/Bounties/BountiesListing/BountiesTable';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import FilterByTags from '~src/ui-components/FilterByTags';
-import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
+import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 import { getAllBounties } from 'pages/api/v1/bounty/bountyDashboard/getAllBounties';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { useRouter } from 'next/router';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 
 interface IBountiesListingProps {
@@ -103,7 +103,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [props.network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -118,7 +118,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 			<div>
 				<Link
 					className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
-					href={'/bounty'}
+					href='/bounty'
+					aria-label='Back to Bounty Dashboard'
 				>
 					<div className='flex items-center'>
 						<LeftOutlined className='mr-2 text-xs' />
@@ -153,9 +154,9 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					</div>
 				</div>
 				<div className='mb-5 mt-3 flex justify-end'>
-					{totalBountiesCount > 0 && totalBountiesCount > VOTES_LISTING_LIMIT && (
+					{totalBountiesCount > 0 && totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination
-							pageSize={VOTES_LISTING_LIMIT}
+							pageSize={BOUNTIES_LISTING_LIMIT}
 							current={Number(router.query.page) || 1}
 							total={totalBountiesCount}
 							showSizeChanger={false}

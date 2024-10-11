@@ -20,29 +20,7 @@ import { IChildBountiesResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import dayjs from 'dayjs';
-
-interface IChildBounty {
-	index: number;
-	title: string;
-	curator: string;
-	createdAt: string;
-	reward: string;
-	status: string;
-}
-
-export interface IBountyListing {
-	index: number;
-	curator: string;
-	title: string;
-	reward: string;
-	claimed: number;
-	date: string;
-	status: string;
-	categories: string[];
-	totalChildBountiesCount?: number;
-	children?: IBountyListing;
-	childbounties?: IChildBounty[];
-}
+import { IBountyListing, IChildBounty } from './types/types';
 
 interface IOnchainBountiesProps {
 	bounties: IBountyListing[];
@@ -62,35 +40,45 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
 
-		setExpandedRowKeys(newExpandedRowKeys);
-
-		if (expanded && (!record.childbounties || record.childbounties.length === 0)) {
-			setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: true }));
-
-			try {
-				const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
-					parentBountyIndex: record.index
-				});
-				if (error) {
-					console.error('Error fetching child bounties:', error);
-					setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));
-					return;
-				}
-				setBounties((prevBounties) => {
-					const updatedBounties = prevBounties.map((bounty) =>
-						bounty.index === record.index
-							? { ...bounty, childbounties: data?.child_bounties.map((childBounty) => ({ ...childBounty, createdAt: childBounty.createdAt.toString() })) || [] }
-							: bounty
-					);
-					return updatedBounties;
-				});
-			} catch (err) {
-				console.error('An unexpected error occurred:', err);
-			} finally {
-				setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));
-			}
+		if (!expanded || !!record?.childbounties?.length) {
+			setExpandedRowKeys(newExpandedRowKeys);
+			return;
 		}
+
+		setExpandedRowKeys(newExpandedRowKeys);
+		setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: true }));
+
+		// Separate API call logic
+		const childBounties = await fetchChildBounties(record.index);
+
+		// Update bounties state if no error
+		if (childBounties) {
+			setBounties((prevBounties) => {
+				const updatedBounties = prevBounties.map((bounty) =>
+					bounty.index === record.index
+						? { ...bounty, childbounties: childBounties.map((childBounty) => ({ ...childBounty, createdAt: childBounty.createdAt.toString() })) }
+						: bounty
+				);
+				return updatedBounties;
+			});
+		}
+
+		setLoadingChildBounties((prevState) => ({ ...prevState, [record.index]: false }));
 	};
+
+	const fetchChildBounties = async (parentBountyIndex: number) => {
+		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+			parentBountyIndex
+		});
+
+		if (error) {
+			console.error('Error fetching child bounties:', error);
+			return null;
+		}
+
+		return data?.child_bounties || [];
+	};
+
 	const columns: TableColumnsType<IBountyListing> = [
 		{
 			dataIndex: 'index',
@@ -187,8 +175,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				return (
 					<>
 						{relativeCreatedAt ? (
-							<span className='text-[#485F7D] dark:text-[#9E9E9E]'>
-								<ClockCircleOutlined className='text-[#485F7D] dark:text-[#9E9E9E]' /> {relativeCreatedAt}
+							<span className='text-blue-light-medium  dark:text-[#9E9E9E]'>
+								<ClockCircleOutlined className='text-blue-light-medium dark:text-[#9E9E9E]' /> {relativeCreatedAt}
 							</span>
 						) : (
 							'-'
@@ -211,7 +199,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			key: 'categories',
 			render: (categories: string[]) => {
 				const maxLength = 15;
-				const [firstCategory, secondCategory, ...rest] = categories;
+				const [firstCategory, secondCategory] = categories;
 
 				const displayCategories = [];
 				let remainingCount = 0;
@@ -220,7 +208,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					displayCategories.push(firstCategory);
 					if (secondCategory && firstCategory.length + secondCategory.length <= maxLength) {
 						displayCategories.push(secondCategory);
-						remainingCount = rest.length;
+						remainingCount = categories.length - 2;
 					} else {
 						remainingCount = categories.length - 1;
 					}
@@ -330,7 +318,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 															<div className='mt-5 w-1/4 dark:text-black'>-</div>
 															<div className='mt-5 w-1/3 dark:text-black'>
 																{relativeCreatedAt ? (
-																	<span className='text-[#485F7D]'>
+																	<span className='text-blue-light-medium'>
 																		<ClockCircleOutlined /> {relativeCreatedAt}
 																	</span>
 																) : (

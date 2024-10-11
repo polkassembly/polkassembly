@@ -16,21 +16,8 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
-
-export interface IBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	title: string;
-	curator: string;
-	totalChildBountiesCount: number;
-	createdAt: string;
-	claimedAmount: string;
-	categories: string[];
-}
+import { EBountiesStatuses, IBounty } from '~src/components/Bounties/BountiesListing/types/types';
+import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -43,8 +30,6 @@ interface ISubsquidBounty {
 }
 
 const ZERO_BN = new BN(0);
-
-const BOUNTIES_LISTING_LIMIT = 10;
 
 const bountyStatuses = [
 	bountyStatus.ACTIVE,

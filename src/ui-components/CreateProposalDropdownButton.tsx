@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { FC } from 'react';
 import CreatePencilIcon from '~assets/icons/create-pencil-icon.svg';
 import { poppins } from 'pages/_app';
+import { ArrowDownIcon } from './CustomIcons';
 
 const StyledButtonContainer = styled.div`
 	.card {
@@ -58,7 +59,8 @@ const CreateProposalDropdownButton: FC = () => (
 		<div className='card mx-4'>
 			<div className='flex items-center justify-center gap-[6px] rounded-[10.5px] bg-white py-[2px] dark:bg-section-dark-background'>
 				<CreatePencilIcon />
-				<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+				<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+				<ArrowDownIcon className='text-sm text-[#0A3EAF] dark:text-[#49CFFC]' />
 			</div>
 		</div>
 	</StyledButtonContainer>

@@ -333,7 +333,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	)}
 																</div>
 																<div className='mt-5 w-[123px] pl-4'>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
-																<div className='mt-5'>-</div>
+																<div className='mt-5 pl-4'>-</div>
 															</div>
 														</Link>
 													);

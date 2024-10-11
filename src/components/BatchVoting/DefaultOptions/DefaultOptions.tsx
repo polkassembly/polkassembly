@@ -57,17 +57,10 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				</div>
 			</header>
 			<article className='-full w-full items-center justify-start gap-x-3 px-6'>
-				{!forSpecificPost && (
-					<Alert
-						type='info'
-						showIcon
-						message={<span className='text-[13px] dark:text-white'>Select default values for votes. These can be edited before making a final transaction</span>}
-					/>
-				)}
 				<Alert
 					type='info'
 					showIcon
-					className='mt-4'
+					className='mt-8'
 					message={
 						<p className='m-0 p-0 text-[13px] dark:text-white'>
 							You can adjust for delegated voting power from edit button on each proposal.

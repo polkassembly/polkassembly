@@ -160,7 +160,7 @@ const BatchCart: React.FC = () => {
 		<section className='px-4'>
 			<article className=''>
 				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2 dark:bg-black'}>
-					<div className='flex items-start justify-center gap-x-1 rounded-md border border-solid border-pink_secondary bg-pink_primary_transparent p-2 text-xs'>
+					<div className='flex items-start justify-center gap-x-1 rounded-md border border-solid border-pink_secondary bg-[#fce5f2] p-2 text-xs dark:bg-pink_primary_transparent'>
 						<InfoCircleOutlined className='mt-1' />
 						<div className='m-0 flex flex items-center gap-x-1 p-0'>
 							All Votes will be made with

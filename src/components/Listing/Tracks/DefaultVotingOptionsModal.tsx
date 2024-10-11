@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { ProposalType } from '~src/global/proposalType';
@@ -50,13 +49,6 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 
 	return (
 		<section className='mt-4'>
-			{!forSpecificPost ? (
-				<Alert
-					type='info'
-					showIcon
-					message={<span className='text-[13px] dark:text-black'>Select default values for votes. These can be edited before making a final transaction</span>}
-				/>
-			) : null}
 			<VoteReferendumCard
 				address={String(address)}
 				postData={voteInfo?.proposal}

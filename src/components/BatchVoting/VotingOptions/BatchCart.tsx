@@ -173,6 +173,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						description={
 							<Address
 								disableTooltip
+								displayInline
 								address={batch_voting_address}
 								iconSize={20}
 							/>

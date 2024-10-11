@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect, useState } from 'react';
-import { Progress, Spin } from 'antd';
+import { Progress, Spin, Tag } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
@@ -219,12 +219,12 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				return (
 					<div style={{ display: 'flex', gap: '5px' }}>
 						{displayCategories.map((category, index) => (
-							<span
+							<Tag
 								key={index}
 								className={`rounded-full px-3 py-1 text-[12px] ${index === 0 ? 'bg-[#dfd5ff] text-[#4800ff]' : 'bg-[#EFEFEF] text-[#4800ff]'}`}
 							>
 								{category}
-							</span>
+							</Tag>
 						))}
 						{remainingCount > 0 && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCount}</span>}
 					</div>

@@ -186,8 +186,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				return (
 					<>
 						{relativeCreatedAt ? (
-							<span>
-								<ClockCircleOutlined /> {relativeCreatedAt}
+							<span className='text-[#485F7D] dark:text-[#9E9E9E]'>
+								<ClockCircleOutlined className='text-[#485F7D] dark:text-[#9E9E9E]' /> {relativeCreatedAt}
 							</span>
 						) : (
 							'-'

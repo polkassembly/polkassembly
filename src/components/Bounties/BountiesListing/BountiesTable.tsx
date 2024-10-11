@@ -200,23 +200,26 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Status'
 		},
 		{
-			className: 'w-[90px]',
 			dataIndex: 'categories',
 			key: 'categories',
-			render: (categories: string[]) => {
-				const maxLength = 15;
-				const [firstCategory, secondCategory] = categories || [];
+			render: (categories: string[] | undefined) => {
+				if (!categories || categories.length === 0) {
+					return <span>N/A</span>;
+				}
+
+				const maxLength = 10;
+				const [firstCategory, secondCategory] = categories;
 
 				const displayCategories = [];
 				let remainingCount = 0;
 
 				if (firstCategory) {
 					displayCategories.push(firstCategory);
-					if (secondCategory && firstCategory.length + secondCategory.length <= maxLength) {
+					if (secondCategory && firstCategory.length + secondCategory?.length <= maxLength) {
 						displayCategories.push(secondCategory);
-						remainingCount = categories.length - 2;
+						remainingCount = categories?.length - 2;
 					} else {
-						remainingCount = categories.length - 1;
+						remainingCount = categories?.length - 1;
 					}
 				}
 
@@ -234,7 +237,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Categories'
+			title: 'Categories',
+			width: 100
 		}
 	];
 

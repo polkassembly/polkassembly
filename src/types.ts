@@ -736,8 +736,8 @@ export interface IChildBountiesResponse {
 		status: string;
 		reward: string;
 		title: string;
-		curator: string;
-		createdAt: Date;
+		curator?: string;
+		createdAt?: Date;
 	}[];
 	child_bounties_count: number;
 }

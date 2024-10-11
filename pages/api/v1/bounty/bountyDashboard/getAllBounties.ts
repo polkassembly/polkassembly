@@ -70,7 +70,7 @@ enum EBountiesStatuses {
 	REJECTED = 'rejected'
 }
 
-const getBountyStauses = (status: EBountiesStatuses) => {
+const getBountyStatuses = (status: EBountiesStatuses) => {
 	switch (status) {
 		case EBountiesStatuses.ACTIVE:
 			return [bountyStatus.ACTIVE, bountyStatus.EXTENDED];
@@ -90,9 +90,9 @@ export async function getAllBounties({ categories, page, status, network }: Args
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		const statuses = getBountyStauses(status);
-		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
-			throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+		const statuses = getBountyStatuses(status);
+
+		if (isNaN(page) || (statuses?.length && !!statuses?.some((status: string) => !bountyStatuses.includes(status)))) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		const bountiesIndexes: number[] = [];
 		let totalBounties = 0;
@@ -222,7 +222,7 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 
 	const network = String(req.headers['x-network']);
 
-	const { page = 1, status, categories } = req.body;
+	const { page, status, categories } = req.body;
 
 	const { data, error } = await getAllBounties({
 		categories: categories && Array.isArray(JSON.parse(decodeURIComponent(String(categories)))) ? JSON.parse(decodeURIComponent(String(categories))) : [],

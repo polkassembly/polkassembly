@@ -2652,7 +2652,7 @@ export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! = 10,$offse
       payee
   }
   
- totalBounties: proposalsConnection(where: {type_eq: Bounty, status_in: $status_in}, orderBy: createdAtBlock_DESC) {
+ totalBounties: proposalsConnection(where: {type_eq: Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
    totalCount
   }
 }`;

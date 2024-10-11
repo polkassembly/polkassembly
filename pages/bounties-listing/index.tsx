@@ -9,19 +9,17 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { LeftOutlined } from '@ant-design/icons';
-import BountiesTable from '~src/components/Bounties/BountiesListing/BountiesTable';
 import BountyProposalActionButton from '~src/components/Bounties/bountyProposal';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
-import { Tabs } from '~src/ui-components/Tabs';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import FilterByTags from '~src/ui-components/FilterByTags';
-import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
+import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 import { getAllBounties } from 'pages/api/v1/bounty/bountyDashboard/getAllBounties';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { useRouter } from 'next/router';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
+import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
 
 interface IBountiesListingProps {
 	data?: {
@@ -60,8 +58,6 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const initialTabKey = router.query.status && JSON.parse(decodeURIComponent(String(router.query.status).toUpperCase()));
-	const activeTabKey = initialTabKey || 'all';
 	const onPaginationChange = (page: number) => {
 		router.push({
 			pathname: router.pathname,
@@ -73,32 +69,6 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	};
 	const bounties = data?.bounties ?? [];
 	const totalBountiesCount = data?.totalBountiesCount ?? 0;
-
-	const bountyStatuses = [
-		{ key: 'all', label: 'All' },
-		...Object.entries(EBountiesStatuses).map(([key, value]) => ({
-			key,
-			label: value?.[0].toUpperCase() + value?.slice(1)
-		}))
-	];
-
-	const tabItems = bountyStatuses.map((status) => ({
-		children: <BountiesTable bounties={bounties.length > 0 ? (bounties as IBountyListing[]) : []} />,
-		key: status.key,
-		label: <p>{status.label}</p>
-	}));
-
-	const onTabChange = (key: string) => {
-		const status = key === 'all' ? '' : key.toLowerCase();
-		router.push({
-			pathname: router.pathname,
-			query: {
-				...router.query,
-				page: 1,
-				status: encodeURIComponent(JSON.stringify(status))
-			}
-		});
-	};
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -136,23 +106,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					</div>
 				</div>
 
-				<div className='relative mt-5 md:mt-0'>
-					<div className='absolute -top-2 right-5 z-50 md:top-8'>
-						<FilterByTags />
-					</div>
+				<BountiesTabItems bounties={bounties} />
 
-					<div>
-						<Tabs
-							defaultActiveKey='2'
-							theme={theme}
-							type='card'
-							onChange={onTabChange}
-							activeKey={activeTabKey}
-							className='ant-tabs-tab-bg-white pt-5 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
-							items={tabItems}
-						/>
-					</div>
-				</div>
 				<div className='mb-5 mt-3 flex justify-end'>
 					{totalBountiesCount > 0 && totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination

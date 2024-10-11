@@ -9,15 +9,15 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
-import { ProposalType } from '~src/global/proposalType';
+import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { bountyStatus } from '~src/global/statuses';
 import { GET_ALL_BOUNTIES, GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { EBountiesStatuses, IBounty } from '~src/components/Bounties/BountiesListing/types/types';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { IBounty } from '~src/components/Bounties/BountiesListing/types/types';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -48,7 +48,15 @@ interface Args {
 	network: string;
 }
 
-const getBountyStauses = (status: EBountiesStatuses) => {
+enum EBountiesStatuses {
+	ACTIVE = 'active',
+	PROPOSED = 'proposed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled',
+	REJECTED = 'rejected'
+}
+
+const getBountyStatuses = (status: EBountiesStatuses) => {
 	switch (status) {
 		case EBountiesStatuses.ACTIVE:
 			return [bountyStatus.ACTIVE, bountyStatus.EXTENDED];
@@ -67,9 +75,10 @@ const getBountyStauses = (status: EBountiesStatuses) => {
 export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-		const statuses = getBountyStauses(status);
-		if (Number.isNaN(page) || (statuses?.length && !!statuses?.filter((status: string) => !bountyStatuses.includes(status))?.length))
-			throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+
+		const statuses = getBountyStatuses(status);
+
+		if (isNaN(page) || (statuses?.length && !!statuses?.some((status: string) => !bountyStatuses.includes(status)))) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		const bountiesIndexes: number[] = [];
 		let totalBounties = 0;
@@ -151,6 +160,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 				payee: subsquidBounty?.payee,
 				proposer: subsquidBounty?.proposer,
 				reward: subsquidBounty?.reward,
+				source: 'polkassembly',
 				status: subsquidBounty?.status,
 				title: '',
 				totalChildBountiesCount: totalChildBountiesCount || 0
@@ -168,7 +178,8 @@ export async function getAllBounties({ categories, page, status, network }: Args
 
 			if (!payload?.title) {
 				const res = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, subsquidBounty?.index);
-				payload.title = res?.title || '';
+				payload.title = res?.title || getProposalTypeTitle(ProposalType.BOUNTIES);
+				payload.source = res?.title?.length ? 'subsquare' : 'polkassembly';
 			}
 
 			return payload;
@@ -201,7 +212,8 @@ const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number 
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
-	const { page = 1, status, categories } = req.body;
+
+	const { page, status, categories } = req.body;
 
 	const { data, error } = await getAllBounties({
 		categories: categories && Array.isArray(JSON.parse(decodeURIComponent(String(categories)))) ? JSON.parse(decodeURIComponent(String(categories))) : [],

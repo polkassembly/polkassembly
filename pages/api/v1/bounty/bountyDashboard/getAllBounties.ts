@@ -16,21 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-
-export interface IBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	title: string;
-	curator: string;
-	totalChildBountiesCount: number;
-	createdAt: string;
-	claimedAmount: string;
-	categories: string[];
-	source: 'polkassembly' | 'subsquare';
-}
+import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -87,7 +73,7 @@ const getBountyStatuses = (status: EBountiesStatuses) => {
 			return [];
 	}
 };
-export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
+export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBountyListing[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -163,7 +149,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 				}
 			});
 
-			const payload: IBounty = {
+			const payload: IBountyListing = {
 				categories: [],
 				claimedAmount: claimedAmount.toString(),
 				createdAt: subsquidBounty?.createdAt,
@@ -199,7 +185,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 
 		const bountiesResults = await Promise.allSettled(bountiesPromises);
 
-		const bounties: IBounty[] = [];
+		const bounties: IBountyListing[] = [];
 
 		bountiesResults?.map((bounty) => {
 			if (bounty.status == 'fulfilled') {
@@ -220,7 +206,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 		};
 	}
 }
-const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ bounties: IBountyListing[]; totalBountiesCount: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

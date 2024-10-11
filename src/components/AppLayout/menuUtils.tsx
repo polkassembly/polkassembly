@@ -230,7 +230,7 @@ export const SidebarFoot1 = () => {
 					</div>
 				</div>
 			</Link>
-			<div className='mt-3 flex items-center justify-center gap-2'>
+			<div className='mt-3 flex items-center justify-center gap-[15px]'>
 				<div className='group relative'>
 					<Link href='https://townhallgov.com/'>
 						<Image

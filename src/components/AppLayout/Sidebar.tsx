@@ -1063,7 +1063,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		!isMobile ? getSiderMenuItem('', '', null) : null,
 
 		getSiderMenuItem(
-			'Overview',
+			'Home',
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
@@ -1139,7 +1139,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (isOpenGovSupported(network)) {
 		gov2OverviewItems.splice(
-			3,
+			5,
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
@@ -1148,7 +1148,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					<BatchVotingIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<BatchVotingIcon className='-mt-[6px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{

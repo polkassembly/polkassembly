@@ -93,7 +93,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 			<Dropdown
 				theme={theme}
 				overlayStyle={{ marginTop: '40px', marginLeft: '10px', marginRight: '10px' }}
-				className={'mt-2 flex cursor-pointer items-center justify-center bg-white dark:bg-section-dark-overlay'}
+				className={'mt-2 flex cursor-pointer items-center justify-center bg-[#ffffff] dark:bg-section-dark-overlay'}
 				overlayClassName='z-[1056]'
 				placement='bottomRight'
 				menu={{ items }}

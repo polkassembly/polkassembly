@@ -635,16 +635,18 @@ const AddressConnectModal = ({
 							}
 						/>
 					)}
-					{isUsedInBatchVoting && (<Alert
-					type='info'
-					showIcon
-					className='mt-2'
-					message={
-						<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
-							<p className='m-0 p-0 font-semibold'>Note:</p>All votes in the cart will be made from the selected account
-						</span>
-					}
-				/>)}
+					{isUsedInBatchVoting && (
+						<Alert
+							type='info'
+							showIcon
+							className='mt-2'
+							message={
+								<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
+									<p className='m-0 p-0 font-semibold'>Note:</p>All votes in the cart will be made from the selected account
+								</span>
+							}
+						/>
+					)}
 				</Spin>
 			)}
 		</Modal>

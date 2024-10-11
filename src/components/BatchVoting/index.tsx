@@ -27,7 +27,8 @@ const BatchVotingWeb = () => {
 
 	useEffect(() => {
 		dispatch(batchVotesActions.setBatchVotingAddress(loginAddress));
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
 
 	return (
 		<section className='flex flex-col gap-y-6'>

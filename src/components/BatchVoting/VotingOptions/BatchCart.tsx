@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { CloseIcon, InfoIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -160,13 +160,13 @@ const BatchCart: React.FC = () => {
 		<section className='px-4'>
 			<article className=''>
 				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2 dark:bg-black'}>
-					<div className='bg-pink_primary_transparent border border-solid border-pink_secondary p-2 text-xs rounded-md flex items-start justify-center gap-x-1'>
-						<InfoCircleOutlined className='mt-1'/>
-						<div className='m-0 p-0 flex flex items-center gap-x-1'>
-						All Votes will be made with
-							<Address 
+					<div className='flex items-start justify-center gap-x-1 rounded-md border border-solid border-pink_secondary bg-pink_primary_transparent p-2 text-xs'>
+						<InfoCircleOutlined className='mt-1' />
+						<div className='m-0 flex flex items-center gap-x-1 p-0'>
+							All Votes will be made with
+							<Address
 								address={batch_voting_address}
-								iconSize={20} 
+								iconSize={20}
 							/>
 						</div>
 					</div>

@@ -5,7 +5,6 @@ import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { useState } from 'react';
-import { ChangeResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -37,11 +36,11 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 	};
 	const [loading, setLoading] = useState(false);
 
-	const createSubscription = async (postId: number | string) => {
-		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
-		if (error) console.error('Error subscribing to post', error);
-		if (data) console.log(data.message);
-	};
+	// const createSubscription = async (postId: number | string) => {
+	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
+	// if (error) console.error('Error subscribing to post', error);
+	// if (data) console.log(data.message);
+	// };
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -53,8 +52,8 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		form.resetFields();
 		global.window.localStorage.removeItem(commentKey());
 
-		if (post.post_id) {
-			await createSubscription(post.post_id);
+		if (post?.post_id) {
+			// await createSubscription(post.post_id);
 		}
 
 		try {

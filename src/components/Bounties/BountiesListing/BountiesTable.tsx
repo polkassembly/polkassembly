@@ -11,8 +11,6 @@ import Popover from '~src/basic-components/Popover';
 import Address from '~src/ui-components/Address';
 import StatusTag from '~src/ui-components/StatusTag';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { formatedBalance } from '~src/util/formatedBalance';
-import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
 import Table from '~src/basic-components/Tables/Table';
 import { useTheme } from 'next-themes';
@@ -22,6 +20,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import dayjs from 'dayjs';
 import { IBountyListing } from './types/types';
 import Link from 'next/link';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface IOnchainBountiesProps {
 	bounties: IBountyListing[];
@@ -31,7 +30,6 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const { resolvedTheme: theme = 'light' } = useTheme();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
-	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
 	const [bounties, setBounties] = useState<IBountyListing[]>(props.bounties);
@@ -83,13 +81,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 
 	const columns: TableColumnsType<IBountyListing> = [
 		{
+			className: 'w-[20px]',
 			dataIndex: 'index',
 			key: 'index',
 			render: (index: number) => (index ? index : '-'),
-			title: '#',
-			width: 160
+			title: '#'
 		},
 		{
+			className: 'w-[117px]',
 			dataIndex: 'curator',
 			key: 'curator',
 			render: (curator: string) => (
@@ -99,7 +98,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 							iconSize={22}
 							address={curator}
 							displayInline
-							isTruncateUsername={false}
+							isTruncateUsername={true}
 							disableTooltip
 						/>
 					) : (
@@ -107,28 +106,27 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					)}
 				</div>
 			),
-			title: 'Curator',
-			width: 200
+			title: 'Curator'
 		},
 		{
+			className: 'w-[277px]',
 			dataIndex: 'title',
 			key: 'title',
 			render: (title: string) => {
-				const maxLength = 22;
+				const maxLength = 30;
 				const truncatedTitle = title?.length > maxLength ? `${title?.substring(0, maxLength)}...` : title;
 				return title ? truncatedTitle : '-';
 			},
-			title: 'Title',
-			width: 300
+			title: 'Title'
 		},
 		{
+			className: 'w-[100px]',
 			dataIndex: 'reward',
-
 			key: 'reward',
 			render: (reward: string) =>
 				reward ? (
 					<>
-						{formatedBalance(reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+						<div className='whitespace-nowrap'>{parseBalance(reward || '0', 2, true, network)}</div>
 					</>
 				) : (
 					'-'
@@ -136,6 +134,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Amount'
 		},
 		{
+			className: 'w-[90px]',
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
 			render: (claimed: number, record: IBountyListing) => {
@@ -165,6 +164,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Claimed'
 		},
 		{
+			className: 'w-[120px]',
 			dataIndex: 'createdAt',
 			key: 'createdAt',
 			render: (createdAt: string) => {
@@ -186,8 +186,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</>
 				);
 			},
-			title: 'Date',
-			width: 300
+			title: 'Date'
 		},
 
 		{
@@ -197,9 +196,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Status'
 		},
 		{
+			className: 'w-[90px]',
 			dataIndex: 'categories',
 			key: 'categories',
-			render: (categories: string[]) => {
+			render: (categories: string[] | undefined) => {
+				if (!categories || categories.length === 0) {
+					return <span>N/A</span>;
+				}
+
 				const maxLength = 10;
 				const [firstCategory, secondCategory] = categories;
 
@@ -217,7 +221,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				}
 
 				return (
-					<div style={{ display: 'flex', gap: '5px' }}>
+					<div style={{ display: 'flex', gap: '2px' }}>
 						{displayCategories.map((category, index) => (
 							<Tag
 								key={index}
@@ -230,8 +234,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Categories',
-			width: 100
+			title: 'Categories'
 		}
 	];
 
@@ -256,7 +259,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 							record.totalChildBountiesCount > 0 ? (
 								expanded ? (
 									<CaretUpOutlined
-										className=' text-[#E5007A]'
+										className='px-1 py-2 text-[#E5007A]'
 										onClick={(e) => {
 											e.stopPropagation();
 											onExpand(record, e);
@@ -269,6 +272,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 										trigger='hover'
 									>
 										<CaretDownOutlined
+											className='px-1 py-2'
 											onClick={(e) => {
 												e.stopPropagation();
 												onExpand(record, e);
@@ -300,6 +304,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 														<Link
 															href={`/child_bounty/${childBounty?.index}`}
 															key={childBounty?.index}
+															className=' hover:text-black dark:hover:text-white'
 														>
 															<div className=' flex items-center  border-[1px] border-y border-solid border-[#D2D8E0] px-4 py-2  pb-4 dark:border-[#4B4B4B]'>
 																{index === record?.childbounties?.length - 1 ? (
@@ -317,13 +322,12 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																)}
 
 																<div className='ml-7 mt-5'>{childBounty?.index}</div>
-																<div className='ml-7 mt-5 w-[156px] pl-10 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
-																<div className='mt-5 w-[171px] pl-4'>{childBounty?.title?.length > 12 ? `${childBounty?.title?.slice(0, 12)}...` : childBounty?.title}</div>
-																<div className='mt-5 w-[110px] pl-5'>
-																	{formatedBalance(childBounty?.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-																</div>
-																<div className='mt-5 w-[110px] pl-5'>-</div>
-																<div className='mt-5 min-w-[178px] pl-4'>
+																<div className='ml-2 mt-4 w-[160px] pl-5 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
+																<div className='mt-5 w-[221px] px-5'>{childBounty?.title?.length > 30 ? `${childBounty?.title?.slice(0, 30)}...` : childBounty?.title}</div>
+																<div className='mt-5 w-[115px] pl-5'>{parseBalance(childBounty?.reward || '0', 2, true, network)}</div>
+
+																<div className='mt-5 w-[107px] pl-5'>-</div>
+																<div className='mt-5 w-[133px] pl-5'>
 																	{relativeCreatedAt ? (
 																		<span className='text-blue-light-medium dark:text-icon-dark-inactive'>
 																			<ClockCircleOutlined /> {relativeCreatedAt}
@@ -332,8 +336,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																		'-'
 																	)}
 																</div>
-																<div className='mt-5 w-[123px] pl-4'>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
-																<div className='mt-5 pl-4'>-</div>
+																<div className='mt-5 w-[132px] pl-5'>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
+																<div className='mt-5 pl-5 '>N/A</div>
 															</div>
 														</Link>
 													);

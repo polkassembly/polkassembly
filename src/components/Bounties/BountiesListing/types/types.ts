@@ -12,31 +12,21 @@ export enum EBountiesStatuses {
 	REJECTED = 'rejected'
 }
 
-export interface IBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	title: string;
-	source: string;
-	curator: string;
-	totalChildBountiesCount: number;
-	createdAt: string;
-	claimedAmount: string;
-	categories: string[];
-}
-
 export interface IBountyListing {
+	proposer?: string;
 	index: number;
 	curator: string;
 	title: string;
 	reward: string;
-	claimed: number;
-	date: string;
+	claimedAmount?: string;
+	claimed?: number;
+	payee?: string;
 	status: string;
-	categories: string[];
+	source?: string;
 	totalChildBountiesCount?: number;
+	createdAt?: string;
+	date?: string;
+	categories: string[];
 	children?: IBountyListing;
 	childbounties?: IChildBounty[];
 }

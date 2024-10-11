@@ -17,8 +17,6 @@ interface IBountiesTabItemsProps {
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const initialTabKey = router.query.status && JSON.parse(decodeURIComponent(String(router.query.status).toUpperCase()));
-	const activeTabKey = initialTabKey || 'all';
 
 	const bountyStatuses = [
 		{ key: 'all', label: 'All' },
@@ -52,11 +50,9 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 
 			<div>
 				<Tabs
-					defaultActiveKey='2'
 					theme={theme}
 					type='card'
 					onChange={onTabChange}
-					activeKey={activeTabKey}
 					className='ant-tabs-tab-bg-white pt-5 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
 					items={tabItems}
 				/>

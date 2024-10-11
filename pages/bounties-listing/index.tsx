@@ -62,7 +62,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 		router.push({
 			pathname: router.pathname,
 			query: {
-				...router.query,
+				...router?.query,
 				page
 			}
 		});
@@ -79,7 +79,6 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 
 	return (
 		<div>
-			{' '}
 			<SEOHead
 				title='On-chain bounties'
 				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'

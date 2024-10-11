@@ -16,8 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { IBounty } from '~src/components/Bounties/BountiesListing/types/types';
+import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -30,6 +29,8 @@ interface ISubsquidBounty {
 }
 
 const ZERO_BN = new BN(0);
+
+const BOUNTIES_LISTING_LIMIT = 10;
 
 const bountyStatuses = [
 	bountyStatus.ACTIVE,
@@ -72,7 +73,7 @@ const getBountyStatuses = (status: EBountiesStatuses) => {
 			return [];
 	}
 };
-export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBounty[]; totalBountiesCount: number }>> {
+export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBountyListing[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -111,9 +112,6 @@ export async function getAllBounties({ categories, page, status, network }: Args
 		if (bountiesIndexes?.length) {
 			variables.index_in = bountiesIndexes;
 		}
-		if (categories?.length) {
-			variables.categories = categories;
-		}
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES,
@@ -151,7 +149,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 				}
 			});
 
-			const payload: IBounty = {
+			const payload: IBountyListing = {
 				categories: [],
 				claimedAmount: claimedAmount.toString(),
 				createdAt: subsquidBounty?.createdAt,
@@ -187,7 +185,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 
 		const bountiesResults = await Promise.allSettled(bountiesPromises);
 
-		const bounties: IBounty[] = [];
+		const bounties: IBountyListing[] = [];
 
 		bountiesResults?.map((bounty) => {
 			if (bounty.status == 'fulfilled') {
@@ -208,7 +206,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 		};
 	}
 }
-const handler: NextApiHandler<{ bounties: IBounty[]; totalBountiesCount: number } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ bounties: IBountyListing[]; totalBountiesCount: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

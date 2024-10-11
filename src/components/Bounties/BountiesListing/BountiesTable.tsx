@@ -142,22 +142,22 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
 			render: (claimed: number, record: IBountyListing) => {
-				const reward = parseFloat(record.reward);
-				const claimedPercentage = reward ? (claimed / reward) * 100 : 0;
+				const claimedAmount = claimed || 0;
+				const reward = parseFloat(record.reward) || 0;
+				const claimedPercentage = reward > 0 ? (claimedAmount / reward) * 100 : 0;
 
 				return (
 					<div style={{ alignItems: 'center', display: 'flex' }}>
-						{claimed !== undefined && reward ? (
+						{reward > 0 ? (
 							<>
 								<Progress
 									type='circle'
 									percent={claimedPercentage}
 									width={25}
 									showInfo={false}
-									trailColor='#f0f0f0'
 									strokeColor='#ffc500'
 								/>
-								<span style={{ marginLeft: '8px' }}>{claimedPercentage?.toFixed(1)}%</span>
+								<span style={{ marginLeft: '8px' }}>{claimedPercentage.toFixed(1)}%</span>
 							</>
 						) : (
 							'-'
@@ -203,29 +203,25 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'w-[90px]',
 			dataIndex: 'categories',
 			key: 'categories',
-			render: (categories: string[] | undefined) => {
-				if (!categories || categories.length === 0) {
-					return <span>N/A</span>;
-				}
-
-				const maxLength = 10;
-				const [firstCategory, secondCategory] = categories;
+			render: (categories: string[]) => {
+				const maxLength = 15;
+				const [firstCategory, secondCategory] = categories || [];
 
 				const displayCategories = [];
 				let remainingCount = 0;
 
 				if (firstCategory) {
 					displayCategories.push(firstCategory);
-					if (secondCategory && firstCategory.length + secondCategory?.length <= maxLength) {
+					if (secondCategory && firstCategory.length + secondCategory.length <= maxLength) {
 						displayCategories.push(secondCategory);
-						remainingCount = categories?.length - 2;
+						remainingCount = categories.length - 2;
 					} else {
-						remainingCount = categories?.length - 1;
+						remainingCount = categories.length - 1;
 					}
 				}
 
 				return (
-					<div style={{ display: 'flex', gap: '2px' }}>
+					<div style={{ display: 'flex', gap: '5px' }}>
 						{displayCategories.map((category, index) => (
 							<Tag
 								key={index}
@@ -243,8 +239,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	];
 
 	useEffect(() => {
-		setBounties(props?.bounties);
-	}, [props?.bounties]);
+		setBounties(props.bounties);
+	}, [props.bounties]);
 
 	return (
 		<StyledTableContainer themeMode={theme}>

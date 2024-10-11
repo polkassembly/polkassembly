@@ -91,7 +91,10 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					aria-label='Back to Bounty Dashboard'
 				>
 					<div className='flex items-center'>
-						<LeftOutlined className='mr-2 text-xs' />
+						<LeftOutlined
+							className='mr-2 text-xs'
+							aria-hidden='true'
+						/>
 						<span className='text-sm font-medium'>Back to Bounty Dashboard</span>
 					</div>
 				</Link>
@@ -108,7 +111,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 				<BountiesTabItems bounties={bounties} />
 
 				<div className='mb-5 mt-3 flex justify-end'>
-					{totalBountiesCount > 0 && totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
+					{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination
 							pageSize={BOUNTIES_LISTING_LIMIT}
 							current={Number(router.query.page) || 1}

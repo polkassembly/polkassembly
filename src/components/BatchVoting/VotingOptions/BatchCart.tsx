@@ -169,7 +169,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						type='info'
 						showIcon
 						className='icon-alert mt-2'
-						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-black'>All Votes will be made with</span>}
+						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-white'>All Votes will be made with</span>}
 						description={
 							<Address
 								disableTooltip

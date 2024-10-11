@@ -1129,7 +1129,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 
-	if (isOpenGovSupported(network)) {
+	if (isOpenGovSupported(network) && ![AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2OverviewItems.splice(
 			3,
 			0,

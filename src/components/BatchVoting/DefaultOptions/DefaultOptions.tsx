@@ -17,7 +17,7 @@ import BN from 'bn.js';
 import { Form, Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { onchainIdentityActions } from '~src/redux/onchainIdentity';
+import { poppins } from 'pages/_app';
 const ZERO_BN = new BN(0);
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
@@ -60,14 +60,14 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				<Alert
 					type='info'
 					showIcon
-					className='mt-8'
+					className='mt-8 px-4'
 					message={
-						<p className='m-0 p-0 text-[13px] dark:text-white'>
+						<p className='m-0 p-0 p-2 text-[13px] dark:text-white'>
 							You can adjust for delegated voting power from edit button on each proposal.
 							<Tooltip
 								color='#363636'
 								title={
-									<div className='flex flex-col gap-y-2 p-2'>
+									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
 										<p className='m-0 p-0 text-white'>1. You can adjust for delegated voting power from edit button on each proposal. know more</p>
 										<p className='m-0 p-0 text-white'>
 											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track
@@ -139,8 +139,6 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				setOpen={setOpen}
 				walletAlertTitle='Batch Voting.'
 				onConfirm={(address: string) => {
-					form.setFieldValue('address', address);
-					dispatch(onchainIdentityActions.setOnchainIdentityAddress(address));
 					setOpen(true);
 					dispatch(batchVotesActions.setBatchVotingAddress(address));
 					setAddress(address);

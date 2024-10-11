@@ -24,8 +24,14 @@ import ProposalInfoCard from '~src/components/TinderStyleVoting/VoteCart/Proposa
 import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuccessModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Address from '~src/ui-components/Address';
+import Alert from '~src/basic-components/Alert';
+import styled from 'styled-components';
 
-const BatchCart: React.FC = () => {
+interface IBatchCartProps {
+	className?: string;
+}
+
+const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -157,19 +163,26 @@ const BatchCart: React.FC = () => {
 	}, [vote_cart_data]);
 
 	return (
-		<section className='px-4'>
+		<section className={`px-4 ${className}`}>
 			<article className=''>
 				<div className={'h-[370px] w-full overflow-y-auto rounded-md bg-white p-2 dark:bg-black'}>
-					<div className='flex items-start justify-center gap-x-1 rounded-md border border-solid border-pink_secondary bg-[#fce5f2] p-2 text-xs dark:bg-pink_primary_transparent'>
-						<InfoCircleOutlined className='mt-1' />
-						<div className='m-0 flex flex items-center gap-x-1 p-0'>
-							All Votes will be made with
+					<Alert
+						type='info'
+						showIcon
+						className='mt-2 icon-alert'
+						message={
+							<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black text-xs'>
+								All Votes will be made with
+							</span>
+						}
+						description={
 							<Address
+								disableTooltip
 								address={batch_voting_address}
 								iconSize={20}
 							/>
-						</div>
-					</div>
+						}
+					/>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
@@ -249,4 +262,15 @@ const BatchCart: React.FC = () => {
 	);
 };
 
-export default BatchCart;
+export default styled(BatchCart)`
+	.icon-alert .ant-alert-icon {
+		transform: scale(0.8) !important;
+	}
+	.ant-alert-with-description .ant-alert-description {
+		margin-top: -4px !important;
+	}
+	.ant-alert-with-description {
+		padding-inline: 8px;
+		padding-block: 8px;
+	}	
+`;

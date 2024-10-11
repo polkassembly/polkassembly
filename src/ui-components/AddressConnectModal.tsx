@@ -639,7 +639,7 @@ const AddressConnectModal = ({
 						<Alert
 							type='info'
 							showIcon
-							className='mt-2'
+							className='mt-2 icon-alert'
 							message={
 								<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
 									<p className='m-0 p-0 font-semibold'>Note:</p>If you switch wallet, all votes in cart will be made from the latest selected wallet only
@@ -672,5 +672,8 @@ export default styled(AddressConnectModal)`
 	.ant-modal .ant-modal-footer {
 		display: flex;
 		justify-content: end !important;
+	}
+	.icon-alert .ant-alert-icon {
+		margin-top: -20px !important;
 	}
 `;

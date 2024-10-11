@@ -50,7 +50,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		return conviction ? conviction[1] : 0;
 	};
 
-	if (!id) {
+	if (isNaN(Number(id))) {
 		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
 	}
 
@@ -81,8 +81,8 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			return 'No lockup period';
 		}
 
-		const res = api.consts.convictionVoting.voteLockingPeriod;
-		const num = res.toJSON();
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+		const num = res?.toJSON();
 		const days = blockToDays(num, network);
 
 		if (days && !isNaN(Number(days)) && lockPeriod) {
@@ -700,5 +700,8 @@ export default styled(OptionWrapper)`
 	}
 	.ant-slider .ant-slider-rail {
 		background-color: #f6f7f9 !important;
+	}
+	.ant-segmented .ant-segmented-item-selected {
+		box-shadow: none !important;
 	}
 `;

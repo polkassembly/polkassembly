@@ -66,8 +66,8 @@ const VotingFormCard = ({
 			return 'No lockup period';
 		}
 
-		const res = api.consts.convictionVoting.voteLockingPeriod;
-		const num = res.toJSON();
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+		const num = res?.toJSON();
 		const days = blockToDays(num, network);
 
 		if (days && !isNaN(Number(days)) && lockPeriod) {

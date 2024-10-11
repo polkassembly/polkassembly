@@ -32,7 +32,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						post={proposal}
 					/>
 					<Button
-						className='border-none bg-transparent p-0 text-pink_primary'
+						className='border-none bg-transparent p-0 text-pink_primary shadow-none'
 						onClick={() => onSkip(proposal.id)}
 					>
 						Skip &gt;

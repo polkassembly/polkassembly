@@ -101,6 +101,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
+	const { batch_voting_address } = useBatchVotesSelector();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -124,7 +125,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const getDelegateData = async () => {
 		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;
 		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
-			addresses: [loginAddress],
+			addresses: [batch_voting_address],
 			trackNo: postData?.track_number
 		});
 		if (data) {

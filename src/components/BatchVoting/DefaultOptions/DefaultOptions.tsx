@@ -14,7 +14,7 @@ import { useApiContext } from '~src/context';
 import { IDefaultOptions } from '../types';
 import Balance from '~src/components/Balance';
 import BN from 'bn.js';
-import { Form, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { poppins } from 'pages/_app';
@@ -33,7 +33,6 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const { api, apiReady } = useApiContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
-	const [form] = Form.useForm();
 
 	const handleOnAvailableBalanceChange = async (balanceStr: string) => {
 		if (!api || !apiReady) {

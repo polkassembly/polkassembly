@@ -22,7 +22,6 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IDeleteBatchVotes } from '~src/components/TinderStyleVoting/types';
 import ProposalInfoCard from '~src/components/TinderStyleVoting/VoteCart/ProposalInfoCard';
 import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuccessModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
@@ -169,12 +168,8 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					<Alert
 						type='info'
 						showIcon
-						className='mt-2 icon-alert'
-						message={
-							<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black text-xs'>
-								All Votes will be made with
-							</span>
-						}
+						className='icon-alert mt-2'
+						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-black'>All Votes will be made with</span>}
 						description={
 							<Address
 								disableTooltip
@@ -272,5 +267,5 @@ export default styled(BatchCart)`
 	.ant-alert-with-description {
 		padding-inline: 8px;
 		padding-block: 8px;
-	}	
+	}
 `;

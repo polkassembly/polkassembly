@@ -52,7 +52,7 @@ const VotingFormCard = ({
 	const dispatch = useAppDispatch();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const [lockingPeriod, setLockingPeriod] = useState<string>('No lockup period');
+	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 
 	const calculateLock = (convictionValue: number): number => {
@@ -79,7 +79,7 @@ const VotingFormCard = ({
 
 	const handleConvictionChange = (value: string) => {
 		const lockingPeriodMessage = value === '0.1x' ? 'No lockup period' : calculateLockingPeriod(parseFloat(value));
-		setLockingPeriod(lockingPeriodMessage);
+		setLockingPeriodMessage(lockingPeriodMessage);
 	};
 
 	const marks: SliderSingleProps['marks'] = {
@@ -174,7 +174,7 @@ const VotingFormCard = ({
 						/>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 					</div>
-					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriod}</p>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriodMessage}</p>
 				</div>
 			)}
 		</Form>

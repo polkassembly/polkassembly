@@ -639,7 +639,7 @@ const AddressConnectModal = ({
 						<Alert
 							type='info'
 							showIcon
-							className='mt-2 icon-alert'
+							className='icon-alert mt-2'
 							message={
 								<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
 									<p className='m-0 p-0 font-semibold'>Note:</p>If you switch wallet, all votes in cart will be made from the latest selected wallet only

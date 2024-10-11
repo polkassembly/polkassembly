@@ -67,9 +67,9 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 								color='#363636'
 								title={
 									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
-										<p className='m-0 p-0 text-white'>1. You can adjust for delegated voting power from edit button on each proposal. know more</p>
+										<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
 										<p className='m-0 p-0 text-white'>
-											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track
+											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.
 										</p>
 									</div>
 								}

@@ -124,7 +124,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
 				<p className='text-bodyblue m-0 p-0 text-xs dark:text-blue-dark-medium'>{voteInfo?.proposal?.title?.substring(0, 50)}...</p>
 				<Button
-					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0'
+					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0 shadow-none'
 					onClick={() => {
 						setOpenViewProposalModal(true);
 					}}
@@ -171,7 +171,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button
-						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
+						className='m-0 flex items-center justify-center border-none bg-transparent p-0 shadow-none'
 						onClick={() => {
 							setOpenEditModal(true);
 						}}
@@ -185,7 +185,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						/>
 					</Button>
 					<Button
-						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
+						className='m-0 flex items-center justify-center border-none bg-transparent p-0 shadow-none'
 						onClick={() => handleRemove(voteInfo.post_id)}
 					>
 						<Image

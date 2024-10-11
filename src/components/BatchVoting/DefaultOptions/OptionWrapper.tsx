@@ -10,7 +10,6 @@ import { EVoteDecisionType } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-import { poppins } from 'pages/_app';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
@@ -19,12 +18,9 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
-import { ApiPromise } from '@polkadot/api';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import SelectOption from '~src/basic-components/Select/SelectOption';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
@@ -33,50 +29,6 @@ import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
-
-export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
-	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
-		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
-			const num = res.toJSON();
-			const days = blockToDays(num, network);
-			if (days && !isNaN(Number(days))) {
-				return [
-					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
-						key={0}
-						value={0}
-					>
-						{'0.1x voting balance, no lockup period'}
-					</SelectOption>,
-					...CONVICTIONS.map(([value, lock]) => (
-						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
-							key={value}
-							value={value}
-						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
-					))
-				];
-			}
-		}
-	}
-	return [
-		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
-			key={0}
-			value={0}
-		>
-			{'0.1x voting balance, no lockup period'}
-		</SelectOption>,
-		...CONVICTIONS.map(([value, lock]) => (
-			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
-				key={value}
-				value={value}
-			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
-		))
-	];
-};
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const userDetails = useUserDetailsSelector();
@@ -90,9 +42,15 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
+	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 
-	if (!id) {
+	const calculateLock = (convictionValue: number): number => {
+		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
+		return conviction ? conviction[1] : 0;
+	};
+
+	if (id === null) {
 		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
 	}
 
@@ -114,6 +72,29 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		abstainFrom.setFieldValue('ayeVote', '');
 		abstainFrom.setFieldValue('nayVote', '');
 		abstainFrom.setFieldValue('abstainVote', '');
+	};
+
+	const calculateLockingPeriod = (convictionValue: number) => {
+		const lockPeriod = calculateLock(convictionValue);
+
+		if (!api || !apiReady) {
+			return 'No lockup period';
+		}
+
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+		const num = res?.toJSON();
+		const days = blockToDays(num, network);
+
+		if (days && !isNaN(Number(days)) && lockPeriod) {
+			return `${convictionValue}x voting balance, locked for ${lockPeriod * days} days`;
+		}
+
+		return 'No lockup period';
+	};
+
+	const handleConvictionChange = (value: string) => {
+		const lockingPeriodMessage = value === '0.1x' ? 'No lockup period' : calculateLockingPeriod(parseFloat(value));
+		setLockingPeriodMessage(lockingPeriodMessage);
 	};
 
 	const handleOnVoteChange = (value: SegmentedValue) => {
@@ -479,6 +460,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 							className='dark:text-white'
 							rootClassName='dark:text-white'
 							onChange={(value) => {
+								handleConvictionChange(getMarkValue(value as number));
 								const markValue = getMarkValue(value as number);
 								if (!forSpecificPost) {
 									dispatch(editBatchValueChanged({ values: { conviction: parseFloat(markValue.replace('x', '')) } }));
@@ -508,7 +490,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						/>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
 					</div>
-					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>No lockup period</p>
+					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriodMessage}</p>
 				</div>
 			</article>
 		</>
@@ -718,5 +700,8 @@ export default styled(OptionWrapper)`
 	}
 	.ant-slider .ant-slider-rail {
 		background-color: #f6f7f9 !important;
+	}
+	.ant-segmented .ant-segmented-item-selected {
+		box-shadow: none !important;
 	}
 `;

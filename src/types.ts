@@ -1007,3 +1007,8 @@ export interface IAccountData {
 	nft_amount: string;
 	nonce: number;
 }
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}

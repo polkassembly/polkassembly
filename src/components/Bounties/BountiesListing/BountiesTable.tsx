@@ -177,8 +177,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				return (
 					<>
 						{relativeCreatedAt ? (
-							<span className='flex gap-1 text-blue-light-medium  dark:text-[#9E9E9E]'>
-								<ClockCircleOutlined className='text-blue-light-medium dark:text-[#9E9E9E]' /> <span className=' whitespace-nowrap'>{relativeCreatedAt}</span>
+							<span className='flex gap-1 text-blue-light-medium  dark:text-icon-dark-inactive'>
+								<ClockCircleOutlined className='text-blue-light-medium dark:text-icon-dark-inactive' /> <span className=' whitespace-nowrap'>{relativeCreatedAt}</span>
 							</span>
 						) : (
 							'-'
@@ -316,24 +316,24 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	/>
 																)}
 
-																<div className='ml-7 mt-5  '>{childBounty?.index}</div>
-																<div className='ml-7 mt-5 pl-10 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
-																<div className='ml-[100px] mt-5'>{childBounty?.title?.length > 12 ? `${childBounty?.title?.slice(0, 12)}...` : childBounty?.title}</div>
-																<div className='ml-[81px] mt-5'>
+																<div className='ml-7 mt-5'>{childBounty?.index}</div>
+																<div className='ml-7 mt-5 w-[156px] pl-10 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
+																<div className='mt-5 w-[171px] pl-4'>{childBounty?.title?.length > 12 ? `${childBounty?.title?.slice(0, 12)}...` : childBounty?.title}</div>
+																<div className='mt-5 w-[110px] pl-5'>
 																	{formatedBalance(childBounty?.reward, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 																</div>
-																<div className='ml-14 mt-5'>-</div>
-																<div className='ml-20 mt-5 min-w-[110px]'>
+																<div className='mt-5 w-[110px] pl-5'>-</div>
+																<div className='mt-5 min-w-[178px] pl-4'>
 																	{relativeCreatedAt ? (
-																		<span className='text-blue-light-medium'>
+																		<span className='text-blue-light-medium dark:text-icon-dark-inactive'>
 																			<ClockCircleOutlined /> {relativeCreatedAt}
 																		</span>
 																	) : (
 																		'-'
 																	)}
 																</div>
-																<div className='ml-5 mt-5  '>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
-																<div className=' ml-20  mt-5'>-</div>
+																<div className='mt-5 w-[123px] pl-4'>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
+																<div className='mt-5'>-</div>
 															</div>
 														</Link>
 													);

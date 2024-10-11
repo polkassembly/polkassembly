@@ -225,14 +225,16 @@ const LatestActivityFollowing: React.FC = () => {
 								network={network}
 							/>
 						</div>
-						<div>{filteredPosts.length > 0 ? <ActivityFeedPostList postData={filteredPosts} /> : <p>No posts available</p>}</div>
+						<div>
+							{filteredPosts.length > 0 ? <ActivityFeedPostList postData={filteredPosts} /> : <p>You&apos;re all caught up! Why not explore other categories or topics?</p>}
+						</div>
 					</div>
 				) : (
 					<div
 						className={'flex h-[900px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}
 					>
 						<Image
-							src='/assets/activityfeed/gifs/noactivity.gif'
+							src='/assets/Gifs/login-like.gif'
 							alt='empty state'
 							className='h-80 w-80 p-0'
 							width={320}

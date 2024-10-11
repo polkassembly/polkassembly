@@ -5,4 +5,4 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 
 const isActivityFeedNetwork = [AllNetworks.POLKADOT];
 
-export const isActivitySupportedNetwork = (network: string) => isActivityFeedNetwork.includes(network);
+export const isActivityFeedSupportedNetwork = (network: string) => isActivityFeedNetwork.includes(network);

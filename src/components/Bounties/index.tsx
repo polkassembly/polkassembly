@@ -7,13 +7,13 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Image from 'next/image';
 import BountyActivities from './BountyActivities';
 import { Carousel } from 'antd';
-import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import HotBountyCard from './HotBountyCard';
 import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
+import Link from 'next/link';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -26,7 +26,6 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
-	const router = useRouter();
 
 	const handleBeforeChange1 = (next: number) => {
 		setCurrentSlide1(next);
@@ -64,14 +63,12 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								</span>
 							)}
 						</div>
-						<button
-							onClick={() => {
-								router.push('/bounties');
-							}}
+						<Link
+							href={'/bounties-listing'}
 							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
 						>
 							View All
-						</button>
+						</Link>
 					</div>
 
 					<div className='relative '>

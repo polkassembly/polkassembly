@@ -34,14 +34,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const page = Number(query.page) || 1;
+	const page = query?.page || 1;
 	const filterBy = query.filterBy ? JSON.parse(decodeURIComponent(String(query.filterBy))) : [];
 	const status = query.status ? JSON.parse(decodeURIComponent(String(query.status))) : '';
 
 	const { data } = await getAllBounties({
 		categories: filterBy,
 		network,
-		page,
+		page: Number(page),
 		status
 	});
 

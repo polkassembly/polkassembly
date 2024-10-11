@@ -9,7 +9,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
-import { ProposalType } from '~src/global/proposalType';
+import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { bountyStatus } from '~src/global/statuses';
 import { GET_ALL_BOUNTIES, GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -29,6 +29,7 @@ export interface IBounty {
 	createdAt: string;
 	claimedAmount: string;
 	categories: string[];
+	source: 'polkassembly' | 'subsquare';
 }
 
 interface ISubsquidBounty {
@@ -171,6 +172,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 				payee: subsquidBounty?.payee,
 				proposer: subsquidBounty?.proposer,
 				reward: subsquidBounty?.reward,
+				source: 'polkassembly',
 				status: subsquidBounty?.status,
 				title: '',
 				totalChildBountiesCount: totalChildBountiesCount || 0
@@ -188,7 +190,8 @@ export async function getAllBounties({ categories, page, status, network }: Args
 
 			if (!payload?.title) {
 				const res = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, subsquidBounty?.index);
-				payload.title = res?.title || '';
+				payload.title = res?.title || getProposalTypeTitle(ProposalType.BOUNTIES);
+				payload.source = res?.title?.length ? 'subsquare' : 'polkassembly';
 			}
 
 			return payload;

@@ -2634,7 +2634,7 @@ query BountyProposals($status_in: [ProposalStatus!] = []) {
 }
 `;
 
-export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! = 10,$offset:Int =1, $status_in: [ProposalStatus!], $index_in:[Int!]) {
+export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int!, $offset:Int, $status_in: [ProposalStatus!], $index_in:[Int!]) {
  bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
     index
     proposer

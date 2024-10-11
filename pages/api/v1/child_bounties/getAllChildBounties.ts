@@ -9,7 +9,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { IChildBountiesResponse } from '~src/types';
+import { IChildBountiesResponse, IChildBounty } from '~src/types';
 import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
@@ -66,28 +66,30 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const childBountiesDocs = childBountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
 
-		console.log(childBountiesDocs);
-
 		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
-			const payload = {
+			const payload: IChildBounty = {
 				createdAt: subsquidChildBounty?.createdAt,
 				curator: subsquidChildBounty?.curator || '',
 				description: subsquidChildBounty?.description || '',
 				index: subsquidChildBounty?.index,
 				reward: subsquidChildBounty?.reward,
+				source: 'polkassembly',
 				status: subsquidChildBounty?.status,
 				title: ''
 			};
 			childBountiesDocs?.map((childBounty) => {
 				if (childBounty.exists) {
 					const data = childBounty.data();
-					payload.title = data?.title || '';
+					if (data?.id === subsquidChildBounty.index) {
+						payload.title = data?.title || '';
+					}
 				}
 			});
 
 			if (!payload?.title.length) {
 				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, subsquidChildBounty?.index);
 				payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
+				payload.source = subsqaureRes?.title?.length ? 'subsquare' : 'polkassembly';
 			}
 			return payload;
 		});

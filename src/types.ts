@@ -729,16 +729,18 @@ export interface IDelegatorsAndDelegatees {
 	};
 }
 
+export interface IChildBounty {
+	description: string;
+	index: number;
+	status: string;
+	reward: string;
+	title: string;
+	curator?: string;
+	createdAt?: Date;
+	source?: 'polkassembly' | 'subsquare';
+}
 export interface IChildBountiesResponse {
-	child_bounties: {
-		description: string;
-		index: number;
-		status: string;
-		reward: string;
-		title: string;
-		curator?: string;
-		createdAt?: Date;
-	}[];
+	child_bounties: IChildBounty[];
 	child_bounties_count: number;
 }
 

@@ -113,15 +113,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const { loginAddress } = useUserDetailsSelector();
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 
-	useEffect(() => {
-		getDelegateData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress]);
-
-	if (!id) {
-		return <LoginToVote isUsedInDefaultValueModal={true} />;
-	}
-
 	const getDelegateData = async () => {
 		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;
 		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
@@ -135,6 +126,15 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			console.log(error);
 		}
 	};
+
+	useEffect(() => {
+		getDelegateData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
+
+	if (!id) {
+		return <LoginToVote isUsedInDefaultValueModal={true} />;
+	}
 
 	const handleModalReset = () => {
 		ayeNayForm.setFieldValue('balance', '');

@@ -16,10 +16,9 @@ import { useTheme } from 'next-themes';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import CreatePencilIcon from '~assets/icons/create-pencil-icon.svg';
-import { poppins } from 'pages/_app';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import { Dropdown } from '~src/ui-components/Dropdown';
+import CreateProposalDropdownButton from '~src/ui-components/CreateProposalDropdownButton';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -46,55 +45,6 @@ export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNe
 interface IAiChatbotProps {
 	className?: string;
 }
-
-const StyledButtonContainer = styled.div<{ gradient: string; shadow: string }>`
-	padding: 1px;
-	border-radius: 0.465rem;
-	background: ${({ gradient }) => gradient};
-	background-size: 200% 200%;
-	display: inline-block;
-	box-shadow: ${({ shadow }) => shadow};
-	cursor: pointer;
-	margin-left: 16px;
-	margin-right: 16px;
-	margin-top: 14px;
-	margin-bottom: 6px;
-	animation: gradientMove 1.5s linear infinite;
-
-	@keyframes gradientMove {
-		0% {
-			background-position: top;
-		}
-		50% {
-			background-position: bottom;
-		}
-		100% {
-			background-position: top;
-		}
-	}
-
-	.create-button {
-		display: block;
-		width: 100%;
-		padding: 4px 16px;
-		border-radius: 0.45rem;
-		font-weight: 500;
-		border: none;
-		box-shadow: inset 1px 1px 2px 0 ${(props: any) => (props.theme === 'dark' ? '#2A2D2F' : '#DBE8F9')};
-		background: ${(props: any) => (props.theme === 'dark' ? '#1A1A1A' : '#FFFFFF')};
-	}
-
-	.gradient-text {
-		background: linear-gradient(180deg, #acceff, #00429b, #001b54);
-		background-size: 200% 200%;
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		color: transparent;
-		display: inline-block;
-		animation: gradientMove 3s ease-in-out infinite;
-	}
-`;
 
 const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 	const router = useRouter();
@@ -138,30 +88,19 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 		});
 	}
 
-	const gradient = theme === 'light' ? 'linear-gradient(#ACCEFF, #00429B)' : 'linear-gradient(#4FFAFF, #0437A7)';
-	const shadow = theme === 'light' ? '2px 2px 1.8px -1px #D7DDE3' : '2px 2px 1.8px -1px #2066C7';
-
 	return (
-		<>
+		<div>
 			<Dropdown
 				theme={theme}
-				overlayStyle={{ marginTop: '20px' }}
-				className={'flex cursor-pointer items-center justify-center bg-white dark:bg-section-dark-overlay'}
+				overlayStyle={{ marginTop: '40px', marginLeft: '10px', marginRight: '10px' }}
+				className={'mt-2 flex cursor-pointer items-center justify-center bg-white dark:bg-section-dark-overlay'}
 				overlayClassName='z-[1056]'
 				placement='bottomRight'
 				menu={{ items }}
 			>
-				<StyledButtonContainer
-					gradient={gradient}
-					shadow={shadow}
-				>
-					<button className='create-button bg-white dark:bg-section-dark-overlay'>
-						<div className='flex items-center justify-center gap-[6px]'>
-							<CreatePencilIcon />
-							<span className={`${poppins.variable} ${poppins.className} gradient-text`}>Create</span>
-						</div>
-					</button>
-				</StyledButtonContainer>
+				<span className='mt-3'>
+					<CreateProposalDropdownButton />
+				</span>
 			</Dropdown>
 
 			<ReferendaLoginPrompts
@@ -171,7 +110,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 				title='Join Polkassembly to Start a New Discussion.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
-		</>
+		</div>
 	);
 };
 

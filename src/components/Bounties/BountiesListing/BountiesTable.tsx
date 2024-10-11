@@ -161,6 +161,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 									percent={claimedPercentage}
 									width={25}
 									showInfo={false}
+									trailColor='#f0f0f0'
 									strokeColor='#ffc500'
 								/>
 								<span style={{ marginLeft: '8px' }}>{claimedPercentage.toFixed(1)}%</span>

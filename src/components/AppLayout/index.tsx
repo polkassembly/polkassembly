@@ -646,7 +646,8 @@ export default styled(AppLayout)`
 	}
 
 	.width-content{
-	@media (max-width: 1532px and min-width: 1700px) {
+	@media (max-width: 1532px) and (min-width: 1700px) {
 		margin-left: 0px;
 	}
+}
 `;

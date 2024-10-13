@@ -3,15 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import styled from 'styled-components';
-import { FC } from 'react';
 import CreatePencilIcon from '~assets/icons/create-pencil-icon.svg';
 import { poppins } from 'pages/_app';
 import { ArrowDownIcon } from './CustomIcons';
 
 const StyledButtonContainer = styled.div`
 	.card {
-		padding: 2px;
-		width: 200px;
 		background: #0b0d15 !important;
 		text-align: center;
 		border-radius: 11.5px;
@@ -40,10 +37,6 @@ const StyledButtonContainer = styled.div`
 		border-radius: 11.5px;
 		animation: 3s spin linear infinite;
 	}
-	.card::before {
-		filter: blur(1.5rem);
-		opacity: 0.3;
-	}
 	@keyframes spin {
 		from {
 			--angle: 0deg;
@@ -54,13 +47,13 @@ const StyledButtonContainer = styled.div`
 	}
 `;
 
-const CreateProposalDropdownButton: FC = () => (
+const CreateProposalDropdownButton = ({sidebarCollapsed}: {sidebarCollapsed: boolean}) => (
 	<StyledButtonContainer>
-		<div className='card mx-4'>
-			<div className='flex items-center justify-center gap-[6px] rounded-[10.5px] bg-white py-[2px] dark:bg-section-dark-background'>
+		<div className={`card ${sidebarCollapsed ? 'p-[2px] w-full ' : 'mx-4 p-[2px] w-[200px]'}`}>
+			<div className={`flex items-center justify-center gap-[6px] rounded-[10.5px] bg-white ${!sidebarCollapsed ? 'py-[2px]' : 'p-[5px]'} dark:bg-section-dark-background`}>
 				<CreatePencilIcon />
-				<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
-				<ArrowDownIcon className='text-sm text-[#0A3EAF] dark:text-[#49CFFC]' />
+				{!sidebarCollapsed && <><span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+				<ArrowDownIcon className='text-sm ml-1 text-[#0A3EAF] dark:text-[#49CFFC]' /></>}
 			</div>
 		</div>
 	</StyledButtonContainer>

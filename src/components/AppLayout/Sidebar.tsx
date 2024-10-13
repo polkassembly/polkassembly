@@ -40,7 +40,8 @@ import {
 	SelectedPreimages,
 	AnalyticsSVGIcon,
 	AllPostIcon,
-	BatchVotingIcon
+	BatchVotingIcon,
+	BatchVotingIconDark
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -61,7 +62,6 @@ import { getSpanStyle } from '~src/ui-components/TopicTag';
 import getUserDropDown, { MenuItem, SidebarFoot1, SidebarFoot2 } from './menuUtils';
 import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
-
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
@@ -1142,13 +1142,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			5,
 			0,
 			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
+				<div className='flex gap-2'>
 					<span>Batch Voting</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					<BatchVotingIcon className='-mt-[6px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					{theme == 'light' ? <BatchVotingIcon className='-mt-[4px] pl-0 scale-100 font-medium text-transparent ' /> : <BatchVotingIconDark className='-mt-[4px] scale-100 font-medium text-transparent ' /> }
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
@@ -1970,7 +1970,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
 							{!sidebarCollapsed ? (
-								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-7`}>
+								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-9`}>
 									{onchainIdentitySupportedNetwork.includes(network) && (
 										<div className='activeborderhover group relative'>
 											<div
@@ -2166,7 +2166,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<CreateProposalDropdown />
+				<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'

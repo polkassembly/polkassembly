@@ -19,6 +19,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import CreateProposalDropdownButton from '~src/ui-components/CreateProposalDropdownButton';
+import { poppins } from 'pages/_app';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -42,11 +43,12 @@ const Gov1TreasuryProposal = dynamic(() => import('../Gov1TreasuryProposal'), {
 
 export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNetworks.POLKADOT, AllNetworks.ROCOCO];
 
-interface IAiChatbotProps {
+interface Props {
 	className?: string;
+	sidebarCollapsed: boolean;
 }
 
-const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
+const CreateProposalDropdown: FC<Props> = ({sidebarCollapsed}: Props) => {
 	const router = useRouter();
 	const { id } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
@@ -74,7 +76,7 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
-					<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>Discussion Post</span>
+					<span className={`${poppins.className} ${poppins.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
 				</div>
 			),
 			key: '2'
@@ -98,8 +100,8 @@ const CreateProposalDropdown: FC<IAiChatbotProps> = () => {
 				placement='bottomRight'
 				menu={{ items }}
 			>
-				<span className='mt-3'>
-					<CreateProposalDropdownButton />
+				<span className='mt-4 mb-[6px]'>
+					<CreateProposalDropdownButton sidebarCollapsed={sidebarCollapsed} />
 				</span>
 			</Dropdown>
 

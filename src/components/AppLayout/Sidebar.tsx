@@ -2170,7 +2170,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'
-					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[154px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu
 						theme={theme as any}

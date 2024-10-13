@@ -1121,17 +1121,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/gov-analytics',
-				<div className='relative -ml-2'>
+				<div className='-ml-2'>
 					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							opacity: sidedrawer ? 0 : 1,
-							transition: 'opacity 0.3s ease-in-out'
-						}}
-					>
-						NEW
-					</div>
 				</div>
 			)
 		);

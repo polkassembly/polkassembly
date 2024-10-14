@@ -126,7 +126,8 @@ const messages = {
 	METHOD_NOT_ALLOWED: 'Method not allowed.',
 	ERROR_IN_UPDATING_BADGES: 'Error in updating badges.',
 	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.',
-	PROGRESS_REPORT_UPDATED_SUCCESSFULLY: 'Progress report updated successfully.'
+	PROGRESS_REPORT_UPDATED_SUCCESSFULLY: 'Progress report updated successfully.',
+	CURATOR_BIO_EDITED_SUCCESSFULLY: 'Curator bio edited successfully.'
 };
 
 export default messages;

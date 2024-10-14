@@ -821,16 +821,17 @@ query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $
 }
 `;
 
-export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
+export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int, $curator_eq: String) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq}) {
     totalCount
   }  
-	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
+	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq}) {
     description
     index
     status
     reward
     createdAt
+    curator
   }
 }`;
 
@@ -2633,8 +2634,8 @@ query BountyProposals($status_in: [ProposalStatus!] = []) {
 }
 `;
 
-export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int!, $offset:Int, $status_in: [ProposalStatus!], $index_in:[Int!]) {
- bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
+export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! =10, $offset:Int =0, $status_in: [ProposalStatus!], $index_in:[Int!], $curator_eq: String) {
+ bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in, curator_eq: $curator_eq}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
     index
     proposer
     reward
@@ -2651,7 +2652,7 @@ export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int!, $offset:In
       payee
   }
   
- totalBounties: proposalsConnection(where: {type_eq: Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
+ totalBounties: proposalsConnection(where: {curator_eq: $curator_eq, type_eq:Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
    totalCount
   }
 }`;

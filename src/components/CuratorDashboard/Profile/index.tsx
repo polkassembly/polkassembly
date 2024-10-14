@@ -9,8 +9,9 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { message } from 'antd';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 import { spaceGrotesk } from 'pages/_app';
+import SocialsHandle from '~src/ui-components/SocialsHandle';
+import Image from 'next/image';
 
 interface Props {
 	curatorprofile: ProfileDetailsResponse;
@@ -63,13 +64,55 @@ function CuratorProfile({ curatorprofile, addressWithIdentity, onchainIdentity }
 								<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</div>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[16px] font-bold text-pink_primary`}>Edit</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[16px] font-bold text-pink_primary`}>
+							{' '}
+							<Image
+								src='/assets/icons/curator-dashboard/pen.svg'
+								alt='bounty icon'
+								width={24}
+								height={24}
+							/>
+							Edit
+						</p>
 					</div>
 					<div className='flex gap-3 text-sm font-bold'>
-						<p className='rounded-full bg-[#EEF2FF] p-1 px-2 text-[#4F46E5]'>0 Bounties Curated</p>
-						<p className='rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F]'>0 Child Bounties Curated</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#EEF2FF] p-1 px-2 text-[#4F46E5]`}>
+							<Image
+								src='/assets/bounty-icons/bounty-proposals.svg'
+								alt='bounty icon'
+								className='mr-1'
+								style={{
+									filter: ' brightness(0) saturate(100%) invert(19%) sepia(82%) saturate(3493%) hue-rotate(242deg) brightness(96%) contrast(88%)'
+								}}
+								width={24}
+								height={24}
+							/>
+							0 Bounties Curated
+						</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F]`}>
+							<Image
+								src='/assets/bounty-icons/child-bounty-icon.svg'
+								alt='bounty icon'
+								className='mr-1'
+								style={{
+									filter: 'invert(39%) sepia(64%) saturate(4280%) hue-rotate(355deg) brightness(93%) contrast(83%)'
+								}}
+								width={24}
+								height={24}
+							/>
+							0 Child Bounties Curated
+						</p>
 					</div>
-					<div>{curatorprofile?.bio}</div>
+
+					<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[16px]`}>{curatorprofile?.bio}</div>
+					<SocialsHandle
+						className='mr-6 mt-3 gap-4'
+						onchainIdentity={onchainIdentity || null}
+						socials={curatorprofile.social_links || []}
+						address={addressWithIdentity}
+						iconSize={18}
+						boxSize={32}
+					/>
 				</div>
 			</div>
 		</div>

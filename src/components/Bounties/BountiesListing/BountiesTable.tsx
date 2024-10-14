@@ -168,9 +168,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				const claimedBn = new BN(claimed || '0');
 				const rewardBn = new BN(record?.reward || '0');
 
-				const percentage = claimedBn.mul(new BN('100')).div(rewardBn);
-
-				// const claimedPercentage = reward > 0 ? (claimedAmount / reward) * 100 : 0;
+				const percentage = !rewardBn.eq(ZERO_BN) ? claimedBn.mul(new BN('100')).div(rewardBn) : ZERO_BN;
 
 				return (
 					<div style={{ alignItems: 'center', display: 'flex' }}>

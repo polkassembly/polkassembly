@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
 import Address from '~src/ui-components/Address';
 import copyToClipboard from '~src/util/copyToClipboard';
-import { Form, Input, message, Modal } from 'antd';
+import { Divider, Form, Input, message, Modal } from 'antd';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import { poppins, spaceGrotesk } from 'pages/_app';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
@@ -261,7 +261,15 @@ function CuratorProfileCard() {
 				</div>
 			</div>
 			<Modal
-				title='Edit Profile'
+				title={
+					<div>
+						<div className='flex items-center gap-1.5 text-xl font-medium text-lightBlue dark:text-white'>Edit Curator Bio</div>
+						<Divider
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='mt-1 px-0 dark:bg-separatorDark'
+						/>
+					</div>
+				}
 				visible={isModalVisible}
 				onOk={handleOk}
 				onCancel={handleCancel}
@@ -284,6 +292,10 @@ function CuratorProfileCard() {
 							placeholder='Enter your bio'
 						/>
 					</Form.Item>
+					<Divider
+						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						className='mt-1 px-0 dark:bg-separatorDark'
+					/>
 				</Form>
 			</Modal>
 		</div>

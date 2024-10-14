@@ -4,7 +4,11 @@
 import React from 'react';
 
 function BountiesCuratorInfo() {
-	return <div>hi</div>;
+	return (
+		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5'>
+			<p>Bounties Curated (2)</p>
+		</div>
+	);
 }
 
 export default BountiesCuratorInfo;

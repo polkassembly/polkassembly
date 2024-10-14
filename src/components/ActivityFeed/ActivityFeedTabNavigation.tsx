@@ -132,11 +132,11 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 		Root: ['root'],
 		['Wish For Change']: ['wish-for-change'],
 		// eslint-disable-next-line sort-keys
-		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
+		Admin: tabItems.filter((item) => item?.key === 'staking-admin' || item?.key === 'auction-admin')?.map((item) => item?.key),
 		...filteredGroups
 	};
 	const handleCategoryClick = (category: string) => {
-		if (tabCategories[category].length > 1) {
+		if (tabCategories[category]?.length > 1) {
 			setCurrentCategory(currentCategory === category ? null : category);
 		} else {
 			setCurrentTab(tabCategories[category][0]);
@@ -151,12 +151,12 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 	};
 
 	const isTabSelected = (category: string) => {
-		return tabCategories[category].some((tabKey) => tabKey === currentTab);
+		return tabCategories[category]?.some((tabKey) => tabKey === currentTab);
 	};
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+			if (dropdownRef?.current && !dropdownRef?.current?.contains(event.target as Node)) {
 				setCurrentCategory(null);
 				setIsTrackDropdownOpen(false);
 			}
@@ -169,31 +169,33 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 	const popoverContent = (
 		<div className='left-2 w-40 py-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
 			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>
-			{['Treasury', 'Whitelist'].map((category) => (
+			{['Treasury', 'Whitelist']?.map((category) => (
 				<React.Fragment key={category}>
 					<Popover
 						content={
 							<div className='w-44 text-sm  text-gray-700 dark:text-gray-200'>
-								{tabCategories[category].map((tabKey) => {
-									const tabItem = tabItems.find((item) => item.key === tabKey);
+								{tabCategories[category]?.map((tabKey) => {
+									const tabItem = tabItems?.find((item) => item.key === tabKey);
 									const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
 									return (
 										tabItem && (
 											<p
 												key={tabItem.key}
 												className={`m-0 cursor-pointer rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-													currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
+													currentTab === tabItem?.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
 												}`}
-												onClick={() => handleTabClick(tabItem.key)}
+												onClick={() => handleTabClick(tabItem?.key)}
 											>
 												<span className='flex w-full items-center justify-between'>
 													<div>
-														{tabIcons[tabItem.key.toLowerCase()]}
-														<span className={`ml-2 ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
+														{tabIcons[tabItem?.key?.toLowerCase()]}
+														<span className={`ml-2 ${poppins.className} ${poppins.variable}`}>{tabItem?.label} </span>
 													</div>
-													{tabItem.posts > 0 && (
-														<span className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}>
-															{tabItem.posts}
+													{tabItem?.posts > 0 && (
+														<span
+															className={`w-5 rounded-md p-1 text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem?.posts)}`}
+														>
+															{tabItem?.posts}
 														</span>
 													)}
 												</span>
@@ -215,7 +217,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 							onClick={() => handleCategoryClick(category)}
 						>
 							<span className='flex items-center'>
-								{isTabSelected(category) ? selectedtabIcons[category.toLowerCase().replace(/\s+/g, '-')] : tabIcons[category.toLowerCase().replace(/\s+/g, '-')]}
+								{isTabSelected(category) ? selectedtabIcons[category?.toLowerCase()?.replace(/\s+/g, '-')] : tabIcons[category?.toLowerCase()?.replace(/\s+/g, '-')]}
 								<span className={`ml-2 ${poppins.className} ${poppins.variable} whitespace-nowrap`}>{category}</span>
 							</span>
 							{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 -rotate-90 transform transition-transform'} />}
@@ -228,9 +230,9 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 
 	return (
 		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 font-poppins dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
-			{Object.keys(tabCategories)
-				.filter((category) => !['Treasury', 'Whitelist'].includes(category))
-				.map((category, index) => (
+			{Object?.keys(tabCategories)
+				?.filter((category) => !['Treasury', 'Whitelist']?.includes(category))
+				?.map((category, index) => (
 					<div
 						key={category}
 						className='relative flex '
@@ -244,7 +246,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 									<div className='w-[220px] divide-y divide-gray-100 pb-2 '>
 										<div className='w-full pt-2 text-sm text-gray-700 dark:text-gray-200'>
 											{tabCategories[category].map((tabKey) => {
-												const tabItem = tabItems.find((item) => item.key === tabKey);
+												const tabItem = tabItems?.find((item) => item?.key === tabKey);
 												const normalizedLabel = tabItem?.label?.replace(/\s+/g, '');
 
 												return (
@@ -252,20 +254,20 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 														<div
 															key={tabItem.key}
 															className={`block cursor-pointer rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${
-																currentTab === tabItem.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
+																currentTab === tabItem?.key ? 'bg-[#F2F4F7] text-[#243A57] dark:bg-[#2E2E2E] dark:text-white' : ''
 															}`}
-															onClick={() => handleTabClick(tabItem.key)}
+															onClick={() => handleTabClick(tabItem?.key)}
 														>
 															<span className='flex w-full items-center justify-between py-1'>
 																<div>
-																	{tabIcons[tabItem.key.toLowerCase()]}
+																	{tabIcons[tabItem?.key?.toLowerCase()]}
 																	<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
 																</div>
 																{tabItem.posts > 0 && (
 																	<span
-																		className={`w-5 rounded-md  text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem.posts)}`}
+																		className={`w-5 rounded-md  text-center text-[12px] text-[#96A4B6] dark:text-[#595959] ${getSpanStyle(normalizedLabel || '', tabItem?.posts)}`}
 																	>
-																		{tabItem.posts}
+																		{tabItem?.posts}
 																	</span>
 																)}
 															</span>

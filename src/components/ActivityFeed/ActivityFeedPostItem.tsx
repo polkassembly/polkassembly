@@ -52,7 +52,7 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 	const handleIdentityInfo = async () => {
 		if (!api || !currentUserdata?.addresses || !apiReady) return;
 
-		const verifiedInfoPromises = currentUserdata.addresses.map(async (address) => {
+		const verifiedInfoPromises = currentUserdata?.addresses?.map(async (address) => {
 			const info = await getIdentityInformation({
 				address,
 				api,
@@ -63,7 +63,7 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 
 		const identities = await Promise.all(verifiedInfoPromises);
 
-		const verifiedIdentity = identities.some((info) => info?.isVerified);
+		const verifiedIdentity = identities?.some((info) => info?.isVerified);
 		setIdentity(verifiedIdentity);
 	};
 
@@ -207,7 +207,7 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 				</Link>
 				<Divider
 					className={`m-0 rounded-lg border-[0.6px] border-solid border-[#D2D8E0] p-0 dark:border-[#4B4B4B] ${
-						reactionState.likesCount === 0 && reactionState.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
+						reactionState?.likesCount === 0 && reactionState?.dislikesCount === 0 && post?.commentsCount === 0 ? 'mt-3' : ''
 					}`}
 				/>
 				<ActivityFeedPostActions

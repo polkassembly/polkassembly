@@ -23,13 +23,13 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 		if (!currentUser) return;
 
 		try {
-			const addresses = Array.isArray(currentUser.addresses) ? currentUser.addresses : typeof currentUser.addresses === 'string' ? [currentUser.addresses] : [];
-			const encodedAddresses = addresses.map((address) => getEncodedAddress(address, network)).filter(Boolean);
+			const addresses = Array?.isArray(currentUser?.addresses) ? currentUser?.addresses : typeof currentUser?.addresses === 'string' ? [currentUser?.addresses] : [];
+			const encodedAddresses = addresses?.map((address) => getEncodedAddress(address, network))?.filter(Boolean);
 			if (encodedAddresses.length === 0) {
 				throw new Error('No valid addresses provided');
 			}
 
-			if (!encodedAddresses || encodedAddresses.length === 0) {
+			if (!encodedAddresses || encodedAddresses?.length === 0) {
 				throw new Error('Failed to encode addresses');
 			}
 
@@ -75,8 +75,8 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 				</div>
 				<div>
 					<p className='text-blue-light-medium dark:text-[#9E9E9E]'>
-						<span className='text-xl font-semibold text-pink_primary'>{proposaldata.totalVotes}</span> out of{' '}
-						<span className='text-md font-semibold text-blue-light-medium dark:text-[#9E9E9E]'>{proposaldata.activeProposals}</span> active proposals
+						<span className='text-xl font-semibold text-pink_primary'>{proposaldata?.totalVotes}</span> out of{' '}
+						<span className='text-md font-semibold text-blue-light-medium dark:text-[#9E9E9E]'>{proposaldata?.activeProposals}</span> active proposals
 					</p>
 				</div>
 			</div>

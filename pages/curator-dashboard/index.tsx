@@ -15,14 +15,8 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
 import { useTheme } from 'next-themes';
 import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
-import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
-import { ProfileDetailsResponse } from '~src/auth/types';
 
 interface ICuratorProfileProps {
-	userProfile: {
-		data: ProfileDetailsResponse;
-		error: string | null;
-	};
 	network: string;
 }
 
@@ -39,25 +33,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			}
 		};
 	}
-	const userProfile = await getUserProfileWithUsername(username?.toString());
 
 	const props: ICuratorProfileProps = {
-		network,
-		userProfile: {
-			data: userProfile.data || {
-				achievement_badges: [],
-				addresses: [],
-				badges: [],
-				bio: '',
-				created_at: null,
-				image: '',
-				social_links: [],
-				title: '',
-				user_id: 0,
-				username: String(username)
-			},
-			error: userProfile.error
-		}
+		network
 	};
 	return {
 		props
@@ -65,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const dispatch = useDispatch();
-	const { network, userProfile } = props;
+	const { network } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -122,7 +100,7 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 					</button>
 				</div>
 				<div>
-					<CuratorDashboardTabItems curatorprofile={userProfile?.data} />
+					<CuratorDashboardTabItems />
 				</div>
 			</main>
 			<BountyActionModal

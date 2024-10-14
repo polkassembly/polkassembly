@@ -213,7 +213,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					<PolkaverseIcon />
 				</Link>
 			)}
-			{network.includes('kilt') && (
+			{network?.includes('kilt') && (
 				<Link
 					target='_blank'
 					onClick={(e) => {

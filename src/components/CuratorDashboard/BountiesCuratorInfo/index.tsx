@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 
-function CuratedInfo() {
+function BountiesCuratorInfo() {
 	return <div>hi</div>;
 }
 
-export default CuratedInfo;
+export default BountiesCuratorInfo;

@@ -98,7 +98,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 		const totalVotes = ayesNumber + naysNumber;
 		const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
 		const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
-		return { ayesPercentage, isAyeNaN: Number.isNaN(ayesPercentage), isNayNaN: Number.isNaN(naysPercentage), naysPercentage };
+		return { ayesPercentage, isAyeNaN: isNaN(ayesPercentage), isNayNaN: isNaN(naysPercentage), naysPercentage };
 	}, [ayesNumber, naysNumber]);
 	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');

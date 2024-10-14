@@ -4,7 +4,15 @@
 import React from 'react';
 
 function CuratorProfile() {
-	return <div>index</div>;
+	return (
+		<div>
+			<div className='bg-white'>
+				<h1>Hannah Baker</h1>
+				<p>GLysv....fKzQw</p>
+				<p>Maecenas eget ligula vitae enim posuere volutpat. Pellentesque sed tellus pretium, pelentesque risus vitae, convallis dui. Ut vestibulum efficitur molis. </p>
+			</div>
+		</div>
+	);
 }
 
 export default CuratorProfile;

@@ -17,13 +17,13 @@ import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/
 import messages from '~src/util/messages';
 
 import { checkReportThreshold, getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 interface IGetOffChainPostParams {
 	network: string;

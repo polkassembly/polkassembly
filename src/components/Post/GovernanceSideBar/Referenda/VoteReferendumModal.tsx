@@ -237,12 +237,18 @@ const VoteReferendumModal = ({
 
 	useEffect(() => {
 		getWallet();
-		if (!api || !apiReady || !loginWallet) return;
+		if (!api || !apiReady) return;
+		let defaultWallet: Wallet | null = loginWallet;
+		if (!defaultWallet) {
+			defaultWallet = (window.localStorage.getItem('loginWallet') as Wallet) || null;
+		}
 
-		setWallet(loginWallet);
+		if (!defaultWallet) return;
+
+		setWallet(defaultWallet);
 
 		const injectedWindow = window as Window & InjectedWindow;
-		const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+		const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[defaultWallet] : null;
 		if (!extensionAvailable) {
 			setExtensionNotFound(true);
 		} else {
@@ -250,7 +256,7 @@ const VoteReferendumModal = ({
 		}
 		(async () => {
 			setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
-			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
+			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: defaultWallet || wallet, loginAddress, network });
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
 			setLoadingStatus({ isLoading: false, message: '' });

@@ -21,10 +21,33 @@ import dayjs from 'dayjs';
 import { IBountyListing } from './types/types';
 import Link from 'next/link';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { BN } from 'bn.js';
 
 interface IOnchainBountiesProps {
 	bounties: IBountyListing[];
 }
+
+const ZERO_BN = new BN(0);
+
+const Categories = ({ categories }: { categories: string[] }) => {
+	if (!categories?.length) {
+		return <span>N/A</span>;
+	}
+
+	return (
+		<div style={{ display: 'flex', gap: '5px' }}>
+			{categories?.slice(0, 2)?.map((category, index) => (
+				<Tag
+					key={index}
+					className={`rounded-full px-3 py-1 text-[12px] ${index === 0 ? 'bg-[#dfd5ff] text-[#4800ff]' : 'bg-[#EFEFEF] text-[#4800ff]'}`}
+				>
+					{category}
+				</Tag>
+			))}
+			{categories?.length - 2 > 0 && <span className='flex items-center rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-lightBlue'>+{categories?.length - 2}</span>}
+		</div>
+	);
+};
 
 const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const { resolvedTheme: theme = 'light' } = useTheme();
@@ -141,23 +164,27 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'w-[90px]',
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
-			render: (claimed: number, record: IBountyListing) => {
-				const claimedAmount = claimed || 0;
-				const reward = parseFloat(record.reward) || 0;
-				const claimedPercentage = reward > 0 ? (claimedAmount / reward) * 100 : 0;
+			render: (claimed: string, record: IBountyListing) => {
+				const claimedBn = new BN(claimed || '0');
+				const rewardBn = new BN(record?.reward || '0');
+
+				const percentage = claimedBn.mul(new BN('100')).div(rewardBn);
+
+				// const claimedPercentage = reward > 0 ? (claimedAmount / reward) * 100 : 0;
 
 				return (
 					<div style={{ alignItems: 'center', display: 'flex' }}>
-						{reward > 0 ? (
+						{!rewardBn.eq(ZERO_BN) ? (
 							<>
 								<Progress
 									type='circle'
-									percent={claimedPercentage}
+									percent={percentage.toNumber()}
 									width={25}
 									showInfo={false}
 									strokeColor='#ffc500'
+									trailColor='#F0F0F0'
 								/>
-								<span style={{ marginLeft: '8px' }}>{claimedPercentage.toFixed(1)}%</span>
+								<span style={{ marginLeft: '8px' }}>{percentage.toNumber().toFixed(1)}%</span>
 							</>
 						) : (
 							'-'
@@ -182,7 +209,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					<>
 						{relativeCreatedAt ? (
 							<span className='flex gap-1 text-blue-light-medium  dark:text-icon-dark-inactive'>
-								<ClockCircleOutlined className='text-blue-light-medium dark:text-icon-dark-inactive' /> <span className=' whitespace-nowrap'>{relativeCreatedAt}</span>
+								<ClockCircleOutlined className='text-blue-light-medium dark:text-icon-dark-inactive' />
+								<span className=' whitespace-nowrap'>{relativeCreatedAt}</span>
 							</span>
 						) : (
 							'-'
@@ -202,40 +230,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		{
 			dataIndex: 'categories',
 			key: 'categories',
-			render: (categories: string[] | undefined) => {
-				if (!categories || categories.length === 0) {
-					return <span>N/A</span>;
-				}
-
-				const maxLength = 10;
-				const [firstCategory, secondCategory] = categories;
-
-				const displayCategories = [];
-				let remainingCount = 0;
-
-				if (firstCategory) {
-					displayCategories.push(firstCategory);
-					if (secondCategory && firstCategory.length + secondCategory?.length <= maxLength) {
-						displayCategories.push(secondCategory);
-						remainingCount = categories?.length - 2;
-					} else {
-						remainingCount = categories?.length - 1;
-					}
-				}
-
-				return (
-					<div style={{ display: 'flex', gap: '5px' }}>
-						{displayCategories.map((category, index) => (
-							<Tag
-								key={index}
-								className={`rounded-full px-3 py-1 text-[12px] ${index === 0 ? 'bg-[#dfd5ff] text-[#4800ff]' : 'bg-[#EFEFEF] text-[#4800ff]'}`}
-							>
-								{category}
-							</Tag>
-						))}
-						{remainingCount > 0 && <span className='rounded-full bg-[#dfd5ff] px-3 py-1 text-[12px] text-[#485F7D]'>+{remainingCount}</span>}
-					</div>
-				);
+			render: (categories: string[]) => {
+				return <Categories categories={categories || []} />;
 			},
 			title: 'Categories',
 			width: 100
@@ -326,7 +322,19 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																)}
 
 																<div className='ml-7 mt-5'>{childBounty?.index}</div>
-																<div className='ml-2 mt-4 w-[160px] pl-5 '>{childBounty?.curator && childBounty?.curator !== '' ? childBounty?.curator : '-'}</div>
+																<div className='ml-2 mt-4 w-[160px] pl-5 '>
+																	{childBounty?.curator?.length ? (
+																		<Address
+																			iconSize={22}
+																			address={childBounty?.curator}
+																			displayInline
+																			isTruncateUsername={true}
+																			disableTooltip
+																		/>
+																	) : (
+																		'-'
+																	)}
+																</div>
 																<div className='mt-5 w-[227px] px-5'>{childBounty?.title?.length > 25 ? `${childBounty?.title?.slice(0, 25)}...` : childBounty?.title}</div>
 																<div className='mt-5 w-[115px] pl-5'>{parseBalance(childBounty?.reward || '0', 2, true, network)}</div>
 
@@ -341,7 +349,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	)}
 																</div>
 																<div className='mt-5 w-[132px] pl-5'>{childBounty?.status ? <StatusTag status={childBounty?.status} /> : '-'}</div>
-																<div className='mt-5 pl-5 '>N/A</div>
+																<div className='mt-5 pl-5 '>{<Categories categories={childBounty?.categories || []} />}</div>
 															</div>
 														</Link>
 													);

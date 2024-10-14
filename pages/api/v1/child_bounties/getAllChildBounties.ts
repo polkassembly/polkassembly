@@ -68,6 +68,7 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
 			const payload: IChildBounty = {
+				categories: [],
 				createdAt: subsquidChildBounty?.createdAt,
 				curator: subsquidChildBounty?.curator || '',
 				description: subsquidChildBounty?.description || '',
@@ -82,6 +83,7 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 					const data = childBounty.data();
 					if (data?.id === subsquidChildBounty.index) {
 						payload.title = data?.title || '';
+						payload.categories = data?.tags || [];
 					}
 				}
 			});

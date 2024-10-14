@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Poppins, Roboto_Mono, Work_Sans, Space_Grotesk } from 'next/font/google';
+// import { Poppins, Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
+import { Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Image from 'next/image';
@@ -29,13 +30,13 @@ import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
 
-export const poppins = Poppins({
+export const poppins = DM_Sans({
 	adjustFontFallback: false,
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],
 	variable: '--font-poppins',
-	weight: ['200', '300', '400', '500', '600', '700']
+	weight: ['400', '500', '700']
 });
 const robotoMono = Roboto_Mono({
 	display: 'swap',

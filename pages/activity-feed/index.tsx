@@ -35,7 +35,7 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	try {
-		const network = getNetworkFromReqHeaders(req.headers);
+		const network = getNetworkFromReqHeaders(req?.headers);
 		const networkRedirect = checkRouteNetworkWithRedirect(network);
 		if (networkRedirect) return networkRedirect;
 

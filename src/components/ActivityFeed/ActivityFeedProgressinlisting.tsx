@@ -49,12 +49,12 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 	});
 	const { ayes, nays } = tallyAyeNayVotes;
 
-	const ayeVotesNumber = usingTallyForAyeNayVotes ? ayes : bnToIntBalance(tallyData.ayes || ZERO);
-	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData.ayes?.add(tallyData.nays || ZERO) || ZERO);
+	const ayeVotesNumber = usingTallyForAyeNayVotes ? ayes : bnToIntBalance(tallyData?.ayes || ZERO);
+	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData?.ayes?.add(tallyData?.nays || ZERO) || ZERO);
 	const ayePercent = totalVotesNumber > 0 ? (ayeVotesNumber / totalVotesNumber) * 100 : 0;
 	const nayPercent = 100 - ayePercent;
-	const isAyeNaN = Number.isNaN(ayePercent);
-	const isNayNaN = Number.isNaN(nayPercent);
+	const isAyeNaN = isNaN(ayePercent);
+	const isNayNaN = isNaN(nayPercent);
 	const getReferendumVoteInfo = async () => {
 		if (!onchainId || !votesData) return;
 		if (network === 'cere') {
@@ -79,25 +79,25 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 								type_eq: 'Referendum'
 							}
 						});
-						if (Array.isArray(res?.data?.votes)) {
+						if (Array?.isArray(res?.data?.votes)) {
 							const voteInfo = {
 								ayes: ZERO,
 								nays: ZERO
 							};
-							res.data.votes.forEach((vote: any) => {
+							res?.data?.votes?.forEach((vote: any) => {
 								if (vote) {
 									const { balance, lockPeriod, decision } = vote;
 									if (decision === 'yes') {
 										if (lockPeriod === 0) {
-											voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).div(new BN(10)));
+											voteInfo.ayes = voteInfo?.ayes?.add(new BN(balance.value)?.div(new BN(10)));
 										} else {
-											voteInfo.ayes = voteInfo.ayes.add(new BN(balance.value).mul(new BN(lockPeriod)));
+											voteInfo.ayes = voteInfo?.ayes?.add(new BN(balance.value)?.mul(new BN(lockPeriod)));
 										}
 									} else {
 										if (lockPeriod === 0) {
-											voteInfo.nays = voteInfo.nays.add(new BN(balance.value).div(new BN(10)));
+											voteInfo.nays = voteInfo?.nays?.add(new BN(balance?.value)?.div(new BN(10)));
 										} else {
-											voteInfo.nays = voteInfo.nays.add(new BN(balance.value).mul(new BN(lockPeriod)));
+											voteInfo.nays = voteInfo?.nays?.add(new BN(balance?.value)?.mul(new BN(lockPeriod)));
 										}
 									}
 								}
@@ -111,18 +111,18 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 					setLoading(false);
 				}
 			})();
-		} else if (votesData && !votesData.error && votesData.data) {
+		} else if (votesData && !votesData?.error && votesData?.data) {
 			setLoading(true);
 
-			const info = votesData.data;
+			const info = votesData?.data;
 
 			const voteInfo = {
 				ayes: ZERO,
 				nays: ZERO
 			};
 
-			voteInfo.ayes = new BN(info.aye_amount);
-			voteInfo.nays = new BN(info.nay_amount);
+			voteInfo.ayes = new BN(info?.aye_amount);
+			voteInfo.nays = new BN(info?.nay_amount);
 
 			setTallyData(voteInfo);
 			setLoading(false);
@@ -138,41 +138,41 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 				ayes: Number(tally?.ayes),
 				nays: Number(tally?.nays)
 			});
-		} else if ([ProposalType.COMMUNITY_PIPS].includes(proposalType as ProposalType)) {
+		} else if ([ProposalType.COMMUNITY_PIPS]?.includes(proposalType as ProposalType)) {
 			const pipId = onchainId;
-			const voteInfo: any = await api.query.pips.proposalResult(pipId).then((data) => data.toJSON());
+			const voteInfo: any = await api?.query?.pips?.proposalResult(pipId)?.then((data) => data?.toJSON());
 			if (voteInfo) {
 				setTallyData({
-					ayes: new BN(voteInfo.ayesStake) || ZERO,
-					nays: new BN(voteInfo.naysStake) || ZERO
+					ayes: new BN(voteInfo?.ayesStake) || ZERO,
+					nays: new BN(voteInfo?.naysStake) || ZERO
 				});
 			}
 			setLoading(false);
 		} else {
 			setLoading(true);
 			formatBalance.setDefaults({
-				decimals: chainProperties[network].tokenDecimals,
-				unit: chainProperties[network].tokenSymbol
+				decimals: chainProperties[network]?.tokenDecimals,
+				unit: chainProperties[network]?.tokenSymbol
 			});
 
 			if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())) {
 				setTallyData({
-					ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
-					nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
+					ayes: String(tally?.ayes)?.startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+					nays: String(tally?.nays)?.startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
 				});
 				setLoading(false);
 				return;
 			}
 
 			(async () => {
-				const referendumInfoOf = await api.query.referenda.referendumInfoFor(onchainId);
-				const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+				const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(onchainId);
+				const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
 				if (parsedReferendumInfo?.ongoing?.tally) {
 					setTallyData({
 						ayes:
-							typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-								? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
-								: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+							typeof parsedReferendumInfo?.ongoing?.tally.ayes === 'string'
+								? new BN(parsedReferendumInfo?.ongoing?.tally?.ayes?.slice(2), 'hex')
+								: new BN(parsedReferendumInfo?.ongoing?.tally?.ayes),
 						nays:
 							typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
 								? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
@@ -180,8 +180,8 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 					});
 				} else {
 					setTallyData({
-						ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
-						nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
+						ayes: String(tally?.ayes)?.startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+						nays: String(tally?.nays)?.startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
 					});
 				}
 				setLoading(false);
@@ -215,14 +215,14 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 								{usingTallyForAyeNayVotes
 									? ayes
 									: formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
-								({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%){' '}
+								({(isAyeNaN ? 50 : ayePercent)?.toFixed(2)}%){' '}
 							</span>
 							<span>
 								Nay ={' '}
 								{usingTallyForAyeNayVotes
 									? nays
 									: formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
-								({(isNayNaN ? 50 : nayPercent).toFixed(2)}%){' '}
+								({(isNayNaN ? 50 : nayPercent)?.toFixed(2)}%){' '}
 							</span>
 						</div>
 					}

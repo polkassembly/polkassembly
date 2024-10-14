@@ -31,7 +31,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 				return;
 			}
 			if (userProfileData) {
-				setProfileScore(userProfileData.profile_score);
+				setProfileScore(userProfileData?.profile_score);
 
 				const { data: leaderboardData, error: leaderboardError } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
 				if (leaderboardError) {
@@ -40,7 +40,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 				}
 
 				if (leaderboardData && leaderboardData?.data && leaderboardData?.data?.length > 0) {
-					const userRank = leaderboardData.data[0].rank;
+					const userRank = leaderboardData?.data[0]?.rank;
 					setUserRank(userRank);
 				} else {
 					console.log('User rank not found.');
@@ -53,7 +53,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 
 	useEffect(() => {
 		if (username) {
-			getUserProfile(username.toString());
+			getUserProfile(username?.toString());
 		} else {
 			console.error('Username is not available');
 		}

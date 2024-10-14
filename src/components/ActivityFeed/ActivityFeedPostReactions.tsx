@@ -50,12 +50,12 @@ export const ActivityFeedPostReactions: React.FC<{
 	const { network } = useNetworkSelector();
 
 	const renderUsernames = (reaction: '👍' | '👎') => {
-		const usernames = reaction === '👍' ? reactionState.likesUsernames : reactionState.dislikesUsernames;
-		const userImages = reaction === '👍' ? reactionState.likesImages : reactionState.dislikesImages;
+		const usernames = reaction === '👍' ? reactionState?.likesUsernames : reactionState?.dislikesUsernames;
+		const userImages = reaction === '👍' ? reactionState?.likesImages : reactionState?.dislikesImages;
 
 		return usernames?.length ? (
 			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>
-				{usernames.map((name: string, index: number) => (
+				{usernames?.map((name: string, index: number) => (
 					<Link
 						href={`https://${network}.polkassembly.io/user/${name}`}
 						key={index}
@@ -76,7 +76,7 @@ export const ActivityFeedPostReactions: React.FC<{
 			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
 		);
 	};
-	const percentage = Math.min(post.highestSentiment?.percentage || 0, 100);
+	const percentage = Math?.min(post?.highestSentiment?.percentage || 0, 100);
 	const sentimentLevels = [
 		{ threshold: 20, title: 'Completely Against' },
 		{ threshold: 40, title: 'Slightly Against' },
@@ -85,7 +85,7 @@ export const ActivityFeedPostReactions: React.FC<{
 		{ threshold: 100, title: 'Completely For' }
 	];
 
-	const sentimentTitle = sentimentLevels.find((level) => percentage <= level.threshold)?.title || 'Completely For';
+	const sentimentTitle = sentimentLevels?.find((level) => percentage <= level?.threshold)?.title || 'Completely For';
 
 	const renderSentimentIcon = (sentiment: number) => {
 		const sentimentIcons: Record<number, React.ReactNode> = {
@@ -103,7 +103,7 @@ export const ActivityFeedPostReactions: React.FC<{
 	return (
 		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
-				{reactionState.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
+				{reactionState?.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
 					<div className='mt-1 flex items-center'>
 						<ImageComponent
 							src={firstVoterProfileImg}
@@ -112,7 +112,7 @@ export const ActivityFeedPostReactions: React.FC<{
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
 						<div className='ml-1 text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
-							{reactionState.likesCount === 1 ? (
+							{reactionState?.likesCount === 1 ? (
 								<p className='md:-mt-2'>{`${displayUsername} has liked this post`}</p>
 							) : (
 								<Popover
@@ -123,7 +123,7 @@ export const ActivityFeedPostReactions: React.FC<{
 								>
 									<p className='cursor-pointer text-[10px] md:-mt-2 md:text-[12px]'>
 										{`${displayUsername} & `}
-										<span className='text-pink_primary underline'>{`${reactionState.likesCount - 1} others`}</span>
+										<span className='text-pink_primary underline'>{`${reactionState?.likesCount - 1} others`}</span>
 										{' liked this post'}
 									</p>
 								</Popover>
@@ -143,7 +143,7 @@ export const ActivityFeedPostReactions: React.FC<{
 							arrow={true}
 						>
 							<p className='cursor-pointer whitespace-nowrap text-[10px] text-gray-600 hover:underline dark:text-[#9E9E9E] md:text-[12px]'>
-								{reactionState.dislikesCount} dislikes
+								{reactionState?.dislikesCount} dislikes
 							</p>
 						</Popover>
 					</span>
@@ -153,9 +153,9 @@ export const ActivityFeedPostReactions: React.FC<{
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-blue-light-medium dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
 					<div className='mt-2 flex items-center space-x-1 md:mt-5'>
-						{post.highestSentiment?.sentiment >= 0 && (
+						{post?.highestSentiment?.sentiment >= 0 && (
 							<EmojiOption
-								icon={renderSentimentIcon(post.highestSentiment.sentiment)}
+								icon={renderSentimentIcon(post?.highestSentiment?.sentiment)}
 								title={sentimentTitle}
 								percentage={percentage}
 							/>

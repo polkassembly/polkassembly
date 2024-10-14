@@ -72,21 +72,22 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 				network,
 				query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,
 				variables: {
-					curator_eq: encodedCuratorAddress,
-					parentBountyIndex_eq: subsquidBounty?.index,
-					status_eq: bountyStatus.CLAIMED
+					parentBountyIndex_eq: subsquidBounty?.index
 				}
 			});
 
 			const subsquidChildBountyData = subsquidChildBountiesRes?.data?.proposals || [];
-			const totalChildBountiesCount = subsquidChildBountiesRes?.data?.proposalsConnection?.totalCount || 0;
 
 			let claimedAmount = ZERO_BN;
+			let totalChildBountiesCount = 0;
 
-			subsquidChildBountyData.map((childBounty: { status: string; reward: string }) => {
+			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
 				if ([bountyStatus.CLAIMED, bountyStatus.AWARDED].includes(childBounty.status)) {
+					if ([bountyStatus.CLAIMED].includes(childBounty?.status) && subsquidBounty?.curator === childBounty?.curator) {
+						totalChildBountiesCount += totalChildBountiesCount;
+					}
 					claimedAmount = claimedAmount.add(amount);
 				}
 			});

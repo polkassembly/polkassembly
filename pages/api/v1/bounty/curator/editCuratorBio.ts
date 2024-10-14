@@ -17,7 +17,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	try {
 		const network = String(req.headers['x-network']);
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { curatorBio } = req.body;
 		if (!curatorBio?.length) return res.status(400).json({ message: messages?.INVALID_PARAMS });
@@ -32,7 +32,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 		const userDoc = await userDocRef.get();
 
-		if (!userDoc.exists) {
+		if (!userDoc?.exists) {
 			return res.status(403).json({ message: messages?.UNAUTHORISED });
 		}
 

@@ -30,7 +30,6 @@ const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
-	console.log('hello user: ', user);
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -96,8 +95,8 @@ const VotingCards = () => {
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
 			skippedIndexes: skippedIndexes,
-			userAddress: user?.loginAddress || '5G1UmMY6Jip2xXjtHvXoe6DxaMByD7LtRuMjiQHSyfaSVQqD',
-			userId: user?.id || 22318
+			userAddress: user?.loginAddress,
+			userId: user?.id
 		});
 		if (error) {
 			console.error(error);

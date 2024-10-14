@@ -72,7 +72,7 @@ function FeaturesSection() {
 		if (feature?.title === 'Identity') {
 			e.stopPropagation();
 			e.preventDefault();
-			if (typeof currentUser?.id === 'number' && !Number?.isNaN(currentUser.id) && currentUser?.username) {
+			if (typeof currentUser?.id === 'number' && !isNaN(currentUser.id) && currentUser?.username) {
 				trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
 					userId: currentUser?.id?.toString(),
 					userName: currentUser?.username

@@ -53,8 +53,8 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData?.ayes?.add(tallyData?.nays || ZERO) || ZERO);
 	const ayePercent = totalVotesNumber > 0 ? (ayeVotesNumber / totalVotesNumber) * 100 : 0;
 	const nayPercent = 100 - ayePercent;
-	const isAyeNaN = Number?.isNaN(ayePercent);
-	const isNayNaN = Number?.isNaN(nayPercent);
+	const isAyeNaN = isNaN(ayePercent);
+	const isNayNaN = isNaN(nayPercent);
 	const getReferendumVoteInfo = async () => {
 		if (!onchainId || !votesData) return;
 		if (network === 'cere') {

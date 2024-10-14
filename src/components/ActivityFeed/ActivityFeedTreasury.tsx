@@ -401,7 +401,7 @@ const ActivityFeedSidebar = () => {
 						<div>
 							{currentTokenPrice?.value === 'N/A' ? (
 								<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-							) : currentTokenPrice?.value && !Number?.isNaN(Number(currentTokenPrice?.value)) ? (
+							) : currentTokenPrice?.value && !isNaN(Number(currentTokenPrice?.value)) ? (
 								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice?.value}</span>
 							) : null}
 						</div>

@@ -15,6 +15,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
 import { useTheme } from 'next-themes';
 import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
+import SEOHead from '~src/global/SEOHead';
 
 interface ICuratorProfileProps {
 	network: string;
@@ -25,20 +26,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-	const username = context.query?.username;
-	if (!username) {
-		return {
-			props: {
-				error: 'No username provided'
-			}
-		};
-	}
-
-	const props: ICuratorProfileProps = {
-		network
-	};
 	return {
-		props
+		props: {
+			network
+		}
 	};
 };
 const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
@@ -73,6 +64,11 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	}, []);
 	return (
 		<div>
+			<SEOHead
+				title='Curator Dashboard'
+				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
+				network={network}
+			/>
 			<Link
 				className='inline-flex items-center pt-3 text-sidebarBlue hover:text-pink_primary dark:text-white'
 				href='#'

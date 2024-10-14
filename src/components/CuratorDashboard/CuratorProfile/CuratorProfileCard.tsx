@@ -33,10 +33,6 @@ function CuratorProfileCard() {
 			if (data) setCuratorProfile(data);
 		}
 	};
-	useEffect(() => {
-		fetchCuratorProfile();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,26 +40,36 @@ function CuratorProfileCard() {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-
+	const [curatorBio, setCuratorBio] = useState<string>('');
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
 		judgements: [],
 		nickname: ''
 	});
 	const [form] = Form.useForm();
+
+	const fetchCuratorBio = async () => {
+		if (currentUser?.id !== undefined && currentUser?.id !== null) {
+			const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getCuratorBio', {
+				network,
+				userId: currentUser.id
+			});
+			if (data) setCuratorBio(data?.curatorBio);
+		}
+	};
+
 	const handleCopyAddress = () => {
 		message.success('Address copied to clipboard');
 	};
 	const handleEditClick = () => {
 		setIsModalVisible(true);
 		form.setFieldsValue({
-			username: curatorprofile?.username
+			bio: curatorBio
 		});
 	};
 
 	const handleCancel = () => {
 		setIsModalVisible(false);
 	};
-
 	const handleOk = () => {
 		form.validateFields().then(async (values) => {
 			const { data, error: editError } = await nextApiClientFetch<any>('/api/v1/bounty/curator/editCuratorBio', {
@@ -74,7 +80,7 @@ function CuratorProfileCard() {
 				message.success('Curator Bio updated successfully');
 			}
 
-			console.log(data, editError);
+			setCuratorBio(values.bio);
 			setIsModalVisible(false);
 		});
 	};
@@ -173,6 +179,11 @@ function CuratorProfileCard() {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity]);
+	useEffect(() => {
+		fetchCuratorProfile();
+		fetchCuratorBio();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUser?.addresses]);
 	return (
 		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5'>
 			<div className='flex gap-5'>
@@ -249,12 +260,12 @@ function CuratorProfileCard() {
 						</p>
 					</div>
 
-					<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[16px]`}>{curatorprofile?.profile?.bio}</div>
+					<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[16px]`}>{curatorBio}</div>
 					<SocialsHandle
 						className='mr-6 mt-3 gap-4'
 						onchainIdentity={onChainIdentity}
 						socials={curatorprofile?.profile?.social_links || []}
-						address={address || ''}
+						address={addressWithIdentity}
 						iconSize={18}
 						boxSize={32}
 					/>

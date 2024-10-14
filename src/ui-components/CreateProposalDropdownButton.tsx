@@ -47,13 +47,17 @@ const StyledButtonContainer = styled.div`
 	}
 `;
 
-const CreateProposalDropdownButton = ({sidebarCollapsed}: {sidebarCollapsed: boolean}) => (
+const CreateProposalDropdownButton = ({ sidebarCollapsed }: { sidebarCollapsed: boolean }) => (
 	<StyledButtonContainer>
-		<div className={`card ${sidebarCollapsed ? 'p-[2px] w-full ' : 'mx-4 p-[2px] w-[200px]'}`}>
+		<div className={`card ${sidebarCollapsed ? 'w-full p-[2px] ' : 'mx-4 w-[200px] p-[2px]'}`}>
 			<div className={`flex items-center justify-center gap-[6px] rounded-[10.5px] bg-white ${!sidebarCollapsed ? 'py-[2px]' : 'p-[5px]'} dark:bg-section-dark-background`}>
 				<CreatePencilIcon />
-				{!sidebarCollapsed && <><span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
-				<ArrowDownIcon className='text-sm ml-1 text-[#0A3EAF] dark:text-[#49CFFC]' /></>}
+				{!sidebarCollapsed && (
+					<>
+						<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+						<ArrowDownIcon className='ml-1 text-sm text-[#0A3EAF] dark:text-[#49CFFC]' />
+					</>
+				)}
 			</div>
 		</div>
 	</StyledButtonContainer>

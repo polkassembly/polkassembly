@@ -645,9 +645,9 @@ export default styled(AppLayout)`
 		overflow: hidden; /* Ensures no scrollbars for other browsers */
 	}
 
-	.width-content{
-	@media (max-width: 1532px) and (min-width: 1700px) {
-		margin-left: 0px;
+	.width-content {
+		@media (max-width: 1532px) and (min-width: 1700px) {
+			margin-left: 0px;
+		}
 	}
-}
 `;

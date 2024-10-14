@@ -1127,33 +1127,37 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
-		
-		if (isOpenGovSupported(network)) {
-			gov2OverviewItems.splice(
-				5,
-				0,
-				getSiderMenuItem(
-					<div className='flex gap-2'>
+
+	if (isOpenGovSupported(network)) {
+		gov2OverviewItems.splice(
+			5,
+			0,
+			getSiderMenuItem(
+				<div className='flex gap-2'>
 					<span>Batch Voting</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					{theme == 'light' ? <BatchVotingIcon className='-mt-[4px] pl-0 scale-100 font-medium text-transparent ' /> : <BatchVotingIconDark className='-mt-[4px] scale-100 font-medium text-transparent ' /> }
+					{theme == 'light' ? (
+						<BatchVotingIcon className='-mt-[4px] scale-100 pl-0 font-medium text-transparent ' />
+					) : (
+						<BatchVotingIconDark className='-mt-[4px] scale-100 font-medium text-transparent ' />
+					)}
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
 						}}
-						>
+					>
 						NEW
 					</div>
 				</div>
 			)
-			);
-		}
-		
+		);
+	}
+
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
@@ -1749,6 +1753,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 				),
 				getSiderMenuItem('Archived', 'group', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
+		}
+
+		if (isOpenGovSupported(network)) {
+			const newItem = getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Gov Analytics</span>
+				</div>,
+				'/gov-analytics',
+				<div className='-ml-2'>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				</div>
+			);
+
+			gov2Items.splice(gov2Items.length - 2, 0, newItem);
 		}
 
 		const archivedDropdownContent = (

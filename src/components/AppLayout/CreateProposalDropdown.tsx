@@ -48,7 +48,7 @@ interface Props {
 	sidebarCollapsed: boolean;
 }
 
-const CreateProposalDropdown: FC<Props> = ({sidebarCollapsed}: Props) => {
+const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	const router = useRouter();
 	const { id } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const CreateProposalDropdown: FC<Props> = ({sidebarCollapsed}: Props) => {
 				placement={sidebarCollapsed ? 'right' : 'bottomRight'}
 				menu={{ items }}
 			>
-				<span className='mt-4 mb-[6px]'>
+				<span className='mb-[6px] mt-4'>
 					<CreateProposalDropdownButton sidebarCollapsed={sidebarCollapsed} />
 				</span>
 			</Dropdown>

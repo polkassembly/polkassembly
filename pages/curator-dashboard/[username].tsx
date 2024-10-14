@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
@@ -15,18 +15,57 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
 import { useTheme } from 'next-themes';
 import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
+import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
+import { ProfileDetailsResponse } from '~src/auth/types';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+interface ICuratorProfileProps {
+	userProfile: {
+		data: ProfileDetailsResponse;
+		error: string | null;
+	};
+	network: string;
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const network = getNetworkFromReqHeaders(context.req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const username = context.query?.username;
+	if (!username) {
+		return {
+			props: {
+				error: 'No username provided'
+			}
+		};
+	}
+	const userProfile = await getUserProfileWithUsername(username?.toString());
 
-	return { props: { network } };
+	const props: ICuratorProfileProps = {
+		network,
+		userProfile: {
+			data: userProfile.data || {
+				achievement_badges: [],
+				addresses: [],
+				badges: [],
+				bio: '',
+				created_at: null,
+				image: '',
+				social_links: [],
+				title: '',
+				user_id: 0,
+				username: String(username)
+			},
+			error: userProfile.error
+		}
+	};
+	return {
+		props
+	};
 };
-
-const CuratorDashboard = (props: { network: string }) => {
+const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const dispatch = useDispatch();
+	const { network, userProfile } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -51,7 +90,7 @@ const CuratorDashboard = (props: { network: string }) => {
 	};
 
 	useEffect(() => {
-		dispatch(setNetwork(props.network));
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
@@ -83,7 +122,7 @@ const CuratorDashboard = (props: { network: string }) => {
 					</button>
 				</div>
 				<div>
-					<CuratorDashboardTabItems />
+					<CuratorDashboardTabItems curatorprofile={userProfile?.data} />
 				</div>
 			</main>
 			<BountyActionModal

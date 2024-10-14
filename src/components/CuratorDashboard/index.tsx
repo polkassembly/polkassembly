@@ -1,19 +1,75 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import CuratorProfile from './Profile';
 // import CuratorPendingRequestManager from './PendingRequestManager';
 import CuratedInfo from './CuratedInfo';
+import { ProfileDetailsResponse } from '~src/auth/types';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
+import { TOnChainIdentity } from '../UserProfile';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { useNetworkSelector } from '~src/redux/selectors';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
-function CuratorDashboardTabItems() {
-	const [activeTab, setActiveTab] = useState<string | null>(null);
+function CuratorDashboardTabItems({ curatorprofile }: { curatorprofile: ProfileDetailsResponse }) {
+	const [activeTab, setActiveTab] = useState<string>('general');
+	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
+	const { api, apiReady } = useApiContext();
+	const [onChainIdentity, setOnChainIdentity] = useState<any>();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const { network } = useNetworkSelector();
 
+	useEffect(() => {
+		if (!api || !apiReady) return;
+
+		let unsubscribes: (() => void)[];
+		const onChainIdentity: TOnChainIdentity = {
+			judgements: [],
+			nickname: ''
+		};
+		const resolved: any[] = [];
+		curatorprofile?.addresses.forEach(async (address) => {
+			const info = await getIdentityInformation({
+				address: address,
+				api: peopleChainApi ?? api,
+				network: network
+			});
+
+			if (info?.nickname && !onChainIdentity.nickname) {
+				onChainIdentity.nickname = info.nickname;
+			}
+			Object.entries(info).forEach(([key, value]) => {
+				if (value) {
+					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
+						(onChainIdentity as any)[key] = value;
+						setAddressWithIdentity(getEncodedAddress(address, network) || '');
+					} else if (!(onChainIdentity as any)?.[key]) {
+						(onChainIdentity as any)[key] = value;
+					}
+				}
+			});
+			resolved.push(true);
+			if (resolved.length === curatorprofile?.addresses.length) {
+				setOnChainIdentity(onChainIdentity);
+			}
+		});
+		return () => {
+			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [curatorprofile?.addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 	const tabs = [
 		{
-			children: <CuratorProfile />,
+			children: (
+				<CuratorProfile
+					addressWithIdentity={addressWithIdentity}
+					curatorprofile={curatorprofile}
+					onchainIdentity={onChainIdentity}
+				/>
+			),
 			description: 'Vestibulum nec leo at dui euismod',
 			icon: '/assets/icons/curator-dashboard/general.svg',
 			key: 'general',

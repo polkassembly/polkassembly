@@ -9,6 +9,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Input from '~src/basic-components/Input';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import TextEditor from '~src/ui-components/TextEditor';
+import { useTheme } from 'next-themes';
 
 const { Option } = Select;
 
@@ -18,6 +19,7 @@ interface IBountyChildBountiesProps {
 
 const Submision: FC<IBountyChildBountiesProps> = (props) => {
 	const { bountyId } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -48,13 +50,11 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 				<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
 			</div>
 
-			{/* Modal for making a submission */}
 			<Modal
 				title='Make Submission'
 				visible={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
-				className='-mt-16'
 				destroyOnClose
 			>
 				<Form
@@ -64,27 +64,20 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					<Form.Item
 						label='Select Account'
 						name='account'
-						rules={[{ message: 'Please select an account', required: true }]}
 					>
 						<Select placeholder='Select an account'>
 							<Option value='account1'>Account 1</Option>
 							<Option value='account2'>Account 2</Option>
 						</Select>
 					</Form.Item>
-
 					<Form.Item
-						label='Propose Curator'
-						name='curator'
-						className='-mt-3'
-					>
-						<Input placeholder='Enter curator' />
-					</Form.Item>
-
-					<Form.Item
-						label='Title'
+						label={
+							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
+								Title <span className='text-red-500'>*</span>
+							</div>
+						}
 						name='title'
 						className='-mt-3'
-						rules={[{ message: 'Please enter a title', required: true }]}
 					>
 						<Input placeholder='Enter title' />
 					</Form.Item>
@@ -107,20 +100,28 @@ const Submision: FC<IBountyChildBountiesProps> = (props) => {
 					</Form.Item>
 
 					<Form.Item
-						label='Tags'
-						name='tags'
+						label={
+							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
+								Categories <span className='text-red-500'>*</span>
+							</div>
+						}
+						name='categories'
 						className='-mt-3'
 					>
-						<Input placeholder='Add tags (comma separated)' />
+						<Input placeholder='Add more context for your request' />
 					</Form.Item>
 					<Form.Item
-						label='Description'
+						label={
+							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
+								Description <span className='text-red-500'>*</span>
+							</div>
+						}
 						name='description'
 						className='-mt-3'
 					>
 						<TextEditor
 							name='content'
-							value='hello'
+							theme={theme}
 							// value={value}
 							// theme={theme}
 							height={150}

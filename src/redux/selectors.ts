@@ -25,6 +25,7 @@ import { IClaimPayoutStore } from './claimProposalPayout/@types';
 import { IAssetsCurrentPriceStore } from './assetsCurrentPrices/@types';
 import { IProgressReportStore } from './progressReport/@types';
 import { IGlobalStore } from './global/@types';
+import { IChildBountyCreationStore } from './childBountyCreation/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -110,6 +111,10 @@ const useAssetsCurrentPriceSelector = () => {
 	return useSelector<TAppState, IAssetsCurrentPriceStore>((state) => state.assetsCurrentPrice);
 };
 
+const useChildBountyCreationSelector = () => {
+	return useSelector<TAppState, IChildBountyCreationStore>((state) => state.childBountyCreation);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -132,5 +137,6 @@ export {
 	useClaimPayoutSelector,
 	useAssetsCurrentPriceSelector,
 	useProgressReportSelector,
-	useGlobalSelector
+	useGlobalSelector,
+	useChildBountyCreationSelector
 };

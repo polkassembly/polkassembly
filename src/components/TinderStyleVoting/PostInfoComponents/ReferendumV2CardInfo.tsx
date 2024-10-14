@@ -22,6 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
+import VoteSummary from '~src/components/BatchVoting/VotingOptions/VoteSummary';
 import { chainProperties } from '~src/global/networkConstants';
 
 interface IReferendumV2CardInfoProps {
@@ -34,17 +35,18 @@ interface IReferendumV2CardInfoProps {
 	post?: any;
 	hideInfo?: boolean;
 	isUsedInBatchVoting?: boolean;
+	isUsedInTinderWebView?: boolean;
 }
 
 const ZERO = new BN(0);
 
 const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
-	isUsedInBatchVoting,
 	className,
 	tally,
 	ayeNayAbstainCounts,
 	setAyeNayAbstainCounts,
 	setUpdatetally,
+	isUsedInTinderWebView,
 	updateTally,
 	post,
 	hideInfo
@@ -180,9 +182,14 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 
 	return (
 		<>
-			<GovSidebarCard className={className}>
-				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className={`m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high ${isUsedInBatchVoting ? 'mb-8' : ''}`}>Summary</h6>
+			<GovSidebarCard
+				className={`${className}`}
+				isUsedInTinderWebView={true}
+			>
+				<div className='relative flex items-center justify-between'>
+					<h6 className={`m-0 p-0 ${isUsedInTinderWebView ? '-ml-6 -mt-3 text-base' : 'text-xl'} font-medium leading-6 text-bodyBlue dark:text-blue-dark-high`}>
+						{isUsedInTinderWebView ? 'Vote History' : 'Summary'}
+					</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag
@@ -205,11 +212,19 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 					indicator={<LoadingOutlined />}
 				>
 					<div>
-						<VoteProgress
-							ayeVotes={tallyData.ayes}
-							className='vote-progress'
-							nayVotes={tallyData.nays}
-						/>
+						{isUsedInTinderWebView ? (
+							<VoteSummary
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						) : (
+							<VoteProgress
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						)}
 					</div>
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>

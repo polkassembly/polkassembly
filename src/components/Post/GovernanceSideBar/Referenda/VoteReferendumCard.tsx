@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -21,15 +21,21 @@ import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
-import { network as AllNetworks } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoComponents/VotingFormCard';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
+import { batchVotesActions } from '~src/redux/batchVoting';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { formatedBalance } from '~src/util/formatedBalance';
+import Input from '~src/basic-components/Input';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
@@ -43,11 +49,8 @@ interface Props {
 	trackNumber?: number;
 	forSpecificPost?: boolean;
 	postEdit?: any;
-}
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
+	currentDecision?: string;
+	postData?: any;
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -94,10 +97,11 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost, postData }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
+	const { batch_voting_address } = useBatchVotesSelector();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -105,8 +109,28 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { vote } = useBatchVotesSelector();
+	const { loginAddress } = useUserDetailsSelector();
+	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+
+	const getDelegateData = async () => {
+		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: [batch_voting_address],
+			trackNo: postData?.track_number
+		});
+		if (data) {
+			const bnVotingPower = new BN(data?.votingPower || '0');
+			setDelegatedVotingPower(bnVotingPower);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		getDelegateData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
 
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
@@ -122,7 +146,8 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	};
 
 	const handleOnVoteChange = (value: any) => {
-		setVote(value as EVoteDecisionType);
+		// setVote(value as EVoteDecisionType);
+		dispatch(batchVotesActions.setVote(value));
 		if (!forSpecificPost) {
 			dispatch(
 				editBatchValueChanged({
@@ -216,7 +241,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 
 	const VoteUI = (
 		<>
-			{/* aye nye split abstain buttons */}
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
 				block
@@ -225,13 +249,28 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				value={vote}
 				onChange={(value) => {
 					handleOnVoteChange(value);
+					dispatch(batchVotesActions.setIsFieldEdited(true));
 				}}
 				options={decisionOptions}
 				disabled={!api || !apiReady}
 			/>
+			{forSpecificPost && delegatedVotingPower.gt(ZERO_BN) && (
+				<div className='mb-5 mt-6 flex flex-col gap-0.5 text-sm'>
+					<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
+						{' '}
+						Delegated power <HelperTooltip text='Total amount of voting power' />
+					</span>
+					<Input
+						value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}
+						disabled
+						className='h-10 rounded-[4px] border-[1px] border-solid dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high'
+					/>
+				</div>
+			)}
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -250,6 +289,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -259,6 +299,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -277,6 +318,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -287,6 +329,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
 				<VotingFormCard
 					form={abstainFrom}
+					showConvictionBar={true}
 					formName={EFormType.ABSTAIN_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -305,6 +348,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAyeValueChange={(balance: BN) => {
@@ -324,6 +368,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onNayValueChange={(balance: BN) => {
@@ -343,6 +388,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					onAbstainValueChange={(balance: BN) => {
@@ -362,23 +408,13 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+							dispatch(batchVotesActions.setIsFieldEdited(true));
 						}
 					}}
 					handleSubmit={handleSubmit}
 					forSpecificPost={forSpecificPost}
 				/>
 			)}
-
-			<div className='mt-[40px] flex h-[46px] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
-				<div className='flex items-center gap-x-1'>
-					<ImageIcon
-						src='/assets/icons/lock-icon.svg'
-						alt='lock-icon'
-					/>
-					<p className='m-0 p-0 text-sm text-lightBlue'>Locking period</p>
-				</div>
-				<p className='m-0 p-0 text-sm text-lightBlue'>No lockup period</p>
-			</div>
 		</>
 	);
 	return VoteUI;

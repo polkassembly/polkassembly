@@ -305,7 +305,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									</div>
 								</Layout>
 							) : (
-								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
+								<Layout className={`min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background ${!showFooter ? 'h-[100vh]' : ''}`}>
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div className={`${!is_sidebar_collapsed && ''}`}>

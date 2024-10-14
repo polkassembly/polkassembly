@@ -254,7 +254,7 @@ function CuratorProfileCard() {
 						className='mr-6 mt-3 gap-4'
 						onchainIdentity={onChainIdentity}
 						socials={curatorprofile?.profile?.social_links || []}
-						address={addressWithIdentity}
+						address={address || ''}
 						iconSize={18}
 						boxSize={32}
 					/>

@@ -34,7 +34,7 @@ const fetchVoterProfileImage = async (username: string): Promise<string | null> 
 		if (error || !data || !data?.image) {
 			return null;
 		}
-		return data.image;
+		return data?.image;
 	} catch (error) {
 		console.error('Error fetching voter profile image:', error);
 		return null;
@@ -73,12 +73,12 @@ const LatestActivityExplore: React.FC = () => {
 			userAddresses: addresses || []
 		});
 
-		const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-		const detailedPosts = await Promise.all(
-			posts.map(async (post: any) => {
+		const posts = Array?.isArray(responseData?.data) ? responseData?.data : [];
+		const detailedPosts = await Promise?.all(
+			posts?.map(async (post: any) => {
 				let firstVoterProfileImg = null;
 				if (post?.post_reactions?.['👍']?.usernames?.[0]) {
-					const username = post.post_reactions['👍'].usernames[0];
+					const username = post?.post_reactions['👍']?.usernames[0];
 					firstVoterProfileImg = await fetchVoterProfileImage(username);
 				}
 
@@ -93,7 +93,7 @@ const LatestActivityExplore: React.FC = () => {
 		);
 
 		// Filter out any posts that encountered an error
-		setPostData(detailedPosts.filter((post) => !post.error));
+		setPostData(detailedPosts?.filter((post) => !post.error));
 
 		setLoading(false);
 	};
@@ -108,12 +108,12 @@ const LatestActivityExplore: React.FC = () => {
 			? postData
 			: postData.filter((post) => {
 					const networkInfo = networkTrackInfo[network] || {};
-					const trackName = Object.keys(networkInfo).find((key) => networkInfo[key]?.trackId === post?.track_no);
+					const trackName = Object?.keys(networkInfo)?.find((key) => networkInfo[key]?.trackId === post?.track_no);
 
 					const formattedTrackName = trackName
 						?.replace(/([a-z])([A-Z])/g, '$1-$2')
-						.replace(/_/g, '-')
-						.toLowerCase();
+						?.replace(/_/g, '-')
+						?.toLowerCase();
 
 					return formattedTrackName === currentTab;
 			  });
@@ -168,16 +168,16 @@ const LatestActivityFollowing: React.FC = () => {
 	const fecthAllSubscribedPosts = async () => {
 		setLoading(true);
 		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
-		const posts = Array.isArray(responseData?.data) ? responseData.data : [];
-		const detailedPosts = await Promise.all(
-			posts.map(async (post: IPostData) => {
+		const posts = Array?.isArray(responseData?.data) ? responseData?.data : [];
+		const detailedPosts = await Promise?.all(
+			posts?.map(async (post: IPostData) => {
 				try {
 					let firstVoterProfileImg = null;
 					if (post?.post_reactions?.['👍']?.usernames?.[0]) {
-						const username = post.post_reactions['👍'].usernames[0];
+						const username = post?.post_reactions['👍']?.usernames[0];
 						firstVoterProfileImg = await fetchVoterProfileImage(username);
 					}
-					const proposerProfile = await fetchUserProfile(post.proposer || '');
+					const proposerProfile = await fetchUserProfile(post?.proposer || '');
 					return {
 						...post,
 						firstVoterProfileImg,
@@ -189,18 +189,18 @@ const LatestActivityFollowing: React.FC = () => {
 				}
 			})
 		);
-		setSubscribedPosts(detailedPosts.filter((post) => !post.error));
+		setSubscribedPosts(detailedPosts?.filter((post) => !post?.error));
 		setLoading(false);
 	};
 
 	const filteredPosts =
 		currentTab === 'all'
 			? subscribedPosts
-			: subscribedPosts.filter((post) => {
+			: subscribedPosts?.filter((post) => {
 					const formattedTrackName = post.trackName
 						?.replace(/([a-z])([A-Z])/g, '$1-$2')
-						.replace(/_/g, '-')
-						.toLowerCase();
+						?.replace(/_/g, '-')
+						?.toLowerCase();
 
 					return formattedTrackName === currentTab;
 			  });
@@ -215,7 +215,7 @@ const LatestActivityFollowing: React.FC = () => {
 					<Skeleton active />
 				</div>
 			) : currentuser?.id && currentuser?.username ? (
-				subscribedPosts.length > 0 ? (
+				subscribedPosts?.length > 0 ? (
 					<div>
 						<div>
 							<ActivityFeedTabNavigation
@@ -226,7 +226,7 @@ const LatestActivityFollowing: React.FC = () => {
 							/>
 						</div>
 						<div>
-							{filteredPosts.length > 0 ? (
+							{filteredPosts?.length > 0 ? (
 								<ActivityFeedPostList postData={filteredPosts} />
 							) : (
 								<div

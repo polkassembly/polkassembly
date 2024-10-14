@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import CuratorProfile from './Profile';
-import CuratorPendingRequestManager from './PendingRequestManager';
-import { CuratorIcon } from '~src/ui-components/CustomIcons';
+// import CuratorPendingRequestManager from './PendingRequestManager';
+import CuratedInfo from './CuratedInfo';
 
 function CuratorDashboardTabItems() {
 	const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -20,29 +20,29 @@ function CuratorDashboardTabItems() {
 			title: 'General'
 		},
 		{
-			children: <CuratorIcon />,
+			children: <CuratedInfo />,
 			description: 'Maecenas eget ligula vitae',
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: 'bounties-curated',
 			title: 'Bounties Curated'
-		},
-		{
-			children: <CuratorPendingRequestManager />,
-			description: 'Ut vestibulum efficitur mollis',
-			icon: '/assets/icons/curator-dashboard/pending-request.svg',
-			key: 'pending-requests',
-			title: 'Pending Requests'
 		}
+		// {
+		// children: <CuratorPendingRequestManager />,
+		// description: 'Ut vestibulum efficitur mollis',
+		// icon: '/assets/icons/curator-dashboard/pending-request.svg',
+		// key: 'pending-requests',
+		// title: 'Pending Requests'
+		// }
 	];
 
 	return (
 		<div className='flex gap-5'>
-			<div className='mt-3 flex w-[400px] flex-col gap-2 rounded-xl border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:bg-[#0d0d0d]'>
+			<div className='mt-3 flex w-[400px] flex-col gap-2 rounded-xl border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 				{tabs.map((tab) => (
 					<div
 						key={tab.key}
 						className={`flex cursor-pointer items-center justify-between px-3 py-2  transition-colors duration-300 ${
-							activeTab === tab.key ? 'rounded-lg border-[0.7px] border-solid border-[text-pink_primary]  text-pink_primary' : 'border-none text-black dark:text-white'
+							activeTab === tab.key ? 'rounded-lg border-[0.7px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
 						}`}
 						onClick={() => setActiveTab(tab.key)}
 					>

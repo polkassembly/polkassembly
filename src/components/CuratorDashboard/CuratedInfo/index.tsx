@@ -4,7 +4,7 @@
 import React from 'react';
 
 function CuratedInfo() {
-	return <div>index</div>;
+	return <div>hi</div>;
 }
 
 export default CuratedInfo;

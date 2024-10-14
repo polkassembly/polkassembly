@@ -14,6 +14,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
 import { useTheme } from 'next-themes';
+import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -80,6 +81,9 @@ const CuratorDashboard = (props: { network: string }) => {
 						/>
 						<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty Proposal</span>
 					</button>
+				</div>
+				<div>
+					<CuratorDashboardTabItems />
 				</div>
 			</main>
 			<BountyActionModal

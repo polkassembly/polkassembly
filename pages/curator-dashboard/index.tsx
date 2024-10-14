@@ -71,12 +71,12 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 			/>
 			<Link
 				className='inline-flex items-center pt-3 text-sidebarBlue hover:text-pink_primary dark:text-white'
-				href='#'
+				href='/bounty'
 			>
 				<div className='flex items-center'>
 					<LeftOutlined className='mr-2 text-xs' />
 					<span className='text-sm font-medium'>
-						Back to <span className='capitalize'> Back to Proposal #123 Standard Guidelines...</span>
+						Back to <span className='capitalize'> Bounty Dashboard</span>
 					</span>
 				</div>
 			</Link>

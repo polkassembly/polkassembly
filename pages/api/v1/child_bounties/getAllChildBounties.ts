@@ -73,11 +73,13 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 				curator: subsquidChildBounty?.curator || '',
 				description: subsquidChildBounty?.description || '',
 				index: subsquidChildBounty?.index,
+				payee: subsquidChildBounty?.payee || '',
 				reward: subsquidChildBounty?.reward,
 				source: 'polkassembly',
 				status: subsquidChildBounty?.status,
 				title: ''
 			};
+
 			childBountiesDocs?.map((childBounty) => {
 				if (childBounty.exists) {
 					const data = childBounty.data();

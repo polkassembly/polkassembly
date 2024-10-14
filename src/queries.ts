@@ -821,17 +821,18 @@ query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $
 }
 `;
 
-export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int, $curator_eq: String) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq}) {
+export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int, $curator_eq: String, $status_eq: ProposalStatus ) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq, status_eq: $status_eq}) {
     totalCount
   }  
-	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq}) {
+	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq, status_eq: $status_eq}) {
     description
     index
     status
     reward
     createdAt
     curator
+    payee
   }
 }`;
 

@@ -73,7 +73,8 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 				query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,
 				variables: {
 					curator_eq: encodedCuratorAddress,
-					parentBountyIndex_eq: subsquidBounty?.index
+					parentBountyIndex_eq: subsquidBounty?.index,
+					status_eq: bountyStatus.CLAIMED
 				}
 			});
 

@@ -41,7 +41,8 @@ import {
 	AnalyticsSVGIcon,
 	AllPostIcon,
 	BatchVotingIcon,
-	BatchVotingIconDark
+	BatchVotingIconDark,
+	DelegationSidebarIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -1111,29 +1112,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 		)
 	];
 
-	if (isOpenGovSupported(network)) {
+	if (delegationSupportedNetworks.includes(network)) {
 		gov2OverviewItems.splice(
-			3,
+			4,
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
-					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
+					<span>Delegation</span>
 				</div>,
-				'/gov-analytics',
+				'/delegation',
 				<div className='-ml-2'>
-					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<DelegationSidebarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>
 			)
 		);
 	}
-
-	if (isOpenGovSupported(network)) {
-		gov2OverviewItems.splice(
-			5,
-			0,
-			getSiderMenuItem(
-				<div className='flex gap-2'>
+		
+		if (isOpenGovSupported(network)) {
+			gov2OverviewItems.splice(
+				5,
+				0,
+				getSiderMenuItem(
+					<div className='flex gap-2'>
 					<span>Batch Voting</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
@@ -1146,14 +1146,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
 						}}
-					>
+						>
 						NEW
 					</div>
 				</div>
 			)
-		);
-	}
-
+			);
+		}
+		
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}

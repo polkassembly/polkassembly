@@ -2667,6 +2667,30 @@ query Rewards($index_in: [Int!] = []) {
 }
 `;
 
+export const GET_ALL_BOUNTIES_WITHOUT_PAGINATION = `query BountyProposals ($status_in: [ProposalStatus!], $index_in:[Int!], $curator_eq: String) {
+ bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in, curator_eq: $curator_eq}, orderBy: createdAtBlock_DESC) {
+    index
+    proposer
+    reward
+    createdAt
+    updatedAt
+    curator
+    hash
+    status
+    preimage {
+      proposedCall {
+        args
+      }
+    }
+      payee
+  }
+  
+ totalBounties: proposalsConnection(where: {curator_eq: $curator_eq, type_eq:Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
+   totalCount
+  }
+}
+`;
+
 export const NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $addresses:[String!], $index_not_in: [Int!]  ){
   proposals(where: {status_in: $status_in, convictionVoting_none:{voter_in: $addresses}, type_eq: $type_eq, index_not_in:$index_not_in}, limit: 25, offset:0, orderBy: index_DESC){
      index

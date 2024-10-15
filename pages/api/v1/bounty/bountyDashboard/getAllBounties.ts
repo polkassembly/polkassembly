@@ -121,7 +121,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
-				if ([bountyStatus.CLAIMED, bountyStatus.AWARDED].includes(childBounty.status)) {
+				if ([bountyStatus.CLAIMED].includes(childBounty.status)) {
 					claimedAmount = claimedAmount.add(amount);
 				}
 			});

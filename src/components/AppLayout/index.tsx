@@ -71,7 +71,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const [showFooter, setShowFooter] = useState<boolean>(true);
+	const showFooter = router.pathname.includes('/batch-voting') && isMobile;
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -85,11 +85,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
-	useEffect(() => {
-		if (router.pathname.includes('/batch-voting')) {
-			setShowFooter(false);
-		}
-	}, []);
 
 	useEffect(() => {
 		const handleResize = () => {

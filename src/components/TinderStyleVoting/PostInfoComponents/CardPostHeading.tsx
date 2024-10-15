@@ -279,7 +279,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 					}`
 				) : (
 					<>
-						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {isUsedInMainDisplay ? `${newTitle.slice(0, 30)}...` : newTitle}
+						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {isUsedInMainDisplay ? `${newTitle?.slice(0, 30)}...` : newTitle}
 					</>
 				)}
 			</h2>

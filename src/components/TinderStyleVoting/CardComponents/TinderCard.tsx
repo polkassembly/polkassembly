@@ -7,7 +7,6 @@ import { isOffChainProposalTypeValid } from '~src/api-utils';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import CardPostHeading from '../PostInfoComponents/CardPostHeading';
-import TinderPostDescription from '../PostInfoComponents/TinderPostDescription';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
@@ -16,6 +15,7 @@ import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons
 import { useRouter } from 'next/router';
 import InfoModalContent from './InfoModalContent';
 import { useBatchVotesSelector } from '~src/redux/selectors';
+import Markdown from '~src/ui-components/Markdown';
 
 interface ITinderCards {
 	post: any;
@@ -29,8 +29,11 @@ const TinderCards: FC<ITinderCards> = (props) => {
 	const router = useRouter();
 	const { show_cart_menu } = useBatchVotesSelector();
 
-	// Local state to control the modal visibility for this specific card
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const sanitizeSummary = (md: string) => {
+		const newMd = (md || '').trim();
+		return newMd;
+	};
 
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];
@@ -92,16 +95,21 @@ const TinderCards: FC<ITinderCards> = (props) => {
 
 	const tabItems: any[] = [
 		{
-			children: <TinderPostDescription postContent={post?.summary} />,
+			children: (
+				<section className='pr-2'>
+					<p>
+						<Markdown
+							className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
+							md={sanitizeSummary(post?.summary || '')}
+						/>
+					</p>
+				</section>
+			),
 			key: 'description',
 			label: 'Description'
 		},
 		...getOnChainTabs()
 	];
-
-	const handleModalOpen = () => {
-		setIsModalVisible(true);
-	};
 
 	const handleModalClose = () => {
 		setIsModalVisible(false);
@@ -130,15 +138,17 @@ const TinderCards: FC<ITinderCards> = (props) => {
 					items={tabItems}
 				/>
 			</div>
-			<Button
-				className='mt-auto flex h-[36px] w-full items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
-				onClick={handleModalOpen}
-			>
-				<div className='flex items-center gap-x-2'>
-					<InfoIcon className='text-2xl text-pink_primary' />
-					<DetailsIcon className='mt-[82px] text-8xl' />
-				</div>
-			</Button>
+			<div className='flex justify-center'>
+				<Button
+					className='mt-auto flex h-[36px] w-[170px] items-center justify-center border border-solid border-pink_primary bg-transparent text-sm text-pink_primary'
+					onClick={() => {
+						setIsModalVisible(true);
+					}}
+				>
+					<InfoIcon className='mt-2 text-2xl text-pink_primary' />
+					<DetailsIcon className='mt-[97px] text-8xl' />
+				</Button>
+			</div>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'z-100000 w-full dark:bg-black')}
@@ -147,7 +157,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
 							variant='default'
-							text='View Details'
+							text='Show More'
 							className='w-full'
 							buttonsize='sm'
 							onClick={() => {

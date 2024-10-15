@@ -19,8 +19,7 @@ const InfoModalContent: FC<IInfoModalContent> = (props) => {
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
-		const newMd = (md || '').trim();
-		return newMd;
+		return (md || '').trim();
 	};
 	return (
 		<section className='mt-6 flex h-[500px] flex-col  gap-y-4 overflow-y-auto overflow-x-hidden bg-white dark:bg-transparent'>

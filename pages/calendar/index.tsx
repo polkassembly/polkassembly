@@ -1007,7 +1007,7 @@ export default styled(CalendarView)`
 
 		.rbc-header {
 			span {
-				font-size: 10px;
+				font-size: 12px;
 				font-weight: 400 !important;
 				text-transform: uppercase;
 				color: #bbb;
@@ -1063,13 +1063,6 @@ export default styled(CalendarView)`
 		margin-left: 10px;
 	}
 
-	.utc-time {
-		color: #646464;
-		font-size: 14px;
-		font-weight: 500;
-		margin-left: 3px;
-	}
-
 	.events-calendar {
 		height: 88vh;
 		width: 99%;
@@ -1107,6 +1100,7 @@ export default styled(CalendarView)`
 		.rbc-time-view,
 		.rbc-agenda-view {
 			padding: 10px 10px;
+			min-height: 100px;
 			td {
 				border: 1px solid #ddd;
 			}
@@ -1203,7 +1197,8 @@ export default styled(CalendarView)`
 					padding: 10px 20px !important;
 
 					@media only screen and (max-width: 576px) {
-						margin-right: 8px;
+						font-size: 14px;
+						padding: 8px 16px !important;
 					}
 				}
 
@@ -1224,100 +1219,8 @@ export default styled(CalendarView)`
 				font-weight: 500;
 
 				@media only screen and (max-width: 768px) {
-					margin-right: 8px;
-				}
-			}
-
-			&.small {
-				height: auto;
-				padding: 10px 2%;
-				border-bottom: none;
-				justify-content: space-between;
-				border-top-left-radius: 0;
-				border-top-right-radius: 0;
-
-				.actions-right {
-					display: flex;
-					align-items: center;
-				}
-
-				.today-btn-img {
-					cursor: pointer;
-					margin-right: 8px;
-				}
-
-				.select-month-dropdown,
-				.select-view-dropdown {
-					padding-left: 5px !important;
-					border: 1px solid #eee;
-					border-radius: 5px;
-					padding: 2px;
-					font-size: 12px;
-					white-space: nowrap;
-
-					.icon {
-						padding-right: 2px !important;
-					}
-				}
-
-				.select-month-dropdown {
-					width: 50px;
-					min-width: 50px;
-					max-width: 50px;
-				}
-
-				.year-text {
-					margin-right: 8px;
-				}
-
-				.create-event-btn {
-					padding: 6px 6px !important;
-					font-size: 12px;
-					margin-left: 8px;
-				}
-			}
-		}
-
-		&.small {
-			.custom-calendar-toolbar {
-				margin-bottom: 2px !important;
-			}
-
-			.rbc-month-view,
-			.rbc-time-view,
-			.rbc-agenda-view {
-				padding: 0 !important;
-			}
-
-			.rbc-time-header-cell {
-				.rbc-header {
-					&.rbc-today {
-						.week-header-text {
-							.day-num {
-								background-color: #e6007a;
-								color: #fff;
-								width: 24px;
-								height: 24px;
-								display: flex;
-								justify-content: center;
-								align-items: center;
-								border-radius: 50%;
-							}
-						}
-					}
-
-					.week-header-text {
-						.day-num {
-							font-size: 14px;
-						}
-					}
-				}
-			}
-
-			.rbc-date-cell {
-				button {
-					font-size: 12px;
-					font-weight: 500 !important;
+					font-size: 14px;
+					padding: 8px 16px !important;
 				}
 			}
 		}

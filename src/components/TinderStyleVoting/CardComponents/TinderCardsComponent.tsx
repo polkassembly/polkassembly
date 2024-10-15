@@ -5,6 +5,7 @@ import React, { FC, useState } from 'react';
 import CardPostHeading from '../PostInfoComponents/CardPostHeading';
 import { Button, Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
+// import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
 import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';

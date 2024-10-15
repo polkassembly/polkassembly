@@ -23,6 +23,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
+import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/PostInfoComponents/VotingFormCard';
 import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
@@ -30,7 +31,9 @@ import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
+	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
+	const { id } = userDetails;
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -46,6 +49,10 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
 		return conviction ? conviction[1] : 0;
 	};
+
+	if (id === null) {
+		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
+	}
 
 	const marks: SliderSingleProps['marks'] = {
 		0: '0.1x',

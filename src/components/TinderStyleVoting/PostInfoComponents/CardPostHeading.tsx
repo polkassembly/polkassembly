@@ -83,11 +83,10 @@ interface ICardPostHeadingProps {
 	method?: string;
 	motion_method?: string;
 	post?: any;
-	isUsedInMainDisplay?: boolean;
 }
 const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className, postArguments, method, motion_method, post, isUsedInMainDisplay } = props;
+	const { className, postArguments, method, motion_method, post } = props;
 	const {
 		assetId,
 		created_at,
@@ -264,11 +263,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			)}
 
-			<h2
-				className={`${proposalType === ProposalType?.TIPS ? 'break-words' : ''} mb-3 ${
-					isUsedInMainDisplay ? 'text-sm font-medium leading-5' : 'text-lg font-medium leading-7'
-				} text-bodyBlue dark:text-blue-dark-high`}
-			>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				#{post?.id}
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
@@ -279,7 +274,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 					}`
 				) : (
 					<>
-						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {isUsedInMainDisplay ? `${newTitle?.slice(0, 30)}...` : newTitle}
+						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}
 					</>
 				)}
 			</h2>

@@ -28,6 +28,7 @@ import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
+import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const dispatch = useAppDispatch();
@@ -38,6 +39,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
+	const { id } = currentUser;
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -129,6 +131,10 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			userName: currentUser?.username || ''
 		});
 	};
+
+	if (id === null) {
+		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
+	}
 
 	const ayeNayVotesArr = [
 		{

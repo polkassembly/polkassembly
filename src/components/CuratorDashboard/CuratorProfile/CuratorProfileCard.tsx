@@ -22,8 +22,7 @@ import { ESocialType } from '~src/auth/types';
 
 function CuratorProfileCard() {
 	const currentUser = useUserDetailsSelector();
-	const { addresses } = currentUser;
-	const address = addresses?.[0];
+	const address = currentUser?.loginAddress;
 	const [curatorprofile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);
 
 	const fetchCuratorProfile = async () => {
@@ -51,7 +50,7 @@ function CuratorProfileCard() {
 		if (currentUser?.id !== undefined && currentUser?.id !== null) {
 			const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getCuratorBio', {
 				network,
-				userId: currentUser.id
+				userId: currentUser?.id
 			});
 			if (data) setCuratorBio(data?.curatorBio);
 		}
@@ -73,28 +72,27 @@ function CuratorProfileCard() {
 	const handleOk = () => {
 		form.validateFields().then(async (values) => {
 			const { data, error: editError } = await nextApiClientFetch<any>('/api/v1/bounty/curator/editCuratorBio', {
-				curatorBio: values.bio
+				curatorBio: values?.bio
 			});
 			if (editError) console.log(data, editError);
 			if (data) {
 				message.success('Curator Bio updated successfully');
 			}
 
-			setCuratorBio(values.bio);
+			setCuratorBio(values?.bio);
 			setIsModalVisible(false);
 		});
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !address) return;
 
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
 			nickname: ''
 		};
-		const resolved: any[] = [];
-		currentUser?.addresses?.forEach(async (address) => {
+		const fetchIdentityInformation = async () => {
 			const info = await getIdentityInformation({
 				address: address,
 				api: peopleChainApi ?? api,
@@ -104,26 +102,26 @@ function CuratorProfileCard() {
 			if (info?.nickname && !onChainIdentity?.nickname) {
 				onChainIdentity.nickname = info?.nickname;
 			}
-			Object.entries(info)?.forEach(([key, value]) => {
+			Object.entries(info).forEach(([key, value]) => {
 				if (value) {
-					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
+					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)[key]?.length === 0) {
 						(onChainIdentity as any)[key] = value;
 						setAddressWithIdentity(getEncodedAddress(address, network) || '');
-					} else if (!(onChainIdentity as any)?.[key]) {
+					} else if (!(onChainIdentity as any)[key]) {
 						(onChainIdentity as any)[key] = value;
 					}
 				}
 			});
-			resolved?.push(true);
-			if (resolved?.length === currentUser?.addresses?.length) {
-				setOnChainIdentity(onChainIdentity);
-			}
-		});
+			setOnChainIdentity(onChainIdentity);
+		};
+
+		fetchIdentityInformation();
+
 		return () => {
-			unsubscribes && unsubscribes?.length > 0 && unsubscribes?.forEach((unsub) => unsub && unsub());
+			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUser?.addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
+	}, [address, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	useEffect(() => {
 		const { email, twitter, riot, web } = onChainIdentity;
@@ -174,7 +172,7 @@ function CuratorProfileCard() {
 				};
 			});
 		} else {
-			setAddressWithIdentity(currentUser?.addresses?.[0] || '');
+			setAddressWithIdentity(address || '');
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,7 +181,7 @@ function CuratorProfileCard() {
 		fetchCuratorProfile();
 		fetchCuratorBio();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUser?.addresses]);
+	}, [address]);
 	return (
 		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 			<div className='flex gap-5'>
@@ -232,7 +230,7 @@ function CuratorProfileCard() {
 						</p>
 					</div>
 					<div className='flex gap-3 text-sm font-bold'>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#EEF2FF] p-1 px-2 text-[#4F46E5]`}>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#EEF2FF] p-1 px-2 text-[#4F46E5] dark:bg-[#A8A4E7] dark:bg-opacity-[20%]`}>
 							<Image
 								src='/assets/bounty-icons/bounty-proposals.svg'
 								alt='bounty icon'
@@ -245,7 +243,7 @@ function CuratorProfileCard() {
 							/>
 							0 Bounties Curated
 						</p>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F]`}>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F] dark:bg-[#DEA38D] dark:bg-opacity-[20%]`}>
 							<Image
 								src='/assets/bounty-icons/child-bounty-icon.svg'
 								alt='bounty icon'

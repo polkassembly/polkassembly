@@ -111,24 +111,20 @@ function CuratorOverviewCard() {
 				/>
 			</div>
 			<div className='flex items-center justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium dark:text-lightWhite`}>Amount Disbursed</p>
-				<div className=' rounded-full bg-[#485F7D] bg-opacity-[5%] p-1 px-2 '>
-					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium  text-opacity-[80%]`}>Last 6 months</span>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}>Amount Disbursed</p>
+				<div className=' rounded-full bg-[#485F7D] bg-opacity-[5%] p-1 px-2 dark:bg-[#262627] dark:text-[#868686] '>
+					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium  text-opacity-[80%] `}>Last 6 months</span>
 				</div>
 			</div>
-			<p className=' font-pixeboy text-[46px] font-bold text-[#2D2D2D] dark:text-lightWhite'>$250</p>
-			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>Total Rewarded</p>
-				<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-lightWhite'>$28,230</p>
-			</div>
-			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>Active Bounties</p>
-				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-lightWhite'>
+			<p className=' -mt-5 font-pixeboy text-[60px] text-[#2D2D2D] dark:text-icon-dark-inactive'>$250</p>
+			<div className='-mt-12 flex justify-between'>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>Active Bounties</p>
+				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
 					08 <span className='text-[17px]'>($1200)</span>
 				</p>
 			</div>
-			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>
+			<div className='-mt-8 flex justify-between'>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>
 					<Image
 						src='/assets/bounty-icons/bounty-proposals.svg'
 						alt='bounty icon'
@@ -141,12 +137,12 @@ function CuratorOverviewCard() {
 					/>
 					Number of Bounties
 				</p>
-				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-lightWhite'>
+				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
 					09 <span className='text-[17px]'>($1300)</span>
 				</p>
 			</div>
-			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>
+			<div className='-mt-5 flex justify-between'>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>
 					<Image
 						src='/assets/bounty-icons/child-bounty-icon.svg'
 						alt='bounty icon'
@@ -160,7 +156,7 @@ function CuratorOverviewCard() {
 					Child Bounties Disbursed
 				</p>
 				<div className='flex gap-2 '>
-					<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-lightWhite'>
+					<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-icon-dark-inactive'>
 						09 <span className='text-[17px]'>($1300)</span>
 					</p>{' '}
 					<div className=''>

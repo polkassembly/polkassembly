@@ -8,9 +8,11 @@ import CuratorProfile from './CuratorProfile';
 // import CuratorPendingRequestManager from './PendingRequestManager';
 
 import BountiesCuratorInfo from './BountiesCuratorInfo';
+import { useRouter } from 'next/router';
 
 function CuratorDashboardTabItems() {
 	const [activeTab, setActiveTab] = useState<string>('general');
+	const router = useRouter();
 
 	const tabs = [
 		{
@@ -35,6 +37,14 @@ function CuratorDashboardTabItems() {
 		// title: 'Pending Requests'
 		// }
 	];
+
+	const handleTabClick = (tabKey: string) => {
+		setActiveTab(tabKey);
+		router.push({
+			pathname: router.pathname,
+			query: { tab: tabKey }
+		});
+	};
 
 	return (
 		<div className='flex gap-5'>

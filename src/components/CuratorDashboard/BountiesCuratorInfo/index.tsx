@@ -48,7 +48,7 @@ function BountiesCuratorInfo() {
 		setLoading(true);
 		const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getAllCuratedBountiesAndChildBounties', {
 			page: 1,
-			userAddress: '15oE3ZD75uPxZmfNSFuNVT1KnBJQqvJrXhZtEtBBZh7yxtPi'
+			userAddress: '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC'
 		});
 		if (data) setCuratedBounties(data?.bounties);
 		setLoading(false);
@@ -113,15 +113,13 @@ function BountiesCuratorInfo() {
 						return (
 							<div
 								key={bounty?.index}
-								className='mb-4'
+								className='-mt-5'
 							>
 								<div className=' flex justify-end text-[12px] font-semibold text-gray-500'>
 									<span className='rounded-t-lg border-t-[1px] border-solid border-t-[#DF1380] bg-[#FFF0FF] p-2'>{percentage?.toNumber()?.toFixed(1)}% Claimed</span>
 								</div>
 
-								<div
-									className={`rounded-lg  border-solid ${expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'} bg-white p-3`}
-								>
+								<div className={`rounded-lg border-solid ${expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'} bg-white p-3`}>
 									<div className='flex items-center justify-between'>
 										<div className='flex items-center gap-3'>
 											<span className='text-[17px] font-medium text-blue-light-medium'>#{bounty?.index} </span>

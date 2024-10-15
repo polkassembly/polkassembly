@@ -71,7 +71,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const showFooter = router?.pathname?.includes('/batch-voting') && isMobile;
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -85,7 +84,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
-
 	useEffect(() => {
 		const handleResize = () => {
 			const isMobile = window.innerWidth < 1024;
@@ -268,12 +266,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 														<Component {...pageProps} />
 													</Content>
 												</div>
-												{showFooter && (
-													<Footer
-														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-														theme={theme as any}
-													/>
-												)}
+												<Footer
+													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+													theme={theme as any}
+												/>
 											</div>
 										) : (
 											<div className='relative mx-auto  w-full'>
@@ -283,7 +279,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													{showFooter && <Footer theme={theme as any} />}
+													<Footer theme={theme as any} />
 												</div>
 												{sidedrawer && (
 													<div
@@ -300,7 +296,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									</div>
 								</Layout>
 							) : (
-								<Layout className={`min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background ${!showFooter ? 'h-[100vh]' : ''}`}>
+								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div className={`${!is_sidebar_collapsed && ''}`}>
@@ -315,12 +311,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
-												{showFooter && (
-													<Footer
-														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-														theme={theme as any}
-													/>
-												)}
+												<Footer
+													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+													theme={theme as any}
+												/>
 											</div>
 										) : (
 											<div
@@ -335,7 +329,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													{showFooter && <Footer theme={theme as any} />}
+													<Footer theme={theme as any} />
 												</div>
 												{sidedrawer && (
 													<div

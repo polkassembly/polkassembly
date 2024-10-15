@@ -39,6 +39,7 @@ export interface ISwipeActionButtons {
 	trackPosts: any;
 	childRefs: any;
 	className?: string;
+	onSwipe?: any;
 	onSwipeAction?: any;
 	decision?: string;
 	isLoading?: boolean;

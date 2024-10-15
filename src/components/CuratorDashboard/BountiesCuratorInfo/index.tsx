@@ -43,7 +43,7 @@ interface ChildBounty {
 const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
-	const address = '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC';
+	const address = currentUser?.loginAddress;
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);

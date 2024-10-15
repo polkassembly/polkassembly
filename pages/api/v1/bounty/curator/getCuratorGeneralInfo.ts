@@ -13,7 +13,8 @@ import { GET_ALL_BOUNTIES_WITHOUT_PAGINATION, GET_ALL_CHILD_BOUNTIES_BY_PARENT_I
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import getBountiesCustomStatuses from '~src/util/src/util/getBountiesCustomStatuses';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
+import dayjs from 'dayjs';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -39,23 +40,49 @@ interface IRes {
 		totalAmount: string;
 		unclaimedAmount: string;
 	};
+
+	lastSixMonthGraphData: { [key: string]: string } | null;
 }
 
 const ZERO_BN = new BN(0);
+
+function sumRewardsByMonth(proposals: { createdAt: string; reward: string }[]) {
+	const sixMonthsAgo = dayjs().subtract(6, 'month');
+
+	const rewardsByMonth: { [key: string]: string } = {};
+
+	proposals.forEach((proposal) => {
+		const createdAt = dayjs(proposal?.createdAt);
+		if (createdAt.isAfter(sixMonthsAgo)) {
+			const month = dayjs(proposal.createdAt).format('YYYY-MM');
+			const reward = new BN(proposal?.reward || '0');
+
+			if (rewardsByMonth[month]) {
+				rewardsByMonth[month] = reward.add(new BN(rewardsByMonth[month]) || ZERO_BN).toString();
+			} else {
+				rewardsByMonth[month] = reward.toString();
+			}
+		}
+	});
+
+	return rewardsByMonth;
+}
 
 const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
 
-	const { userAddress } = req.body;
+	const { userAddress = '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC' } = req.body;
 
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		if (!userAddress?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
-		const resObj = {
+		const allChildBounties: { createdAt: string; reward: string }[] = [];
+
+		const resObj: IRes = {
 			activeBounties: {
 				amount: '0',
 				count: 0
@@ -68,7 +95,8 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 				count: 0,
 				totalAmount: '0',
 				unclaimedAmount: '0'
-			}
+			},
+			lastSixMonthGraphData: null
 		};
 
 		const encodedCuratorAddress = getEncodedAddress(userAddress, network);
@@ -98,11 +126,14 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 			let claimedAmount = ZERO_BN;
 			const totalChildBountiesCount = 0;
 
-			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string }) => {
+			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string; createdAt: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
 				if ([bountyStatus.CLAIMED].includes(childBounty?.status)) {
 					claimedAmount = claimedAmount.add(amount);
+					if (subsquidBounty?.curator === childBounty?.curator) {
+						allChildBounties?.push({ createdAt: childBounty?.createdAt, reward: childBounty?.reward || '0' });
+					}
 				} else {
 					resObj.childBounties.unclaimedAmount = new BN(resObj?.activeBounties?.amount || '0').add(new BN(childBounty?.reward || '0')).toString();
 				}
@@ -138,6 +169,8 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 				bounties.push(bounty?.value);
 			}
 		});
+
+		resObj.lastSixMonthGraphData = sumRewardsByMonth(allChildBounties) || null;
 
 		bounties?.map((bounty) => {
 			if (getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(bounty?.status)) {

@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const CuratorOverviewCard = dynamic(() => import('./CuratorOverviewCard'), {
 	loading: () => <Skeleton active />,
@@ -14,7 +15,8 @@ const CuratorOverviewCard = dynamic(() => import('./CuratorOverviewCard'), {
 });
 
 function CuratorProfile() {
-	const address = '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC';
+	const currentUser = useUserDetailsSelector();
+	const address = currentUser?.loginAddress;
 	const [bountiesdata, setBountiesData] = React.useState<any>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const fetchCuratorBountiesData = async () => {
@@ -25,7 +27,6 @@ function CuratorProfile() {
 				userAddress: substrateAddress
 			});
 			if (data) {
-				console.log('data', data);
 				setBountiesData(data);
 			}
 		}

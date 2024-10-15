@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { spaceGrotesk } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
@@ -38,6 +38,8 @@ interface ChildBounty {
 }
 
 function BountiesCuratorInfo() {
+	const currentUser = useUserDetailsSelector();
+	const address = currentUser?.loginAddress;
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +50,7 @@ function BountiesCuratorInfo() {
 		setLoading(true);
 		const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getAllCuratedBountiesAndChildBounties', {
 			page: 1,
-			userAddress: '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC'
+			userAddress: address
 		});
 		if (data) setCuratedBounties(data?.bounties);
 		setLoading(false);
@@ -91,6 +93,7 @@ function BountiesCuratorInfo() {
 
 	useEffect(() => {
 		fetchCuratorBounties();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

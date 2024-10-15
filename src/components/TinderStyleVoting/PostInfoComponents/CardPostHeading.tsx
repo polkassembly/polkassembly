@@ -265,7 +265,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 			)}
 
 			<h2
-				className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 ${
+				className={`${proposalType === ProposalType?.TIPS ? 'break-words' : ''} mb-3 ${
 					isUsedInMainDisplay ? 'text-sm font-medium leading-5' : 'text-lg font-medium leading-7'
 				} text-bodyBlue dark:text-blue-dark-high`}
 			>

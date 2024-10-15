@@ -42,8 +42,8 @@ const VotingCards = () => {
 	const childRefs: any = useMemo(
 		() =>
 			Array(activeProposal?.length)
-				.fill(0)
-				.map(() => React.createRef()),
+				?.fill(0)
+				?.map(() => React.createRef()),
 		[activeProposal?.length]
 	);
 
@@ -115,7 +115,7 @@ const VotingCards = () => {
 	const handleSkipProposalCard = (id: number) => {
 		const updateActiveProposals: any[] = [];
 		activeProposal.map((proposal) => {
-			if (id !== proposal.id) {
+			if (id !== proposal?.id) {
 				updateActiveProposals.push(proposal);
 			}
 		});

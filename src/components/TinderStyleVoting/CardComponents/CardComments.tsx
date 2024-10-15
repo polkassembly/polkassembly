@@ -14,7 +14,7 @@ const CardComments: FC<ICardComments> = (props) => {
 				<h1 className='m-0 -mt-1 p-0 text-sm font-semibold text-sidebarBlue dark:text-white'>Users are saying...</h1>
 				<p className='m-0 flex h-[24px] w-[124px] items-center justify-center rounded-[38px] bg-[#F6F6F6] p-0 text-[10px] text-lightBlue'>Based on comments</p>
 			</div>
-			{proposal.comments.map((comment: any, index: number) => (
+			{proposal?.comments?.map((comment: any, index: number) => (
 				<div
 					key={index}
 					className='comment-container flex items-start justify-center gap-x-4'
@@ -27,12 +27,12 @@ const CardComments: FC<ICardComments> = (props) => {
 						<p className='m-0 flex items-center justify-center p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>
 							<Markdown
 								className='post-content'
-								md={comment.content}
+								md={comment?.content || ''}
 							/>
 						</p>
 						<div className='flex items-center justify-start gap-x-2'>
-							{comment.replies?.length > 0 && (
-								<p className='m-0 flex h-[26px] items-center justify-center rounded-md bg-[#ECFCF3] p-0 px-2 py-1 text-[10px] text-[#1FA25B]'>{comment.replies?.length} replies</p>
+							{comment?.replies?.length > 0 && (
+								<p className='m-0 flex h-[26px] items-center justify-center rounded-md bg-[#ECFCF3] p-0 px-2 py-1 text-[10px] text-[#1FA25B]'>{comment?.replies?.length} replies</p>
 							)}
 						</div>
 					</div>

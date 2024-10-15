@@ -18,7 +18,7 @@ const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 		if (canSwipe && currentIndex < trackPosts?.length) {
 			onSwipe(dir);
 			setTimeout(async () => {
-				await childRefs[currentIndex].current.swipe(dir);
+				await childRefs[currentIndex]?.current?.swipe(dir);
 			}, 300);
 		}
 	};

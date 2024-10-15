@@ -71,7 +71,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const showFooter = router.pathname.includes('/batch-voting') && isMobile;
+	const showFooter = router?.pathname?.includes('/batch-voting') && isMobile;
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 

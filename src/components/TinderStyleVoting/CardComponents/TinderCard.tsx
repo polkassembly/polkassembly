@@ -31,8 +31,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const sanitizeSummary = (md: string) => {
-		const newMd = (md || '').trim();
-		return newMd;
+		return (md || '')?.trim();
 	};
 
 	const getOnChainTabs = () => {

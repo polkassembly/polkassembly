@@ -1121,8 +1121,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span>Delegation</span>
 				</div>,
 				'/delegation',
-				<div className='-ml-2'>
-					<DelegationSidebarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				<div className='-ml-2 mt-1'>
+					<DelegationSidebarIcon className='scale-100 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>
 			)
 		);

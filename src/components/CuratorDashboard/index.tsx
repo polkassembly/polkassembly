@@ -56,7 +56,7 @@ function CuratorDashboardTabItems() {
 							className={`flex cursor-pointer items-center justify-between px-3 py-2  transition-colors duration-300 ${
 								activeTab === tab.key ? 'rounded-lg border-[0.7px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
 							}`}
-							onClick={() => setActiveTab(tab.key)}
+							onClick={() => handleTabClick(tab.key)}
 						>
 							<div className='flex gap-3'>
 								<div className={`rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2]' : 'bg-[#F0F2F5]'}  p-2`}>

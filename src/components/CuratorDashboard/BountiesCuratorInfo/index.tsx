@@ -120,12 +120,12 @@ function BountiesCuratorInfo() {
 								</div>
 
 								<div className={`rounded-lg border-solid ${expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'} bg-white p-3`}>
-									<div className='flex items-center justify-between'>
-										<div className='flex items-center gap-3'>
+									<div className='flex items-center justify-between gap-3'>
+										<div className=' flex gap-1'>
 											<span className='text-[17px] font-medium text-blue-light-medium'>#{bounty?.index} </span>
 											<Link href={`/bounty/${bounty?.index}`}>
-												<span className='w-96 text-[17px] font-medium text-blue-light-high'>
-													{bounty.title}{' '}
+												<span className='text-[17px] font-medium text-blue-light-high hover:underline'>
+													{bounty.title}
 													<Image
 														src='/assets/more.svg'
 														alt=''
@@ -138,8 +138,8 @@ function BountiesCuratorInfo() {
 												</span>
 											</Link>
 										</div>
-										<div className='flex items-center gap-3'>
-											<span className='text-[20px] font-bold text-pink_primary'>{parseBalance(String(bounty?.reward || '0'), 2, true, network)}</span>
+										<div className='-mt-4 flex items-center gap-3'>
+											<span className='whitespace-nowrap text-[20px] font-bold text-pink_primary'>{parseBalance(String(bounty?.reward || '0'), 2, true, network)}</span>
 											{bounty?.totalChildBountiesCount > 0 && (
 												<div
 													onClick={() => toggleChildBounties(bounty)}
@@ -180,7 +180,7 @@ function BountiesCuratorInfo() {
 														<div className='flex items-center gap-3'>
 															<span className='text-[18px] text-blue-light-medium'>#{childBounty?.index} </span>
 															<Link href={`/child_bounty/${childBounty?.index}`}>
-																<span className='text-[18px] font-medium text-blue-light-high'>
+																<span className='text-[18px] font-medium text-blue-light-high hover:underline'>
 																	{childBounty?.title}{' '}
 																	<Image
 																		src='/assets/more.svg'

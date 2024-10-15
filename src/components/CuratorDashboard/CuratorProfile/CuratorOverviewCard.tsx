@@ -7,9 +7,12 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { ResponsiveLine } from '@nivo/line';
 import dayjs from 'dayjs';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
 
-function CuratorOverviewCard() {
+const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const getLastSixMonths = () => {
 		const months = [];
 		for (let i = 5; i >= 0; i--) {
@@ -29,9 +32,18 @@ function CuratorOverviewCard() {
 		}
 	];
 	return (
-		<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
+		<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 			<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[24px] font-bold text-blue-light-medium dark:text-lightWhite`}>Overview</p>
-			<div className='relative -mt-7 flex h-[200px] items-center justify-center gap-x-2'>
+			<div className='flex items-center justify-between'>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}>Amount Disbursed</p>
+				<div className=' rounded-full bg-[#485F7D] bg-opacity-[5%] p-1 px-2 dark:bg-[#262627] dark:text-[#868686] '>
+					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium  text-opacity-[80%] `}>Last 6 months</span>
+				</div>
+			</div>
+			<p className=' -mt-5 font-pixeboy text-[60px] text-[#2D2D2D] dark:text-icon-dark-inactive'>
+				<span className='font-pixelify text-[46px] font-bold'>$</span>250
+			</p>
+			<div className='relative -mt-14 flex h-[200px] items-center justify-center gap-x-2'>
 				<ResponsiveLine
 					data={chartData}
 					margin={{ bottom: 40, left: 0, right: 40, top: 30 }}
@@ -110,20 +122,15 @@ function CuratorOverviewCard() {
 					}}
 				/>
 			</div>
-			<div className='flex items-center justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}>Amount Disbursed</p>
-				<div className=' rounded-full bg-[#485F7D] bg-opacity-[5%] p-1 px-2 dark:bg-[#262627] dark:text-[#868686] '>
-					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium  text-opacity-[80%] `}>Last 6 months</span>
-				</div>
-			</div>
-			<p className=' -mt-5 font-pixeboy text-[60px] text-[#2D2D2D] dark:text-icon-dark-inactive'>$250</p>
-			<div className='-mt-12 flex justify-between'>
+
+			<div className=' flex items-center justify-between'>
 				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>Active Bounties</p>
-				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
-					08 <span className='text-[17px]'>($1200)</span>
+				<p className=' font-pixeboy text-[30px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
+					{curatorData?.activeBounties?.count}{' '}
+					<span className='text-[17px] text-blue-light-medium'>({parseBalance(String(curatorData?.activeBounties?.amount || '0'), 2, true, network)})</span>
 				</p>
 			</div>
-			<div className='-mt-8 flex justify-between'>
+			<div className='-mt-6 flex items-center justify-between'>
 				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>
 					<Image
 						src='/assets/bounty-icons/bounty-proposals.svg'
@@ -137,11 +144,12 @@ function CuratorOverviewCard() {
 					/>
 					Number of Bounties
 				</p>
-				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
-					09 <span className='text-[17px]'>($1300)</span>
+				<p className=' font-pixeboy text-[30px] text-[#2D2D2D]  dark:text-icon-dark-inactive'>
+					{curatorData?.allBounties?.count}{' '}
+					<span className='text-[17px] text-blue-light-medium'>({parseBalance(String(curatorData?.allBounties?.amount || '0'), 2, true, network)})</span>
 				</p>
 			</div>
-			<div className='-mt-5 flex justify-between'>
+			<div className='-mt-5 flex items-center justify-between'>
 				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-icon-dark-inactive`}>
 					<Image
 						src='/assets/bounty-icons/child-bounty-icon.svg'
@@ -156,16 +164,21 @@ function CuratorOverviewCard() {
 					Child Bounties Disbursed
 				</p>
 				<div className='flex gap-2 '>
-					<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-icon-dark-inactive'>
-						09 <span className='text-[17px]'>($1300)</span>
+					<p className=' font-pixeboy text-[30px] text-[#2D2D2D] dark:text-icon-dark-inactive'>
+						{curatorData?.childBounties?.count}{' '}
+						<span className='text-[17px] text-blue-light-medium'>({parseBalance(String(curatorData?.childBounties?.totalAmount || '0'), 2, true, network)})</span>
 					</p>{' '}
-					<div className=''>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg bg-[#FF3C5F] p-3 text-[14px] text-white`}>Unclaimed: $700 </p>
-					</div>
+					{curatorData?.childBounties?.unclaimedAmount > 0 && (
+						<div>
+							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg bg-[#FF3C5F] p-3 text-[14px] text-white`}>
+								Unclaimed:{parseBalance(String(curatorData?.childBounties?.unclaimedAmount || '0'), 2, true, network)}
+							</p>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
 	);
-}
+};
 
 export default CuratorOverviewCard;

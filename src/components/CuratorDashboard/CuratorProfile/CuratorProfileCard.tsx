@@ -20,7 +20,7 @@ import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ESocialType } from '~src/auth/types';
 
-function CuratorProfileCard() {
+const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const [curatorprofile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);
@@ -241,7 +241,7 @@ function CuratorProfileCard() {
 								width={24}
 								height={24}
 							/>
-							0 Bounties Curated
+							{curatorData?.allBounties?.count} Bounties Curated
 						</p>
 						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F] dark:bg-[#DEA38D] dark:bg-opacity-[20%]`}>
 							<Image
@@ -254,7 +254,7 @@ function CuratorProfileCard() {
 								width={24}
 								height={24}
 							/>
-							0 Child Bounties Curated
+							{curatorData?.childBounties?.count} Child Bounties Curated
 						</p>
 					</div>
 
@@ -309,6 +309,6 @@ function CuratorProfileCard() {
 			</Modal>
 		</div>
 	);
-}
+};
 
 export default CuratorProfileCard;

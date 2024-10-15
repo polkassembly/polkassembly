@@ -185,7 +185,7 @@ function CuratorProfileCard() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser?.addresses]);
 	return (
-		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5'>
+		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 			<div className='flex gap-5'>
 				<ImageComponent
 					src={curatorprofile?.profile?.image}

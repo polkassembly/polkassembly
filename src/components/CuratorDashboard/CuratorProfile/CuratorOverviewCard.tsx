@@ -29,8 +29,8 @@ function CuratorOverviewCard() {
 		}
 	];
 	return (
-		<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5'>
-			<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[24px] font-bold text-blue-light-medium`}>Overview</p>
+		<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
+			<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[24px] font-bold text-blue-light-medium dark:text-lightWhite`}>Overview</p>
 			<div className='relative -mt-7 flex h-[200px] items-center justify-center gap-x-2'>
 				<ResponsiveLine
 					data={chartData}
@@ -111,24 +111,24 @@ function CuratorOverviewCard() {
 				/>
 			</div>
 			<div className='flex items-center justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium`}>Amount Disbursed</p>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-medium text-blue-light-medium dark:text-lightWhite`}>Amount Disbursed</p>
 				<div className=' rounded-full bg-[#485F7D] bg-opacity-[5%] p-1 px-2 '>
-					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium text-opacity-[80%]`}>Last 6 months</span>
+					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable}   p-1 text-[14px] font-medium text-blue-light-medium  text-opacity-[80%]`}>Last 6 months</span>
 				</div>
 			</div>
-			<p className=' font-pixeboy text-[46px] font-bold text-[#2D2D2D]'>$250</p>
+			<p className=' font-pixeboy text-[46px] font-bold text-[#2D2D2D] dark:text-lightWhite'>$250</p>
 			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium`}>Total Rewarded</p>
-				<p className=' font-pixeboy text-[32px]  text-[#2D2D2D]'>$28,230</p>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>Total Rewarded</p>
+				<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-lightWhite'>$28,230</p>
 			</div>
 			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium`}>Active Bounties</p>
-				<p className=' font-pixeboy text-[32px]  text-[#2D2D2D]'>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>Active Bounties</p>
+				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-lightWhite'>
 					08 <span className='text-[17px]'>($1200)</span>
 				</p>
 			</div>
 			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium`}>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>
 					<Image
 						src='/assets/bounty-icons/bounty-proposals.svg'
 						alt='bounty icon'
@@ -141,12 +141,12 @@ function CuratorOverviewCard() {
 					/>
 					Number of Bounties
 				</p>
-				<p className=' font-pixeboy text-[32px]  text-[#2D2D2D]'>
+				<p className=' font-pixeboy text-[32px] text-[#2D2D2D]  dark:text-lightWhite'>
 					09 <span className='text-[17px]'>($1300)</span>
 				</p>
 			</div>
 			<div className='flex justify-between'>
-				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium`}>
+				<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[17px] font-bold text-blue-light-medium dark:text-lightWhite`}>
 					<Image
 						src='/assets/bounty-icons/child-bounty-icon.svg'
 						alt='bounty icon'
@@ -160,7 +160,7 @@ function CuratorOverviewCard() {
 					Child Bounties Disbursed
 				</p>
 				<div className='flex gap-2 '>
-					<p className=' font-pixeboy text-[32px]  text-[#2D2D2D]'>
+					<p className=' font-pixeboy text-[32px] text-[#2D2D2D] dark:text-lightWhite'>
 						09 <span className='text-[17px]'>($1300)</span>
 					</p>{' '}
 					<div className=''>

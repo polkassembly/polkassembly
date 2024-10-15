@@ -84,9 +84,9 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
-				if ([bountyStatus.CLAIMED].includes(childBounty.status)) {
-					if (subsquidBounty?.curator === childBounty?.curator) {
-						totalChildBountiesCount += totalChildBountiesCount;
+				if ([bountyStatus.CLAIMED, bountyStatus.AWARDED].includes(childBounty.status)) {
+					if ([bountyStatus.CLAIMED].includes(childBounty?.status) && subsquidBounty?.curator === childBounty?.curator) {
+						totalChildBountiesCount = totalChildBountiesCount + 1;
 					}
 					claimedAmount = claimedAmount.add(amount);
 				}

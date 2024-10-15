@@ -17,7 +17,7 @@ import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-con
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
-import getBountiesCustomStatuses from '~src/util/src/util/getBountiesCustomStatuses';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 
 interface ISubsquidBounty {
 	proposer: string;

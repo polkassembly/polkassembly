@@ -14,6 +14,10 @@ import Link from 'next/link';
 import { Spin } from 'antd';
 import Image from 'next/image';
 import Skeleton from '~src/basic-components/Skeleton';
+import { Pagination } from '~src/ui-components/Pagination';
+import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -38,6 +42,7 @@ interface ChildBounty {
 }
 
 function BountiesCuratorInfo() {
+	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -45,14 +50,19 @@ function BountiesCuratorInfo() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: number]: boolean }>({});
 	const [curatedBounties, setCuratedBounties] = useState<Bounty[]>();
+	const [totalBountiesCount, setTotalBountiesCount] = useState<number>(0);
+	const { resolvedTheme: theme } = useTheme();
 
 	const fetchCuratorBounties = async () => {
 		setLoading(true);
 		const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getAllCuratedBountiesAndChildBounties', {
-			page: 1,
+			page: router?.query?.page || 1,
 			userAddress: address
 		});
-		if (data) setCuratedBounties(data?.bounties);
+		if (data) {
+			setCuratedBounties(data?.bounties);
+			setTotalBountiesCount(data?.totalBountiesCount);
+		}
 		setLoading(false);
 	};
 
@@ -90,7 +100,15 @@ function BountiesCuratorInfo() {
 			}
 		}
 	};
-
+	const onPaginationChange = (page: number) => {
+		router.push({
+			pathname: router.pathname,
+			query: {
+				...router?.query,
+				page
+			}
+		});
+	};
 	useEffect(() => {
 		fetchCuratorBounties();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,7 +139,6 @@ function BountiesCuratorInfo() {
 								<div className=' flex justify-end text-[12px] font-semibold text-gray-500'>
 									<span className='rounded-t-lg border-t-[1px] border-solid border-t-[#DF1380] bg-[#FFF0FF] p-2'>{percentage?.toNumber()?.toFixed(1)}% Claimed</span>
 								</div>
-
 								<div className={`rounded-lg border-solid ${expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'} bg-white p-3`}>
 									<div className='flex items-center justify-between gap-3'>
 										<div className=' flex gap-1'>
@@ -207,6 +224,20 @@ function BountiesCuratorInfo() {
 												))
 											)}
 										</div>
+									)}
+								</div>
+								<div className='mb-5 mt-3 flex justify-end'>
+									{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
+										<Pagination
+											pageSize={BOUNTIES_LISTING_LIMIT}
+											current={Number(router?.query?.page) || 1}
+											total={totalBountiesCount}
+											showSizeChanger={false}
+											hideOnSinglePage={true}
+											onChange={onPaginationChange}
+											responsive={true}
+											theme={theme}
+										/>
 									)}
 								</div>
 							</div>

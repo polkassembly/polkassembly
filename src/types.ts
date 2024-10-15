@@ -739,6 +739,7 @@ export interface IChildBounty {
 	curator?: string;
 	createdAt?: Date;
 	source?: 'polkassembly' | 'subsquare';
+	categories?: string[];
 }
 export interface IChildBountiesResponse {
 	child_bounties: IChildBounty[];

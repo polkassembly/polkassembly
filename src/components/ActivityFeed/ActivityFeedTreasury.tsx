@@ -53,14 +53,14 @@ const ActivityFeedSidebar = () => {
 	});
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 	const unit = chainProperties?.[network]?.tokenSymbol;
-	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
-	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
+	const assetValue = formatBnBalance(assethubValues?.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues?.usdcValue) / 1000000));
+	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues?.usdtValue) / 1000000));
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
-				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000
+			(tokenValue + parseFloat(assethubValues?.dotValue) / 10000000000) * parseFloat(currentTokenPrice?.value) +
+				Number(assethubValues?.usdcValue) / 1000000 +
+				Number(assethubValues?.usdtValue) / 1000000
 		)
 	);
 
@@ -75,7 +75,7 @@ const ActivityFeedSidebar = () => {
 		setNextBurn({ isLoading: true, value: '', valueUSD: '' });
 
 		try {
-			const accountData = await api.query.system.account(treasuryAccount);
+			const accountData = await api?.query?.system?.account(treasuryAccount);
 			const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
 			const treasuryBalance = { freeBalance: freeBalance as Balance };
 
@@ -90,44 +90,46 @@ const ActivityFeedSidebar = () => {
 
 	const updateBurnValue = (treasuryBalance: any, currentTokenPrice: ITokenPrice, setNextBurn: Function) => {
 		const burn =
-			treasuryBalance.freeBalance.gt(BN_ZERO) && api && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
+			treasuryBalance?.freeBalance?.gt(BN_ZERO) && api && !api?.consts?.treasury?.burn?.isZero()
+				? api?.consts?.treasury?.burn?.mul(treasuryBalance.freeBalance)?.div(BN_MILLION)
+				: BN_ZERO;
 
 		let valueUSD = '';
 		let value = '';
 
 		if (burn && currentTokenPrice?.value) {
-			const nextBurnValueUSD = parseFloat(formatBnBalance(burn.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
-			valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
-			value = formatUSDWithUnits(formatBnBalance(burn.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			const nextBurnValueUSD = parseFloat(formatBnBalance(burn?.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+			valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice?.value))?.toString());
+			value = formatUSDWithUnits(formatBnBalance(burn?.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
 		}
 
 		setNextBurn({ isLoading: false, value, valueUSD });
 	};
 
 	const updateAvailableValue = (treasuryBalance: any, currentTokenPrice: ITokenPrice, network: string, setAvailable: Function) => {
-		const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
+		const freeBalance = treasuryBalance?.freeBalance?.gt(BN_ZERO) ? treasuryBalance?.freeBalance : 0;
 		let valueUSD = '';
 		let value = '';
 
 		if (freeBalance) {
-			const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+			const availableValueUSD = parseFloat(formatBnBalance(freeBalance?.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
 			setTokenValue(availableValueUSD);
 			if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
-				valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+				valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice?.value))?.toString());
 			}
-			value = formatUSDWithUnits(formatBnBalance(freeBalance.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			value = formatUSDWithUnits(formatBnBalance(freeBalance?.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
 		}
 
 		setAvailable({ isLoading: false, value, valueUSD });
 	};
 
 	const fetchWeekAgoTokenPrice = async (currentTokenPrice: ITokenPrice, network: string, setPriceWeeklyChange: (change: IPriceWeeklyChange) => void) => {
-		if (!currentTokenPrice.value || currentTokenPrice.isLoading) {
+		if (!currentTokenPrice?.value || currentTokenPrice.isLoading) {
 			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
 			return;
 		}
 
-		const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
+		const weekAgoDate = dayjs()?.subtract(7, 'd')?.format('YYYY-MM-DD');
 		try {
 			const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
 				body: JSON.stringify({
@@ -138,7 +140,7 @@ const ActivityFeedSidebar = () => {
 				method: 'POST'
 			});
 
-			const responseJSON = await response.json();
+			const responseJSON = await response?.json();
 			if (responseJSON['message'] === 'Success') {
 				const weekAgoPrice = responseJSON['data']['ema7_average'];
 				const currentTokenPriceNum = parseFloat(currentTokenPrice.value);
@@ -150,7 +152,7 @@ const ActivityFeedSidebar = () => {
 				}
 
 				const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-				setPriceWeeklyChange({ isLoading: false, value: percentChange.toFixed(2) });
+				setPriceWeeklyChange({ isLoading: false, value: percentChange?.toFixed(2) });
 				return;
 			}
 
@@ -165,29 +167,29 @@ const ActivityFeedSidebar = () => {
 
 		try {
 			if (chainProperties?.[network]?.assetHubTreasuryAddress) {
-				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
+				const tokenResult: any = await assethubApi?.query?.system?.account(chainProperties[network]?.assetHubTreasuryAddress);
 				if (tokenResult?.data?.free) {
-					const freeTokenBalance = tokenResult.data.free.toBigInt();
-					setAssethubValues((values: any) => ({ ...values, dotValue: freeTokenBalance.toString() }));
+					const freeTokenBalance = tokenResult?.data?.free?.toBigInt();
+					setAssethubValues((values: any) => ({ ...values, dotValue: freeTokenBalance?.toString() }));
 				}
 
-				const usdcResult = (await assethubApi.query.assets.account(
-					chainProperties[network]?.supportedAssets?.[2].genralIndex,
-					chainProperties[network].assetHubTreasuryAddress
+				const usdcResult = (await assethubApi?.query?.assets?.account(
+					chainProperties[network]?.supportedAssets?.[2]?.genralIndex,
+					chainProperties[network]?.assetHubTreasuryAddress
 				)) as any;
 				if (!usdcResult.isNone) {
-					const data = usdcResult.unwrap();
-					const freeUSDCBalance = data.balance.toBigInt().toString();
+					const data = usdcResult?.unwrap();
+					const freeUSDCBalance = data?.balance?.toBigInt()?.toString();
 					setAssethubValues((values: { dotValue: string; usdcValue: string; usdtValue: string }) => ({ ...values, usdcValue: freeUSDCBalance }));
 				}
 
-				const usdtResult = (await assethubApi.query.assets.account(
-					chainProperties[network]?.supportedAssets?.[1].genralIndex,
-					chainProperties[network].assetHubTreasuryAddress
+				const usdtResult = (await assethubApi?.query?.assets?.account(
+					chainProperties[network]?.supportedAssets?.[1]?.genralIndex,
+					chainProperties[network]?.assetHubTreasuryAddress
 				)) as any;
 				if (!usdtResult.isNone) {
-					const data = usdtResult.unwrap();
-					const freeUSDTBalance = data.balance.toBigInt().toString();
+					const data = usdtResult?.unwrap();
+					const freeUSDTBalance = data?.balance?.toBigInt()?.toString();
 					setAssethubValues((values: { dotValue: string; usdcValue: string; usdtValue: string }) => ({ ...values, usdtValue: freeUSDTBalance }));
 				}
 			}
@@ -198,18 +200,18 @@ const ActivityFeedSidebar = () => {
 
 	const initAssetHubApi = async (network: string, setAssethubApi: Function, setAssethubApiReady: Function) => {
 		const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
-		const apiPromise = await ApiPromise.create({ provider: wsProvider });
+		const apiPromise = await ApiPromise?.create({ provider: wsProvider });
 		setAssethubApi(apiPromise);
 
 		apiPromise?.isReady
-			.then(() => setAssethubApiReady(true))
-			.catch(async (error) => {
-				await apiPromise.disconnect();
+			?.then(() => setAssethubApiReady(true))
+			?.catch(async (error) => {
+				await apiPromise?.disconnect();
 				console.error(error);
 			});
 
 		setTimeout(async () => {
-			await apiPromise.disconnect();
+			await apiPromise?.disconnect();
 		}, 60000);
 	};
 
@@ -285,7 +287,7 @@ const ActivityFeedSidebar = () => {
 			<div className='dark:bg-section-dark-overlaysm:my-0 flex w-full flex-1 flex-col rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay lg:px-6 lg:py-4'>
 				<div>
 					<div>
-						{!available.isLoading ? (
+						{!available?.isLoading ? (
 							<>
 								<div className='mb-2 justify-between sm:flex'>
 									<div>
@@ -314,15 +316,15 @@ const ActivityFeedSidebar = () => {
 										</div>
 										{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
 											<div>
-												{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+												{!(currentTokenPrice?.isLoading || priceWeeklyChange?.isLoading) ? (
 													<div className='mt-2 flex flex-col justify-between gap-2 '>
 														<div className='flex items-baseline justify-start font-medium xl:justify-between'>
-															{available.value ? (
+															{available?.value ? (
 																<div className='flex items-center'>
 																	<PolkadotIcon />
 																	<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
 																		<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
-																		<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
+																		<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available?.value}</span>
 																		<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
 																	</div>
 																</div>
@@ -399,17 +401,17 @@ const ActivityFeedSidebar = () => {
 						<div>
 							{currentTokenPrice?.value === 'N/A' ? (
 								<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-							) : currentTokenPrice?.value && !Number?.isNaN(Number(currentTokenPrice.value)) ? (
-								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
+							) : currentTokenPrice?.value && !isNaN(Number(currentTokenPrice?.value)) ? (
+								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice?.value}</span>
 							) : null}
 						</div>
-						{priceWeeklyChange.value !== 'N/A' && (
+						{priceWeeklyChange?.value !== 'N/A' && (
 							<div className='-mb-[2px] ml-2 flex items-center'>
-								<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
-									{Math.abs(Number(priceWeeklyChange.value))}%
+								<span className={`text-xs font-medium ${Number(priceWeeklyChange?.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+									{Math.abs(Number(priceWeeklyChange?.value))}%
 								</span>
 								<span>
-									{Number(priceWeeklyChange.value) < 0 ? (
+									{Number(priceWeeklyChange?.value) < 0 ? (
 										<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
 									) : (
 										<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
@@ -420,10 +422,10 @@ const ActivityFeedSidebar = () => {
 					</div>
 				</div>
 				<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-				{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
+				{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec']?.includes(network) && (
 					<div>
 						<div className='w-full gap-x-0 lg:flex'>
-							{!nextBurn.isLoading ? (
+							{!nextBurn?.isLoading ? (
 								<div className='items-start sm:flex sm:gap-2'>
 									<div className='mt-2  h-12'>
 										<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
@@ -435,13 +437,13 @@ const ActivityFeedSidebar = () => {
 												/>
 											</div>
 											<div className='m-0 flex flex-wrap items-baseline gap-x-[6px]'>
-												{nextBurn.value ? (
+												{nextBurn?.value ? (
 													<div className='m-0 flex items-baseline gap-x-[3px]'>
-														<span className='text-lg font-medium'>{nextBurn.value}</span>
+														<span className='text-lg font-medium'>{nextBurn?.value}</span>
 														<span className='text-base font-medium text-lightBlue dark:text-[#595959]'>{chainProperties[network]?.tokenSymbol}</span>
 													</div>
 												) : null}
-												<span className='text-[12px] font-normal text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
+												<span className='text-[12px] font-normal text-lightBlue dark:text-blue-dark-high'>{nextBurn?.valueUSD ? `~ $${nextBurn?.valueUSD}` : 'N/A'}</span>
 											</div>
 										</div>
 									</div>

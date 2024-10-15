@@ -18,29 +18,29 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 	const getLastSixMonths = () => {
 		const months = [];
 		for (let i = 5; i >= 0; i--) {
-			months.push(dayjs().subtract(i, 'month').format('MMM'));
+			months?.push(dayjs()?.subtract(i, 'month')?.format('MMM'));
 		}
-		return months.reverse();
+		return months?.reverse();
 	};
 
 	const getLastSixMonthsData = (curatorData: any) => {
 		const lastSixMonths = getLastSixMonths();
 		const monthKeys = lastSixMonths
-			.map((month, idx) => {
-				return dayjs().subtract(idx, 'month').format('YYYY-MM');
+			?.map((month, idx) => {
+				return dayjs()?.subtract(idx, 'month')?.format('YYYY-MM');
 			})
-			.reverse();
-		const lastSixMonthData = monthKeys.map((month) => ({
-			x: dayjs(month).format('MMM'),
-			y: curatorData?.lastSixMonthGraphData?.[month] ? parseFloat(parseBalance(curatorData.lastSixMonthGraphData[month], 2, false, network)) : 0
+			?.reverse();
+		const lastSixMonthData = monthKeys?.map((month) => ({
+			x: dayjs(month)?.format('MMM'),
+			y: curatorData?.lastSixMonthGraphData?.[month] ? parseFloat(parseBalance(curatorData?.lastSixMonthGraphData[month], 2, false, network)) : 0
 		}));
 
 		return lastSixMonthData;
 	};
 
 	const calculateHikePercentage = (data: { x: string; y: number }[]) => {
-		const firstMonthValue = data[0].y;
-		const lastMonthValue = data[data.length - 1].y;
+		const firstMonthValue = data[0]?.y;
+		const lastMonthValue = data[data?.length - 1]?.y;
 
 		if (firstMonthValue === 0) {
 			if (lastMonthValue > 0) {
@@ -56,7 +56,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 	};
 
 	const lastSixMonthsData = getLastSixMonthsData(curatorData);
-	const totalDisbursed = lastSixMonthsData.reduce((acc, monthData) => acc + monthData.y, 0);
+	const totalDisbursed = lastSixMonthsData?.reduce((acc, monthData) => acc + monthData?.y, 0);
 	const hikePercentage = calculateHikePercentage(lastSixMonthsData);
 
 	const chartData = [
@@ -77,17 +77,17 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 				</div>
 			</div>
 			<div className='-mt-5 flex gap-3'>
-				<p className='font-pixeboy text-[60px] text-[#2D2D2D] dark:text-icon-dark-inactive'>{`${totalDisbursed.toFixed(2)} ${chainProperties[network]?.tokenSymbol}`}</p>
+				<p className='font-pixeboy text-[60px] text-[#2D2D2D] dark:text-icon-dark-inactive'>{`${totalDisbursed?.toFixed(2)} ${chainProperties[network]?.tokenSymbol}`}</p>
 				<div className='mt-5'>
 					{hikePercentage > 0 ? (
 						<div className='flex items-center gap-2 rounded-full bg-[#75c486] px-5 py-2 text-white'>
 							<UpOutlined />
-							<span className='font-pixeboy text-[20px] '>{hikePercentage.toFixed(2)}%</span>
+							<span className='font-pixeboy text-[20px] '>{hikePercentage?.toFixed(2)}%</span>
 						</div>
 					) : (
 						<div className='flex items-center gap-2 rounded-full bg-[#FF5D7A] px-5 py-2 text-white'>
 							<DownOutlined />
-							<span className='font-pixeboy text-[20px] '>{hikePercentage.toFixed(2)}%</span>
+							<span className='font-pixeboy text-[20px] '>{hikePercentage?.toFixed(2)}%</span>
 						</div>
 					)}
 				</div>
@@ -127,8 +127,8 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 					}}
 					tooltip={({ point }) => (
 						<div className={`flex gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
-							<span className='text-xs font-semibold'>{point.data.xFormatted}</span>
-							<span className='text-xs font-semibold'>{`${parseFloat(String(point.data.yFormatted)).toFixed(2)} ${chainProperties[network]?.tokenSymbol}`}</span>
+							<span className='text-xs font-semibold'>{point?.data?.xFormatted}</span>
+							<span className='text-xs font-semibold'>{`${parseFloat(String(point?.data?.yFormatted))?.toFixed(2)} ${chainProperties[network]?.tokenSymbol}`}</span>
 						</div>
 					)}
 					pointSize={5}

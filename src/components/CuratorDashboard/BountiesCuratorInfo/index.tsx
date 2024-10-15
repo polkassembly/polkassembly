@@ -89,7 +89,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 			setExpandedBountyId(null);
 		} else {
 			setExpandedBountyId(bounty?.index);
-			if (bounty.childBounties === undefined) {
+			if (bounty?.childBounties === undefined) {
 				setLoadingChildBounties((prevState) => ({ ...prevState, [bounty?.index]: true }));
 				const childBounties = await fetchChildBounties(bounty?.index, bounty?.curator);
 				if (childBounties) {
@@ -100,8 +100,8 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 		}
 	};
 	const onPaginationChange = (page: number) => {
-		router.push({
-			pathname: router.pathname,
+		router?.push({
+			pathname: router?.pathname,
 			query: {
 				...router?.query,
 				page
@@ -182,7 +182,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 															onClick={() => toggleChildBounties(bounty)}
 															className='cursor-pointer'
 														>
-															{expandedBountyId === bounty.index ? (
+															{expandedBountyId === bounty?.index ? (
 																<UpOutlined
 																	style={{
 																		background: theme == 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'

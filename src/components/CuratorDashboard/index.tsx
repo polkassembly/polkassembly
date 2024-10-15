@@ -59,7 +59,7 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 							onClick={() => handleTabClick(tab.key)}
 						>
 							<div className='flex gap-3'>
-								<div className={`rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2]' : 'bg-[#F0F2F5]'}  p-2`}>
+								<div className={`rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'}  p-2`}>
 									<Image
 										src={tab.icon}
 										alt={`Curator Dashboard Icon ${tab.key}`}
@@ -72,8 +72,10 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 									/>
 								</div>
 								<div className='flex flex-col'>
-									<span className={`${activeTab === tab.key && 'font-bold text-pink_primary'} text-[16px]`}>{tab.title}</span>
-									<span className={`${activeTab === tab.key && 'text-pink_primary'} mt-1 whitespace-nowrap text-sm  text-blue-light-medium `}>{tab.description}</span>
+									<span className={`${activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'} text-[16px]`}>{tab.title}</span>
+									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-nowrap text-sm  text-blue-light-medium `}>
+										{tab.description}
+									</span>
 								</div>
 							</div>
 							<RightOutlined className='ml-5' />

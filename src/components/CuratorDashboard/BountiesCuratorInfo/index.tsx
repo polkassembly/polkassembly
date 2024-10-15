@@ -94,7 +94,9 @@ function BountiesCuratorInfo() {
 	}, []);
 
 	return (
-		<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[0.7px] border-solid bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}>
+		<div
+			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
+		>
 			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Bounties Curated {curatedBounties?.length && <>({curatedBounties?.length})</>} </p>
 			{loading ? (
 				<>

@@ -34,6 +34,7 @@ interface IReferendumV2CardInfoProps {
 	updateTally?: boolean;
 	post?: any;
 	hideInfo?: boolean;
+	isUsedInBatchVoting?: boolean;
 	isUsedInTinderWebView?: boolean;
 }
 

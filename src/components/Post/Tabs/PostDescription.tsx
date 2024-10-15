@@ -213,7 +213,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					<Sidebar />
 				</div>
 			)}
-			<CommentsContainer id={id} />
+			{/* <CommentsContainer id={id} /> */}
 		</div>
 	);
 };

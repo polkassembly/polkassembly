@@ -98,7 +98,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 		const totalVotes = ayesNumber + naysNumber;
 		const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
 		const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
-		return { ayesPercentage, isAyeNaN: Number.isNaN(ayesPercentage), isNayNaN: Number.isNaN(naysPercentage), naysPercentage };
+		return { ayesPercentage, isAyeNaN: isNaN(ayesPercentage), isNayNaN: isNaN(naysPercentage), naysPercentage };
 	}, [ayesNumber, naysNumber]);
 	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
@@ -112,15 +112,15 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const fetchData = useCallback(async () => {
-		if (network && post.post_id) {
-			const votesResponse = await getReferendumVotes(network, post.post_id);
-			if (votesResponse.data) {
+		if (network && post?.post_id) {
+			const votesResponse = await getReferendumVotes(network, post?.post_id);
+			if (votesResponse?.data) {
 				setVotesData(votesResponse.data);
 			} else {
 				console.error('Error fetching votes:', votesResponse.error);
 			}
 		}
-	}, [network, post.post_id]);
+	}, [network, post?.post_id]);
 
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
@@ -130,12 +130,12 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	`;
 	const fetchUSDValue = useCallback(async () => {
-		if (!post?.created_at || dayjs(post?.created_at).isSame(dayjs())) return;
+		if (!post?.created_at || dayjs(post?.created_at)?.isSame(dayjs())) return;
 
 		setLoading(true);
 		try {
 			const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
-			const proposalClosedStatusDetails = post?.timeline?.[0]?.statuses.find((status: any) => passedProposalStatuses.includes(status.status));
+			const proposalClosedStatusDetails = post?.timeline?.[0]?.statuses?.find((status: any) => passedProposalStatuses?.includes(status?.status));
 			setIsProposalClosed(!!proposalClosedStatusDetails);
 
 			const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
@@ -147,8 +147,8 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 			if (error) throw new Error(error);
 
 			if (data) {
-				const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
-				setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
+				const [bnClosed] = inputToBn(data?.usdValueOnClosed ? String(Number(data?.usdValueOnClosed)) : '0', network, false);
+				setUsdValueOnClosed(data?.usdValueOnClosed ? String(Number(data?.usdValueOnClosed)) : null);
 				setBnUsdValueOnClosed(bnClosed);
 			}
 		} catch (error) {
@@ -174,7 +174,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 		const decisionPeriodStartsAt = decidingStatusBlock?.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
-		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
+		setRemainingTime(convertRemainingTime(decision?.periodEndsAt));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -196,7 +196,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								<>
 									<p className='text-[16px] font-bold text-blue-light-medium dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
 										{post?.assetId ? (
-											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount.toString(), network)
+											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount?.toString(), network)
 										) : (
 											<>
 												{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
@@ -216,8 +216,8 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 															dedTokenUsdPrice: dedTokenUsdPrice || '0',
 															generalIndex: post?.assetId,
 															inputAmountValue: new BN(post?.requestedAmount)
-																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
-																.toString(),
+																?.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: post?.assetId, network }) || '0')))
+																?.toString(),
 															network
 														})} ${chainProperties[network]?.tokenSymbol}`
 													) : (
@@ -226,9 +226,9 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 																requestedAmountFormatted
 																	?.mul(
 																		!isProposalClosed
-																			? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																			? new BN(Number(currentTokenPrice))?.mul(new BN('10')?.pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 																			: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-																			? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																			? new BN(Number(currentTokenPrice))?.mul(new BN('10')?.pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 																			: bnUsdValueOnClosed
 																	)
 																	?.toString() || '0',

@@ -69,13 +69,13 @@ function FeaturesSection() {
 	};
 
 	const handleFeatureClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, feature: IFeature) => {
-		if (feature.title === 'Identity') {
+		if (feature?.title === 'Identity') {
 			e.stopPropagation();
 			e.preventDefault();
-			if (typeof currentUser?.id === 'number' && !Number.isNaN(currentUser.id) && currentUser?.username) {
+			if (typeof currentUser?.id === 'number' && !isNaN(currentUser.id) && currentUser?.username) {
 				trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-					userId: currentUser.id.toString(),
-					userName: currentUser.username
+					userId: currentUser?.id?.toString(),
+					userName: currentUser?.username
 				});
 				handleIdentityButtonClick();
 			} else {
@@ -85,7 +85,7 @@ function FeaturesSection() {
 	};
 
 	const handleIdentityButtonClick = () => {
-		const address = localStorage.getItem('identityAddress');
+		const address = localStorage?.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
 		} else {
@@ -99,11 +99,11 @@ function FeaturesSection() {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
+			setCurrentIndex((prevIndex) => (prevIndex + 1) % features?.length);
 		}, 5000);
 
 		return () => clearInterval(interval);
-	}, [features.length]);
+	}, [features?.length]);
 
 	return (
 		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>
@@ -113,7 +113,7 @@ function FeaturesSection() {
 					<p className='mt-1 rounded-full bg-[#E5007A] p-1 text-[10px] font-bold text-white'>LIVE</p>
 				</div>
 				<div className='flex gap-2'>
-					{features.map((_, index) => (
+					{features?.map((_, index) => (
 						<div
 							key={index}
 							className={`mt-2 h-2 w-2 cursor-pointer rounded-full ${index === currentIndex ? 'bg-black  dark:bg-[#9E9E9E]' : 'bg-[#D9D9D9] '}`}
@@ -124,19 +124,19 @@ function FeaturesSection() {
 			</div>
 			<div className='-mt-2'>
 				<Link
-					href={features[currentIndex].path}
+					href={features[currentIndex]?.path}
 					onClick={(e) => handleFeatureClick(e, features[currentIndex])}
 				>
 					<Image
-						src={features[currentIndex].image}
+						src={features[currentIndex]?.image}
 						className='h-full w-full'
-						alt={features[currentIndex].title}
+						alt={features[currentIndex]?.title}
 						width={800}
 						height={800}
 					/>
 					<div className='mt-3'>
-						<p className='m-0 text-[16px] font-semibold text-[#243A57] dark:text-white'>{features[currentIndex].title}</p>
-						<p className='pt-1 text-[14px] text-[#243A57] dark:text-white'>{features[currentIndex].description}</p>
+						<p className='m-0 text-[16px] font-semibold text-[#243A57] dark:text-white'>{features[currentIndex]?.title}</p>
+						<p className='pt-1 text-[14px] text-[#243A57] dark:text-white'>{features[currentIndex]?.description}</p>
 					</div>
 				</Link>
 			</div>
@@ -146,7 +146,7 @@ function FeaturesSection() {
 				footer={false}
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${poppins?.className} ${poppins?.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
@@ -158,7 +158,7 @@ function FeaturesSection() {
 					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
-			{onchainIdentitySupportedNetwork.includes(network) && (
+			{onchainIdentitySupportedNetwork?.includes(network) && (
 				<OnchainIdentity
 					open={open}
 					setOpen={setOpen}

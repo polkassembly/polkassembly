@@ -34,6 +34,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 		<div>
 			<Modal
 				open={open}
+				maskClosable={false}
 				onCancel={() => setOpen(false)}
 				className={`${poppins.className} ${poppins.variable} antSteps w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark antSteps`}

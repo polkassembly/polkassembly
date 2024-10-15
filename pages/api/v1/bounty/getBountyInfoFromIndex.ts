@@ -11,7 +11,6 @@ import { GET_ALL_BOUNTIES } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import console_pretty from '~src/api-utils/console_pretty';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 interface Args {
@@ -22,8 +21,6 @@ interface Args {
 export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IApiResponse<{ status: string }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-
-		console_pretty({ bountyIndex });
 
 		if (isNaN(bountyIndex)) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 

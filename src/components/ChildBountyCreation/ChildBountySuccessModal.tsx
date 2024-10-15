@@ -9,36 +9,42 @@ import Link from 'next/link';
 import { poppins } from 'pages/_app';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { resetGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
-import { useChildBountyCreationSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useChildBountyCreationSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Image from 'next/image';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { EChildBountySteps } from './types';
+import { childBountyCreationActions } from '~src/redux/childBountyCreation';
+import Address from '~src/ui-components/Address';
 
 interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	setStep: (pre: EChildBountySteps) => void;
 }
+
+const ZERO_BN = new BN(0);
 const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
-	const { childBountyIndex, reqAmount } = useChildBountyCreationSelector();
+	const { childBountyIndex, reqAmount, curator, parentBountyIndex } = useChildBountyCreationSelector();
+	const { loginAddress } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
-	const bnFundingAmount = new BN(reqAmount);
+	const bnRequestedAmount = new BN(reqAmount);
 
 	return (
 		<Modal
 			open={open}
 			onCancel={() => {
 				setOpen(false);
-				dispatch(resetGov1TreasuryProposal());
+				dispatch(childBountyCreationActions.resetChildBountyCreationStore());
 				setStep(EChildBountySteps.WRITE_CHILDBOUNTY);
 			}}
-			className={classNames(poppins.className, poppins.variable)}
+			className={classNames(poppins.className, poppins.variable, 'dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			maskClosable={false}
 			closeIcon={<CloseIcon />}
+			wrapClassName={'dark:bg-modalOverlayDark antSteps'}
+			centered
 			footer={
 				<Link
 					href={`https://${network}.polkassembly.io/childBounty/${childBountyIndex}`}
@@ -66,44 +72,69 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
 					/>
 				</div>
 
-				<label className='mt-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Child Bounty creation initiated for</label>
-				{!!bnFundingAmount && <span className='mt-2 text-2xl font-semibold text-pink_primary'>{parseBalance(bnFundingAmount.toString(), 2, true, network)}</span>}
-				{/* {!!(proposer || loginAddress)?.length && (
+				<label className='mt-0 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Child Bounty creation initiated for</label>
+				{!bnRequestedAmount?.eq(ZERO_BN) && <span className='mt-2 text-2xl font-semibold text-pink_primary'>{parseBalance(bnRequestedAmount.toString(), 2, true, network)}</span>}
+				{
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
-								<span className='w-[172px]'>Proposer Address:</span>
+								<span className='w-[172px]'>Proposer:</span>
 								<Address
 									addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
-									address={proposer || loginAddress}
+									address={loginAddress}
 									isTruncateUsername={false}
 									iconSize={18}
 									displayInline
+									disableTooltip
 								/>
 							</span>
 							{curator?.length && (
 								<span className='flex'>
-									<span className='w-[172px]'>Curator Address:</span>
-									<div className='flex flex-col gap-2'>
+									<span className='w-[172px]'>Child Bounty Curator:</span>
+									<div className='flex flex-col'>
 										<Address
 											address={curator}
 											displayInline
 											iconSize={18}
 											isTruncateUsername={false}
+											disableTooltip
 										/>
 									</div>
 								</span>
 							)}
 
-							<span className='flex'>
-								<span className='w-[172px]'>Funding Amount:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{reqAmount && formatedBalance(reqAmount.toString(), unit)} {unit}
+							{!bnRequestedAmount?.eq(ZERO_BN) && (
+								<span className='flex'>
+									<span className='w-[172px]'>Child Bounty Amount:</span>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(bnRequestedAmount.toString(), 2, true, network)}</span>
 								</span>
-							</span>
+							)}
+
+							{parentBountyIndex && !isNaN(parentBountyIndex) && (
+								<span className='flex'>
+									<span className='w-[172px]'>Link to parent bounty:</span>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<Link
+											onClick={() => dispatch(childBountyCreationActions.resetChildBountyCreationStore())}
+											href={`https://${network}.polkassembly.io/bounty/${parentBountyIndex}`}
+											className='mb-2 flex items-center gap-x-1 text-pink_primary'
+											target='_blank'
+											rel='noopener noreferrer'
+										>
+											Link
+											<Image
+												src='/assets/icons/redirect.svg'
+												height={16}
+												width={16}
+												alt=''
+											/>
+										</Link>
+									</span>
+								</span>
+							)}
 						</div>
 					</div>
-				)} */}
+				}
 			</div>
 		</Modal>
 	);

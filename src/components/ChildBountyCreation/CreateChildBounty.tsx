@@ -67,7 +67,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 			const activeBountyStatuses = getBountiesCustomStatuses(EBountiesStatuses.ACTIVE);
 			const isActive = activeBountyStatuses.includes(data?.status);
 			setIsValidBounty(!!isActive);
-			dispatch(childBountyCreationActions.updateSecondStepPercentage(!isActive ? 83.33 : 100));
+			dispatch(childBountyCreationActions.updateSecondStepPercentage(!isActive || new BN(reqAmount).eq(ZERO_BN) ? 83.33 : 100));
 		}
 		if (error) {
 			console.log(error);
@@ -147,8 +147,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 			setLoadingStatus({ isLoading: false, message: '' });
 			console.error(apiError);
 		}
-		if (data && data.post_id) {
-			dispatch(childBountyCreationActions.resetChildBountyCreationStore());
+		if (data?.post_id) {
 			queueNotification({
 				header: 'Thanks for sharing!',
 				message: 'Bounty created successfully.',
@@ -165,7 +164,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 
 		if (!txDetails?.tx || (txDetails?.childbountyIndex && isNaN(txDetails?.childbountyIndex))) return;
 
-		const onFailed = (message: string) => {
+		const onFailed = async (message: string) => {
 			setLoadingStatus({ isLoading: false, message: '' });
 			queueNotification({
 				header: 'Failed!',
@@ -301,7 +300,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 							inputClassName='dark:text-blue-dark-high text-bodyBlue'
 							className='mb-0'
 							onChange={(amount: BN) => {
-								dispatch(childBountyCreationActions.updateSecondStepPercentage(amount.gte(ZERO_BN) ? 83.33 : 100));
+								dispatch(childBountyCreationActions.updateSecondStepPercentage(amount.eq(ZERO_BN) || !isValidBounty ? 83.33 : 100));
 								dispatch(childBountyCreationActions.setChildBountyAmount(amount.toString()));
 								debounceGetGasFee();
 							}}

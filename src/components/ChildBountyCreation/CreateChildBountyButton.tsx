@@ -8,13 +8,14 @@ import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ChildBountyCreationForm from '.';
 import { useState } from 'react';
+import classNames from 'classnames';
 
-const CreateChildBountyButton = () => {
+const CreateChildBountyButton = ({ className }: { className?: string }) => {
 	const [openModal, setOpenModal] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	return (
-		<div className='flex items-center justify-center '>
+		<div className={classNames(className, 'flex items-center justify-center ')}>
 			<CustomButton
 				type='primary'
 				className='w-full cursor-pointer'

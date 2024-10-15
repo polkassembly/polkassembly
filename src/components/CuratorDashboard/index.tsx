@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import CuratorProfile from './CuratorProfile';
@@ -10,7 +10,7 @@ import CuratorProfile from './CuratorProfile';
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
 
-function CuratorDashboardTabItems() {
+const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const [activeTab, setActiveTab] = useState<string>('general');
 	const router = useRouter();
 
@@ -23,7 +23,7 @@ function CuratorDashboardTabItems() {
 			title: 'General'
 		},
 		{
-			children: <BountiesCuratorInfo />,
+			children: <BountiesCuratorInfo handleClick={handleClick} />,
 			description: 'Maecenas eget ligula vitae',
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: 'bounties-curated',
@@ -84,6 +84,6 @@ function CuratorDashboardTabItems() {
 			<div className='mt-3 flex-grow'>{activeTab && tabs.find((tab) => tab.key === activeTab)?.children}</div>
 		</div>
 	);
-}
+};
 
 export default CuratorDashboardTabItems;

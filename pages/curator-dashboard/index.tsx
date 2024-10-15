@@ -96,7 +96,7 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 					</button>
 				</div>
 				<div>
-					<CuratorDashboardTabItems />
+					<CuratorDashboardTabItems handleClick={handleClick} />
 				</div>
 			</main>
 			<BountyActionModal

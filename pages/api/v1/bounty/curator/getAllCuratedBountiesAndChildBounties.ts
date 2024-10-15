@@ -86,7 +86,7 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 
 				if ([bountyStatus.CLAIMED, bountyStatus.AWARDED].includes(childBounty.status)) {
 					if ([bountyStatus.CLAIMED].includes(childBounty?.status) && subsquidBounty?.curator === childBounty?.curator) {
-						totalChildBountiesCount += totalChildBountiesCount;
+						totalChildBountiesCount = totalChildBountiesCount + 1;
 					}
 					claimedAmount = claimedAmount.add(amount);
 				}

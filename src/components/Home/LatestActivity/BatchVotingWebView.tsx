@@ -3,17 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import React from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import LoginPopup from '~src/ui-components/loginPopup';
-import SignupPopup from '~src/ui-components/SignupPopup';
 
 const BatchVotingWebView = () => {
 	const router = useRouter();
-	const { id } = useUserDetailsSelector();
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	return (
 		<>
 			<section className='relative mb-[70px] '>
@@ -27,28 +21,12 @@ const BatchVotingWebView = () => {
 				<Button
 					className='absolute right-[132px] top-[48px] flex h-[40px] w-[155px] items-center justify-center rounded-[40px] border-none bg-black text-xl font-semibold text-white'
 					onClick={() => {
-						if (id) {
-							router?.push('/batch-voting');
-						} else {
-							setLoginOpen(true);
-						}
+						router.push('/batch-voting');
 					}}
 				>
 					Lets Begin
 				</Button>
 			</section>
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
-			/>
 		</>
 	);
 };

@@ -10,10 +10,12 @@ import { useAppDispatch } from '~src/redux/store';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDeleteBatchVotes } from '../types';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 
 const CartOptionMenu = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
+	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
 
 	const deletePostDetails = async () => {
 		const { error } = await nextApiClientFetch<IDeleteBatchVotes>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
@@ -36,7 +38,7 @@ const CartOptionMenu = () => {
 
 	return (
 		<article className='fixed bottom-0 flex w-full items-center justify-center gap-x-6 bg-white p-4 py-2 drop-shadow-2xl dark:bg-section-dark-garyBackground'>
-			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue dark:text-white'>New proposal added</p>
+			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue dark:text-white'>{total_proposals_added_in_Cart || 0} proposal added</p>
 			<div className='ml-auto flex gap-x-1'>
 				<CustomButton
 					variant='primary'

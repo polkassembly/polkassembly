@@ -58,10 +58,12 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	const items: MenuProps['items'] = [
 		{
 			label: (
+				<div className='pt-[6px]'>
 				<OpenGovTreasuryProposal
 					theme={theme}
 					isUsedInSidebar={true}
-				/>
+					/>
+					</div>
 			),
 			key: '0'
 		},
@@ -72,7 +74,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		{
 			label: (
 				<div
-					className='flex cursor-pointer gap-2'
+					className='flex pb-[6px] cursor-pointer gap-2'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
@@ -91,7 +93,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	}
 
 	return (
-		<div>
+		<div className='max-w-[200px] mx-auto'>
 			<Dropdown
 				theme={theme}
 				trigger={[!sidebarCollapsed && 'click']}

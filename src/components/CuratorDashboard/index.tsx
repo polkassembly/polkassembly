@@ -17,21 +17,21 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 	const tabs = [
 		{
 			children: <CuratorProfile />,
-			description: 'Vestibulum nec leo at dui euismod',
+			description: 'Track your bounty via notifications',
 			icon: '/assets/icons/curator-dashboard/general.svg',
 			key: 'general',
 			title: 'General'
 		},
 		{
 			children: <BountiesCuratorInfo handleClick={handleClick} />,
-			description: 'Maecenas eget ligula vitae',
+			description: 'Review and Reward submissions on curated bounties',
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: 'bounties-curated',
 			title: 'Bounties Curated'
 		}
 		// {
 		// children: <CuratorPendingRequestManager />,
-		// description: 'Ut vestibulum efficitur mollis',
+		// description: 'Review curator and child bounty requests',
 		// icon: '/assets/icons/curator-dashboard/pending-request.svg',
 		// key: 'pending-requests',
 		// title: 'Pending Requests'
@@ -49,7 +49,7 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 	return (
 		<div className='flex gap-5'>
 			<div className='h-[175px]'>
-				<div className='mt-3 flex w-[400px] flex-col gap-2  rounded-xl border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
+				<div className='mt-3 flex w-[400px] flex-col gap-2   rounded-xl border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 					{tabs.map((tab) => (
 						<div
 							key={tab.key}
@@ -58,8 +58,8 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 							}`}
 							onClick={() => handleTabClick(tab.key)}
 						>
-							<div className='flex gap-3'>
-								<div className={`rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'}  p-2`}>
+							<div className='flex items-start gap-3'>
+								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'} p-2`}>
 									<Image
 										src={tab.icon}
 										alt={`Curator Dashboard Icon ${tab.key}`}
@@ -72,12 +72,13 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 									/>
 								</div>
 								<div className='flex flex-col'>
-									<span className={`${activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'} text-[16px]`}>{tab.title}</span>
-									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-nowrap text-sm  text-blue-light-medium `}>
+									<span className={`${activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'} whitespace-normal break-words text-[16px]`}>{tab.title}</span>
+									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-normal break-words text-sm text-blue-light-medium`}>
 										{tab.description}
 									</span>
 								</div>
 							</div>
+
 							<RightOutlined className='ml-5' />
 						</div>
 					))}

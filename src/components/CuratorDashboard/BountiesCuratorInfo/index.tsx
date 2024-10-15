@@ -43,7 +43,7 @@ interface ChildBounty {
 const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
+	const address = '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC';
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -203,7 +203,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 											</div>
 
 											{expandedBountyId === bounty?.index && bounty?.totalChildBountiesCount > 0 && (
-												<div className='ml-4 mt-2'>
+												<div className='mx-3 mt-2'>
 													{loadingChildBounties[bounty?.index] ? (
 														<div className='mt-2 flex justify-center'>
 															<Spin />
@@ -245,6 +245,21 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 													)}
 												</div>
 											)}
+											<div className='mx-3 mt-4 rounded-lg border-[1px] border-solid border-[#E5007A] py-3 text-center'>
+												<span className='text-[18px] font-bold text-pink_primary'>
+													<Image
+														src='/assets/bounty-icons/child-bounty-icon.svg'
+														alt='bounty icon'
+														className='mr-1'
+														style={{
+															filter: 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)'
+														}}
+														width={24}
+														height={24}
+													/>{' '}
+													Create Child Bounty
+												</span>
+											</div>
 										</div>
 										<div className='mb-5 mt-3 flex justify-end'>
 											{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (

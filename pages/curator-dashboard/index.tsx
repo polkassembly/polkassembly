@@ -16,6 +16,7 @@ import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyAct
 import { useTheme } from 'next-themes';
 import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
 import SEOHead from '~src/global/SEOHead';
+import { useRouter } from 'next/router';
 
 interface ICuratorProfileProps {
 	network: string;
@@ -34,6 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
 	const { network } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
@@ -59,9 +61,12 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	};
 
 	useEffect(() => {
+		if (!currentUser?.id) {
+			router.push('/bounty');
+		}
 		dispatch(setNetwork(network));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network, currentUser]);
+
 	return (
 		<div>
 			<SEOHead

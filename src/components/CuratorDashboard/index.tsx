@@ -72,8 +72,14 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 									/>
 								</div>
 								<div className='flex flex-col'>
-									<span className={`${activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'} whitespace-normal break-words text-[16px]`}>{tab.title}</span>
-									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-normal break-words text-sm text-blue-light-medium`}>
+									<span
+										className={`${
+											activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'
+										} whitespace-normal break-words text-[16px] font-medium dark:text-icon-dark-inactive`}
+									>
+										{tab.title}
+									</span>
+									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-normal break-words text-sm dark:text-icon-dark-inactive`}>
 										{tab.description}
 									</span>
 								</div>

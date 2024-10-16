@@ -58,7 +58,12 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	};
 
 	const handleCopyAddress = () => {
-		message.success('Address copied to clipboard');
+		if (address) {
+			copyToClipboard(address);
+			message.success('Address copied to clipboard');
+		} else {
+			message.error('No address available to copy');
+		}
 	};
 	const handleEditClick = () => {
 		setIsModalVisible(true);
@@ -85,39 +90,33 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 		});
 	};
 
+	const fetchIdentityInformation = async () => {
+		const info = await getIdentityInformation({
+			address: address,
+			api: peopleChainApi ?? api,
+			network: network
+		});
+
+		if (info?.nickname && !onChainIdentity?.nickname) {
+			onChainIdentity.nickname = info?.nickname;
+		}
+		Object.entries(info).forEach(([key, value]) => {
+			if (value) {
+				if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)[key]?.length === 0) {
+					(onChainIdentity as any)[key] = value;
+					setAddressWithIdentity(getEncodedAddress(address, network) || '');
+				} else if (!(onChainIdentity as any)[key]) {
+					(onChainIdentity as any)[key] = value;
+				}
+			}
+		});
+		setOnChainIdentity(onChainIdentity);
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
-
 		let unsubscribes: (() => void)[];
-		const onChainIdentity: TOnChainIdentity = {
-			judgements: [],
-			nickname: ''
-		};
-		const fetchIdentityInformation = async () => {
-			const info = await getIdentityInformation({
-				address: address,
-				api: peopleChainApi ?? api,
-				network: network
-			});
-
-			if (info?.nickname && !onChainIdentity?.nickname) {
-				onChainIdentity.nickname = info?.nickname;
-			}
-			Object.entries(info).forEach(([key, value]) => {
-				if (value) {
-					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)[key]?.length === 0) {
-						(onChainIdentity as any)[key] = value;
-						setAddressWithIdentity(getEncodedAddress(address, network) || '');
-					} else if (!(onChainIdentity as any)[key]) {
-						(onChainIdentity as any)[key] = value;
-					}
-				}
-			});
-			setOnChainIdentity(onChainIdentity);
-		};
-
 		fetchIdentityInformation();
-
 		return () => {
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};

@@ -9,7 +9,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { LeftOutlined } from '@ant-design/icons';
-import { spaceGrotesk } from 'pages/_app';
+import { poppins, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
@@ -124,7 +124,7 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 					{currentUser?.id && currentUser?.username ? (
 						<CuratorDashboardTabItems handleClick={handleClick} />
 					) : (
-						<div className={'flex h-[900px]  flex-col items-center rounded-xl  px-5 pt-5  md:pt-10'}>
+						<div className={`flex h-[900px] ${poppins.variable} ${poppins.className} flex-col items-center rounded-xl  px-5 pt-5  md:pt-10`}>
 							<Image
 								src='/assets/Gifs/login-dislike.gif'
 								alt='empty state'

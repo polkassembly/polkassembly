@@ -9,6 +9,7 @@ import CuratorProfile from './CuratorProfile';
 
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
+import { spaceGrotesk } from 'pages/_app';
 
 const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const [activeTab, setActiveTab] = useState<string>('general');
@@ -73,13 +74,17 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 								</div>
 								<div className='flex flex-col'>
 									<span
-										className={`${
-											activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'
-										} whitespace-normal break-words text-[16px] font-medium dark:text-icon-dark-inactive`}
+										className={`${activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'} whitespace-normal break-words ${spaceGrotesk.className} ${
+											spaceGrotesk.variable
+										} text-[16px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}
 									>
 										{tab.title}
 									</span>
-									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-normal break-words text-sm dark:text-icon-dark-inactive`}>
+									<span
+										className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} ext-blue-light-medium mt-1 ${spaceGrotesk.className} ${
+											spaceGrotesk.variable
+										} whitespace-normal break-words text-sm dark:text-icon-dark-inactive`}
+									>
 										{tab.description}
 									</span>
 								</div>

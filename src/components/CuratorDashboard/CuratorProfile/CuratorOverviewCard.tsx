@@ -241,11 +241,11 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 					<Image
 						src='/assets/Gifs/watering.gif'
 						alt='empty state'
-						className='m-0 h-96 w-96 p-0'
-						width={350}
-						height={350}
+						className='m-0 -mt-16  p-0'
+						width={500}
+						height={500}
 					/>
-					<span className='-mt-14 text-xl font-semibold text-[#243A57] dark:text-white'>Nothing to see here</span>
+					<span className='-mt-28 text-xl font-semibold text-[#243A57] dark:text-white'>Nothing to see here</span>
 					<span className='pt-3 text-center text-[#243A57] dark:text-white'>Curate bounties to view data here</span>
 				</div>
 			)}

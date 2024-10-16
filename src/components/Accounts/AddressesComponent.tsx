@@ -22,13 +22,12 @@ const AddressesComponent = () => {
 
 	const fetchData = async () => {
 		setIsLoading(true);
-		const { data, error } = await nextApiClientFetch<{ data: { account: IAccountData } }>('api/v1/accounts', { address: '5HLNsGxpwQrV5ZfHAjZsHkjQJA7gKyFsYMTmzAjeG8s1pbvM' });
+		const { data, error } = await nextApiClientFetch<{ data: { account: IAccountData } }>('api/v1/accounts', { address: loginAddress });
 
 		if (error || !data) {
 			console.log('Error While fetching accounts');
 		}
 		if (data?.data?.account) {
-			console.log('data', data?.data?.account);
 			setAccountData(data?.data?.account);
 			setIsMultisigAddress(data?.data?.account?.multisig?.multi_account_member?.length > 0);
 			setIsLoading(false);

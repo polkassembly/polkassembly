@@ -135,24 +135,23 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'max-w-[227px] w-[227px] m-0 p-0 px-5',
 			dataIndex: 'title',
 			key: 'title',
-			title: 'Title',
-			width: 227,
 			render: (title: string) => {
 				const maxLength = 25;
 				const truncatedTitle = title?.length > maxLength ? `${title?.substring(0, maxLength)}...` : title;
 				return (
 					<div
 						className='m-0 truncate p-0 pt-3'
-						style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+						style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
 					>
 						<p>{title ? truncatedTitle : '-'}</p>
 					</div>
 				);
-			}
+			},
+			title: 'Title',
+			width: 227
 		},
 		{
 			className: 'w-[126px] min-w-[126px]',
-			width: 126,
 			dataIndex: 'reward',
 			key: 'reward',
 			render: (reward: string) =>
@@ -163,11 +162,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				) : (
 					'-'
 				),
-			title: 'Amount'
+			title: 'Amount',
+			width: 126
 		},
 		{
 			className: 'w-[120px] min-w-[120px]',
-			width: 120,
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
 			render: (claimed: string, record: IBountyListing) => {
@@ -196,7 +195,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Claimed'
+			title: 'Claimed',
+			width: 120
 		},
 		{
 			className: 'w-[120px]',

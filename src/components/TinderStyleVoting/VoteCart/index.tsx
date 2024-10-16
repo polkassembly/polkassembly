@@ -158,7 +158,7 @@ const VoteCart: React.FC = () => {
 	return (
 		<section>
 			<article className='px-2'>
-				{loginAddress && (
+				{!!loginAddress?.length && (
 					<Alert
 						type='info'
 						showIcon

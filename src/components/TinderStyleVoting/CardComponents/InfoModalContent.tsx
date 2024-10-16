@@ -58,7 +58,6 @@ const InfoModalContent: FC<IInfoModalContent> = (props) => {
 						tally={post?.tally}
 						post={post}
 						hideInfo={true}
-						isUsedInBatchVoting={true}
 					/>
 				</div>
 			</div>

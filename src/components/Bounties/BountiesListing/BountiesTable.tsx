@@ -35,7 +35,7 @@ const Categories = ({ categories }: { categories: string[] }) => {
 	}
 
 	return (
-		<div style={{ display: 'flex', gap: '5px' }}>
+		<div style={{ display: 'flex' }}>
 			{categories?.slice(0, 2)?.map((category, index) => (
 				<Tag
 					key={index}
@@ -135,19 +135,24 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'max-w-[227px] w-[227px] m-0 p-0 px-5',
 			dataIndex: 'title',
 			key: 'title',
+			title: 'Title',
+			width: 227,
 			render: (title: string) => {
 				const maxLength = 25;
 				const truncatedTitle = title?.length > maxLength ? `${title?.substring(0, maxLength)}...` : title;
 				return (
-					<div className='m-0  p-0 pt-3'>
+					<div
+						className='m-0 truncate p-0 pt-3'
+						style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+					>
 						<p>{title ? truncatedTitle : '-'}</p>
 					</div>
 				);
-			},
-			title: 'Title'
+			}
 		},
 		{
-			className: 'w-[100px]',
+			className: 'w-[126px] min-w-[126px]',
+			width: 126,
 			dataIndex: 'reward',
 			key: 'reward',
 			render: (reward: string) =>
@@ -161,7 +166,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Amount'
 		},
 		{
-			className: 'w-[90px]',
+			className: 'w-[120px] min-w-[120px]',
+			width: 120,
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
 			render: (claimed: string, record: IBountyListing) => {
@@ -231,8 +237,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			render: (categories: string[]) => {
 				return <Categories categories={categories || []} />;
 			},
-			title: 'Categories',
-			width: 100
+			title: 'Categories'
 		}
 	];
 
@@ -319,8 +324,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	/>
 																)}
 
-																<div className='ml-7 mt-5'>{childBounty?.index}</div>
-																<div className='ml-2 mt-4 w-[160px] pl-5 '>
+																<div className='ml-5 mt-5 w-[48px] px-1'>{childBounty?.index}</div>
+																<div className='mt-4 w-[160px] pl-5 '>
 																	{childBounty?.curator?.length ? (
 																		<Address
 																			iconSize={22}
@@ -334,9 +339,9 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	)}
 																</div>
 																<div className='mt-5 w-[227px] px-5'>{childBounty?.title?.length > 25 ? `${childBounty?.title?.slice(0, 25)}...` : childBounty?.title}</div>
-																<div className='mt-5 w-[115px] pl-5'>{parseBalance(childBounty?.reward || '0', 2, true, network)}</div>
+																<div className='mt-5 w-[126px] pl-5'>{parseBalance(childBounty?.reward || '0', 2, true, network)}</div>
 
-																<div className='mt-5 w-[107px] pl-5'>-</div>
+																<div className='mt-5 w-[120px] pl-5'>-</div>
 																<div className='mt-5 w-[133px] pl-5'>
 																	{relativeCreatedAt ? (
 																		<span className='text-blue-light-medium dark:text-icon-dark-inactive'>

@@ -3,9 +3,33 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import changeProfileScoreForAddress from 'pages/api/v1/utils/changeProfileScoreForAddress';
+import { firestore_db } from '~src/services/firebaseInit';
+import { EUserActivityType } from '~src/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import REPUTATION_SCORES from '~src/util/reputationScores';
 
-export async function _processUndelegated({ delegateAddress, delegatorAddress }: { delegateAddress: string; delegatorAddress: string }) {
-	await changeProfileScoreForAddress(delegateAddress, -REPUTATION_SCORES.recieved_delegation.value);
+export async function _processUndelegated({ network, delegateAddress, delegatorAddress }: { network: string; delegateAddress: string; delegatorAddress: string }) {
+	const delegatorActivityPayload = {
+		by: getSubstrateAddress(delegatorAddress),
+		created_at: new Date(),
+		is_deleted: false,
+		network,
+		type: EUserActivityType.UNDELEGATED,
+		updated_at: new Date()
+	};
+
+	await firestore_db.collection('user_activities').add(delegatorActivityPayload);
 	await changeProfileScoreForAddress(delegatorAddress, -REPUTATION_SCORES.first_delegation.value);
+
+	const delegateActivityPayload = {
+		by: getSubstrateAddress(delegateAddress),
+		created_at: new Date(),
+		is_deleted: false,
+		network,
+		type: EUserActivityType.UNDELEGATED,
+		updated_at: new Date()
+	};
+
+	await firestore_db.collection('user_activities').add(delegateActivityPayload);
+	await changeProfileScoreForAddress(delegateAddress, -REPUTATION_SCORES.recieved_delegation.value);
 }

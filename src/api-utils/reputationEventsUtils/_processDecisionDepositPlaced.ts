@@ -2,9 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { dayjs } from 'dayjs-init';
 import changeProfileScoreForAddress from 'pages/api/v1/utils/changeProfileScoreForAddress';
-import { TSubsquidProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, ProposalType, TSubsquidProposalType } from '~src/global/proposalType';
 import { GET_FOREIGN_DECISION_DEPOSIT_PLACED_COUNT, GET_PROPOSER_BY_ID_AND_TYPE } from '~src/queries';
+import { firestore_db } from '~src/services/firebaseInit';
+import { EUserActivityType } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import REPUTATION_SCORES from '~src/util/reputationScores';
@@ -57,6 +60,20 @@ export async function _processDecisionDepositPlaced({
 	});
 
 	const foreignDecisionDepositPlacedCount = (foreignDecisionDepositPlacedCountSubsquidRes?.data?.proposalsConnection?.totalCount as number) || 0;
+	const createdAt = foreignDecisionDepositPlacedCountSubsquidRes?.data?.proposalsConnection?.edges?.[0]?.node?.createdAt as string;
+
+	const activityPayload = {
+		by: getSubstrateAddress(depositorAddress),
+		created_at: dayjs(createdAt).toDate() || new Date(),
+		is_deleted: false,
+		network,
+		post_id: proposalIndex.startsWith('0x') ? proposalIndex : Number(proposalIndex),
+		post_type: getFirestoreProposalType(proposalType) as ProposalType,
+		type: EUserActivityType.DECISION_DEPOSIT_ON_FORIEGN_PROPOSAL,
+		updated_at: new Date()
+	};
+
+	await firestore_db.collection('user_activities').add(activityPayload);
 
 	await changeProfileScoreForAddress(
 		depositorAddress,

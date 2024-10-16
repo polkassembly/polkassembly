@@ -3200,7 +3200,8 @@ export const GET_TIP_VALUE_AND_PAYEE_BY_PROPOSAL_ID_AND_TYPE = `
 query TipPayee($index_eq: Int!, $type_eq: ProposalType!) {
   proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
     payee,
-    reward
+    reward,
+    createdAt
   }
 }
 `;
@@ -3219,7 +3220,12 @@ query TipperCounts($tipper_eq: String!, $payee_eq: String!) {
 export const GET_FOREIGN_DECISION_DEPOSIT_PLACED_COUNT = `
 query ForeignDecisionDepositPlacedCount($address: String!) {
   proposalsConnection(orderBy: id_ASC, where: {decisionDeposit: {who_eq: $address}, proposer_not_eq: $address}) {
-    totalCount
+    totalCount,
+    edges {
+      node {
+        createdAt
+      }
+    }
   }
 }
 `;
@@ -3253,6 +3259,30 @@ query GetProposalStatus($index_eq: Int!, $type_eq: ProposalType!) {
   proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
     status,
     endedAt
+  }
+}
+`;
+
+export const GET_PROPOSAL_CREATED_AT = `
+query GetProposalCreatedAt($index_eq: Int!, $type_eq: ProposalType!) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    createdAt
+  }
+}
+`;
+
+export const GET_VOTE_CREATED_AT = `
+query GetVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
+  votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_address_eq: $voter_address_eq}) {
+    createdAt
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTE_CREATED_AT = `
+ query GetConvictionVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
+  convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_address_eq: $voter_address_eq}) {
+    createdAt
   }
 }
 `;

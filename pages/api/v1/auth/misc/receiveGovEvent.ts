@@ -70,6 +70,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processProposalCreated({
+				network,
+				proposalIndex,
 				proposalType,
 				proposerAddress: substrateAddress
 			});
@@ -83,7 +85,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processVoted({
-				voterAddress: substrateAddress
+				network,
+				proposalIndex,
+				proposalType,
+				voterAddress: address
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -95,7 +100,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processBountyClaimed({
-				payeeAddress: substrateAddress
+				network,
+				payeeAddress: substrateAddress,
+				proposalIndex,
+				proposalType
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -160,7 +168,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 			await _processDelegated({
 				delegateAddress: substrateAddressTo,
-				delegatorAddress: substrateAddress
+				delegatorAddress: substrateAddress,
+				network
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -179,7 +188,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 			await _processUndelegated({
 				delegateAddress: substrateAddressTo,
-				delegatorAddress: substrateAddress
+				delegatorAddress: substrateAddress,
+				network
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -191,7 +201,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processIdentityVerificationSignUp({
-				address: substrateAddress
+				address: substrateAddress,
+				network
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -203,7 +214,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processCompleteJudgement({
-				address: substrateAddress
+				address: substrateAddress,
+				network
 			});
 
 			return res.status(200).json({ message: 'Success' });
@@ -216,7 +228,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			}
 
 			await _processIdentityCleared({
-				address: substrateAddress
+				address: substrateAddress,
+				network
 			});
 
 			return res.status(200).json({ message: 'Success' });

@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import CuratorProfile from './CuratorProfile';
-// import CuratorPendingRequestManager from './PendingRequestManager';
+import CuratorPendingRequestManager from './PendingRequestManager';
 
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
@@ -28,14 +28,14 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: 'bounties-curated',
 			title: 'Bounties Curated'
+		},
+		{
+			children: <CuratorPendingRequestManager />,
+			description: 'Review curator and child bounty requests',
+			icon: '/assets/icons/curator-dashboard/pending-request.svg',
+			key: 'pending-requests',
+			title: 'Pending Requests'
 		}
-		// {
-		// children: <CuratorPendingRequestManager />,
-		// description: 'Review curator and child bounty requests',
-		// icon: '/assets/icons/curator-dashboard/pending-request.svg',
-		// key: 'pending-requests',
-		// title: 'Pending Requests'
-		// }
 	];
 
 	const handleTabClick = (tabKey: string) => {

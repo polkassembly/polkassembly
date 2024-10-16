@@ -70,7 +70,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 
 	return (
 		<>
-			{curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0 || curatorData?.activeBounties?.count > 0 ? (
+			{curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0 ? (
 				<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[24px] font-bold text-blue-light-medium dark:text-lightWhite`}>Overview</p>
 					<div className='flex items-center justify-between'>

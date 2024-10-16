@@ -73,7 +73,7 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 
 	const network = String(req.headers['x-network']);
 
-	const { userAddress = '15AysydMuDH9XnzZsNTBezB5uLPjAGFBYtVVEu3p3MZqcSzC' } = req.body;
+	const { userAddress } = req.body;
 
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });

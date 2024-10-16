@@ -124,7 +124,7 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 					{currentUser?.id && currentUser?.username ? (
 						<CuratorDashboardTabItems handleClick={handleClick} />
 					) : (
-						<div className={'flex h-[900px]  flex-col items-center rounded-xl  px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}>
+						<div className={'flex h-[900px]  flex-col items-center rounded-xl  px-5 pt-5  md:pt-10'}>
 							<Image
 								src='/assets/Gifs/login-dislike.gif'
 								alt='empty state'

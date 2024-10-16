@@ -30,7 +30,7 @@ interface IBountiesListingProps {
 	network: string;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	const network = getNetworkFromReqHeaders(req?.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -59,8 +59,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const onPaginationChange = (page: number) => {
-		router.push({
-			pathname: router.pathname,
+		router?.push({
+			pathname: router?.pathname,
 			query: {
 				...router?.query,
 				page
@@ -71,9 +71,9 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const totalBountiesCount = data?.totalBountiesCount ?? 0;
 
 	useEffect(() => {
-		dispatch(setNetwork(props.network));
+		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.network]);
+	}, [props?.network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -114,7 +114,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination
 							pageSize={BOUNTIES_LISTING_LIMIT}
-							current={Number(router.query.page) || 1}
+							current={Number(router?.query?.page) || 1}
 							total={totalBountiesCount}
 							showSizeChanger={false}
 							hideOnSinglePage={true}

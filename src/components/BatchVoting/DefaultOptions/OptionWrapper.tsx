@@ -132,7 +132,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		});
 	};
 
-	if (id === null) {
+	if (id === null || isNaN(Number(id))) {
 		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
 	}
 

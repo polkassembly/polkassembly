@@ -9,13 +9,16 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { LeftOutlined } from '@ant-design/icons';
-import { spaceGrotesk } from 'pages/_app';
+import { poppins, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyActionModal from '~src/components/Bounties/bountyProposal/BountyActionModal';
 import { useTheme } from 'next-themes';
 import CuratorDashboardTabItems from '~src/components/CuratorDashboard';
 import SEOHead from '~src/global/SEOHead';
+import Image from 'next/image';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 interface ICuratorProfileProps {
 	network: string;
@@ -32,6 +35,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		}
 	};
 };
+
+const LoginButton = ({ onClick }: { onClick: () => void }) => (
+	<p
+		onClick={onClick}
+		className='w-full cursor-pointer rounded-md bg-[#E5007A] px-4 py-3 text-center text-[14px] text-white lg:w-[480px]'
+	>
+		Log In
+	</p>
+);
+
+const SignupButton = ({ onClick }: { onClick: () => void }) => (
+	<p
+		onClick={onClick}
+		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-3 text-center text-[14px] text-pink_primary lg:w-[480px] lg:border'
+	>
+		Sign Up
+	</p>
+);
+
 const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const dispatch = useDispatch();
 	const { network } = props;
@@ -43,6 +65,8 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
 	const handleClick = (num: number) => {
 		if (id) {
@@ -97,9 +121,39 @@ const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 					</button>
 				</div>
 				<div>
-					<CuratorDashboardTabItems handleClick={handleClick} />
+					{currentUser?.id && currentUser?.username ? (
+						<CuratorDashboardTabItems handleClick={handleClick} />
+					) : (
+						<div className={`flex h-[900px] ${poppins.variable} ${poppins.className} flex-col items-center rounded-xl  px-5 pt-5  md:pt-10`}>
+							<Image
+								src='/assets/Gifs/login-dislike.gif'
+								alt='empty state'
+								className='h-80 w-80 p-0'
+								width={320}
+								height={320}
+							/>
+							<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>Join Polkassembly to see your Curator Dashboard!</p>
+							<p className='p-0 text-center text-[#243A57] dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
+							<div className='pt-3'>
+								<LoginButton onClick={() => setLoginOpen(true)} />
+								<SignupButton onClick={() => setSignupOpen(true)} />
+							</div>
+						</div>
+					)}
 				</div>
 			</main>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			<BountyActionModal
 				theme={theme}
 				referendaModal={referendaModal}

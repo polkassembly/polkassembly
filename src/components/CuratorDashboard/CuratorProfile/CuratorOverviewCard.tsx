@@ -11,8 +11,9 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import { useNetworkSelector } from '~src/redux/selectors';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { chainProperties } from '~src/global/networkConstants';
+import { CuratorData } from '../types/types';
 
-const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
+const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const getLastSixMonths = () => {
@@ -69,7 +70,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 
 	return (
 		<>
-			{curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0 || curatorData?.activeBounties?.count > 0 ? (
+			{curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0 ? (
 				<div className='mt-5 rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[24px] font-bold text-blue-light-medium dark:text-lightWhite`}>Overview</p>
 					<div className='flex items-center justify-between'>
@@ -158,7 +159,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 								},
 								grid: {
 									line: {
-										stroke: theme === 'dark' ? '#3B444F' : '##EE7F10',
+										stroke: theme === 'dark' ? '#3B444F' : '#EE7F10',
 										strokeDasharray: '2 2',
 										strokeWidth: 1
 									}
@@ -220,7 +221,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 								{curatorData?.childBounties?.count}{' '}
 								<span className='text-[17px] text-blue-light-medium'>({parseBalance(String(curatorData?.childBounties?.totalAmount || '0'), 2, true, network)})</span>
 							</p>{' '}
-							{curatorData?.childBounties?.unclaimedAmount > 0 && (
+							{parseFloat(curatorData?.childBounties?.unclaimedAmount) > 0 && (
 								<div>
 									<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg bg-[#FF3C5F] p-3 text-[14px] text-white`}>
 										Unclaimed:{parseBalance(String(curatorData?.childBounties?.unclaimedAmount || '0'), 2, true, network)}
@@ -233,18 +234,18 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 			) : (
 				<div
 					className={
-						'mt-10 flex h-[600px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'
+						'mt-5 flex h-[600px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'
 					}
 				>
 					{' '}
 					<Image
 						src='/assets/Gifs/watering.gif'
 						alt='empty state'
-						className='m-0 h-96 w-96 p-0'
-						width={350}
-						height={350}
+						className='m-0 -mt-16  p-0'
+						width={500}
+						height={500}
 					/>
-					<span className='-mt-14 text-xl font-semibold text-[#243A57] dark:text-white'>Nothing to see here</span>
+					<span className='-mt-28 text-xl font-semibold text-[#243A57] dark:text-white'>Nothing to see here</span>
 					<span className='pt-3 text-center text-[#243A57] dark:text-white'>Curate bounties to view data here</span>
 				</div>
 			)}

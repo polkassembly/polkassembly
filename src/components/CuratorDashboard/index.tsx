@@ -9,6 +9,7 @@ import CuratorPendingRequestManager from './PendingRequestManager';
 
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
+import { spaceGrotesk } from 'pages/_app';
 
 const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const [activeTab, setActiveTab] = useState<string>('general');
@@ -54,12 +55,12 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 						<div
 							key={tab.key}
 							className={`flex cursor-pointer items-center justify-between px-3 py-2  transition-colors duration-300 ${
-								activeTab === tab.key ? 'rounded-lg border-[0.7px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
+								activeTab === tab.key ? 'rounded-lg border-[1.2px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
 							}`}
 							onClick={() => handleTabClick(tab.key)}
 						>
 							<div className='flex items-start gap-3'>
-								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'} p-2`}>
+								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? ' bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'} p-2`}>
 									<Image
 										src={tab.icon}
 										alt={`Curator Dashboard Icon ${tab.key}`}
@@ -73,13 +74,17 @@ const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ 
 								</div>
 								<div className='flex flex-col'>
 									<span
-										className={`${
-											activeTab === tab.key && 'font-bold text-pink_primary dark:text-[#FF4098]'
-										} whitespace-normal break-words text-[16px] font-medium dark:text-icon-dark-inactive`}
+										className={`${activeTab === tab.key && ' font-extrabold text-pink_primary dark:text-[#FF4098]'} whitespace-normal break-words ${spaceGrotesk.className} ${
+											spaceGrotesk.variable
+										} text-[16px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}
 									>
 										{tab.title}
 									</span>
-									<span className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'} mt-1 whitespace-normal break-words text-sm dark:text-icon-dark-inactive`}>
+									<span
+										className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'}  mt-1 ${spaceGrotesk.className} ${
+											spaceGrotesk.variable
+										} whitespace-normal break-words text-sm text-blue-light-medium dark:text-icon-dark-inactive`}
+									>
 										{tab.description}
 									</span>
 								</div>

@@ -19,8 +19,9 @@ import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ESocialType } from '~src/auth/types';
+import { CuratorData } from '../types/types';
 
-const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
+const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const [curatorprofile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);
@@ -57,7 +58,12 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
 	};
 
 	const handleCopyAddress = () => {
-		message.success('Address copied to clipboard');
+		if (address) {
+			copyToClipboard(address);
+			message.success('Address copied to clipboard');
+		} else {
+			message.error('No address available to copy');
+		}
 	};
 	const handleEditClick = () => {
 		setIsModalVisible(true);
@@ -86,7 +92,6 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
-
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
@@ -114,9 +119,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
 			});
 			setOnChainIdentity(onChainIdentity);
 		};
-
 		fetchIdentityInformation();
-
 		return () => {
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
@@ -177,6 +180,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity]);
+
 	useEffect(() => {
 		fetchCuratorProfile();
 		fetchCuratorBio();

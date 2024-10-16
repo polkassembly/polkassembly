@@ -57,9 +57,9 @@ const ProxyTypeBadges: React.FC<ProxyTypeBadgesProps> = ({ text }) => {
 				};
 			default:
 				return {
-					textColor: '#2060EB',
-					bgColor: '#2060EB14',
-					borderColor: '#2060EB'
+					textColor: '#B8216F',
+					bgColor: '#B8216F14',
+					borderColor: '##B8216F'
 				};
 		}
 	};
@@ -75,7 +75,7 @@ const ProxyTypeBadges: React.FC<ProxyTypeBadgesProps> = ({ text }) => {
 				borderColor: borderColor
 			}}
 		>
-			{displayText ? displayText : 'Any'}
+			{displayText ? displayText : text ? text : 'Any'}
 		</div>
 	);
 };

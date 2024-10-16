@@ -993,8 +993,14 @@ interface IMultisigAccount {
 	address: string;
 }
 
+interface IMultiAccountMember {
+	address: string;
+}
+
 interface IMultisig {
 	multi_account: IMultisigAccount[];
+	multi_account_member: IMultiAccountMember[];
+	threshold: number;
 }
 
 export interface IAccountData {

@@ -2,15 +2,45 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { poppins } from 'pages/_app';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Divider } from 'antd';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
+import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import userProfileBalances from '~src/util/userProfileBalances';
+import { formatedBalance } from '~src/util/formatedBalance';
 
-const BalanceDetails = () => {
+const ZERO_BN = new BN(0);
+
+const BalanceDetails = ({ address }: { address: string }) => {
+	const { api, apiReady } = useApiContext();
+	const currentUser = useUserDetailsSelector();
+	const { loginAddress } = currentUser;
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
+	const [balances, setBalances] = useState<{ freeBalance: BN; transferableBalance: BN; lockedBalance: BN; total: BN }>({
+		freeBalance: ZERO_BN,
+		lockedBalance: ZERO_BN,
+		total: ZERO_BN,
+		transferableBalance: ZERO_BN
+	});
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		(async () => {
+			const allBalances = await userProfileBalances({ address: address || loginAddress, api, apiReady, network });
+			setBalances({
+				freeBalance: allBalances?.freeBalance || ZERO_BN,
+				lockedBalance: allBalances?.transferableBalance || ZERO_BN,
+				total: allBalances?.totalBalance || ZERO_BN,
+				transferableBalance: allBalances?.lockedBalance || ZERO_BN
+			});
+		})();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, loginAddress, api, apiReady]);
 
 	return (
 		<div className={`${poppins.className} ${poppins.variable} flex items-center gap-2`}>
@@ -25,7 +55,9 @@ const BalanceDetails = () => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Balance</span>
 				</div>
-				<span className='text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>60 {unit}</span>
+				<span className='whitespace-nowrap text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>
+					{formatedBalance(balances.freeBalance.toString(), unit, 2)} {unit}
+				</span>
 			</div>
 			<Divider
 				type='vertical'
@@ -42,7 +74,9 @@ const BalanceDetails = () => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Transferrable</span>
 				</div>
-				<span className='text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>60 {unit}</span>
+				<span className='whitespace-nowrap text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>
+					{formatedBalance(balances.transferableBalance.toString(), unit, 2)} {unit}
+				</span>
 			</div>
 			<Divider
 				type='vertical'
@@ -59,7 +93,9 @@ const BalanceDetails = () => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Locked</span>
 				</div>
-				<span className='text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>60 {unit}</span>
+				<span className='whitespace-nowrap text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>
+					{formatedBalance(balances.lockedBalance.toString(), unit, 2)} {unit}
+				</span>
 			</div>
 		</div>
 	);

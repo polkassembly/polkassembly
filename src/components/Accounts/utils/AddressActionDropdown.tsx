@@ -3,20 +3,37 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import Skeleton from '~src/basic-components/Skeleton';
 import { Dropdown } from '~src/ui-components/Dropdown';
 
-const AddressActionDropdown = () => {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	ssr: false
+});
+
+const AddressActionDropdown = ({ address }: { address: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isDropdownActive, setIsDropdownActive] = useState(false);
+	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
+	const [openSetIdentityModal, setOpenSetIdentityModal] = useState(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const items: MenuProps['items'] = [
 		{
 			key: '1',
 			label: (
-				<div className='mt-1 flex items-center space-x-2'>
+				<div
+					onClick={() => setOpenAddressLinkModal(true)}
+					className='mt-1 flex items-center space-x-2'
+				>
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Link Address</span>
 				</div>
 			)
@@ -26,6 +43,17 @@ const AddressActionDropdown = () => {
 			label: (
 				<div className='mt-1 flex items-center space-x-2'>
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Add Proxy</span>
+				</div>
+			)
+		},
+		{
+			key: '3',
+			label: (
+				<div
+					onClick={() => (!address ? setOpenAddressLinkedModal(true) : setOpenSetIdentityModal(true))}
+					className='mt-1 flex items-center space-x-2'
+				>
+					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Set Identity</span>
 				</div>
 			)
 		}
@@ -48,6 +76,20 @@ const AddressActionDropdown = () => {
 					<ThreeDotsIcon />
 				</span>
 			</Dropdown>
+			<AddressConnectModal
+				linkAddressNeeded
+				open={openAddressLinkModal}
+				setOpen={setOpenAddressLinkModal}
+				closable
+				onConfirm={() => setOpenAddressLinkModal(false)}
+				usedInIdentityFlow={false}
+			/>
+			<OnchainIdentity
+				open={openSetIdentityModal}
+				setOpen={setOpenSetIdentityModal}
+				openAddressModal={openAddressLinkedModal}
+				setOpenAddressModal={setOpenAddressLinkedModal}
+			/>
 		</div>
 	);
 };

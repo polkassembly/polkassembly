@@ -16,14 +16,14 @@ const Tipping = dynamic(() => import('src/components/Tipping'), {
 });
 
 interface Props {
-	proxyAddress: string;
+	address: string;
 }
 
 interface IUsernameProfile {
 	username: string;
 }
 
-const SendFundsComponent = ({ proxyAddress }: Props) => {
+const SendFundsComponent = ({ address }: Props) => {
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [tippingUser, setTippingUser] = useState<string>('');
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
@@ -31,9 +31,9 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 		username: ''
 	});
 
-	const getData = async (proxyAddress: string) => {
+	const getData = async (address: string) => {
 		try {
-			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${proxyAddress}`, undefined, 'GET');
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`, undefined, 'GET');
 			if (error || !data || !data.username || !data.user_id) {
 				return;
 			}
@@ -46,15 +46,15 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 	};
 
 	useEffect(() => {
-		getData(proxyAddress);
+		getData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [proxyAddress]);
+	}, [address]);
 
 	return (
 		<div>
 			<Button
 				onClick={() => {
-					setTippingUser(proxyAddress);
+					setTippingUser(address);
 					setOpenTipping(true);
 				}}
 				// disabled={}
@@ -73,12 +73,12 @@ const SendFundsComponent = ({ proxyAddress }: Props) => {
 					<span className={`${poppins.className} ${poppins.variable} ml-[4px] text-sm font-medium`}>Send Funds</span>
 				</div>
 			</Button>
-			{proxyAddress && (
+			{address && (
 				<Tipping
 					username={profileDetails?.username || tippingUser || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
-					key={proxyAddress}
+					key={address}
 					paUsername={profileDetails?.username}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}

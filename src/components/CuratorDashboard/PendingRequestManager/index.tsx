@@ -4,6 +4,7 @@
 import React from 'react';
 
 function CuratorPendingRequestManager() {
+	// TODO: Implement CuratorPendingRequestManager
 	return <div>index</div>;
 }
 

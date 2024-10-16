@@ -233,7 +233,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: any }) => {
 			) : (
 				<div
 					className={
-						'mt-10 flex h-[600px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'
+						'mt-5 flex h-[600px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'
 					}
 				>
 					{' '}

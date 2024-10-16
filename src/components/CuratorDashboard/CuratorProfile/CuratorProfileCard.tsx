@@ -90,32 +90,35 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 		});
 	};
 
-	const fetchIdentityInformation = async () => {
-		const info = await getIdentityInformation({
-			address: address,
-			api: peopleChainApi ?? api,
-			network: network
-		});
-
-		if (info?.nickname && !onChainIdentity?.nickname) {
-			onChainIdentity.nickname = info?.nickname;
-		}
-		Object.entries(info).forEach(([key, value]) => {
-			if (value) {
-				if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)[key]?.length === 0) {
-					(onChainIdentity as any)[key] = value;
-					setAddressWithIdentity(getEncodedAddress(address, network) || '');
-				} else if (!(onChainIdentity as any)[key]) {
-					(onChainIdentity as any)[key] = value;
-				}
-			}
-		});
-		setOnChainIdentity(onChainIdentity);
-	};
-
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
 		let unsubscribes: (() => void)[];
+		const onChainIdentity: TOnChainIdentity = {
+			judgements: [],
+			nickname: ''
+		};
+		const fetchIdentityInformation = async () => {
+			const info = await getIdentityInformation({
+				address: address,
+				api: peopleChainApi ?? api,
+				network: network
+			});
+
+			if (info?.nickname && !onChainIdentity?.nickname) {
+				onChainIdentity.nickname = info?.nickname;
+			}
+			Object.entries(info).forEach(([key, value]) => {
+				if (value) {
+					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)[key]?.length === 0) {
+						(onChainIdentity as any)[key] = value;
+						setAddressWithIdentity(getEncodedAddress(address, network) || '');
+					} else if (!(onChainIdentity as any)[key]) {
+						(onChainIdentity as any)[key] = value;
+					}
+				}
+			});
+			setOnChainIdentity(onChainIdentity);
+		};
 		fetchIdentityInformation();
 		return () => {
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
@@ -177,6 +180,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity]);
+
 	useEffect(() => {
 		fetchCuratorProfile();
 		fetchCuratorBio();

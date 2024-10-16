@@ -6,127 +6,54 @@ import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { poppins } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
+import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatNumberWithSuffix } from '../../Bounties/utils/formatBalanceUsd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
+import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
+import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
+import TreasuryAssetDisplay from './TreasuryAssetDisplay';
+import BN from 'bn.js';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
+	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
+	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
-	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);
-	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
-	const [assethubValues, setAssethubValues] = useState<{
-		dotValue: string;
-		usdcValue: string;
-		usdtValue: string;
-	}>({
-		dotValue: '',
-		usdcValue: '',
-		usdtValue: ''
-	});
+
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
-	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
-	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
+	const BN_MILLION = new BN(10).pow(new BN(6));
 
-	// const totalTreasuryValue = formatUSDWithUnits(
-	// String(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000)
-	// );
+	const assetValue = formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const assetValueUSDC = formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString());
+	const assetValueUSDT = formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString());
+
+	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
+	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
+
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
+			(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
+				parseFloat(currentTokenPrice.value) +
 				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000
+				Number(assethubValues.usdtValue) / 1000000 +
+				Number(hydrationValues.usdcValue) / 1000000 +
+				Number(hydrationValues.usdtValue) / 1000000
 		)
 	);
-
-	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
-	const formatedBalanceDifference =
-		graphBalanceDifference &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				graphBalanceDifference.toString(),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: true
-				},
-				network
-			)
-		);
-	// const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
-
-	const sortedGraphData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
-
-	const fetchAssetsAmount = async () => {
-		if (!assethubApi || !assethubApiReady) return;
-
-		if (assethubApiReady && chainProperties?.[network]?.assetHubTreasuryAddress) {
-			try {
-				// Fetching balance in token (DOT)
-				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
-				if (tokenResult?.data?.free) {
-					const freeTokenBalance = tokenResult.data.free.toBigInt();
-					setAssethubValues((values) => ({ ...values, dotValue: freeTokenBalance.toString() }));
-				}
-
-				// Fetch balance in USDC
-				if (chainProperties[network]?.supportedAssets?.[2].genralIndex) {
-					const usdcResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[2].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
-
-					if (usdcResult.isNone) {
-						console.log('No data found for the USDC assets');
-					} else {
-						const data = usdcResult.unwrap();
-						const freeUSDCBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
-					}
-				}
-
-				// Fetch balance in USDT
-				if (chainProperties[network]?.supportedAssets?.[1].genralIndex) {
-					const usdtResult = (await assethubApi.query.assets.account(
-						chainProperties[network]?.supportedAssets?.[1].genralIndex,
-						chainProperties[network].assetHubTreasuryAddress
-					)) as any;
-
-					if (usdtResult.isNone) {
-						console.log('No data found for the USDT assets');
-					} else {
-						const data = usdtResult.unwrap();
-						const freeUSDTBalance = data.balance.toBigInt().toString();
-						setAssethubValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
-					}
-				}
-				return;
-			} catch (e) {
-				console.error('Error fetching asset balance:', e);
-			}
-		}
-
-		return;
-	};
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -165,52 +92,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		}
 	};
 
-	const getDifferenceData = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IDailyTreasuryTallyData>('/api/v1/treasury-amount-history/get-daily-tally-data');
-
-			if (error) {
-				console.error('Error fetching daily tally data:', error);
-			}
-
-			if (data) {
-				if (sortedGraphData.length > 0) {
-					const lastGraphBalance = parseFloat(sortedGraphData[sortedGraphData.length - 1]?.balance);
-
-					const apiBalance = parseFloat(data.balance);
-					const difference = apiBalance - lastGraphBalance;
-
-					setGraphBalanceDifference(difference);
-				}
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
-
-	useEffect(() => {
-		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setAssethubApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-					setAssethubApiReady(true);
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
-		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	useEffect(() => {
 		fetchDataFromApi();
 		getGraphData();
@@ -218,15 +99,13 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, [network]);
 
 	useEffect(() => {
-		getDifferenceData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, graphData.length]);
-
-	useEffect(() => {
-		if (!assethubApi || !assethubApiReady) return;
-		fetchAssetsAmount();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [assethubApi, assethubApiReady]);
+		if (assethubApiReady) {
+			fetchAssetsAmount();
+		}
+		if (hydrationApiReady) {
+			fetchHydrationAssetsAmount();
+		}
+	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
 
 	return (
 		<div
@@ -252,7 +131,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												/>
 											</div>
 										)}
-										{formatedBalanceDifference && (
+										{totalTreasuryValueUSD && (
 											<div className='flex items-baseline'>
 												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 													~${totalTreasuryValueUSD}
@@ -295,10 +174,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						)}
 					</div>
 					{/* // current Price */}
-					{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
+					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
 						<div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='flex flex-col justify-between gap-2 xl:flex-row'>
+								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '>
 									<div className='flex items-baseline justify-start font-medium xl:justify-between'>
 										{available.value ? (
 											<div className='flex items-center'>
@@ -306,7 +185,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
 													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
 													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
-													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
+													<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>
 											</div>
 										) : (
@@ -315,41 +194,36 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									</div>
 
 									{chainProperties[network]?.assetHubTreasuryAddress && (
-										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
-											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-												<AssethubIcon />
-												Asset Hub
-											</span>
-											<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-												<div className='text-xs'>
-													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
-												</div>
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{assetValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
-												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{assetValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
-														</div>
-													</>
-												)}
-											</div>
-										</div>
+										<TreasuryAssetDisplay
+											title='Asset Hub'
+											icon={<AssethubIcon />}
+											value={assetValue}
+											unit={unit}
+											valueUSDT={assetValueUSDT}
+											valueUSDC={assetValueUSDC}
+											isLoading={!assethubApiReady}
+											supportedAssets={chainProperties[network]?.supportedAssets}
+										/>
+									)}
+								</div>
+							) : (
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+							)}
+							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+								<div className='mt-2 flex flex-col xl:items-end'>
+									{chainProperties[network]?.hydrationTreasuryAddress && (
+										<TreasuryAssetDisplay
+											title='Hydration'
+											icon={<HydrationIcon />}
+											value={hydrationValue}
+											unit={unit}
+											valueUSDT={hydrationValueUSDT}
+											valueUSDC={hydrationValueUSDC}
+											isLoading={!hydrationApiReady}
+											supportedAssets={chainProperties[network]?.supportedAssets}
+										/>
 									)}
 								</div>
 							) : (
@@ -393,33 +267,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 
 										{chainProperties[network]?.assetHubTreasuryAddress && (
-											<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
-												<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
-													<AssethubIcon />
-													Asset Hub
-												</span>
-												<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-													<div className=''>
-														{formatNumberWithSuffix(Number(assetValue))} <span className='ml-[2px] font-normal'>{unit}</span>
-													</div>
-													<Divider
-														className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-														type='vertical'
-													/>
-													<div className=''>
-														{assetValueUSDC}
-														<span className='ml-[3px] font-normal'>USDC</span>
-													</div>
-													<Divider
-														className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-														type='vertical'
-													/>
-													<div className=''>
-														{assetValueUSDT}
-														<span className='ml-[3px] font-normal'>USDT</span>
-													</div>
-												</div>
-											</div>
+											<TreasuryAssetDisplay
+												title='Asset Hub'
+												icon={<AssethubIcon />}
+												value={assetValue}
+												unit={unit}
+												valueUSDT={assetValueUSDT}
+												valueUSDC={assetValueUSDC}
+												isLoading={!assethubApiReady}
+												supportedAssets={chainProperties[network]?.supportedAssets}
+											/>
 										)}
 									</div>
 								) : (
@@ -440,7 +297,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<>
 										<div className='sm:mb-2'>
 											<div className='flex items-center'>
-												<span className={`${poppins.className} ${poppins.variable} mr-2 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}>
+												<span
+													className={`${poppins.className} ${poppins.variable} mr-2 pt-[3px] text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
+												>
 													Spend Period Remaining
 												</span>
 
@@ -451,7 +310,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 
 											<div
-												className={`${poppins.className} ${poppins.variable} mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
+												className={`${poppins.className} ${poppins.variable} flex items-baseline whitespace-pre pt-[5px] font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
 											>
 												{spendPeriod.value?.total ? (
 													<>
@@ -478,9 +337,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												)}
 											</div>
 										</div>
-										<span className='flex items-center gap-[10px]'>
+										<span className=' flex items-center gap-[10px]'>
 											<ProgressBar
-												className='m-0 flex items-center p-0'
+												className=' flex items-center p-0'
 												percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
 												trailColor={trailColor}
 												strokeColor='#E5007A'

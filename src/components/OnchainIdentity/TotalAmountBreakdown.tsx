@@ -22,7 +22,7 @@ import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirec
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import classNames from 'classnames';
 
-const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
+const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -125,7 +125,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 							className='flex justify-end'
 							onClick={() => setAmountBreakup(!amountBreakup)}
 						>
-							{formatedBalance(perSocialBondFee?.add(registerarFee?.add(minDeposite)).toString(), unit, 2)} {unit}
+							{formatedBalance(registerarFee?.add(minDeposite).toString(), unit, 2)} {unit}
 							{amountBreakup ? <DownArrowIcon className='ml-2 text-2xl' /> : <UpArrowIcon className='ml-2 text-xl' />}
 						</span>
 						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
@@ -133,12 +133,6 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 				</div>
 				{amountBreakup && (
 					<div className='mt-3 flex flex-col gap-2'>
-						<span className='flex justify-between text-sm'>
-							<span className='text-lightBlue dark:text-blue-dark-medium'>Bond</span>
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(perSocialBondFee.toString(), unit)} {unit} per social field
-							</span>
-						</span>
 						<span className='flex justify-between text-sm'>
 							<span className='text-lightBlue dark:text-blue-dark-medium'>
 								Min Deposit{' '}

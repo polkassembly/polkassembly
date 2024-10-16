@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
@@ -17,14 +16,12 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
@@ -42,6 +39,8 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { getTimeline } from '~src/util/getTimeline';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -54,40 +53,6 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	} catch (error) {
 		return [];
 	}
-};
-
-export const getTimeline = (
-	proposals: any,
-	isStatus?: {
-		swap: boolean;
-	}
-) => {
-	return (
-		proposals?.map((obj: any) => {
-			const statuses = obj?.statusHistory as { status: string }[];
-			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
-				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
-					if (decidingIndex >= 0) {
-						const obj = statuses[index];
-						statuses.splice(index, 1);
-						statuses.splice(decidingIndex, 0, obj);
-						if (isStatus) {
-							isStatus.swap = true;
-						}
-					}
-				}
-			}
-			return {
-				created_at: obj?.createdAt,
-				hash: obj?.hash,
-				index: obj?.index,
-				statuses,
-				type: obj?.type
-			};
-		}) || []
-	);
 };
 
 export interface IReactions {
@@ -136,6 +101,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
+	progress_report?: IProgressReport;
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -286,6 +252,9 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.created_at && !newData.created_at) {
 								newData.created_at = data.created_at;
+							}
+							if (data.progress_report) {
+								newData.progress_report = data.progress_report;
 							}
 							if (!newData.topic_id) {
 								newData.topic_id = getTopicFromFirestoreData(data, proposalType)?.id || null;
@@ -766,6 +735,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.MOTION;
+		}
 		if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
 			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
@@ -846,52 +818,97 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
-
 		const postData = subsquidData.proposals?.[0] || subsquidData.announcements?.[0];
+
+		if (postData?.proposalArguments && !postData?.preimage) {
+			postData.preimage = {
+				description: postData?.proposalArguments?.description,
+				method: postData?.proposalArguments?.method,
+				proposedCall: { args: postData?.proposalArguments?.args, method: postData?.proposalArguments?.method, section: postData?.proposalArguments?.section },
+				section: postData?.proposalArguments?.section
+			};
+			postData.proposalArguments = null;
+		}
+
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
-		const proposedCall = preimage?.proposedCall;
+		const proposedCall = preimage?.proposedCall || postData?.proposalArguments?.args;
 		let remark = '';
 		let requested = BigInt(0);
 		const beneficiaries: IBeneficiary[] = [];
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+			if (
+				proposedCall?.args?.assetKind?.assetId?.value?.interior ||
+				proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+				proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
+			) {
+				const call =
+					proposedCall?.args?.assetKind?.assetId?.value?.interior?.value ||
+					proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+					proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
-			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+
+			proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
 
 			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
 				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
+			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id) {
+				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id, network);
 			}
 
-			if (proposedCall.args.amount) {
-				requested = proposedCall.args.amount;
-				if (proposedCall.args.beneficiary) {
+			if (proposedCall?.args?.amount) {
+				requested = proposedCall?.args?.amount;
+				if (proposedCall?.args?.beneficiary) {
 					beneficiaries.push({
-						address: proposedCall.args.beneficiary as string,
-						amount: proposedCall.args.amount
+						address:
+							typeof proposedCall?.args?.beneficiary === 'string'
+								? proposedCall?.args?.beneficiary
+								: (proposedCall?.args?.beneficiary as any)?.value?.length
+								? (proposedCall?.args?.beneficiary as any)?.value
+								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) ||
+								  (proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.[0]?.id ||
+								  '',
+						amount: proposedCall?.args?.amount
 					});
 				}
 			} else {
-				const calls = proposedCall.args.calls;
+				const calls = proposedCall?.args?.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
-					calls.forEach((call) => {
-						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-							remark += call.remark + '\n';
-						}
-						if (call && call.amount) {
-							requested += BigInt(call.amount);
-							if (call.beneficiary) {
-								beneficiaries.push({
-									address: call.beneficiary as string,
-									amount: call.amount
-								});
+					if (assetId) {
+						calls.forEach((call) => {
+							if (call?.value?.beneficiary?.value?.interior?.value?.id) {
+								call.value.beneficiary.value.interior.value.id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value.id, network);
+							} else if (call?.value?.beneficiary?.value?.interior?.value?.[0]?.id) {
+								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value?.[0].id, network);
 							}
-						}
-					});
+
+							const beneficiary = {
+								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value?.[0]?.id || '',
+								amount: call?.value?.amount
+							};
+							requested += BigInt(call?.value?.amount || 0);
+
+							beneficiaries.push(beneficiary);
+						});
+					} else {
+						calls.forEach((call) => {
+							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+								remark += call.remark + '\n';
+							}
+							if (call && call.amount) {
+								requested += BigInt(call.amount);
+								if (call.beneficiary) {
+									beneficiaries.push({
+										address: call.beneficiary as string,
+										amount: call.amount
+									});
+								}
+							}
+						});
+					}
 				}
 			}
 		}
@@ -1132,6 +1149,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
+				post.progress_report = { ...data.progress_report, created_at: data?.progress_report?.created_at?.toDate?.() };
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1168,12 +1186,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
-			if (post.content === '' || post.title === '' || post.title === undefined || post.content === undefined) {
+			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
 
-				if (!post.content && !post.title && (res.title || res.content)) {
+				if (res.title || res.content) {
 					post.dataSource = 'subsquare';
 				}
 
@@ -1191,7 +1209,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip' ? timeline.hash : timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
-					return { ...timeline, commentsCount };
+					return { ...timeline, commentsCount, index: postId };
 				});
 				const timelines: Array<any> = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map((timeline) => timeline.value);
@@ -1203,7 +1221,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					date: dayjs(currentTimelineObj?.created_at),
 					firstCommentId: '',
 					id: 1,
-					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash || postId,
 					status: getStatus(currentTimelineObj?.type),
 					type: currentTimelineObj?.type
 				};

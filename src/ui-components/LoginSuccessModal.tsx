@@ -11,7 +11,7 @@ import { useTheme } from 'next-themes';
 import * as validation from 'src/util/validation';
 import queueNotification from './QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IAddProfileResponse } from '~src/auth/types';
@@ -23,27 +23,29 @@ import ImageIcon from './ImageIcon';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
+import UsernameSkipAlertModal from './UsernameSkipAlertContent';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
-	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
 	theme?: string;
 }
 
 const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
+	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [optionalUsername, setOptionalUsername] = useState('');
 	const [showSuccessModal, setShowSuccessModal] = useState(true);
 	const [isError, setIsError] = useState(false);
 	const [email, setEmail] = useState('');
 	const [emailError, setEmailError] = useState(false);
-	const userDetailsContext = useUserDetailsSelector();
-	const currentUser = useUserDetailsSelector();
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [firstPassword, setFirstPassword] = useState('');
 	const { password } = validation;
+	const [skipUsername, setSkipUsername] = useState<boolean>(false);
 
 	const validateUsername = (optionalUsername: string) => {
 		let errorUsername = 0;
@@ -77,22 +79,29 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 		setSignupOpen && setSignupOpen(false);
 	};
 
-	const handleOptionalDetails = async () => {
-		if (optionalUsername && optionalUsername.trim() !== '') {
+	const generateCustomUsername = () => {
+		if (!currentUser?.loginAddress?.length) return;
+		const encodedAddress = getEncodedAddress(currentUser?.loginAddress, network) || currentUser?.loginAddress;
+		const name = encodedAddress?.slice(0, 5) + '_' + encodedAddress?.slice(encodedAddress.length - 5, encodedAddress.length);
+		return name;
+	};
+
+	const handleOptionalDetails = async (skipUsername?: boolean) => {
+		if (optionalUsername && optionalUsername.trim() !== '' && !skipUsername) {
 			if (!validateUsername(optionalUsername)) return;
 		}
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify([]),
 			bio: '',
-			custom_username: true,
+			custom_username: !skipUsername,
 			email: email || '',
 			image: currentUser.picture || '',
 			password: firstPassword || '',
 			social_links: JSON.stringify([]),
 			title: '',
 			user_id: Number(currentUser.id),
-			username: optionalUsername
+			username: skipUsername ? generateCustomUsername() ?? optionalUsername : optionalUsername
 		});
 
 		if (email && email.length > 0) {
@@ -104,7 +113,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			}
 
 			if (data?.token) {
-				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+				handleTokenChange(data?.token, { ...currentUser }, dispatch);
 				setLoading(false);
 				setEmailError(false);
 				setLoginOpen?.(false);
@@ -122,7 +131,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			}
 
 			if (data?.token) {
-				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+				handleTokenChange(data?.token, { ...currentUser }, dispatch);
 				setLoading(false);
 				setShowSuccessModal(false);
 				setIsError(false);
@@ -130,10 +139,15 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 		}
 	};
 
-	return (
+	return skipUsername ? (
+		<UsernameSkipAlertModal
+			username={generateCustomUsername() || ''}
+			closeModal={() => setLoginOpen?.(false)}
+		/>
+	) : (
 		<div>
 			{showSuccessModal && (
-				<AuthForm onSubmit={handleOptionalDetails}>
+				<AuthForm onSubmit={() => handleOptionalDetails()}>
 					<div>
 						<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 							<div className='flex justify-center'>
@@ -186,7 +200,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							{!isError ? (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm'
-									message={<span className='dark:text-blue-dark-high'>You can update your username from the settings page.</span>}
+									message={<span className='dark:text-blue-dark-high'>You can update your username from the profile page.</span>}
 									type='info'
 									showIcon
 								/>
@@ -203,13 +217,24 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							style={{ background: '#D2D8E0', flexGrow: 1 }}
 							className='-mt-2 dark:bg-separatorDark'
 						/>
-						<div className='mb-6 flex px-8'>
+						<div className='mb-6 flex items-end justify-end gap-4 pr-8'>
+							<CustomButton
+								loading={loading}
+								onClick={() => {
+									setSkipUsername(true);
+									handleOptionalDetails(true);
+								}}
+								variant='default'
+								buttonsize='sm'
+								className='tracking-wide'
+								text='Skip'
+							/>
 							<CustomButton
 								loading={loading}
 								htmlType='submit'
 								variant='primary'
 								buttonsize='sm'
-								className='ml-auto'
+								className='ml-0 tracking-wide'
 								text='Next'
 							/>
 						</div>
@@ -217,7 +242,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 				</AuthForm>
 			)}
 			{!showSuccessModal && (
-				<AuthForm onSubmit={handleOptionalDetails}>
+				<AuthForm onSubmit={() => handleOptionalDetails()}>
 					<div>
 						<div className='my-4 ml-7 flex justify-between dark:text-white'>
 							<div className='flex'>

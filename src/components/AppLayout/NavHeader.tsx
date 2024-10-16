@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -47,6 +47,10 @@ import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import ToggleButton from '~src/ui-components/ToggleButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import { GlobalActions } from '~src/redux/global';
+import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -78,6 +82,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
+
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
@@ -206,6 +211,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		});
 	}
+	menudropDownItems.push({
+		className: 'logo-class',
+		key: 'Theme',
+		label: <ToggleButton />
+	});
 
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -258,7 +268,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				key: 'set on-chain identity',
 				label: (
 					<Link
-						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+						className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 						href={''}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -321,18 +331,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		</Dropdown>
 	);
 
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
 	return (
 		<Header
 			className={`${className} shadow-md ${
@@ -343,13 +341,27 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
-				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
+				className='ml-3 mr-5 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='text-2xl' />
+				{!sidedrawer ? (
+					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
+							alt=''
+						/>
+					</div>
+				) : (
+					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
+						<ImageIcon
+							src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
+							alt=''
+						/>
+					</div>
+				)}
 			</div>
 			<div className='ml-[84px] hidden lg:block'></div>
 			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
-				<div className='flex items-center'>
+				<div className='ml-2 flex items-center md:ml-0'>
 					<Link
 						className='logo-size flex lg:hidden'
 						href={'/'}
@@ -364,17 +376,20 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className='type-container hidden items-center gap-1 sm:flex'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+					<div className={`type-container ${sidedrawer && '3xl:pl-0 pl-28'} hidden items-center gap-1 sm:flex`}>
+						<span className='line-container ml-4 mr-2  h-5 w-[1.5px] bg-pink_primary  dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
-					<SearchBar className='searchbar-container' />
-					<InAppNotification />
+				<div className=' flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
+					<SearchBar
+						className='searchbar-container'
+						setSidedrawer={setSidedrawer}
+					/>
+					<InAppNotification setSidedrawer={setSidedrawer} />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
@@ -388,7 +403,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									text='Login'
 									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
-										setSidedrawer(false);
+										if (isMobile) {
+											dispatch(GlobalActions.setIsSidebarCollapsed(true));
+											setSidedrawer(false);
+										}
 										setLoginOpen(true);
 									}}
 								/>
@@ -414,20 +432,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div
-							className='mr-2 lg:mr-0'
-							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
-									userId: id || '',
-									userName: username || ''
-								});
-							}}
-						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
-						</div>
 					</Space>
+					<div className='mr-2 hidden md:block lg:mr-0'>
+						<ToggleButton />
+					</div>
 					{open ? (
 						<button
 							onBlur={() => {
@@ -463,9 +471,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
+										<div className='mt-6 w-full'>
+											<BigToggleButton />
+										</div>
 										{username ? (
 											<div>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={(e) => {
@@ -482,7 +493,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											</div>
 										) : (
 											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-8' />
+												<Divider className='my-6' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {
@@ -525,20 +536,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						</button>
 					)}
 				</div>
-
-				<SignupPopup
-					setLoginOpen={setLoginOpen}
-					modalOpen={openSignup}
-					setModalOpen={setSignupOpen}
-					isModal={true}
-				/>
-				<LoginPopup
-					setSignupOpen={setSignupOpen}
-					modalOpen={openLogin}
-					setModalOpen={setLoginOpen}
-					isModal={true}
-				/>
 			</nav>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
 					<Identity

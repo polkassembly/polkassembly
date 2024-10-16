@@ -24,6 +24,7 @@ import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
 import GreenTickIcon from '~assets/icons/green-tick.svg';
 import MinusSignIcon from '~assets/icons/minus-sign.svg';
+import CrossSignIcon from '~assets/icons/cross-sign.svg';
 import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
 import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
 import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
@@ -126,6 +127,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
 	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
 	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
+	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
@@ -142,7 +144,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 		});
 		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
-		return wordCount > 200;
+		return wordCount > 100;
 	};
 
 	if (filterSentiments) {
@@ -214,7 +216,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	useEffect(() => {
 		getOverallSentimentPercentage();
 		if (!Object.keys(comments).length) return;
-		if (network != 'rococo') return;
 		setHasEnoughContent(CommentsContentCheck(comments));
 		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,11 +324,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
-	const toggleSummary = (type: 'positive' | 'negative') => {
+	const toggleSummary = (type: 'positive' | 'negative' | 'neutral') => {
 		if (type === 'positive') {
 			setShowPositiveSummary(!showPositiveSummary);
-		} else {
+		} else if (type === 'negative') {
 			setShowNegativeSummary(!showNegativeSummary);
+		} else if (type === 'neutral') {
+			setNeutralSummary(!showNeutralSummary);
 		}
 	};
 
@@ -390,22 +393,20 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-			{network == 'rococo' ? (
-				<div className='mt-4'>
-					{fetchingAISummary ? (
-						<Skeleton className='mt-4' />
-					) : aiContentSummary && hasEnoughContent ? (
-						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
-							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
-								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
-								<span
-									className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
-								>
-									<span className='mr-1 '>Based on</span>
-									{allComments.length || 0}
-									<span className='ml-1'>Comments</span>
-								</span>
-							</div>
+			<div className='mt-4'>
+				{fetchingAISummary ? (
+					<Skeleton className='mt-4' />
+				) : aiContentSummary && hasEnoughContent && (aiContentSummary?.summary_positive || aiContentSummary?.summary_neutral || aiContentSummary?.summary_negative) ? (
+					<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+						<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+							<span
+								className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+							>
+								<span className='mr-1 '>Based on all comments and replies</span>
+							</span>
+						</div>
+						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 20 && (
 							<div className='mt-2 flex items-start gap-4'>
 								<span className='mt-2'>
 									<GreenTickIcon />
@@ -422,9 +423,31 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									)}
 								</p>
 							</div>
+						)}
+
+						{aiContentSummary?.summary_neutral && aiContentSummary.summary_neutral.split(' ').length > 20 && (
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<MinusSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
+										<span
+											onClick={() => toggleSummary('neutral')}
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
+										>
+											{showNeutralSummary ? 'See Less' : 'See More'}
+										</span>
+									)}
+								</p>
+							</div>
+						)}
+
+						{aiContentSummary?.summary_negative && aiContentSummary.summary_negative.split(' ').length > 20 && (
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<CrossSignIcon />
 								</span>
 								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
@@ -438,13 +461,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									)}
 								</p>
 							</div>
-							<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-								<AiStarIcon className='text-base' /> AI-generated from comments
-							</h2>
-						</div>
-					) : null}
-				</div>
-			) : null}
+						)}
+						<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+							<AiStarIcon className='text-base' /> AI-generated from comments
+						</h2>
+					</div>
+				) : null}
+			</div>
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'
@@ -551,7 +574,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
-							image='/assets/post-comment.png'
+							image='/assets/Gifs/login-discussion.gif'
 							title='Join Polkassembly to Comment on this proposal.'
 							subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 						/>

@@ -7,12 +7,12 @@ import { Card, MenuProps, Space, Spin } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { DownOutlined } from '@ant-design/icons';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useTheme } from 'next-themes';
 import { IGetStatusWiseRefOutcome } from './types';
+import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -43,7 +43,10 @@ const StyledCard = styled(Card)`
 const LegendContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
+	gap: 4px 0;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	overflow-x: auto;
 	white-space: nowrap;
 	padding-top: 2px;
@@ -60,7 +63,7 @@ const LegendContainer = styled.div`
 const AnalyticsReferendumOutcome = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1260;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
 	const [trackIds, setTrackIds] = useState<number[]>([]);
@@ -146,40 +149,48 @@ const AnalyticsReferendumOutcome = () => {
 	const data = [
 		{
 			color: '#ff0000',
-			id: 'timeout',
+			id: 'Timeout',
 			label: 'Timeout',
 			value: statusInfo?.timeout
 		},
 		{
 			color: '#ff6000',
-			id: 'ongoing',
+			id: 'Ongoing',
 			label: 'Ongoing',
 			value: statusInfo?.ongoing
 		},
 		{
 			color: '#27d941',
-			id: 'approved',
+			id: 'Approved',
 			label: 'Approved',
 			value: statusInfo?.approved
 		},
 		{
 			color: '#6800ff',
-			id: 'rejected',
+			id: 'Rejected',
 			label: 'Rejected',
 			value: statusInfo?.rejected
 		},
 		{
 			color: '#fdcc4a',
-			id: 'cancelled',
+			id: 'Cancelled',
 			label: 'Cancelled',
 			value: statusInfo?.cancelled
 		}
 	];
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard
+			className={`mx-auto ${
+				isMobile ? 'max-h-[525px]' : 'max-h-[500px]'
+			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+		>
 			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
-				<div className={'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
+				<div
+					className={
+						'flex h-[30px] w-[112px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2 text-sm font-medium dark:border-blue-dark-medium'
+					}
+				>
 					<Dropdown
 						menu={{ items }}
 						theme={theme}
@@ -193,7 +204,7 @@ const AnalyticsReferendumOutcome = () => {
 											.join(' ')
 											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
 									: 'All Tracks'}
-								<DownOutlined />
+								<ArrowDownIcon className='dark:text-blue-dark-medium' />
 							</Space>
 						</a>
 					</Dropdown>
@@ -307,15 +318,16 @@ const AnalyticsReferendumOutcome = () => {
 						{data.map((item) => (
 							<div
 								key={item.id}
-								className='mb-2 mr-4 flex items-center text-xs text-bodyBlue dark:text-white'
+								className='mb-2 mr-4 flex w-[50%] items-center justify-between text-xs text-bodyBlue dark:text-white'
 							>
-								<div
-									className='mr-2 h-2 w-2 rounded-full'
-									style={{ background: item.color }}
-								></div>
-								<p className='m-0 p-0'>
-									{item.label} - {item.value}
-								</p>
+								<div className='flex items-center gap-x-1'>
+									<div
+										className='h-2 w-2 rounded-full'
+										style={{ background: item.color }}
+									></div>
+									<p className='m-0 p-0'>{item.label}</p>
+								</div>
+								<p className='m-0 p-0'>{item.value}</p>
 							</div>
 						))}
 					</LegendContainer>

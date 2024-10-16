@@ -65,7 +65,7 @@ const AccountSelectionForm = ({
 	return (
 		<article className={`flex w-full flex-col ${className}`}>
 			<div className='mb-1 ml-[-6px] flex flex-wrap items-center gap-x-2'>
-				<h3 className='inner-headings mb-[1px] dark:text-blue-dark-medium msm:ml-1.5'>{title}</h3>
+				<h3 className='inner-headings mb-[1px] ml-1 text-xs dark:text-blue-dark-medium sm:ml-1.5 sm:text-base'>{title}</h3>
 				{!withoutInfo && (
 					<HelperTooltip
 						className='-mt-1 dark:text-grey_primary'

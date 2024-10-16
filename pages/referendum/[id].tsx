@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 // import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useApiContext } from '~src/context';
@@ -21,6 +21,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { FrownOutlined } from '@ant-design/icons';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -79,12 +80,8 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 			/>
 		);
 	}
-	if (error) {
-		return <ErrorState errorMessage={error} />;
-	}
-	if (!post) return null;
 
-	if (post)
+	if (post) {
 		return (
 			<>
 				<SEOHead
@@ -103,6 +100,21 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 				</div>
 			</>
 		);
+	} else if (error) {
+		return (
+			<div className='mt-20 flex flex-col items-center justify-center'>
+				<div className='flex items-center gap-5'>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+				</div>
+				<p className='mt-2 text-lg text-gray-500'>
+					Post not found in the {PostCategory.REFERENDA || 'specified'} category. If you just created a post, it might take up to a minute to appear.
+				</p>
+				<div className='mt-5'>
+					<BackToListingView postCategory={PostCategory.REFERENDA} />
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className='mt-16'>

@@ -166,7 +166,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Teleport
+						Teleport funds to People Chain
 					</div>
 				}
 				footer={

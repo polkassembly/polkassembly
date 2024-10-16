@@ -35,9 +35,9 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
+import useImagePreloader from '~src/hooks/useImagePreloader';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -118,6 +118,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [justStart, setJustStart] = useState<boolean>(true);
 	const currentUser = useUserDetailsSelector();
 	const inputRef = useRef<InputRef>(null);
+	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 
 	useEffect(() => {
 		if (openModal) {
@@ -928,7 +929,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						)}
 
 						{!loading &&
-							(!!searchInputErr.err || !!onchainPostResults || !!offchainPostResults || !!peopleResults || (!isNaN(Number(finalSearchInput)) && !!finalSearchInput.length)) && (
+							(finalSearchInput.length !== 0 ||
+								(!justStart && (!!onchainPostResults || !!offchainPostResults || !!peopleResults)) ||
+								(!isNaN(Number(finalSearchInput)) && !!finalSearchInput.length)) && (
 								<SearchErrorsCard
 									isSearchErr={
 										(searchInput?.trim().length <= 2 || !isNaN(Number(finalSearchInput))) && searchInputErr.clicked ? true : searchInputErr?.err && !!finalSearchInput?.length
@@ -962,9 +965,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				{finalSearchInput.length === 0 && justStart && (
 					<div className='flex h-[360px] flex-col items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						{/* <StartSearchIcon /> */}
-						<ImageIcon
-							src='/assets/search/search-start.svg'
-							alt='search start icon'
+						<Image
+							src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
+							alt='search-icon'
+							width={274}
+							height={274}
+							className='-my-[40px]'
+							priority={true}
 						/>
 						<span className='mt-8 text-center tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
 						<div className='mt-2 flex items-center gap-1 text-xs font-medium tracking-[0.01em]'>

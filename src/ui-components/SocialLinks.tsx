@@ -4,7 +4,7 @@
 
 import React, { FC } from 'react';
 import { ESocialType, ISocial } from '~src/auth/types';
-import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { DiscordIcon, EmailIcon, MatrixIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 
 interface ISocialIconProps {
 	type: ESocialType;
@@ -16,7 +16,7 @@ export const SocialIcon: FC<ISocialIconProps> = (props) => {
 		case ESocialType.EMAIL:
 			return <EmailIcon className={props.className} />;
 		case ESocialType.RIOT:
-			return <RiotIcon className={props.className} />;
+			return <MatrixIcon className={props.className} />;
 		case ESocialType.TWITTER:
 			return <TwitterIcon className={props.className} />;
 		case ESocialType.TELEGRAM:

@@ -285,7 +285,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 							<div className='flex w-full items-end gap-2 text-sm '>
 								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 									<Address
-										address={proposer || ''}
+										address={proposer || loginAddress || ''}
 										isTruncateUsername={false}
 										displayInline
 									/>
@@ -474,10 +474,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${
-							(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading || availableBalance.lte(new BN(fundingAmount || '0'))) && 'opacity-50'
-						} `}
-						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || availableBalance.lte(new BN(fundingAmount || '0')) || loading.isLoading}
+						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading || gasFee.gte(availableBalance)) && 'opacity-50'} `}
+						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading.isLoading || gasFee.gte(availableBalance)}
 					/>
 				</div>
 			</div>

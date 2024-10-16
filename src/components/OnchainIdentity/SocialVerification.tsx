@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useEffect, useRef, useState } from 'react';
-import { Timeline, TimelineItemProps } from 'antd';
+import { message, Timeline, TimelineItemProps, Tooltip } from 'antd';
 import styled from 'styled-components';
-import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { CopyIcon, EmailIcon, MatrixIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
@@ -20,21 +20,44 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SocialVerificationInprogress from './SocialVerificationInprogress';
 import Image from 'next/image';
 import messages from '~src/auth/utils/messages';
+import { MessageType } from '~src/auth/types';
+import copyToClipboard from '~src/util/copyToClipboard';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
 	const { socials, identityAddress, identityHash } = useOnchainIdentitySelector();
-	const { email, twitter } = socials;
+	const { email, twitter, matrix } = socials;
 	const [open, setOpen] = useState<boolean>(false);
-	const [status, setStatus] = useState({ email: '', twitter: '' });
-	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
+	const [status, setStatus] = useState({ email: '', matrix: '', twitter: '' });
+	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean; matrix: boolean }>({ email: false, matrix: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
 	const router = useRouter();
 	const isEmailVerified = useRef(false);
 	const isTwitterVerified = useRef(false);
+	const isMatrixVerified = useRef(false);
+	const [messageApi, contextHolder] = message.useMessage();
+	const [matrixDisplayName, setMatrixDisplayname] = useState<string>('');
+
+	const success = (msg: string) => {
+		messageApi.open({
+			content: msg,
+			duration: 10,
+			type: 'success'
+		});
+	};
 
 	const items: TimelineItemProps[] = [];
+
+	const handleUpdatedUserName = () => {
+		if (!matrixDisplayName?.length || !identityAddress) return '';
+		const updatedUsername = `${matrixDisplayName?.split(':')?.[0]}:${identityAddress.slice(0, 5)}`;
+		return updatedUsername;
+	};
+
+	const copyLink = (address: string) => {
+		copyToClipboard(address);
+	};
 
 	const handleTwitterVerificationClick = async () => {
 		if (twitterVerificationStart) {
@@ -44,6 +67,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			await handleTwitterVerification();
 		}
 	};
+
 	if (email?.value.length) {
 		items.push({
 			children: (
@@ -87,6 +111,112 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			key: 2
 		});
 	}
+
+	if (matrix?.value?.length) {
+		items.push({
+			children: (
+				<SocialsLayout
+					title='Matrix'
+					description={
+						<div className='mt-0.5 text-xs tracking-wide'>
+							{contextHolder}
+
+							<Tooltip
+								title={
+									<div
+										className='flex cursor-pointer items-center gap-2 text-xs text-white'
+										onClick={() => {
+											copyLink(handleUpdatedUserName());
+											success('Update display name has been copied');
+										}}
+									>
+										Copy updated display name
+										<CopyIcon className='ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive' />
+									</div>
+								}
+							>
+								<div className='hover:text-xs'>
+									To verify your Matrix ID, please set your Element display name to {handleUpdatedUserName()}. Make sure to follow this format for successful verification.
+								</div>
+							</Tooltip>
+						</div>
+					}
+					onVerify={() => handleMatrixVerificationClick()}
+					value={matrix?.value}
+					verified={isMatrixVerified.current || false}
+					status={status.matrix as VerificationStatus}
+					loading={fieldLoading.matrix}
+					fieldName={ESocials.MATRIX}
+				/>
+			),
+			dot: (
+				<MatrixIcon
+					className={`${isMatrixVerified?.current ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`}
+				/>
+			),
+			key: 3
+		});
+	}
+	const getMatrixDisplayName = async () => {
+		if (!matrix?.value?.length) return '';
+		let displayName = '';
+		try {
+			const homeUrl = matrix.value.split(':')[1];
+
+			const response = await fetch(`https://${homeUrl}/_matrix/client/v3/profile/${matrix?.value?.[0] !== '@' ? `@${matrix?.value}` : matrix.value}`, {
+				headers: {
+					Accept: 'application/json'
+				}
+			});
+
+			const resJSON = await response.json();
+			displayName = resJSON?.displayname || '';
+		} catch (err) {
+			queueNotification({
+				header: 'Error!',
+				message: err || '',
+				status: NotificationStatus.ERROR
+			});
+
+			return '';
+		}
+		return displayName;
+	};
+
+	const handleMatrixVerificationClick = async () => {
+		if (!matrix?.value?.length) return;
+		const displayName = await getMatrixDisplayName();
+		setFieldLoading({ ...fieldLoading, matrix: true });
+
+		if (`${displayName}`?.toLowerCase() == handleUpdatedUserName()?.toLowerCase()) {
+			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
+				matrixHandle: matrix?.value || ''
+			});
+
+			if (data?.message == messages.SUCCESS) {
+				isMatrixVerified.current = true;
+				queueNotification({
+					header: 'Success!',
+					message: 'Matrix account successfully verified',
+					status: NotificationStatus.SUCCESS
+				});
+			} else {
+				queueNotification({
+					header: 'Error!',
+					message: error || '',
+					status: NotificationStatus.ERROR
+				});
+			}
+		} else {
+			queueNotification({
+				header: 'Error!',
+				message: 'The Matrix display name does not match the updated one. Please ensure your display name is correctly set for verification',
+				status: NotificationStatus.ERROR
+			});
+		}
+		setFieldLoading({ ...fieldLoading, matrix: false });
+	};
+
 	const handleNewStateUpdation = (field: any, socialsChanging?: boolean) => {
 		const newData = { ...email, ...field };
 
@@ -106,10 +236,14 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
 			isEmailVerified.current = verifiedField;
 			handleNewStateUpdation({ email: { ...email, verified: verifiedField } }, true);
-		} else {
+		} else if (ESocials.TWITTER == fieldName) {
 			isTwitterVerified.current = verifiedField;
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
 			handleNewStateUpdation({ twitter: { ...twitter, verified: verifiedField } }, true);
+		} else if (ESocials.MATRIX == fieldName) {
+			isMatrixVerified.current = verifiedField;
+			!noStatusUpdate && setStatus({ ...status, matrix: verificationStatus });
+			handleNewStateUpdation({ matrix: { ...matrix, verified: verifiedField } }, true);
 		}
 	};
 
@@ -226,6 +360,13 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		(async () => {
 			await handleVerify(ESocials.EMAIL, true);
 		})();
+		if (matrix?.value?.length) {
+			(async () => {
+				const displayName = await getMatrixDisplayName();
+				setMatrixDisplayname(displayName || '');
+				await handleVerify(ESocials.MATRIX, true);
+			})();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -242,6 +383,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			}
 			if (key == ESocials.TWITTER) {
 				verifiedCount += isTwitterVerified.current ? 1 : 0;
+			}
+			if (key == ESocials.MATRIX) {
+				verifiedCount += isMatrixVerified.current ? 1 : 0;
 			}
 		});
 

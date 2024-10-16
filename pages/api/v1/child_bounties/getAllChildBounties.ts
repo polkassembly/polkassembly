@@ -9,8 +9,11 @@ import { isValidNetwork } from '~src/api-utils';
 import { GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { IChildBountiesResponse } from '~src/types';
+import { IChildBountiesResponse, IChildBounty } from '~src/types';
 import messages from '~src/auth/utils/messages';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, network }: { parentBountyIndex: number; network: string }) => {
 	if (!network || !isValidNetwork(network)) {
@@ -43,15 +46,63 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 			child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
 		};
 
-		for (const childBounty of subsquidData.proposals) {
-			resObj.child_bounties.push({
-				description: childBounty.description,
-				index: childBounty.index,
-				reward: childBounty?.reward,
-				status: childBounty.status,
+		const childBountiesProposals = subsquidData?.proposals || [];
+
+		const allChildBountiesIndexes = childBountiesProposals.map((childBounty: { index: number }) => childBounty?.index);
+
+		const chunkArray = (arr: any[], chunkSize: number) => {
+			const chunks = [];
+			for (let i = 0; i < arr.length; i += chunkSize) {
+				chunks.push(arr.slice(i, i + chunkSize));
+			}
+			return chunks;
+		};
+
+		const chunks = chunkArray(allChildBountiesIndexes, 30);
+
+		const childBountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.CHILD_BOUNTIES).where('id', 'in', chunk).get());
+
+		const childBountiesDocsSnapshots = await Promise.all(childBountiesDocsPromises);
+
+		const childBountiesDocs = childBountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
+
+		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
+			const payload: IChildBounty = {
+				categories: [],
+				createdAt: subsquidChildBounty?.createdAt,
+				curator: subsquidChildBounty?.curator || '',
+				description: subsquidChildBounty?.description || '',
+				index: subsquidChildBounty?.index,
+				reward: subsquidChildBounty?.reward,
+				source: 'polkassembly',
+				status: subsquidChildBounty?.status,
 				title: ''
+			};
+			childBountiesDocs?.map((childBounty) => {
+				if (childBounty.exists) {
+					const data = childBounty.data();
+					if (data?.id === subsquidChildBounty.index) {
+						payload.title = data?.title || '';
+						payload.categories = data?.tags || [];
+					}
+				}
 			});
-		}
+
+			if (!payload?.title.length) {
+				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, subsquidChildBounty?.index);
+				payload.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.CHILD_BOUNTIES) || '';
+				payload.source = subsqaureRes?.title?.length ? 'subsquare' : 'polkassembly';
+			}
+			return payload;
+		});
+
+		const resolvedPromises = await Promise.allSettled(childBountiesPromises);
+
+		resolvedPromises.map((promise) => {
+			if (promise?.status == 'fulfilled') {
+				resObj?.child_bounties.push(promise.value);
+			}
+		});
 
 		return {
 			data: resObj,

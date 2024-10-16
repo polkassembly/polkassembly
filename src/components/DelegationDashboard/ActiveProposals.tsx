@@ -14,6 +14,8 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import Skeleton from '~src/basic-components/Skeleton';
+import { poppins } from 'pages/_app';
+import Image from 'next/image';
 
 interface Props {
 	className?: string;
@@ -37,15 +39,26 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 	const [page, setPage] = useState<number>(1);
 
 	return (
-		<div className={`${className} mt-5 rounded-xl bg-white px-8 py-6 dark:bg-section-dark-overlay`}>
+		<div className={`${className} mt-5 rounded-xl bg-white px-4 py-1 dark:bg-section-dark-overlay sm:px-8 sm:py-6`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
 				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex cursor-pointer items-center justify-between'
 			>
-				<div className='jutify-center flex items-center gap-2'>
-					<ActiveProposalsIcon className='mr-1' />
-					<span className='text-2xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Active Proposals</span>
-					<span className='flex h-8 items-center justify-center rounded-3xl bg-[#D2D8E04D] px-3 py-1.5 font-semibold text-bodyBlue dark:text-white'>{totalCount}</span>
+				<div className={`${poppins.className} ${poppins.variable} flex items-center justify-center gap-2`}>
+					<Image
+						src={'/assets/icons/active-proposals.svg'}
+						height={22}
+						width={22}
+						alt=''
+						className={'sm:hidden'}
+					/>
+					<span className='hidden sm:block'>
+						<ActiveProposalsIcon className='mr-1' />
+					</span>
+					<span className='text-base font-semibold tracking-[0.0015em] text-blue-light-high dark:text-white sm:text-2xl'>Active Proposals</span>
+					<span className='flex items-center justify-center rounded-3xl bg-[#D2D8E04D] px-2 py-1 text-[10px] font-semibold text-bodyBlue dark:text-white sm:px-3 sm:py-1.5 sm:text-base'>
+						{totalCount}
+					</span>
 				</div>
 				<div className='cursor-pointer p-2'>
 					<ExpandIcon className={`${expandProposals && 'rotate-180'}`} />
@@ -53,8 +66,8 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 			</div>
 			{expandProposals ? (
 				posts?.length > 0 ? (
-					<div className='mt-5 flex flex-col gap-4'>
-						<div className='flex max-h-[630px] flex-col gap-6 overflow-y-auto pr-2'>
+					<div className='mt-1 flex flex-col gap-3 sm:mt-5 sm:gap-4'>
+						<div className='flex max-h-[630px] flex-col gap-4 overflow-y-auto pr-2 sm:gap-6'>
 							{posts?.map((proposal, index) => (
 								<ActiveProposalCard
 									proposal={proposal}

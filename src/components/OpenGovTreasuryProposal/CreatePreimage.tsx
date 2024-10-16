@@ -39,7 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -139,7 +139,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -154,7 +154,7 @@ const CreatePreimage = ({
 	const trackArr: string[] = [];
 	const maxSpendArr: { track: string; maxSpend: number }[] = [];
 	const [gasFee, setGasFee] = useState(ZERO_BN);
-	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit || 0}` || 0);
 
 	if (network) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
@@ -274,8 +274,21 @@ const CreatePreimage = ({
 		}
 	};
 
-	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
+	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean, generalInd: string | null) => {
 		let selectedTrack = '';
+
+		if (generalInd) {
+			const dotAmount =
+				getUsdValueFromAsset({
+					currentTokenPrice: currentTokenPrice || '0',
+					dedTokenUsdPrice: dedTokenUsdPrice || '0',
+					generalIndex: generalInd,
+					inputAmountValue: inputAmountValue || '0',
+					network
+				}) || 0;
+
+			fundingAmount = new BN(dotAmount || '0').mul(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)));
+		}
 
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
@@ -505,7 +518,9 @@ const CreatePreimage = ({
 					? beneficiaryAddresses?.[beneficiary]?.address
 					: (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.length
 					? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
-					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) || '';
+					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) ||
+					  (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value[0]?.id ||
+					  '';
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
 				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
@@ -605,9 +620,9 @@ const CreatePreimage = ({
 					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
 
 					setFundingAmount(balance);
-					onChangeLocalStorageSet({ beneficiaryAddresses: [newBeneficiaryAddress] || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
+					onChangeLocalStorageSet({ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100, step: 1 });
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 				} else {
 					setPreimageLength(0);
 					queueNotification({
@@ -687,11 +702,11 @@ const CreatePreimage = ({
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet(
-						{ beneficiaryAddresses: [newBeneficiaryAddress] || [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
+						{ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
 						Boolean(isPreimage)
 					);
 					//select track
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 
 					setSteps({ percent: 100, step: 1 });
 				}
@@ -856,7 +871,7 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
 
-		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage), generalIndex);
 		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
@@ -886,7 +901,7 @@ const CreatePreimage = ({
 
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
-		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+		handleSelectTrack(ZERO_BN, Boolean(isPreimage), generalIndex);
 	};
 
 	const fundingAmtToBN = () => {
@@ -1093,7 +1108,10 @@ const CreatePreimage = ({
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												onAssetConfirm={setGeneralIndex}
+												onAssetConfirm={(index: string | null) => {
+													setGeneralIndex(index);
+													handleSelectTrack(fundingAmount, isPreimage, index);
+												}}
 											/>
 										</div>
 									</div>

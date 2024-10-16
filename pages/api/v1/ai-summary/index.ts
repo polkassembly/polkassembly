@@ -4,19 +4,37 @@
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
+import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import fetch from 'node-fetch';
 import { ICommentsSummary } from '~src/types';
 import messages from '~src/auth/utils/messages';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 interface GetCommentsAISummaryResponse {
 	data: ICommentsSummary | null;
 	error: string | null;
 	status: number;
 }
+
+const cleanContentForSummary = (content: string): string => {
+	const htmlTagRegex = /<\/?[^>]+(>|$)/g;
+	const imgTagRegex = /<img[^>]*>/g;
+
+	return removeSymbols(
+		content
+			.replace(imgTagRegex, '')
+			.replace(htmlTagRegex, '')
+			.replace(/```[\s\S]*?```|`[^`]*`/g, '') // Removes code blocks and inline code
+			.replace(/&nbsp;/g, ' ')
+			.replace(/\n/g, ' ')
+			.replace(/\+/g, ' ')
+			.replace(/"/g, '')
+			.replace(/\s\s+/g, ' ')
+	);
+};
 
 export const getCommentsAISummaryByPost = async ({
 	network,
@@ -41,13 +59,26 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		const htmlTagRegex = /<\/?[^>]+(>|$)/g;
+		const unwantedContents = [
+			{
+				content:
+					'Please consider this a temporary notification after our vote has gone on chain. If you would like additional feedback on our rationale for this vote, please join our OpenGov Public Forum on Telegram here:',
+				id: 19585
+			}
+		];
 
-		const commentsTextPromises = commentsSnapshot.docs.map(async (commentDoc) => {
+		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
 			const commentData = commentDoc.data();
 			if (!commentData || !commentData.content) return '';
 
-			let commentText = commentData.content.replace(htmlTagRegex, '');
+			const commentObj = {
+				content: cleanContentForSummary(commentData.content),
+				id: commentData.user_id || 'unknown'
+			};
+
+			if (unwantedContents.some((unwanted) => commentObj.content.includes(unwanted.content) && commentObj.id === unwanted.id)) {
+				return '';
+			}
 
 			const repliesRef = commentDoc.ref.collection('replies');
 			const repliesSnapshot = await repliesRef.get();
@@ -55,29 +86,45 @@ export const getCommentsAISummaryByPost = async ({
 			const repliesPromises = repliesSnapshot.docs.map(async (replyDoc) => {
 				const replyData = replyDoc.data();
 				if (replyData && replyData.content) {
-					return replyData.content.replace(htmlTagRegex, '');
+					const replyObj = {
+						content: cleanContentForSummary(replyData.content),
+						id: replyData.user_id || 'unknown'
+					};
+
+					if (unwantedContents.some((unwanted) => replyObj.content.includes(unwanted.content) && replyObj.id === unwanted.id)) {
+						return '';
+					}
+
+					return replyObj;
 				}
 				return '';
 			});
 
 			const repliesResults = await Promise.allSettled(repliesPromises);
 
-			repliesResults.forEach((result) => {
-				if (result.status === 'fulfilled') {
-					commentText += ' ' + (result as PromiseFulfilledResult<string>).value;
-				}
-			});
+			const repliesObjects = repliesResults
+				.filter((result) => result.status === 'fulfilled' && result.value)
+				.map((result) => (result as PromiseFulfilledResult<{ id: string; content: string }>).value)
+				.filter((replyObj) => replyObj.content !== '');
 
-			return commentText;
+			return [commentObj, ...repliesObjects].filter((comment) => comment.content !== '');
 		});
 
-		const commentsTextsResults = await Promise.allSettled(commentsTextPromises);
+		const commentsDataResults = await Promise.allSettled(commentsDataPromises);
 
-		const allCommentsText = commentsTextsResults
-			.filter((result) => result.status === 'fulfilled' && (result as PromiseFulfilledResult<string>).value)
-			.map((result) => (result as PromiseFulfilledResult<string>).value)
-			.join(' ')
-			.trim();
+		const allCommentsAndReplies = commentsDataResults
+			.filter((result) => result.status === 'fulfilled' && result.value)
+			.flatMap((result) => (result as PromiseFulfilledResult<any[]>).value);
+
+		if (!allCommentsAndReplies.length) {
+			return {
+				data: null,
+				error: 'No comments or replies found.',
+				status: 404
+			};
+		}
+
+		const commentsData = [{ network, postId }, ...allCommentsAndReplies];
 
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
 
@@ -91,7 +138,7 @@ export const getCommentsAISummaryByPost = async ({
 
 		const response = await fetch(apiUrl, {
 			body: JSON.stringify({
-				text: allCommentsText
+				text: commentsData
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -100,7 +147,11 @@ export const getCommentsAISummaryByPost = async ({
 		});
 
 		if (!response.ok) {
-			throw new Error(`Error fetching AI summary: ${response.statusText}`);
+			return {
+				data: null,
+				error: `Failed to fetch: ${response.status} - ${response.statusText}`,
+				status: response.status
+			};
 		}
 
 		const data = (await response.json()) as ICommentsSummary | null;
@@ -137,7 +188,7 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!postId || isNaN(Number(postId)) || !postType || !isProposalTypeValid(postType)) {
+	if (!postId || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

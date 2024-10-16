@@ -58,13 +58,11 @@ const AnalyticsStats: FC<IStats> = (props) => {
 		<Spin spinning={loading}>
 			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col lg:max-w-[100%]'>
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
-					<div className='flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#CCF3FF]'>
-						<ImageIcon
-							src='/assets/icons/total-proposal-icon.svg'
-							alt='proposal created icon'
-							className='-mt-0.5 ml-1'
-						/>
-					</div>
+					<ImageIcon
+						src='/assets/icons/analytics/proposal-created.svg'
+						alt='proposal created icon'
+						className=''
+					/>
 					<div className='flex flex-col'>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Proposals</span>
 						<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalProposalCount}</span>
@@ -75,13 +73,14 @@ const AnalyticsStats: FC<IStats> = (props) => {
 					className='hidden h-[87px] bg-section-light-container dark:bg-separatorDark sm:flex'
 					type='vertical'
 				/>
-				<Divider className=' bg-section-light-container dark:bg-separatorDark sm:hidden' />
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
-					<ImageIcon
-						src='/assets/icons/analytics/proposal-created.svg'
-						alt='proposal created icon'
-						className=''
-					/>
+					<div className='flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#CCF3FF]'>
+						<ImageIcon
+							src='/assets/icons/total-proposal-icon.svg'
+							alt='proposal created icon'
+							className='-mt-0.5 ml-1'
+						/>
+					</div>
 					<div className='flex flex-col'>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Approved Proposal</span>
 						<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalApprovedProposalCount}</span>
@@ -92,7 +91,6 @@ const AnalyticsStats: FC<IStats> = (props) => {
 					className='hidden h-[87px] bg-section-light-container dark:bg-separatorDark sm:flex'
 					type='vertical'
 				/>
-				<Divider className=' bg-section-light-container dark:bg-separatorDark sm:hidden' />
 
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<ImageIcon

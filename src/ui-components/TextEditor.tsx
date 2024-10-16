@@ -16,6 +16,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import { useQuoteCommentContext } from '~src/context';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import { EditorEvent } from 'tinymce';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -119,6 +120,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const { quotedText, setQuotedText } = useQuoteCommentContext();
+	const pasteRef = useRef<string>('');
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -200,53 +202,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						)}
 						<Editor
 							key={theme}
-							onPaste={(e) => {
-								const files = e.clipboardData?.files;
-								e.stopPropagation();
-								e.preventDefault();
-								if (files && files.length > 0 && (files as FileList).item(0)?.type?.includes('image')) {
-									const file = (files as FileList).item(0) as File;
-									const xhr = new XMLHttpRequest();
-									xhr.withCredentials = false;
-									xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
-
-									xhr.onload = () => {
-										if (xhr.status === 403) {
-											return;
-										}
-										if (xhr.status < 200 || xhr.status >= 300) {
-											return;
-										}
-
-										const json = JSON.parse(xhr.responseText);
-
-										if (!json || typeof json?.data?.display_url != 'string') {
-											return;
-										}
-
-										const url = json?.data?.display_url;
-										if (url) {
-											const imageContent = `<img src="${json?.data?.display_url}" alt="${file.name}">`;
-											const caretPosition = ref.current?.editor?.selection.getRng();
-											ref.current?.editor?.insertContent(imageContent, { format: 'html', caretPosition });
-										}
-									};
-									const formData = new FormData();
-									formData.append('image', file, `${file.name}`);
-									xhr.send(formData);
-								} else {
-									const content = e.clipboardData?.getData('text/plain') || '';
-									const caretPosition = ref.current?.editor?.selection.getRng();
-									const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-									const parsed_content = converter.makeHtml(sanitisedContent);
-									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
-								}
-								let content = e.clipboardData?.getData('html') || '';
-								const caretPosition = ref.current?.editor?.selection.getRng();
-								content = content.replace(/color\s*:\s*[^;{}]+[;}]/gi, '').replace(/background-color\s*:\s*[^;{}]+[;}]/gi, '');
-								const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-								const parsed_content = converter.makeHtml(sanitisedContent);
-								ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
+							onPaste={() => {
+								// First this function is running when pasting some content
+								pasteRef.current = '';
 							}}
 							textareaName={name}
 							value={converter.makeHtml(value || quoteBox || '')}
@@ -265,7 +223,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								onChange(content);
 							}}
 							apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-							cloudChannel='5-stable'
+							cloudChannel='5'
 							onInit={() => setLoading(false)}
 							onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
 							onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
@@ -333,13 +291,18 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									'emoticons',
 									'paste'
 								],
+								paste_postprocess: (plugin, args) => {
+									// Third this function is running when pasting some content
+									args.node.innerHTML = pasteRef.current;
+									pasteRef.current = '';
+								},
 								setup: (editor) => {
 									editor.on('init', () => {
 										if (autofocus) editor.focus();
 									});
 
 									editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
-										ch: '@',
+										trigger: '@',
 										minChars: 1,
 										columns: 1,
 										fetch: (pattern: string) => {
@@ -418,6 +381,19 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										}
 									});
 
+									editor.on('paste', (e: EditorEvent<ClipboardEvent>) => {
+										// Second this function is running when pasting some content
+										const files = e.clipboardData?.files;
+										if (files && files.length > 0 && files[0].type.includes('image')) {
+											handleImageUpload(files[0], editor);
+										} else {
+											const content = e.clipboardData?.getData('text/plain') || '';
+											const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
+											const parsed_content = converter.makeHtml(sanitisedContent);
+											pasteRef.current = parsed_content || sanitisedContent || '';
+										}
+									});
+
 									editor.ui.registry.addIcon('custom-icon', gifSVGData);
 									editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 								},
@@ -464,6 +440,37 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		</>
 	);
 };
+// Add this function outside the component
+function handleImageUpload(file: File, editor: any) {
+	const xhr = new XMLHttpRequest();
+	xhr.withCredentials = false;
+	xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+
+	xhr.onload = () => {
+		if (xhr.status === 403) {
+			return;
+		}
+		if (xhr.status < 200 || xhr.status >= 300) {
+			return;
+		}
+
+		const json = JSON.parse(xhr.responseText);
+
+		if (!json || typeof json?.data?.display_url != 'string') {
+			return;
+		}
+
+		const url = json?.data?.display_url;
+		if (url) {
+			const imageContent = `<img src="${json?.data?.display_url}" alt="${file.name}">`;
+			editor.insertContent(imageContent);
+		}
+	};
+
+	const formData = new FormData();
+	formData.append('image', file, file.name);
+	xhr.send(formData);
+}
 
 export default styled(TextEditor)`
 	.tox-tinymce {

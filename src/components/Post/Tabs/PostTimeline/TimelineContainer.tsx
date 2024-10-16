@@ -210,7 +210,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 };
 export default styled(TimelineContainer)`
 	.content-container {
-		width: 660px;
+		width: 600px;
 	}
 
 	.export-link {
@@ -222,7 +222,7 @@ export default styled(TimelineContainer)`
 	}
 
 	.timeline-dropdown {
-		margin-left: 664px;
+		margin-left: 604px;
 	}
 
 	.info-container {
@@ -247,26 +247,26 @@ export default styled(TimelineContainer)`
 
 	@media (max-width: 1500px) and (min-width: 1320px) {
 		.content-container {
-			width: 580px;
+			width: 500px;
 		}
 
 		.timeline-dropdown {
-			margin-left: 586px;
+			margin-left: 516px;
 		}
 	}
 	@media (max-width: 1320px) and (min-width: 1280px) {
 		.content-container {
-			width: 540px;
+			width: 500px;
 		}
 
 		.timeline-dropdown {
-			margin-left: 544px;
+			margin-left: 504px;
 		}
 	}
 
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
-			width: 800px;
+			width: 700px;
 		}
 
 		.timeline-container {
@@ -274,7 +274,7 @@ export default styled(TimelineContainer)`
 		}
 
 		.timeline-dropdown {
-			margin-left: 800px;
+			margin-left: 700px;
 		}
 
 		.round-icon {

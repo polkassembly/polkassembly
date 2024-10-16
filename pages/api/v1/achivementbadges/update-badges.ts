@@ -18,9 +18,9 @@ import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import dayjs from 'dayjs';
-import { badgeNames } from '~src/global/achievementbadges';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
+import { badgeNames } from '~src/components/UserProfile/utils/GetAchievementBadgesText';
 
 // Badge1: Check if the user is a Decentralised Voice delegate
 async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: string): Promise<boolean> {

@@ -25,7 +25,7 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<>
-			{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
+			{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>

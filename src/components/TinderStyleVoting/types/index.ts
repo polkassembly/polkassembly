@@ -39,10 +39,14 @@ export interface ISwipeActionButtons {
 	trackPosts: any;
 	childRefs: any;
 	className?: string;
+	onSwipeAction?: any;
+	decision?: string;
+	isLoading?: boolean;
 }
 
 export interface ITinderCardsComponent {
 	proposal: any;
+	isUsedInWebView?: boolean;
 	onSkip: (pre: number) => void;
 }
 

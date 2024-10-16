@@ -109,15 +109,19 @@ const Web3Login: FC<Props> = ({
 		}
 	};
 
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
+	const getAccounts = async (chosenWallet: Wallet): Promise<void> => {
+		if (['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network)) {
 			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
-				setExtensionNotFound(true);
+				if (!extensionNotFound) {
+					setExtensionNotFound(true);
+				}
 				setIsAccountLoading(false);
 				return;
 			} else {
-				setExtensionNotFound(false);
+				if (extensionNotFound) {
+					setExtensionNotFound(false);
+				}
 			}
 			const accounts: string[] = (await wallet.request({ method: 'eth_requestAccounts' })) || [];
 
@@ -150,11 +154,15 @@ const Web3Login: FC<Props> = ({
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
 			if (!wallet) {
-				setExtensionNotFound(true);
+				if (!extensionNotFound) {
+					setExtensionNotFound(true);
+				}
 				setIsAccountLoading(false);
 				return;
 			} else {
-				setExtensionNotFound(false);
+				if (extensionNotFound) {
+					setExtensionNotFound(false);
+				}
 			}
 
 			let injected: Injected | undefined;
@@ -458,7 +466,8 @@ const Web3Login: FC<Props> = ({
 		setAccounts([]);
 	};
 	useEffect(() => {
-		if (withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE) {
+		if (fetchAccounts && withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE) {
+			setLoading(true);
 			getAccounts(chosenWallet)
 				.then(() => setFetchAccounts(false))
 				.catch((err) => {
@@ -467,7 +476,7 @@ const Web3Login: FC<Props> = ({
 				.finally(() => setLoading(false));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [accounts.length, chosenWallet, withPolkasafe]);
+	}, [accounts.length, chosenWallet, withPolkasafe, fetchAccounts]);
 
 	return (
 		<div className={`${className}`}>

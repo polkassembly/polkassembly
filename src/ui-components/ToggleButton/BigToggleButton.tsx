@@ -15,7 +15,7 @@ const BigToggleButton = () => {
 	const currentUser = useUserDetailsSelector();
 
 	return (
-		<div className='mb-4 flex w-full items-center justify-center'>
+		<div className='flex w-full items-center justify-center'>
 			<button
 				onClick={(e) => {
 					e.preventDefault();
@@ -28,7 +28,7 @@ const BigToggleButton = () => {
 						userName: currentUser?.username || ''
 					});
 				}}
-				className={classNames('mx-6 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
+				className={classNames('mx-1 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
 				})}

@@ -267,6 +267,9 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 									payload.status = 'Deciding';
 								}
 							}
+							if (!process.env.AI_SUMMARY_API_KEY) {
+								delete payload?.summary;
+							}
 
 							await getContentSummary(firebasePost, network, isExternalApiCall);
 							results.push(payload);

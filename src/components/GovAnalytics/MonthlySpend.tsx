@@ -24,6 +24,7 @@ import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/
 import { network as AllNetworks } from '~src/global/networkConstants';
 import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
@@ -350,7 +351,7 @@ const MonthlySpend = () => {
 	return (
 		<StyledCard className='mx-auto h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Monthly DOT Spent</h2>
-			{isAssetHubNetwork.includes(network) ? (
+			{isAssetHubSupportedNetwork(network) ? (
 				<div className='mt-[64px]'>
 					<LatestTreasuryOverview
 						currentTokenPrice={currentTokenPrice}

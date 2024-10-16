@@ -19,6 +19,8 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import { poppins } from 'pages/_app';
+import ProfileBalanceModal from './utils/ProfileBalanceModal';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -33,9 +35,10 @@ const ProfileBalances = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const [balances, setBalances] = useState<{ freeBalance: BN; transferableBalance: BN; lockedBalance: BN }>({
+	const [balances, setBalances] = useState<{ freeBalance: BN; transferableBalance: BN; lockedBalance: BN; total: BN }>({
 		freeBalance: ZERO_BN,
 		lockedBalance: ZERO_BN,
+		total: ZERO_BN,
 		transferableBalance: ZERO_BN
 	});
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -44,9 +47,10 @@ const ProfileBalances = ({ className }: Props) => {
 	const { loginWallet, delegationDashboardAddress, loginAddress } = currentUser;
 	const dispatch = useDispatch();
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
+	const [openBalanceDetailsModal, setOpenBalanceDetailsModal] = useState<boolean>(false);
 
 	const balancesArr = [
-		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.freeBalance.toString() },
+		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.total.toString() },
 		{ icon: '/assets/icons/verified-tick.svg', key: 'transferableBalance', label: 'Transferable', value: balances.lockedBalance.toString() },
 		{ icon: '/assets/icons/lock-balance.svg', key: 'lockedBalance', label: 'Total Locked', value: balances.transferableBalance.toString() }
 	];
@@ -71,13 +75,13 @@ const ProfileBalances = ({ className }: Props) => {
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
 		(async () => {
-			const balances = await userProfileBalances({ address: defaultAddress, api, apiReady, network });
+			const allBalances = await userProfileBalances({ address: defaultAddress || delegationDashboardAddress, api, apiReady, network });
 			setBalances({
-				freeBalance: balances?.freeBalance || ZERO_BN,
-				lockedBalance: balances?.transferableBalance || ZERO_BN,
-				transferableBalance: balances?.lockedBalance || ZERO_BN
+				freeBalance: allBalances?.freeBalance || ZERO_BN,
+				lockedBalance: allBalances?.transferableBalance || ZERO_BN,
+				total: allBalances?.totalBalance || ZERO_BN,
+				transferableBalance: allBalances?.lockedBalance || ZERO_BN
 			});
 		})();
 
@@ -86,8 +90,94 @@ const ProfileBalances = ({ className }: Props) => {
 	}, [delegationDashboardAddress, api, apiReady]);
 
 	return (
-		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
-			<div className={`${className} flex h-full items-center gap-2 py-4 max-md:px-2.5`}>
+		<div className={'flex w-full items-center justify-between pl-[26px] max-md:pl-4 '}>
+			{/* for small screen */}
+			<div className='flex w-full items-center justify-between sm:hidden'>
+				<div className='flex items-center space-x-2 pt-1 '>
+					{balancesArr.slice(0, 1).map((balance) => (
+						<div
+							key={balance?.label}
+							className='ml-[2px] flex h-full gap-1'
+						>
+							<div className='flex flex-col justify-start gap-1'>
+								<div
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+										poppins.className
+									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+								>
+									{formatedBalance(balance.value, unit, 2)}
+									<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+									<span onClick={() => setOpenBalanceDetailsModal(true)}>
+										<Image
+											src={'/assets/delegation-tracks/info-white.svg'}
+											height={20}
+											width={20}
+											alt=''
+											className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
+										/>
+									</span>
+								</div>
+								<div className='flex items-center justify-start gap-2'>
+									<Image
+										src={'/assets/icons/polkadot-logo.svg'}
+										height={18}
+										width={18}
+										alt=''
+										className={'sm:hidden'}
+									/>
+									<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+								</div>
+							</div>
+							<Divider
+								type='vertical'
+								className=' mt-1 h-[38px] bg-section-light-container '
+							/>
+						</div>
+					))}
+					{balancesArr.slice(1, 2).map((balance) => (
+						<div
+							key={balance?.label}
+							className='flex h-full gap-1'
+						>
+							<div className='flex flex-col justify-start gap-1'>
+								<div
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+										poppins.className
+									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+								>
+									{formatedBalance(balance.value, unit, 2)}
+									<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+								</div>
+								<div className=' flex items-center justify-start gap-2'>
+									<Image
+										src={balance.icon}
+										height={18}
+										width={18}
+										alt=''
+										className={'sm:hidden'}
+									/>
+									<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+				<span
+					className='mr-3 cursor-pointer'
+					onClick={() => setOpenBalanceDetailsModal(true)}
+				>
+					<Image
+						className=' h-5 w-5 rounded-full object-contain'
+						src={'/assets/icons/three-dots-vertical.svg'}
+						alt='Logo'
+						width={20}
+						height={20}
+					/>
+				</span>
+			</div>
+
+			{/* for large screen */}
+			<div className={`${className} hidden h-full items-center gap-2 py-4 max-md:px-2.5 sm:flex lg:mt-[6px]`}>
 				{balancesArr.map((balance) => (
 					<div
 						key={balance?.label}
@@ -118,7 +208,7 @@ const ProfileBalances = ({ className }: Props) => {
 					</div>
 				))}
 			</div>
-			<div className='-mt-6 mr-6 w-52'>
+			<div className='-mt-7 mr-4 hidden w-48 sm:mr-6 sm:flex sm:w-52'>
 				{!!accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled
@@ -148,6 +238,17 @@ const ProfileBalances = ({ className }: Props) => {
 				closable={true}
 				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
 				usedInIdentityFlow={false}
+			/>
+			<ProfileBalanceModal
+				className=''
+				open={openBalanceDetailsModal}
+				setOpen={setOpenBalanceDetailsModal}
+				balancesArr={balancesArr}
+				setOpenModal={setOpenModal}
+				accounts={accounts}
+				delegationDashboardAddress={delegationDashboardAddress}
+				defaultAddress={defaultAddress}
+				setAddress={setAddress}
 			/>
 		</div>
 	);

@@ -23,6 +23,8 @@ import { IAmbassadorStore } from './addAmbassadorSeeding/@types';
 import { IAmbassadorReplaceStore } from './replaceAmbassador/@types';
 import { IClaimPayoutStore } from './claimProposalPayout/@types';
 import { IAssetsCurrentPriceStore } from './assetsCurrentPrices/@types';
+import { IProgressReportStore } from './progressReport/@types';
+import { IGlobalStore } from './global/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -92,11 +94,19 @@ const useAmbassadorReplacementSelector = () => {
 const useBatchVotesSelector = () => {
 	return useSelector<TAppState, IBatchVoteStore>((state) => state.batchVote);
 };
+
+const useProgressReportSelector = () => {
+	return useSelector<TAppState, IProgressReportStore>((state) => state.progressReport);
+};
+const useGlobalSelector = () => {
+	return useSelector<TAppState, IGlobalStore>((state) => state.global);
+};
+
 const useClaimPayoutSelector = () => {
 	return useSelector<TAppState, IClaimPayoutStore>((state) => state.claimPayout);
 };
 
-const useAssetsCurrentPriceSelectior = () => {
+const useAssetsCurrentPriceSelector = () => {
 	return useSelector<TAppState, IAssetsCurrentPriceStore>((state) => state.assetsCurrentPrice);
 };
 
@@ -120,5 +130,7 @@ export {
 	useAmbassadorRemovalSelector,
 	useAmbassadorReplacementSelector,
 	useClaimPayoutSelector,
-	useAssetsCurrentPriceSelectior
+	useAssetsCurrentPriceSelector,
+	useProgressReportSelector,
+	useGlobalSelector
 };

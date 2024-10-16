@@ -20,8 +20,8 @@ const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] 
 						<Space>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{confirmationAttempts}</span>
 							<HelperTooltip
-								placement='topLeft'
-								text='Number of times proposal entered confirmation period as both support & approval were greater than threshold'
+								placement={'topLeft'}
+								text={<span className='text-xs'>Number of times proposal entered confirmation period as both support & approval were greater than threshold</span>}
 							/>
 						</Space>
 					</>

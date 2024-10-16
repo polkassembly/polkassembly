@@ -6,12 +6,12 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { Badge, BadgeName, ProfileDetailsResponse } from '~src/auth/types';
 import styled from 'styled-components';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
-import { badgeDetails } from '~src/global/achievementbadges';
 import getNetwork from '~src/util/getNetwork';
+import { badgeDetails } from './utils/GetAchievementBadgesText';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -36,6 +36,9 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
 	const network = getNetwork();
 
+	const getRequirementText = (requirement: string | ((network: string) => string), network: string) => {
+		return typeof requirement === 'function' ? requirement(network) : requirement;
+	};
 	const filteredBadgeDetails = badgeDetails.filter((badge) => {
 		if ((badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.POLKADOT) || (badge.name === BadgeName.DECENTRALISED_VOICE && network === AllNetworks.KUSAMA)) {
 			return true;
@@ -50,6 +53,10 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 			return {
 				...badgeDetail,
 				isUnlocked: true,
+				requirements: {
+					locked: getRequirementText(badgeDetail.requirements.locked, network),
+					unlocked: getRequirementText(badgeDetail.requirements.unlocked, network)
+				},
 				unlockedAt: unlockedBadge.unlockedAt
 			};
 		} else {
@@ -57,7 +64,11 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 			return {
 				...badgeDetail,
 				img: lockedBadge ? lockedBadge.img : badgeDetail.img,
-				isUnlocked: false
+				isUnlocked: false,
+				requirements: {
+					locked: getRequirementText(badgeDetail.requirements.locked, network),
+					unlocked: getRequirementText(badgeDetail.requirements.unlocked, network)
+				}
 			};
 		}
 	});
@@ -84,7 +95,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 					<p className='m-0 mt-2 font-light'>Unlock, receive and earn badges as you engage in polkassembly</p>
 				</div>
 				<p
-					className='m-0 mt-2 w-[90px] cursor-pointer text-xs font-medium text-pink_primary'
+					className='m-0 mt-2 w-[90px] cursor-pointer whitespace-nowrap text-xs font-medium text-pink_primary'
 					onClick={() => setShowMore(!showMore)}
 				>
 					{showMore ? 'Show Less' : 'Show More'}
@@ -144,13 +155,12 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 								width={132}
 								height={82}
 							/>
-							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.name === BadgeName.DECENTRALISED_VOICE ? 'Decentralised Voice' : item.name}</span>
+							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.name}</span>
 						</div>
 					</Tooltip>
 				))}
 			</div>
 
-			{/* Badge Unlocked Modal */}
 			<BadgeUnlockedModal
 				open={openModal}
 				setOpen={setOpenModal}

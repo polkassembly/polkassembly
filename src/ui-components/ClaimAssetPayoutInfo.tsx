@@ -127,7 +127,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 							? addr.address
 							: (addr.address as any)?.value?.length
 							? (addr.address as any)?.value
-							: ((addr?.address as any)?.value?.interior?.value?.id as string) || '',
+							: ((addr?.address as any)?.value?.interior?.value?.id as string) || (addr?.address as any)?.value?.interior?.value[0]?.id || '',
 						network
 					) || addr
 			);

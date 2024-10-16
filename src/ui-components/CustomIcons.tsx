@@ -48,9 +48,10 @@ import BountiesSVG from '~assets/sidebar/treasury-bounties-icon.svg';
 import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
 import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
+import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
-import AuctionAdminSVG from '~assets/sidebar/auction-admin-gov2.svg';
+import AuctionAdminSVG from '~assets/sidebar/auction.svg';
 import FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import GovernanceGroupSVG from '~assets/sidebar/gov2_governance_group.svg';
 import PreimagesSVG from '~assets/sidebar/gov2_preimages.svg';
@@ -121,7 +122,7 @@ import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 import Comments from '~assets/icons/chat-icon.svg';
 import ForumComments from '~assets/icons/forum-chat-icon.svg';
-import RiotSVG from '~assets/icons/riot.svg';
+import MatrixSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
 import WebSVG from '~assets/profile/web-icon.svg';
@@ -178,6 +179,20 @@ import CapitalIconSVG from '~assets/icons/capital-small-icom.svg';
 import EmailIconSVG from '~assets/icons/email_icon.svg';
 import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
 import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
+
+import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
+import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
+import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
+import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
+import SelectedRootIcon from '~assets/selected-icons/Root.svg';
+import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
+import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
+import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
+import AllpostIcon from '~assets/allpost.svg';
+import AstralSVG from '~assets/sidebar/astral-points.svg';
+import GovernanceIcon from '~assets/governance.svg';
+import FellowshipIconnew from '~assets/members.svg';
+import TreasuryIcon from '~assets/treasury.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -493,6 +508,13 @@ export const CalendarIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
+export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BatchVotingSVG}
+		{...props}
+	/>
+);
+
 export const DiscordIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={DiscordSVG}
@@ -563,9 +585,9 @@ export const EmailIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const RiotIcon = (props: Partial<CustomIconComponentProps>) => (
+export const MatrixIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={RiotSVG}
+		component={MatrixSVG}
 		{...props}
 	/>
 );
@@ -1322,6 +1344,97 @@ export const CuratorIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BountyCriteriaSVG}
+		{...props}
+	/>
+);
+
+export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedDiscussionsIcon}
+		{...props}
+	/>
+);
+
+export const SelectedGovernance = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedGovernanceIcon}
+		{...props}
+	/>
+);
+
+export const SelectedOverview = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedOverviewIcon}
+		{...props}
+	/>
+);
+
+export const SelectedPreimages = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedPreimagesIcon}
+		{...props}
+	/>
+);
+
+export const SelectedRoot = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedRootIcon}
+		{...props}
+	/>
+);
+
+export const SelectedTreasury = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedTreasuryIcon}
+		{...props}
+	/>
+);
+
+export const SelectedWhitelist = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedWhitelistIcon}
+		{...props}
+	/>
+);
+
+export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedWishForChangeIcon}
+		{...props}
+	/>
+);
+
+export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AllpostIcon}
+		{...props}
+	/>
+);
+
+export const AstralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSVG}
+		{...props}
+	/>
+);
+
+export const GovernanceIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={GovernanceIcon}
+		{...props}
+	/>
+);
+
+export const FellowshipIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={FellowshipIconnew}
+		{...props}
+	/>
+);
+
+export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={TreasuryIcon}
 		{...props}
 	/>
 );

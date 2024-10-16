@@ -5,11 +5,11 @@
 import { chainProperties } from '~src/global/networkConstants';
 
 export function isSubscanSupport(network: string) {
-	return !['xx', 'myriad', 'frequency', 'cere', 'equilibrium', 'polimec', 'rolimec'].includes(network);
+	return !['xx', 'myriad', 'frequency', 'cere', 'equilibrium', 'polimec', 'rolimec', 'laossigma'].includes(network);
 }
 
 export function isExplorerSupport(network: string) {
-	return ['xx', 'myriad', 'polimec'].includes(network);
+	return ['xx', 'myriad', 'polimec', 'laossigma'].includes(network);
 }
 
 export function isPolkaholicSupport(network: string) {

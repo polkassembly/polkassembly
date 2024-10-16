@@ -2,8 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -16,6 +14,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DelegationCapitalDetails from './DelegationCapitalDetails';
 import { IDelegationInfo } from './types';
+import Image from 'next/image';
 
 const { Panel } = Collapse;
 
@@ -67,7 +66,25 @@ const AnalyticsDelegationTrends = () => {
 			theme={theme as any}
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			expandIcon={({ isActive }) =>
+				isActive ? (
+					<Image
+						src={'/assets/icons/expand.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
+					/>
+				) : (
+					<Image
+						src={'/assets/icons/collapse.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
+					/>
+				)
+			}
 		>
 			<Panel
 				header={

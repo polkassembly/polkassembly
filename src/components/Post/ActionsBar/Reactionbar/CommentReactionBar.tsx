@@ -47,7 +47,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, c
 			<ReferendaLoginPrompts
 				modalOpen={openLikeModal}
 				setModalOpen={setLikeModalOpen}
-				image='/assets/referenda-like-dislike.png'
+				image='/assets/Gifs/login-like.gif'
 				title='Join Polkassembly to Like this proposal.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
@@ -55,7 +55,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, c
 			<ReferendaLoginPrompts
 				modalOpen={openDislikeModal}
 				setModalOpen={setDislikeModalOpen}
-				image='/assets/referenda-like-dislike.png'
+				image='/assets/Gifs/login-dislike.gif'
 				title='Join Polkassembly to Dislike this proposal.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>

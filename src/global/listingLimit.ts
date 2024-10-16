@@ -4,6 +4,10 @@
 
 export const LISTING_LIMIT: number = 25;
 
+export const LEADERBOARD_LISTING_LIMIT: number = 10;
+
 export const LATEST_POSTS_LIMIT: number = 8;
 
 export const VOTES_LISTING_LIMIT: number = 10;
+
+export const BOUNTIES_LISTING_LIMIT = 10;

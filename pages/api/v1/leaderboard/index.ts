@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import messages from '~src/util/messages';
 import { MessageType, LeaderboardEntry } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
-import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { LEADERBOARD_LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface LeaderboardResponse {
@@ -24,8 +24,8 @@ export const getLeaderboard = async ({ page, username = '', include_addresses = 
 		const users = (
 			await usersQuery
 				.orderBy('profile_score', 'desc')
-				.offset(username ? 0 : (Number(page) - 1) * LISTING_LIMIT)
-				.limit(username ? 1 : LISTING_LIMIT)
+				.offset(username ? 0 : (Number(page) - 1) * LEADERBOARD_LISTING_LIMIT)
+				.limit(username ? 1 : LEADERBOARD_LISTING_LIMIT)
 				.get()
 		).docs.map((doc) => doc.data());
 

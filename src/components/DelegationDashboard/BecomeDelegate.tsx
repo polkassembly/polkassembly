@@ -36,7 +36,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 	}
 
 	return (
-		<div>
+		<div className='hidden sm:block'>
 			{isBecomedelegateVisible ? (
 				<>
 					<div className='mb-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>

@@ -7,7 +7,7 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
-import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, INetworkWalletErr, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -51,12 +51,6 @@ interface Props {
 	proposalType: ProposalType;
 	address: string;
 	hash: string;
-}
-
-export interface INetworkWalletErr {
-	message: string;
-	description: string;
-	error: number;
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {

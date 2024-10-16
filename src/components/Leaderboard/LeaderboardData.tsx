@@ -41,10 +41,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [currentUserData, setCurrentUserData] = useState<any>();
 	const { username } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [baseUrl, setBaseUrl] = useState<string>('');
 	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
-
 	useEffect(() => {
 		const fetchData = async () => {
 			if (router.isReady) {
@@ -53,7 +53,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				setLoading(false);
 
 				setLoadingCurrentUser(true);
-				await currentuserData();
+				await getCurrentuserData();
 				setLoadingCurrentUser(false);
 			}
 		};
@@ -61,7 +61,12 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady, searchedUsername, username]);
 
-	const currentuserData = async () => {
+	useEffect(() => {
+		const url = new URL(window.location.href);
+		setBaseUrl(`${url.origin}`);
+	}, []);
+
+	const getCurrentuserData = async () => {
 		if (username) {
 			try {
 				const response = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
@@ -103,7 +108,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 								className='ml-[2px] text-pink_primary'
 								target='_blank'
 								rel='noreferrer'
-								href='https://docs.google.com/spreadsheets/u/2/d/1Yqqjsg9d1VYl4Da8Hz8hYX24cKgAlqfa_dPnT7C6AcU/htmlview#gid=0'
+								href={`${baseUrl}/astral-scoring`}
 							>
 								Learn more{' '}
 								<Image
@@ -140,18 +145,26 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	];
 
 	const getLeaderboardData = async () => {
-		const body = searchedUsername ? { page: 1, username: searchedUsername } : { page: currentPage };
+		const body = { page: currentPage };
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
+
 		if (error) {
 			console.error(error);
 			return;
 		}
+
 		let modifiedData = data?.data || [];
+
+		if (searchedUsername) {
+			modifiedData = modifiedData.filter((item) => item?.username.toLowerCase().includes(searchedUsername.toLowerCase()));
+		}
+
 		if (!searchedUsername && currentPage === 1) {
 			modifiedData = modifiedData.slice(3);
 		}
+
 		setTableData(modifiedData);
-		setTotalData(searchedUsername ? 1 : currentPage === 1 ? 47 : 50);
+		setTotalData(searchedUsername ? modifiedData.length : currentPage === 1 ? 47 : 50);
 	};
 
 	const getUserProfile = async (username: string) => {
@@ -181,7 +194,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			filteredValue: [searchedUsername || ''],
 			key: 'user',
 			onFilter: (value, record) => {
-				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
+				return String(record.user).toLowerCase().includes(String(value).toLowerCase());
 			},
 			render: (user, obj) => (
 				<div className='flex items-center gap-x-2'>
@@ -319,7 +332,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
+	console.log(dataSource, currentUserDataSource);
+
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
+	console.log('combined: ', combinedDataSource);
 
 	return (
 		<Spin spinning={loading || loadingCurrentUser}>

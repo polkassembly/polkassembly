@@ -2,8 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -13,6 +11,7 @@ import AnalyticsReferendumOutcome from './AnalyticsReferendumOutcome';
 import AnalyticsReferendumCount from './AnalyticsReferendumCount';
 import ReferendumCount from './ReferendumCount';
 import MonthlySpend from './MonthlySpend';
+import Image from 'next/image';
 const AnalyticTurnOutPercentage = dynamic(() => import('./AnalyticTurnOutPercentage'), { ssr: false });
 
 const { Panel } = Collapse;
@@ -29,7 +28,25 @@ const AnalyticsTrends = () => {
 			theme={theme as any}
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			expandIcon={({ isActive }) =>
+				isActive ? (
+					<Image
+						src={'/assets/icons/expand.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
+					/>
+				) : (
+					<Image
+						src={'/assets/icons/collapse.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
+					/>
+				)
+			}
 			defaultActiveKey={['1']}
 		>
 			<Panel

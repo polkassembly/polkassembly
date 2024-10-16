@@ -22,7 +22,7 @@ import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
-import { getConvictionVoteOptions } from './VoteReferendum';
+import { getConvictionVoteOptions } from './VoteReferendumModal';
 import VotingForm, { EFormType } from './VotingFrom';
 import getMetamaskAccounts from '~src/util/getMetamaskAccounts';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';

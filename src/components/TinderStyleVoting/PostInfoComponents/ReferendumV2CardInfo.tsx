@@ -22,6 +22,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
+import VoteSummary from '~src/components/BatchVoting/VotingOptions/VoteSummary';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface IReferendumV2CardInfoProps {
 	className?: string;
@@ -32,11 +34,22 @@ interface IReferendumV2CardInfoProps {
 	updateTally?: boolean;
 	post?: any;
 	hideInfo?: boolean;
+	isUsedInTinderWebView?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
+	className,
+	tally,
+	ayeNayAbstainCounts,
+	setAyeNayAbstainCounts,
+	setUpdatetally,
+	isUsedInTinderWebView,
+	updateTally,
+	post,
+	hideInfo
+}) => {
 	const { network } = useNetworkSelector();
 	const { status } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
@@ -168,9 +181,14 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 
 	return (
 		<>
-			<GovSidebarCard className={className}>
-				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Summary</h6>
+			<GovSidebarCard
+				className={`${className}`}
+				isUsedInTinderWebView={true}
+			>
+				<div className='relative flex items-center justify-between'>
+					<h6 className={`m-0 p-0 ${isUsedInTinderWebView ? '-ml-6 -mt-3 text-base' : 'text-xl'} font-medium leading-6 text-bodyBlue dark:text-blue-dark-high`}>
+						{isUsedInTinderWebView ? 'Vote History' : 'Summary'}
+					</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag
@@ -193,11 +211,19 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 					indicator={<LoadingOutlined />}
 				>
 					<div>
-						<VoteProgress
-							ayeVotes={tallyData.ayes}
-							className='vote-progress'
-							nayVotes={tallyData.nays}
-						/>
+						{isUsedInTinderWebView ? (
+							<VoteSummary
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						) : (
+							<VoteProgress
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						)}
 					</div>
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
@@ -360,7 +386,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Amount</p>
-											<span className='item-start text-xs leading-6 text-navBlue'>11.27 KSM</span>
+											<span className='item-start text-xs leading-6 text-navBlue'>11.27 {chainProperties[network]?.tokenSymbol}</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
@@ -381,7 +407,8 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 								</article>
 							</div>
 							<p className='m-0 p-0 text-sm font-normal leading-4 text-sidebarBlue dark:text-white'>
-								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.
+								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 {chainProperties[network]?.tokenSymbol} (amount)*4 (conviction)</span> to get
+								the final vote.
 							</p>
 							<div
 								className='mb-1'

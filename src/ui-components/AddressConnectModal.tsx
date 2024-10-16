@@ -59,6 +59,7 @@ interface Props {
 	isBalanceUpdated?: boolean;
 	isUsedInDelegationModal?: boolean;
 	usedInIdentityFlow?: boolean;
+	isUsedInBatchVoting?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -78,7 +79,8 @@ const AddressConnectModal = ({
 	accountSelectionFormTitle = 'Select address',
 	isProposalCreation = false,
 	isBalanceUpdated,
-	usedInIdentityFlow = false
+	usedInIdentityFlow = false,
+	isUsedInBatchVoting = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -98,7 +100,7 @@ const AddressConnectModal = ({
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const substrate_address = getSubstrateAddress(loginAddress);
-	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+	const substrate_addresses = (addresses || []).map((address) => (getSubstrateAddress(address) || address || '').toLowerCase());
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
@@ -122,16 +124,17 @@ const AddressConnectModal = ({
 	}, [api, apiReady]);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
-		const account_substrate_address = getSubstrateAddress(account?.address || '');
-		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
+		const account_substrate_address = getSubstrateAddress(account?.address || '') || account?.address || '';
+		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || loginAddress || '').toLowerCase();
+
 		if (account?.isCouncil || false) {
 			if (isConnected) {
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address.toLowerCase())) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
+		} else if (substrate_addresses.includes(account_substrate_address.toLowerCase())) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		} else {
 			return EAddressOtherTextType.UNLINKED_ADDRESS;
@@ -147,20 +150,22 @@ const AddressConnectModal = ({
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
 
-			if (!wallet) return;
+			if (!wallet) {
+				throw new Error('Wallet not found!');
+			}
 
 			const injected = wallet && wallet.enable && (await wallet.enable(APPNAME));
 
 			const signRaw = injected && injected.signer && injected.signer.signRaw;
-			if (!signRaw) return console.error('Signer not available');
+			if (!signRaw) {
+				throw new Error('Signer not available');
+			}
 
 			let substrate_address: string | null;
 			if (!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
 				if (!substrate_address) {
-					console.error('Invalid address');
-					setLoading(false);
-					return;
+					throw new Error('Invalid Address!');
 				}
 			} else {
 				substrate_address = address;
@@ -187,11 +192,20 @@ const AddressConnectModal = ({
 				const method = 'personal_sign';
 
 				let sendAsyncQuery;
-				if (isMetamaskWallet) {
-					sendAsyncQuery = (window as any).ethereum;
-				} else {
-					sendAsyncQuery = (window as any).web3.currentProvider;
+				switch (chosenWallet) {
+					case Wallet.TALISMAN:
+						sendAsyncQuery = (window as any).talismanEth;
+						break;
+					case Wallet.SUBWALLET:
+						sendAsyncQuery = (window as any).SubWallet;
+						break;
+					case Wallet.NOVAWALLET:
+						sendAsyncQuery = (window as any)?.ethereum;
+						break;
+					default:
+						sendAsyncQuery = (window as any).web3.currentProvider;
 				}
+
 				sendAsyncQuery.sendAsync(
 					{
 						from,
@@ -242,7 +256,7 @@ const AddressConnectModal = ({
 					const { data: confirmData, error: confirmError } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/addressLinkConfirm', {
 						address: substrate_address,
 						signature,
-						wallet
+						wallet: chosenWallet
 					});
 
 					if (confirmError) {
@@ -621,6 +635,18 @@ const AddressConnectModal = ({
 							}
 						/>
 					)}
+					{isUsedInBatchVoting && (
+						<Alert
+							type='info'
+							showIcon
+							className='icon-alert mt-2'
+							message={
+								<span className='m-0 flex gap-x-1 p-0 text-sm dark:text-black'>
+									<p className='m-0 p-0 font-semibold'>Note:</p>If you switch wallet, all votes in cart will be made from the latest selected wallet only
+								</span>
+							}
+						/>
+					)}
 				</Spin>
 			)}
 		</Modal>
@@ -646,5 +672,8 @@ export default styled(AddressConnectModal)`
 	.ant-modal .ant-modal-footer {
 		display: flex;
 		justify-content: end !important;
+	}
+	.icon-alert .ant-alert-icon {
+		margin-top: -20px !important;
 	}
 `;

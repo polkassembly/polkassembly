@@ -23,13 +23,13 @@ const IdentityFormActionButtons = ({
 	isProxyExistsOnWallet
 }: IIdentityFormActionButtons) => {
 	const { identityInfo, displayName, legalName, socials } = useOnchainIdentitySelector();
-	const { bondFee, registerarFee, minDeposite, gasFee } = txFee;
-	const { email, twitter } = socials;
+	const { registerarFee, minDeposite, gasFee } = txFee;
+	const { email, twitter, matrix } = socials;
 
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite));
 
 	const handleAllowSetIdentity = () => {
-		return allowSetIdentity({ displayName, email: email, identityInfo: identityInfo, legalName: legalName, twitter: twitter });
+		return allowSetIdentity({ displayName, email: email, identityInfo: identityInfo, legalName: legalName, matrix, twitter: twitter });
 	};
 
 	return (

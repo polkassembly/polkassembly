@@ -53,10 +53,11 @@ import turingLogo from '~assets/parachain-logos/turing-logo.png';
 import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
-import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
+import zeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
 import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
+import laossigmaLogo from '~assets/parachain-logos/laossigma-logo.png';
 
 import * as types from '../types';
 import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
@@ -122,7 +123,8 @@ export const network = {
 	XX: 'xx',
 	ZEITGEIST: 'zeitgeist',
 	MANDALA: 'mandala',
-	CURIO: 'curio'
+	CURIO: 'curio',
+	LAOSSIGMA: 'laossigma'
 };
 
 export const tokenSymbol = {
@@ -180,7 +182,8 @@ export const tokenSymbol = {
 	XX: 'XX',
 	ZTG: 'ZTG',
 	KPGT: 'KPGT',
-	CGT: 'CGT'
+	CGT: 'CGT',
+	SIGMA: 'SIGMA'
 };
 
 export const treasuryAssets = {
@@ -262,6 +265,22 @@ export const chainProperties: types.ChainPropType = {
 			{ ...treasuryAssets.DED, genralIndex: '30' },
 			{ ...treasuryAssets.USDT, genralIndex: '1984' },
 			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		],
+		hydrationEndpoints: ['wss://hydradx-rpc.dwellir.com', 'wss://rpc.hydradx.cloud', 'wss://rpc.helikon.io/hydradx', 'wss://hydradx.paras.ibp.network'],
+		hydrationTreasuryAddress: '7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV',
+		hydrationAssets: [
+			{
+				label: 'DOT',
+				assetId: 5
+			},
+			{
+				label: 'USDT',
+				assetId: 10
+			},
+			{
+				label: 'USDC',
+				assetId: 22
+			}
 		]
 	},
 	[network.KUSAMA]: {
@@ -557,9 +576,9 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: polimecLogo,
-		rpcEndpoint: 'wss://rpc.polimec.org',
+		rpcEndpoint: 'wss://polimec.rpc.amforc.com',
 		ss58Format: 41,
-		subsquidUrl: 'https://squid.subsquid.io/polimec-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/polimec-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.PLMC,
 		treasuryProposalBondPercent: '5%',
@@ -568,6 +587,10 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: 'https://explorer.polimec.org/polimec',
 		gTag: null,
 		rpcEndpoints: [
+			{
+				label: 'via IBP',
+				key: 'wss://polimec.rpc.amforc.com'
+			},
 			{
 				label: 'via Helikon',
 				key: 'wss://rpc.helikon.io/polimec'
@@ -1191,7 +1214,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: kiltLogo,
-		rpcEndpoint: 'wss://spiritnet.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://kilt-rpc.dwellir.com',
 		ss58Format: 38,
 		subsquidUrl: 'https://squid.subsquid.io/kilt-polkassembly/graphql',
 		tokenDecimals: 15,
@@ -1916,7 +1939,7 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 12000,
 		category: 'polkadot',
 		chainId: 0,
-		logo: ZeitgeistLogo,
+		logo: zeitgeistLogo,
 		rpcEndpoint: 'wss://zeitgeist.api.onfinality.io/public-ws',
 		ss58Format: 73,
 		subsquidUrl: 'https://squid.subsquid.io/zeitgeist-polkassembly/graphql',
@@ -1939,6 +1962,28 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via ZeitgeistPM',
 				key: 'wss://main.rpc.zeitgeist.pm/ws'
+			}
+		]
+	},
+	[network.LAOSSIGMA]: {
+		blockTime: 13000,
+		category: 'test',
+		chainId: 0,
+		logo: laossigmaLogo,
+		rpcEndpoint: 'wss://rpc.laossigma.laosfoundation.io',
+		ss58Format: 42,
+		subsquidUrl: 'https://polkassembly.squids.live/laos-polkassembly/graphql',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.SIGMA,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://sigma.explorer.laosnetwork.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://rpc.laossigma.laosfoundation.io'
 			}
 		]
 	}

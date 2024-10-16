@@ -43,16 +43,18 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
+import PostProgressReport from '../ProgressReport/PostProgressReport';
+import { useRouter } from 'next/router';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+// const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+// loading: () => <Skeleton active />,
+// ssr: false
+// });
 
 const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
@@ -122,15 +124,38 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const router = useRouter();
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const [selectedTabKey, setSelectedTabKey] = useState<string>('description');
+
+	useEffect(() => {
+		const { tab } = router.query;
+		if (tab && typeof tab === 'string') {
+			setSelectedTabKey(tab);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.query]);
+
+	const handleTabChange = (key: string) => {
+		setSelectedTabKey(key);
+		router.push(
+			{
+				pathname: router.pathname,
+				query: { ...router.query, tab: key }
+			},
+			undefined,
+			{ shallow: true }
+		);
+	};
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
 		setCanEdit(post.user_id === id);
+		const substrateAddress = getSubstrateAddress(proposer);
 
-		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		let isProposer = proposer && addresses?.includes(substrateAddress || proposer);
 		const network = getNetwork();
 		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
@@ -139,9 +164,8 @@ const Post: FC<IPostProps> = (props) => {
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
-		const substrateAddress = getSubstrateAddress(proposer);
 		if (!isProposer) {
-			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			isProposer = await checkIsProposer(substrateAddress || proposer, [...(addresses || loginAddress)]);
 			if (isProposer) {
 				setCanEdit(true);
 				return;
@@ -312,10 +336,10 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className }: { className?: string }) => {
 		return (
 			<div className={`${className} flex w-full flex-col xl:col-span-4`}>
-				<StickyBox
-					offsetTop={65}
-					offsetBottom={65}
-					className='md:mb-6'
+				<div
+					// offsetTop={65}
+					// offsetBottom={65}
+					className={`${isOffchainPost ? '' : 'md:mb-6'}`}
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
@@ -332,7 +356,7 @@ const Post: FC<IPostProps> = (props) => {
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
 					/>
-				</StickyBox>
+				</div>
 
 				{isOffchainPost && (
 					<div className={'sticky top-[65px] mb-6 '}>
@@ -465,15 +489,18 @@ const Post: FC<IPostProps> = (props) => {
 	const tabItems: any[] = [
 		{
 			children: (
-				<PostDescription
-					id={id}
-					isEditing={isEditing}
-					canEdit={canEdit}
-					toggleEdit={toggleEdit}
-					isOnchainPost={isOnchainPost}
-					TrackerButtonComp={TrackerButtonComp}
-					Sidebar={() => <Sidebar />}
-				/>
+				<>
+					{post?.progress_report?.progress_file && <PostProgressReport />}
+					<PostDescription
+						id={id}
+						isEditing={isEditing}
+						canEdit={canEdit}
+						toggleEdit={toggleEdit}
+						isOnchainPost={isOnchainPost}
+						TrackerButtonComp={TrackerButtonComp}
+						Sidebar={() => <Sidebar />}
+					/>
+				</>
 			),
 			key: 'description',
 			label: 'Description'
@@ -505,6 +532,7 @@ const Post: FC<IPostProps> = (props) => {
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',
+					progress_report: post?.progress_report,
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,
@@ -586,6 +614,8 @@ const Post: FC<IPostProps> = (props) => {
 												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
+												activeKey={selectedTabKey} // This sets the currently active tab
+												onChange={handleTabChange}
 											/>
 										</>
 									)}

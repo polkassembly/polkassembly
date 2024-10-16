@@ -312,7 +312,8 @@ class AuthService {
 	}
 
 	public async AddressLoginStart(address: string): Promise<string> {
-		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
+		const timestamp = dayjs().format('DD-MM-YYYY HH:mm:ss');
+		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${timestamp}` : `<Bytes>Login in polkassembly ${timestamp}</Bytes>`;
 
 		await redisSetex(getAddressLoginKey(address), ADDRESS_LOGIN_TTL, signMessage);
 
@@ -557,10 +558,10 @@ class AuthService {
 		if (!addressToLinkDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_NOT_FOUND, 404);
 
 		const addressToLink = addressToLinkDoc.data() as Address;
-
 		const isValidSr = skipSignCheck
 			? true
-			: address.startsWith('0x') && wallet === Wallet.METAMASK
+			: // : address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
+			address.startsWith('0x')
 			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
 			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);

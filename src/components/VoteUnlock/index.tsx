@@ -37,6 +37,8 @@ interface Props {
 	addresses: string[];
 	isReferendaPage?: boolean;
 	referendumIndex?: number;
+	refreshKey?: boolean;
+	setRefreshKey?: (pre: boolean) => void;
 }
 export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -56,7 +58,7 @@ export const handlePrevData = (data: IUnlockTokenskData[]) => {
 	});
 	return newData;
 };
-const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: Props) => {
+const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, setRefreshKey, refreshKey }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -262,6 +264,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 		setIsReferesh(true);
 		setLoadingStatus({ isLoading: false, message: 'Success!' });
 		setOpen(false);
+		setRefreshKey?.(!refreshKey);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({

@@ -526,9 +526,9 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
-				image='/assets/referenda-endorse.png'
-				title='Join Polkassembly to start creating a proposal.'
-				subtitle='Please login with a desktop computer to start creating a proposal.'
+				image='/assets/Gifs/login-treasury.gif'
+				title='Join Polkassembly to Create a New proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</div>
 	);

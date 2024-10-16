@@ -85,35 +85,35 @@ export const editCartPostValueChanged = createAsyncThunk('house/editProfileField
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'ayeVoteBalance',
-				value: values?.ayeVoteBalance || '0'
+				value: values?.ayeVoteBalance || '0.1'
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'nyeVoteBalance',
-				value: values?.nyeVoteBalance || '0'
+				value: values?.nyeVoteBalance || '0.1'
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainAyeVoteBalance',
-				value: values?.abstainAyeVoteBalance || '0'
+				value: values?.abstainAyeVoteBalance || '0.1'
 			})
 		);
 	} else if (values?.abstainNyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainNyeVoteBalance',
-				value: values?.abstainNyeVoteBalance || '0'
+				value: values?.abstainNyeVoteBalance || '0.1'
 			})
 		);
 	} else if (values?.abstainVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainVoteBalance',
-				value: values?.abstainVoteBalance || '0'
+				value: values?.abstainVoteBalance || '0.1'
 			})
 		);
 	} else if (values?.conviction) {

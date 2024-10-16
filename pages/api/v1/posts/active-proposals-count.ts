@@ -33,8 +33,8 @@ export const getNetworkTrackActiveProposalsCount = async ({ network }: { network
 			const proposals = subsquidRes?.['data']?.proposals || [];
 			let proposalsCount: { [key: string]: number } = {};
 
-			proposals.map((proposal: { trackNumber: number }) => {
-				if (proposalsCount[proposal?.trackNumber] === undefined) {
+			proposals?.map((proposal: { trackNumber: number }) => {
+				if (proposalsCount?.[proposal?.trackNumber] === undefined) {
 					proposalsCount[proposal?.trackNumber] = 1;
 				} else {
 					proposalsCount[proposal?.trackNumber] += 1;
@@ -64,30 +64,30 @@ export const getNetworkTrackActiveProposalsCount = async ({ network }: { network
 				network,
 				query
 			});
-			const data = subsquidRes['data'];
+			const data = subsquidRes?.['data'];
 			let proposalsCount: IActiveProposalCount;
 			if (network === 'polymesh') {
 				proposalsCount = {
 					communityPipsCount: data?.communityPips?.totalCount || 0,
-					technicalPipsCount: data?.technicalPips.totalCount || 0,
+					technicalPipsCount: data?.technicalPips?.totalCount || 0,
 					upgradePipsCount: data?.upgradePips?.totalCount || 0
 				};
 			} else {
 				proposalsCount = {
-					councilMotionsCount: data?.councilMotions.totalCount || 0,
-					democracyProposalsCount: data?.democracyProposals.totalCount || 0,
-					referendumsCount: data?.referendums.totalCount || 0,
-					techCommetteeProposalsCount: data?.techCommitteeProposals.totalCount || 0,
-					tipsCount: data?.tips.totalCount || 0,
-					treasuryProposalsCount: data?.treasuryProposals.totalCount || 0
+					councilMotionsCount: data?.councilMotions?.totalCount || 0,
+					democracyProposalsCount: data?.democracyProposals?.totalCount || 0,
+					referendumsCount: data?.referendums?.totalCount || 0,
+					techCommetteeProposalsCount: data?.techCommitteeProposals?.totalCount || 0,
+					tipsCount: data?.tips?.totalCount || 0,
+					treasuryProposalsCount: data?.treasuryProposals?.totalCount || 0
 				};
 				if (network === 'zeitgeist') {
-					proposalsCount = { ...proposalsCount, advisoryCommitteeMotionsCount: data?.advisoryCommitteeMotions.totalCount || 0 };
+					proposalsCount = { ...proposalsCount, advisoryCommitteeMotionsCount: data?.advisoryCommitteeMotions?.totalCount || 0 };
 				} else {
 					proposalsCount = {
 						...proposalsCount,
 						bountiesCount: data?.bounties?.totalCount || 0,
-						childBountiesCount: data?.childBounties.totalCount || 0
+						childBountiesCount: data?.childBounties?.totalCount || 0
 					};
 				}
 			}

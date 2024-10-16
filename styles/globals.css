@@ -200,7 +200,7 @@ p > a:hover {
 }
 
 .ant-segmented-item-selected .ant-segmented-item-label {
-  color: var(--pink_primary) !important;
+  color: #E5007A !important;
 }
 
 .ant-modal-header {
@@ -889,4 +889,37 @@ z-index: 105 !important;
 
 .ant-slider .ant-slider-mark-text {
   color: #777b80 !important;
+}
+
+.dark .ant-collapse .ant-collapse-content {
+  border-top: 1px solid #3B444F !important;
+}
+
+body.light-theme .ant-layout-sider {
+  border-right: 1px solid #d2d8e0;
+}
+
+body.dark-theme .ant-layout-sider {
+  border-right: 1px solid #4b4b4b;
+}
+
+body.light-theme .ant-menu .ant-menu-submenu-arrow {
+		color: var(--lightBlue) !important;
+}
+
+body.dark-theme .ant-menu .ant-menu-submenu-arrow {
+		color: #9E9E9E !important;
+}
+
+.dark .ant-upload-list-item,
+.dark .ant-upload-list-item-uploading {
+    color: #909090 !important;
+}
+
+.dark .ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-icon .anticon {
+  color: #909090 !important;
+}
+
+.tox-statusbar__text-container {
+  display: none !important;
 }

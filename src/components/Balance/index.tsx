@@ -14,6 +14,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 interface Props {
 	address: string;
@@ -30,13 +31,12 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
+	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
-	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
 		if (!network) return;
@@ -49,69 +49,28 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
 		setLoading(true);
-		if (['genshiro'].includes(network)) {
-			api.query.eqBalances
-				.account(address, { '0': 1734700659 })
-				.then((result: any) => {
-					setBalance(result.toHuman()?.Positive?.toString() || '0');
-					setAvailableBalance?.(result.toHuman()?.Positive?.toString() || '0');
-					onChange?.(result.toHuman()?.Positive?.toString() || '0');
-				})
-				.catch((e) => console.error(e));
-		} else if (['equilibrium'].includes(network)) {
-			api?.query.system
-				.account(address)
-				.then((result: any) => {
-					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', ''));
-					if (isReferendum) {
-						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						setAvailableBalance?.(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						onChange?.(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-					} else {
-						const locked = result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') || '0';
-						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-						if (new BN(positive).cmp(new BN(locked))) {
-							setBalance(new BN(positive).sub(new BN(locked)).toString() || '0');
-							setAvailableBalance?.(new BN(positive).sub(new BN(locked)).toString() || '0');
-							onChange?.(new BN(positive).sub(new BN(locked)).toString() || '0');
-						} else {
-							setBalance(positive);
-							setAvailableBalance?.(positive);
-							onChange?.(positive);
-						}
-					}
-					setLockBalance(locked);
-				})
-				.catch((e) => console.error(e));
-		} else {
-			(usedInIdentityFlow ? peopleChainApi ?? api : api).query.system
-				.account(address)
-				.then((result: any) => {
-					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
-					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
-					const locked = new BN(result.data?.frozen?.toBigInt().toString());
-					if ((isReferendum && isVoting) || isDelegating) {
-						setBalance(result.data?.free?.toString() || '0');
-						setAvailableBalance?.(result.data?.free?.toString() || '0');
-						onChange?.(result.data?.free?.toString() || '0');
-					} else if (isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen) {
-						setBalance((result.data?.free?.toBigInt() + reserved).toString() || '0');
-						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString() || '0');
-						onChange?.((result.data?.free?.toBigInt() + reserved).toString() || '0');
-					} else if (result.data.free && result.data?.free?.toBigInt() >= frozen) {
-						setBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						setAvailableBalance?.((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						onChange?.((result.data?.free?.toBigInt() - frozen).toString() || '0');
-					} else {
-						setBalance('0');
-						setAvailableBalance && setAvailableBalance('0');
-						onChange?.('0');
-					}
-					setLockBalance(locked);
-				})
-				.catch((e) => console.error(e));
-		}
-		setLoading(false);
+
+		(async () => {
+			const { freeBalance, transferableBalance } = await userProfileBalances({
+				address: address,
+				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
+				apiReady: usedInIdentityFlow ? peopleChainApiReady ?? apiReady : apiReady,
+				network
+			});
+
+			if ((isReferendum && isVoting) || isDelegating) {
+				setAvailableBalance?.(freeBalance.toString());
+				setBalance?.(freeBalance.toString());
+				onChange?.(freeBalance.toString());
+			} else {
+				setAvailableBalance?.(transferableBalance?.toString());
+				setBalance?.(transferableBalance?.toString());
+				onChange?.(transferableBalance?.toString());
+			}
+			setTransferableBalance(transferableBalance);
+			setLoading(false);
+		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated, peopleChainApi, peopleChainApiReady, usedInIdentityFlow]);
 
@@ -121,11 +80,11 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 			<HelperTooltip
 				className='mx-1'
 				text={
-					<div>
+					<div className='text-xs'>
 						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 						<br />
 						<span>
-							Locked Balance: {formatedBalance(lockBalance.toString(), unit, 2)} {unit}
+							Transferable Balance: {formatedBalance(transferableBalance.toString(), unit, 2)} {unit}
 						</span>
 					</div>
 				}

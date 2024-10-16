@@ -66,7 +66,7 @@ const handler: NextApiHandler<LeaderboardPointsResponse | MessageType> = async (
 	//get user_id from req.query
 	const { page = 1, user_id, activity_category = null } = req.query;
 
-	if (isNaN(Number(page)) || isNaN(Number(user_id))) {
+	if (!Number.isInteger(Number(page)) || Number(page) < 1 || !Number.isInteger(Number(user_id)) || Number(user_id) < 1) {
 		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
 	}
 

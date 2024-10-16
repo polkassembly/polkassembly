@@ -5,12 +5,16 @@ import { spaceGrotesk } from 'pages/_app';
 import React, { useState } from 'react';
 import CuratorRequest from './PendingRequestTabs/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
-import CuratorArchived from './PendingRequestTabs/CuratorArchived';
 import Input from '~src/basic-components/Input';
 import { SearchIcon } from '~src/ui-components/CustomIcons';
 
 function CuratorPendingRequestManager() {
-	const [selectedTab, setSelectedTab] = useState('curatorRequests');
+	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
+
+	const tabs = [
+		{ count: 0, id: 'curatorRequests', label: 'Curator Requests' },
+		{ count: 0, id: 'submissions', label: 'Submissions' }
+	];
 
 	const renderTabContent = () => {
 		switch (selectedTab) {
@@ -18,8 +22,6 @@ function CuratorPendingRequestManager() {
 				return <CuratorRequest />;
 			case 'submissions':
 				return <CuratorSubmission />;
-			case 'archived':
-				return <CuratorArchived />;
 			default:
 				return null;
 		}
@@ -32,39 +34,22 @@ function CuratorPendingRequestManager() {
 			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests (0)</p>
 
 			<div className='mt-4 flex gap-1'>
-				<label className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === 'curatorRequests' ? 'bg-[#FEF2F8]' : ''}`}>
-					<input
-						type='radio'
-						className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px]  border-solid border-white  ${
-							selectedTab === 'curatorRequests' ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A]' : 'shadow-[0_0_0_1px_#667488] '
-						}`}
-						checked={selectedTab === 'curatorRequests'}
-						onChange={() => setSelectedTab('curatorRequests')}
-					/>
-					Curator Requests (0)
-				</label>
-				<label className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === 'submissions' ? 'bg-[#FEF2F8]' : ''}`}>
-					<input
-						type='radio'
-						className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px]  border-solid border-white   ${
-							selectedTab === 'submissions' ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A]' : 'shadow-[0_0_0_1px_#667488]'
-						}`}
-						checked={selectedTab === 'submissions'}
-						onChange={() => setSelectedTab('submissions')}
-					/>
-					Submissions (0)
-				</label>
-				<label className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === 'archived' ? 'bg-[#FEF2F8]' : ''}`}>
-					<input
-						type='radio'
-						className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px]  border-solid border-white  ${
-							selectedTab === 'archived' ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A]' : 'shadow-[0_0_0_1px_#667488] '
-						}`}
-						checked={selectedTab === 'archived'}
-						onChange={() => setSelectedTab('archived')}
-					/>
-					Archived (0)
-				</label>
+				{tabs.map((tab) => (
+					<label
+						key={tab.id}
+						className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === tab.id ? 'bg-[#FEF2F8]' : ''}`}
+					>
+						<input
+							type='radio'
+							className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px] border-solid border-white ${
+								selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A]' : 'shadow-[0_0_0_1px_#667488]'
+							}`}
+							checked={selectedTab === tab.id}
+							onChange={() => setSelectedTab(tab.id as 'curatorRequests' | 'submissions')}
+						/>
+						{`${tab.label} (${tab.count})`}
+					</label>
+				))}
 			</div>
 
 			<div className='relative mt-2'>

@@ -9,17 +9,31 @@ import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { LeaderboardPointsResponse } from '~src/types';
+import { EUserActivityCategory, EUserActivityType, LeaderboardPointsResponse } from '~src/types';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
-export const getUserLeaderboardPoints = async ({ page, user_id }: { page: number; user_id: number }) => {
+export const getUserLeaderboardPoints = async ({ page, user_id, activity_category }: { page: number; user_id: number; activity_category?: EUserActivityCategory }) => {
 	try {
-		const userActivityQuery = firestore_db.collection('user_activities').where('by', '==', user_id).where('is_deleted', '==', false);
+		let activityTypesToFetch: EUserActivityType[] = [];
+
+		if (activity_category) {
+			//find all activity types for the given category from REPUTATION_SCORES
+			activityTypesToFetch = Object.values(REPUTATION_SCORES)
+				.filter((activity) => activity.category === activity_category)
+				.map((activity) => activity.type);
+		}
+
+		let userActivityQuery = firestore_db.collection('user_activities').where('by', '==', user_id).where('is_deleted', '==', false);
+
+		if (activityTypesToFetch.length) {
+			userActivityQuery = userActivityQuery.where('type', 'in', activityTypesToFetch);
+		}
 
 		const totalUserActivitiesCount = (await userActivityQuery.count().get()).data().count || 0;
 
 		const activities = (
 			await userActivityQuery
-				// .orderBy('created_at', 'desc') //TODO: add created_at in all user activities
+				// .orderBy('created_at', 'desc') //TODO: script and add created_at in all user activities
 				.offset((Number(page) - 1) * LISTING_LIMIT)
 				.limit(LISTING_LIMIT)
 				.get()
@@ -31,8 +45,6 @@ export const getUserLeaderboardPoints = async ({ page, user_id }: { page: number
 				updated_at: data.updated_at?.toDate?.() || new Date()
 			};
 		});
-
-		console.log('activities', activities);
 
 		return {
 			data: { count: totalUserActivitiesCount, data: activities } as LeaderboardPointsResponse,
@@ -52,13 +64,20 @@ const handler: NextApiHandler<LeaderboardPointsResponse | MessageType> = async (
 	storeApiKeyUsage(req);
 
 	//get user_id from req.query
-	const { page = 1, user_id } = req.query;
+	const { page = 1, user_id, activity_category = null } = req.query;
 
 	if (isNaN(Number(page)) || isNaN(Number(user_id))) {
 		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
 	}
 
+	let parsedActivityCategory;
+
+	if (activity_category && Object.values(EUserActivityCategory).includes(activity_category as EUserActivityCategory)) {
+		parsedActivityCategory = activity_category as EUserActivityCategory;
+	}
+
 	const { data, error, status } = await getUserLeaderboardPoints({
+		activity_category: parsedActivityCategory,
 		page: Number(page),
 		user_id: Number(user_id)
 	});

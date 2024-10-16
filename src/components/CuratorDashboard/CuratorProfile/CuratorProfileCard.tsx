@@ -19,8 +19,9 @@ import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ESocialType } from '~src/auth/types';
+import { CuratorData } from '../types/types';
 
-const CuratorProfileCard = ({ curatorData }: { curatorData: any }) => {
+const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const [curatorprofile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);

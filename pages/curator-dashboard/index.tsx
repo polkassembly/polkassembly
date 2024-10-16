@@ -53,6 +53,7 @@ const SignupButton = ({ onClick }: { onClick: () => void }) => (
 		Sign Up
 	</p>
 );
+
 const CuratorDashboard: FC<ICuratorProfileProps> = (props) => {
 	const dispatch = useDispatch();
 	const { network } = props;

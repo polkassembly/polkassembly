@@ -224,11 +224,12 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		{
 			dataIndex: 'profileScore',
 			key: 'profileScore',
-			render: (profileScore) => (
+			render: (profileScore, obj) => (
 				<ScoreTag
 					className='h-7 w-[90px] py-2'
 					score={profileScore}
 					scale={1.1}
+					userId={obj?.key}
 					iconWrapperClassName='ml-1.5 mt-[5.5px]'
 				/>
 			),

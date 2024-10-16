@@ -99,7 +99,7 @@ const ProfileTabs = ({
 			)
 		},
 		{
-			children: <AstralPoints />,
+			children: <AstralPoints userProfile={userProfile} />,
 			key: 'Astrals',
 			label: (
 				<div className='flex items-center'>

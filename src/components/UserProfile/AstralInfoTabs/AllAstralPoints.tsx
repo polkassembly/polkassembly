@@ -203,12 +203,12 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 								imgClassName='-mt-[100px] w-[555px] h-[462px]'
 							/>
 							<h3 className='m-0 -mt-[120px] p-0 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Nothing to see here</h3>
-							<p className='m-0 flex items-center gap-x-1 text-sm text-bodyBlue dark:text-blue-dark-medium'>
+							<p className='m-0 p-0 text-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
 								Click{' '}
 								<Link
 									href='/astral-scoring'
 									target='_blank'
-									className='m-0 mt-1 cursor-pointer text-sm text-pink_primary'
+									className='m-0 cursor-pointer p-0 text-sm text-pink_primary'
 								>
 									here
 								</Link>{' '}

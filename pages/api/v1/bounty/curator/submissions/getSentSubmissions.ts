@@ -34,11 +34,11 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
-		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		// const token = getTokenFromReq(req);
+		// if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
 
-		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		// const user = await authServiceInstance.GetUser(token);
+		// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
 
@@ -69,7 +69,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 
 				//is Bounty active
 				const { data: subsquidRes } = await getBountyInfo({
-					bountyIndex: userAddress,
+					bountyIndex: payload?.parentBountyIndex,
 					network: network
 				});
 

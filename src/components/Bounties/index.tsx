@@ -43,7 +43,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const activeDataChunks = activeBountyData ? chunkArray(activeBountyData.posts, isMobile ? 1 : 3) : [];
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
-	const [curatorData, setCuratorData] = React.useState<any>();
+	// const [curatorData, setCuratorData] = React.useState<any>();
 
 	const fetchCuratorBountiesData = async () => {
 		if (address) {
@@ -52,7 +52,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				userAddress: substrateAddress
 			});
 			if (data) {
-				setCuratorData(data);
+				// setCuratorData(data);
 			}
 		}
 	};

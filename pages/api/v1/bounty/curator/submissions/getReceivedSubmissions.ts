@@ -17,6 +17,10 @@ import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_ALL_BOUNTIES_WITHOUT_PAGINATION } from '~src/queries';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
+import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsquare-content';
+import { getDefaultContent } from '~src/util/getDefaultContent';
 
 const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -71,7 +75,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
-					createdAt: data?.created_at,
+					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
 					link: data?.link || '',
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,
@@ -79,19 +83,79 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					status: data?.staus,
 					tags: data?.tags || [],
 					title: data?.title || '',
-					updatedAt: data?.updated_at
+					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at
 				};
 
-				subsquidBountiesData?.map((subsquidBounty: { index: number; status: string }) => {
-					if (payload?.parentBountyIndex == subsquidBounty?.index && !getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(subsquidBounty?.status || '')) {
-						payload.status = ESubmissionStatus.OUTDATED;
+				subsquidBountiesData?.map((subsquidBounty: { index: number; status: string; reward: string; curator: string; createdAt: string }) => {
+					if (payload?.parentBountyIndex == subsquidBounty?.index) {
+						payload.bountyData = {
+							...(payload?.bountyData || {}),
+							createdAt: subsquidBounty?.createdAt as any,
+							curator: subsquidBounty?.curator || '',
+							reqAmount: subsquidBounty?.reward || '0',
+							status: subsquidBounty?.status || ''
+						};
+
+						if (!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(subsquidBounty?.status || '')) {
+							payload.status = ESubmissionStatus.OUTDATED;
+						}
 					}
 				});
 				allSubmissions?.push(payload);
 			}
 		});
 
-		return res.status(200).json(allSubmissions);
+		const allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+
+		const chunkArray = (arr: any[], chunkSize: number) => {
+			const chunks = [];
+			for (let i = 0; i < arr.length; i += chunkSize) {
+				chunks.push(arr.slice(i, i + chunkSize));
+			}
+			return chunks;
+		};
+
+		const chunks = chunkArray(allSubmissionsBountyIndexes, 30);
+
+		const bountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', chunk).get());
+		const bountiesDocsSnapshots = await Promise.all(bountiesDocsPromises);
+
+		const bountiesDocs = bountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
+
+		const resultsPromises = allSubmissions?.map(async (submission: IChildBountySubmission) => {
+			const bountiesDataPromises = bountiesDocs?.map(async (bounty) => {
+				if (bounty?.exists) {
+					const data = bounty.data();
+					if (submission?.parentBountyIndex == data?.id) {
+						submission.bountyData = {
+							...(submission?.bountyData || {}),
+							content: data?.content || '',
+							title: data?.title || ''
+						};
+						if (!submission?.content?.length || !submission?.title?.length) {
+							const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
+							submission.bountyData.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.BOUNTIES) || '';
+							submission.bountyData.content = subsqaureRes?.content || getDefaultContent({ proposalType: ProposalType.BOUNTIES, proposer: encodedCuratorAddress || '' }) || '';
+						}
+					}
+				}
+			});
+
+			await Promise.allSettled(bountiesDataPromises);
+			return submission;
+		});
+
+		const resultRes = await Promise.allSettled(resultsPromises);
+
+		const results: IChildBountySubmission[] = [];
+
+		resultRes.map((promise) => {
+			if (promise?.status == 'fulfilled') {
+				results?.push(promise.value);
+			}
+		});
+
+		return res.status(200).json(results);
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

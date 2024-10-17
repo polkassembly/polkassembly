@@ -51,6 +51,7 @@ interface Props {
 	openAddressChangeModal: boolean;
 	setOpenAddressChangeModal: (pre: boolean) => void;
 	paUsername: string;
+	isUsedInAccountsPage?: boolean;
 }
 
 export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; src: string; value: number }[] = [
@@ -60,7 +61,7 @@ export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenD
 	{ key: 'fifteenDollar', src: '/assets/icons/tip-4.svg', value: 15 }
 ];
 
-const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
+const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername, isUsedInAccountsPage = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -285,7 +286,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<TipIcon className='mr-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-						Give a Tip
+						{isUsedInAccountsPage ? 'Send Funds' : 'Give a Tip'}
 					</div>
 				}
 				open={open}
@@ -311,7 +312,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							onClick={handleTip}
 							className={`font-semibold ${disable && 'opacity-50'}`}
 							buttonsize='xs'
-							text='Tip'
+							text={isUsedInAccountsPage ? 'Send' : 'Tip'}
 						/>
 					</div>
 				}

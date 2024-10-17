@@ -156,7 +156,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const getData = async () => {
 		if (!api || !apiReady || !delegationDashboardAddress) return;
-		const res = api.consts.convictionVoting.voteLockingPeriod;
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
 		const num = res.toJSON();
 		const days = blockToDays(num, network);
 		setDays(days);

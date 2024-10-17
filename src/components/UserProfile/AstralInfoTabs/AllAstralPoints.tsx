@@ -130,7 +130,7 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 					</div>
 				)}
 				{hasMoreData && data.length > 0 && (
-					<div className='mt-[60px] flex w-full justify-center'>
+					<div className='mt-9 flex w-full justify-center'>
 						<Button
 							onClick={handleLoadMore}
 							className='flex h-[40px] items-center gap-x-1 rounded-[20px] border-none bg-lightWhite text-lightBlue dark:bg-inactiveIconDark dark:text-blue-dark-medium'

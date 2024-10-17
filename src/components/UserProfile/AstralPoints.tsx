@@ -121,7 +121,7 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 		>
 			<header className='flex items-center justify-between gap-4 max-md:px-0'>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
-					<AstralIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
+					<AstralIcon className='mt-1 text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Astrals</div>
 				</div>
 			</header>

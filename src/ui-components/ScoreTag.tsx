@@ -22,24 +22,21 @@ interface Props {
 const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId, showPointsInfo }: Props) => {
 	const [scores, setScores] = useState({
 		offChain: 0,
-		onChain: 0,
-		profile: 0
+		onChain: 0
 	});
 
 	const fetchUserActivityData = useCallback(async () => {
 		if (!userId) return;
 
 		try {
-			const [offChainRes, onChainRes, profileRes] = await Promise.all([
+			const [offChainRes, onChainRes] = await Promise.all([
 				nextApiClientFetch<LeaderboardPointsResponse>(`api/v1/leaderboard/user-points?user_id=${userId}&activity_category=${EUserActivityCategory.OFF_CHAIN}`),
-				nextApiClientFetch<LeaderboardPointsResponse>(`api/v1/leaderboard/user-points?user_id=${userId}&activity_category=${EUserActivityCategory.ON_CHAIN}`),
-				nextApiClientFetch<LeaderboardPointsResponse>(`api/v1/leaderboard/user-points?user_id=${userId}&activity_category=${EUserActivityCategory.PROFILE}`)
+				nextApiClientFetch<LeaderboardPointsResponse>(`api/v1/leaderboard/user-points?user_id=${userId}&activity_category=${EUserActivityCategory.ON_CHAIN}`)
 			]);
 
 			setScores({
 				offChain: offChainRes.data?.count || 0,
-				onChain: onChainRes.data?.count || 0,
-				profile: profileRes.data?.count || 0
+				onChain: onChainRes.data?.count || 0
 			});
 		} catch (error) {
 			console.error(error);
@@ -59,8 +56,7 @@ const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId, s
 				<article className='flex max-w-[505px] items-center justify-center gap-x-2 whitespace-nowrap text-sm text-white'>
 					{[
 						{ icon: '/assets/icons/onChain-icon.svg', label: 'On-chain activity', score: scores.onChain },
-						{ icon: '/assets/icons/offChain-icon.svg', label: 'Off-chain activity', score: scores.offChain },
-						{ icon: '/assets/icons/user-icon.svg', label: 'Profile', score: scores.profile }
+						{ icon: '/assets/icons/offChain-icon.svg', label: 'Off-chain activity', score: scores.offChain }
 					].map(({ icon, label, score }, index) => (
 						<div
 							key={index}

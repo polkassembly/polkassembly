@@ -72,6 +72,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const payload = {
 			content,
 			created_at: new Date(),
+			id: submissionDocRef?.id,
 			link: link || '',
 			parent_bounty_index: parentBountyIndex,
 			proposer: getEncodedAddress(proposerAddress, network) || '',

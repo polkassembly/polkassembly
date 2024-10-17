@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { useRouter } from 'next/router';
@@ -9,13 +8,12 @@ import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import CreationLabel from 'src/ui-components/CreationLabel';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-import UserAvatar from 'src/ui-components/UserAvatar';
-
 import { usePostDataContext } from '~src/context';
-import EditableCommentContent from './EditableCommentContent';
-import Replies from './Replies';
 import { ICommentHistory } from '~src/types';
 import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
+import Replies from '../Replies';
+import EditableCommentContent from '../EditableCommentContent';
+import CreationLabelForComments from './CreationLabelForComments';
 
 export interface IComment {
 	user_id: number;
@@ -48,7 +46,7 @@ interface ICommentProps {
 	disableEdit?: boolean;
 }
 
-export const Comment: FC<ICommentProps> = (props) => {
+const CommentCard: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
 	const { user_id, content, created_at, id, replies, updated_at, sentiment, comment_source = 'polkassembly', history, spam_users_count, profile, vote = null } = comment;
 	const { asPath } = useRouter();
@@ -98,14 +96,11 @@ export const Comment: FC<ICommentProps> = (props) => {
 	}
 
 	const modifiedContent = modifyQuoteComment(comment.content);
-
-	// TODO: author address
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (
 		<div className={`${className} mb-9 flex gap-x-4 `}>
 			<div className='w-full overflow-hidden'>
-				<CreationLabel
-					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
+				<CreationLabelForComments
+					className=' rounded-t-md px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					voterAddress={comment?.votes?.[0]?.voter}
@@ -123,17 +118,20 @@ export const Comment: FC<ICommentProps> = (props) => {
 							onClick={() => setOpenModal(true)}
 						>
 							<UpdateLabel
+                            className='-ml-[2px]'
 								created_at={created_at}
 								updated_at={updated_at}
 								isHistory={history && history?.length > 0}
+                                isUsedInComments={true}
 							/>
 						</div>
 					)}
-				</CreationLabel>
+				</CreationLabelForComments>
+                <div className='pl-10 pr-7'>
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]'}`}
+					className={``}
 					comment={comment}
 					commentId={id}
 					content={modifiedContent || content}
@@ -158,6 +156,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 						isReactionOnReply={true}
 					/>
 				)}
+                </div>
 			</div>
 			{history && history.length > 0 && (
 				<CommentHistoryModal
@@ -173,4 +172,4 @@ export const Comment: FC<ICommentProps> = (props) => {
 	);
 };
 
-export default Comment;
+export default CommentCard;

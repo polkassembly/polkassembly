@@ -4,6 +4,7 @@
 import React, { FC } from 'react';
 
 import Comment, { IComment } from './Comment';
+import CommentCard from './CommentsContainer/CommentCard';
 
 interface ICommentsProps {
 	className?: string;
@@ -34,7 +35,7 @@ const Comments: FC<ICommentsProps> = (props) => {
 	return (
 		<div className={className}>
 			{uniqueComments.map((comment) => (
-				<Comment
+				<CommentCard
 					disableEdit={props.disableEdit}
 					comment={comment}
 					key={comment.id}

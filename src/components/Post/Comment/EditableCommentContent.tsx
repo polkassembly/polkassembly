@@ -640,14 +640,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	return (
 		<>
 			<div className={className}>
-				{error && (
+				{error ? (
 					<div>
 						<ErrorAlert
 							errorMsg={error}
 							className='mb-4'
 						/>
 					</div>
-				)}
+				) : null}
 				{isEditing ? (
 					<Form
 						form={form}
@@ -725,11 +725,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<Markdown
 							theme={theme}
 							md={content}
-							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							className='rounded-b-md text-sm '
 							isUsedInComments={true}
 						/>
 
-						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
+						<div className='flex -mt-3 flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}

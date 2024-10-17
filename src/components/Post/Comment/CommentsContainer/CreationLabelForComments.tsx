@@ -115,7 +115,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 								</p>
 							) : votesArr[0].decision == 'no' ? (
 								<p className='mb-[-1px]'>
-									<DislikeFilled className='text-[red]' /> <span className='font-medium capitalize text-[red] mb-[2px]'> Nay</span>
+									<DislikeFilled className='text-[red]' /> <span className='mb-[2px] font-medium capitalize text-[red]'> Nay</span>
 								</p>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
 								<p className='mb-[-1px]'>
@@ -155,23 +155,24 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 				{relativeCreatedAt && (
 					<div className={`${poppins.variable} ${poppins.className} flex items-center`}>
 						<Divider
-							className='ml-1 mr-2 mt-[2px] hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+							className='ml-1 mr-2 mt-[2px] hidden border-lightBlue dark:border-blue-dark-medium  md:inline-block'
 							type='vertical'
 						/>
-						<span className={`flex items-center max-[450px]:text-[9px] md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+						<span className={`flex items-center max-[450px]:text-[9px] text-blue-light-medium dark:text-blue-dark-medium md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
 							<ClockCircleOutlined className={'mr-1'} />
 							{relativeCreatedAt}
 						</span>
 					</div>
 				)}
-                <div className='flex items-center'>
+				{children && (
+					<div className='flex items-center'>
 						<Divider
-							className='ml-[2px] mt-[2px] hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+							className='ml-[2px] mt-[2px] hidden border-lightBlue dark:border-blue-dark-medium  md:inline-block'
 							type='vertical'
 						/>
 						{children}
 					</div>
-                
+				)}
 			</div>
 
 			<div className='flex'>

@@ -10,6 +10,7 @@ import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
 import { IComment } from './Comment';
+import CreationLabelForComments from './CommentsContainer/CreationLabelForComments';
 interface Props {
 	className?: string;
 	reply: any;
@@ -42,25 +43,19 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 			ref={replyRef}
 			className={`${className} flex gap-x-4`}
 		>
-			<UserAvatar
-				className='mt-1 hidden md:inline-block'
-				username={username}
-				size='large'
-				id={id}
-			/>
 			<div className='comment-box'>
-				<CreationLabel
-					className='reply-user-container -mt-1 rounded-t-md px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
+				<CreationLabelForComments
+					className='-mt-1 rounded-t-md py-2 pt-4'
 					created_at={created_at}
 					defaultAddress={proposer}
 					username={username}
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
 					isRow={true}
-				></CreationLabel>
+				></CreationLabelForComments>
 				<EditableReplyContent
 					userId={user_id}
-					className='rounded-md'
+					className='rounded-md ml-5'
 					commentId={commentId}
 					reply={reply}
 					replyId={id}
@@ -85,7 +80,7 @@ export default styled(Reply)`
 		border-radius: 3px;
 		box-shadow: box_shadow_card;
 		margin-bottom: 1rem;
-		width: calc(100% - 60px);
+		width: calc(100%);
 		word-break: break-word;
 
 		@media only screen and (max-width: 576px) {

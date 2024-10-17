@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -19,7 +19,8 @@ import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
-
+import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
@@ -559,15 +560,15 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					)
 			  }
 			: null,
-		id === userId
+		id == userId
 			? {
 					key: 2,
 					label: (
 						<button
-							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'}
 							onClick={deleteReply}
 						>
-							<DeleteOutlined />
+							{theme == 'light' ? <DeleteIcon className='mr-[2px]' /> : <DeleteIconDark className='mr-[2px]' />}
 							<span className='m-0 p-1'>Delete</span>
 						</button>
 					)
@@ -585,6 +586,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							commentId={commentId}
 							replyId={replyId}
 							postId={(reply.post_index as any) || postIndex}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -600,6 +603,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							commentId={commentId}
 							type='reply'
 							replyId={replyId}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -652,11 +657,12 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					<>
 						<Markdown
 							theme={theme}
-							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							className='rounded-b-md py-2 text-sm '
 							md={content}
 							isUsedInComments={true}
 						/>
-						<div className=' flex flex-wrap items-center gap-1'>
+						<div className=' flex flex-wrap items-center  justify-between gap-1'>
+							<div className='flex gap-1 items-center'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}
@@ -667,25 +673,25 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							/>
 							<div className='item-center flex flex-wrap gap-3'>
 								{id ? (
-									reply.reply_source === 'subsquare' ? (
+									reply.reply_source == 'subsquare' ? (
 										<Tooltip
 											title='Reply are disabled for imported comments.'
 											color='#E5007A'
 										>
 											<Button
 												disabled={!isCommentAllowed}
-												className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
+												className={`mt-[-2px] flex items-center justify-start shadow-none font-medium border-none bg-transparent pl-1 pr-1 text-xs text-[#485F7DCC] dark:text-[#9E9E9ECC] ${
 													reply.reply_source ? 'disabled-reply' : ''
 												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
 											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 ' />} Reply
 											</Button>
 										</Tooltip>
 									) : (
 										!isReplying && (
 											<Button
 												disabled={!isCommentAllowed}
-												className={`flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
+												className={`flex -mt-[2px] items-center border-none shadow-none font-medium p-0 text-xs text-[#485F7DCC] dark:text-[#9E9E9ECC] ${
 													!isCommentAllowed ? 'opacity-50' : ''
 												}`}
 												onClick={() => setIsReplying(!isReplying)}
@@ -697,6 +703,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									)
 								) : null}
 							</div>
+							</div>
+							<div>
 							<Dropdown
 								theme={theme}
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
@@ -724,6 +732,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									</div>
 								</div>
 							)}
+							</div>
 						</div>
 						{isReplying && (
 							<Form

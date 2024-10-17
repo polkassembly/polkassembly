@@ -98,9 +98,9 @@ const CommentCard: FC<ICommentProps> = (props) => {
 	const modifiedContent = modifyQuoteComment(comment.content);
 	return (
 		<div className={`${className} mb-9 flex gap-x-4 `}>
-			<div className='w-full overflow-hidden'>
+			<div className='w-full overflow-hidden '>
 				<CreationLabelForComments
-					className=' rounded-t-md px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
+					className=' rounded-t-md px-2 py-2 pt-4 md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					voterAddress={comment?.votes?.[0]?.voter}
@@ -118,45 +118,45 @@ const CommentCard: FC<ICommentProps> = (props) => {
 							onClick={() => setOpenModal(true)}
 						>
 							<UpdateLabel
-                            className='-ml-[2px]'
+								className='-ml-[2px]'
 								created_at={created_at}
 								updated_at={updated_at}
 								isHistory={history && history?.length > 0}
-                                isUsedInComments={true}
+								isUsedInComments={true}
 							/>
 						</div>
 					)}
 				</CreationLabelForComments>
-                <div className='pl-10 pr-7'>
-				<EditableCommentContent
-					userId={user_id}
-					created_at={created_at}
-					className={``}
-					comment={comment}
-					commentId={id}
-					content={modifiedContent || content}
-					postId={postIndex}
-					proposalType={postType}
-					disableEdit={props.disableEdit}
-					sentiment={newSentiment}
-					setSentiment={setNewSentiment}
-					prevSentiment={sentiment || 0}
-					isSubsquareUser={comment_source === 'subsquare'}
-					userName={comment?.username}
-					proposer={comment?.proposer}
-					is_custom_username={comment?.is_custom_username}
-				/>
-				{replies && replies.length > 0 && (
-					<Replies
-						className='comment-content'
-						commentId={id}
-						repliesArr={replies}
+				<div className='pl-10 pr-7'>
+					<EditableCommentContent
+						userId={user_id}
+						created_at={created_at}
+						className={''}
 						comment={comment}
+						commentId={id}
+						content={modifiedContent || content}
+						postId={postIndex}
+						proposalType={postType}
+						disableEdit={props.disableEdit}
+						sentiment={newSentiment}
+						setSentiment={setNewSentiment}
+						prevSentiment={sentiment || 0}
 						isSubsquareUser={comment_source === 'subsquare'}
-						isReactionOnReply={true}
+						userName={comment?.username}
+						proposer={comment?.proposer}
+						is_custom_username={comment?.is_custom_username}
 					/>
-				)}
-                </div>
+					{replies && replies.length > 0 && (
+						<Replies
+							className='comment-content'
+							commentId={id}
+							repliesArr={replies}
+							comment={comment}
+							isSubsquareUser={comment_source === 'subsquare'}
+							isReactionOnReply={true}
+						/>
+					)}
+				</div>
 			</div>
 			{history && history.length > 0 && (
 				<CommentHistoryModal

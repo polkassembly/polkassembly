@@ -12,6 +12,7 @@ import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Tooltip from '~src/basic-components/Tooltip';
+import { poppins } from 'pages/_app';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -58,7 +59,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
-				<LikeFilled className='-mt-1' />
+				<LikeFilled className='-mt-[2px] ' />
 			) : (
 				<div
 					onClick={() => {
@@ -71,7 +72,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined />
+					<LikeOutlined className='text-[#485F7DCC] dark:text-[#9E9E9ECC]'  />
 				</div>
 			);
 		}
@@ -80,7 +81,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			return reacted ? (
 				<LikeFilled
 					rotate={180}
-					className='-mt-1'
+					className='-mt-[2px]'
 				/>
 			) : (
 				<div
@@ -94,7 +95,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined rotate={180} />
+					<LikeOutlined rotate={180} className='text-[#485F7DCC] dark:text-[#9E9E9ECC]' />
 				</div>
 			);
 		}
@@ -150,13 +151,13 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			<CustomButton
 				variant='default'
 				onClick={handleReact}
-				className='m-0 mr-3 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
+				className='m-0 border-none hover:bg-[#0000000A] px-2 disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}
 				height={40}
 			>
 				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
-					<span className='ml-2 text-xs'>{reactions?.[reaction as IReaction].count}</span>
+					<span className={`${poppins.variable} ${poppins.className} ml-[5px] font-medium text-xs ${!reacted ? 'text-[#485F7DCC] dark:text-[#9E9E9ECC]' : 'text-pink_primary dark:text-blue-dark-helper' } `}>{reactions?.[reaction as IReaction].count}</span>
 				</span>
 			</CustomButton>
 		</span>

@@ -26,7 +26,11 @@ const UpdateLabel = ({ className, created_at, updated_at, isHistory, isUsedInCom
 				color='#E5007A'
 				title={title}
 			>
-				<span className={`${poppins.variable} ${poppins.className} text-xs leading-4 ${isUsedInComments ? ' text-blue-light-medium dark:text-blue-dark-medium' :  'text-pink_primary'}`}>{isUsedInComments ? 'Edit History' : '(Edited)'}</span>
+				<span
+					className={`${poppins.variable} ${poppins.className} text-xs leading-4 ${isUsedInComments ? ' text-blue-light-medium dark:text-blue-dark-medium' : 'text-pink_primary'}`}
+				>
+					{isUsedInComments ? 'Edit History' : '(Edited)'}
+				</span>
 			</Tooltip>
 		</span>
 	);

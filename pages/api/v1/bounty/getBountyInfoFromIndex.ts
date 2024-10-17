@@ -39,8 +39,8 @@ export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IAp
 		const status = subsquidBountiesRes?.data?.bounties?.[0]?.status || null;
 		return {
 			data: {
-				createdAt: subsquidBountiesRes?.createdAt,
-				curator: subsquidBountiesRes?.curator || '',
+				createdAt: subsquidBountiesRes?.data?.bounties?.[0]?.createdAt,
+				curator: subsquidBountiesRes?.data?.bounties?.[0]?.curator || '',
 				reqAmount: subsquidBountiesRes?.data?.bounties?.[0]?.reward || '0',
 				status: status
 			},

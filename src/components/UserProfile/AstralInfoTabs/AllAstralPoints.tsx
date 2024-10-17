@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Spin } from 'antd';
 import dayjs from 'dayjs';
-import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -26,7 +25,6 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [hasMoreData, setHasMoreData] = useState<boolean>(true);
-	const { resolvedTheme: theme } = useTheme();
 
 	const getAllAstralPointsData = async (pageNumber: number) => {
 		setLoading(true);
@@ -73,82 +71,95 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 			spinning={loading}
 			className='mt-3'
 		>
-			<section className='mt-4'>
-				{data?.length ? (
-					data.map((item, index) => {
-						return (
-							<div
-								key={index}
-								className='activity-item'
-							>
-								<div className='flex justify-between'>
-									<p className='m-0 flex items-center gap-x-1 p-0 text-bodyBlue dark:text-blue-dark-medium'>
-										<div className='mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#FFBA03]'>
-											<AstralIcon className='m-0 ml-1 mt-1 scale-[70%] p-0 text-[28px] text-lightBlue' />
-										</div>
-										Earned <span className='text-base font-bold text-[#FFBA03]'>+{String(getPoints(item.type))}</span> for {item?.type?.toLowerCase()} on
-										<span className='text-sm font-semibold'>#{item.post_id}</span>
-										<Image
-											src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}
-											alt=''
-											className='scale-90'
-											width={20}
-											height={20}
-										/>
-										<Link
-											href={`/referenda/${item.post_id}`}
-											target='_blank'
-										>
+			{!loading && (
+				<section className='mt-4'>
+					{data?.length ? (
+						data.map((item, index) => {
+							return (
+								<div
+									key={index}
+									className='activity-item'
+								>
+									<div className='flex justify-between'>
+										<p className='m-0 flex items-center gap-x-1 p-0 text-bodyBlue dark:text-blue-dark-medium'>
+											<div className='mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#FFBA03]'>
+												<AstralIcon className='m-0 ml-1 mt-1 scale-[70%] p-0 text-[28px] text-lightBlue' />
+											</div>
+											Earned <span className='text-base font-bold text-[#FFBA03]'>+{String(getPoints(item.type))}</span> for {item?.type?.toLowerCase()} on
+											<span className='text-sm font-semibold'>#{item.post_id}</span>
 											<Image
-												src={'/assets/icons/redirect-pink-icon.svg'}
+												src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}
 												alt=''
 												className='scale-90'
 												width={20}
 												height={20}
 											/>
-										</Link>
-									</p>
-									<p className='m-0 flex items-center gap-x-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<ClockCircleOutlined /> {dayjs(item.updated_at).format('DD MMM YYYY')}
-									</p>
+											<Link
+												href={`/referenda/${item.post_id}`}
+												target='_blank'
+											>
+												<Image
+													src={'/assets/icons/redirect-pink-icon.svg'}
+													alt=''
+													className='scale-90'
+													width={20}
+													height={20}
+												/>
+											</Link>
+										</p>
+										<p className='m-0 flex items-center gap-x-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>
+											<ClockCircleOutlined /> {dayjs(item.updated_at).format('DD MMM YYYY')}
+										</p>
+									</div>
+									{index < data.length - 1 && (
+										<Divider
+											style={{ background: '#D2D8E0', flexGrow: 1 }}
+											className='my-4 dark:bg-separatorDark'
+										/>
+									)}
 								</div>
-								{index < data.length - 1 && (
-									<Divider
-										style={{ background: '#D2D8E0', flexGrow: 1 }}
-										className='my-4 dark:bg-separatorDark'
-									/>
-								)}
-							</div>
-						);
-					})
-				) : (
-					<div className='my-9 flex flex-col items-center gap-6'>
-						<ImageIcon
-							src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
-							alt='Empty Icon'
-							imgClassName='w-[225px] h-[225px]'
-						/>
-						<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Data to display</h3>
-					</div>
-				)}
-				{hasMoreData && data.length > 0 && (
-					<div className='mt-9 flex w-full justify-center'>
-						<Button
-							onClick={handleLoadMore}
-							className='flex h-[40px] items-center gap-x-1 rounded-[20px] border-none bg-lightWhite text-lightBlue dark:bg-inactiveIconDark dark:text-blue-dark-medium'
-						>
-							Load More
-							<Image
-								src='/assets/icons/ArrowCircleUpRight.svg'
-								alt='down-arrow'
-								className='dark-icons'
-								width={20}
-								height={20}
+							);
+						})
+					) : (
+						<div className='flex flex-col items-center justify-center gap-2'>
+							<ImageIcon
+								src={'/assets/Gifs/empty-state.gif'}
+								alt='Empty Icon'
+								imgClassName='-mt-[100px] w-[555px] h-[462px]'
 							/>
-						</Button>
-					</div>
-				)}
-			</section>
+							<h3 className='m-0 -mt-[120px] p-0 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Nothing to see here</h3>
+							<p className='m-0 flex items-center gap-x-1 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
+								Click{' '}
+								<Link
+									href='/astral-scoring'
+									target='_blank'
+									className='m-0 mt-1 cursor-pointer p-0 text-sm text-pink_primary'
+								>
+									here
+								</Link>{' '}
+								to view how you can earn more On-chain activity points
+							</p>
+						</div>
+					)}
+					{hasMoreData && data.length > 0 && (
+						<div className='mt-9 flex w-full justify-center'>
+							<Button
+								onClick={handleLoadMore}
+								className='flex h-[40px] items-center gap-x-1 rounded-[20px] border-none bg-lightWhite text-lightBlue dark:bg-inactiveIconDark dark:text-blue-dark-medium'
+							>
+								Load More
+								<Image
+									src='/assets/icons/ArrowCircleUpRight.svg'
+									alt='down-arrow'
+									className='dark-icons'
+									width={20}
+									height={20}
+								/>
+							</Button>
+						</div>
+					)}
+				</section>
+			)}
 		</Spin>
 	);
 };

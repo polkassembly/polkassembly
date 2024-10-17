@@ -91,9 +91,14 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 					current_astral_info_tab === tab ? 'border-pink_primary' : 'border-[#D2D8E0] dark:border-separatorDark'
 				)}
 			>
-				<div className={classNames('flex h-8 w-8 items-center justify-center rounded', current_astral_info_tab === tab ? 'bg-[#FEF2F8]' : 'bg-[#F3F4F6] dark:bg-modalOverlayDark')}>
+				<div
+					className={classNames(
+						'flex h-8 w-8 items-center justify-center rounded',
+						current_astral_info_tab === tab ? 'bg-pink_primary_semi_transparent' : 'bg-[#F3F4F6] dark:bg-modalOverlayDark'
+					)}
+				>
 					<Image
-						src={iconSrc}
+						src={current_astral_info_tab === tab ? `${iconSrc}-pink.svg` : `${iconSrc}.svg`}
 						alt={`${title.toLowerCase()}-icon`}
 						height={20}
 						width={20}
@@ -101,7 +106,7 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 					/>
 				</div>
 			</div>
-			<p className='m-0 text-base font-semibold text-sidebarBlue dark:text-blue-dark-medium'>{title}</p>
+			<p className={`m-0 text-base font-semibold ${current_astral_info_tab === tab ? 'text-pink_primary' : 'text-sidebarBlue dark:text-blue-dark-medium'}`}>{title}</p>
 			<div
 				className='flex h-[20px] items-center gap-x-1 rounded-md px-1'
 				style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
@@ -163,8 +168,8 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 						</div>
 					</p> */}
 				</div>
-				{renderActivityCard('On-chain activity', scores.onChain, EAstralInfoTab.ON_CHAIN_ACTIVITY, '/assets/icons/on-chain-box-ixon.svg')}
-				{renderActivityCard('Off-chain activity', scores.offChain, EAstralInfoTab.OFF_CHAIN_ACTIVITY, '/assets/icons/off-chain-box-ixon.svg')}
+				{renderActivityCard('On-chain activity', scores.onChain, EAstralInfoTab.ON_CHAIN_ACTIVITY, '/assets/icons/on-chain-box-icon')}
+				{renderActivityCard('Off-chain activity', scores.offChain, EAstralInfoTab.OFF_CHAIN_ACTIVITY, '/assets/icons/off-chain-box-icon')}
 			</article>
 			{current_astral_info_tab === EAstralInfoTab?.ALL_INFO && <AllAstralPoints userId={user_id} />}
 			{current_astral_info_tab === EAstralInfoTab?.ON_CHAIN_ACTIVITY && (

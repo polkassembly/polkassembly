@@ -47,6 +47,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
 					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
+					id: data?.id,
 					link: data?.link || '',
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,

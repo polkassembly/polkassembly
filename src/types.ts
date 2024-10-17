@@ -1000,6 +1000,14 @@ export interface IChildBountySubmission {
 	tags: string[];
 	title: string;
 	updatedAt: Date;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
 }
 
 export enum ESubmissionStatus {

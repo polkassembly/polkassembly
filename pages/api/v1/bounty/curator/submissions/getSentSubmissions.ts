@@ -20,6 +20,7 @@ import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsqu
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { getDefaultContent } from '~src/util/getDefaultContent';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import console_pretty from '~src/api-utils/console_pretty';
 
 const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -69,7 +70,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 
 				//is Bounty active
 				const { data: subsquidRes } = await getBountyInfo({
-					bountyIndex: userAddress,
+					bountyIndex: payload?.parentBountyIndex,
 					network: network
 				});
 

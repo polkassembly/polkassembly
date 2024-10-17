@@ -67,19 +67,19 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Dashboard</span>
 				<div className='flex gap-2'>
 					<BountyProposalActionButton className='hidden md:block' />
-					{(curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0) && (
-						<Link
-							href='/curator-dashboard'
-							className={`cursor-pointer rounded-xl text-[16px] font-bold text-white hover:text-white ${spaceGrotesk.className} ${spaceGrotesk.variable} px-6 py-3`}
-							style={{
-								background:
-									'radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%), radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%), radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)',
-								boxShadow: '1px 1px 4px 0px rgba(255, 255, 255, 0.50) inset'
-							}}
-						>
-							Curator Dashboard <ArrowRightOutlined className='-rotate-45 font-bold' />
-						</Link>
-					)}
+					{/* {(curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0) && ( */}
+					<Link
+						href='/curator-dashboard'
+						className={`cursor-pointer rounded-xl text-[16px] font-bold text-white hover:text-white ${spaceGrotesk.className} ${spaceGrotesk.variable} px-6 py-3`}
+						style={{
+							background:
+								'radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%), radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%), radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)',
+							boxShadow: '1px 1px 4px 0px rgba(255, 255, 255, 0.50) inset'
+						}}
+					>
+						Curator Dashboard <ArrowRightOutlined className='-rotate-45 font-bold' />
+					</Link>
+					{/* )} */}
 				</div>
 			</div>
 			<BountiesHeader />

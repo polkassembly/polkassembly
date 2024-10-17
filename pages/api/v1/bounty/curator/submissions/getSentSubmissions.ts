@@ -120,7 +120,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				}
 			});
 
-			if (!submission?.content?.length || !submission?.title?.length) {
+			if (!submission?.bountyData?.title?.length || !submission?.bountyData?.content?.length) {
 				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
 
 				submission.bountyData = {

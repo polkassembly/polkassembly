@@ -116,16 +116,19 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 							content: data?.content || '',
 							title: data?.title || ''
 						};
-
-						if (!submission?.content?.length || !submission?.title?.length) {
-							const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
-
-							submission.bountyData.title = subsqaureRes?.title || getProposalTypeTitle(ProposalType.BOUNTIES) || '';
-							submission.bountyData.content = subsqaureRes?.content || getDefaultContent({ proposalType: ProposalType.BOUNTIES, proposer: userAddress || '' }) || '';
-						}
 					}
 				}
 			});
+
+			if (!submission?.content?.length || !submission?.title?.length) {
+				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
+
+				submission.bountyData = {
+					...(submission?.bountyData || {}),
+					content: subsqaureRes?.content || getDefaultContent({ proposalType: ProposalType.BOUNTIES, proposer: userAddress || '' }) || '',
+					title: subsqaureRes?.title || getProposalTypeTitle(ProposalType.BOUNTIES) || ''
+				};
+			}
 
 			await Promise.allSettled(bountiesDataPromises);
 			return submission;

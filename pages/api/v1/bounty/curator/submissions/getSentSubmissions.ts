@@ -20,7 +20,6 @@ import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsqu
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { getDefaultContent } from '~src/util/getDefaultContent';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import console_pretty from '~src/api-utils/console_pretty';
 
 const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);

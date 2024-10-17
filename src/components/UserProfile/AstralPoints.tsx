@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,8 @@ import { EUserActivityCategory, LeaderboardPointsResponse } from '~src/types';
 import { AstralIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import AllAstralPoints from './AstralInfoTabs/AllAstralPoints';
+import Link from 'next/link';
 
 interface Props {
 	className?: string;
@@ -30,7 +32,7 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 	const [userRank, setUserRank] = useState<number>(0);
 	const [userScore, setUserScore] = useState<number>(0);
 	const [scores, setScores] = useState({ offChain: 0, onChain: 0 });
-	const router = useRouter();
+	// const router = useRouter();
 	const dispatch = useDispatch();
 
 	const { username, user_id } = userProfile;
@@ -126,7 +128,7 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 			<article className='flex justify-start gap-x-5'>
 				<div
 					className={classNames(
-						'flex h-[74px] cursor-pointer flex-col items-start gap-y-1 rounded-xl border border-solid px-5 py-3',
+						'flex h-[74px] cursor-pointer flex-col items-start justify-center gap-y-1 rounded-xl border border-solid px-5 py-3',
 						current_astral_info_tab === EAstralInfoTab.ALL_INFO
 							? 'border-pink_primary bg-[#FEF2F8] dark:border-[#FF0088]'
 							: 'border-[#D2D8E0] bg-transparent dark:border-separatorDark'
@@ -141,8 +143,17 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 						)}
 					>
 						{userScore} <span className='m-0 flex h-7 items-center rounded-md bg-abstainBlueColor px-2 text-sm font-semibold text-white'>Rank #{userRank}</span>
+						<Link
+							href='/astral-scoring'
+							target='_blank'
+						>
+							<ImageIcon
+								src='/assets/icons/rounded-que-icon.svg'
+								alt='qna-icon'
+							/>
+						</Link>
 					</h1>
-					<p className='m-0 flex items-center gap-x-1 text-xs font-medium text-[#98A2B3] dark:text-blue-dark-medium'>
+					{/* <p className='m-0 flex items-center gap-x-1 text-xs font-medium text-[#98A2B3] dark:text-blue-dark-medium'>
 						Earned <span className='text-sm font-semibold text-[#FFBA03]'>+40</span> in last 90 days{' '}
 						<div onClick={() => router.push('/astral-scoring')}>
 							<ImageIcon
@@ -150,11 +161,24 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 								alt='qna-icon'
 							/>
 						</div>
-					</p>
+					</p> */}
 				</div>
 				{renderActivityCard('On-chain activity', scores.onChain, EAstralInfoTab.ON_CHAIN_ACTIVITY, '/assets/icons/on-chain-box-ixon.svg')}
 				{renderActivityCard('Off-chain activity', scores.offChain, EAstralInfoTab.OFF_CHAIN_ACTIVITY, '/assets/icons/off-chain-box-ixon.svg')}
 			</article>
+			{current_astral_info_tab === EAstralInfoTab?.ALL_INFO && <AllAstralPoints userId={user_id} />}
+			{current_astral_info_tab === EAstralInfoTab?.ON_CHAIN_ACTIVITY && (
+				<AllAstralPoints
+					userId={user_id}
+					type={EUserActivityCategory?.ON_CHAIN}
+				/>
+			)}
+			{current_astral_info_tab === EAstralInfoTab?.OFF_CHAIN_ACTIVITY && (
+				<AllAstralPoints
+					userId={user_id}
+					type={EUserActivityCategory?.OFF_CHAIN}
+				/>
+			)}
 		</section>
 	);
 };

@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
-import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { ASTRAL_LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { EUserActivityCategory, EUserActivityType, LeaderboardPointsResponse } from '~src/types';
 import REPUTATION_SCORES from '~src/util/reputationScores';
@@ -34,8 +34,8 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		const activities = (
 			await userActivityQuery
 				// .orderBy('created_at', 'desc') //TODO: script and add created_at in all user activities
-				.offset((Number(page) - 1) * LISTING_LIMIT)
-				.limit(LISTING_LIMIT)
+				.offset((Number(page) - 1) * ASTRAL_LISTING_LIMIT)
+				.limit(ASTRAL_LISTING_LIMIT)
 				.get()
 		).docs.map((doc) => {
 			const data = doc.data();

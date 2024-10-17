@@ -16,9 +16,10 @@ interface Props {
 	iconWrapperClassName?: string;
 	scale?: number;
 	userId?: number;
+	showPointsInfo?: boolean;
 }
 
-const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId }: Props) => {
+const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId, showPointsInfo }: Props) => {
 	const [scores, setScores] = useState({
 		offChain: 0,
 		onChain: 0,
@@ -53,6 +54,7 @@ const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId }:
 		<Tooltip
 			color='#363636'
 			className={`${className} max-w-[505px]`}
+			open={showPointsInfo}
 			title={
 				<article className='flex max-w-[505px] items-center justify-center gap-x-2 whitespace-nowrap text-sm text-white'>
 					{[

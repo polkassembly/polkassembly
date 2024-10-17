@@ -29,10 +29,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 		if (!curatorAddress?.length || !getEncodedAddress(curatorAddress, network)) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
-		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
-		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		// const token = getTokenFromReq(req);
+		// if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		// const user = await authServiceInstance.GetUser(token);
+		// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 		const encodedCuratorAddress = getEncodedAddress(curatorAddress, network);
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
@@ -58,6 +58,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
 					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
+					id: data?.id,
 					link: data?.link || '',
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,
@@ -84,7 +85,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				allSubmissions?.push(payload);
 			}
 		});
-		const allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+
+		let allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+		allSubmissionsBountyIndexes = [...new Set(allSubmissionsBountyIndexes)];
+
 		const chunkArray = (arr: any[], chunkSize: number) => {
 			const chunks = [];
 			for (let i = 0; i < arr.length; i += chunkSize) {

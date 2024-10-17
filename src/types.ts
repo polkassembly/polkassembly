@@ -1008,6 +1008,8 @@ export interface IChildBountySubmission {
 		curator?: string;
 		createdAt?: Date;
 	};
+	id: string;
+	rejectionMessage?: string;
 }
 
 export enum ESubmissionStatus {

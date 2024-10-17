@@ -11,6 +11,9 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { IChildBountySubmission } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import NameLabel from '~src/ui-components/NameLabel';
+import dayjs from 'dayjs';
+import Markdown from '~src/ui-components/Markdown';
 
 function CuratorSubmission() {
 	const [activeTab, setActiveTab] = useState('received');
@@ -77,29 +80,6 @@ function ReceivedRequests() {
 
 	console.log('receivedRequests:', receivedRequests);
 
-	const bounties = [
-		{
-			bountyData: {
-				content:
-					"**Summary:**\nThe IBP, a collective of independent infrastructure service providers, aims to become the main ecosystem RPC and 'IT department' by providing infrastructure related services to the Polkadot ecosystem and all parachains. The unique design of the IBP creates a globally distributed and resilient ecosystem service provider. By offering RPC services to parachain teams we want to make it more lucrative for new projects to build on Polkadot and existing teams to purely focus on building.\n\n\nThe program is a specialized initiative to enhance the decentralized infrastructure of the Polkadot and Kusama network. It establishes a resilient, globally distributed setup for the core infrastructure services. All services are deployed on infrastructure owned by its members, removing value extraction by unnecessary intermediaries. \n\n**!Note!:**\nThe requested amount is set up as a bounty with 5 Polkadot native curators where costs are only paid retroactively. The charge of the hereby stated proposal only occurs in the case of full Polkadot adoption where the scale of deployment would mean:\n- \\>1140 RPC nodes (across 15 datacenters)\n- \\>37 Billion requests a month (across relay and parachains)\n\nRPC services are **all paid retroactively** for delivered services monthly by USD value.\n\n **See the Full Proposal [here](https://docs.google.com/document/d/1WENGgO1KwJKkLJ_c6AGxRkLtOhhAjd4OW1v_yWaEUqY)**\n",
-				createdAt: '2024-04-04T18:58:42.000000Z',
-				curator: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea',
-				reqAmount: '4610540000000000',
-				status: 'Extended',
-
-				title: 'Infrastructure Builders Program'
-			},
-			content: 'This is the content of the bounty submission.',
-			createdAt: '2024-10-17T10:22:22.278Z',
-			link: 'https://example.com',
-			parentBountyIndex: 50,
-			proposer: '15BXEztHcQLQyWESNE2s1J3Uxw7ueTKKKuzRt6C7n9zhCjqG',
-			reqAmount: '1000000000000000',
-			tags: ['tag1', 'tag2'],
-			title: 'Sample Bounty Title'
-		}
-	];
-
 	const toggleBountyDescription = (id: number) => {
 		setExpandedBountyId(expandedBountyId === id ? null : id);
 	};
@@ -133,135 +113,143 @@ function ReceivedRequests() {
 		<div>
 			<div className={`${spaceGrotesk.variable} ${spaceGrotesk.className} mb-4`}>
 				<div>
-					{bounties.map((bounty) => (
-						<div
-							key={bounty.index}
-							className={`mt-3 rounded-lg border-solid ${
-								expandedBountyId === bounty.index ? 'border-[1px] border-[#E5007A] bg-[#f6f8fa] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
-							}  dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
-						>
-							<div className='flex items-center justify-between gap-3 px-3 pt-3'>
-								<div className='flex gap-1 pt-2'>
-									<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{bounty.proposer} </span>
+					{receivedRequests.map((bounty: any) => {
+						const trimmedContentForComment = bounty.bountyData.content?.length > 250 ? bounty.bountyData.content?.slice(0, 200) + '...' : bounty.bountyData.content;
+						const startsWithBulletPoint = trimmedContentForComment.trim().startsWith('•') || trimmedContentForComment.trim().startsWith('-');
 
-									<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-									<div className='-mt-1  flex items-center gap-1'>
-										<ImageIcon
-											src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
-											alt='timer'
-											className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
-										/>
-										<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
-									</div>
-									<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-
-									<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.reward || '0'), 2, true, network)}</span>
-								</div>
-								<div className='-mt-1 flex items-center gap-3'>
-									{expandedBountyId !== bounty.index && bounty?.submissions && bounty.submissions.length > 0 && (
-										<span className='whitespace-nowrap rounded-md py-2 text-center text-[16px] font-semibold text-pink_primary'>
-											Submissions (<span className='text-[14px] font-medium'>{bounty.submissions.length}</span>)
+						return (
+							<div
+								key={bounty.index}
+								className={`mt-3 rounded-lg border-solid ${
+									expandedBountyId === bounty.index ? 'border-[1px] border-[#E5007A] bg-[#f6f8fa] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
+								} dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
+							>
+								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
+									<div className='flex gap-1 pt-2'>
+										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
+											<NameLabel defaultAddress={bounty.bountyData.curator} />
 										</span>
-									)}
-									{bounty.description && (
-										<div
-											className='cursor-pointer'
-											onClick={() => toggleBountyDescription(bounty.index)}
-										>
-											{expandedBountyId === bounty.index ? (
-												<UpOutlined
-													style={{
-														background: theme === 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'
-													}}
-													className='rounded-full p-2 text-white'
-												/>
-											) : (
-												<DownOutlined
-													style={{
-														background: theme === 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'
-													}}
-													className=' rounded-full p-2 text-white dark:text-icon-dark-inactive'
-												/>
-											)}
+										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
+										<div className='-mt-1 flex items-center gap-1'>
+											<ImageIcon
+												src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
+												alt='timer'
+												className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
+											/>
+											<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'> {dayjs(bounty.bountyData.createdAt).format('Do MMM YYYY')}</p>
 										</div>
-									)}
-								</div>
-							</div>
-							<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-							<div className='px-3 pb-3'>
-								<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{bounty.index} </span>
-								<span
-									className={` text-[17px] font-medium text-blue-light-high hover:underline  ${
-										expandedBountyId === bounty.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
-									}`}
-								>
-									{bounty.title}
-								</span>
-								<div className='flex flex-col'>
-									<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{bounty.description}</span>
-									<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
-								</div>
-							</div>
-
-							{expandedBountyId === bounty.index && bounty.submissions && bounty.submissions.length > 0 && (
-								<div className='px-3 pb-3'>
-									<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-									<div>
-										<p className='text-[20px] font-semibold text-blue-light-high dark:text-lightWhite'>
-											Submissions <span className='text-[16px] font-medium'>({bounty.submissions.length})</span>
-										</p>
+										<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
+										<span className='ml-1 text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.bountyData.reqAmount || '0'), 2, true, network)}</span>
 									</div>
-									{bounty.submissions.map((submission, index) => (
-										<div
-											key={index}
-											className='rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white'
-										>
+									<div className='-mt-1 flex items-center gap-3'>
+										{/* {expandedBountyId !== bounty.index && bounty?.submissions?.length > 0 && (
+											<span className='whitespace-nowrap rounded-md py-2 text-[16px] font-semibold text-pink_primary'>
+												Submissions (<span className='text-[14px] font-medium'>{bounty.submissions.length}</span>)
+											</span>
+										)} */}
+										{bounty.content && (
+											<div
+												className='cursor-pointer'
+												onClick={() => toggleBountyDescription(bounty.index)}
+											>
+												{expandedBountyId === bounty.index ? (
+													<UpOutlined
+														style={{
+															background: theme === 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'
+														}}
+														className='rounded-full p-2 text-white'
+													/>
+												) : (
+													<DownOutlined
+														style={{
+															background: theme === 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'
+														}}
+														className='rounded-full p-2 text-white dark:text-icon-dark-inactive'
+													/>
+												)}
+											</div>
+										)}
+									</div>
+								</div>
+								<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
+								<div className='px-3 pb-3'>
+									<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{bounty.parentBountyIndex} </span>
+									<span
+										className={`text-[17px] font-medium text-blue-light-high hover:underline ${
+											expandedBountyId === bounty.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
+										}`}
+									>
+										{bounty.bountyData.title}
+									</span>
+									<div className='flex flex-col'>
+										<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>
+											<Markdown
+												className={`xl:text-md text-[14px] text-[#243A57] ${startsWithBulletPoint ? '-ml-8' : ''}`}
+												md={trimmedContentForComment}
+											/>{' '}
+										</span>
+										<span className=' cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
+									</div>
+								</div>
+
+								{expandedBountyId === bounty.index && (
+									<div className='px-3 pb-3'>
+										<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
+										<div>
+											{/* <p className='text-[20px] font-semibold text-blue-light-high dark:text-lightWhite'>
+												Submissions <span className='text-[16px] font-medium'>({bounty.submissions.length})</span>
+											</p> */}
+										</div>
+										<div className='rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-[#1a1a1a]'>
 											<div className='flex items-center justify-between gap-3 px-3 pt-1'>
 												<div className='flex gap-1 pt-2'>
-													<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{submission.curator} </span>
+													<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
+														<NameLabel defaultAddress={bounty.proposer} />
+													</span>
 													<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 													<div className='-mt-1 flex items-center gap-1'>
 														<ImageIcon
 															src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
 															alt='timer'
-															className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
+															className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 														/>
-														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
+														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{new Date(bounty.createdAt).toLocaleDateString()}</p>
 													</div>
-													<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-													<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(submission.amount || '0'), 2, true, network)}</span>
+													<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
+													<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.reqAmount || '0'), 2, true, network)}</span>
 												</div>
 											</div>
 											<div className='px-3 pb-2'>
-												<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
-												<span className=' text-[17px] font-medium text-blue-light-high'>{submission.title}</span>
+												<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'># </span>
+												<span className='text-[17px] font-medium text-blue-light-high'>{bounty.title}</span>
 												<div className='flex flex-col'>
-													<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{submission.description}</span>
+													<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{bounty.content}</span>
 													<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 												</div>
 											</div>
 											<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 											<div className='flex justify-between gap-4 p-2'>
 												<span
-													onClick={() => showRejectModal(submission)}
+													onClick={() => showRejectModal(bounty)}
 													className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
 												>
 													Reject
 												</span>
 												<span
-													onClick={() => showApproveModal(submission)}
+													onClick={() => showApproveModal(bounty)}
 													className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
 												>
 													Approve
 												</span>
 											</div>
 										</div>
-									))}
-								</div>
-							)}
-						</div>
-					))}
+									</div>
+								)}
+							</div>
+						);
+					})}
 				</div>
+
 				<Modal
 					title={
 						<>
@@ -488,11 +476,11 @@ function SentRequests() {
 									<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.reward || '0'), 2, true, network)}</span>
 								</div>
 								<div className='-mt-1 flex items-center gap-3'>
-									{expandedBountyId !== bounty.index && bounty?.submissions && bounty.submissions.length > 0 && (
+									{/* {expandedBountyId !== bounty.index && bounty?.submissions && bounty.submissions.length > 0 && (
 										<span className='whitespace-nowrap rounded-md py-2 text-center text-[16px] font-semibold text-pink_primary'>
 											Submissions (<span className='text-[14px] font-medium'>{bounty.submissions.length}</span>)
 										</span>
-									)}
+									)} */}
 									{bounty.description && (
 										<div
 											className='cursor-pointer'
@@ -532,63 +520,6 @@ function SentRequests() {
 									<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 								</div>
 							</div>
-
-							{expandedBountyId === bounty.index && bounty.submissions && bounty.submissions.length > 0 && (
-								<div className='px-3 pb-3'>
-									<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-									<div>
-										<p className='text-[20px] font-semibold text-blue-light-high dark:text-lightWhite'>
-											Submissions <span className='text-[16px] font-medium'>({bounty.submissions.length})</span>
-										</p>
-									</div>
-									{bounty.submissions.map((submission, index) => (
-										<div
-											key={index}
-											className='rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white'
-										>
-											<div className='flex items-center justify-between gap-3 px-3 pt-1'>
-												<div className='flex gap-1 pt-2'>
-													<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{submission.curator} </span>
-													<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-													<div className='-mt-1 flex items-center gap-1'>
-														<ImageIcon
-															src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
-															alt='timer'
-															className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
-														/>
-														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
-													</div>
-													<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-													<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(submission.amount || '0'), 2, true, network)}</span>
-												</div>
-											</div>
-											<div className='px-3 pb-2'>
-												<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
-												<span className=' text-[17px] font-medium text-blue-light-high'>{submission.title}</span>
-												<div className='flex flex-col'>
-													<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{submission.description}</span>
-													<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
-												</div>
-											</div>
-											<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-											<div className='flex justify-between gap-4 p-2'>
-												<span
-													onClick={() => showRejectModal(submission)}
-													className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
-												>
-													Reject
-												</span>
-												<span
-													onClick={() => showApproveModal(submission)}
-													className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
-												>
-													Approve
-												</span>
-											</div>
-										</div>
-									))}
-								</div>
-							)}
 						</div>
 					))}
 				</div>

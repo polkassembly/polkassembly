@@ -28,10 +28,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 		if (!userAddress?.length || !getEncodedAddress(userAddress, network)) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
-		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
-		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		// const token = getTokenFromReq(req);
+		// if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		// const user = await authServiceInstance.GetUser(token);
+		// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
 		const submissionsDocs = await submissionsSnapshot?.where('proposer', '==', getEncodedAddress(userAddress, network)).get();
 		if (submissionsDocs?.empty) {
@@ -44,6 +44,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
 					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
+					id: data?.id,
 					link: data?.link || '',
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,
@@ -72,7 +73,9 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			}
 		});
 		await Promise.allSettled(submissionsPromises);
-		const allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+
+		let allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+		allSubmissionsBountyIndexes = [...new Set(allSubmissionsBountyIndexes)];
 		const chunkArray = (arr: any[], chunkSize: number) => {
 			const chunks = [];
 			for (let i = 0; i < arr.length; i += chunkSize) {

@@ -7,7 +7,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
-
+import { poppins } from 'pages/_app';
 const languages = [
 	{
 		code: 'en',
@@ -18,44 +18,48 @@ const languages = [
 		name: 'Français'
 	}
 ];
-
 function LanguageSwitcher() {
 	const { resolvedTheme: theme } = useTheme();
 	const [isDropdownActive, setIsDropdownActive] = useState(false);
 	const router = useRouter();
-
 	const changeLanguage = (locale: string) => {
 		router.push(router.pathname, router.asPath, { locale });
 	};
-
 	return (
 		<div>
 			<Dropdown
 				disabled={false}
+				theme={theme}
 				trigger={['click']}
-				className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
-					theme === 'dark' ? 'border-none max-md:bg-section-dark-background md:bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+				className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container bg-[#F6F7F9] ${
+					theme === 'dark'
+						? 'border border-solid border-separatorDark max-md:bg-section-dark-background md:bg-section-dark-overlay'
+						: isDropdownActive
+						? 'bg-section-light-container'
+						: ''
 				}`}
 				menu={{
 					items: languages.map((language) => {
 						return {
 							key: language.code,
-							label: <p className={classNames('flex flex-col text-blue-light-medium dark:text-blue-dark-high')}>{language.name}</p>
+							label: (
+								<div className={classNames(`${poppins.className} ${poppins.variable} flex w-[100px] flex-col pt-1 text-blue-light-high dark:text-blue-dark-high`)}>
+									{language.name}
+								</div>
+							)
 						};
 					}),
 					onClick: (e: any) => {
-						console.log(e);
 						changeLanguage(e.key);
 					}
 				}}
 				onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
 			>
 				<span className='flex items-center justify-center text-white'>
-					<GlobalOutlined className='text-lg' />
+					<GlobalOutlined className='text-lg text-pink_primary' />
 				</span>
 			</Dropdown>
 		</div>
 	);
 }
-
 export default LanguageSwitcher;

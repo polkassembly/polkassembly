@@ -56,7 +56,7 @@ interface Props {
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
+			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
 			const num = res.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {

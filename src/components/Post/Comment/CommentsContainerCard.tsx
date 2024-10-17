@@ -51,7 +51,6 @@ import { poppins } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
 		return 'Democracy Proposal';
@@ -383,7 +382,7 @@ const CommentsContainerCard: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-            	{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
+			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'
 					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1')}
@@ -497,7 +496,7 @@ const CommentsContainerCard: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				) : null}
 			</div>
-		
+
 			<div className=''>
 				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
 					{!!allComments?.length && !loading && (
@@ -563,4 +562,3 @@ export default React.memo(styled(CommentsContainerCard)`
 		}
 	}
 `);
-

@@ -56,16 +56,16 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt='bounty icon'
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
 							{extendedData?.count && (
-								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
+								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-2xl`}>
 									({extendedData?.count})
 								</span>
 							)}
 						</div>
 						<Link
-							href={'/bounties-listing'}
-							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
+							href={'/bounties'}
+							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-2xl`}
 						>
 							View All
 						</Link>
@@ -143,7 +143,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt='bounty icon'
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
 						</div>
 					</div>
 

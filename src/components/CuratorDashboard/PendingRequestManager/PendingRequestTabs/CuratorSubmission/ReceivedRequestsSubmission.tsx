@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider, Input, Modal } from 'antd';
+import { Button, Divider, Input, message, Modal } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
 import React, { useState } from 'react';
 import { CheckCircleOutlined, CloseCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
@@ -9,12 +9,32 @@ import { useTheme } from 'next-themes';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import NameLabel from '~src/ui-components/NameLabel';
 import dayjs from 'dayjs';
 import Markdown from '~src/ui-components/Markdown';
 import Skeleton from '~src/basic-components/Skeleton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import AddressDropdown from '~src/ui-components/AddressDropdown';
 
+const groupBountyData = (bounties: IChildBountySubmission[]) => {
+	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
+
+	bounties.forEach((bounty) => {
+		const parentBountyIndex = bounty.parentBountyIndex;
+
+		if (!groupedBounties[parentBountyIndex]) {
+			groupedBounties[parentBountyIndex] = {
+				bountyData: bounty.bountyData,
+				requests: [{ ...bounty }]
+			};
+		} else {
+			groupedBounties[parentBountyIndex].requests.push(bounty);
+		}
+	});
+
+	return groupedBounties;
+};
 function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: boolean; receivedSubmissions: any }) {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
@@ -23,6 +43,8 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 	const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
 	const [isApproveModalVisible, setIsApproveModalVisible] = useState<boolean>(false);
 	const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+	const [comment, setComment] = useState<string>('');
+	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(receivedSubmissions)); // State for grouped bounties
 
 	const toggleBountyDescription = (parentBountyIndex: number) => {
 		setExpandedBountyId(expandedBountyId === parentBountyIndex ? null : parentBountyIndex);
@@ -39,39 +61,61 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 	};
 
 	const handleCancel = () => {
+		setComment('');
 		setIsRejectModalVisible(false);
 		setIsApproveModalVisible(false);
+	};
+
+	const updateGroupedBounties = (updatedStatus: EChildbountySubmissionStatus.APPROVED | EChildbountySubmissionStatus.REJECTED) => {
+		if (!selectedSubmission) return;
+
+		setGroupedBounties((prevBounties) => {
+			const updatedBounties = { ...prevBounties };
+			const parentBounty = updatedBounties[selectedSubmission.parentBountyIndex];
+			const updatedRequests = parentBounty.requests.map((request: any) => (request.id === selectedSubmission.id ? { ...request, status: updatedStatus } : request));
+
+			updatedBounties[selectedSubmission.parentBountyIndex] = {
+				...parentBounty,
+				requests: updatedRequests
+			};
+
+			return updatedBounties;
+		});
+	};
+
+	const handleStatusUpdate = async (updatedStatus: EChildbountySubmissionStatus.APPROVED | EChildbountySubmissionStatus.REJECTED, rejectionMessage = '') => {
+		if (!selectedSubmission) return;
+
+		const payload = {
+			curatorAddress: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea',
+			parentBountyIndex: selectedSubmission.parentBountyIndex,
+			proposerAddress: selectedSubmission.proposer,
+			rejectionMessage,
+			submissionId: selectedSubmission.id,
+			updatedStatus
+		};
+
+		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
+
+		if (error) {
+			console.error('Error updating submission status:', error);
+			return;
+		}
+		if (data) {
+			message.success('Submission status updated successfully');
+			updateGroupedBounties(updatedStatus);
+		}
+
+		handleCancel();
 	};
 
 	const handleReject = () => {
-		setIsRejectModalVisible(false);
+		handleStatusUpdate(EChildbountySubmissionStatus.REJECTED, comment);
 	};
 
 	const handleApprove = () => {
-		console.log('Approving submission:', selectedSubmission);
-		setIsApproveModalVisible(false);
+		handleStatusUpdate(EChildbountySubmissionStatus.APPROVED);
 	};
-	const groupBountyData = (bounties: IChildBountySubmission[]) => {
-		const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
-
-		bounties.forEach((bounty) => {
-			const parentBountyIndex = bounty.parentBountyIndex;
-
-			if (!groupedBounties[parentBountyIndex]) {
-				groupedBounties[parentBountyIndex] = {
-					bountyData: bounty.bountyData,
-					requests: [{ ...bounty }]
-				};
-			} else {
-				groupedBounties[parentBountyIndex].requests.push(bounty);
-			}
-		});
-
-		return groupedBounties;
-	};
-
-	const groupedBounties = groupBountyData(receivedSubmissions);
-
 	return (
 		<div>
 			{isloading ? (
@@ -93,10 +137,11 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 								<div
 									key={parentBountyIndex}
 									className={`mt-3 rounded-lg border-solid ${
-										expandedBountyId === Number(parentBountyIndex) ? 'border-[1px] border-[#E5007A] bg-[#f6f8fa] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
+										expandedBountyId === Number(parentBountyIndex)
+											? 'border-[1px] border-[#E5007A] bg-[#f6f8fa] dark:border-[#E5007A] dark:bg-[#272727]'
+											: 'border-[0.7px] border-[#D2D8E0]'
 									} dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 								>
-									{/* Bounty Data Section */}
 									<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 										<div className='flex gap-1 pt-2'>
 											<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
@@ -112,11 +157,13 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 												<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData.createdAt).format('Do MMM YYYY')}</p>
 											</div>
 											<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-											<span className='ml-1 text-[16px] font-bold text-pink_primary'>{parseBalance(String(bountyData.reqAmount || '0'), 2, true, network)}</span>
+											<span className='ml-1 text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
+												{parseBalance(String(bountyData.reqAmount || '0'), 2, true, network)}
+											</span>
 										</div>
 										<div className='-mt-1 flex items-center gap-3'>
 											{expandedBountyId !== Number(parentBountyIndex) && requests.length > 0 && (
-												<span className='whitespace-nowrap rounded-md py-2 text-[16px] font-semibold text-pink_primary'>Submissions ({requests.length})</span>
+												<span className='whitespace-nowrap rounded-md py-2 text-[16px] font-semibold text-pink_primary dark:text-[#FF4098]'>Submissions ({requests.length})</span>
 											)}
 											{requests.length > 0 && (
 												<div
@@ -155,7 +202,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 										<div className='flex flex-col'>
 											<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>
 												<Markdown
-													className={`xl:text-md text-[14px] text-[#243A57] ${startsWithBulletPoint ? '-ml-8' : ''}`}
+													className={`xl:text-md text-[14px] text-[#243A57] dark:text-white ${startsWithBulletPoint ? '-ml-8' : ''}`}
 													md={trimmedContentForComment}
 												/>
 											</span>
@@ -191,33 +238,45 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 																<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{new Date(request.createdAt).toLocaleDateString()}</p>
 															</div>
 															<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-															<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>
+															<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
 																{parseBalance(String(request.reqAmount || '0'), 2, true, network)}
 															</span>
 														</div>
 													</div>
 													<div className='px-4 pb-2'>
 														<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1}</span>
-														<span className='pl-2 text-[17px] font-medium text-blue-light-high'>{request.title}</span>
+														<span className='pl-2 text-[17px] font-medium text-blue-light-high dark:text-white'>{request.title}</span>
 														<div className='flex flex-col'>
 															<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{request.content}</span>
 															<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 														</div>
 													</div>
 													<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-													<div className='flex justify-between gap-4 p-2 px-4'>
-														<span
-															onClick={() => showRejectModal(request)}
-															className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
-														>
-															Reject
-														</span>
-														<span
-															onClick={() => showApproveModal(request)}
-															className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
-														>
-															Approve
-														</span>
+													<div className='flex justify-between gap-4 p-2'>
+														{request.status === EChildbountySubmissionStatus.APPROVED ? (
+															<span className='w-full  cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-[16px] font-medium text-[#07641C]'>
+																<CheckCircleOutlined /> Approved
+															</span>
+														) : request.status === EChildbountySubmissionStatus.REJECTED ? (
+															<span className='w-full cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-[16px] font-medium text-[#FB123C]'>
+																<CloseCircleOutlined /> Rejected
+															</span>
+														) : (
+															<>
+																<span
+																	onClick={() => showRejectModal(request)}
+																	className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
+																>
+																	Reject
+																</span>
+																<span
+																	onClick={() => showApproveModal(request)}
+																	className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
+																>
+																	Approve
+																</span>
+															</>
+														)}
 													</div>
 												</div>
 											))}
@@ -265,25 +324,12 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 							>
 								Account
 							</label>
-							<Input
-								id='account'
-								placeholder='Account'
-								className='mb-4'
-								value={currentUser?.loginAddress}
-								disabled
-								name='account'
-								aria-label='Account'
-							/>
-
-							<label
-								htmlFor='comment'
-								className='mb-1 block text-sm text-blue-light-medium'
-							>
-								Add Comment <span className='text-pink_primary'>*</span>
-							</label>
-							<Input
-								id='comment'
-								placeholder='Add Comment'
+							<AddressDropdown
+								accounts={currentUser?.addresses?.map((address) => ({ address })) || []}
+								defaultAddress={currentUser?.loginAddress}
+								onAccountChange={(newAddress) => {
+									console.log('Account changed to:', newAddress);
+								}}
 							/>
 						</div>
 					</Modal>
@@ -324,19 +370,17 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 							>
 								Account
 							</label>
-							<Input
-								id='account'
-								placeholder='Account'
-								className='mb-4'
-								disabled
-								value={currentUser?.loginAddress}
-								name='account'
-								aria-label='Account'
+							<AddressDropdown
+								accounts={currentUser?.addresses?.map((address) => ({ address })) || []}
+								defaultAddress={currentUser?.loginAddress}
+								onAccountChange={(newAddress) => {
+									console.log('Account changed to:', newAddress);
+								}}
 							/>
 
 							<label
 								htmlFor='comment'
-								className='mb-1 block text-sm text-blue-light-medium'
+								className='mb-1 mt-3 block text-sm text-blue-light-medium'
 							>
 								Add Comment <span className='text-pink_primary'>*</span>
 							</label>
@@ -344,6 +388,8 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 								id='comment'
 								placeholder='Add Comment'
 								rows={4}
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
 							/>
 						</div>
 					</Modal>

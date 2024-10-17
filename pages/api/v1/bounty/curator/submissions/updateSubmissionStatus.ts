@@ -13,7 +13,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { getBountyInfo } from '../../getBountyInfoFromIndex';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
-import { ESubmissionStatus } from '~src/types';
+import { EChildbountySubmissionStatus } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -23,8 +23,27 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMesssage, updatedStatus } = req.body;
-		if (!proposerAddress?.length || !curatorAddress?.length || !submissionId?.length || ![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)) {
+		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMessage, updatedStatus } = req.body;
+		console.log(
+			'curatorAddress',
+			curatorAddress,
+			'proposerAddress',
+			proposerAddress,
+			'submissionId',
+			submissionId,
+			'parentBountyIndex',
+			parentBountyIndex,
+			'rejectionMessage',
+			rejectionMessage,
+			'updatedStatus',
+			updatedStatus
+		);
+		if (
+			!proposerAddress?.length ||
+			!curatorAddress?.length ||
+			!submissionId?.length ||
+			![EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED].includes(updatedStatus)
+		) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
@@ -55,7 +74,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		const payload = {
-			rejection_msg: rejectionMesssage || '',
+			rejection_msg: rejectionMessage || '',
 			status: updatedStatus,
 			updatedAt: new Date()
 		};

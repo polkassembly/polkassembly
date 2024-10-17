@@ -115,7 +115,7 @@ function ReceivedRequests() {
 							>
 								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 									<div className='flex gap-1 pt-2'>
-										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{bounty.proposer} </span>
+										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive dark:text-white'>{bounty.proposer} </span>
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>
@@ -129,13 +129,15 @@ function ReceivedRequests() {
 										</div>
 										<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 
-										<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.reward || '0'), 2, true, network)}</span>
+										<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
+											{parseBalance(String(bounty.reward || '0'), 2, true, network)}
+										</span>
 									</div>
 									<div className='-mt-1 flex items-center gap-3'>
 										{bounty.status === 'Pending' ? (
 											<span className='w-40 whitespace-nowrap rounded-md bg-pink_primary py-2 text-center text-[14px] font-medium text-white'>Approve</span>
 										) : (
-											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C]'>
+											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'>
 												<CheckCircleOutlined /> Approved
 											</span>
 										)}{' '}
@@ -166,13 +168,7 @@ function ReceivedRequests() {
 								<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 								<div className='px-3 pb-3'>
 									<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{bounty.index} </span>
-									<span
-										className={` text-[17px] font-medium text-blue-light-high hover:underline  ${
-											expandedBountyId === bounty.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
-										}`}
-									>
-										{bounty.title}
-									</span>
+									<span className={'text-[17px] font-medium text-blue-light-high hover:underline dark:text-white'}>{bounty.title}</span>
 								</div>
 
 								{expandedBountyId === bounty.index && bounty.description && (
@@ -269,8 +265,8 @@ function SentRequests() {
 					className='mb-4 mt-5 flex cursor-pointer justify-between pr-5'
 					onClick={() => setOnChainExpanded(!isOnChainExpanded)}
 				>
-					<span className={'text-[16px] font-semibold text-blue-light-high'}>
-						ON-CHAIN BOUNTY REQUESTS <span className='text-[14px] font-medium'>({bounties.length})</span>
+					<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
+						ON-CHAIN BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>({bounties.length})</span>
 					</span>
 					<DownOutlined
 						className={`${isOnChainExpanded ? '-rotate-180' : ''} transition-transform`}
@@ -287,9 +283,9 @@ function SentRequests() {
 									expandedBountyId === bounty.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
 								} bg-white  dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 							>
-								<div className='flex items-center justify-between gap-3 p-3'>
+								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 									<div className='flex gap-1 pt-2'>
-										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{bounty.proposer} </span>
+										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive dark:text-white'>{bounty.proposer} </span>
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>
@@ -298,17 +294,22 @@ function SentRequests() {
 												alt='timer'
 												className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
 											/>
+
 											<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
 										</div>
 										<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 
-										<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary'>{parseBalance(String(bounty.reward || '0'), 2, true, network)}</span>
+										<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
+											{parseBalance(String(bounty.reward || '0'), 2, true, network)}
+										</span>
 									</div>
 									<div className='-mt-1 flex items-center gap-3'>
 										{bounty.status === 'Pending' ? (
 											<span className='w-40 whitespace-nowrap rounded-md bg-pink_primary py-2 text-center text-[14px] font-medium text-white'>Approve</span>
 										) : (
-											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C]'>Approved</span>
+											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'>
+												<CheckCircleOutlined /> Approved
+											</span>
 										)}{' '}
 										{bounty.description && (
 											<div
@@ -334,16 +335,10 @@ function SentRequests() {
 										)}
 									</div>
 								</div>
-								<Divider className='m-0 mb-2 mt-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-								<div className=' p-3'>
+								<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
+								<div className='px-3 pb-3'>
 									<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{bounty.index} </span>
-									<span
-										className={` text-[17px] font-medium text-blue-light-high hover:underline  ${
-											expandedBountyId === bounty.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
-										}`}
-									>
-										{bounty.title}
-									</span>
+									<span className={'text-[17px] font-medium text-blue-light-high hover:underline dark:text-white'}>{bounty.title}</span>
 								</div>
 
 								{expandedBountyId === bounty.index && bounty.description && (
@@ -380,8 +375,8 @@ function SentRequests() {
 					className='mb-4 mt-6 flex cursor-pointer justify-between pr-5'
 					onClick={() => setChildBountyExpanded(!isChildBountyExpanded)}
 				>
-					<span className={'text-[16px] font-semibold text-blue-light-high'}>
-						CHILD BOUNTY REQUESTS <span className='text-[14px] font-medium'>(0)</span>
+					<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
+						CHILD BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>(0)</span>
 					</span>
 					<DownOutlined
 						className={`${isChildBountyExpanded ? '-rotate-180' : ''} transition-transform`}

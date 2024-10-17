@@ -99,8 +99,8 @@ function CuratorPendingRequestManager() {
 							>
 								<input
 									type='radio'
-									className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px] border-solid border-white ${
-										selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A]' : 'shadow-[0_0_0_1px_#667488]'
+									className={`mr-2 h-[12px] w-[12px] appearance-none rounded-[50%] border-[2px] border-solid border-white  ${
+										selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A] dark:border-black' : 'shadow-[0_0_0_1px_#667488] dark:border-[#667488]'
 									}`}
 									checked={selectedTab === tab.id}
 									onChange={() => setSelectedTab(tab.id as 'curatorRequests' | 'submissions')}

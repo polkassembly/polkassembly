@@ -996,7 +996,7 @@ export interface IChildBountySubmission {
 	parentBountyIndex: number;
 	proposer: string;
 	reqAmount: string;
-	status: ESubmissionStatus;
+	status: EChildbountySubmissionStatus;
 	tags: string[];
 	title: string;
 	updatedAt: Date;
@@ -1012,9 +1012,10 @@ export interface IChildBountySubmission {
 	rejectionMessage?: string;
 }
 
-export enum ESubmissionStatus {
+export enum EChildbountySubmissionStatus {
 	APPROVED = 'approved',
 	REJECTED = 'rejected',
 	PENDING = 'pending',
-	OUTDATED = 'outdated'
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
 }

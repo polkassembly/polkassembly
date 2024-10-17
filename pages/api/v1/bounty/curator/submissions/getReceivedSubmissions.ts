@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { ESubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -63,7 +63,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,
 					reqAmount: data?.req_amount,
-					status: data?.staus,
+					status: data?.status,
 					tags: data?.tags || [],
 					title: data?.title || '',
 					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at
@@ -78,7 +78,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 							status: subsquidBounty?.status || ''
 						};
 						if (!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(subsquidBounty?.status || '')) {
-							payload.status = ESubmissionStatus.OUTDATED;
+							payload.status = EChildbountySubmissionStatus.OUTDATED;
 						}
 					}
 				});

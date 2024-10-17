@@ -5,8 +5,6 @@ import { spaceGrotesk } from 'pages/_app';
 import React, { useState } from 'react';
 import CuratorRequest from './PendingRequestTabs/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
-import Input from '~src/basic-components/Input';
-import { SearchIcon } from '~src/ui-components/CustomIcons';
 
 function CuratorPendingRequestManager() {
 	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
@@ -37,7 +35,7 @@ function CuratorPendingRequestManager() {
 				{tabs.map((tab) => (
 					<label
 						key={tab.id}
-						className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === tab.id ? 'bg-[#FEF2F8]' : ''}`}
+						className={`mb-2 flex cursor-pointer items-center rounded-full p-2 px-4 ${selectedTab === tab.id ? 'bg-[#FEF2F8] dark:bg-[#540E33]' : ''}`}
 					>
 						<input
 							type='radio'
@@ -50,15 +48,6 @@ function CuratorPendingRequestManager() {
 						{`${tab.label} (${tab.count})`}
 					</label>
 				))}
-			</div>
-
-			<div className='relative mt-2'>
-				<Input
-					className='placeholderColor h-10 rounded-[4px] border-[1px] border-[#D2D8E0] pl-10 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
-					type='search'
-					placeholder='Search'
-				/>
-				<SearchIcon className='absolute left-3 top-1/2 -translate-y-1/2 transform text-xl text-gray-500' />
 			</div>
 
 			<div className='mt-4'>{renderTabContent()}</div>

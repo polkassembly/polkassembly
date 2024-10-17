@@ -5,11 +5,12 @@ import { Divider } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
 import React, { useState } from 'react';
 import Alert from '~src/basic-components/Alert';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 function CuratorRequest() {
 	const [activeTab, setActiveTab] = useState('received');
@@ -22,19 +23,23 @@ function CuratorRequest() {
 			<div className='flex justify-between rounded-full border-[1px] border-solid border-[#D2D8E0]'>
 				<div
 					className={`w-1/2 ${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer py-2 text-center text-[14px] ${
-						activeTab === 'received' ? 'rounded-l-full bg-[#F6F8FA] font-bold text-blue-light-high' : 'font-medium text-[#475569]'
+						activeTab === 'received'
+							? 'rounded-l-full bg-[#F6F8FA] font-bold text-blue-light-high dark:bg-[#4B4B4B] dark:text-white'
+							: 'font-medium text-[#475569] dark:text-icon-dark-inactive'
 					}`}
 					onClick={() => handleTabClick('received')}
 				>
-					Received Requests <span className={'text-[12px] font-medium text-[#475569]'}>(0)</span>
+					Received Requests <span className={'text-[12px] font-medium text-[#475569] dark:text-icon-dark-inactive'}>(0)</span>
 				</div>
 				<div
 					className={`w-1/2 ${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer py-2 text-center text-[14px] ${
-						activeTab === 'sent' ? 'rounded-r-full bg-[#F6F8FA] font-bold text-blue-light-high' : 'font-medium text-[#475569]'
+						activeTab === 'sent'
+							? 'rounded-r-full bg-[#F6F8FA] font-bold text-blue-light-high dark:bg-[#4B4B4B] dark:text-white'
+							: 'font-medium text-[#475569] dark:text-icon-dark-inactive'
 					}`}
 					onClick={() => handleTabClick('sent')}
 				>
-					Sent Requests <span className={'text-[12px] font-medium text-[#475569]'}>(0)</span>
+					Sent Requests <span className={'text-[12px] font-medium text-[#475569] dark:text-icon-dark-inactive'}>(0)</span>
 				</div>
 			</div>
 			<div className='pt-5'>
@@ -90,8 +95,8 @@ function ReceivedRequests() {
 					className='mb-4 mt-5 flex cursor-pointer justify-between pr-5'
 					onClick={() => setOnChainExpanded(!isOnChainExpanded)}
 				>
-					<span className={'text-[16px] font-semibold text-blue-light-high'}>
-						ON-CHAIN BOUNTY REQUESTS <span className='text-[14px] font-medium'>({bounties.length})</span>
+					<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
+						ON-CHAIN BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>({bounties.length})</span>
 					</span>
 					<DownOutlined
 						className={`${isOnChainExpanded ? '-rotate-180' : ''} transition-transform`}
@@ -108,12 +113,18 @@ function ReceivedRequests() {
 									expandedBountyId === bounty.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
 								} bg-white  dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 							>
-								<div className='flex items-center justify-between gap-3 p-3'>
+								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 									<div className='flex gap-1 pt-2'>
 										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>{bounty.proposer} </span>
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>
+											<ImageIcon
+												src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
+												alt='timer'
+												className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
+											/>
+
 											<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
 										</div>
 										<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
@@ -124,7 +135,9 @@ function ReceivedRequests() {
 										{bounty.status === 'Pending' ? (
 											<span className='w-40 whitespace-nowrap rounded-md bg-pink_primary py-2 text-center text-[14px] font-medium text-white'>Approve</span>
 										) : (
-											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C]'>Approved</span>
+											<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C]'>
+												<CheckCircleOutlined /> Approved
+											</span>
 										)}{' '}
 										{bounty.description && (
 											<div
@@ -150,8 +163,8 @@ function ReceivedRequests() {
 										)}
 									</div>
 								</div>
-								<Divider className='m-0 mb-2 mt-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-								<div className=' p-3'>
+								<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
+								<div className='px-3 pb-3'>
 									<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{bounty.index} </span>
 									<span
 										className={` text-[17px] font-medium text-blue-light-high hover:underline  ${
@@ -196,8 +209,8 @@ function ReceivedRequests() {
 					className='mb-4 mt-6 flex cursor-pointer justify-between pr-5'
 					onClick={() => setChildBountyExpanded(!isChildBountyExpanded)}
 				>
-					<span className={'text-[16px] font-semibold text-blue-light-high'}>
-						CHILD BOUNTY REQUESTS <span className='text-[14px] font-medium'>(0)</span>
+					<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
+						CHILD BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>(0)</span>
 					</span>
 					<DownOutlined
 						className={`${isChildBountyExpanded ? '-rotate-180' : ''} transition-transform`}
@@ -280,6 +293,11 @@ function SentRequests() {
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>
+											<ImageIcon
+												src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
+												alt='timer'
+												className=' -mt-3 h-4   text-blue-light-medium dark:text-[#9E9E9E]'
+											/>
 											<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>20th Dec 2021</p>
 										</div>
 										<p className=' text-blue-light-medium dark:text-[#9E9E9E]'>|</p>

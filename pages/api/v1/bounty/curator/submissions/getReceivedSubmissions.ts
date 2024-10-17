@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -21,28 +20,20 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsquare-content';
 import { getDefaultContent } from '~src/util/getDefaultContent';
-
 const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
-
 	try {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
 		const { curatorAddress } = req.body;
-
 		if (!curatorAddress?.length || !getEncodedAddress(curatorAddress, network)) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
-
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
-
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
-
 		const encodedCuratorAddress = getEncodedAddress(curatorAddress, network);
-
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES_WITHOUT_PAGINATION,
@@ -50,29 +41,20 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				curator_eq: encodedCuratorAddress
 			}
 		});
-
 		const subsquidBountiesData = subsquidBountiesRes?.data?.bounties || [];
-
 		if (!subsquidBountiesData?.length) {
 			return res.status(400).json({ message: messages.PARENT_BOUNTY_IS_NOT_ACTIVE });
 		}
-
 		const allSubsquidBountiesIndexes = subsquidBountiesData?.map((bounty: { index: number }) => bounty?.index) || [];
-
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
-
 		const submissionsDocs = await submissionsSnapshot?.where('parent_bounty_index', 'in', allSubsquidBountiesIndexes).get();
-
 		if (submissionsDocs?.empty) {
 			return res.status(403).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });
 		}
-
 		const allSubmissions: IChildBountySubmission[] = [];
-
 		submissionsDocs?.docs?.map((doc) => {
 			if (doc?.exists) {
 				const data = doc?.data();
-
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
 					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
@@ -85,7 +67,6 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					title: data?.title || '',
 					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at
 				};
-
 				subsquidBountiesData?.map((subsquidBounty: { index: number; status: string; reward: string; curator: string; createdAt: string }) => {
 					if (payload?.parentBountyIndex == subsquidBounty?.index) {
 						payload.bountyData = {
@@ -95,7 +76,6 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 							reqAmount: subsquidBounty?.reward || '0',
 							status: subsquidBounty?.status || ''
 						};
-
 						if (!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(subsquidBounty?.status || '')) {
 							payload.status = ESubmissionStatus.OUTDATED;
 						}
@@ -104,9 +84,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 				allSubmissions?.push(payload);
 			}
 		});
-
 		const allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
-
 		const chunkArray = (arr: any[], chunkSize: number) => {
 			const chunks = [];
 			for (let i = 0; i < arr.length; i += chunkSize) {
@@ -114,14 +92,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			}
 			return chunks;
 		};
-
 		const chunks = chunkArray(allSubmissionsBountyIndexes, 30);
-
 		const bountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', chunk).get());
 		const bountiesDocsSnapshots = await Promise.all(bountiesDocsPromises);
-
 		const bountiesDocs = bountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
-
 		const resultsPromises = allSubmissions?.map(async (submission: IChildBountySubmission) => {
 			const bountiesDataPromises = bountiesDocs?.map(async (bounty) => {
 				if (bounty?.exists) {
@@ -135,35 +109,27 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					}
 				}
 			});
-
-			if (!submission?.content?.length || !submission?.title?.length) {
+			if (!submission?.bountyData?.title?.length || !submission?.bountyData?.content?.length) {
 				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
-
 				submission.bountyData = {
 					...(submission?.bountyData || {}),
 					content: subsqaureRes?.content || getDefaultContent({ proposalType: ProposalType.BOUNTIES, proposer: encodedCuratorAddress || '' }) || '',
 					title: subsqaureRes?.title || getProposalTypeTitle(ProposalType.BOUNTIES) || ''
 				};
 			}
-
 			await Promise.allSettled(bountiesDataPromises);
 			return submission;
 		});
-
 		const resultRes = await Promise.allSettled(resultsPromises);
-
 		const results: IChildBountySubmission[] = [];
-
 		resultRes.map((promise) => {
 			if (promise?.status == 'fulfilled') {
 				results?.push(promise.value);
 			}
 		});
-
 		return res.status(200).json(results);
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}
 };
-
 export default withErrorHandling(handler);

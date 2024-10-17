@@ -3,12 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Input, Modal } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircleOutlined, CloseCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useTheme } from 'next-themes';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { IChildBountySubmission } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 function CuratorSubmission() {
 	const [activeTab, setActiveTab] = useState('received');
@@ -56,45 +58,45 @@ function ReceivedRequests() {
 	const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
 	const [isApproveModalVisible, setIsApproveModalVisible] = useState<boolean>(false);
 	const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+	const [receivedRequests, setReceivedRequests] = useState<any>([]);
+
+	const getreceivedRequests = async () => {
+		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/getReceivedSubmissions', {
+			curatorAddress: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea'
+		});
+		if (error) {
+			console.error('Error fetching child bounties:', error);
+			return null;
+		}
+		setReceivedRequests(data);
+	};
+
+	useEffect(() => {
+		getreceivedRequests();
+	}, []);
+
+	console.log('receivedRequests:', receivedRequests);
 
 	const bounties = [
 		{
-			description:
-				'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more: this includes spending more funds, extending the categories  ......',
-			index: 1,
-			proposer: 'Larry Page',
-			reward: '10000000000000000000',
-			status: 'Approved',
-			submissions: [
-				{
-					amount: '10000000000000000000',
-					curator: 'Larry Page',
-					description:
-						'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more: this includes spending more funds, extending......',
-					proposer: 'Noob Master',
-					status: 'Pending',
-					title: 'Standard Guidelines to judge Liquidity Treasury Proposals on the governance side - Kusama and Polkadot'
-				},
-				{
-					amount: '10000000000000000000',
-					curator: 'Larry Page',
-					description:
-						'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more: this includes spending more funds, extending......',
-					proposer: 'Noob Master',
-					status: 'Pending',
-					title: 'Standard Guidelines to judge Liquidity Treasury Proposals on the governance side - Kusama and Polkadot'
-				}
-			],
-			title: 'Bounty Title 1'
-		},
-		{
-			description:
-				'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more: this includes spending more funds, extending the categories  ......',
-			index: 2,
-			proposer: 'Larry Page',
-			reward: '10000000000000000000',
-			status: 'Pending',
-			title: 'Bounty Title 2'
+			bountyData: {
+				content:
+					"**Summary:**\nThe IBP, a collective of independent infrastructure service providers, aims to become the main ecosystem RPC and 'IT department' by providing infrastructure related services to the Polkadot ecosystem and all parachains. The unique design of the IBP creates a globally distributed and resilient ecosystem service provider. By offering RPC services to parachain teams we want to make it more lucrative for new projects to build on Polkadot and existing teams to purely focus on building.\n\n\nThe program is a specialized initiative to enhance the decentralized infrastructure of the Polkadot and Kusama network. It establishes a resilient, globally distributed setup for the core infrastructure services. All services are deployed on infrastructure owned by its members, removing value extraction by unnecessary intermediaries. \n\n**!Note!:**\nThe requested amount is set up as a bounty with 5 Polkadot native curators where costs are only paid retroactively. The charge of the hereby stated proposal only occurs in the case of full Polkadot adoption where the scale of deployment would mean:\n- \\>1140 RPC nodes (across 15 datacenters)\n- \\>37 Billion requests a month (across relay and parachains)\n\nRPC services are **all paid retroactively** for delivered services monthly by USD value.\n\n **See the Full Proposal [here](https://docs.google.com/document/d/1WENGgO1KwJKkLJ_c6AGxRkLtOhhAjd4OW1v_yWaEUqY)**\n",
+				createdAt: '2024-04-04T18:58:42.000000Z',
+				curator: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea',
+				reqAmount: '4610540000000000',
+				status: 'Extended',
+
+				title: 'Infrastructure Builders Program'
+			},
+			content: 'This is the content of the bounty submission.',
+			createdAt: '2024-10-17T10:22:22.278Z',
+			link: 'https://example.com',
+			parentBountyIndex: 50,
+			proposer: '15BXEztHcQLQyWESNE2s1J3Uxw7ueTKKKuzRt6C7n9zhCjqG',
+			reqAmount: '1000000000000000',
+			tags: ['tag1', 'tag2'],
+			title: 'Sample Bounty Title'
 		}
 	];
 

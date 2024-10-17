@@ -12,18 +12,14 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-
 interface Args {
 	bountyIndex: number;
 	network: string;
 }
-
 export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IApiResponse<{ status: string; reqAmount?: string; curator?: string; createdAt?: string }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-
 		if (isNaN(bountyIndex)) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
-
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES,
@@ -33,14 +29,12 @@ export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IAp
 				offset: 0
 			}
 		});
-
 		if (!subsquidBountiesRes?.data?.bounties?.length) throw apiErrorWithStatusCode('No bounty data found', 400);
-
 		const status = subsquidBountiesRes?.data?.bounties?.[0]?.status || null;
 		return {
 			data: {
-				createdAt: subsquidBountiesRes?.createdAt,
-				curator: subsquidBountiesRes?.curator || '',
+				createdAt: subsquidBountiesRes?.data?.bounties?.[0]?.createdAt,
+				curator: subsquidBountiesRes?.data?.bounties?.[0]?.curator || '',
 				reqAmount: subsquidBountiesRes?.data?.bounties?.[0]?.reward || '0',
 				status: status
 			},
@@ -55,19 +49,14 @@ export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IAp
 		};
 	}
 }
-
 const handler: NextApiHandler<{ status: string } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
-
 	const network = String(req.headers['x-network']);
-
 	const { bountyIndex } = req.body;
-
 	const { data, error } = await getBountyInfo({
 		bountyIndex,
 		network: network
 	});
-
 	if (data?.status) {
 		return res.status(200).json(data);
 	}
@@ -75,5 +64,4 @@ const handler: NextApiHandler<{ status: string } | MessageType> = async (req, re
 		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 };
-
 export default withErrorHandling(handler);

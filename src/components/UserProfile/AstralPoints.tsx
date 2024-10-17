@@ -130,13 +130,14 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Astrals</div>
 				</div>
 			</header>
-			<article className='flex justify-start gap-x-5'>
+			<article className={classNames('flex flex-row justify-start gap-x-5 max-md:w-full max-md:flex-col max-md:gap-y-3')}>
 				<div
 					className={classNames(
 						'flex h-[74px] cursor-pointer flex-col items-start justify-center gap-y-1 rounded-xl border border-solid px-5 py-3',
 						current_astral_info_tab === EAstralInfoTab.ALL_INFO
 							? 'border-pink_primary bg-[#FEF2F8] dark:border-[#FF0088]'
-							: 'border-[#D2D8E0] bg-transparent dark:border-separatorDark'
+							: 'border-[#D2D8E0] bg-transparent dark:border-separatorDark',
+						'max-md:w-full'
 					)}
 					style={{ boxShadow: '0px 4px 6px 0px rgba(0, 0, 0, 0.08)' }}
 					onClick={() => dispatch(GlobalActions.setCurrentAstralTab(EAstralInfoTab.ALL_INFO))}
@@ -158,15 +159,6 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 							/>
 						</Link>
 					</h1>
-					{/* <p className='m-0 flex items-center gap-x-1 text-xs font-medium text-[#98A2B3] dark:text-blue-dark-medium'>
-						Earned <span className='text-sm font-semibold text-[#FFBA03]'>+40</span> in last 90 days{' '}
-						<div onClick={() => router.push('/astral-scoring')}>
-							<ImageIcon
-								src='/assets/icons/rounded-que-icon.svg'
-								alt='qna-icon'
-							/>
-						</div>
-					</p> */}
 				</div>
 				{renderActivityCard('On-chain activity', scores.onChain, EAstralInfoTab.ON_CHAIN_ACTIVITY, '/assets/icons/on-chain-box-icon')}
 				{renderActivityCard('Off-chain activity', scores.offChain, EAstralInfoTab.OFF_CHAIN_ACTIVITY, '/assets/icons/off-chain-box-icon')}

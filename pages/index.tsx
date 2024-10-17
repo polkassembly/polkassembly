@@ -35,6 +35,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -52,7 +53,7 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -198,10 +199,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
 	const responseArr = await Promise.all(Object.values(fetches));
+
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	const props: IHomeProps = {
 		latestPosts: {},
 		network,
-		networkSocialsData
+		networkSocialsData,
+		...translations
 	};
 
 	Object.keys(fetches).forEach((key, index) => {

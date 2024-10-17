@@ -41,11 +41,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
-		// const token = getTokenFromReq(req);
-		// if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		const token = getTokenFromReq(req);
+		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
 
-		// const user = await authServiceInstance.GetUser(token);
-		// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		const user = await authServiceInstance.GetUser(token);
+		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 		const { data } = await getBountyInfo({
 			bountyIndex: parentBountyIndex,
@@ -72,7 +72,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const payload = {
 			content,
 			created_at: new Date(),
-			id: submissionDocRef?.id,
 			link: link || '',
 			parent_bounty_index: parentBountyIndex,
 			proposer: getEncodedAddress(proposerAddress, network) || '',

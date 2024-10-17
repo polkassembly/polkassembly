@@ -12,7 +12,7 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
-function CuratorRequest() {
+const CuratorRequest = () => {
 	const [activeTab, setActiveTab] = useState('received');
 	const handleTabClick = (tab: string) => {
 		setActiveTab(tab);
@@ -48,7 +48,7 @@ function CuratorRequest() {
 			</div>
 		</div>
 	);
-}
+};
 
 function ReceivedRequests() {
 	const [isOnChainExpanded, setOnChainExpanded] = useState(false);

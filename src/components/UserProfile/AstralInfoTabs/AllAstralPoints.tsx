@@ -112,10 +112,12 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 										<ClockCircleOutlined /> {dayjs(item.updated_at).format('DD MMM YYYY')}
 									</p>
 								</div>
-								<Divider
-									style={{ background: '#D2D8E0', flexGrow: 1 }}
-									className='my-4 dark:bg-separatorDark'
-								/>
+								{index < data.length - 1 && (
+									<Divider
+										style={{ background: '#D2D8E0', flexGrow: 1 }}
+										className='my-4 dark:bg-separatorDark'
+									/>
+								)}
 							</div>
 						);
 					})

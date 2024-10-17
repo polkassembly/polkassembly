@@ -67,6 +67,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					score={data?.profile_score}
 					className='mx-auto h-7 w-[93px] justify-center border-solid border-white px-1 pr-3'
 					scale={1.1}
+					userId={data?.user_id}
 					iconWrapperClassName='ml-1.5 mt-[5.5px]'
 				/>
 				<div className={'mx-auto mt-6 flex items-center'}>

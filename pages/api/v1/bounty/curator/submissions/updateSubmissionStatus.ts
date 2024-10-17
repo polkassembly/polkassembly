@@ -23,8 +23,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMesssage } = req.body;
-		if (!proposerAddress?.length || !curatorAddress?.length || !submissionId?.length) {
+		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMesssage, updatedStatus } = req.body;
+		if (!proposerAddress?.length || !curatorAddress?.length || !submissionId?.length || ![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
@@ -56,7 +56,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const payload = {
 			rejection_msg: rejectionMesssage || '',
-			status: ESubmissionStatus.REJECTED,
+			status: updatedStatus,
 			updatedAt: new Date()
 		};
 

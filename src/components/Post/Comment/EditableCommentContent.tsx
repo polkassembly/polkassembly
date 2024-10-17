@@ -524,7 +524,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 1,
 					label: (
 						<div
-							className={`flex items-center font-medium text-xs text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+							className={`flex items-center text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 							onClick={() => {
 								toggleEdit();
 								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
@@ -534,8 +534,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								});
 							}}
 						>
-								<EditPencilIcon className='-ml-[2px] mr-1 text-xl ' />
-								Edit
+							<EditPencilIcon className='-ml-[2px] mr-1 text-xl ' />
+							Edit
 						</div>
 					)
 			  }
@@ -544,16 +544,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key: 2,
 			label: (
 				<div
-					className={`flex items-center gap-1 text-xs font-medium shadow-none text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+					className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 					onClick={() => {
 						copyLink();
 					}}
 				>
-					<CopyIcon
-						className='-ml-1 mr-[2px] text-xl text-blue-light-medium dark:text-blue-dark-medium'
-						
-					/>{' '}
-					Copy link
+					<CopyIcon className='-ml-1 mr-[2px] text-xl text-blue-light-medium dark:text-blue-dark-medium' /> Copy link
 				</div>
 			)
 		},
@@ -579,7 +575,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 4,
 					label: (
 						<div
-						className={`flex items-center gap-1 text-xs font-medium shadow-none text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+							className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 							onClick={() => {
 								deleteComment();
 								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
@@ -733,55 +729,54 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						/>
 
 						<div className='-mt-3 flex flex-row flex-wrap items-center justify-between gap-[1px] bg-white dark:bg-section-dark-overlay'>
-
 							<div className='flex items-center'>
-							<CommentReactionBar
-								className='reactions mr-0'
-								commentId={commentId}
-								comment_reactions={comment.comment_reactions}
-								importedReactions={props.isSubsquareUser}
-							/>
-							{id && (
-								<Button
-									disabled={props.disableEdit || !isCommentAllowed}
-									className={classNames(
-										props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
-										'-mt-[2px] flex items-center justify-start font-medium border-none pl-1 pr-1 text-xs shadow-none dark:bg-transparent text-[#485F7DCC] dark:text-[#9E9E9ECC]'
-									)}
-									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
-								>
-									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1  ' />} Reply
-								</Button>
-							)}
+								<CommentReactionBar
+									className='reactions mr-0'
+									commentId={commentId}
+									comment_reactions={comment.comment_reactions}
+									importedReactions={props.isSubsquareUser}
+								/>
+								{id && (
+									<Button
+										disabled={props.disableEdit || !isCommentAllowed}
+										className={classNames(
+											props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
+											'-mt-[2px] flex items-center justify-start border-none pl-1 pr-1 text-xs font-medium text-[#485F7DCC] shadow-none dark:bg-transparent dark:text-[#9E9E9ECC]'
+										)}
+										onClick={props.isSubsquareUser ? toggleReply : toggleReply}
+									>
+										{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1  ' />} Reply
+									</Button>
+								)}
 							</div>
 							<div>
-							<Dropdown
-								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown z-[1056]'
-								placement='bottomRight'
-								menu={{ items }}
-							>
-								{theme === 'dark' ? (
-									<ThreeDotsIconDark className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
-								) : (
-									<ThreeDotsIcon className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
-								)}
-							</Dropdown>
-							{comment.isError && (
-								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
-									<div
-										onClick={handleRetry}
-										className='retry-container relative flex w-[66px] cursor-pointer px-1'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-									>
-										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+								<Dropdown
+									theme={theme}
+									className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+									overlayClassName='sentiment-dropdown z-[1056]'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									{theme === 'dark' ? (
+										<ThreeDotsIconDark className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
+									) : (
+										<ThreeDotsIcon className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
+									)}
+								</Dropdown>
+								{comment.isError && (
+									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
 							</div>
 						</div>
 

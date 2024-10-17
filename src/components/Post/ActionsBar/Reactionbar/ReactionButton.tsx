@@ -72,7 +72,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined className='text-[#485F7DCC] dark:text-[#9E9E9ECC]'  />
+					<LikeOutlined className='text-[#485F7DCC] dark:text-[#9E9E9ECC]' />
 				</div>
 			);
 		}
@@ -95,7 +95,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined rotate={180} className='text-[#485F7DCC] dark:text-[#9E9E9ECC]' />
+					<LikeOutlined
+						rotate={180}
+						className='text-[#485F7DCC] dark:text-[#9E9E9ECC]'
+					/>
 				</div>
 			);
 		}
@@ -151,13 +154,19 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			<CustomButton
 				variant='default'
 				onClick={handleReact}
-				className='m-0 border-none hover:bg-[#0000000A] px-2 disabled:bg-transparent disabled:opacity-[0.5]'
+				className='m-0 border-none px-2 hover:bg-[#0000000A] disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}
 				height={40}
 			>
 				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
-					<span className={`${poppins.variable} ${poppins.className} ml-[5px] font-medium text-xs ${!reacted ? 'text-[#485F7DCC] dark:text-[#9E9E9ECC]' : 'text-pink_primary dark:text-blue-dark-helper' } `}>{reactions?.[reaction as IReaction].count}</span>
+					<span
+						className={`${poppins.variable} ${poppins.className} ml-[5px] text-xs font-medium ${
+							!reacted ? 'text-[#485F7DCC] dark:text-[#9E9E9ECC]' : 'text-pink_primary dark:text-blue-dark-helper'
+						} `}
+					>
+						{reactions?.[reaction as IReaction].count}
+					</span>
 				</span>
 			</CustomButton>
 		</span>

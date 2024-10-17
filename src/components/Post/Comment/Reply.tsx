@@ -4,8 +4,6 @@
 
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
-import CreationLabel from 'src/ui-components/CreationLabel';
-import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
@@ -55,7 +53,7 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 				></CreationLabelForComments>
 				<EditableReplyContent
 					userId={user_id}
-					className='rounded-md ml-5'
+					className='ml-5 rounded-md'
 					commentId={commentId}
 					reply={reply}
 					replyId={id}

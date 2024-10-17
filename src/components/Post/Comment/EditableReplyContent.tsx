@@ -662,76 +662,76 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							isUsedInComments={true}
 						/>
 						<div className=' flex flex-wrap items-center  justify-between gap-1'>
-							<div className='flex gap-1 items-center'>
-							<CommentReactionBar
-								className='reactions mr-0'
-								commentId={commentId}
-								comment_reactions={reply.reply_reactions}
-								importedReactions={isSubsquareUser}
-								replyId={replyId}
-								isReactionOnReply={isReactionOnReply}
-							/>
-							<div className='item-center flex flex-wrap gap-3'>
-								{id ? (
-									reply.reply_source == 'subsquare' ? (
-										<Tooltip
-											title='Reply are disabled for imported comments.'
-											color='#E5007A'
-										>
-											<Button
-												disabled={!isCommentAllowed}
-												className={`mt-[-2px] flex items-center justify-start shadow-none font-medium border-none bg-transparent pl-1 pr-1 text-xs text-[#485F7DCC] dark:text-[#9E9E9ECC] ${
-													reply.reply_source ? 'disabled-reply' : ''
-												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
+							<div className='flex items-center gap-1'>
+								<CommentReactionBar
+									className='reactions mr-0'
+									commentId={commentId}
+									comment_reactions={reply.reply_reactions}
+									importedReactions={isSubsquareUser}
+									replyId={replyId}
+									isReactionOnReply={isReactionOnReply}
+								/>
+								<div className='item-center flex flex-wrap gap-3'>
+									{id ? (
+										reply.reply_source == 'subsquare' ? (
+											<Tooltip
+												title='Reply are disabled for imported comments.'
+												color='#E5007A'
 											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 ' />} Reply
-											</Button>
-										</Tooltip>
-									) : (
-										!isReplying && (
-											<Button
-												disabled={!isCommentAllowed}
-												className={`flex -mt-[2px] items-center border-none shadow-none font-medium p-0 text-xs text-[#485F7DCC] dark:text-[#9E9E9ECC] ${
-													!isCommentAllowed ? 'opacity-50' : ''
-												}`}
-												onClick={() => setIsReplying(!isReplying)}
-											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
-												Reply
-											</Button>
+												<Button
+													disabled={!isCommentAllowed}
+													className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs font-medium text-[#485F7DCC] shadow-none dark:text-[#9E9E9ECC] ${
+														reply.reply_source ? 'disabled-reply' : ''
+													} ${!isCommentAllowed ? 'opacity-50' : ''}`}
+												>
+													{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 ' />} Reply
+												</Button>
+											</Tooltip>
+										) : (
+											!isReplying && (
+												<Button
+													disabled={!isCommentAllowed}
+													className={`-mt-[2px] flex items-center border-none p-0 text-xs font-medium text-[#485F7DCC] shadow-none dark:text-[#9E9E9ECC] ${
+														!isCommentAllowed ? 'opacity-50' : ''
+													}`}
+													onClick={() => setIsReplying(!isReplying)}
+												>
+													{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
+													Reply
+												</Button>
+											)
 										)
-									)
-								) : null}
-							</div>
+									) : null}
+								</div>
 							</div>
 							<div>
-							<Dropdown
-								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown z-[1056]'
-								placement='bottomRight'
-								menu={{ items }}
-							>
-								{theme === 'dark' ? (
-									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								) : (
-									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								)}
-							</Dropdown>
-							{reply.isReplyError && (
-								<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
-									<div
-										onClick={handleRetry}
-										className='retry-container relative flex w-[66px] cursor-pointer px-1'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-									>
-										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+								<Dropdown
+									theme={theme}
+									className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+									overlayClassName='sentiment-dropdown z-[1056]'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									{theme === 'dark' ? (
+										<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									) : (
+										<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									)}
+								</Dropdown>
+								{reply.isReplyError && (
+									<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
 							</div>
 						</div>
 						{isReplying && (

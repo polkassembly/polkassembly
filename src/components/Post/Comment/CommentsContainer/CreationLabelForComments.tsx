@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import { Divider, Modal, Dropdown } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { poppins } from 'pages/_app';
 import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
-import Link from 'next/link';
 import { ESentiment, EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
@@ -158,7 +157,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 							className='ml-1 mr-2 mt-[2px] hidden border-lightBlue dark:border-blue-dark-medium  md:inline-block'
 							type='vertical'
 						/>
-						<span className={`flex items-center max-[450px]:text-[9px] text-blue-light-medium dark:text-blue-dark-medium md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+						<span className={`flex items-center text-blue-light-medium dark:text-blue-dark-medium max-[450px]:text-[9px] md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
 							<ClockCircleOutlined className={'mr-1'} />
 							{relativeCreatedAt}
 						</span>

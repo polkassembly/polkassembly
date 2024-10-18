@@ -7,14 +7,19 @@ import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { poppins } from 'pages/_app';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { EChildBountySteps } from './types';
 import styled from 'styled-components';
 import WriteChildBounty from './WriteChildBounty';
-import { useChildBountyCreationSelector } from '~src/redux/selectors';
+import { useChildBountyCreationSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CreateChildBounty from './CreateChildBounty';
 import ChildBountySuccessModal from './ChildBountySuccessModal';
+import { useApiContext } from '~src/context';
+import { Wallet } from '~src/types';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { getMultisigAddressDetails } from '../DelegationDashboard/utils/getMultisigAddressDetails';
 
 interface ICreateBounty {
 	className?: string;
@@ -26,9 +31,48 @@ interface ICreateBounty {
 
 const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, setOpenSuccessModal }: ICreateBounty) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const { loginAddress, multisigAssociatedAddress, loginWallet } = useUserDetailsSelector();
 	const { firstStepPercentage, secondStepPercentage } = useChildBountyCreationSelector();
-
 	const [step, setStep] = useState(EChildBountySteps.WRITE_CHILDBOUNTY);
+	const [multisigData, setMultisigData] = useState<{ threshold: number; signatories: string[] }>({
+		signatories: [],
+		threshold: 0
+	});
+
+	const handleMultisigAddress = async () => {
+		if (!api || !apiReady || !loginAddress?.length || !network) return;
+		let defaultWallet: Wallet | null = loginWallet;
+		if (!defaultWallet) {
+			defaultWallet = (window.localStorage.getItem('loginWallet') as Wallet) || null;
+		}
+
+		if (!defaultWallet) return;
+		//for setting signer
+		await getAccountsFromWallet({ api, apiReady, chosenWallet: defaultWallet || loginWallet, loginAddress: '', network });
+
+		const data = await getMultisigAddressDetails(loginAddress);
+		if (data?.threshold) {
+			const filteredSignaories: string[] = [];
+
+			data?.multi_account_member?.map((addr: { address: string }) => {
+				if (getEncodedAddress(addr?.address || '', network) !== getEncodedAddress(multisigAssociatedAddress || '', network)) {
+					filteredSignaories?.push(addr?.address);
+				}
+			});
+
+			setMultisigData({
+				signatories: filteredSignaories,
+				threshold: data?.threshold || 0
+			});
+		}
+	};
+
+	useEffect(() => {
+		handleMultisigAddress();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, multisigAssociatedAddress, loginAddress]);
 
 	return (
 		<div>
@@ -79,6 +123,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 							setStep={setStep}
 							setOpenSuccessModal={setOpenSuccessModal}
 							setCloseModal={() => setOpen(false)}
+							multisigData={multisigData}
 						/>
 					)}
 				</div>
@@ -87,6 +132,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				setStep={setStep}
+				multisigData={multisigData}
 			/>
 		</div>
 	);

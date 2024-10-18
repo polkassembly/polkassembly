@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Modal } from 'antd';
+import { Modal, Tag } from 'antd';
 import { BN } from 'bn.js';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -17,15 +17,17 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { EChildBountySteps } from './types';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import Address from '~src/ui-components/Address';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	setStep: (pre: EChildBountySteps) => void;
+	multisigData: { signatories: string[]; threshold: number };
 }
 
 const ZERO_BN = new BN(0);
-const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
+const ChildBountySuccessModal = ({ open, setOpen, setStep, multisigData }: Props) => {
 	const { childBountyIndex, reqAmount, curator, parentBountyIndex } = useChildBountyCreationSelector();
 	const { loginAddress } = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -40,25 +42,29 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
 				dispatch(childBountyCreationActions.resetChildBountyCreationStore());
 				setStep(EChildBountySteps.WRITE_CHILDBOUNTY);
 			}}
-			className={classNames(poppins.className, poppins.variable, 'dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
+			className={classNames(poppins.className, poppins.variable, 'w-[620px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			maskClosable={false}
 			closeIcon={<CloseIcon />}
 			wrapClassName={'dark:bg-modalOverlayDark antSteps'}
 			centered
 			footer={
-				<Link
-					href={`https://${network}.polkassembly.io/childBounty/${childBountyIndex}`}
-					className='mb-2 flex items-center'
-					target='_blank'
-					rel='noopener noreferrer'
-				>
-					<CustomButton
-						height={40}
-						className='w-full'
-						variant='primary'
-						text='View Child Bounty'
-					/>
-				</Link>
+				!multisigData?.threshold ? (
+					<Link
+						href={`https://${network}.polkassembly.io/childBounty/${childBountyIndex}`}
+						className='mb-2 flex items-center'
+						target='_blank'
+						rel='noopener noreferrer'
+					>
+						<CustomButton
+							height={40}
+							className='w-full'
+							variant='primary'
+							text='View Child Bounty'
+						/>
+					</Link>
+				) : (
+					false
+				)
 			}
 		>
 			<div className='flex flex-col items-center justify-center'>
@@ -79,16 +85,20 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
 								<span className='w-[172px]'>Proposer:</span>
-								<Address
-									addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
-									address={loginAddress}
-									isTruncateUsername={false}
-									iconSize={18}
-									displayInline
-									disableTooltip
-								/>
+								<div className='flex gap-3'>
+									<Address
+										addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
+										address={loginAddress}
+										isTruncateUsername={false}
+										iconSize={18}
+										displayInline
+										disableTooltip
+									/>
+									{/* multisig Tag */}
+									{multisigData?.threshold > 0 && <Tag className={'rounded-full bg-[#EFF0F1] px-3 py-0.5 text-xs text-[#F4970B] dark:bg-[#EFF0F1]'}>Multisig Address</Tag>}
+								</div>
 							</span>
-							{curator?.length && (
+							{!!curator?.length && (
 								<span className='flex'>
 									<span className='w-[172px]'>Child Bounty Curator:</span>
 									<div className='flex flex-col'>
@@ -135,6 +145,23 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep }: Props) => {
 						</div>
 					</div>
 				}
+				{multisigData?.threshold > 0 && (
+					<Alert
+						showIcon
+						className='mb-6 mt-4'
+						message={
+							<div className='text-xs'>
+								An approval request has been sent to signatories to confirm transaction.{' '}
+								<Link
+									href={'https://app.polkasafe.xyz'}
+									className='text-xs text-pink_primary'
+								>
+									View Details
+								</Link>
+							</div>
+						}
+					/>
+				)}
 			</div>
 		</Modal>
 	);

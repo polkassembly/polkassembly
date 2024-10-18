@@ -21,6 +21,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
+import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -38,7 +39,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const canCreateChildBounty = () => {
-		if (!network) return false;
+		if (!network || !isBountiesDashboardSupportedNetwork(network)) return false;
 
 		return (
 			!!(

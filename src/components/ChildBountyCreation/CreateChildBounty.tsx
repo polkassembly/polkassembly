@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useCallback, useEffect, useState } from 'react';
-import { Form, Spin } from 'antd';
+import { Form, Spin, Tag } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { useDispatch } from 'react-redux';
@@ -36,11 +36,12 @@ interface Props {
 	setStep: (pre: EChildBountySteps) => void;
 	setOpenSuccessModal: (pre: boolean) => void;
 	setCloseModal: () => void;
+	multisigData: { signatories: string[]; threshold: number };
 }
 
-const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Props) => {
+const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, multisigAssociatedAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
@@ -99,26 +100,33 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 	const getOnChainTx = async () => {
 		if (!api || !apiReady || parentBountyIndex == null || isNaN(parentBountyIndex)) return null;
 		const description = 'PA';
-		const childbountyIndex = Number(await api.query.childBounties.childBountyCount());
+		const childbountyIndex = Number(await api?.query?.childBounties?.childBountyCount());
 
-		const childBountyTx = api.tx.childBounties.addChildBounty(parentBountyIndex, reqAmount.toString(), description);
+		const childBountyTx = api?.tx?.childBounties?.addChildBounty(parentBountyIndex, reqAmount.toString(), description);
 		let curatorTx = null;
 		if (!!curator?.length && getEncodedAddress(curator, network)) {
-			curatorTx = api.tx.childBounties.proposeCurator(parentBountyIndex, childbountyIndex, curator, curatorFee);
+			curatorTx = api?.tx?.childBounties?.proposeCurator(parentBountyIndex, childbountyIndex, curator, curatorFee);
 		}
-		const tx = curatorTx ? api.tx.utility.batchAll([childBountyTx, curatorTx]) : childBountyTx;
+		let tx = curatorTx ? api?.tx?.utility?.batchAll([childBountyTx, curatorTx]) : childBountyTx;
+
+		if (multisigData?.threshold > 0) {
+			tx = api?.tx?.multisig?.asMulti(multisigData?.threshold, multisigData?.signatories?.map((item) => item), null, tx, {
+				proofSize: null,
+				refTime: null
+			});
+		}
 
 		return { childbountyIndex: childbountyIndex || null, tx: tx || null };
 	};
 
 	const getGasFee = async () => {
-		if (!curator) return;
+		if (!multisigAssociatedAddress && !loginAddress) return;
 		const txDetails = await getOnChainTx();
 
 		const tx = txDetails?.tx;
 
-		const paymentInfo = await tx?.paymentInfo(curator);
-		setGasFee(new BN(paymentInfo?.partialFee || '0'));
+		const paymentInfo = await tx?.paymentInfo(multisigAssociatedAddress || loginAddress);
+		setGasFee(new BN(paymentInfo?.partialFee?.toString() || '0'));
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,7 +196,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 		};
 
 		await executeTx({
-			address: loginAddress,
+			address: multisigAssociatedAddress || '',
 			api,
 			apiReady,
 			errorMessageFallback: 'Transaction failed.',
@@ -208,11 +216,15 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 
 		checkIsBountyActiveAndValid(parentBountyIndex);
 		getGasFee();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (
-		<Spin spinning={loadingStatus.isLoading}>
+		<Spin
+			spinning={loadingStatus.isLoading}
+			tip={loadingStatus?.message}
+		>
 			<Form
 				form={form}
 				onFinish={handleSubmit}
@@ -248,12 +260,15 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 							)}
 						</div>
 						<div className='flex w-full items-end gap-2 text-sm '>
-							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='flex h-10 w-full items-center gap-x-3 rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
 									address={loginAddress || ''}
 									isTruncateUsername={false}
 									displayInline
+									disableTooltip
 								/>
+								{/* multisig Tag */}
+								{multisigData?.threshold > 0 && <Tag className={'rounded-full bg-[#EFF0F1] px-3 py-0.5 text-xs text-[#F4970B] dark:bg-[#EFF0F1]'}>Multisig Address</Tag>}
 							</div>
 						</div>
 					</section>
@@ -345,7 +360,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal }: Prop
 							type='info'
 							message={
 								<span className='text-[13px] text-bodyBlue dark:text-blue-dark-high'>
-									An amount of <span className='font-semibold'>{parseBalance(String(gasFee.toString()), 2, true, network)}</span> will be required to submit Child bounty
+									An amount of <span className='font-semibold'>{parseBalance(String(gasFee.toString()), 3, true, network)}</span> will be required to submit Child bounty
 								</span>
 							}
 						/>

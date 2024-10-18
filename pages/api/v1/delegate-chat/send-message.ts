@@ -46,7 +46,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 
-	const messageSnapshot = firestore_db.collection('chats').doc(String(chatId)).collection('messages');
+	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
+	const messageSnapshot = chatSnapshot.collection('messages');
 
 	const newMessage: IMessage = {
 		content,
@@ -59,11 +60,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	};
 
 	try {
-		await messageSnapshot.add(newMessage);
+		const batch = firestore_db.batch();
+		const newMessageRef = messageSnapshot.doc();
+
+		batch.set(newMessageRef, newMessage);
+		batch.update(chatSnapshot, { latestMessage: newMessage, updated_at: new Date() });
+
+		await batch.commit();
 
 		return res.status(200).json({ message: messages.SUCCESS });
 	} catch (error) {
-		return res.status(500).json({ message: error || messages.ERROR_IN_ADDING_EVENT });
+		console.error('Error adding message: ', error);
+		return res.status(500).json({ message: messages.ERROR_IN_ADDING_EVENT });
 	}
 }
 

@@ -16,8 +16,9 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
-import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
+import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
+import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -31,68 +32,30 @@ interface ISubsquidBounty {
 
 const ZERO_BN = new BN(0);
 
-const BOUNTIES_LISTING_LIMIT = 10;
-
-const bountyStatuses = [
-	bountyStatus.ACTIVE,
-	bountyStatus.AWARDED,
-	bountyStatus.CANCELLED,
-	bountyStatus.CLAIMED,
-	bountyStatus.EXTENDED,
-	bountyStatus.PROPOSED,
-	bountyStatus.REJECTED
-];
-
 interface Args {
-	categories: string[];
-	status: EBountiesStatuses;
 	page: number;
 	network: string;
+	curatorAddress: string;
 }
 
-export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBountyListing[]; totalBountiesCount: number }>> {
+export async function getAllBounties({ page, network, curatorAddress }: Args): Promise<IApiResponse<{ bounties: IBountyListing[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		const statuses = getBountiesCustomStatuses(status);
+		if (isNaN(page) || !curatorAddress?.length || !getEncodedAddress(curatorAddress, network)) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
-		if (isNaN(page) || (statuses?.length && !!statuses?.some((status: string) => !bountyStatuses.includes(status)))) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
-
-		const bountiesIndexes: number[] = [];
 		let totalBounties = 0;
-		let bountiesDocs: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData> | null = null;
 
-		if (categories?.length && Array.isArray(categories)) {
-			bountiesDocs = await postsByTypeRef(network, ProposalType.BOUNTIES)
-				.where('tags', 'array-contains-any', categories)
-				.limit(Number(BOUNTIES_LISTING_LIMIT))
-				.offset((Number(page) - 1) * Number(BOUNTIES_LISTING_LIMIT))
-				.get();
+		const encodedCuratorAddress = getEncodedAddress(curatorAddress, network);
 
-			bountiesDocs?.docs?.map((doc: any) => {
-				if (doc.exists) {
-					const data = doc.data();
-					bountiesIndexes.push(Number(data?.id));
-				}
-			});
-
-			totalBounties = (await postsByTypeRef(network, ProposalType.BOUNTIES).where('tags', 'array-contains-any', categories).count().get()).data().count;
-		}
-
-		const variables: any = {
-			limit: 10,
-			offset: BOUNTIES_LISTING_LIMIT * (page - 1)
-		};
-		if (statuses.length) {
-			variables.status_in = statuses;
-		}
-		if (bountiesIndexes?.length) {
-			variables.index_in = bountiesIndexes;
-		}
 		const subsquidBountiesRes = await fetchSubsquid({
 			network,
 			query: GET_ALL_BOUNTIES,
-			variables: variables
+			variables: {
+				curator_eq: encodedCuratorAddress,
+				limit: BOUNTIES_LISTING_LIMIT,
+				offset: BOUNTIES_LISTING_LIMIT * (page - 1)
+			}
 		});
 
 		if (!subsquidBountiesRes?.data?.bounties?.length) throw apiErrorWithStatusCode('No bounty data found', 400);
@@ -102,7 +65,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 
 		const subsquidbountiesIndexes = subsquidBountiesData.map((bounty: { index: number }) => bounty?.index);
 
-		bountiesDocs = bountiesDocs ? bountiesDocs : await postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', subsquidbountiesIndexes).get();
+		const bountiesDocs = await postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', subsquidbountiesIndexes).get();
 
 		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidBounty) => {
 			const subsquidChildBountiesRes = await fetchSubsquid({
@@ -114,14 +77,17 @@ export async function getAllBounties({ categories, page, status, network }: Args
 			});
 
 			const subsquidChildBountyData = subsquidChildBountiesRes?.data?.proposals || [];
-			const totalChildBountiesCount = subsquidChildBountiesRes?.data?.proposalsConnection?.totalCount || 0;
 
 			let claimedAmount = ZERO_BN;
+			let totalChildBountiesCount = 0;
 
-			subsquidChildBountyData.map((childBounty: { status: string; reward: string }) => {
+			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
 				if ([bountyStatus.CLAIMED].includes(childBounty.status)) {
+					if (subsquidBounty?.curator === childBounty?.curator) {
+						totalChildBountiesCount = totalChildBountiesCount + 1;
+					}
 					claimedAmount = claimedAmount.add(amount);
 				}
 			});
@@ -188,13 +154,12 @@ const handler: NextApiHandler<{ bounties: IBountyListing[]; totalBountiesCount: 
 
 	const network = String(req.headers['x-network']);
 
-	const { page, status, categories } = req.body;
+	const { page, userAddress } = req.body;
 
 	const { data, error } = await getAllBounties({
-		categories: categories && Array.isArray(JSON.parse(decodeURIComponent(String(categories)))) ? JSON.parse(decodeURIComponent(String(categories))) : [],
+		curatorAddress: userAddress || '',
 		network: network,
-		page: page || 1,
-		status: status
+		page: page || 1
 	});
 
 	if (data?.bounties) {

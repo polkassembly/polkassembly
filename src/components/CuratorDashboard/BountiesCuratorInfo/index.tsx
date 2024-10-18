@@ -158,7 +158,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 																expandedBountyId === bounty?.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
 															}`}
 														>
-															{bounty.title}
+															{bounty?.title}
 															<Image
 																src='/assets/more.svg'
 																alt=''

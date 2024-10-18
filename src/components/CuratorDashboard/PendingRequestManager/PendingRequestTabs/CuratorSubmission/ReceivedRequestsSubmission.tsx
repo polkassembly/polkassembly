@@ -20,16 +20,16 @@ import AddressDropdown from '~src/ui-components/AddressDropdown';
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
 
-	bounties.forEach((bounty) => {
-		const parentBountyIndex = bounty.parentBountyIndex;
+	bounties?.forEach((bounty) => {
+		const parentBountyIndex = bounty?.parentBountyIndex;
 
 		if (!groupedBounties[parentBountyIndex]) {
 			groupedBounties[parentBountyIndex] = {
-				bountyData: bounty.bountyData,
+				bountyData: bounty?.bountyData,
 				requests: [{ ...bounty }]
 			};
 		} else {
-			groupedBounties[parentBountyIndex].requests.push(bounty);
+			groupedBounties[parentBountyIndex]?.requests?.push(bounty);
 		}
 	});
 
@@ -72,9 +72,9 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 		setGroupedBounties((prevBounties) => {
 			const updatedBounties = { ...prevBounties };
 			const parentBounty = updatedBounties[selectedSubmission.parentBountyIndex];
-			const updatedRequests = parentBounty.requests.map((request: any) => (request.id === selectedSubmission.id ? { ...request, status: updatedStatus } : request));
+			const updatedRequests = parentBounty?.requests?.map((request: any) => (request?.id === selectedSubmission?.id ? { ...request, status: updatedStatus } : request));
 
-			updatedBounties[selectedSubmission.parentBountyIndex] = {
+			updatedBounties[selectedSubmission?.parentBountyIndex] = {
 				...parentBounty,
 				requests: updatedRequests
 			};
@@ -88,10 +88,10 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 
 		const payload = {
 			curatorAddress: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea',
-			parentBountyIndex: selectedSubmission.parentBountyIndex,
-			proposerAddress: selectedSubmission.proposer,
+			parentBountyIndex: selectedSubmission?.parentBountyIndex,
+			proposerAddress: selectedSubmission?.proposer,
 			rejectionMessage,
-			submissionId: selectedSubmission.id,
+			submissionId: selectedSubmission?.id,
 			updatedStatus
 		};
 
@@ -125,13 +125,13 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 			) : (
 				<div className={`${spaceGrotesk.variable} ${spaceGrotesk.className} mb-4`}>
 					<div>
-						{Object.keys(groupedBounties).map((parentBountyIndex) => {
+						{Object?.keys(groupedBounties)?.map((parentBountyIndex) => {
 							const bountyGroup = groupedBounties[Number(parentBountyIndex)];
-							const bountyData = bountyGroup.bountyData;
-							const requests = bountyGroup.requests;
-							const trimmedContentForComment = bountyData.content?.length > 250 ? bountyData.content.slice(0, 200) + '...' : bountyData.content;
+							const bountyData = bountyGroup?.bountyData;
+							const requests = bountyGroup?.requests;
+							const trimmedContentForComment = bountyData?.content?.length > 250 ? bountyData?.content?.slice(0, 200) + '...' : bountyData?.content;
 
-							const startsWithBulletPoint = trimmedContentForComment.trim().startsWith('•') || trimmedContentForComment.trim().startsWith('-');
+							const startsWithBulletPoint = trimmedContentForComment?.trim()?.startsWith('•') || trimmedContentForComment?.trim()?.startsWith('-');
 
 							return (
 								<div
@@ -145,7 +145,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 									<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 										<div className='flex gap-1 pt-2'>
 											<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
-												<NameLabel defaultAddress={bountyData.curator} />
+												<NameLabel defaultAddress={bountyData?.curator} />
 											</span>
 											<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 											<div className='-mt-1 flex items-center gap-1'>
@@ -154,18 +154,18 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 													alt='timer'
 													className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 												/>
-												<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData.createdAt).format('Do MMM YYYY')}</p>
+												<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData?.createdAt)?.format('Do MMM YYYY')}</p>
 											</div>
 											<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 											<span className='ml-1 text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
-												{parseBalance(String(bountyData.reqAmount || '0'), 2, true, network)}
+												{parseBalance(String(bountyData?.reqAmount || '0'), 2, true, network)}
 											</span>
 										</div>
 										<div className='-mt-1 flex items-center gap-3'>
-											{expandedBountyId !== Number(parentBountyIndex) && requests.length > 0 && (
-												<span className='whitespace-nowrap rounded-md py-2 text-[16px] font-semibold text-pink_primary dark:text-[#FF4098]'>Submissions ({requests.length})</span>
+											{expandedBountyId !== Number(parentBountyIndex) && requests?.length > 0 && (
+												<span className='whitespace-nowrap rounded-md py-2 text-[16px] font-semibold text-pink_primary dark:text-[#FF4098]'>Submissions ({requests?.length})</span>
 											)}
-											{requests.length > 0 && (
+											{requests?.length > 0 && (
 												<div
 													className='cursor-pointer'
 													onClick={() => toggleBountyDescription(Number(parentBountyIndex))}
@@ -197,7 +197,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 												expandedBountyId === Number(parentBountyIndex) ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
 											}`}
 										>
-											{bountyData.title}
+											{bountyData?.title}
 										</span>
 										<div className='flex flex-col'>
 											<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>
@@ -213,12 +213,12 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 									{expandedBountyId === Number(parentBountyIndex) && (
 										<div className='px-3 pb-3'>
 											<Divider className='m-0 mb-3 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-											{requests.length > 0 && (
+											{requests?.length > 0 && (
 												<span className='text-[20px] font-semibold text-blue-light-high dark:text-lightWhite'>
-													Submissions <span className='text-[16px] font-medium'>({requests.length})</span>
+													Submissions <span className='text-[16px] font-medium'>({requests?.length})</span>
 												</span>
 											)}
-											{requests.map((request, index) => (
+											{requests?.map((request, index) => (
 												<div
 													key={index}
 													className='mt-3 rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-[#1a1a1a]'
@@ -226,7 +226,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 													<div className='flex items-center justify-between gap-3 px-4 pt-2'>
 														<div className='flex gap-1 pt-2'>
 															<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
-																<NameLabel defaultAddress={request.proposer} />
+																<NameLabel defaultAddress={request?.proposer} />
 															</span>
 															<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 															<div className='-mt-1 flex items-center gap-1'>
@@ -235,29 +235,29 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 																	alt='timer'
 																	className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 																/>
-																<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{new Date(request.createdAt).toLocaleDateString()}</p>
+																<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{new Date(request?.createdAt)?.toLocaleDateString()}</p>
 															</div>
 															<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 															<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
-																{parseBalance(String(request.reqAmount || '0'), 2, true, network)}
+																{parseBalance(String(request?.reqAmount || '0'), 2, true, network)}
 															</span>
 														</div>
 													</div>
 													<div className='px-4 pb-2'>
 														<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1}</span>
-														<span className='pl-2 text-[17px] font-medium text-blue-light-high dark:text-white'>{request.title}</span>
+														<span className='pl-2 text-[17px] font-medium text-blue-light-high dark:text-white'>{request?.title}</span>
 														<div className='flex flex-col'>
-															<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{request.content}</span>
+															<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{request?.content}</span>
 															<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 														</div>
 													</div>
 													<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 													<div className='flex justify-between gap-4 p-2'>
-														{request.status === EChildbountySubmissionStatus.APPROVED ? (
+														{request?.status === EChildbountySubmissionStatus.APPROVED ? (
 															<span className='w-full  cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-[16px] font-medium text-[#07641C]'>
 																<CheckCircleOutlined /> Approved
 															</span>
-														) : request.status === EChildbountySubmissionStatus.REJECTED ? (
+														) : request?.status === EChildbountySubmissionStatus.REJECTED ? (
 															<span className='w-full cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-[16px] font-medium text-[#FB123C]'>
 																<CloseCircleOutlined /> Rejected
 															</span>

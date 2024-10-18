@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC, useEffect, useState } from 'react';
-import { Modal, Button, Select, Form } from 'antd';
+import { Modal, Button, Select, Form, Divider } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Input from '~src/basic-components/Input';
@@ -11,15 +11,17 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import TextEditor from '~src/ui-components/TextEditor';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import NameLabel from '~src/ui-components/NameLabel';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import dayjs from 'dayjs';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { ESubmissionStatus } from '~src/types';
+import { ESubmissionStatus, IChildBountySubmission } from '~src/types';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Skeleton from '~src/basic-components/Skeleton';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Link from 'next/link';
+import { usePostDataContext } from '~src/context';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import Address from '~src/ui-components/Address';
+import classNames from 'classnames';
 
 const { Option } = Select;
 
@@ -29,15 +31,16 @@ interface IBountyChildBountiesProps {
 
 const Submission: FC<IBountyChildBountiesProps> = (props) => {
 	const { bountyId } = props;
+	const {
+		postData: { curator }
+	} = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
+	const { loginAddress } = useUserDetailsSelector();
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [bountySubmission, setBountySubmission] = useState<any>(null);
+	const [bountySubmission, setBountySubmission] = useState<IChildBountySubmission[]>([]);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [activeTab, setActiveTab] = useState<'All' | 'Pending' | 'Archived'>('All');
-	const [curatorData, setCuratorData] = React.useState<any>();
+	const [activeTab, setActiveTab] = useState<ESubmissionStatus | null>(null);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -50,14 +53,16 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 		if (!bountyId || loading) return;
 		try {
 			setLoading(true);
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/curator/submissions/getAllSubmissionsForBounty', {
+			const { data, error } = await nextApiClientFetch<IChildBountySubmission[]>('/api/v1/bounty/curator/submissions/getAllSubmissionsForBounty', {
 				parentBountyIndex: bountyId
 			});
 			if (error) {
 				console.error('Error fetching bounty submission:', error);
 				return;
 			}
-			setBountySubmission(data);
+			if (data) {
+				setBountySubmission(data || []);
+			}
 		} catch (err) {
 			console.error('Error fetching bounty submission:', err);
 		} finally {
@@ -72,34 +77,13 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyId]);
 
-	const filteredSubmissions = bountySubmission?.filter((submission: any) => {
-		if (activeTab === 'Pending') {
-			return submission.status === ESubmissionStatus.PENDING;
-		} else if (activeTab === 'Archived') {
-			return submission.status === ESubmissionStatus.OUTDATED;
+	const getFilteredSumbissions = () => {
+		switch (activeTab) {
+			case ESubmissionStatus.PENDING:
+				return bountySubmission?.filter((item: IChildBountySubmission) => item?.status == ESubmissionStatus.PENDING);
+			default:
+				return bountySubmission || [];
 		}
-		return true;
-	});
-
-	const fetchCuratorBountiesData = async () => {
-		if (address) {
-			const substrateAddress = getSubstrateAddress(address);
-			const { data } = await nextApiClientFetch<any>('api/v1/bounty/curator/getCuratorGeneralInfo', {
-				userAddress: substrateAddress
-			});
-			if (data) {
-				setCuratorData(data);
-			}
-		}
-	};
-
-	useEffect(() => {
-		fetchCuratorBountiesData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
-	const handleOk = (values: any) => {
-		console.log('Submitted Values:', values);
-		setIsModalVisible(false);
 	};
 
 	return (
@@ -115,79 +99,76 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 						Submissions <span className='text-[16px] font-normal'>({bountySubmission?.length || 0})</span>{' '}
 					</h4>
 				</div>
-				{(curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0) && (
+				{getEncodedAddress(curator, network) == getEncodedAddress(loginAddress, network) && (
 					<Link href='/curator-dashboard'>
 						<p className='text-sm font-medium text-pink_primary'>View All</p>
 					</Link>
 				)}
 			</div>
-			<div className='mb-4 flex items-center gap-3 rounded-lg bg-[#F5F6F8] px-3 py-2 text-center'>
+			<div className='dark:text- mb-4 flex items-center gap-6 rounded-lg bg-[#F5F6F8] px-3 py-2 text-center text-sm text-bodyBlue dark:bg-section-dark-garyBackground dark:text-white'>
 				<span
-					className={`w-1/3 cursor-pointer ${activeTab === 'All' ? 'rounded-lg bg-white px-2 py-1 font-semibold text-pink_primary' : ''}`}
-					onClick={() => setActiveTab('All')}
+					onClick={() => setActiveTab(null)}
+					className={classNames(activeTab == null ? 'text-pink_primary' : '', 'border-pink_primary px-4 py-1 font-medium shadow-sm')}
 				>
 					All
 				</span>
 				<span
-					className={`w-1/3 cursor-pointer ${activeTab === 'Pending' ? 'rounded-lg bg-white px-2 py-1 font-semibold text-pink_primary' : ''}`}
-					onClick={() => setActiveTab('Pending')}
+					onClick={() => setActiveTab(ESubmissionStatus.PENDING)}
+					className={activeTab == ESubmissionStatus.PENDING ? 'text-pink_primary' : ''}
 				>
 					Pending
-				</span>
-				<span
-					className={`w-1/3 cursor-pointer ${activeTab === 'Archived' ? 'rounded-lg bg-white px-2 py-1 font-semibold text-pink_primary' : ''}`}
-					onClick={() => setActiveTab('Archived')}
-				>
-					Archived
 				</span>
 			</div>
 			{loading ? (
 				<Skeleton active />
 			) : (
 				<>
-					{filteredSubmissions?.map((submission: any, index: number) => {
+					{getFilteredSumbissions()?.map((submission: any, index: number) => {
 						return (
 							<div
 								key={submission?.id}
-								className='mb-3 rounded-lg border-[1px] border-solid border-[#D2D8E0] p-3'
+								className='rounded-lg border-[1px] border-solid border-[#D2D8E0] p-3'
 							>
 								<div>
-									<div className='flex gap-1 pt-2'>
-										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
-											<NameLabel defaultAddress={submission?.proposer} />
-										</span>
-										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-										<div className='-mt-1 flex items-center gap-1'>
+									<div className='flex items-center gap-1'>
+											<Address
+												address={submission?.proposer}
+												displayInline
+												isTruncateUsername
+											/>
+										<Divider
+											type='vertical'
+											className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'
+										/>
+										<div className='flex items-center gap-1'>
 											<ImageIcon
 												src={theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}
 												alt='timer'
-												className='-mt-5 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
+												className='h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 											/>
-											<p className=' whitespace-nowrap text-[10px] text-blue-light-medium dark:text-[#9E9E9E]'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</p>
+											<p className=' whitespace-nowrap text-xs text-blue-light-medium dark:text-[#9E9E9E]'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</p>
 										</div>
 										<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-										<span className='ml-1 whitespace-nowrap text-[14px] font-bold text-pink_primary dark:text-[#FF4098]'>
-											{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}
-										</span>
+										<span className='ml-1 whitespace-nowrap text-sm font-medium text-pink_primary'>{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}</span>
 									</div>
 									<div className='px-3 pb-3'>
-										<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
-										<span className={'text-[17px] font-medium text-blue-light-high hover:underline dark:text-icon-dark-inactive'}>{submission?.title}</span>
+										<span className='text-sm font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
+										<span className={'text-sm font-medium text-blue-light-high hover:underline dark:text-icon-dark-inactive'}>{submission?.title}</span>
 									</div>
 									<div className='flex w-full'>
 										{submission.status === ESubmissionStatus.APPROVED ? (
-											<span className='w-full cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C]'>
+											<span className='w-full cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-sm font-medium text-[#07641C]'>
 												<CheckCircleOutlined /> Approved
 											</span>
 										) : submission.status === ESubmissionStatus.REJECTED ? (
 											<>
-												<span className='w-full cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-[14px] font-medium text-[#FB123C]'>
+												<span className='w-full cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-sm font-medium text-[#FB123C]'>
 													<CloseCircleOutlined /> Rejected
 												</span>
 											</>
 										) : (
 											submission.status === ESubmissionStatus.PENDING && (
-												<span className='w-full cursor-default rounded-md bg-[#fefced] py-2 text-center text-[14px] font-medium text-[#EDB10A]'>
+												<span className='w-full cursor-default rounded-md bg-[#fefced] py-2 text-center text-sm font-medium text-[#EDB10A]'>
 													<ExclamationCircleOutlined /> Pending
 												</span>
 											)
@@ -219,7 +200,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 			>
 				<Form
 					layout='vertical'
-					onFinish={handleOk}
+					onFinish={() => setIsModalVisible(false)}
 				>
 					<Form.Item
 						label='Select Account'

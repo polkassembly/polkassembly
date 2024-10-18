@@ -32,7 +32,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			return res.status(400).json({ message: messages?.PARENT_BOUNTY_IS_NOT_ACTIVE });
 		}
 
-		const submissionsDocs = await firestore_db.collection('curator_submissions').get();
+		const submissionsDocs = await firestore_db.collection('curator_submissions').where('parent_bounty_index', '==', parentBountyIndex).get();
 
 		if (submissionsDocs?.empty) {
 			return res.status(403).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });

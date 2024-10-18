@@ -8,6 +8,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CuratorRequest from './PendingRequestTabs/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const fetchSubmissions = async (url: string, params: Record<string, any>, setData: React.Dispatch<any>, setLoading: React.Dispatch<boolean>) => {
 	try {
@@ -27,6 +28,7 @@ const fetchSubmissions = async (url: string, params: Record<string, any>, setDat
 };
 
 function CuratorPendingRequestManager() {
+	const currentUser = useUserDetailsSelector();
 	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
 	const [receivedSubmissions, setReceivedSubmissions] = useState<any>([]);
 	const [sentSubmissions, setSentSubmissions] = useState<any>([]);
@@ -34,27 +36,18 @@ function CuratorPendingRequestManager() {
 	const [isloading, setLoading] = useState<boolean>(false);
 
 	const getReceivedRequests = () => {
-		fetchSubmissions(
-			'/api/v1/bounty/curator/submissions/getReceivedSubmissions',
-			{ curatorAddress: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea' },
-			setReceivedSubmissions,
-			setLoading
-		);
+		fetchSubmissions('/api/v1/bounty/curator/submissions/getReceivedSubmissions', { curatorAddress: currentUser?.loginAddress }, setReceivedSubmissions, setLoading);
 	};
 
 	const getSentRequests = () => {
-		fetchSubmissions(
-			'/api/v1/bounty/curator/submissions/getSentSubmissions',
-			{ userAddress: '5GFE6fdDkd4wXyDvQayrs9DL7K8Fx9mBFRFwioCmE4yB2GCU' },
-			setSentSubmissions,
-			setLoadingSubmission
-		);
+		fetchSubmissions('/api/v1/bounty/curator/submissions/getSentSubmissions', { userAddress: currentUser?.loginAddress }, setSentSubmissions, setLoadingSubmission);
 	};
 
 	useEffect(() => {
 		getReceivedRequests();
 		getSentRequests();
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUser]);
 
 	const totalSubmissionCount = receivedSubmissions.length + sentSubmissions.length;
 
@@ -74,6 +67,8 @@ function CuratorPendingRequestManager() {
 						receivedSubmissions={receivedSubmissions}
 						isloadingSubmissions={isloading}
 						sentSubmissions={sentSubmissions}
+						setReceivedSubmissions={setReceivedSubmissions}
+						setSentSubmissions={setSentSubmissions}
 					/>
 				);
 			default:

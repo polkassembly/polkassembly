@@ -10,12 +10,16 @@ function CuratorSubmission({
 	isloading,
 	isloadingSubmissions,
 	sentSubmissions,
-	receivedSubmissions
+	receivedSubmissions,
+	setReceivedSubmissions,
+	setSentSubmissions
 }: {
 	isloading: boolean;
 	receivedSubmissions: any;
 	isloadingSubmissions: boolean;
 	sentSubmissions: any;
+	setReceivedSubmissions: (submissions: any) => void;
+	setSentSubmissions: (submissions: any) => void;
 }) {
 	const [activeTab, setActiveTab] = useState('received');
 
@@ -52,12 +56,14 @@ function CuratorSubmission({
 					<ReceivedSubmissions
 						isloading={isloading}
 						receivedSubmissions={receivedSubmissions}
+						setReceivedSubmissions={setReceivedSubmissions}
 					/>
 				)}
 				{activeTab === 'sent' && (
 					<SentSubmissions
 						isloading={isloadingSubmissions}
 						sentSubmissions={sentSubmissions}
+						setSentSubmissions={setSentSubmissions}
 					/>
 				)}
 			</div>

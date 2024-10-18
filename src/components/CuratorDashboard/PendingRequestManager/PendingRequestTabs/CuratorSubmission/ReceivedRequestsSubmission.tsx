@@ -35,7 +35,7 @@ const groupBountyData = (bounties: IChildBountySubmission[]) => {
 
 	return groupedBounties;
 };
-function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: boolean; receivedSubmissions: any }) {
+function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmissions }: { isloading: boolean; receivedSubmissions: any; setReceivedSubmissions: any }) {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -87,7 +87,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 		if (!selectedSubmission) return;
 
 		const payload = {
-			curatorAddress: '1EkXxWpyv5pY7t427CDyqLfqUzEhwPsWSAWeurqmxYxY9ea',
+			curatorAddress: currentUser?.loginAddress,
 			parentBountyIndex: selectedSubmission?.parentBountyIndex,
 			proposerAddress: selectedSubmission?.proposer,
 			rejectionMessage,
@@ -104,6 +104,8 @@ function ReceivedSubmissions({ isloading, receivedSubmissions }: { isloading: bo
 		if (data) {
 			message.success('Submission status updated successfully');
 			updateGroupedBounties(updatedStatus);
+			const updatedSubmissions = receivedSubmissions.map((submission: any) => (submission.id === selectedSubmission.id ? { ...submission, status: updatedStatus } : submission));
+			setReceivedSubmissions(updatedSubmissions);
 		}
 
 		handleCancel();

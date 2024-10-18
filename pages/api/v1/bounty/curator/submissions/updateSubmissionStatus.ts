@@ -24,15 +24,20 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMesssage, updatedStatus } = req.body;
-		if (!proposerAddress?.length || !curatorAddress?.length || !submissionId?.length || ![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)) {
+		if (
+			!proposerAddress?.length ||
+			!curatorAddress?.length ||
+			!submissionId?.length ||
+			![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED, ESubmissionStatus.DELETED].includes(updatedStatus)
+		) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
 		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
 
 		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
 		const { data } = await getBountyInfo({
 			bountyIndex: parentBountyIndex,
@@ -52,6 +57,14 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		if (!submissionDoc?.exists) {
 			return res.status(403).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_NOT_EXISTS });
+		}
+
+		if (updatedStatus == ESubmissionStatus.DELETED) {
+			if (submissionDoc?.data()?.user_id !== user?.id) {
+				return res.status(401).json({ message: messages.UNAUTHORISED });
+			}
+			await submissionDocRef?.delete();
+			return res.status(200).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY });
 		}
 
 		const payload = {

@@ -1016,5 +1016,6 @@ export enum ESubmissionStatus {
 	APPROVED = 'approved',
 	REJECTED = 'rejected',
 	PENDING = 'pending',
-	OUTDATED = 'outdated'
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
 }

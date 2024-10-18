@@ -133,6 +133,7 @@ const messages = {
 	CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS: 'Child bounty submission already exists',
 	CHILD_BOUNTY_SUBMISSION_NOT_EXISTS: 'Child bounty submission not exists.',
 	CHILD_BOUNTY_SUBMISSION_EDITED_SUCCESSFULLY: 'Child bounty submission edited successfully',
+	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully',
 	NO_CHILD_BOUNTY_SUBMISSION_FOUND: 'No child bounty submission found.'
 };
 

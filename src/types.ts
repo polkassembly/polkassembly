@@ -1000,6 +1000,7 @@ export interface IChildBountySubmission {
 	tags: string[];
 	title: string;
 	updatedAt: Date;
+	userId: number;
 	bountyData?: {
 		title?: string;
 		content?: string;

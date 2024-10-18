@@ -79,7 +79,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			req_amount: reqAmount || '0',
 			status: EChildbountySubmissionStatus.PENDING,
 			tags: tags || [],
-			title: title || ''
+			title: title || '',
+			user_id: user?.id
 		};
 
 		await submissionDocRef?.set(payload, { merge: true });

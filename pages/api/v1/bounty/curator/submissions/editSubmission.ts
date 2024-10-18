@@ -62,6 +62,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			?.where('proposer', '==', getEncodedAddress(proposerAddress, network))
 			.where('parent_bounty_index', '==', parentBountyIndex)
 			.where('status', '==', EChildbountySubmissionStatus.PENDING)
+			.where('user_id', '==', user?.id)
 			.limit(1)
 			.get();
 

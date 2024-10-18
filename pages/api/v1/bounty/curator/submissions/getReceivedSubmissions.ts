@@ -66,7 +66,8 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					status: data?.status,
 					tags: data?.tags || [],
 					title: data?.title || '',
-					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at
+					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at,
+					userId: data?.user_id
 				};
 				subsquidBountiesData?.map((subsquidBounty: { index: number; status: string; reward: string; curator: string; createdAt: string }) => {
 					if (payload?.parentBountyIndex == subsquidBounty?.index) {

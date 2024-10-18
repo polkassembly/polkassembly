@@ -18,16 +18,27 @@ import { useCurrentBlock } from '~src/hooks';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
 import { chainProperties } from '~src/global/networkConstants';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useTheme } from 'next-themes';
 import Select from '~src/basic-components/Select';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+
+export enum ProxyTypeEnum {
+	Any = 'Any',
+	Auction = 'Auction',
+	CancelProxy = 'CancelProxy',
+	Governance = 'Governance',
+	IdentityJudgement = 'IdentityJudgement',
+	NonTransfer = 'NonTransfer',
+	OnDemandOrdering = 'OnDemandOrdering',
+	Society = 'Society'
+}
 
 interface Props {
 	openModal: boolean;
@@ -48,79 +59,62 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const { loginAddress, loginWallet } = userDetails;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [form] = Form.useForm();
-	const [createPureProxy, setCreatePureProxy] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
-	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
+	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE }); // Advanced details state
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
-	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
+	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED }); // Enactment state
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
-	const [proxyAddress, setProxyAddress] = useState<string>('');
-	const [proxyType, setProxyType] = useState<any>('Any');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		if (loginWallet) {
-			(async () => {
-				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
+
+		const loadAccountsAndFetchFees = async () => {
+			try {
+				setLoadingStatus({ isLoading: true, message: 'Fetching accounts' });
+
+				// Get accounts
+				const accountsData = await getAccountsFromWallet({
+					api,
+					apiReady,
+					chosenWallet: loginWallet || (localStorage.getItem('loginWallet') as Wallet),
+					loginAddress,
+					network
+				});
 				setAccounts(accountsData?.accounts || []);
 				onAccountChange(accountsData?.account || '');
+
+				// For fetching fees
+				const values = form.getFieldsValue();
+				if (!values.proxyType) return;
+
+				const proxyTx = values.createPureProxy
+					? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
+					: values.proxyAddress
+					? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
+					: null;
+
+				if (proxyTx) {
+					const accountData = await api?.query?.system?.account(address);
+					const availableBalance = new BN(accountData?.data?.free.toString() || '0');
+					setAvailableBalance(availableBalance);
+
+					const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+					setGasFee(new BN(gasFee));
+				}
+			} catch (error) {
+				console.error('Failed to fetch accounts and fees:', error);
+			} finally {
 				setLoadingStatus({ isLoading: false, message: '' });
-			})();
-		} else {
-			if (!window) return;
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-					onAccountChange(accountsData?.account || '');
-				})();
 			}
-		}
+		};
+
+		loadAccountsAndFetchFees();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails, proxyAddress]);
-
-	const fetchFees = async () => {
-		setLoadingStatus({ isLoading: true, message: '' });
-		try {
-			let proxyTx;
-			if (createPureProxy) {
-				proxyTx = api?.tx?.proxy?.createPure(proxyType as any, 0, 0);
-			}
-			if (proxyAddress && !createPureProxy) {
-				proxyTx = api?.tx?.proxy?.addProxy(proxyAddress, proxyType as any, 0);
-			}
-
-			const balanceStr = (await api?.query?.system?.account(address))?.data?.free.toString();
-
-			if (balanceStr) {
-				const availableBalance = new BN(balanceStr);
-				setAvailableBalance(availableBalance);
-			} else {
-				console.log('Failed to retrieve balance');
-			}
-
-			setAvailableBalance(availableBalance);
-			if (!proxyTx) return;
-			const gasFee = (await proxyTx?.paymentInfo(address || proxyAddress))?.toJSON();
-			setGasFee(new BN(String(gasFee?.partialFee)));
-			setLoadingStatus({ isLoading: false, message: '' });
-		} catch (error) {
-			console.error('Failed to fetch fees:', error);
-			setLoadingStatus({ isLoading: false, message: '' });
-		}
-	};
-
-	useEffect(() => {
-		if (!api && !apiReady) return;
-		fetchFees();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [createPureProxy, apiReady, api, proxyAddress, address]);
+	}, [api, apiReady, loginWallet, address, userDetails]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -143,15 +137,17 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	const handleSubmit = async () => {
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
-		if (!api || !apiReady || !proxyType) {
+		const values = form.getFieldsValue();
+		if (!api || !apiReady || !values.proxyType) {
 			return;
 		}
+
 		let txn;
-		if (createPureProxy) {
-			txn = api?.tx?.proxy?.createPure(proxyType as any, 0, 0);
+		if (values.createPureProxy) {
+			txn = api?.tx?.proxy?.createPure(values.proxyType as any, 0, 0);
 		}
-		if (proxyAddress && !createPureProxy) {
-			txn = api?.tx?.proxy?.addProxy(proxyAddress, proxyType as any, 0);
+		if (values.proxyAddress && !values.createPureProxy) {
+			txn = api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType as any, 0);
 		}
 		if (!txn) return;
 		const { partialFee: txGasFee } = (await txn.paymentInfo(address || loginAddress)).toJSON();
@@ -217,7 +213,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={getSubstrateAddress(address || loginAddress) == getSubstrateAddress(proxyAddress) || availableBalance.lt(gasFee)}
+						disabled={getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) || availableBalance.lt(gasFee)}
 						height={40}
 						width={145}
 						text='Create Proxy'
@@ -236,7 +232,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					<Form
 						form={form}
 						disabled={loadingStatus.isLoading}
-						initialValues={{ loginAddress: loginAddress }}
+						initialValues={{ loginAddress }}
 						onFinish={handleSubmit}
 					>
 						<div className=''>
@@ -246,7 +242,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								accounts={accounts}
 								address={loginAddress}
 								withBalance={false}
-								onAccountChange={onAccountChange}
+								onAccountChange={(address) => form.setFieldsValue({ address })}
 								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
@@ -260,21 +256,21 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								title='Proxy Address'
 								isTruncateUsername={false}
 								accounts={accounts}
-								address={proxyAddress || loginAddress}
+								address={form.getFieldValue('proxyAddress') || loginAddress}
 								withBalance={false}
-								onAccountChange={(address) => setProxyAddress(address)}
+								onAccountChange={(address) => form.setFieldsValue({ proxyAddress: address })}
 								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
 								linkAddressTextDisabled
 								theme={theme}
-								isDisabled={createPureProxy}
+								isDisabled={form.getFieldValue('createPureProxy')}
 								isVoting
 							/>
 							<div className='mt-1'>
 								<Checkbox
-									checked={createPureProxy}
-									onChange={(e) => setCreatePureProxy(e.target.checked)}
+									checked={form.getFieldValue('createPureProxy')}
+									onChange={(e) => form.setFieldsValue({ createPureProxy: e.target.checked })}
 									className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
 								>
 									Create Pure Proxy
@@ -286,32 +282,27 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							<Select
 								className='w-full rounded-[4px] py-1'
 								style={{ width: '100%' }}
-								value={proxyType}
+								value={form.getFieldValue('proxyType')}
 								size='large'
 								suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
-								onChange={(value) => setProxyType(value)}
-								defaultValue={'Any'}
-								options={[
-									{ label: 'Any', value: 'Any' },
-									{ label: 'Auction', value: 'Auction' },
-									{ label: 'Cancel Proxy', value: 'CancelProxy' },
-									{ label: 'Governance', value: 'Governance' },
-									{ label: 'Identity Judgment', value: 'IdentityJudgement' },
-									{ label: 'Non Transfer', value: 'NonTransfer' },
-									{ label: 'On Demand Ordering', value: 'OnDemandOrdering' },
-									{ label: 'Society', value: 'Society' }
-								]}
+								onChange={(value) => form.setFieldsValue({ proxyType: value })}
+								defaultValue={ProxyTypeEnum.Any}
+								options={Object.values(ProxyTypeEnum).map((type) => ({
+									label: type,
+									value: type
+								}))}
 							/>
 						</div>
-						{proxyType && (
-							<div
-								className='mt-6 flex cursor-pointer items-center gap-2'
-								onClick={() => setOpenAdvanced(!openAdvanced)}
-							>
-								<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
-								<DownArrow className='down-icon' />
-							</div>
-						)}
+
+						{/* Advanced Details and Enactment logic remains unchanged */}
+
+						<div
+							className='mt-6 flex cursor-pointer items-center gap-2'
+							onClick={() => setOpenAdvanced(!openAdvanced)}
+						>
+							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<DownArrow className='down-icon' />
+						</div>
 						{openAdvanced && (
 							<div className='preimage mt-3 flex flex-col'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
@@ -405,7 +396,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 														<Input
 															name='after_blocks'
 															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
+															onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
 														/>
 													</Form.Item>
 												)}
@@ -415,6 +406,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								</Radio.Group>
 							</div>
 						)}
+						{/* Fee display */}
 						{gasFee && gasFee != ZERO_BN && (
 							<Alert
 								type='info'
@@ -427,6 +419,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								}
 							/>
 						)}
+						{/* Insufficient balance check */}
 						{availableBalance.lt(gasFee) && (
 							<Alert
 								type='info'

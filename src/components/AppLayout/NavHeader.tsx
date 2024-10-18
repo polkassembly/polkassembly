@@ -224,7 +224,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					className='mt-1/2 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -232,22 +232,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		...(isOpenGovSupported(network)
-			? [
-					{
-						key: 'create proxy',
-						label: (
-							<span
-								className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-								onClick={() => setOpenProxyModal(true)}
-							>
-								<ProxyIcon className='userdropdown-icon text-2xl' />
-								<span>Create Proxy</span>
-							</span>
-						)
-					}
-			  ]
-			: []),
 		{
 			key: 'settings',
 			label: (
@@ -280,6 +264,21 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
+	if (isOpenGovSupported(network)) {
+		dropdownMenuItems.splice(1, 0, {
+			key: 'create proxy',
+			label: (
+				<span
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					onClick={() => setOpenProxyModal(true)}
+				>
+					<ProxyIcon className='userdropdown-icon text-2xl' />
+					<span>Create Proxy</span>
+				</span>
+			)
+		});
+	}
+
 	if (onchainIdentitySupportedNetwork.includes(network)) {
 		const options = [
 			{
@@ -299,7 +298,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							handleIdentityButtonClick();
 						}}
 					>
-						<div className='my-0 text-[24px]'>
+						<div className='my-0 text-2xl'>
 							<ApplayoutIdentityIcon />
 						</div>
 						<span>Set on-chain identity</span>
@@ -334,7 +333,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				)
 			});
 		}
-		dropdownMenuItems.splice(1, 0, ...options);
+		dropdownMenuItems.splice(2, 0, ...options);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (

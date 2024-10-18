@@ -100,7 +100,6 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 								{loading ? (
 									<SkeletonInput active />
 								) : (
-									!loading &&
 									pureProxyAddress && (
 										<Address
 											displayInline

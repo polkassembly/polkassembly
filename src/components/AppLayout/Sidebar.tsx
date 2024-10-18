@@ -1377,7 +1377,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
 					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						{network === 'polkadot' ? 'All Bounties' : 'Bounties'}
+						Bounties
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1

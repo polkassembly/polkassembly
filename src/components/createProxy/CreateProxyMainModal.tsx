@@ -60,9 +60,9 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [form] = Form.useForm();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
-	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE }); // Advanced details state
+	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE }); 
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
-	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED }); // Enactment state
+	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -76,7 +76,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			try {
 				setLoadingStatus({ isLoading: true, message: 'Fetching accounts' });
 
-				// Get accounts
+				// Get All accounts
 				const accountsData = await getAccountsFromWallet({
 					api,
 					apiReady,

@@ -118,7 +118,7 @@ const CreateBounty = ({
 	const fetchGasFee = async () => {
 		if (!api || !apiReady || !linkedAddress || !proposerAddress || !bountyAmount) return;
 		const title = 'PA';
-		const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
+		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
 		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 		setGasFee(new BN(String(bountyTxGasFee)));
 	};
@@ -177,7 +177,7 @@ const CreateBounty = ({
 		const availableBalanceBN = new BN(availableBalance || '0');
 
 		const title = 'PA';
-		const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
+		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
 		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 
 		if (availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {

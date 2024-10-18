@@ -14,38 +14,24 @@ import { chainProperties } from '~src/global/networkConstants';
 const ZERO_BN = new BN(0);
 
 interface IIdentityTxBreakdown {
-	perSocialBondFee: BN;
 	txFee: ITxFee;
 	loading: boolean;
 }
 
-const IdentityTxBreakdown = ({ perSocialBondFee, txFee, loading }: IIdentityTxBreakdown) => {
+const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
 	const { network } = useNetworkSelector();
 	const { identityInfo } = useOnchainIdentitySelector();
-	const { bondFee, registerarFee, minDeposite, gasFee } = txFee;
+	const { registerarFee, minDeposite, gasFee } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite));
 	return (
 		<div>
-			<span className='flex items-center gap-x-2 text-sm font-semibold'>
-				<span className='text-lightBlue dark:text-blue-dark-medium '>
-					Bond
-					<HelperTooltip
-						className='mx-1'
-						text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
-					/>
-					:
-				</span>
-				<span className='rounded-2xl bg-[#edeff3] px-4 py-1 font-medium text-bodyBlue dark:text-bodyBlue'>
-					{formatedBalance(bondFee.toString(), unit)} {unit}
-				</span>
-			</span>
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px]'
+						className='mt-4 rounded-[4px]'
 						type='info'
 						showIcon
 						message={
@@ -80,18 +66,6 @@ const IdentityTxBreakdown = ({ perSocialBondFee, txFee, loading }: IIdentityTxBr
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
-										</span>
-									</span>
-									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium '>
-											Bond{' '}
-											<HelperTooltip
-												className='ml-1'
-												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
-											/>
-										</span>
-										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>

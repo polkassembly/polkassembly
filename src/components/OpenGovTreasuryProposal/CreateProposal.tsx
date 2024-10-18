@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
@@ -101,7 +101,7 @@ const CreateProposal = ({
 	const { id: userId, loginAddress } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const success = (message: string) => {

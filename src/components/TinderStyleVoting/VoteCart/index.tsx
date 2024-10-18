@@ -53,6 +53,10 @@ const VoteCart: React.FC = () => {
 		}
 	};
 
+	const reloadBatchCart = () => {
+		getVoteCartData();
+	};
+
 	useEffect(() => {
 		getVoteCartData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,7 +156,7 @@ const VoteCart: React.FC = () => {
 	return (
 		<section>
 			<article className='px-2'>
-				<div className='max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md dark:bg-black'>
+				<div className={'max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md  dark:bg-black'}>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
@@ -178,11 +182,13 @@ const VoteCart: React.FC = () => {
 								key={index}
 								voteInfo={voteCardInfo}
 								index={index}
+								reloadBatchCart={reloadBatchCart}
 							/>
 						))}
 					</Spin>
 				</div>
 			</article>
+
 			<article
 				className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
 				style={{ borderRadius: '8px 8px 0 0' }}
@@ -207,6 +213,7 @@ const VoteCart: React.FC = () => {
 					</Button>
 				</div>
 			</article>
+
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}

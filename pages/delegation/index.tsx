@@ -5,20 +5,18 @@
 import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import DelegationDashboard from '~src/components/DelegationDashboard';
-// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
-import CopyContentIcon from '~assets/icons/content_copy_small.svg';
-import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
-import copyToClipboard from 'src/util/copyToClipboard';
-import { message } from 'antd';
 import SEOHead from '~src/global/SEOHead';
-import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import ImageIcon from '~src/ui-components/ImageIcon';
-import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
+import dynamic from 'next/dynamic';
+import Skeleton from '~src/basic-components/Skeleton';
+
+const DelegationDashboard = dynamic(() => import('src/components/DelegationDashboard'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -38,17 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Delegation = (props: { network: string }) => {
-	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
-	const { asPath } = useRouter();
-
-	const handleCopylink = () => {
-		const url = `https://${props.network}.polkassembly.io${asPath.split('#')[0]}`;
-
-		copyToClipboard(url);
-
-		message.success('Link copied to clipboard');
-	};
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -61,27 +49,8 @@ const Delegation = (props: { network: string }) => {
 				title='Delegation Dashboard'
 				network={props.network}
 			/>
-			<div className='hidden sm:block'>
+			<div className=''>
 				<DelegationDashboard />
-			</div>
-			<div className='w-full sm:hidden'>
-				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Dashboard</h1>
-				<div className='mt-12 flex flex-col items-center justify-center'>
-					{/* <DelegationDashboardEmptyState /> */}
-					<ImageIcon
-						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
-					/>
-					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Delegation Dashboard from your Dekstop computer</p>
-					<button
-						className='mt-5 flex items-center justify-center rounded-full border border-solid border-section-light-container bg-transparent px-3.5 py-1.5 text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
-						onClick={() => {
-							handleCopylink();
-						}}
-					>
-						Copy Page Link <span className='ml-1'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
-					</button>
-				</div>
 			</div>
 		</>
 	);

@@ -202,7 +202,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{inPostHeading && !beneficiaries?.length && (
 						<Divider
-							className='ml-1 hidden xs:mt-2 md:mt-0 md:inline-block'
+							className='ml-3 hidden xs:mt-2 md:mt-0 md:inline-block'
 							type='vertical'
 							style={{ borderLeft: '1px solid #485F7D' }}
 						/>

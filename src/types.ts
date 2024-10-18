@@ -110,6 +110,11 @@ export interface IAssets {
 	genralIndex: string;
 }
 
+interface Asset {
+	label: string;
+	assetId: number;
+}
+
 export interface ChainProps {
 	peopleChainRpcEndpoint?: string;
 	peopleChainParachain?: string;
@@ -137,6 +142,9 @@ export interface ChainProps {
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
 	supportedAssets?: IAssets[];
+	hydrationTreasuryAddress?: string;
+	hydrationEndpoints?: string[];
+	hydrationAssets?: Asset[];
 }
 
 export type TRPCEndpoint = {
@@ -215,6 +223,7 @@ export enum Wallet {
 }
 
 export const PostOrigin = {
+	ASTRAL_SCORECARD: 'AstralScorcard',
 	AUCTION_ADMIN: 'AuctionAdmin',
 	BIG_SPENDER: 'BigSpender',
 	BIG_TIPPER: 'BigTipper',
@@ -385,6 +394,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
+	progress_report?: IProgressReport;
 }
 
 export interface IPostTag {
@@ -555,11 +565,12 @@ export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	PLEASE_VERIFY_MATRIX = 'Please verify matrix account',
 	NOT_VERIFIED = 'Not verified'
 }
 export enum ESocials {
 	EMAIL = 'email',
-	RIOT = 'riot',
+	MATRIX = 'matrix',
 	TWITTER = 'twitter',
 	WEB = 'web'
 }
@@ -578,6 +589,18 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+}
+
+export interface IRating {
+	rating: number;
+	user_id: string;
+}
+export interface IProgressReport {
+	created_at?: Date;
+	progress_file?: string;
+	progress_name?: string;
+	progress_summary?: string;
+	ratings?: IRating[];
 }
 
 export interface IVotesCount {
@@ -706,14 +729,20 @@ export interface IDelegatorsAndDelegatees {
 	};
 }
 
+export interface IChildBounty {
+	description: string;
+	index: number;
+	status: string;
+	reward: string;
+	title: string;
+	curator?: string;
+	createdAt?: Date;
+	source?: 'polkassembly' | 'subsquare';
+	categories?: string[];
+	payee?: string;
+}
 export interface IChildBountiesResponse {
-	child_bounties: {
-		description: string;
-		index: number;
-		status: string;
-		reward: string;
-		title: string;
-	}[];
+	child_bounties: IChildBounty[];
 	child_bounties_count: number;
 }
 
@@ -952,4 +981,42 @@ export interface ICommentsSummary {
 	summary_negative: string;
 	summary_positive: string;
 	summary_neutral: string;
+}
+
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}
+
+export interface IChildBountySubmission {
+	content: string;
+	createdAt: Date;
+	link: string;
+	parentBountyIndex: number;
+	proposer: string;
+	reqAmount: string;
+	status: ESubmissionStatus;
+	tags: string[];
+	title: string;
+	updatedAt: Date;
+	userId: number;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
+	id: string;
+	rejectionMessage?: string;
+}
+
+export enum ESubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
 }

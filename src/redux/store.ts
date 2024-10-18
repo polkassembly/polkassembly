@@ -30,6 +30,7 @@ import { ambassadorRemovalStore } from './removeAmbassador';
 import { ambassadorReplacementStore } from './replaceAmbassador';
 import { claimPayoutStore } from './claimProposalPayout';
 import { assetsCurrentPriceStore } from './assetsCurrentPrices';
+import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
@@ -125,6 +126,7 @@ export const makeStore = () => {
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
 		[batchVoteStore.name]: batchVoteStore.reducer,
+		[progressReportStore.name]: progressReportStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
 		[claimPayoutStore.name]: claimPayoutStore.reducer,

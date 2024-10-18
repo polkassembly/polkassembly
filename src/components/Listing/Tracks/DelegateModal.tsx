@@ -341,12 +341,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			)}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive ' />}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />
+					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>
+						<DelegateModalIcon className='-mt-1 mr-2 text-[20px] text-lightBlue dark:text-icon-dark-inactive ' />
 						Delegate
 					</div>
 				}
@@ -355,10 +355,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 				confirmLoading={loading}
 				onCancel={handleCloseModal}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 flex items-center justify-evenly gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark sm:justify-end'>
 						<CustomButton
 							text='Cancel'
-							className='rounded-[4px]'
+							className='rounded-[4px] text-sm sm:text-base'
 							variant='default'
 							buttonsize='xs'
 							onClick={handleCloseModal}
@@ -366,7 +366,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						<CustomButton
 							text='Delegate'
 							variant='primary'
-							className={`rounded-[4px] ${delegateButtonDisable && 'opacity-50'}`}
+							className={`rounded-[4px] text-sm sm:text-base ${delegateButtonDisable && 'opacity-50'}`}
 							disabled={delegateButtonDisable}
 							onClick={async () => {
 								await handleSubmit();
@@ -390,7 +390,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px]'
+										className='mb-2 h-10 rounded-[4px] sm:mb-4'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
@@ -399,13 +399,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								{availableTransferableBalance.lte(txFee) && !txFee.eq(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px]'
+										className='mb-2 h-10 rounded-[4px] sm:mb-4'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient Transferable Balance for paing Gas Fee</span>}
 									/>
 								)}
 
-								<div className=''>
+								<div className='mt-2 '>
 									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 									<AddressInput
 										name='dashboardAddress'
@@ -423,7 +423,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									defaultAddress={defaultTarget || target}
 									label={'Delegate To'}
 									placeholder='Add Delegatee Address'
-									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
+									className='font-normal text-lightBlue dark:text-blue-dark-medium sm:text-sm'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
@@ -452,7 +452,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									/>
 								)}
 
-								<div className='mt-6 flex cursor-pointer items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+								<div className='mt-4 flex cursor-pointer items-center justify-between text-lightBlue dark:text-blue-dark-medium sm:mt-6'>
 									Balance
 									<span
 										onClick={() => {
@@ -479,7 +479,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									inputClassName='text-[#7c899b] text-sm dark:bg-section-dark-overlay'
 									theme={theme}
 								/>
-								<div className='mb-2 mt-4'>
+								<div className='mb-2 sm:mt-4'>
 									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 										Conviction
 										<span>
@@ -490,7 +490,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										</span>
 									</label>
 
-									<div className='mt-4 px-[2px]'>
+									<div className='mt-3 px-[2px] sm:mt-4'>
 										<Slider
 											tooltip={{ open: false }}
 											className='mt-[9px] text-sm'
@@ -512,22 +512,23 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										/>
 									</div>
 								</div>
-								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px] dark:bg-inactiveIconDark'>
-									<div className='flex items-center justify-center gap-2.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
+								<div className='track-[0.0025em] mt-3 flex items-center justify-between rounded-md bg-[#F6F7F9] px-2 py-2 dark:bg-inactiveIconDark sm:mt-4 sm:px-[17px] sm:py-[13px]'>
+									<div className='flex items-center justify-center gap-2.5 text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
-									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+									<div className='flex items-center justify-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high sm:text-sm'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
-								<div className='mb-2 mt-6 flex items-center justify-between'>
+								<div className='mb-2 mt-4 flex flex-col justify-between sm:mt-6 sm:flex-row sm:items-center'>
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									{trackArr?.length ? (
 										<Popover
 											content={content}
 											placement='top'
 											zIndex={1056}
+											className='mt-1 sm:mt-0'
 										>
 											<Checkbox
 												indeterminate={indeterminate}
@@ -535,7 +536,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 												checked={checkAll}
 												className='dark:text-blue-dark-medium'
 											>
-												Select available tracks
+												Delegate to all available tracks
 											</Checkbox>
 										</Popover>
 									) : (
@@ -550,7 +551,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									)}
 								</div>
 								{
-									<div className='mb-6 mt-0 flex flex-wrap gap-2 '>
+									<div className='mb-2 mt-0 flex flex-wrap gap-2 sm:mb-6 '>
 										{checkedTrack && (
 											<div
 												key={checkedTrack?.trackId}
@@ -585,7 +586,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px]'
+								className='mb-2 rounded-[4px] sm:mb-4'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}
@@ -664,10 +665,23 @@ export default styled(DelegateModal)`
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
 	}
+	@media (max-width: 640px) and (min-width: 320px) {
+		.ant-modal-content .ant-modal-close {
+			margin-top: -3px !important;
+		}
+	}
 
 	@media (max-width: 365px) and (min-width: 320px) {
 		.delegation-buttons {
-			padding: 12px 0px !important;
+			padding: 12px 0px;
+		}
+		.ant-modal-content .ant-modal-close {
+			margin-top: -3px !important;
+		}
+	}
+	@media (max-width: 640px) {
+		.ant-modal-content {
+			padding: 12px !important;
 		}
 	}
 `;

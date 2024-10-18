@@ -215,7 +215,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 						<div
 							id='smallCircle'
 							className={`${
-								ayes < nays ? (theme === 'dark' ? 'bg-aye_green_Dark' : 'bg-ayeColor') : theme === 'dark' ? 'bg-nay_red_Dark' : 'bg-nayColor'
+								ayes < nays ? (theme === 'dark' ? 'bg-aye_green_Dark' : 'bg-aye_green') : theme === 'dark' ? 'bg-nay_red_Dark' : 'bg-nay_red'
 							} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white dark:border-[#3B444F]`}
 						>
 							{ayes == 0 && nays == 0 ? '0' : ayes < nays ? ((ayes / (ayes + nays)) * 100).toFixed(1) : ((nays / (ayes + nays)) * 100).toFixed(1)}%
@@ -240,7 +240,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 					<AyeNayButtons
 						className='mx-auto mb-6 mt-9 max-w-[310px]'
 						size='large'
-						disabled={!id || !!ownVote || !canVote}
+						disabled={!!ownVote || !canVote}
 						onClickAye={() => castVote(Vote.AYE)}
 						onClickNay={() => castVote(Vote.NAY)}
 						customWidth='w-[180px]'

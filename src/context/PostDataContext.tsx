@@ -81,6 +81,7 @@ export interface IPostData {
 	statusHistory?: any[];
 	identityId?: string | null;
 	preimageHash?: string;
+	progress_report?: any;
 }
 export interface IPostDataContext {
 	postData: IPostData;

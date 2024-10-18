@@ -79,7 +79,7 @@ export async function fetchCouncilMotions(api: ApiPromise, network: string): Pro
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const blockTime = chainProperties[network].blockTime;
-	const councilMotions: DeriveCollectiveProposal[] = await api.derive.council?.proposals();
+	const councilMotions: DeriveCollectiveProposal[] = (await api?.derive?.council?.proposals()) ?? [];
 
 	if (councilMotions) {
 		councilMotions.forEach(({ hash, votes }) => {

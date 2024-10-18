@@ -4,7 +4,6 @@
 
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
-import Markdown from 'src/ui-components/Markdown';
 import { usePostDataContext } from '~src/context';
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
@@ -25,7 +24,8 @@ import EditIconDark from '~assets/icons/reactions/EditIconDark.svg';
 import ThreeDots from '~assets/icons/reactions/ThreeDots.svg';
 import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { Divider, MenuProps } from 'antd';
+import { MenuProps } from 'antd';
+import ExpandableMarkdown from './ExpandableMarkdown';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -148,8 +148,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	return (
 		<div className={`${className} mt-4`}>
 			{content && (
-				<Markdown
-					className='post-content'
+				<ExpandableMarkdown
 					md={content}
 					theme={theme}
 				/>
@@ -208,8 +207,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				</div>
 				{/* <div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div> */}
 			</div>
-
-			<Divider className='border-1 -mr-4 bg-[#f4f5f6] text-lightBlue dark:bg-separatorDark' />
 
 			{!isEditing && (
 				<div className='mx-2 mb-8 flex xl:hidden'>

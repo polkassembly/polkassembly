@@ -910,3 +910,16 @@ body.light-theme .ant-menu .ant-menu-submenu-arrow {
 body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 		color: #9E9E9E !important;
 }
+
+.dark .ant-upload-list-item,
+.dark .ant-upload-list-item-uploading {
+    color: #909090 !important;
+}
+
+.dark .ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-icon .anticon {
+  color: #909090 !important;
+}
+
+.tox-statusbar__text-container {
+  display: none !important;
+}

@@ -282,7 +282,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				<>
 					<CreationLabel
 						assetId={assetId}
-						className='md post-user-container dark:bg-black'
+						className='md post-user-container dark:bg-transparent'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}
 						username={username}

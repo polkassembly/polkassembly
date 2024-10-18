@@ -265,6 +265,22 @@ export const chainProperties: types.ChainPropType = {
 			{ ...treasuryAssets.DED, genralIndex: '30' },
 			{ ...treasuryAssets.USDT, genralIndex: '1984' },
 			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		],
+		hydrationEndpoints: ['wss://hydradx-rpc.dwellir.com', 'wss://rpc.hydradx.cloud', 'wss://rpc.helikon.io/hydradx', 'wss://hydradx.paras.ibp.network'],
+		hydrationTreasuryAddress: '7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV',
+		hydrationAssets: [
+			{
+				label: 'DOT',
+				assetId: 5
+			},
+			{
+				label: 'USDT',
+				assetId: 10
+			},
+			{
+				label: 'USDC',
+				assetId: 22
+			}
 		]
 	},
 	[network.KUSAMA]: {

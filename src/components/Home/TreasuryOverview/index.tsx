@@ -25,7 +25,7 @@ import AvailableTreasuryBalance from './AvailableTreasuryBalance';
 import CurrentPrice from './CurrentPrice';
 import NextBurn from './NextBurn';
 import SpendPeriod from './SpendPeriod';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -34,8 +34,6 @@ interface ITreasuryOverviewProps {
 	className?: string;
 	theme?: string;
 }
-
-export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
@@ -335,7 +333,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 	return (
 		<section>
-			{isAssetHubNetwork.includes(network) ? (
+			{isAssetHubSupportedNetwork(network) ? (
 				<>
 					<LatestTreasuryOverview
 						currentTokenPrice={currentTokenPrice}

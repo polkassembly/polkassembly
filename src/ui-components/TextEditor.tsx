@@ -223,7 +223,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								onChange(content);
 							}}
 							apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-							cloudChannel='5-stable'
+							cloudChannel='5'
 							onInit={() => setLoading(false)}
 							onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
 							onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
@@ -302,7 +302,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									});
 
 									editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
-										ch: '@',
+										trigger: '@',
 										minChars: 1,
 										columns: 1,
 										fetch: (pattern: string) => {

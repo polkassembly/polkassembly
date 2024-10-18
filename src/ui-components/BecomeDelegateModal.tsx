@@ -85,7 +85,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 	return (
 		<Modal
 			title={
-				<div className='flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-4 py-[14px] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-5 sm:py-4 sm:text-[20px]'>
 					{isEditMode ? 'Edit Delegate Details' : 'Become A Delegate'}
 				</div>
 			}
@@ -97,25 +97,26 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			onCancel={() => {
 				setIsModalOpen && setIsModalOpen(false);
 			}}
-			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive sm:mt-2' />}
 		>
 			<Spin
 				spinning={loading}
 				className='h-[250px]'
 			>
 				<AuthForm onSubmit={handleSubmit}>
-					<div className='mt-6 px-5'>
-						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px]'>
+					<div className='mt-3 px-4 sm:mt-6 sm:px-5'>
+						<label className='text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>Your Address</label>
+						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px] dark:border-separatorDark'>
 							<Address
 								address={defaultAddress || delegationDashboardAddress}
 								displayInline
 								isTruncateUsername={false}
+								destroyTooltipOnHide={true}
 							/>
 						</div>
 					</div>
-					<div className='mt-6 px-6'>
-						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+					<div className='mt-3 px-4 sm:mt-6 sm:px-6'>
+						<label className='text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>
 							{isEditMode ? 'Edit Delegation Mandate' : 'Your Delegation Mandate'}
 							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
@@ -127,7 +128,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							}}
 						/>
 					</div>
-					<div className='mb-7 mt-6 rounded-[4px] px-5'>
+					<div className='-mt-2 mb-4 rounded-[4px] px-4 sm:mb-7 sm:mt-6 sm:px-5'>
 						<Alert
 							message={<BecomeDelegateIdentiyButton closeModal={() => setIsModalOpen && setIsModalOpen(false)} />}
 							type='info'
@@ -135,9 +136,9 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							className='border-none dark:bg-infoAlertBgDark'
 						/>
 					</div>
-					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+					<div className='mt-4 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-4 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium sm:mt-5 sm:px-5 sm:py-4'>
 						<Button
-							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white dark:bg-pink_primary ${
+							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-xs font-medium tracking-wide text-white dark:bg-pink_primary sm:text-sm ${
 								newBio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'
@@ -155,6 +156,11 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 export default styled(BecomeDelegateModal)`
 	.ant-modal-content {
 		padding: 0px !important;
-		border-radius: 14px;
+		border-radius: 14px !important;
+	}
+	@media (max-width: 640px) {
+		.ant-modal-content .ant-modal-close {
+			margin-top: -5px !important;
+		}
 	}
 `;

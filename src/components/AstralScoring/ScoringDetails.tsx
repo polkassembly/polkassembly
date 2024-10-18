@@ -47,7 +47,7 @@ const ScoringDetails = (props: { scoringData: IScoringSection[] }) => {
 										className='flex items-center justify-between rounded-lg bg-[#F7F7F7] px-3 py-2 dark:bg-inactiveIconDark'
 									>
 										<div className='flex items-center gap-x-2'>
-											<p className='m-0 w-[150px] p-0 text-[12px] font-normal text-bodyBlue dark:text-white md:w-[300px] md:text-sm'>{item.label}</p>
+											<p className='m-0 w-[60%] p-0 text-[12px] font-normal text-bodyBlue dark:text-white xl:w-[300px] xl:text-sm'>{item.label}</p>
 											{item?.type && (
 												<span className='m-0 flex h-5 items-center gap-x-1 whitespace-nowrap rounded bg-white p-0 px-2 text-[10px] text-sidebarBlue dark:bg-black  dark:text-blue-dark-medium'>
 													<Image

@@ -30,7 +30,7 @@ interface Props {
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore = 0, addresses } = userProfile;
+	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore = 0, addresses, user_id } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
@@ -122,6 +122,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 						{!isNaN(profileScore) && (
 							<ScoreTag
 								score={profileScore}
+								userId={user_id}
 								className='ml-1 px-1 pr-3'
 								scale={1.1}
 								iconWrapperClassName='ml-1.5 mt-[5.5px]'

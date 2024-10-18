@@ -33,6 +33,7 @@ module.exports = {
 				nav_black: 'var(--nav_black)',
 				pink_primary: 'var(--pink_primary)',
 				pink_primary_transparent: 'var(--pink_primary_transparent)',
+				pink_primary_semi_transparent: 'var(--pink_primary_semi_transparent)',
 				pink_secondary: 'var(--pink_secondary)',
 				pink_light: 'var(--pink_light)',
 				red_light: 'var(--red_light)',

@@ -131,11 +131,11 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 							>
 								<div>
 									<div className='flex items-center gap-1'>
-											<Address
-												address={submission?.proposer}
-												displayInline
-												isTruncateUsername
-											/>
+										<Address
+											address={submission?.proposer}
+											displayInline
+											isTruncateUsername
+										/>
 										<Divider
 											type='vertical'
 											className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'

@@ -12,8 +12,8 @@ import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
 
 const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
-	const [activeTab, setActiveTab] = useState<string>('general');
 	const router = useRouter();
+	const [activeTab, setActiveTab] = useState<string>(router.query.tab !== undefined ? (router.query.tab as string) : 'general');
 
 	const tabs = [
 		{

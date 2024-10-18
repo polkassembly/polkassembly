@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import { EChildBountySteps } from './types';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -36,6 +37,13 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 				validateMessages={{ required: "Please add the '${name}'" }}
 			>
 				<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
+					{link?.length && !link?.startsWith('https:') && (
+						<Alert
+							showIcon
+							type='info'
+							message={<div>Invalid Link Parameter.</div>}
+						/>
+					)}
 					<section className='mt-4'>
 						<label className='mb-0.5'>
 							Title <span className='text-nay_red'>*</span>
@@ -76,6 +84,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 									dispatch(childBountyCreationActions.setLink(e?.target?.value?.trim()));
 								}}
 								value={link}
+								placeholder='eg:https://polkadot.polkassembly.io'
 							/>
 						</Form.Item>
 					</section>
@@ -121,8 +130,8 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${!(title && content) && 'opacity-50'}`}
-						disabled={!(title && content)}
+						className={`${(!title || !content || (!!link?.length && !link?.startsWith('https:'))) && 'opacity-50'}`}
+						disabled={!title || !content || (!!link?.length && !link?.startsWith('https:'))}
 					/>
 				</div>
 			</Form>

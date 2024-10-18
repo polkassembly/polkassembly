@@ -171,6 +171,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		const txDetails = await getOnChainTx();
 
 		if (!txDetails?.tx || (txDetails?.childbountyIndex && isNaN(txDetails?.childbountyIndex))) return;
+		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation!' });
 
 		const onFailed = async (message: string) => {
 			setLoadingStatus({ isLoading: false, message: '' });

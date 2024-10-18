@@ -23,7 +23,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 	const { title, content, categories, allowedCommentors, link } = useChildBountyStore;
 
 	const handleSubmit = async () => {
-		childBountyCreationActions.updateFirstStepPercentage(100);
+		dispatch(childBountyCreationActions.updateFirstStepPercentage(100));
 		setStep(EChildBountySteps.CREATE_CHILDBOUNTY);
 	};
 

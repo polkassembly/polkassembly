@@ -192,7 +192,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 			setLoadingStatus({ isLoading: false, message: '' });
 			setOpenSuccessModal(true);
 			setCloseModal();
-			childBountyCreationActions.updateSecondStepPercentage(100);
+			dispatch(childBountyCreationActions.updateSecondStepPercentage(100));
 		};
 
 		await executeTx({

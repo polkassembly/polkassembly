@@ -102,7 +102,6 @@ export const childBountyCreationStore = createSlice({
 			state.parentBountyIndex = action.payload.parentBountyIndex;
 			state.proposer = action.payload.proposer;
 			state.reqAmount = action.payload.reqAmount;
-			state.categories = action.payload.categories;
 			state.secondStepPercentage = action.payload.secondStepPercentage;
 			state.title = action.payload.title;
 		},

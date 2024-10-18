@@ -102,7 +102,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 						<Steps
 							className={classNames(theme, 'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high')}
 							percent={step === EChildBountySteps.WRITE_CHILDBOUNTY ? firstStepPercentage : secondStepPercentage}
-							current={step == EChildBountySteps.WRITE_CHILDBOUNTY ? 0 : 1}
+							current={step === EChildBountySteps.WRITE_CHILDBOUNTY ? 0 : 1}
 							size='default'
 							labelPlacement='vertical'
 							items={[
@@ -116,7 +116,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 						/>
 					</div>
 
-					{step == EChildBountySteps.WRITE_CHILDBOUNTY ? (
+					{step === EChildBountySteps.WRITE_CHILDBOUNTY ? (
 						<WriteChildBounty setStep={setStep} />
 					) : (
 						<CreateChildBounty

@@ -27,12 +27,15 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		const { content, title, postId, proposerAddress, allowedCommentors, link, tags } = req.body;
 		if (!content || !title || !postId || !proposerAddress) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
-		if (allowedCommentors && !Array.isArray(allowedCommentors)) {
+		if (
+			(allowedCommentors && !Array.isArray(allowedCommentors)) ||
+			allowedCommentors?.some((item: EAllowedCommentor) => ![EAllowedCommentor.ALL, EAllowedCommentor.NONE, EAllowedCommentor.ONCHAIN_VERIFIED].includes(item))
+		) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 
 		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
 
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
@@ -75,7 +78,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		await postDocRef
 			.set(newPost)
 			.then(() => {
-				return res.status(200).json({ message: 'Child Bounty successfully created, it will appear on polkassembly as soon as it is synced on chain.', post_id: postId });
+				return res.status(200).json({ message: messages?.SUCCESS, post_id: postId });
 			})
 			.catch((error) => {
 				console.error('Error saving post: ', error);

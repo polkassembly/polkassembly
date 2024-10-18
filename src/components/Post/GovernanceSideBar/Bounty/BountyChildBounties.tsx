@@ -84,7 +84,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 					<span className='text-base font-medium'>Child Bounties({bountiesRes?.child_bounties_count || 0})</span>
 				</div>
 				{bountiesRes?.child_bounties_count
-					? bountiesRes?.child_bounties.map(
+					? bountiesRes?.child_bounties?.map(
 							(childBounty) =>
 								childBounty && (
 									<Link

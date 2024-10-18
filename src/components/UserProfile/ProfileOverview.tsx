@@ -24,6 +24,9 @@ const ProfileLinkedAddress = dynamic(() => import('./ProfileLinkedAddresses'), {
 const TotalProfileBalances = dynamic(() => import('./TotalProfileBalances'), {
 	ssr: false
 });
+const AstralsScoreCard = dynamic(() => import('./AstralsScoreCard'), {
+	ssr: false
+});
 const ProfileBadges = dynamic(() => import('./ProfileBadges'), {
 	ssr: false
 });
@@ -201,6 +204,10 @@ const ProfileOverview = ({
 									addressWithIdentity={addressWithIdentity}
 									theme={theme}
 								/>
+								<AstralsScoreCard
+									userProfile={userProfile}
+									theme={theme}
+								/>
 								{profileDetails?.user_id && (
 									<ProfileBadges
 										badges={achievement_badges}
@@ -242,6 +249,10 @@ const ProfileOverview = ({
 								selectedAddresses={selectedAddresses}
 								userProfile={userProfile}
 								addressWithIdentity={addressWithIdentity}
+								theme={theme}
+							/>
+							<AstralsScoreCard
+								userProfile={userProfile}
 								theme={theme}
 							/>
 							{profileDetails?.user_id && (

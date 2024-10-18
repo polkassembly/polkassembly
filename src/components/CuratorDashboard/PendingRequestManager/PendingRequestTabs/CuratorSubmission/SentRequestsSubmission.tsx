@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import Markdown from '~src/ui-components/Markdown';
 import Skeleton from '~src/basic-components/Skeleton';
 import AddressDropdown from '~src/ui-components/AddressDropdown';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
@@ -61,17 +62,59 @@ function SentSubmissions({ isloading, sentSubmissions }: { isloading: boolean; s
 		setIsSubmitModalVisible(false);
 	};
 
-	const handleDelete = (requestId: string, parentBountyIndex: number) => {
-		const updatedGroupedBounties = {
-			...groupedBounties,
-			[parentBountyIndex]: {
-				...groupedBounties[parentBountyIndex],
-				requests: groupedBounties[parentBountyIndex]?.requests?.filter((req) => req?.id !== requestId)
-			}
+	const updateGroupedBounties = (submission: any) => {
+		const parentBountyIndex = submission?.parentBountyIndex;
+		const updatedRequests = groupedBounties[parentBountyIndex]?.requests?.filter((req) => req?.id !== submission?.id);
+
+		if (updatedRequests?.length === 0) {
+			const updatedGroupedBounties = { ...groupedBounties };
+			delete updatedGroupedBounties[parentBountyIndex];
+			setGroupedBounties(updatedGroupedBounties);
+		} else {
+			const updatedGroupedBounties = {
+				...groupedBounties,
+				[parentBountyIndex]: {
+					...groupedBounties[parentBountyIndex],
+					requests: updatedRequests
+				}
+			};
+			setGroupedBounties(updatedGroupedBounties);
+		}
+	};
+
+	const handleStatusUpdate = async (updatedStatus: EChildbountySubmissionStatus) => {
+		if (!selectedSubmission) return;
+
+		console.log('selectedSubmission', selectedSubmission);
+		const payload = {
+			curatorAddress: '15BXEztHcQLQyWESNE2s1J3Uxw7ueTKKKuzRt6C7n9zhCjqG',
+			parentBountyIndex: selectedSubmission?.parentBountyIndex,
+			proposerAddress: selectedSubmission?.proposer,
+			rejectionMessage: '',
+			submissionId: selectedSubmission?.id,
+			updatedStatus
 		};
 
-		setGroupedBounties(updatedGroupedBounties);
-		message.success('Request deleted successfully');
+		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
+
+		if (error) {
+			console.error('Error updating submission status:', error);
+			return;
+		}
+
+		if (data) {
+			message.success('Submission status updated successfully');
+			updateGroupedBounties(selectedSubmission);
+		}
+
+		handleCancel();
+	};
+
+	const handleDelete = (submission: any) => {
+		console.log('submission', submission);
+		setSelectedSubmission(submission);
+		console.log('selectedSubmission', selectedSubmission);
+		handleStatusUpdate(EChildbountySubmissionStatus.DELETED);
 	};
 
 	return (
@@ -230,7 +273,7 @@ function SentSubmissions({ isloading, sentSubmissions }: { isloading: boolean; s
 														) : (
 															<>
 																<span
-																	onClick={() => handleDelete(request?.id, Number(parentBountyIndex))}
+																	onClick={() => handleDelete(request)}
 																	className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
 																>
 																	Delete

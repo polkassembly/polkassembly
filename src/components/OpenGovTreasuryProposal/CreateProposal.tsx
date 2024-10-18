@@ -167,7 +167,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
-			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,

@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import BountiesContainer from '~src/components/Bounties';
+import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import SEOHead from '~src/global/SEOHead';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -22,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (network != 'polkadot') {
+	if (!isBountiesDashboardSupportedNetwork(network)) {
 		return {
 			props: {},
 			redirect: {

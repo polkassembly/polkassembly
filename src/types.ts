@@ -395,6 +395,7 @@ export interface Post {
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
 	progress_report?: IProgressReport;
+	link?: string;
 }
 
 export interface IPostTag {

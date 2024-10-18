@@ -4,7 +4,7 @@
 
 import { Form } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
@@ -29,7 +29,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
-	label?: string;
+	label?: ReactNode | string;
 	helpText?: string;
 	onChange?: (balance: BN) => void;
 	placeholder?: string;
@@ -156,8 +156,10 @@ const BalanceInput = ({
 										if (
 											callback &&
 											(isNaN(Number(value)) ||
-												(Number(value) > 0 && value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals < (value?.split('.')?.[1].length || 0)) ||
-												(value.length && Number(value) <= 0))
+												(Number(value) > 0 &&
+													value.toString()?.split('.')?.[1]?.length &&
+													chainProperties[network]?.tokenDecimals < (value.toString()?.split('.')?.[1].length || 0)) ||
+												(value.toString().length && Number(value) <= 0))
 										) {
 											setIsBalanceSet?.(false);
 											callback(rule?.message?.toString());

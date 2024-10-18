@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-// import { useRouter } from 'next/router';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -19,6 +18,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import AllAstralPoints from './AstralInfoTabs/AllAstralPoints';
 import Link from 'next/link';
+import dayjs from 'dayjs';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface Props {
 	className?: string;
@@ -32,7 +33,8 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 	const [userRank, setUserRank] = useState<number>(0);
 	const [userScore, setUserScore] = useState<number>(0);
 	const [scores, setScores] = useState({ offChain: 0, onChain: 0 });
-	// const router = useRouter();
+	const [activityTypes, setActivityTypes] = useState<string[]>([]);
+	const [page, setPage] = useState<number>(1);
 	const dispatch = useDispatch();
 
 	const { username, user_id } = userProfile;
@@ -68,6 +70,48 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 		}
 	}, [user_id]);
 
+	const thresholdDate = dayjs().subtract(90, 'day');
+
+	const fetchActivityBefore90Days = useCallback(async () => {
+		if (!user_id) return;
+
+		try {
+			let newPage = page;
+			let hasOlderData = true;
+
+			while (hasOlderData) {
+				const response = await nextApiClientFetch<LeaderboardPointsResponse>(`api/v1/leaderboard/user-points?user_id=${user_id}&page=${newPage}`);
+
+				const activities = response?.data?.data || [];
+
+				for (const activity of activities) {
+					const createdAt = dayjs(activity.created_at);
+
+					if (createdAt.isBefore(thresholdDate)) {
+						hasOlderData = false;
+						break;
+					}
+
+					setActivityTypes((prevTypes) => [...prevTypes, activity.type]);
+				}
+
+				if (hasOlderData && activities.length > 0) {
+					newPage += 1;
+					setPage(newPage);
+				} else {
+					hasOlderData = false;
+				}
+			}
+		} catch (error) {
+			console.error('Error fetching user activities:', error);
+		}
+	}, [user_id, page, thresholdDate]);
+
+	useEffect(() => {
+		fetchActivityBefore90Days();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	useEffect(() => {
 		fetchUserActivityData();
 	}, [fetchUserActivityData]);
@@ -75,6 +119,24 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 	useEffect(() => {
 		getCurrentUserData();
 	}, [getCurrentUserData]);
+
+	function calculateTotalReputationScore(activityTypes: string[]): number {
+		return activityTypes
+			?.map((activity) => {
+				const matchingScore = Object?.values(REPUTATION_SCORES)?.find((score) => score?.type === activity);
+				if (matchingScore) {
+					if ('value' in matchingScore) {
+						return matchingScore.value;
+					} else if ('first' in matchingScore) {
+						return matchingScore.first;
+					}
+				}
+				return 0;
+			})
+			?.reduce((total, score) => total + score, 0);
+	}
+
+	const totalReputationScore = calculateTotalReputationScore(activityTypes);
 
 	const renderActivityCard = (title: string, score: number, tab: EAstralInfoTab, iconSrc: string) => (
 		<div
@@ -144,11 +206,14 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 				>
 					<h1
 						className={classNames(
-							'm-0 flex items-center gap-x-1 text-[28px] font-bold',
+							'm-0 mt-1 flex items-center gap-x-1 text-[28px] font-bold',
 							current_astral_info_tab === EAstralInfoTab.ALL_INFO ? 'text-bodyBlue' : 'text-bodyBlue dark:text-white'
 						)}
 					>
 						{userScore} <span className='m-0 flex h-7 items-center rounded-md bg-abstainBlueColor px-2 text-sm font-semibold text-white'>Rank #{userRank}</span>
+					</h1>
+					<p className='m-0 flex items-center justify-start gap-x-1 p-0 text-xs font-medium text-[#98A2B3]  dark:text-blue-dark-medium'>
+						Earned <span className='m-0 p-0 text-sm font-semibold text-[#FFBA03]'>+{totalReputationScore || 0}</span>in last 90 days{' '}
 						<Link
 							href='/astral-scoring'
 							target='_blank'
@@ -158,7 +223,7 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 								alt='qna-icon'
 							/>
 						</Link>
-					</h1>
+					</p>
 				</div>
 				{renderActivityCard('On-chain activity', scores.onChain, EAstralInfoTab.ON_CHAIN_ACTIVITY, '/assets/icons/on-chain-box-icon')}
 				{renderActivityCard('Off-chain activity', scores.offChain, EAstralInfoTab.OFF_CHAIN_ACTIVITY, '/assets/icons/off-chain-box-icon')}

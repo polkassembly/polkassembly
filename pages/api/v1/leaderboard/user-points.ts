@@ -29,11 +29,13 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 			userActivityQuery = userActivityQuery.where('type', 'in', activityTypesToFetch);
 		}
 
+		// Add orderBy for created_at in descending order
+		userActivityQuery = userActivityQuery.orderBy('created_at', 'desc');
+
 		const totalUserActivitiesCount = (await userActivityQuery.count().get()).data().count || 0;
 
 		const activities = (
 			await userActivityQuery
-				// .orderBy('created_at', 'desc') //TODO: script and add created_at in all user activities
 				.offset((Number(page) - 1) * ASTRAL_LISTING_LIMIT)
 				.limit(ASTRAL_LISTING_LIMIT)
 				.get()

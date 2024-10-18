@@ -200,7 +200,7 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 							<ImageIcon
 								src={'/assets/Gifs/empty-state.gif'}
 								alt='Empty Icon'
-								imgClassName='-mt-[100px] w-[555px] h-[462px]'
+								imgClassName='w-[555px] h-[462px]'
 							/>
 							<h3 className='m-0 -mt-[120px] p-0 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Nothing to see here</h3>
 							<p className='m-0 p-0 text-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
@@ -216,7 +216,6 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 							</p>
 						</div>
 					)}
-					{/* Load More Button */}
 					{hasMoreData && data.length > 0 && (
 						<div className='mt-9 flex w-full justify-center'>
 							<Button

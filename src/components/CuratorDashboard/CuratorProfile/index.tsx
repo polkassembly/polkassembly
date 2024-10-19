@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import CuratorProfileCard from './CuratorProfileCard';
 import dynamic from 'next/dynamic';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 
@@ -15,16 +14,15 @@ const CuratorOverviewCard = dynamic(() => import('./CuratorOverviewCard'), {
 });
 
 function CuratorProfile() {
-	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
+	const { loginAddress } = useUserDetailsSelector();
 	const [bountiesdata, setBountiesData] = React.useState<any>();
 	const [loading, setLoading] = useState<boolean>(false);
+
 	const fetchCuratorBountiesData = async () => {
 		setLoading(true);
-		if (address) {
-			const substrateAddress = getSubstrateAddress(address);
+		if (loginAddress) {
 			const { data } = await nextApiClientFetch<any>('api/v1/bounty/curator/getCuratorGeneralInfo', {
-				userAddress: substrateAddress
+				userAddress: loginAddress
 			});
 			if (data) {
 				setBountiesData(data);
@@ -36,7 +34,7 @@ function CuratorProfile() {
 	useEffect(() => {
 		fetchCuratorBountiesData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	}, [loginAddress]);
 
 	return (
 		<div>

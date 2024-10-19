@@ -60,7 +60,7 @@ const handler: NextApiHandler = async (req, res) => {
 	const { address } = req.body;
 
 	const network = String(req.headers['x-network']);
-	
+
 	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}

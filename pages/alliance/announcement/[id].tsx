@@ -29,7 +29,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const { data, error } = await getOnChainPost({
 		network,
 		postId: id || '',

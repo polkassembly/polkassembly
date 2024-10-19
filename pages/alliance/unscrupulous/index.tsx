@@ -33,13 +33,11 @@ const Unscrupulous = ({ network }: { network: string }) => {
 				title={'Alliance Unscrupulous'}
 				network={network}
 			/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>t{('alliance')}</h1>
+			<h1 className='dashboard-heading mb-4 md:mb-6'>t{'alliance'}</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					{t('alliance_desc')}
-				</p>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>{t('alliance_desc')}</p>
 			</div>
 			<AllianceUnscrupulous className='mt-8' />
 		</>

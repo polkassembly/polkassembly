@@ -38,7 +38,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
@@ -62,7 +61,6 @@ const UpgradePIPsPost: FC<ITechCommPostProps> = (props) => {
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
 	const { t } = useTranslation('common');
-
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

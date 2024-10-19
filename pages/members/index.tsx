@@ -2,7 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -17,17 +19,19 @@ export enum EMembersType {
 	COUNCIL = 'council'
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const WhitelistMembers = (props: { network: string }) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -40,13 +44,12 @@ const WhitelistMembers = (props: { network: string }) => {
 				title='Whitelist'
 				network={props.network}
 			/>
-			<h1 className='dashboard-heading mb-4 dark:text-white md:mb-6'>Open Tech Committee Members</h1>
+			<h1 className='dashboard-heading mb-4 dark:text-white md:mb-6'>{t('open_tech_committee_members')}</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay dark:text-white md:p-8 md:text-base'>
-					Open Tech Committee Members is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of
-					the Polkadot network and protocol.
+					{t('open_tech_committee_desc')}
 				</p>
 			</div>
 			<WhitelistMembersContainer

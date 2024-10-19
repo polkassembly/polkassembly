@@ -17,7 +17,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale }) =>
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	return {
 		props: {
 			network,
@@ -38,9 +37,7 @@ const Members = ({ network }: { network: string }) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					{t('alliance_desc')}
-				</p>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>{t('alliance_desc')}</p>
 			</div>
 			<AllianceMembers className='mt-8' />
 		</>

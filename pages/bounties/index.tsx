@@ -103,7 +103,9 @@ const Bounties: FC<IBountiesProps> = (props) => {
 			</Link>
 			<div className='mt-3 flex sm:items-center'>
 				<RoundedDollarIcon className='text-2xl text-lightBlue dark:text-white xs:mt-1 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('on_chain_bounties')} ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					{t('on_chain_bounties')} ({count})
+				</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}

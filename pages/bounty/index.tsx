@@ -64,9 +64,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const extendedData = extendedResponse.status === 'fulfilled' ? extendedResponse.value.data : null;
 	const activeBountyData = activeBountyResp.status === 'fulfilled' ? activeBountyResp.value.data : null;
 	const error = extendedResponse.status === 'rejected' ? extendedResponse.reason : activeBountyResp.status === 'rejected' ? activeBountyResp.reason : null;
-	
-	const translations = await serverSideTranslations(context.locale || '', ['common']);
 
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
 
 	return {
 		props: {

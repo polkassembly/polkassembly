@@ -29,7 +29,6 @@ const FellowshipMembers = (props: { network: string }) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation('common');
 
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,8 +41,7 @@ const FellowshipMembers = (props: { network: string }) => {
 				desc='Meet the accomplished and dedicated members of our fellowship program, who are dedicated to promoting and advancing the goals of the community.'
 				network={props.network}
 			/>
-			<h1 className='dashboard-heading mb-4 dark:text-white md:mb-6'>					{t('fellowship')}
-			</h1>
+			<h1 className='dashboard-heading mb-4 dark:text-white md:mb-6'> {t('fellowship')}</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>

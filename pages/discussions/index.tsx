@@ -75,7 +75,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	});
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const props = { data, error, network, page, ...translations };
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
@@ -134,9 +133,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 w-full rounded-xxl bg-white px-4 py-2 shadow-md dark:bg-section-dark-overlay md:px-8 md:py-4'>
-				<p className='m-0 mt-2 p-0 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-					{t('discussion_desc')}
-				</p>
+				<p className='m-0 mt-2 p-0 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('discussion_desc')}</p>
 			</div>
 			{isForumSupportedNetwork(network) ? (
 				<OffChainTabs

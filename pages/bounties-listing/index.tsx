@@ -22,7 +22,6 @@ import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
-import { text } from 'stream/consumers';
 
 interface IBountiesListingProps {
 	data?: {
@@ -53,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 		props: {
 			data,
 			network,
-			...translations,
+			...translations
 		}
 	};
 };

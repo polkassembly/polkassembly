@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const { token, identityVerification } = query;
 	return { props: { identityVerification: identityVerification || null, network, token: token || null }, ...translations };
 };

@@ -21,7 +21,6 @@ import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
 import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 
 interface IUserProfileProps {
 	activitiesCounts: {

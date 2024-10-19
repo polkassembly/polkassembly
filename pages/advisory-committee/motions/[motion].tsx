@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	const network = getNetworkFromReqHeaders(req.headers);
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -55,7 +54,6 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	const { id } = router.query;
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { t } = useTranslation('common');
-
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {

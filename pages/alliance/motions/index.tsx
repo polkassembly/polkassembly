@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const { page = 1, sortBy = sortValues.NEWEST } = query;
 	const proposalType = ProposalType.ALLIANCE_MOTION;
 	const { data, error } = await getOnChainPosts({
@@ -81,13 +80,13 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 			/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>{t('alliance_motions')}</h1>
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					{t('motions_desc')}
-				</p>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>{t('motions_desc')}</p>
 			</div>
 			<div className='rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{count} {t('motions')}</h1>
+					<h1 className='dashboard-heading'>
+						{count} {t('motions')}
+					</h1>
 				</div>
 
 				<div>

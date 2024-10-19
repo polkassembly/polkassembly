@@ -23,22 +23,25 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { error, network, post: data, status } };
+	return { props: { error, network, post: data, status, ...translations } };
 };
 
 interface IReferendaPostProps {
@@ -55,6 +58,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -75,8 +79,8 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>

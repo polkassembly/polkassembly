@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	const { page = 1, sortBy = sortValues.NEWEST } = query;
 	const proposalType = ProposalType.ANNOUNCEMENT;
 	const { data, error } = await getOnChainPosts({
@@ -38,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IAnnouncementProps {
@@ -84,13 +83,13 @@ const Announcements = (props: IAnnouncementProps) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					{t('alliance_desc')}
-				</p>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>{t('alliance_desc')}</p>
 			</div>
 			<div className='rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{count} {t('announcement')}</h1>
+					<h1 className='dashboard-heading'>
+						{count} {t('announcement')}
+					</h1>
 				</div>
 
 				<div>

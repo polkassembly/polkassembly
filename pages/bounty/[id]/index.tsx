@@ -59,7 +59,6 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	const { id } = router.query;
 	const { t } = useTranslation('common');
 
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

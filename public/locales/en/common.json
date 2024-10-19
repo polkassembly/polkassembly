@@ -35,6 +35,18 @@
     "fellowship": "Fellowship",
     "fellowship_desc": "Fellowship is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot network and protocol.",
     "governance_analytics": "Governance Analytics",
-    "gov_Analytics_desc": "All active and history referenda of various tracks."
+    "gov_Analytics_desc": "All active and history referenda of various tracks.",
+    "grants_discussion": "Grants Discussion",
+    "this_is_the_place_to_discuss_grants_for": "This is the place to discuss grants for",
+    "anyone_can_start_a_new_grants_discussion": "Anyone can start a new grants discussion.",
+    "guidelines_of_the_interim_grants_program": "Guidelines of the Interim Grants Program.",
+    "leaderboard": "Leaderboard",
+    "find_your_rank_in": "Find your rank in",
+    "ecosystem": "Ecoystem",
+    "beta": "BETA",
+    "open_tech_committee_members": "Open Tech Committee Members",
+    "open_tech_committee_desc": "Open Tech Committee Members is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot network and protocol.",
+    "on_chain_motions": "On Chain Motions",
+    "on_chain_motions_desc": "This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit them."
 
 }

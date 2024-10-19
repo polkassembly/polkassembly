@@ -28,7 +28,6 @@ const AdvisoryMembers = (props: { network: string }) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation('common');
 
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	}
 	const translations = await serverSideTranslations(context.locale || '', ['common']);
 
-
 	return {
 		props: {
 			network,

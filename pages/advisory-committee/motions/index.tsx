@@ -54,7 +54,6 @@ const Motions: FC<IMotionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation('common');
 
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +82,9 @@ const Motions: FC<IMotionsProps> = (props) => {
 			/>
 			<div className='mt-3 flex sm:items-center'>
 				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('advisory_council_members')} ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					{t('advisory_council_members')} ({count})
+				</h1>
 			</div>
 
 			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>

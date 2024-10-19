@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, local
 	const props: IBigTipperProps = {
 		network,
 		posts: {},
-		...translations,
+		...translations
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];

@@ -35,7 +35,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale }) =>
 	if (networkRedirect) return networkRedirect;
 	const translations = await serverSideTranslations(locale || '', ['common']);
 
-
 	return { props: { network, ...translations } };
 };
 

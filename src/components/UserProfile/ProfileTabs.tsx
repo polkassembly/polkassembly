@@ -12,13 +12,14 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IActivitiesCounts, IStats } from '.';
-import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, FollowIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from '~src/types';
+import ProfileFollows from './ProfileFollows';
 
 interface Props {
 	className?: string;
@@ -162,6 +163,17 @@ const ProfileTabs = ({
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
 					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span>
+				</div>
+			)
+		},
+		{
+			children: <ProfileFollows className='' />,
+			key: 'Follows',
+			label: (
+				<div className='flex items-center'>
+					<FollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Follows
+					{/* <span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span> */}
 				</div>
 			)
 		}

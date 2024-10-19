@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -20,12 +21,14 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 
 const proposalType = ProposalType.ANNOUNCEMENT;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 
 	const { data, error } = await getOnChainPost({
 		network,
@@ -33,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType
 	});
 
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 interface IAnnouncementPostProps {
 	data: IPostResponse;

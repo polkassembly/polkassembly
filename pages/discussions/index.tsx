@@ -25,6 +25,8 @@ import { useTheme } from 'next-themes';
 import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -33,7 +35,7 @@ interface IDiscussionsProps {
 	page?: number;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -71,8 +73,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType: OffChainProposalType.DISCUSSIONS,
 		sortBy: String(sortBy)
 	});
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	const props = { data, error, network, page };
+
+	const props = { data, error, network, page, ...translations };
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
@@ -87,6 +91,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -117,22 +122,20 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
-					Latest Discussions({count})
+					{t('latest_discussions')} ({count})
 				</div>
 				<button
 					onClick={handleClick}
 					className='flex cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none  bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:h-[40px] sm:w-[120px]'
 				>
-					+ Add Post
+					+ {t('add_post')}
 				</button>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 w-full rounded-xxl bg-white px-4 py-2 shadow-md dark:bg-section-dark-overlay md:px-8 md:py-4'>
 				<p className='m-0 mt-2 p-0 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-					Discussions is a space for the community to engage in meaningful conversations around on-chain proposals. It’s a space to share insights, provide feedback, and
-					collaborate on ideas that impact the network. On-chain posts are automatically generated as soon as a proposal is created, and only the proposer can edit the original
-					details. Join the conversation and help shape the future of the ecosystem.
+					{t('discussion_desc')}
 				</p>
 			</div>
 			{isForumSupportedNetwork(network) ? (

@@ -21,12 +21,15 @@ import MotionsIcon from '~assets/icons/motions-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.ADVISORY_COMMITTEE;
@@ -38,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IMotionsProps {
@@ -49,6 +52,8 @@ interface IMotionsProps {
 const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
+
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -78,7 +83,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 			/>
 			<div className='mt-3 flex sm:items-center'>
 				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Advisory Council Motions ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('advisory_council_members')} ({count})</h1>
 			</div>
 
 			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>

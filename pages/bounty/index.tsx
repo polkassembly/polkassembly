@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { IPostsListingResponse, getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -63,13 +64,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const extendedData = extendedResponse.status === 'fulfilled' ? extendedResponse.value.data : null;
 	const activeBountyData = activeBountyResp.status === 'fulfilled' ? activeBountyResp.value.data : null;
 	const error = extendedResponse.status === 'rejected' ? extendedResponse.reason : activeBountyResp.status === 'rejected' ? activeBountyResp.reason : null;
+	
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
+
 
 	return {
 		props: {
 			activeBountyData,
 			error,
 			extendedData,
-			network
+			network,
+			...translations
 		}
 	};
 };

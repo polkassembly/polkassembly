@@ -4,6 +4,7 @@
 import { WarningOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,13 +22,15 @@ import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+
+	return { props: { network, ...translations } };
 };
 
 const UndoEmailChange = ({ network }: { network: string }) => {

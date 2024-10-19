@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
@@ -19,7 +20,7 @@ import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -80,9 +81,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	const props: IWishForChangeProps = {
 		network,
-		posts: {}
+		posts: {},
+		...translations
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];

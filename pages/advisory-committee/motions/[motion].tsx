@@ -19,11 +19,15 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const proposalType = ProposalType.ADVISORY_COMMITTEE;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { motion } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -33,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: motion,
 		proposalType
 	});
-	return { props: { error, network, post: data, status } };
+	return { props: { error, network, post: data, status, ...translations } };
 };
 
 interface IReferendumPostProps {
@@ -50,6 +54,8 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	const router = useRouter();
 	const { id } = router.query;
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { t } = useTranslation('common');
+
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {
@@ -70,8 +76,8 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>

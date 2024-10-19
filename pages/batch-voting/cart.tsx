@@ -20,25 +20,30 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import copyToClipboard from '~src/util/copyToClipboard';
 import CopyContentIcon from '~assets/icons/content_copy_small.svg';
 import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCart'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+
+	return { props: { network, ...translations } };
 };
 
 const CouncilBoard = (props: { network: string }) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { asPath } = useRouter();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -65,7 +70,7 @@ const CouncilBoard = (props: { network: string }) => {
 				</div>
 			)}
 			<div className='batch-voting-desktop-container hidden sm:block'>
-				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Cart Page</h1>
+				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('cart_page')}</h1>
 				<div className='mt-12 flex flex-col items-center justify-center'>
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
@@ -80,7 +85,7 @@ const CouncilBoard = (props: { network: string }) => {
 							handleCopylink();
 						}}
 					>
-						Copy Page Link <span className='ml-1'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+						{t('copy_page_link')} <span className='ml-1'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
 					</button>
 				</div>
 			</div>

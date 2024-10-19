@@ -36,12 +36,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 
 	const encodedAddress = getEncodedAddress(address, network);
 
-	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
-
-	if (paDelegatesSnapshot.empty && !paDelegatesSnapshot?.docs?.[0]) {
-		return res.status(400).json({ message: `User with address ${address} is not a Polkassembly delegate` });
-	}
-
 	const chatSnapshot = firestore_db.collection('chats');
 	try {
 		const [sentChatsSnapshot, receivedChatsSnapshot] = await Promise.all([

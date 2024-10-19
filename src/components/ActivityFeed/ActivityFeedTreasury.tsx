@@ -2,19 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Divider } from 'antd';
 import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
-import { BN, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
-import dayjs from 'dayjs';
-import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
+import { BN } from '@polkadot/util';
 import { useApiContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
-import { subscanApiHeaders } from '~src/global/apiHeaders';
 import formatBnBalance from '~src/util/formatBnBalance';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
@@ -22,55 +17,36 @@ import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { poppins } from 'pages/_app';
-import type { Balance } from '@polkadot/types/interfaces';
 import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import ActivityFeedDataGraph from './ActivityFeedDataGraph';
+import { calculateTreasuryValues, fetchDailyTreasuryData, fetchGraphData, fetchTreasuryData, fetchWeekAgoTokenPrice } from './utils/ActivityTreasuryUtils';
 
-const EMPTY_U8A_32 = new Uint8Array(32);
+const BN_MILLION = new BN(10).pow(new BN(6));
 
 const ActivityFeedTreasury = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const dispatch = useDispatch();
-
-	const [available, setAvailable] = useState({
-		isLoading: true,
-		value: '',
-		valueUSD: ''
-	});
-	const [nextBurn, setNextBurn] = useState({
-		isLoading: true,
-		value: '',
-		valueUSD: ''
-	});
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
-	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
-		isLoading: true,
-		value: ''
-	});
-
+	const [available, setAvailable] = useState({ isLoading: true, value: '', valueUSD: '' });
+	const [nextBurn, setNextBurn] = useState({ isLoading: true, value: '', valueUSD: '' });
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({ isLoading: true, value: '' });
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState({ isLoading: true, value: '' });
 	const [tokenValue, setTokenValue] = useState<number>(0);
+	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
+	const unit = chainProperties?.[network]?.tokenSymbol || 'N/A';
 
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
-	const unit = chainProperties?.[network]?.tokenSymbol;
-
-	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
-
-	const BN_MILLION = new BN(10).pow(new BN(6));
-
-	const assetValue = formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString());
-	const assetValueUSDT = formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString());
-
-	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
-	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
-
+	const assetValue = assethubValues?.dotValue
+		? formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network)
+		: 'N/A';
+	const assetValueUSDC = assethubValues?.usdcValue ? formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString()) : 'N/A';
+	const assetValueUSDT = assethubValues?.usdtValue ? formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString()) : 'N/A';
+	const hydrationValue = hydrationValues?.dotValue
+		? formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network)
+		: 'N/A';
+	const hydrationValueUSDC = hydrationValues?.usdcValue ? formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString()) : 'N/A';
+	const hydrationValueUSDT = hydrationValues?.usdtValue ? formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString()) : 'N/A';
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
 			(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
@@ -82,254 +58,32 @@ const ActivityFeedTreasury = () => {
 		)
 	);
 
-	const fetchDataFromApi = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
-
-			if (error) {
-				console.error('Error fetching data:', error);
-			}
-			if (data) {
-				return;
-			}
-
-			const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally');
-
-			if (dailyError) {
-				console.error('Error fetching daily data:', dailyError);
-			}
-			if (dailyData) return;
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
-
-	const getGraphData = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IMonthlyTreasuryTally[]>('/api/v1/treasury-amount-history');
-
-			if (error) {
-				console.error('Error fetching data:', error);
-			}
-			if (data) {
-				setGraphData(data);
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
-
 	useEffect(() => {
-		fetchDataFromApi();
-		getGraphData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		fetchTreasuryData();
+		fetchDailyTreasuryData();
+		fetchGraphData().then(setGraphData);
 	}, [network]);
 
 	useEffect(() => {
-		if (!api || !apiReady) {
-			return;
+		if (api && apiReady) {
+			calculateTreasuryValues(api, network, currentTokenPrice, setAvailable, setNextBurn, setTokenValue);
 		}
-
-		setAvailable({
-			isLoading: true,
-			value: '',
-			valueUSD: ''
-		});
-
-		setNextBurn({
-			isLoading: true,
-			value: '',
-			valueUSD: ''
-		});
-
-		const treasuryAccount = u8aConcat(
-			'modl',
-			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
-			EMPTY_U8A_32
-		);
-
-		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
-			api.query.system
-				.account(treasuryAccount)
-				.then((res) => {
-					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
-					treasuryBalance.freeBalance = freeBalance as Balance;
-				})
-				.catch((e) => {
-					console.error(e);
-					setAvailable({
-						isLoading: false,
-						value: '',
-						valueUSD: ''
-					});
-				})
-				.finally(() => {
-					// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-					let valueUSD = '';
-					let value = '';
-					{
-						try {
-							const burn =
-								treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
-
-							if (burn) {
-								// replace spaces returned in string by format function
-								const nextBurnValueUSD = parseFloat(
-									formatBnBalance(
-										burn.toString(),
-										{
-											numberAfterComma: 2,
-											withThousandDelimitor: false,
-											withUnit: false
-										},
-										network
-									)
-								);
-								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
-								}
-								value = formatUSDWithUnits(
-									formatBnBalance(
-										burn.toString(),
-										{
-											numberAfterComma: 0,
-											withThousandDelimitor: false,
-											withUnit: false
-										},
-										network
-									)
-								);
-							}
-						} catch (error) {
-							console.log(error);
-						}
-						setNextBurn({
-							isLoading: false,
-							value,
-							valueUSD
-						});
-					}
-					{
-						const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
-
-						let valueUSD = '';
-						let value = '';
-
-						if (freeBalance) {
-							const availableValueUSD = parseFloat(
-								formatBnBalance(
-									freeBalance.toString(),
-									{
-										numberAfterComma: 2,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-							setTokenValue(availableValueUSD);
-
-							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
-								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
-							}
-							value = formatUSDWithUnits(
-								formatBnBalance(
-									freeBalance.toString(),
-									{
-										numberAfterComma: 0,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-						}
-
-						setAvailable({
-							isLoading: false,
-							value,
-							valueUSD
-						});
-					}
-				});
-		});
-		if (currentTokenPrice.value !== 'N/A') {
-			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
 	useEffect(() => {
-		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		if (network) {
+			GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		}
 	}, [network]);
 
 	useEffect(() => {
-		let cancel = false;
-		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
-
-		setPriceWeeklyChange({
-			isLoading: true,
-			value: ''
-		});
-		async function fetchWeekAgoTokenPrice() {
-			if (cancel) return;
-			const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
-			try {
-				const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
-					body: JSON.stringify({
-						end: weekAgoDate,
-						start: weekAgoDate
-					}),
-					headers: subscanApiHeaders,
-					method: 'POST'
-				});
-				const responseJSON = await response.json();
-				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON?.['data']?.['list']?.[0]?.['price'] ? responseJSON?.['data']?.['list']?.[0]?.['price'] : responseJSON?.['data']?.['ema7_average'];
-
-					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
-					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
-					if (weekAgoPriceNum == 0) {
-						setPriceWeeklyChange({
-							isLoading: false,
-							value: 'N/A'
-						});
-						return;
-					}
-					const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-					setPriceWeeklyChange({
-						isLoading: false,
-						value: percentChange.toFixed(2)
-					});
-					return;
-				}
-				setPriceWeeklyChange({
-					isLoading: false,
-					value: 'N/A'
-				});
-			} catch (err) {
-				setPriceWeeklyChange({
-					isLoading: false,
-					value: 'N/A'
-				});
-			}
-		}
-
-		fetchWeekAgoTokenPrice();
-		return () => {
-			cancel = true;
-		};
+		if (!currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
+		fetchWeekAgoTokenPrice(network, currentTokenPrice, setPriceWeeklyChange);
 	}, [currentTokenPrice, network]);
 
 	useEffect(() => {
-		if (assethubApiReady) {
-			fetchAssetsAmount();
-		}
-		if (hydrationApiReady) {
-			fetchHydrationAssetsAmount();
-		}
+		if (assethubApiReady) fetchAssetsAmount();
+		if (hydrationApiReady) fetchHydrationAssetsAmount();
 	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
 
 	return (
@@ -409,20 +163,9 @@ const ActivityFeedTreasury = () => {
 														{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 													</div>
 												</div>
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0  dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs text-blue-light-high dark:text-blue-dark-high'>
-															{assetValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
+
 												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<div className='ml-2 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+													<div className='ml-1 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
 														<Divider
 															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
 															type='vertical'
@@ -432,6 +175,18 @@ const ActivityFeedTreasury = () => {
 															<span className='ml-[3px] font-normal'>USDT</span>
 														</div>
 													</div>
+												)}
+												{chainProperties?.[network]?.supportedAssets?.[1] && (
+													<>
+														<Divider
+															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0  dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='ml-1 text-xs text-blue-light-high dark:text-blue-dark-high'>
+															{assetValueUSDC}
+															<span className='ml-[3px] font-normal'>USDC</span>
+														</div>
+													</>
 												)}
 											</div>
 										)}
@@ -454,29 +209,29 @@ const ActivityFeedTreasury = () => {
 														{formatUSDWithUnits(hydrationValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 													</div>
 												</div>
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs text-blue-light-high dark:text-blue-dark-high'>
-															{hydrationValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
 												{chainProperties?.[network]?.supportedAssets?.[2] && (
 													<div className='ml-2 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
 														<Divider
 															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
 															type='vertical'
 														/>
-														<div className='text-xs'>
+														<div className='ml-1 text-xs'>
 															{hydrationValueUSDT}
 															<span className='ml-[3px] font-normal'>USDT</span>
 														</div>
 													</div>
+												)}
+												{chainProperties?.[network]?.supportedAssets?.[1] && (
+													<>
+														<Divider
+															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0 dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='ml-1 text-xs text-blue-light-high dark:text-blue-dark-high'>
+															{hydrationValueUSDC}
+															<span className='ml-[3px] font-normal'>USDC</span>
+														</div>
+													</>
 												)}
 											</div>
 										)}

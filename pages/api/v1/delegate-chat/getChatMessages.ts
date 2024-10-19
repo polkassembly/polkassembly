@@ -15,7 +15,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
-async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMessage[] } | MessageType>) {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
@@ -29,28 +29,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 
 	const { chatId } = req.body;
 
-	if (!chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!chatId && !chatId?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
 		const chatMessagesSnapshot = await firestore_db.collection('chats').doc(String(chatId)).collection('messages').orderBy('created_at', 'desc').limit(1).get();
 
-		if (!chatMessagesSnapshot.empty) {
-			const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
+		const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
 
-			const chatMessages: IMessage[] = messagesData.map((message) => ({
-				content: message.content,
-				created_at: message.created_at,
-				id: message.id,
-				receiverAddress: message.receiverAddress,
-				senderAddress: message.senderAddress,
-				senderImage: message?.senderImage,
-				senderUsername: message?.senderUsername,
-				updated_at: message.updated_at,
-				viewed_by: message?.viewed_by || []
-			}));
+		const chatMessages: IMessage[] = messagesData.map((message) => ({
+			content: message.content,
+			created_at: message.created_at,
+			id: message.id,
+			receiverAddress: message.receiverAddress,
+			senderAddress: message.senderAddress,
+			senderImage: message?.senderImage,
+			senderUsername: message?.senderUsername,
+			updated_at: message.updated_at,
+			viewed_by: message?.viewed_by || []
+		}));
 
-			return res.status(200).json(chatMessages);
-		}
+		return res.status(200).json({ messages: chatMessages });
 	} catch (error) {
 		return res.status(500).json({ message: error.message || messages.API_FETCH_ERROR });
 	}

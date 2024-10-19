@@ -15,8 +15,8 @@ import Link from 'next/link';
 
 interface Props {
 	className?: string;
-	userId?: number;
-	type?: any;
+	userId: number;
+	type?: EUserActivityCategory;
 }
 
 const AllAstralPoints = ({ userId, type }: Props) => {

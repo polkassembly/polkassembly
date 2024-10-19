@@ -29,7 +29,7 @@ import ActivityFeedDataGraph from './ActivityFeedDataGraph';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
-const ActivityFeedSidebar = () => {
+const ActivityFeedTreasury = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
@@ -563,4 +563,4 @@ const ActivityFeedSidebar = () => {
 	);
 };
 
-export default ActivityFeedSidebar;
+export default ActivityFeedTreasury;

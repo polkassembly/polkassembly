@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { address, senderAddress, receiverAddress, content, senderImage, chatId } = req.body;
+	const { address, senderAddress, receiverAddress, content, senderImage, senderUsername, chatId } = req.body;
 
 	if (!address || !senderAddress.length || !receiverAddress.length || !content.length || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
@@ -55,6 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		receiverAddress,
 		senderAddress,
 		senderImage,
+		senderUsername,
 		updated_at: new Date(),
 		viewed_by: [senderAddress]
 	};

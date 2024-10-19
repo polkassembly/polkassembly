@@ -995,6 +995,7 @@ export interface IMessage {
 	senderAddress: string;
 	receiverAddress: string;
 	senderImage?: string;
+	senderUsername?: string;
 	viewed_by: string[];
 }
 

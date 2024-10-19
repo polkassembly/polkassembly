@@ -71,6 +71,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 				receiverAddress: message.receiverAddress,
 				senderAddress: message.senderAddress,
 				senderImage: message?.senderImage,
+				senderUsername: message?.senderUsername,
 				updated_at: message.updated_at,
 				viewed_by: message?.viewed_by || []
 			}));

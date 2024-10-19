@@ -106,8 +106,8 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 									</p>
 									{groupedData[date].map((item: any, idx: number) => {
 										const keyOfReputationScore = (Object.keys(REPUTATION_SCORES) as Array<keyof typeof REPUTATION_SCORES>)
-                                            .map((key) => ({ key, type: REPUTATION_SCORES[key].type }))
-                                            .find((entry) => entry.type === item.type)?.key;
+											.map((key) => ({ key, type: REPUTATION_SCORES[key].type }))
+											.find((entry) => entry.type === item.type)?.key;
 
 										return (
 											<div
@@ -116,7 +116,7 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 											>
 												<div className='flex items-center justify-between'>
 													<p className='m-0 flex flex-wrap items-center gap-x-1 p-0 text-bodyBlue dark:text-blue-dark-medium'>
-														<span className='m-0 p-0 flex items-center text-base font-bold text-[#FFBA03]'>
+														<span className='m-0 flex items-center p-0 text-base font-bold text-[#FFBA03]'>
 															+{String(getPoints(item.type))}{' '}
 															<ImageIcon
 																src='/assets/icons/astral-star-icon.svg'
@@ -126,17 +126,10 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 														</span>{' '}
 														for{' '}
 														<span className='whitespace-nowrap text-sm font-normal'>
-															{keyOfReputationScore} on{' '}
-															<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>
-																#{item.post_id}
-															</span>
+															{keyOfReputationScore} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
 														</span>
 														<Image
-															src={
-																getType(item.type) === EUserActivityCategory.ON_CHAIN
-																	? '/assets/icons/on-chain-light.svg'
-																	: '/assets/icons/off-chain-light.svg'
-															}
+															src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}
 															alt=''
 															className='scale-90'
 															width={20}

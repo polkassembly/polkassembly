@@ -61,6 +61,11 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 		return scoreDetails && 'value' in scoreDetails ? scoreDetails.value : 0;
 	};
 
+	const getReputationScoreKey = (type: string) => {
+		// Cast the key as 'keyof typeof REPUTATION_SCORES' to ensure it's valid
+		return (Object.keys(REPUTATION_SCORES) as Array<keyof typeof REPUTATION_SCORES>).find((key) => REPUTATION_SCORES[key].type === type) || '';
+	};
+
 	const getType = (type: string) => {
 		const activityDetails = Object.values(REPUTATION_SCORES).find((score) => score.type === type);
 		return activityDetails && 'category' in activityDetails ? activityDetails.category : 0;
@@ -99,10 +104,11 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 													<AstralIcon className='m-0 ml-1 mt-1 scale-[70%] text-[28px] text-lightBlue' />
 												</div>
 												<span className='whitespace-nowrap font-normal'>
-													Earned <span className='text-base font-bold text-[#FFBA03]'>+{String(getPoints(item.type))}</span> for
+													<span className='text-base font-bold text-[#FFBA03]'>+{String(getPoints(item.type))}</span> for
 												</span>
 												<span className='whitespace-nowrap text-sm font-normal'>
-													{item?.type?.toLowerCase()} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
+													{/* Use the key from REPUTATION_SCORES */}
+													{getReputationScoreKey(item.type)} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
 												</span>
 												<Image
 													src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}
@@ -159,7 +165,8 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 												Earned <span className='text-base font-bold text-[#FFBA03]'>+{String(getPoints(item.type))}</span> for
 											</span>
 											<span className='whitespace-nowrap text-sm font-normal'>
-												{item?.type?.toLowerCase()} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
+												{/* Use the key from REPUTATION_SCORES */}
+												{getReputationScoreKey(item.type)} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
 											</span>
 											<Image
 												src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}

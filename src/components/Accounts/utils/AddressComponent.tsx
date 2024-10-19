@@ -11,6 +11,7 @@ import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { message } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import Link from 'next/link';
 
 interface Props {
 	address: string;
@@ -57,12 +58,17 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 							>
 								<CopyIcon className='-ml-2 text-xl text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
-							<span
-								className='cursor-pointer'
-								onClick={() => window.open(`https://${network}.subscan.io/address/${address}`, '_blank')}
+							<Link
+								href={`https://${network}.subscan.io/address/${address}`}
+								passHref
 							>
-								<SubscanIcon className='-ml-1 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-							</span>
+								<a
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									<SubscanIcon className='-ml-1 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
+								</a>
+							</Link>
 							{isMultisigAddress && <ProxyTypeBadges text={'MULTISIG SIGNATORY'} />}
 							{isPureProxy && <ProxyTypeBadges text={'PURE PROXY'} />}
 							{proxyType && proxyType !== 'Any' && <ProxyTypeBadges text={isPureProxy ? 'PURE PROXY' : proxyType} />}

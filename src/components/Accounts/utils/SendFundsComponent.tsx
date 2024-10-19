@@ -19,16 +19,12 @@ interface Props {
 	address: string;
 }
 
-interface IUsernameProfile {
-	username: string;
-}
-
 const SendFundsComponent = ({ address }: Props) => {
-	const [openTipping, setOpenTipping] = useState<boolean>(false);
-	const [tippingUser, setTippingUser] = useState<string>('');
-	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
-	const [profileDetails, setProfileDetails] = useState<IUsernameProfile>({
-		username: ''
+	const [state, setState] = useState({
+		openAddressChangeModal: false,
+		openTipping: false,
+		profileDetails: { username: '' },
+		tippingUser: ''
 	});
 
 	const getData = async (address: string) => {
@@ -37,9 +33,10 @@ const SendFundsComponent = ({ address }: Props) => {
 			if (error || !data || !data.username || !data.user_id) {
 				return;
 			}
-			setProfileDetails({
-				username: data?.username
-			});
+			setState((prevState) => ({
+				...prevState,
+				profileDetails: { username: data.username }
+			}));
 		} catch (error) {
 			console.log(error);
 		}
@@ -47,20 +44,20 @@ const SendFundsComponent = ({ address }: Props) => {
 
 	useEffect(() => {
 		getData(address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
 	return (
 		<div>
 			<Button
 				onClick={() => {
-					setTippingUser(address);
-					setOpenTipping(true);
+					setState((prevState) => ({
+						...prevState,
+						openTipping: true,
+						tippingUser: address
+					}));
 				}}
-				// disabled={}
-				// loading={loading}
 				htmlType='submit'
-				className={'my-0 flex h-8 items-center rounded-md border-none bg-[#E5007A] pl-[10px] text-white hover:bg-pink_secondary '}
+				className={'my-0 flex h-8 items-center rounded-md border-none bg-pink_primary pl-[10px] text-white hover:bg-pink_secondary '}
 			>
 				<div>
 					<Image
@@ -75,13 +72,13 @@ const SendFundsComponent = ({ address }: Props) => {
 			</Button>
 			{address && (
 				<Tipping
-					username={profileDetails?.username || tippingUser || ''}
-					open={openTipping}
-					setOpen={setOpenTipping}
+					username={state.profileDetails?.username || state.tippingUser || ''}
+					open={state.openTipping}
+					setOpen={(open) => setState((prevState) => ({ ...prevState, openTipping: open }))}
 					key={address}
-					paUsername={profileDetails?.username}
-					setOpenAddressChangeModal={setOpenAddressChangeModal}
-					openAddressChangeModal={openAddressChangeModal}
+					paUsername={state.profileDetails?.username}
+					setOpenAddressChangeModal={(open) => setState((prevState) => ({ ...prevState, openAddressChangeModal: open }))}
+					openAddressChangeModal={state.openAddressChangeModal}
 					isUsedInAccountsPage={true}
 				/>
 			)}

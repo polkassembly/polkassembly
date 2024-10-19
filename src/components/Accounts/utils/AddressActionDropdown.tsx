@@ -21,17 +21,19 @@ const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 
 const AddressActionDropdown = ({ address }: { address: string }) => {
 	const { resolvedTheme: theme } = useTheme();
-	const [isDropdownActive, setIsDropdownActive] = useState(false);
-	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
-	const [openSetIdentityModal, setOpenSetIdentityModal] = useState(false);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [state, setState] = useState({
+		isDropdownActive: false,
+		openAddressLinkModal: false,
+		openAddressLinkedModal: false,
+		openSetIdentityModal: false
+	});
 
 	const items: MenuProps['items'] = [
 		{
 			key: '1',
 			label: (
 				<div
-					onClick={() => setOpenAddressLinkModal(true)}
+					onClick={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: true }))}
 					className='mt-1 flex items-center space-x-2'
 				>
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Link Address</span>
@@ -50,7 +52,9 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 			key: '3',
 			label: (
 				<div
-					onClick={() => (!address ? setOpenAddressLinkedModal(true) : setOpenSetIdentityModal(true))}
+					onClick={() =>
+						!address ? setState((prevState) => ({ ...prevState, openAddressLinkedModal: true })) : setState((prevState) => ({ ...prevState, openSetIdentityModal: true }))
+					}
 					className='mt-1 flex items-center space-x-2'
 				>
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Set Identity</span>
@@ -65,12 +69,12 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 				theme={theme}
 				overlayStyle={{ marginTop: '20px' }}
 				className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-solid border-section-light-container dark:border-separatorDark ${
-					theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+					theme === 'dark' ? 'border-none bg-section-dark-overlay' : state.isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 				}`}
 				overlayClassName='z-[1056]'
 				placement='bottomRight'
 				menu={{ items }}
-				onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
+				onOpenChange={() => setState((prevState) => ({ ...prevState, isDropdownActive: !prevState.isDropdownActive }))}
 			>
 				<span className=' dark:bg-section-dark-background'>
 					<ThreeDotsIcon />
@@ -78,17 +82,17 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 			</Dropdown>
 			<AddressConnectModal
 				linkAddressNeeded
-				open={openAddressLinkModal}
-				setOpen={setOpenAddressLinkModal}
+				open={state.openAddressLinkModal}
+				setOpen={(open) => setState((prevState) => ({ ...prevState, openAddressLinkModal: open }))}
 				closable
-				onConfirm={() => setOpenAddressLinkModal(false)}
+				onConfirm={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: false }))}
 				usedInIdentityFlow={false}
 			/>
 			<OnchainIdentity
-				open={openSetIdentityModal}
-				setOpen={setOpenSetIdentityModal}
-				openAddressModal={openAddressLinkedModal}
-				setOpenAddressModal={setOpenAddressLinkedModal}
+				open={state.openSetIdentityModal}
+				setOpen={(open) => setState((prevState) => ({ ...prevState, openSetIdentityModal: open }))}
+				openAddressModal={state.openAddressLinkedModal}
+				setOpenAddressModal={(open) => setState((prevState) => ({ ...prevState, openAddressLinkedModal: open }))}
 			/>
 		</div>
 	);

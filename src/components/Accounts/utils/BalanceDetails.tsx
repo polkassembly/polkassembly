@@ -38,9 +38,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 				transferableBalance: allBalances?.lockedBalance || ZERO_BN
 			});
 		})();
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, loginAddress, api, apiReady]);
+	}, [address, network, loginAddress, api, apiReady]);
 
 	return (
 		<div className={`${poppins.className} ${poppins.variable} flex items-center gap-2`}>

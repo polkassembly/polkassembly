@@ -58,7 +58,7 @@ const handler: NextApiHandler = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const { address } = req.body;
-	const network = String(req.headers['x-network']);
+	const network = 'rococo';
 	// const network = 'polkadot';
 
 	if (!network || !isValidNetwork(network)) {

@@ -33,7 +33,7 @@ const AccountSection: FC<IAccountsProps> = (props) => {
 	useEffect(() => {
 		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<>

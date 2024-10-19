@@ -165,12 +165,12 @@ const bnToIntBalance = function(bn: BN, network:string): number {
 
 const getTotalIssuance = async (api: any, network: string) => {
 	if (network === 'picasso') {
-		const totalIssuance = await api.query.openGovBalances.totalIssuance();
-		const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+		const totalIssuance = await api?.query?.openGovBalances?.totalIssuance();
+		const inactiveIssuance = await api?.query?.openGovBalances?.inactiveIssuance();
 		return (totalIssuance as any).sub(inactiveIssuance);
 	} else {
-		const totalIssuance = await api.query.balances.totalIssuance();
-		const inactiveIssuance = await api.query.balances.inactiveIssuance();
+		const totalIssuance = await api?.query?.balances?.totalIssuance();
+		const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
 		return (totalIssuance as any).sub(inactiveIssuance);
 	}
 };

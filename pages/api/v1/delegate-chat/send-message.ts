@@ -49,7 +49,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
 	const messageSnapshot = chatSnapshot.collection('messages');
 
-	const newMessage: IMessage = {
+	const newMessage = {
 		content,
 		created_at: new Date(),
 		receiverAddress,

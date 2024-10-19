@@ -68,6 +68,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 			const chatMessages: IMessage[] = messagesData.map((message) => ({
 				content: message.content,
 				created_at: message.created_at,
+				id: message.id,
 				receiverAddress: message.receiverAddress,
 				senderAddress: message.senderAddress,
 				senderImage: message?.senderImage,

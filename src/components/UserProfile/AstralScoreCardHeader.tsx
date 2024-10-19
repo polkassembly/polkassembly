@@ -130,7 +130,7 @@ const AstralScoreCardHeader = ({ userProfile, className }: Props) => {
 
 	return (
 		<section
-			className={`flex items-center justify-between rounded-xl border border-solid border-[#D2D8E0] px-4 py-6 dark:border-separatorDark ${className}`}
+			className={`flex items-center justify-start rounded-xl border border-solid border-[#D2D8E0] px-4 py-6 dark:border-separatorDark md:justify-between ${className}`}
 			style={{
 				boxShadow: '0px 4px 6px 0px rgba(0, 0, 0, 0.08)'
 			}}
@@ -144,7 +144,7 @@ const AstralScoreCardHeader = ({ userProfile, className }: Props) => {
 				</p>
 			</article>
 			<Divider
-				className='mx-2 border border-solid border-[#D2D8E0] dark:border-separatorDark'
+				className='mx-6 border border-solid border-[#D2D8E0] dark:border-separatorDark md:mx-2'
 				type='vertical'
 			/>
 			<article className='flex flex-col gap-y-2'>
@@ -156,8 +156,9 @@ const AstralScoreCardHeader = ({ userProfile, className }: Props) => {
 						width={20}
 						height={20}
 					/>
-					<p className='m-0 p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium'>On-chain Activity: </p>
-					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{scores?.onChain}</p>
+					{/* Tailwind classes to hide the text on mobile */}
+					<p className='m-0 hidden p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium sm:block'>On-chain Activity </p>
+					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>: {scores?.onChain}</p>
 				</div>
 				<div className='flex items-center justify-start gap-x-1'>
 					<Image
@@ -167,8 +168,9 @@ const AstralScoreCardHeader = ({ userProfile, className }: Props) => {
 						width={20}
 						height={20}
 					/>
-					<p className='m-0 p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium'>Off-chain Activity: </p>
-					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{scores?.offChain}</p>
+					{/* Tailwind classes to hide the text on mobile */}
+					<p className='m-0 hidden p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium sm:block'>Off-chain Activity </p>
+					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>: {scores?.offChain}</p>
 				</div>
 			</article>
 		</section>

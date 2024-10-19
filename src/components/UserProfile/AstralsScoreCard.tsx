@@ -26,7 +26,6 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [hasMoreData, setHasMoreData] = useState<boolean>(true);
-	// const isMobile = typeof window !== 'undefined' && window?.screen.width < 768;
 
 	const getAllAstralPointsData = async (pageNumber: number) => {
 		setLoading(true);
@@ -49,7 +48,6 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 		if (userProfile?.user_id) {
 			getAllAstralPointsData(1);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userProfile?.user_id]);
 
 	const handleLoadMore = () => {
@@ -106,54 +104,67 @@ const AstralsScoreCard = ({ userProfile, className, theme }: Props) => {
 									<p className='mb-3 flex items-center gap-x-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 										<ClockCircleOutlined /> {date}
 									</p>
-									{groupedData[date].map((item: any, idx: number) => (
-										<div
-											key={idx}
-											className='activity-item'
-										>
-											<div className='flex items-center justify-between'>
-												<p className='m-0 flex flex-wrap items-center gap-x-1 p-0 text-bodyBlue dark:text-blue-dark-medium'>
-													<span className='whitespace-nowrap font-normal'>Earned for</span>
-													<span className='whitespace-nowrap text-sm font-normal'>
-														{item?.type?.toLowerCase()} on <span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>#{item.post_id}</span>
-													</span>
-													<Image
-														src={getType(item.type) === EUserActivityCategory.ON_CHAIN ? '/assets/icons/on-chain-light.svg' : '/assets/icons/off-chain-light.svg'}
-														alt=''
-														className='scale-90'
-														width={20}
-														height={20}
-													/>
-													<Link
-														href={`/referenda/${item.post_id}`}
-														target='_blank'
-													>
+									{groupedData[date].map((item: any, idx: number) => {
+										const keyOfReputationScore = (Object.keys(REPUTATION_SCORES) as Array<keyof typeof REPUTATION_SCORES>)
+                                            .map((key) => ({ key, type: REPUTATION_SCORES[key].type }))
+                                            .find((entry) => entry.type === item.type)?.key;
+
+										return (
+											<div
+												key={idx}
+												className='activity-item'
+											>
+												<div className='flex items-center justify-between'>
+													<p className='m-0 flex flex-wrap items-center gap-x-1 p-0 text-bodyBlue dark:text-blue-dark-medium'>
+														<span className='m-0 p-0 flex items-center text-base font-bold text-[#FFBA03]'>
+															+{String(getPoints(item.type))}{' '}
+															<ImageIcon
+																src='/assets/icons/astral-star-icon.svg'
+																alt='astral-star-icon'
+																imgWrapperClassName='scale-[70%] -mt-0.5'
+															/>
+														</span>{' '}
+														for{' '}
+														<span className='whitespace-nowrap text-sm font-normal'>
+															{keyOfReputationScore} on{' '}
+															<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-medium'>
+																#{item.post_id}
+															</span>
+														</span>
 														<Image
-															src={'/assets/icons/redirect-pink-icon.svg'}
+															src={
+																getType(item.type) === EUserActivityCategory.ON_CHAIN
+																	? '/assets/icons/on-chain-light.svg'
+																	: '/assets/icons/off-chain-light.svg'
+															}
 															alt=''
 															className='scale-90'
 															width={20}
 															height={20}
 														/>
-													</Link>
-												</p>
-												<span className='flex items-center text-base font-bold text-[#FFBA03]'>
-													+{String(getPoints(item.type))}{' '}
-													<ImageIcon
-														src='/assets/icons/astral-star-icon.svg'
-														alt='astral-star-icon'
-														imgWrapperClassName='scale-[70%] -mt-0.5'
+														<Link
+															href={`/referenda/${item.post_id}`}
+															target='_blank'
+														>
+															<Image
+																src={'/assets/icons/redirect-pink-icon.svg'}
+																alt=''
+																className='scale-90'
+																width={20}
+																height={20}
+															/>
+														</Link>
+													</p>
+												</div>
+												{idx < groupedData[date].length - 1 && (
+													<Divider
+														style={{ background: '#D2D8E0', flexGrow: 1 }}
+														className='my-4 dark:bg-separatorDark'
 													/>
-												</span>
+												)}
 											</div>
-											{idx < groupedData[date].length - 1 && (
-												<Divider
-													style={{ background: '#D2D8E0', flexGrow: 1 }}
-													className='my-4 dark:bg-separatorDark'
-												/>
-											)}
-										</div>
-									))}
+										);
+									})}
 									{index < Object.keys(groupedData).length - 1 && (
 										<Divider
 											style={{ background: '#D2D8E0', flexGrow: 1 }}

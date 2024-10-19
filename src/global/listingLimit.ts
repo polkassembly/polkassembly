@@ -4,6 +4,8 @@
 
 export const LISTING_LIMIT: number = 25;
 
+export const ASTRAL_LISTING_LIMIT: number = 5;
+
 export const LEADERBOARD_LISTING_LIMIT: number = 10;
 
 export const LATEST_POSTS_LIMIT: number = 8;

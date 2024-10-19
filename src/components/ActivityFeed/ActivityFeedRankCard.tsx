@@ -18,7 +18,7 @@ interface IRankCardProps {
 const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const username = currentUser?.username;
+	const { id, username } = currentUser;
 	const [profilescore, setProfileScore] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [userRank, setUserRank] = useState<number | 0>(0);
@@ -94,6 +94,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 								<div className='flex items-center gap-4'>
 									<ScoreTag
 										className='  pt-1'
+										userId={id || 0}
 										score={profilescore || 0}
 									/>
 								</div>

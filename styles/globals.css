@@ -34,6 +34,7 @@
   --nav_black: #1e1e28;
   --pink_primary: #e5007a;
   --pink_primary_transparent: rgba(229, 0, 122, 0.5);
+  --pink_primary_semi_transparent: rgba(229, 0, 122, 0.2);
   --pink_secondary: #c40061;
   --pink_light: #ea729d;
   --baby_pink: #fbdbec;
@@ -911,6 +912,9 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 		color: #9E9E9E !important;
 }
 
+.ant-tooltip {
+  max-width: 1000px !important
+}
 .dark .ant-upload-list-item,
 .dark .ant-upload-list-item-uploading {
     color: #909090 !important;

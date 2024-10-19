@@ -25,6 +25,7 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
+import Link from 'next/link';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -128,7 +129,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 								className='ml-1 inline'
 							/>
 						</div>
-						{/* <div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
+						<div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
 							To view detailed off-chain and on-chain activity{' '}
 							<Link
 								className='text-xs font-medium text-pink_primary'
@@ -137,7 +138,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 							>
 								Visit Profile
 							</Link>
-						</div> */}
+						</div>
 					</div>
 				</div>
 			)
@@ -223,11 +224,12 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		{
 			dataIndex: 'profileScore',
 			key: 'profileScore',
-			render: (profileScore) => (
+			render: (profileScore, obj) => (
 				<ScoreTag
 					className='h-7 w-[90px] py-2'
 					score={profileScore}
 					scale={1.1}
+					userId={obj?.key}
 					iconWrapperClassName='ml-1.5 mt-[5.5px]'
 				/>
 			),

@@ -144,6 +144,7 @@ import DownArrowSVG from '~assets/icons/down-arrow.svg';
 import DollarSVG from '~assets/profile/dollar.svg';
 import RemoveVoteSVG from '~assets/profile/remove-vote.svg';
 import ClipboardSVG from '~assets/profile/profile-clipboard.svg';
+import AstralSVG from '~assets/profile/profile-astrals.svg';
 import VotesSVG from '~assets/profile/profile-votes.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
@@ -189,7 +190,7 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
-import AstralSVG from '~assets/sidebar/astral-points.svg';
+import AstralSidebarSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
@@ -1130,6 +1131,13 @@ export const RemoveVoteIcon = (props: Partial<CustomIconComponentProps>) => (
 export const ClipboardIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ClipboardSVG}
+		{...props}
+	/>
+);
+
+export const AstralSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AstralSidebarSVG}
 		{...props}
 	/>
 );

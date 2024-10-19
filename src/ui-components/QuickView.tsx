@@ -184,6 +184,7 @@ const QuickView = ({
 							<ScoreTag
 								className='h-6 w-min px-[6px] py-1'
 								score={leaderboardAstrals}
+								showPointsInfo={false}
 								iconWrapperClassName='mt-[5.5px]'
 							/>
 						)}

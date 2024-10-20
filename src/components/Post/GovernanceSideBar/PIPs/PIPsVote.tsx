@@ -120,9 +120,17 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const getPolymeshCommitteeMembers = async () => {
-		const members = await api?.query?.polymeshCommittee?.members().then((members) => members.toJSON());
-		if ((members as string[]).includes(address)) {
-			setIsPolymeshCommitteeMember(true);
+		try {
+			const members = await api?.query?.polymeshCommittee?.members();
+			const membersArray = members?.toJSON();
+
+			if (Array.isArray(membersArray) && membersArray?.includes(address)) {
+				setIsPolymeshCommitteeMember(true);
+			} else {
+				setIsPolymeshCommitteeMember(false);
+			}
+		} catch (error) {
+			console.error('Error fetching committee members:', error);
 		}
 	};
 

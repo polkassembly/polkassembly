@@ -155,7 +155,7 @@ import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
 import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
 import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
-import FollowSVG from '~assets/profile/follow-icon.svg';
+import ProfileFollowSVG from '~assets/profile/profile-follows.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
 import MailFilled from '~assets/icons/email-notification.svg';
 import SlackIconSVG from '~assets/icons/slack.svg';
@@ -1199,9 +1199,9 @@ export const ProfileReactionsIcon = (props: Partial<CustomIconComponentProps>) =
 		{...props}
 	/>
 );
-export const FollowIcon = (props: Partial<CustomIconComponentProps>) => (
+export const ProfileFollowIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={FollowSVG}
+		component={ProfileFollowSVG}
 		{...props}
 	/>
 );

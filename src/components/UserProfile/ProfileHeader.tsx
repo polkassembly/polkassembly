@@ -104,7 +104,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									<span className='max-md:hidden'>Delegate</span>
 								</CustomButton>
 							)}
-							<FollowButton userProfile={userProfile} />
+							<FollowButton userId={userProfile.user_id} />
 						</div>
 					)}
 				</div>

@@ -12,7 +12,7 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IActivitiesCounts, IStats } from '.';
-import { ClipboardIcon, FollowIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, MyActivityIcon, ProfileFollowIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
@@ -165,19 +165,22 @@ const ProfileTabs = ({
 					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span>
 				</div>
 			)
-		},
-		{
+		}
+	];
+
+	if (userId === userProfile.user_id) {
+		tabItems.push({
 			children: <ProfileFollows className='' />,
 			key: 'Follows',
 			label: (
 				<div className='flex items-center'>
-					<FollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Follows
 					{/* <span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span> */}
 				</div>
 			)
-		}
-	];
+		});
+	}
 	if (!votesHistoryUnavailableNetworks.includes(network)) {
 		tabItems.splice(1, 0, {
 			children: (

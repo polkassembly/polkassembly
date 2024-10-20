@@ -5,40 +5,58 @@ import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { ProfileDetailsResponse } from '~src/auth/types';
 import { useFollowStatus } from '~src/hooks/useFollowStatus';
 
-const FollowButton = ({ userProfile }: { userProfile: ProfileDetailsResponse }) => {
+const FollowButton = ({ userId, isUsedInProfileTab }: { userId: number; isUsedInProfileTab?: boolean }) => {
 	const { id } = useUserDetailsSelector();
-	const { isFollowing, loading, error, followUser, unfollowUser } = useFollowStatus(userProfile.user_id);
+	const { isFollowing, loading, followUser, unfollowUser } = useFollowStatus(userId);
 
 	const handleFollowClick = () => {
 		if (isFollowing) {
-			unfollowUser(userProfile.user_id);
+			unfollowUser(userId);
 		} else {
-			followUser(userProfile.user_id);
+			followUser(userId);
 		}
 	};
 
 	return (
 		<div>
-			<CustomButton
-				shape='circle'
-				variant='primary'
-				className={`rounded-full border-none px-4 py-2.5 text-white max-md:p-3 ${!id && 'opacity-50'}`}
-				onClick={handleFollowClick}
-				disabled={!id || loading}
-			>
-				<Image
-					src={'/assets/profile/profile-follow.svg'}
-					className='mr-1 rounded-full'
-					height={20}
-					width={20}
-					alt={isFollowing ? 'unfollow logo' : 'follow logo'}
-				/>
-				<span className='max-md:hidden'>{loading ? (isFollowing ? 'Unfollowing...' : 'Following...') : isFollowing ? 'Unfollow' : 'Follow'}</span>
-			</CustomButton>
-			{error && <p className='text-red-500'>{error}</p>}
+			{isUsedInProfileTab ? (
+				<CustomButton
+					shape='circle'
+					variant='primary'
+					className={`rounded-md border-none px-3 py-0 text-xs text-white ${!id && 'opacity-50'}`}
+					onClick={handleFollowClick}
+					disabled={!id || loading}
+					height={28}
+				>
+					<Image
+						src={'/assets/profile/profile-follow.svg'}
+						className='mr-1 rounded-full'
+						height={20}
+						width={20}
+						alt={isFollowing ? 'unfollow logo' : 'follow logo'}
+					/>
+					<span className='max-md:hidden'>{loading ? 'loading...' : isFollowing ? 'Unfollow' : 'Follow Back'}</span>
+				</CustomButton>
+			) : (
+				<CustomButton
+					shape='circle'
+					variant='primary'
+					className={`rounded-full border-none px-4 py-2.5 text-white max-md:p-3 ${!id && 'opacity-50'}`}
+					onClick={handleFollowClick}
+					disabled={!id || loading}
+				>
+					<Image
+						src={'/assets/profile/profile-follow.svg'}
+						className='mr-1 rounded-full'
+						height={20}
+						width={20}
+						alt={isFollowing ? 'unfollow logo' : 'follow logo'}
+					/>
+					<span className='max-md:hidden'>{loading ? 'loading...' : isFollowing ? 'Unfollow' : 'Follow'}</span>
+				</CustomButton>
+			)}
 		</div>
 	);
 };

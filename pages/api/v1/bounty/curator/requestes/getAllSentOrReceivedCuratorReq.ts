@@ -15,6 +15,7 @@ import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsquare-content';
 import { EPendingCuratorReqType, IPendingCuratorReq } from '~src/types';
+import { getDefaultContent } from '~src/util/getDefaultContent';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -69,6 +70,7 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 		const bountiesPromises = subsquidBountiesData.map(async (item: ISubsquidBounty) => {
 			const payload: IPendingCuratorReq = {
 				categories: [],
+				content: '',
 				createdAt: item?.createdAt,
 				curator: item?.curator,
 				index: item.index,
@@ -84,17 +86,19 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 
 			postDocs?.docs?.map((doc) => {
 				if (doc?.exists) {
-					const bountyData = doc?.data();
-					if (bountyData?.id == item.index) {
-						payload.title = bountyData?.title || '';
-						payload.categories = bountyData?.tags || [];
+					const data = doc?.data();
+					if (data?.id == item.index) {
+						payload.title = data?.title || '';
+						payload.categories = data?.tags || [];
+						payload.content = data.content || '';
 					}
 				}
 			});
 
-			if (!payload?.title) {
+			if (!payload?.title || !payload.content) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, item?.index);
 				payload.title = res?.title || getProposalTypeTitle(proposalType);
+				payload.content = res.content || getDefaultContent({ proposalType, proposer: payload.proposer || '' });
 				payload.source = res?.title?.length ? 'subsquare' : 'polkassembly';
 			}
 
@@ -105,9 +109,9 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 
 		const resolvedResults: IPendingCuratorReq[] = [];
 
-		results?.map((bounty) => {
-			if (bounty.status == 'fulfilled') {
-				resolvedResults.push(bounty?.value);
+		results?.map((promise) => {
+			if (promise.status == 'fulfilled') {
+				resolvedResults.push(promise?.value);
 			}
 		});
 

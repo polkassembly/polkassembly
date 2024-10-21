@@ -1057,4 +1057,5 @@ export enum EPendingCuratorReqType {
 export interface IPendingCuratorReq extends IBountyListing {
 	reqType: EPendingCuratorReqType;
 	proposalType: ProposalType;
+	content: string;
 }

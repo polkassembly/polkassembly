@@ -47,12 +47,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 			docs.map((doc) => {
 				const data = doc.data();
 				return {
-					chatId: data.chatId,
-					created_at: data.created_at,
-					latestMessage: data.latestMessage,
-					receiverAddress: data.receiverAddress,
-					senderAddress: data.senderAddress,
-					updated_at: data.updated_at
+					chatId: data?.chatId,
+					created_at: data?.created_at?.toDate(),
+					latestMessage: { ...data?.latestMessage, created_at: data?.latestMessage?.created_at?.toDate(), updated_at: data?.latestMessage?.updated_at?.toDate() },
+					receiverAddress: data?.receiverAddress,
+					senderAddress: data?.senderAddress,
+					updated_at: data?.updated_at?.toDate()
 				};
 			});
 

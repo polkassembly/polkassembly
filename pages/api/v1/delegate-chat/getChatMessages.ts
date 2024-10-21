@@ -37,14 +37,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 		const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
 
 		const messages: IMessage[] = messagesData.map((message) => ({
-			content: message.content,
-			created_at: message.created_at,
-			id: message.id,
-			receiverAddress: message.receiverAddress,
-			senderAddress: message.senderAddress,
+			content: message?.content,
+			created_at: message?.created_at?.toDate(),
+			id: message?.id,
+			receiverAddress: message?.receiverAddress,
+			senderAddress: message?.senderAddress,
 			senderImage: message?.senderImage,
 			senderUsername: message?.senderUsername,
-			updated_at: message.updated_at,
+			updated_at: message?.updated_at?.toDate(),
 			viewed_by: message?.viewed_by || []
 		}));
 

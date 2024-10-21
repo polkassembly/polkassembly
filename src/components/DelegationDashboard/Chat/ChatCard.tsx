@@ -32,7 +32,7 @@ const ChatCard = ({ chat }: Props) => {
 					width={32}
 					alt='user avatar'
 				/>
-			) : latestMessage?.senderAddress.startsWith('0x') ? (
+			) : latestMessage?.senderAddress?.startsWith('0x') ? (
 				<EthIdenticon
 					size={32}
 					address={latestMessage?.senderAddress || ''}

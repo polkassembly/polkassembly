@@ -56,8 +56,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 
 		return res.status(200).json({ message: messages.SUCCESS });
 	} catch (error) {
-		console.error('Error adding message: ', error);
-		return res.status(500).json({ message: messages.ERROR_IN_ADDING_EVENT });
+		return res.status(500).json({ message: error.message || messages.ERROR_IN_ADDING_EVENT });
 	}
 }
 

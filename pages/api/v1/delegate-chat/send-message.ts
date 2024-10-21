@@ -69,7 +69,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 
 		await batch.commit();
 
-		return res.status(200).json({ message: messages.SUCCESS });
+		const chatMessagesSnapshot = await messageSnapshot.orderBy('created_at', 'desc').limit(1).get();
+
+		const chatMessages: IMessage[] = chatMessagesSnapshot.docs.map((doc) => {
+			const message = doc.data();
+			return {
+				content: message.content,
+				created_at: message.created_at,
+				id: doc.id,
+				receiverAddress: message.receiverAddress,
+				senderAddress: message.senderAddress,
+				senderImage: message?.senderImage,
+				senderUsername: message?.senderUsername,
+				updated_at: message.updated_at,
+				viewed_by: message?.viewed_by || []
+			};
+		});
+
+		return res.status(200).json(chatMessages);
 	} catch (error) {
 		console.error('Error adding message: ', error);
 		return res.status(500).json({ message: messages.ERROR_IN_ADDING_EVENT });

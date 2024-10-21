@@ -93,10 +93,6 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
-	useEffect(() => {
-		handleSearch(searchAddress);
-	}, [searchAddress, allDelegates]);
-
 	return (
 		<div className='flex h-[calc(100%-300px)] w-full flex-col'>
 			<div className='p-5'>

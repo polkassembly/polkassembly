@@ -103,6 +103,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 			button.innerHTML = '<span class="text-white">Post</span>';
 			button.classList.toggle('opacity-60', !newMessage || loading);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newMessage, loading]);
 
 	return (

@@ -6,6 +6,7 @@ import { Drawer, Button } from 'antd';
 import { poppins } from 'pages/_app';
 import { useState } from 'react';
 import Image from 'next/image';
+import UserChats from './UserChats';
 
 interface Props {
 	className?: string;
@@ -21,6 +22,7 @@ interface IChatHeaderAction {
 const ChatWithDelegates = ({ className }: Props) => {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [isMinimized, setIsMinimized] = useState(false);
+	const [isNewChat, setIsNewChat] = useState(false);
 
 	const openChat = () => {
 		setIsModalOpen(true);
@@ -30,7 +32,7 @@ const ChatWithDelegates = ({ className }: Props) => {
 	const chatHeaderActions: IChatHeaderAction[] = [
 		{
 			icon: '/assets/icons/delegation-chat/add-message-icon.svg',
-			onClick: () => console.log('Add message'),
+			onClick: () => setIsNewChat(true),
 			title: 'Add message'
 		},
 		{
@@ -94,12 +96,15 @@ const ChatWithDelegates = ({ className }: Props) => {
 				height={isMinimized ? 60 : 500}
 				mask={false}
 				closable={false}
-				contentWrapperStyle={{ boxShadow: 'none' }}
+				contentWrapperStyle={{ boxShadow: 'none', transform: 'none' }}
 				style={{ position: 'fixed', right: '50px', top: 'auto', zIndex: '999' }}
 				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
-				bodyStyle={{ display: isMinimized ? 'none' : 'block' }}
+				bodyStyle={{ display: isMinimized ? 'none' : 'block', padding: '0px' }}
 			>
-				<div>Hello World</div>
+				<UserChats
+					isNewChat={isNewChat}
+					setIsNewChat={setIsNewChat}
+				/>
 			</Drawer>
 		</>
 	);

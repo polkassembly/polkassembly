@@ -18,12 +18,15 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST } = query;
 	const proposalType = ProposalType.ANNOUNCEMENT;
@@ -34,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IAnnouncementProps {
@@ -46,6 +49,7 @@ interface IAnnouncementProps {
 const Announcements = (props: IAnnouncementProps) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 
 	const router = useRouter();
@@ -75,18 +79,17 @@ const Announcements = (props: IAnnouncementProps) => {
 				title={'Alliance Announcements'}
 				network={network}
 			/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance</h1>
+			<h1 className='dashboard-heading mb-4 md:mb-6'>{t('alliance')}</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of
-					ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
-				</p>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>{t('alliance_desc')}</p>
 			</div>
 			<div className='rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{count} Announcement</h1>
+					<h1 className='dashboard-heading'>
+						{count} {t('announcement')}
+					</h1>
 				</div>
 
 				<div>

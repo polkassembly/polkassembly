@@ -19,22 +19,25 @@ import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { PostCategory } from '~src/global/post_categories';
 import ConfusedNudge from '~src/ui-components/ConfusedNudge';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const proposalType = ProposalType.OPEN_GOV;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { error, network, post: data, status } };
+	return { props: { error, network, post: data, status, ...translations } };
 };
 
 interface IReferendaPostProps {
@@ -46,6 +49,7 @@ interface IReferendaPostProps {
 
 const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const [openNudge, setOpenNudge] = useState(false);
 
 	useEffect(() => {
@@ -94,9 +98,9 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 		return (
 			<div className='mt-20 flex flex-col items-center justify-center'>
 				<div className='flex items-center gap-5'>
-					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>{t('404')}</h1>
 				</div>
-				<p className='mt-2 text-lg text-gray-500'>Post not found in the {trackName || 'specified'} category. If you just created a post, it might take up to a minute to appear.</p>
+				<p className='mt-2 text-lg text-gray-500'>{t('post_not_found')}</p>
 				<div className='mt-5'>
 					<BackToListingView postCategory={PostCategory.REFERENDA} />
 				</div>

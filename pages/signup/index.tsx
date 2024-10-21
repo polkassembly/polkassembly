@@ -16,6 +16,7 @@ import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletConnectSignup'), {
 	loading: () => <Skeleton active />,
@@ -42,12 +43,13 @@ interface Props {
 	setIsClosable?: (pre: boolean) => void;
 	isDelegation?: boolean;
 }
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, isDelegation }: Props) => {

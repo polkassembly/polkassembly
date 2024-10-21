@@ -3,9 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Image from 'next/image';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
@@ -18,14 +20,15 @@ import { NetworkSocials } from '~src/types';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error } = await getNetworkSocials({ network });
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface Props {
@@ -41,6 +44,7 @@ enum Profile {
 
 const News: FC<Props> = ({ data, error, network }) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -65,7 +69,7 @@ const News: FC<Props> = ({ data, error, network }) => {
 				network={network}
 			/>
 			<div className='h-full w-full'>
-				<h3 className='text-lg font-medium leading-7 tracking-wide text-sidebarBlue'>News</h3>
+				<h3 className='text-lg font-medium leading-7 tracking-wide text-sidebarBlue'>{t('news')}</h3>
 				<section className='mt-6 flex w-full flex-col justify-center gap-5 md:flex-row'>
 					<article className='max-w-[720px] flex-1 justify-center'>
 						{isPolkadotOrKusama && (

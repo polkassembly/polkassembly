@@ -20,8 +20,10 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { useTheme } from 'next-themes';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -37,7 +39,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
+	return { props: { data, error, network, ...translations } };
 };
 
 interface ITechCommProposalsProps {
@@ -49,6 +53,7 @@ interface ITechCommProposalsProps {
 const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
@@ -78,13 +83,12 @@ const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On-chain Upgrade PIPs</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('on-chain_upgrade_PIPs')}</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain Upgrade PIPs. Upgrade Committee PIPs are proposed by the Upgrade Committee and approved by the Polymesh Governance Council. Only the
-					Upgrade Committee can amend these PIPs
+					{t('PIPs_desc')}
 				</p>
 			</div>
 

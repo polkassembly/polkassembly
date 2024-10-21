@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import dynamic from 'next/dynamic';
 import { getProfileWithAddress } from 'pages/api/v1/auth/data/profileWithAddress';
 import React, { FC, useEffect } from 'react';
@@ -35,6 +36,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { data, error } = await getProfileWithAddress({
 		address
 	});
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
+
 	const props: IProfileProps = {
 		network,
 		userProfile: {
@@ -47,7 +50,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				title: ''
 			},
 			error: error
-		}
+		},
+		...translations
 	};
 	return { props: props };
 };

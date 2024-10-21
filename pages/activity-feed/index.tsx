@@ -21,6 +21,8 @@ import ActivityFeedSidebar from '~src/components/ActivityFeed/ActivityFeedSideba
 import { EActivityFeedTab } from '~src/components/ActivityFeed/types/types';
 import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const LatestActivity = dynamic(() => import('~src/components/ActivityFeed'), {
 	loading: () => <Skeleton active />,
@@ -33,7 +35,7 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	try {
 		const network = getNetworkFromReqHeaders(req?.headers);
 		const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -58,12 +60,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		}
 
 		const networkSocialsData = await getNetworkSocials({ network });
+		const translations = await serverSideTranslations(locale || '', ['common']);
 
 		return {
 			props: {
 				error: '',
 				network,
-				networkSocialsData
+				networkSocialsData,
+				...translations
 			}
 		};
 	} catch (error) {
@@ -80,6 +84,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const [activeTab, setActiveTab] = useState<EActivityFeedTab>(EActivityFeedTab.EXPLORE as EActivityFeedTab);
 
 	useEffect(() => {
@@ -98,7 +103,7 @@ const ActivityFeed = ({ error, network, networkSocialsData }: Props) => {
 				<div className='flex w-full justify-between lg:mt-3 xl:items-center'>
 					<div className='flex flex-col lg:flex-row  xl:h-12 xl:gap-2'>
 						<div>
-							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-3 lg:text-2xl'>Activity Feed</h1>
+							<h1 className='mx-2 text-xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high lg:mt-3 lg:text-2xl'>{t('activity_feed')}</h1>
 						</div>
 						<ActivityFeeToggleButton
 							activeTab={activeTab}

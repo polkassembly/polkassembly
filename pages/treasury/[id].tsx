@@ -25,22 +25,25 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const proposalType = ProposalType.TREASURY_PROPOSALS;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { data, error, network, status } };
+	return { props: { data, error, network, status, ...translations } };
 };
 
 interface ITreasuryPostProps {
@@ -57,6 +60,7 @@ const TreasuryPost: FC<ITreasuryPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -77,8 +81,8 @@ const TreasuryPost: FC<ITreasuryPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>
@@ -108,9 +112,9 @@ const TreasuryPost: FC<ITreasuryPostProps> = (props) => {
 		return (
 			<div className='mt-20 flex flex-col items-center justify-center'>
 				<div className='flex items-center gap-5'>
-					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>{t('404')}</h1>
 				</div>
-				<p className='mt-2 text-lg text-gray-500'>Post not found. If you just created a post, it might take up to a minute to appear.</p>
+				<p className='mt-2 text-lg text-gray-500'>{t('post_not_found')}</p>
 				<div className='mt-5'>
 					<BackToListingView postCategory={PostCategory.TREASURY_PROPOSAL} />
 				</div>

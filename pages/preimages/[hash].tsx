@@ -3,10 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { IPreimageData, getLatestPreimage } from 'pages/api/v1/preimages/latest';
 import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -21,16 +23,17 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { hash = '' } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error } = await getLatestPreimage({ hash: String(hash), network });
 
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IPreImagesProps {
@@ -43,6 +46,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	console.log(data);
 
@@ -61,8 +65,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 				desc='Discover more about preimages of on chain governance proposals on Polkassembly'
 				network={network}
 			/>
-			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Preimage</h1>
-
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('preimage')}</h1>
 			{/* <div className="mt-8 mx-1">
 				<PreImagesTable tableData={tableData} />
 			</div> */}

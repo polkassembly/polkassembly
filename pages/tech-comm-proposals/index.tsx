@@ -24,12 +24,15 @@ import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.TECH_COMMITTEE_PROPOSALS;
@@ -42,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, translations } };
 };
 
 interface ITechCommProposalsProps {
@@ -56,6 +59,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [statusItem, setStatusItem] = useState([]);
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -85,13 +89,12 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 			/>
 			<div className='mt-3 flex sm:items-center'>
 				<TechComIconListing className='-mt-3.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Tech Committee Proposals</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('tech_committee_proposals')}</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain technical committee proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the
-					proposer is able to edit them.
+					{t('tech_committee_proposals_desc')}
 				</p>
 			</div>
 

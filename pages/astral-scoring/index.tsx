@@ -13,8 +13,10 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import ScoringDetails from '../../src/components/AstralScoring/ScoringDetails';
 import { scoringData } from '../../src/components/AstralScoring/utils';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	if (!isOpenGovSupported(network)) {
@@ -27,14 +29,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	if (networkRedirect) return networkRedirect;
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const AstralScoring = (props: { network: string; className: string }) => {
 	const { className } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,9 +68,9 @@ const AstralScoring = (props: { network: string; className: string }) => {
 							src='/assets/icons/astral-star-icon.svg'
 							alt='astral-star-icon'
 						/>
-						<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Astrals Scoresheet</h1>
+						<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>{t('astrals_scoresheet')}</h1>
 					</div>
-					<p className='m-0 p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium'>See how you can earn more points!</p>
+					<p className='m-0 p-0 text-sm font-medium text-sidebarBlue dark:text-blue-dark-medium'>{t('see_how_you_can_earn_more_points')}</p>
 					<div className='mt-2 grid w-full gap-x-6 gap-y-4 md:grid-cols-2'>
 						<ScoringDetails scoringData={scoringData.slice(0, 3)} />
 						<ScoringDetails scoringData={scoringData.slice(3)} />

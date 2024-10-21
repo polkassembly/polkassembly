@@ -1015,3 +1015,32 @@ export interface INetworkWalletErr {
 	description: string;
 	error: number;
 }
+
+export interface IMessage {
+	id: string;
+	content: string;
+	created_at: Date;
+	updated_at: Date;
+	senderAddress: string;
+	receiverAddress: string;
+	senderImage?: string;
+	senderUsername?: string;
+	viewed_by: string[];
+}
+
+export interface ICreateChatPayload {
+	chatId: string;
+	senderAddress: string;
+	receiverAddress: string;
+	created_at: Date;
+	updated_at: Date;
+}
+
+export interface IChat extends ICreateChatPayload {
+	latestMessage: IMessage;
+}
+
+export interface IChatsResponse {
+	sentChats: IChat[];
+	receivedChats: IChat[];
+}

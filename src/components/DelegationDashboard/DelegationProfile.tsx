@@ -26,6 +26,11 @@ const BecomeDelegateModal = dynamic(() => import('src/ui-components/BecomeDelega
 	ssr: false
 });
 
+const ChatWithDelegates = dynamic(() => import('~src/components/DelegationDashboard/Chat'), {
+	loading: () => <SkeletonAvatar active />,
+	ssr: false
+});
+
 interface Props {
 	isSearch?: boolean;
 	className?: string;
@@ -165,6 +170,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 								</div>
 							) : (
 								<div className='flex items-center justify-center gap-2'>
+									<ChatWithDelegates />
 									<Button
 										onClick={() => setIsModalOpen(true)}
 										className={'h-10 border-pink_primary bg-white font-medium text-pink_primary dark:bg-black'}

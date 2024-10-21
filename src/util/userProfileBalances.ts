@@ -74,7 +74,7 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 				})
 				.catch((e: any) => console.error(e));
 		} else {
-			await api.derive.balances
+			await api?.derive?.balances
 				?.all(encodedAddr)
 				.then((result: any) => {
 					transferableBalance = new BN((result?.transferable || result.availableBalance).toBigInt().toString());

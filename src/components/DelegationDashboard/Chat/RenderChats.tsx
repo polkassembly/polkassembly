@@ -10,15 +10,10 @@ import { List } from 'antd';
 interface Props {
 	className?: string;
 	chats: IChat[];
-	setIsChatOpen: (isChatOpen: boolean) => void;
-	setOpenedChat: (openedChat: IChat | null) => void;
+	handleOpenChat: (chat: IChat) => void;
 }
 
-const RenderChats = ({ className, setIsChatOpen, setOpenedChat, chats }: Props) => {
-	const openChat = (chat: IChat) => {
-		setIsChatOpen(true);
-		setOpenedChat(chat);
-	};
+const RenderChats = ({ className, handleOpenChat, chats }: Props) => {
 	return (
 		<div className={`${className} h-full w-full overflow-y-auto`}>
 			<List
@@ -27,7 +22,7 @@ const RenderChats = ({ className, setIsChatOpen, setOpenedChat, chats }: Props) 
 				renderItem={(chat) => (
 					<List.Item
 						key={chat.chatId}
-						onClick={() => openChat(chat)}
+						onClick={() => handleOpenChat(chat)}
 						className='cursor-pointer border-section-light-container p-0'
 					>
 						<ChatCard chat={chat} />

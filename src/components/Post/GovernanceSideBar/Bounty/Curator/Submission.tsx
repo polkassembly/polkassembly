@@ -3,15 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC, useEffect, useState } from 'react';
-import { Modal, Button, Select, Form, Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import Input from '~src/basic-components/Input';
-import BalanceInput from '~src/ui-components/BalanceInput';
-import TextEditor from '~src/ui-components/TextEditor';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
+import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 import dayjs from 'dayjs';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ESubmissionStatus, IChildBountySubmission } from '~src/types';
@@ -22,8 +19,8 @@ import { usePostDataContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Address from '~src/ui-components/Address';
 import Image from 'next/image';
-
-const { Option } = Select;
+import MakeChildBountySubmisionModal from './MakeChildBountySubmision';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -41,12 +38,6 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState<ESubmissionStatus | null>(null);
-	const showModal = () => {
-		setIsModalVisible(true);
-	};
-	const handleCancel = () => {
-		setIsModalVisible(false);
-	};
 
 	const fetchBountySubmission = async () => {
 		if (!bountyId || loading) return;
@@ -226,110 +217,24 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 					) : null}
 				</>
 			)}
-			<div
-				className='flex cursor-pointer items-center justify-center rounded-md border-[0.7px] border-solid border-section-light-container bg-[#E5007A] px-2 py-1 dark:border-separatorDark'
-				onClick={showModal}
-			>
-				<ImageIcon
-					src='/assets/icons/Document.svg'
-					alt='submit'
-				/>
-				<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
-			</div>
-
-			<Modal
-				title='Make Submission'
-				visible={isModalVisible}
-				onCancel={handleCancel}
-				footer={null}
-				destroyOnClose
-			>
-				<Form
-					layout='vertical'
-					onFinish={() => setIsModalVisible(false)}
+			{!!loginAddress?.length && (
+				<CustomButton
+					variant='primary'
+					className='flex w-full cursor-pointer items-center justify-center rounded-md border-none'
+					onClick={() => setIsModalVisible(true)}
 				>
-					<Form.Item
-						label='Select Account'
-						name='account'
-					>
-						<Select placeholder='Select an account'>
-							<Option value='account1'>Account 1</Option>
-							<Option value='account2'>Account 2</Option>
-						</Select>
-					</Form.Item>
-					<Form.Item
-						label={
-							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
-								Title <span className='text-red-500'>*</span>
-							</div>
-						}
-						name='title'
-						className='-mt-3'
-					>
-						<Input placeholder='Enter title' />
-					</Form.Item>
-
-					<BalanceInput
-						label={'Request Amount'}
-						helpText={'Enter an amount for your request'}
-						placeholder={'Enter an amount for your request '}
-						className='-mt-3 border-section-light-container text-sm font-medium dark:border-section-dark-container'
-						theme={theme}
+					<ImageIcon
+						src='/assets/icons/Document.svg'
+						alt='submit'
 					/>
-
-					<Form.Item
-						label='Links'
-						name='links'
-						className='-mt-3'
-					>
-						<Input placeholder='Add relevant links' />
-					</Form.Item>
-
-					<Form.Item
-						label={
-							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
-								Categories <span className='text-red-500'>*</span>
-							</div>
-						}
-						name='categories'
-						className='-mt-3'
-					>
-						<Input placeholder='Add more context for your request' />
-					</Form.Item>
-					<Form.Item
-						label={
-							<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
-								Description <span className='text-red-500'>*</span>
-							</div>
-						}
-						name='description'
-						className='-mt-3'
-					>
-						<TextEditor
-							name='content'
-							theme={theme}
-							// value={value}
-							// theme={theme}
-							height={150}
-							onChange={() => {}}
-							// onChange={onChangeWrapper}
-							autofocus={false}
-						/>{' '}
-					</Form.Item>
-
-					<Form.Item>
-						<div className='flex justify-end gap-2'>
-							<Button onClick={handleCancel}>Cancel</Button>
-							<Button
-								type='primary'
-								htmlType='submit'
-							>
-								Send
-							</Button>
-						</div>
-					</Form.Item>
-				</Form>
-			</Modal>
+					<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
+				</CustomButton>
+			)}
+			<MakeChildBountySubmisionModal
+				bountyId={bountyId}
+				open={isModalVisible}
+				setOpen={setIsModalVisible}
+			/>
 		</GovSidebarCard>
 	);
 };

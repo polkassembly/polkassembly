@@ -7,6 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { followsCollRef } from '~src/api-utils/firestore_refs';
+import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 
@@ -23,13 +24,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowStatusRes
 		return res.status(400).json({ message: 'Missing or invalid userIdToCheck in query parameters', isFollowing: false });
 	}
 
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ message: 'Missing or invalid network name in request headers', isFollowing: false });
+	}
+
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Missing user token', isFollowing: false });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: 'User not found', isFollowing: false });
 
-	const followsDoc = await followsCollRef().where('follower_user_id', '==', user.id).where('followed_user_id', '==', Number(userIdToCheck)).get();
+	const followsDoc = await followsCollRef().where('network', '==', network).where('follower_user_id', '==', user.id).where('followed_user_id', '==', Number(userIdToCheck)).get();
 
 	if (!followsDoc.empty) {
 		return res.status(200).json({ message: 'Already following', isFollowing: true });

@@ -34,6 +34,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			!reqAmount ||
 			new BN(reqAmount || 0).eq(ZERO_BN) ||
 			!proposerAddress?.length ||
+			!getEncodedAddress(proposerAddress, network) ||
 			(link?.length && !(link as string)?.startsWith('https:')) ||
 			(tags?.length && !!tags?.some((tag: string) => typeof tag !== 'string')) ||
 			isNaN(parentBountyIndex)

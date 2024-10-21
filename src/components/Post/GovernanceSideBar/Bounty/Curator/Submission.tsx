@@ -2,8 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useEffect, useState } from 'react';
-import { Button, Divider } from 'antd';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Button, Divider, message } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
@@ -12,7 +12,6 @@ import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 import dayjs from 'dayjs';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ESubmissionStatus, IChildBountySubmission } from '~src/types';
-import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Skeleton from '~src/basic-components/Skeleton';
 import Link from 'next/link';
 import { usePostDataContext } from '~src/context';
@@ -21,6 +20,7 @@ import Address from '~src/ui-components/Address';
 import Image from 'next/image';
 import MakeChildBountySubmisionModal from './MakeChildBountySubmision';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import SubmissionAction from './SubmissionAction';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -31,6 +31,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 	const {
 		postData: { curator }
 	} = usePostDataContext();
+	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress } = useUserDetailsSelector();
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -38,6 +39,15 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState<ESubmissionStatus | null>(null);
+	const handleNewSubmission = useCallback(async (created: boolean) => {
+		if (created) {
+			await fetchBountySubmission();
+			setIsModalVisible(false);
+			setEditSubmission(undefined);
+			setIsEditing(false);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const fetchBountySubmission = async () => {
 		if (!bountyId || loading) return;
@@ -60,12 +70,51 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 		}
 	};
 
+	const [isEditing, setIsEditing] = useState(false);
+	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | undefined>(undefined);
+
+	const handleEditClick = (submission: IChildBountySubmission) => {
+		setEditSubmission(submission);
+		setIsEditing(true);
+		setIsModalVisible(true);
+	};
+
+	const handleSubmissionClick = () => {
+		setEditSubmission(undefined);
+		setIsEditing(false);
+		setIsModalVisible(true);
+	};
+
+	const handleDelete = async (submission: IChildBountySubmission) => {
+		const payload = {
+			curatorAddress: currentUser?.loginAddress,
+			parentBountyIndex: submission?.parentBountyIndex,
+			proposerAddress: submission?.proposer,
+			rejectionMessage: '',
+			submissionId: submission?.id,
+			updatedStatus: ESubmissionStatus.DELETED
+		};
+
+		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
+
+		if (error) {
+			console.error('Error updating submission status:', error);
+			return;
+		}
+
+		if (data) {
+			setBountySubmission((prevSubmissions) => prevSubmissions.filter((sub) => sub.id !== submission.id));
+			setEditSubmission(undefined);
+			message.success('Submission status updated successfully');
+		}
+	};
+
 	useEffect(() => {
 		if (bountyId) {
 			fetchBountySubmission();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bountyId]);
+	}, [bountyId, handleNewSubmission]);
 
 	const getFilteredSubmissions = () => {
 		switch (activeTab) {
@@ -80,6 +129,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 	const canViewAll = bountySubmission.some((submission) =>
 		[getEncodedAddress(curator, network), getEncodedAddress(submission?.proposer, network)].includes(getEncodedAddress(loginAddress, network))
 	);
+	const hasSubmitted = bountySubmission.some((submission) => submission?.proposer === getEncodedAddress(loginAddress, network));
 
 	return (
 		<GovSidebarCard>
@@ -156,7 +206,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 										<Address
 											address={submission?.proposer}
 											displayInline
-											isTruncateUsername
+											isTruncateUsername={true}
 											className='text-xs'
 										/>
 										<Divider
@@ -182,21 +232,13 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 										<span className='text-sm font-medium text-blue-light-high hover:underline dark:text-white'>{submission?.title}</span>
 									</div>
 									<div className='flex w-full'>
-										{submission.status === ESubmissionStatus.APPROVED ? (
-											<span className='w-full cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-sm font-medium text-[#07641C]'>
-												<CheckCircleOutlined /> Approved
-											</span>
-										) : submission.status === ESubmissionStatus.REJECTED ? (
-											<span className='w-full cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-sm font-medium text-[#FB123C]'>
-												<CloseCircleOutlined /> Rejected
-											</span>
-										) : (
-											submission.status === ESubmissionStatus.PENDING && (
-												<span className='w-full cursor-default rounded-md bg-[#fefced] py-2 text-center text-sm font-medium text-[#EDB10A]'>
-													<ExclamationCircleOutlined /> Pending
-												</span>
-											)
-										)}
+										<SubmissionAction
+											submission={submission}
+											loginAddress={loginAddress}
+											network={network}
+											handleDelete={handleDelete}
+											handleEditClick={handleEditClick}
+										/>
 									</div>
 								</div>
 							</div>
@@ -217,11 +259,11 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 					) : null}
 				</>
 			)}
-			{!!loginAddress?.length && (
+			{!hasSubmitted && !!loginAddress?.length && (
 				<CustomButton
 					variant='primary'
 					className='flex w-full cursor-pointer items-center justify-center rounded-md border-none'
-					onClick={() => setIsModalVisible(true)}
+					onClick={handleSubmissionClick}
 				>
 					<ImageIcon
 						src='/assets/icons/Document.svg'
@@ -234,6 +276,10 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 				bountyId={bountyId}
 				open={isModalVisible}
 				setOpen={setIsModalVisible}
+				editing={isEditing}
+				submission={isEditing ? editSubmission : undefined}
+				ModalTitle={isEditing ? 'Edit Submission' : undefined}
+				onSubmissionCreated={handleNewSubmission}
 			/>
 		</GovSidebarCard>
 	);

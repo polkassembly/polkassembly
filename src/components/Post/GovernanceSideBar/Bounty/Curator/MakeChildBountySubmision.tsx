@@ -29,13 +29,14 @@ interface IBountyChildBountiesProps {
 	open: boolean;
 	editing?: boolean;
 	submission?: IChildBountySubmission;
+	onSubmissionCreated: (created: boolean) => void;
 }
 
 const ZERO_BN = new BN(0);
 
 const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
-	const { bountyId, ModalTitle, open, setOpen, editing = false, submission } = props;
+	const { bountyId, ModalTitle, open, setOpen, editing = false, submission, onSubmissionCreated = false } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const [title, setTitle] = useState<string>('');
 	const [content, setContent] = useState<string>('');
@@ -64,6 +65,9 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 				message: data?.message || 'Child Bounty Sumbission added successfully',
 				status: NotificationStatus.SUCCESS
 			});
+			if (typeof onSubmissionCreated === 'function') {
+				onSubmissionCreated(true);
+			}
 			setOpen(false);
 		}
 		if (error) {
@@ -76,15 +80,29 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 		setLoading(false);
 	};
 
-	useEffect(() => {
-		if (!submission || !editing) return;
+	const handleModalClose = () => {
+		setTitle('');
+		setContent('');
+		setLink('');
+		setTags([]);
+		setReqAmount('0');
+		setOpen(false);
+	};
 
-		setTitle(submission?.title || '');
-		setContent(submission?.content || '');
-		setTags(submission?.tags || []);
-		setReqAmount(submission?.reqAmount || '0');
-		setLink(submission?.link || '');
+	useEffect(() => {
+		if (submission && editing) {
+			console.log('setting full');
+			setTitle(submission?.title || '');
+			setContent(submission?.content || '');
+			setTags(submission?.tags || []);
+			setReqAmount(submission?.reqAmount || '0');
+			setLink(submission?.link || '');
+		}
 	}, [submission, editing]);
+
+	console.log('submission inside modal', submission);
+	console.log('editing inside modal', title);
+	console.log('title inside modal', content);
 
 	return (
 		<>
@@ -96,6 +114,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {
+					handleModalClose();
 					setOpen(false);
 				}}
 				title={
@@ -147,9 +166,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 								<Input
 									name='title'
 									className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									onChange={(e) => {
-										setTitle(e.target.value?.trim() || '');
-									}}
+									onChange={(e) => setTitle(e.target.value?.trim() || '')}
 									value={title}
 								/>
 							</Form.Item>

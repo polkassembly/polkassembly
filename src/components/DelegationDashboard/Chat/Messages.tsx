@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Spin, Card } from 'antd';
+import { Spin, Card, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -88,25 +88,6 @@ const Messages = ({ className, chat, chatId }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chatId]);
 
-	useEffect(() => {
-		const toolbar = document.querySelector('.tox-toolbar__primary');
-		if (toolbar) {
-			let button = toolbar.querySelector('.custom-post-button') as HTMLButtonElement;
-			if (!button) {
-				button = document.createElement('button') as HTMLButtonElement;
-				button.className =
-					'custom-post-button inline-flex h-7 self-center ml-auto mr-3 w-fit px-5 items-center justify-center space-x-2 rounded-md border-none bg-[#485F7D99] text-sm font-medium tracking-wide text-white';
-				button.type = 'button';
-				toolbar.appendChild(button);
-			}
-			button.disabled = !newMessage || loading;
-			button.onclick = handleSubmit;
-			button.innerHTML = '<span class="text-white">Post</span>';
-			button.classList.toggle('opacity-60', !newMessage || loading);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [newMessage, loading]);
-
 	return (
 		<div className='flex h-full w-full flex-col'>
 			<Card
@@ -133,7 +114,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				spinning={loading}
 				className='h-[250px]'
 			>
-				<div className={`${className} h-64 overflow-y-scroll px-5 py-3`}>
+				<div className={`${className} h-56 overflow-y-scroll px-5 py-3`}>
 					{messages.map((message) => {
 						const isSent = message?.senderAddress === address;
 						return (
@@ -160,11 +141,21 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				<ContentForm
 					value={newMessage}
 					height={120}
-					className='[&_.ant-form-item]:m-0 [&_.tox-editor-container]:flex-col-reverse [&_.tox-editor-header]:border-t [&_.tox-editor-header]:border-section-light-container [&_.tox-statusbar]:hidden [&_.tox]:rounded-none [&_.tox_.tox-toolbar\_\_primary]:bg-[#D2D8E0]'
+					className='[&_.ant-form-item]:m-0 [&_.tox-statusbar]:hidden [&_.tox]:rounded-none [&_.tox_.tox-toolbar\_\_primary]:bg-[#D2D8E0]'
 					onChange={(content: string) => {
 						setNewMessage(content);
 					}}
 				/>
+				<Button
+					className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
+						!newMessage || loading ? 'opacity-60' : ''
+					}`}
+					type='primary'
+					disabled={!newMessage || loading}
+					onClick={handleSubmit}
+				>
+					<span className='text-white'>Post</span>
+				</Button>
 			</AuthForm>
 		</div>
 	);

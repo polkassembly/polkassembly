@@ -259,11 +259,18 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 					) : null}
 				</>
 			)}
-			{!hasSubmitted && !!loginAddress?.length && (
+			{!!loginAddress?.length && (
 				<CustomButton
 					variant='primary'
 					className='flex w-full cursor-pointer items-center justify-center rounded-md border-none'
-					onClick={handleSubmissionClick}
+					onClick={() => {
+						if (hasSubmitted) {
+							message.error('You can only make one submission per bounty.');
+						} else {
+							handleSubmissionClick();
+						}
+					}}
+					disabled={!hasSubmitted}
 				>
 					<ImageIcon
 						src='/assets/icons/Document.svg'

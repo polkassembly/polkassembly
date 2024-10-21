@@ -22,7 +22,9 @@ interface Props {
 const NewChat = ({ handleOpenChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const { delegationDashboardAddress: address } = userProfile;
+	const { delegationDashboardAddress, loginAddress } = userProfile;
+
+	const address = delegationDashboardAddress || loginAddress;
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [allDelegates, setAllDelegates] = useState<IDelegateAddressDetails[]>([]);
@@ -40,8 +42,6 @@ const NewChat = ({ handleOpenChat }: Props) => {
 			setLoading(false);
 		}
 	};
-
-	console.log('allDelegates', allDelegates);
 
 	const handleSearch = (searchTerm: string) => {
 		setSearchAddress(searchTerm);
@@ -64,8 +64,8 @@ const NewChat = ({ handleOpenChat }: Props) => {
 			return;
 		}
 		const requestData = {
-			address: '14afTxWVYvk7TmMZ9m2MtYUH32MXemtFib9KzkaLKBu76xJZ',
-			senderAddress: '14afTxWVYvk7TmMZ9m2MtYUH32MXemtFib9KzkaLKBu76xJZ',
+			address,
+			senderAddress: address,
 			receiverAddress: recipientAddress
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);

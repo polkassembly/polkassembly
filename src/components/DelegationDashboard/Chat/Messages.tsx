@@ -22,7 +22,9 @@ interface Props {
 
 const Messages = ({ className, chat, chatId }: Props) => {
 	const userProfile = useUserDetailsSelector();
-	const { delegationDashboardAddress: address, picture, username } = userProfile;
+	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
+
+	const address = delegationDashboardAddress || loginAddress;
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [messages, setMessages] = useState<IMessage[]>([]);

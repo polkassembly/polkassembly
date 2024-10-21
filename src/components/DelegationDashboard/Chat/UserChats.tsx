@@ -19,7 +19,9 @@ interface Props {
 
 const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
-	const { delegationDashboardAddress: address } = userProfile;
+	const { delegationDashboardAddress, loginAddress } = userProfile;
+
+	const address = delegationDashboardAddress || loginAddress;
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [sentChats, setSentChats] = useState<IChat[]>([]);

@@ -17,8 +17,9 @@ interface Props {
 
 const ChatCard = ({ chat }: Props) => {
 	const userProfile = useUserDetailsSelector();
-	const { delegationDashboardAddress: address } = userProfile;
+	const { delegationDashboardAddress, loginAddress } = userProfile;
 
+	const address = delegationDashboardAddress || loginAddress;
 	const latestMessage = chat?.latestMessage;
 	const isReadMessage = latestMessage?.viewed_by?.includes(address);
 

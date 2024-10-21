@@ -7,6 +7,7 @@ import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposal
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
+import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 
 declare global {
 	interface Window {
@@ -1046,4 +1047,14 @@ export enum ESubmissionStatus {
 	PENDING = 'pending',
 	OUTDATED = 'outdated',
 	DELETED = 'deleted'
+}
+
+export enum EPendingCuratorReqType {
+	SENT = 'sent',
+	RECEIVED = 'received'
+}
+
+export interface IPendingCuratorReq extends IBountyListing {
+	reqType: EPendingCuratorReqType;
+	proposalType: ProposalType;
 }

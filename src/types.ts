@@ -1015,3 +1015,11 @@ export interface INetworkWalletErr {
 	description: string;
 	error: number;
 }
+export interface IFollowEntry {
+	id: string;
+	network: string;
+	created_at: Date;
+	follower_user_id: number;
+	followed_user_id: number;
+	updated_at: Date;
+}

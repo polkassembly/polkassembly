@@ -28,20 +28,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userIdToUnfollow = Number(userId);
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Missing user token' });
+	if (!token) return res.status(401).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	if (user.id === userIdToUnfollow) {
-		return res.status(400).json({ message: 'Cannot unfollow yourself' });
+		return res.status(403).json({ message: 'Cannot unfollow yourself' });
 	}
 
 	const userRef = firestore_db.collection('users').doc(String(userIdToUnfollow));
 	const userDoc = await userRef.get();
 
 	if (!userDoc.exists) {
-		return res.status(403).json({ message: 'User to unfollow not found' });
+		return res.status(404).json({ message: 'User to unfollow not found' });
 	}
 
 	const followsRef = followsCollRef();

@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowStatusRes
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ message: 'Missing or invalid network name in request headers', isFollowing: false });
+		return res.status(500).json({ message: 'Missing or invalid network name in request headers', isFollowing: false });
 	}
 
 	const token = getTokenFromReq(req);

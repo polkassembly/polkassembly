@@ -22,7 +22,7 @@ export const useFollowStatus = (userIdToCheck: number | null) => {
 			const { data, error } = await nextApiClientFetch<FollowStatusResponseType>(`/api/v1/auth/actions/checkFollowStatus?userIdToCheck=${userIdToCheck}`);
 			if (error) {
 				console.log('Error while checking status', error);
-				setError(error);
+				setError(error || 'Something went wrong while fetching follow status.');
 			} else if (data?.isFollowing) {
 				setIsFollowing(true);
 			}

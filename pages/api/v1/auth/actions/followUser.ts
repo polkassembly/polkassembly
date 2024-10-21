@@ -30,10 +30,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userIdToFollow = Number(userId);
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Missing user token' });
+	if (!token) return res.status(401).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!user) return res.status(401).json({ message: messages.USER_NOT_FOUND });
 
 	if (user.id === userIdToFollow) {
 		return res.status(400).json({ message: 'Cannot follow yourself' });

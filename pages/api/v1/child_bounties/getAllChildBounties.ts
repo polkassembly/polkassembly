@@ -24,8 +24,8 @@ export const getAllchildBountiesFromBountyIndex = async ({
 }: {
 	parentBountyIndex: number;
 	network: string;
-	status: string;
-	curator: string;
+	status?: string;
+	curator?: string;
 }) => {
 	if (!network || !isValidNetwork(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);

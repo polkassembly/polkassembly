@@ -19,22 +19,26 @@ import {
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
+	StakingAdminIcon,
 	TipsIcon,
 	TreasuryIconNew,
 	TreasuryProposalsIcon,
 	ChildBountiesIcon,
 	TechComProposalIcon,
 	RootIcon,
+	WishForChangeIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ArchivedIcon,
 	SelectedOverview,
 	SelectedRoot,
+	SelectedWishForChange,
 	SelectedGovernance,
 	SelectedWhitelist,
 	SelectedTreasury,
 	SelectedDiscussions,
 	SelectedPreimages,
+	AnalyticsSVGIcon,
 	AllPostIcon,
 	BatchVotingIcon,
 	BatchVotingIconDark,
@@ -45,7 +49,7 @@ import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { IActiveProposalCount } from '~src/types';
+import { IActiveProposalCount, PostOrigin } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { poppins } from 'pages/_app';
@@ -766,7 +770,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	const gov2TrackItems: { [x: string]: ItemType[] } = {
-		administrationItems: [getSiderMenuItem('Auction Admin', '/auction-admin', null), getSiderMenuItem('Staking Admin', '/staking-admin', null)],
 		fellowshipItems: [getSiderMenuItem('Members', '/members')],
 		governanceItems: [],
 		mainItems: [],
@@ -778,9 +781,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	if (network && networkTrackInfo[network]) {
-		gov2TrackItems.mainItems.splice(
-			1,
-			0,
+		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
 				<div className='flex items-center justify-between py-1'>
 					<span className='pt-1'>All</span>
@@ -875,9 +876,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			switch (networkTrackInfo[network][trackName].group) {
 				case 'Governance':
 					gov2TrackItems.governanceItems.push(menuItem);
-					if (networkTrackInfo[network][trackName].name.toLowerCase().includes('admin')) {
-						gov2TrackItems.administrationItems.push(menuItem);
-					}
 					break;
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
@@ -933,11 +931,134 @@ const Sidebar: React.FC<SidebarProps> = ({
 						)
 					);
 					break;
+
+				default: {
+					const icon =
+						trackName === 'all' ? (
+							<>
+								{router.pathname.includes('/root') ? (
+									<SelectedRoot className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+								) : (
+									<RootIcon className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+								)}
+							</>
+						) : trackName === PostOrigin.ROOT ? (
+							<>
+								{router.pathname.includes('/root') ? (
+									<SelectedRoot
+										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-[10px] -mt-0.5 '} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
+								) : (
+									<RootIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-[8px] mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+								)}
+							</>
+						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
+							<>
+								{router.pathname.includes('/wish-for-change') ? (
+									<SelectedWishForChange
+										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-[10px] -mt-1'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
+								) : (
+									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-[8px] mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+								)}
+							</>
+						) : trackName === PostOrigin.AUCTION_ADMIN ? (
+							<>
+								{' '}
+								{router.pathname.includes('/auction-admin') ? (
+									<ImageIcon
+										src='/assets/selected-icons/Auction Admin.svg'
+										alt=''
+										className={`${sidebarCollapsed ? 'absolute  -top-[28px] -ml-2' : '-ml-[10px]  '}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
+								) : (
+									<ImageIcon
+										src='/assets/sidebar/auction.svg'
+										alt=''
+										className={`${sidebarCollapsed ? ' absolute -top-[28px]  -ml-[7px]' : ' -ml-[8px] -mt-2'}   h-6 w-6 scale-90 text-2xl  ${
+											theme == 'dark' ? 'dark-icons' : 'text-lightBlue'
+										} text-2xl font-medium `}
+									/>
+								)}
+							</>
+						) : (
+							<>
+								{' '}
+								{router.pathname.includes('/staking-admin') ? (
+									<ImageIcon
+										src='/assets/selected-icons/Staking Admin.svg'
+										alt=''
+										className={`${
+											sidebarCollapsed ? 'absolute -top-[29px] -ml-[10px] mt-0.5' : '-ml-[10px] '
+										}  scale-90 text-2xl  font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
+								) : (
+									<StakingAdminIcon
+										className={`${sidebarCollapsed ? '-ml-[8px] text-2xl' : ' -ml-[8px]'} mt-1 scale-90   font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
+								)}
+							</>
+						);
+
+					gov2TrackItems.mainItems.push(
+						getSiderMenuItem(
+							<div className='flex justify-between'>
+								<span className='pt-1'>
+									{trackName
+										.split(/(?=[A-Z])/)
+										.join(' ')
+										.replace(/\b\w/g, (char) => char.toUpperCase())}
+								</span>
+								{!sidebarCollapsed && (
+									<span
+										className={`text-[10px] ${
+											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+										} w-5 rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+									>
+										{activeProposal && activeProposal > 9 ? (
+											<>
+												9<span className='text-[7px]'>+</span>
+											</>
+										) : (
+											activeProposal || ''
+										)}
+									</span>
+								)}
+							</div>,
+							`/${trackName
+								.split(/(?=[A-Z])/)
+								.join('-')
+								.toLowerCase()}`,
+							<div className='relative'>
+								{icon}
+								<div
+									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-8'
+									style={{
+										opacity: sidedrawer ? 0 : 1,
+										transition: 'opacity 0.3s ease-in-out'
+									}}
+								>
+									<span
+										className={`text-[10px] ${
+											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+									>
+										{activeProposal && activeProposal > 9 ? (
+											<>
+												9<span className='text-[7px]'>+</span>
+											</>
+										) : (
+											activeProposal || ''
+										)}
+									</span>
+								</div>
+							</div>
+						)
+					);
+				}
 			}
 		}
 	}
-
-	let bountiesSubCategories: ItemType[] = [];
 
 	const gov2OverviewItems = [
 		!isMobile ? getSiderMenuItem('', '', null) : null,
@@ -1041,76 +1162,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
 
-	if (['polkadot'].includes(network)) {
-		bountiesSubCategories.push(
-			getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
-		);
-	}
-
-	if (isOpenGovSupported(network)) {
-		bountiesSubCategories = bountiesSubCategories.concat(
-			getSiderMenuItem(
-				<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-					{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
-					<span
-						className={`text-[10px] ${
-							totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
-								? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
-								: ''
-						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
-					>
-						{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
-							<>
-								9<span className='text-[7px]'>+</span>
-							</>
-						) : (
-							totalActiveProposalsCount?.['bountiesCount'] || ''
-						)}
-					</span>
-				</div>,
-				'/bounties',
-				null
-			),
-			getSiderMenuItem(
-				<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-					Child Bounties
-					<span
-						className={`text-[10px] ${
-							totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
-								? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
-								: ''
-						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
-					>
-						{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
-							<>
-								9<span className='text-[7px]'>+</span>
-							</>
-						) : (
-							totalActiveProposalsCount?.['childBountiesCount'] || ''
-						)}
-					</span>
-				</div>,
-				'/child_bounties',
-				null
-			)
-		);
-	}
-	const bountiesMenuCategory = getSiderMenuItem(
-		'Bounties',
-		'gov2_bounties_group',
-		<div>
-			<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-		</div>,
-		[...bountiesSubCategories]
-	);
-
-	gov2OverviewItems.splice(5, 0, bountiesMenuCategory);
-
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem(
-			'Administration',
+			'Governance',
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
@@ -1119,20 +1175,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<GovernanceIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
-			[...gov2TrackItems.administrationItems]
+			[...gov2TrackItems.governanceItems]
+		),
+		getSiderMenuItem(
+			'Whitelist',
+			'gov2_fellowship_group',
+			<div>
+				{activeWhitelist ? (
+					<SelectedWhitelist className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</div>,
+			[...gov2TrackItems.fellowshipItems]
 		)
-		// getSiderMenuItem(
-		// 'Whitelist',
-		// 'gov2_fellowship_group',
-		// <div>
-		// {activeWhitelist ? (
-		// <SelectedWhitelist className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-		// ) : (
-		// <FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-		// )}
-		// </div>,
-		// [...gov2TrackItems.fellowshipItems]
-		// )
 	];
 
 	const governanceDropdownContent = (
@@ -1311,12 +1367,79 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
-
+	let bountiesSubItems: ItemType[] = [];
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
-		const items = [...gov2TrackItems.treasuryItems];
+		let items = [...gov2TrackItems.treasuryItems];
+
+		if (['polkadot'].includes(network)) {
+			bountiesSubItems.push(
+				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+			);
+		}
+		if (isOpenGovSupported(network)) {
+			bountiesSubItems = bountiesSubItems.concat(
+				getSiderMenuItem(
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
+									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
+									: ''
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
+								<>
+									9<span className='text-[7px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.['bountiesCount'] || ''
+							)}
+						</span>
+					</div>,
+					'/bounties',
+					null
+				),
+				getSiderMenuItem(
+					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+						Child Bounties
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
+									? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
+									: ''
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
+								<>
+									9<span className='text-[7px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.['childBountiesCount'] || ''
+							)}
+						</span>
+					</div>,
+					'/child_bounties',
+					null
+				)
+			);
+		}
+
+		const bountiesMenuItem = getSiderMenuItem(
+			'Bounties',
+			'gov2_bounties_group',
+			<div>
+				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+			</div>,
+			[...bountiesSubItems]
+		);
+
+		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
+
+		items = items.concat(bountiesMenuItem);
 
 		gov2Items.splice(
-			9,
+			8,
 			0,
 			getSiderMenuItem(
 				'Treasury',
@@ -1361,6 +1484,75 @@ const Sidebar: React.FC<SidebarProps> = ({
 					} else if (React.isValidElement(item.label)) {
 						formattedLabel = item.label;
 					}
+				}
+				if (item && item.key === 'gov2_bounties_group') {
+					const bountiesPopoverContent = (
+						<div className='w-[150px] pt-2'>
+							{bountiesSubItems.map((subItem, subIndex) => {
+								if (!subItem) return null;
+								const uniqueSubKey = `${subItem?.key}-${subIndex}`;
+
+								let formattedSubLabel;
+								if (subItem && 'label' in subItem) {
+									if (typeof subItem.label === 'string') {
+										formattedSubLabel = subItem.label
+											?.toString()
+											.replace(/^\//, '')
+											.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ');
+									} else if (React.isValidElement(subItem.label)) {
+										formattedSubLabel = subItem.label;
+									}
+								}
+
+								if (formattedSubLabel === 'Bounty') {
+									formattedSubLabel = 'Dashboard';
+								}
+
+								return (
+									<p
+										key={uniqueSubKey}
+										className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+											isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+										}`}
+									>
+										<Link href={subItem?.key as string}>
+											<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+												{formattedSubLabel || ''}
+											</span>
+										</Link>
+									</p>
+								);
+							})}
+						</div>
+					);
+
+					return (
+						<div
+							key={uniqueKey}
+							className='relative'
+						>
+							<Popover
+								content={bountiesPopoverContent}
+								placement='right'
+								trigger='hover'
+								overlayClassName='z-[1200]'
+							>
+								<p
+									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
+									}`}
+								>
+									<span className='flex items-center gap-2 font-medium'>
+										<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' />
+										<span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
+									</span>
+									<RightOutlined />
+								</p>
+							</Popover>
+						</div>
+					);
 				}
 
 				return (
@@ -1563,19 +1755,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 			];
 		}
 
-		// if (isOpenGovSupported(network)) {
-		// const newItem = getSiderMenuItem(
-		// <div className='flex w-fit gap-2'>
-		// <span>Gov Analytics</span>
-		// </div>,
-		// '/gov-analytics',
-		// <div className='-ml-2'>
-		// <AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-		// </div>
-		// );
+		if (isOpenGovSupported(network)) {
+			const newItem = getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Gov Analytics</span>
+				</div>,
+				'/gov-analytics',
+				<div className='-ml-2'>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				</div>
+			);
 
-		// gov2Items.splice(gov2Items.length - 2, 0, newItem);
-		// }
+			gov2Items.splice(gov2Items.length - 2, 0, newItem);
+		}
 
 		const archivedDropdownContent = (
 			<div className='text-left'>

@@ -413,7 +413,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								label='Funding Amount'
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
 								className='mb-0'
-								onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
+								onChange={(amount: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: amount.toString() })}
 							/>
 						</div>
 

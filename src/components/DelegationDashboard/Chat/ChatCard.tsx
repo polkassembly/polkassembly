@@ -9,6 +9,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
+import Markdown from '~src/ui-components/Markdown';
 import dayjs from 'dayjs';
 
 interface Props {
@@ -59,7 +60,11 @@ const ChatCard = ({ chat }: Props) => {
 					/>
 					<span className='text-xs'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
 				</div>
-				<p className='line-clamp-2 w-full break-words text-xs'>{latestMessage?.content}</p>
+				<Markdown
+					md={latestMessage?.content?.length > 100 ? `${latestMessage?.content.slice(0, 100)}...` : latestMessage?.content}
+					className={'line-clamp-2 w-full break-words text-xs'}
+					isPreview={true}
+				/>
 			</div>
 		</div>
 	);

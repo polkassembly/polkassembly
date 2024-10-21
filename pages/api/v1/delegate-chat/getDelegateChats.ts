@@ -48,7 +48,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 				const data = doc.data();
 				return {
 					chatId: data.chatId,
-					created_at: data.data.created_at,
+					created_at: data.created_at,
 					latestMessage: data.latestMessage,
 					receiverAddress: data.receiverAddress,
 					senderAddress: data.senderAddress,

@@ -65,8 +65,8 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		}
 		const requestData = {
 			address,
-			senderAddress: address,
-			receiverAddress: recipientAddress
+			receiverAddress: recipientAddress,
+			senderAddress: address
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
 		if (data) {
@@ -144,7 +144,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 								<Card
 									key={delegate?.address}
 									className='w-full rounded-none border-t-0'
-									bodyStyle={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}
+									bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 									size='small'
 								>
 									{delegate?.address && delegate?.address?.startsWith('0x') ? (

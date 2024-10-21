@@ -31,7 +31,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 
 	const [newMessage, setNewMessage] = useState<string>('');
 
-	const recipientAddress = chat?.senderAddress === address ? chat?.senderAddress : chat?.receiverAddress;
+	const recipientAddress = chat?.senderAddress === address ? chat?.receiverAddress : chat?.senderAddress;
 
 	const handleDataFetch = async () => {
 		setLoading(true);
@@ -55,12 +55,12 @@ const Messages = ({ className, chat, chatId }: Props) => {
 		}
 		const requestData = {
 			address,
-			content: trimmedMsg,
 			chatId,
-			senderAddress: address,
+			content: trimmedMsg,
 			receiverAddress: recipientAddress,
-			senderUsername: username,
-			senderImage: picture
+			senderAddress: address,
+			senderImage: picture,
+			senderUsername: username
 		};
 		const { data, error } = await nextApiClientFetch<IMessage[]>('api/v1/delegate-chat/send-message', requestData);
 		if (data) {
@@ -109,7 +109,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 		<div className='flex h-[calc(100%-300px)] w-full flex-col'>
 			<Card
 				className='w-full rounded-none border-t-0'
-				bodyStyle={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}
+				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 				size='small'
 			>
 				{recipientAddress && recipientAddress?.startsWith('0x') ? (

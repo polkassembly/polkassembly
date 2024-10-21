@@ -17,46 +17,29 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
-import NameLabel from '~src/ui-components/NameLabel';
+import Address from '~src/ui-components/Address';
+import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
+import { IChildBounty } from '~src/types';
+import classNames from 'classnames';
 
 const ZERO_BN = new BN(0);
 
-interface Bounty {
-	index: number;
-	title: string;
-	reward: number;
-	curator: string;
-	totalChildBountiesCount: number;
-	childBounties: ChildBounty[];
-	claimedAmount: number;
-	payee: string;
-	proposer: string;
-	status: string;
-}
-
-interface ChildBounty {
-	index: number;
-	title: string;
-	reward: number;
-	payee: string;
-}
 const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const router = useRouter();
-	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
+	const { loginAddress } = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: number]: boolean }>({});
-	const [curatedBounties, setCuratedBounties] = useState<Bounty[]>();
+	const [curatedBounties, setCuratedBounties] = useState<IBountyListing[]>();
 	const [totalBountiesCount, setTotalBountiesCount] = useState<number>(0);
 	const { resolvedTheme: theme } = useTheme();
 
 	const fetchCuratorBounties = async () => {
 		setLoading(true);
-		const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getAllCuratedBountiesAndChildBounties', {
+		const { data } = await nextApiClientFetch<{ bounties: IBountyListing[]; totalBountiesCount: number }>('/api/v1/bounty/curator/getAllCuratedBountiesAndChildBounties', {
 			page: router?.query?.page || 1,
-			userAddress: address
+			userAddress: loginAddress
 		});
 		if (data) {
 			setCuratedBounties(data?.bounties);
@@ -66,10 +49,10 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 	};
 
 	interface ChildBountiesResponse {
-		child_bounties: ChildBounty[];
+		child_bounties: IChildBounty[];
 	}
 
-	const fetchChildBounties = async (parentBountyIndex: number, curator: string): Promise<ChildBounty[]> => {
+	const fetchChildBounties = async (parentBountyIndex: number, curator: string): Promise<IChildBounty[]> => {
 		const { data, error } = await nextApiClientFetch<ChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
 			curator,
 			parentBountyIndex,
@@ -84,7 +67,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 		return data?.child_bounties || [];
 	};
 
-	const toggleChildBounties = async (bounty: Bounty) => {
+	const toggleChildBounties = async (bounty: IBountyListing) => {
 		if (expandedBountyId === bounty?.index) {
 			setExpandedBountyId(null);
 		} else {
@@ -115,9 +98,9 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 
 	return (
 		<div
-			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
+			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-section-light-container bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
-			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>
+			<p className='text-2xl font-bold text-lightBlue dark:text-lightWhite'>
 				Bounties Curated {curatedBounties && curatedBounties?.length > 0 ? <>({curatedBounties?.length})</> : <>(0)</>}{' '}
 			</p>
 			{loading ? (
@@ -126,7 +109,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 				</>
 			) : (
 				<>
-					{curatedBounties && curatedBounties?.length > 0 ? (
+					{curatedBounties?.length ? (
 						<>
 							{curatedBounties?.map((bounty) => {
 								const claimedBn = new BN(bounty?.claimedAmount || '0');
@@ -139,23 +122,29 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 										key={bounty?.index}
 										className='-mt-5'
 									>
-										<div className=' flex justify-end text-[12px] font-bold text-gray-500'>
-											<span className='rounded-t-lg border-t-[1px] border-solid border-t-[#DF1380] bg-[#FFF0FF] p-2 dark:bg-[#311B27] dark:text-[#DF1380]'>
+										<div className=' flex justify-end text-xs font-bold text-bodyBlue'>
+											<span className='rounded-t-lg border-b-0 border-t-[1px] border-solid border-t-[#DF1380] bg-[#FFF0FF] p-2 dark:bg-[#311B27] dark:text-[#DF1380]'>
 												{percentage?.toNumber()?.toFixed(1)}% Claimed
 											</span>
 										</div>
 										<div
 											className={`rounded-lg border-solid ${
-												expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
+												expandedBountyId === bounty?.index ? 'border-[1px] border-pink_primary dark:border-pink_primary' : 'border-[0.7px] border-section-light-container'
 											} bg-white p-3 dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 										>
-											<div className='flex items-center justify-between gap-3'>
-												<div className=' flex gap-1'>
-													<span className='dark:text-icon-dark-inactiv text-[17px] font-medium text-blue-light-medium'>#{bounty?.index} </span>
+											<div className='flex items-center justify-between gap-3 py-1.5'>
+												<div className='flex items-center gap-1'>
+													<span
+														className={`text-lg font-medium text-lightBlue hover:underline  ${
+															expandedBountyId === bounty?.index ? 'dark:text-white' : 'dark:text-blue-dark-medium'
+														}`}
+													>
+														#{bounty?.index}{' '}
+													</span>
 													<Link href={`/bounty/${bounty?.index}`}>
 														<span
-															className={`text-[17px] font-medium text-blue-light-high hover:underline  ${
-																expandedBountyId === bounty?.index ? 'dark:text-white' : 'dark:text-icon-dark-inactive'
+															className={`text-lg font-medium text-lightBlue hover:underline  ${
+																expandedBountyId === bounty?.index ? 'dark:text-white' : 'dark:text-blue-dark-medium'
 															}`}
 														>
 															{bounty?.title}
@@ -175,9 +164,9 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 														</span>
 													</Link>
 												</div>
-												<div className='-mt-4 flex items-center gap-3'>
+												<div className='flex items-center gap-3'>
 													<span className='whitespace-nowrap text-[20px] font-bold text-pink_primary'>{parseBalance(String(bounty?.reward || '0'), 2, true, network)}</span>
-													{bounty?.totalChildBountiesCount > 0 && (
+													{!!bounty?.totalChildBountiesCount && (
 														<div
 															onClick={() => toggleChildBounties(bounty)}
 															className='cursor-pointer'
@@ -194,7 +183,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 																	style={{
 																		background: theme == 'dark' ? '#4f4f4f' : 'linear-gradient(264.95deg, #333333 19.45%, #0A0A0A 101.3%)'
 																	}}
-																	className=' rounded-full p-2 text-white dark:text-icon-dark-inactive'
+																	className=' rounded-full p-2 text-white dark:text-blue-dark-medium'
 																/>
 															)}
 														</div>
@@ -202,7 +191,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 												</div>
 											</div>
 
-											{expandedBountyId === bounty?.index && bounty?.totalChildBountiesCount > 0 && (
+											{expandedBountyId === bounty?.index && !!bounty?.totalChildBountiesCount && (
 												<div className='mx-3 mt-2'>
 													{loadingChildBounties[bounty?.index] ? (
 														<div className='mt-2 flex justify-center'>
@@ -212,32 +201,31 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 														bounty?.childBounties?.map((childBounty) => (
 															<div
 																key={childBounty?.index}
-																className='mt-3 flex flex-col justify-between rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-[#F7F8FA] p-3 dark:bg-[#303030] dark:text-icon-dark-inactive'
+																className='mt-3 flex flex-col justify-between rounded-lg border-[0.7px] border-solid border-section-light-container bg-[#F7F8FA] p-3 dark:bg-[#303030] dark:text-blue-dark-medium'
 															>
-																<div className='flex items-center gap-3'>
-																	<span className='text-[18px] text-blue-light-medium dark:text-icon-dark-inactive'>#{childBounty?.index} </span>
+																<div className='flex items-start gap-5'>
+																	<span className='text-base font-medium text-lightBlue dark:text-blue-dark-medium'>#{childBounty?.index} </span>
 																	<Link href={`/child_bounty/${childBounty?.index}`}>
-																		<span className='text-[18px] font-medium text-blue-light-high hover:underline dark:text-white'>
-																			{childBounty?.title}{' '}
+																		<div className='text-base font-medium text-lightBlue hover:underline dark:text-white'>
+																			{childBounty?.title}
 																			<Image
 																				src='/assets/more.svg'
 																				alt=''
-																				style={{
-																					filter:
-																						theme === 'dark'
-																							? 'brightness(0) saturate(100%) invert(69%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(86%) contrast(87%)'
-																							: 'brightness(0) saturate(100%) invert(33%) sepia(14%) saturate(1156%) hue-rotate(174deg) brightness(102%) contrast(92%)'
-																				}}
+																				className={classNames(theme === 'dark' ? 'dark-icons' : '', '-mt-1 ml-1')}
 																				width={16}
 																				height={16}
-																			/>{' '}
-																		</span>
+																			/>
+																		</div>
 																	</Link>
 																</div>
 																<div className='mt-2 flex items-center justify-center gap-3 rounded-lg border-[1px] border-solid border-[#129F5D] bg-[#E7F6EC] p-1 dark:bg-[#2c3d36]'>
-																	<span className='text-[18px] font-bold text-[#129F5D]'>{parseBalance(String(childBounty?.reward || '0'), 2, true, network)}</span>
+																	<span className='text-lg font-bold text-[#129F5D]'>{parseBalance(String(childBounty?.reward || '0'), 2, true, network)}</span>
 																	<span className='flex items-center gap-3'>
-																		<span className='text-[#485F7D] dark:text-icon-dark-inactive'>Claimed By</span> <NameLabel defaultAddress={childBounty?.payee} />
+																		<span className='font-medium text-lightBlue dark:text-blue-dark-medium'>Claimed By</span>
+																		<Address
+																			address={childBounty?.payee || ''}
+																			displayInline
+																		/>
 																	</span>
 																</div>
 															</div>
@@ -245,8 +233,8 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 													)}
 												</div>
 											)}
-											<div className='mx-3 mt-4 rounded-lg border-[1px] border-solid border-[#E5007A] py-3 text-center'>
-												<span className='text-[18px] font-bold text-pink_primary'>
+											<div className='mx-3 mt-4 rounded-lg border-[1px] border-solid border-pink_primary py-3 text-center'>
+												<span className='text-lg font-bold text-pink_primary'>
 													<Image
 														src='/assets/bounty-icons/child-bounty-icon.svg'
 														alt='bounty icon'

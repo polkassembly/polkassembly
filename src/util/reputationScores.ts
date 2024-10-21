@@ -40,9 +40,6 @@ const REPUTATION_SCORES = {
 	create_tip: {
 		value: 2
 	},
-	give_tip: {
-		value: 1
-	},
 	vote_treasury_proposal: {
 		value: 2
 	},
@@ -137,6 +134,11 @@ const REPUTATION_SCORES = {
 		first: -10,
 		second: -20,
 		third_or_more: -50
+	},
+	passed_proposal: {
+		first: 10,
+		second: 20,
+		third_or_more: 50
 	}
 };
 

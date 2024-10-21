@@ -1,103 +1,125 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
-import { RightOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import CuratorProfile from './CuratorProfile';
-import CuratorPendingRequestManager from './PendingRequestManager';
+import { poppins, spaceGrotesk } from 'pages/_app';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import CuratorDashboardTabItems from './CuratorDashboardTabs';
+import { useTheme } from 'next-themes';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
+import BountyActionModal from '../Bounties/bountyProposal/BountyActionModal';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
-import BountiesCuratorInfo from './BountiesCuratorInfo';
-import { useRouter } from 'next/router';
-import { spaceGrotesk } from 'pages/_app';
+interface Props {
+	className?: string;
+}
 
-const CuratorDashboardTabItems: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
-	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<string>(router.query.tab !== undefined ? (router.query.tab as string) : 'general');
+const CuratorDashboard = ({ className }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
+	const { id, loginAddress } = useUserDetailsSelector();
+	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [proposerAddress, setProposerAddress] = useState<string>('');
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
-	const tabs = [
-		{
-			children: <CuratorProfile />,
-			description: 'Track your bounty via notifications',
-			icon: '/assets/icons/curator-dashboard/general.svg',
-			key: 'general',
-			title: 'General'
-		},
-		{
-			children: <BountiesCuratorInfo handleClick={handleClick} />,
-			description: 'Review and Reward submissions on curated bounties',
-			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
-			key: 'bounties-curated',
-			title: 'Bounties Curated'
-		},
-		{
-			children: <CuratorPendingRequestManager />,
-			description: 'Review curator and child bounty requests',
-			icon: '/assets/icons/curator-dashboard/pending-request.svg',
-			key: 'pending-requests',
-			title: 'Pending Requests'
+	const handleClick = () => {
+		if (id && !isNaN(id)) {
+			if (proposerAddress.length > 0) {
+				setOpenModal(!openModal);
+			} else if (setOpenAddressLinkedModal) {
+				setOpenAddressLinkedModal(true);
+			}
+		} else {
+			setOpenLoginPrompt(true);
 		}
-	];
-
-	const handleTabClick = (tabKey: string) => {
-		setActiveTab(tabKey);
-		router.push({
-			pathname: router.pathname,
-			query: { tab: tabKey }
-		});
 	};
 
 	return (
-		<div className='flex gap-5'>
-			<div className='h-[175px]'>
-				<div className='mt-3 flex w-[400px] flex-col gap-2   rounded-xl border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
-					{tabs.map((tab) => (
-						<div
-							key={tab.key}
-							className={`flex cursor-pointer items-center justify-between px-3 py-2  transition-colors duration-300 ${
-								activeTab === tab.key ? 'rounded-lg border-[1.2px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
-							}`}
-							onClick={() => handleTabClick(tab.key)}
+		<div className={className}>
+			<main className='mx-3 mt-3'>
+				<div className='flex items-center justify-between'>
+					<span className={`text-3xl ${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-bodyBlue dark:text-blue-dark-high`}>Curator Dashboard</span>
+					{!isNaN(id || 0) && !!loginAddress?.length && (
+						<CustomButton
+							variant='primary'
+							onClick={handleClick}
+							className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
 						>
-							<div className='flex items-start gap-3'>
-								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? ' bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'} p-2`}>
-									<Image
-										src={tab.icon}
-										alt={`Curator Dashboard Icon ${tab.key}`}
-										width={24}
-										height={24}
-										style={{
-											filter:
-												activeTab === tab.key ? 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)' : 'none'
-										}}
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<span
-										className={`${activeTab === tab.key && ' font-extrabold text-pink_primary dark:text-[#FF4098]'} whitespace-normal break-words ${spaceGrotesk.className} ${
-											spaceGrotesk.variable
-										} text-[16px] font-medium text-blue-light-medium dark:text-icon-dark-inactive`}
-									>
-										{tab.title}
-									</span>
-									<span
-										className={`${activeTab === tab.key && 'text-pink_primary dark:text-[#FF4098]'}  mt-1 ${spaceGrotesk.className} ${
-											spaceGrotesk.variable
-										} whitespace-normal break-words text-sm text-blue-light-medium dark:text-icon-dark-inactive`}
-									>
-										{tab.description}
-									</span>
-								</div>
-							</div>
-
-							<RightOutlined className='ml-5' />
-						</div>
-					))}
+							<ImageIcon
+								src='/assets/bounty-icons/proposal-icon.svg'
+								alt='bounty icon'
+								imgClassName=''
+							/>
+							<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-medium text-white`}>Create Bounty Proposal</span>
+						</CustomButton>
+					)}
 				</div>
-			</div>
-			<div className='mt-3 flex-grow'>{activeTab && tabs.find((tab) => tab.key === activeTab)?.children}</div>
+				<div>
+					{!isNaN(id || 0) && !!loginAddress?.length ? (
+						<CuratorDashboardTabItems handleClick={handleClick} />
+					) : (
+						<div className={`flex h-[900px] ${poppins.variable} ${poppins.className} flex-col items-center rounded-xl  px-5 pt-5  md:pt-10`}>
+							<Image
+								src='/assets/Gifs/login-dislike.gif'
+								alt='empty state'
+								className='h-80 w-80 p-0'
+								width={320}
+								height={320}
+							/>
+							<p className='p-0 text-xl font-medium text-bodyBlue dark:text-white'>Join Polkassembly to see your Curator Dashboard!</p>
+							<p className='p-0 text-center text-bodyBlue dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
+							<div className='flex flex-col gap-4 pt-3'>
+								<CustomButton
+									variant='primary'
+									onClick={() => setLoginOpen(true)}
+									className='w-full cursor-pointer rounded-md px-4 py-3 text-center text-sm text-white lg:w-[480px]'
+								>
+									Log In
+								</CustomButton>
+								<CustomButton
+									variant='default'
+									onClick={() => setLoginOpen(true)}
+									className='w-full cursor-pointer rounded-md border-[1px] border-solid px-4 py-3 text-center text-sm text-pink_primary lg:w-[480px] lg:border'
+								>
+									Sign Up
+								</CustomButton>
+							</div>
+						</div>
+					)}
+				</div>
+			</main>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
+			{!isNaN(id || 0) && !!loginAddress?.length && (
+				<BountyActionModal
+					theme={theme}
+					openAddressLinkedModal={openAddressLinkedModal}
+					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					openLoginPrompt={openLoginPrompt}
+					setOpenLoginPrompt={setOpenLoginPrompt}
+					setProposerAddress={setProposerAddress}
+					proposerAddress={proposerAddress}
+				/>
+			)}
 		</div>
 	);
 };
 
-export default CuratorDashboardTabItems;
+export default CuratorDashboard;

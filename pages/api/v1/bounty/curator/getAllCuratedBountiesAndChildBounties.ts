@@ -42,7 +42,7 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		if (isNaN(page) || !curatorAddress?.length) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+		if (isNaN(page) || !curatorAddress?.length || !getEncodedAddress(curatorAddress, network)) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		let totalBounties = 0;
 
@@ -53,7 +53,7 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 			query: GET_ALL_BOUNTIES,
 			variables: {
 				curator_eq: encodedCuratorAddress,
-				limit: 10,
+				limit: BOUNTIES_LISTING_LIMIT,
 				offset: BOUNTIES_LISTING_LIMIT * (page - 1)
 			}
 		});

@@ -88,10 +88,12 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 			}
 		}
 	};
+
 	useEffect(() => {
 		fetchCuratorBountiesData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,7 +111,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 			<div>
 				<Link
 					className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
-					href='/bounty'
+					href='/bounty-dashboard'
 					aria-label='Back to Bounty Dashboard'
 				>
 					<div className='flex items-center'>

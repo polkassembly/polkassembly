@@ -821,17 +821,18 @@ query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $
 }
 `;
 
-export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
+export const GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX = `query ChildBountiesByParentIndex($parentBountyIndex_eq: Int, $curator_eq: String, $status_eq: ProposalStatus ) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq, status_eq: $status_eq}) {
     totalCount
   }  
-	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty}) {
+	proposals(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq, type_eq: ChildBounty, curator_eq: $curator_eq, status_eq: $status_eq}) {
     description
     index
     status
     reward
     createdAt
     curator
+    payee
   }
 }`;
 
@@ -2634,8 +2635,8 @@ query BountyProposals($status_in: [ProposalStatus!] = []) {
 }
 `;
 
-export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int!, $offset:Int, $status_in: [ProposalStatus!], $index_in:[Int!]) {
- bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
+export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! =10, $offset:Int =0, $status_in: [ProposalStatus!], $index_in:[Int!], $curator_eq: String) {
+ bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in, curator_eq: $curator_eq}, orderBy: createdAtBlock_DESC,limit:$limit,offset: $offset) {
     index
     proposer
     reward
@@ -2652,7 +2653,7 @@ export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int!, $offset:In
       payee
   }
   
- totalBounties: proposalsConnection(where: {type_eq: Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
+ totalBounties: proposalsConnection(where: {curator_eq: $curator_eq, type_eq:Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
    totalCount
   }
 }`;
@@ -2662,6 +2663,30 @@ query Rewards($index_in: [Int!] = []) {
   proposals(where: {type_eq: Bounty, index_in: $index_in}) {
     index
     reward
+  }
+}
+`;
+
+export const GET_ALL_BOUNTIES_WITHOUT_PAGINATION = `query BountyProposals ($status_in: [ProposalStatus!], $index_in:[Int!], $curator_eq: String) {
+ bounties: proposals(where: {type_eq: Bounty, status_in:$status_in, index_in:$index_in, curator_eq: $curator_eq}, orderBy: createdAtBlock_DESC) {
+    index
+    proposer
+    reward
+    createdAt
+    updatedAt
+    curator
+    hash
+    status
+    preimage {
+      proposedCall {
+        args
+      }
+    }
+      payee
+  }
+  
+ totalBounties: proposalsConnection(where: {curator_eq: $curator_eq, type_eq:Bounty, status_in: $status_in, index_in: $index_in}, orderBy: createdAtBlock_DESC) {
+   totalCount
   }
 }
 `;
@@ -3164,6 +3189,125 @@ query MyQuery($type: VoteType, $voter_in:[String!], $proposalIndexes: [Int!] ) {
     type_eq: $type, removedAtBlock_isNull: true,
     voter_in: $voter_in}) {
     totalCount
+  }
+}
+`;
+
+export const GET_PROPOSER_BY_ID_AND_TYPE = `
+query ProposerByIndexAndType($index_eq: Int = 10, $type_eq: ProposalType = DemocracyProposal) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    index
+    proposer
+    preimage {
+      proposer
+    }
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTERS_BY_PROPOSAL_ID_AND_TYPE = `
+query ConvictionVoteVoters($index_eq: Int = 0, $type_eq: ProposalType = ReferendumV2, $offset: Int = 0) {
+  convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}, limit: 500, offset: $offset) {
+    voter
+  }
+}
+`;
+
+export const GET_VOTERS_BY_PROPOSAL_ID_AND_TYPE = `
+query Voters($index_eq: Int = 10, $type_eq: ProposalType = DemocracyProposal, $offset: Int = 0) {
+  votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}, limit: 500, offset: $offset) {
+    voter
+  }
+}
+`;
+
+export const GET_TIP_VALUE_AND_PAYEE_BY_PROPOSAL_ID_AND_TYPE = `
+query TipPayee($index_eq: Int!, $type_eq: ProposalType!) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    payee,
+    reward,
+    createdAt
+  }
+}
+`;
+
+export const GET_TIP_PAYEE_AND_ALL_TIPPER_COUNTS = `
+query TipperCounts($tipper_eq: String!, $payee_eq: String!) {
+  tippersConnection(where: {tipper_eq: $tipper_eq, proposal: {payee_eq: $payee_eq}}, orderBy: id_ASC) {
+    totalCount
+  }
+  allTipsConnection: tippersConnection(where: {tipper_eq: $tipper_eq}, orderBy: id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GET_FOREIGN_DECISION_DEPOSIT_PLACED_COUNT = `
+query ForeignDecisionDepositPlacedCount($address: String!) {
+  proposalsConnection(orderBy: id_ASC, where: {decisionDeposit: {who_eq: $address}, proposer_not_eq: $address}) {
+    totalCount,
+    edges {
+      node {
+        createdAt
+      }
+    }
+  }
+}
+`;
+
+export const GET_FIRST_AND_CURRENT_CONVICTION_VOTE_TIMESTAMP_BY_PROPOSAL_ID_AND_TYPE = `
+query GetFirstAndCurrentConvictionVoteTimestamp($index_eq: Int!, $type_eq: ProposalType!, $voter_eq: String!) {
+  firstVoteTimestamp: convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}, orderBy: createdAt_ASC, limit: 1) {
+    createdAt
+  }
+
+  currentVoteTimestamp: convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_eq: $voter_eq}, orderBy: createdAt_DESC, limit: 1) {
+    createdAt
+  }
+}
+`;
+
+export const GET_FIRST_AND_CURRENT_VOTE_TIMESTAMP_BY_PROPOSAL_ID_AND_TYPE = `
+query GetFirstAndCurrentVoteTimestamp($index_eq: Int!, $type_eq: ProposalType!, $voter_eq: String!) {
+  firstVoteTimestamp: votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}, orderBy: id_DESC, limit: 1) {
+    createdAt: timestamp
+  }
+
+  currentVoteTimestamp: votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_eq: $voter_eq}, orderBy: id_DESC, limit: 1) {
+    createdAt: timestamp
+  }
+}
+`;
+
+export const GET_PROPOSAL_ENDED_INFO = `
+query GetProposalStatus($index_eq: Int!, $type_eq: ProposalType!) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    status,
+    endedAt
+  }
+}
+`;
+
+export const GET_PROPOSAL_CREATED_AT = `
+query GetProposalCreatedAt($index_eq: Int!, $type_eq: ProposalType!) {
+  proposals(where: {index_eq: $index_eq, type_eq: $type_eq}) {
+    createdAt
+  }
+}
+`;
+
+export const GET_VOTE_CREATED_AT = `
+query GetVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
+  votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_address_eq: $voter_address_eq}) {
+    createdAt
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTE_CREATED_AT = `
+ query GetConvictionVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
+  convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_address_eq: $voter_address_eq}) {
+    createdAt
   }
 }
 `;

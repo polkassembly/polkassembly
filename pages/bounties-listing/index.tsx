@@ -88,10 +88,12 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 			}
 		}
 	};
+
 	useEffect(() => {
 		fetchCuratorBountiesData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

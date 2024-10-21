@@ -62,7 +62,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
 
-		if (!expanded || !!record?.childbounties?.length) {
+		if (!expanded || !!record?.childBounties?.length) {
 			setExpandedRowKeys(newExpandedRowKeys);
 			return;
 		}

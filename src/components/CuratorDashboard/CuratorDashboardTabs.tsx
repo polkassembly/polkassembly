@@ -20,7 +20,7 @@ enum ECuratorDashboardTabs {
 
 const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<ECuratorDashboardTabs>(router?.query?.tab ? (router.query.tab as ECuratorDashboardTabs) : ECuratorDashboardTabs.CURATED);
+	const [activeTab, setActiveTab] = useState<ECuratorDashboardTabs>((router?.query?.tab as ECuratorDashboardTabs) || ECuratorDashboardTabs.CURATED);
 
 	const tabs = [
 		{

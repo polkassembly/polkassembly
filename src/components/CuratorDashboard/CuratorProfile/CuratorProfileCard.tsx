@@ -38,26 +38,29 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const [form] = Form.useForm();
 
 	const fetchCuratorProfile = async () => {
-		if (loginAddress) {
-			const substrateAddress = getSubstrateAddress(loginAddress);
-			const { data } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
-			if (data) setCuratorProfile(data);
+		if (!loginAddress) return;
+		const substrateAddress = getSubstrateAddress(loginAddress);
+		const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
+		if (data) setCuratorProfile(data);
+		if (error) {
+			console.log(error, 'error');
+			setCuratorProfile(null);
 		}
 	};
 
 	const fetchCuratorBio = async () => {
-		if (id !== undefined && id !== null) {
-			const { data } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getCuratorBio', {
-				network,
-				userId: id
-			});
-			if (data) setCuratorBio(data?.curatorBio);
-		}
+		if (!id || isNaN(id) || id < 0) return;
+		const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getCuratorBio', {
+			network,
+			userId: id
+		});
+		if (data) setCuratorBio(data?.curatorBio);
+		if (error) console.log(error, 'error');
 	};
 
 	const handleCopyAddress = () => {
-		if (loginAddress) {
-			copyToClipboard(loginAddress);
+		if (getEncodedAddress(loginAddress, network)) {
+			copyToClipboard(getEncodedAddress(loginAddress, network) || loginAddress);
 			message.success('Address copied to clipboard');
 		} else {
 			message.error('No address available to copy');
@@ -98,16 +101,14 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress) return;
-		let unsubscribes: (() => void)[];
 
 		fetchIdentityInformation();
-		return () => {
-			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
-		};
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	useEffect(() => {
+		if (!getEncodedAddress(loginAddress, network)) return;
 		fetchCuratorProfile();
 		fetchCuratorBio();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

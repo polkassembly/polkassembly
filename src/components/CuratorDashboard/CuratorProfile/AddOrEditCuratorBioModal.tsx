@@ -6,7 +6,7 @@ import { Input, Modal, Spin } from 'antd';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { NotificationStatus } from '~src/types';
@@ -46,12 +46,16 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 			queueNotification({
 				header: 'Error!',
 				message: error,
-				status: NotificationStatus.SUCCESS
+				status: NotificationStatus.ERROR
 			});
 			setCuratorInitialBio(curatorInitialBio || '');
 		}
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		setCuratorBio(curatorInitialBio);
+	}, [curatorInitialBio]);
 
 	return (
 		<>

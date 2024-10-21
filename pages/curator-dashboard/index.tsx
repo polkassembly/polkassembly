@@ -11,6 +11,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { LeftOutlined } from '@ant-design/icons';
 import SEOHead from '~src/global/SEOHead';
 import CuratorDashboard from '~src/components/CuratorDashboard';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface ICuratorProfileProps {
 	network: string;
@@ -21,6 +22,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+
+	if (network != 'polkadot') {
+		return {
+			props: {},
+			redirect: {
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
+			}
+		};
+	}
 	return {
 		props: {
 			network

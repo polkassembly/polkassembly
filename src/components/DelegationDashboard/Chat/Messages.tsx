@@ -108,7 +108,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 	}, [newMessage, loading]);
 
 	return (
-		<div className='flex h-[calc(100%-300px)] w-full flex-col'>
+		<div className='flex h-full w-full flex-col'>
 			<Card
 				className='w-full rounded-none border-t-0'
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
@@ -133,7 +133,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				spinning={loading}
 				className='h-[250px]'
 			>
-				<div className={`${className} h-auto overflow-y-auto px-5 py-3`}>
+				<div className={`${className} h-64 overflow-y-scroll px-5 py-3`}>
 					{messages.map((message) => {
 						const isSent = message?.senderAddress === address;
 						return (

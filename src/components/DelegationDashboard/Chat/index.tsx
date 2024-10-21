@@ -99,7 +99,7 @@ const ChatWithDelegates = ({ className }: Props) => {
 				contentWrapperStyle={{ boxShadow: 'none', transform: 'none' }}
 				style={{ position: 'fixed', right: '50px', top: 'auto', zIndex: '999' }}
 				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
-				bodyStyle={{ display: isMinimized ? 'none' : 'block', padding: '0px' }}
+				bodyStyle={{ display: isMinimized ? 'none' : 'block', maxHeight: '440px', padding: '0px' }}
 			>
 				<UserChats
 					isNewChat={isNewChat}

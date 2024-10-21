@@ -89,7 +89,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 	}, [address]);
 
 	return (
-		<div className='flex h-[calc(100%-300px)] w-full flex-col'>
+		<div className='flex h-full w-full flex-col'>
 			<div className='p-5'>
 				<Input
 					type='search'

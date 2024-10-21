@@ -56,7 +56,7 @@ const MessageDrawer = ({ className, isDrawerOpen, handleCloseChat, handleOpenCha
 				contentWrapperStyle={{ boxShadow: 'none', transform: 'none' }}
 				style={{ position: 'fixed', right: '450px', top: 'auto', zIndex: '999' }}
 				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
-				bodyStyle={{ padding: '0px' }}
+				bodyStyle={{ maxHeight: '440px', padding: '0px' }}
 			>
 				{isNewChat ? (
 					<NewChat handleOpenChat={handleOpenChat} />

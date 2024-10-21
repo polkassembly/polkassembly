@@ -62,7 +62,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 
 	return (
 		<>
-			<div className={`${className} h-full w-full`}>
+			<div className={`${className} h-full w-full overflow-y-scroll pb-5`}>
 				<div className='flex flex-col gap-2 p-5'>
 					<ChatTab
 						setSelectedChatTab={setSelectedChatTab}

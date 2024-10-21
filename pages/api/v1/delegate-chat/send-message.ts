@@ -32,15 +32,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	const { address, senderAddress, receiverAddress, content, senderImage, senderUsername, chatId } = req.body;
 
 	if (!address || !senderAddress.length || !receiverAddress.length || !content.length || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
-	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
-
-	const encodedAddress = getEncodedAddress(address, network);
-
-	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
-
-	if (paDelegatesSnapshot.empty && !paDelegatesSnapshot?.docs?.[0]) {
-		return res.status(400).json({ message: `User with address ${address} is not a Polkassembly delegate` });
-	}
+	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress))))
+		return res.status(400).json({ message: 'Invalid address' });
 
 	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });

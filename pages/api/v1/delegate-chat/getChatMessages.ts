@@ -36,7 +36,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 
 		const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
 
-		const chatMessages: IMessage[] = messagesData.map((message) => ({
+		const messages: IMessage[] = messagesData.map((message) => ({
 			content: message.content,
 			created_at: message.created_at,
 			id: message.id,
@@ -48,7 +48,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 			viewed_by: message?.viewed_by || []
 		}));
 
-		return res.status(200).json({ messages: chatMessages });
+		return res.status(200).json({ messages });
 	} catch (error) {
 		return res.status(500).json({ message: error.message || messages.API_FETCH_ERROR });
 	}

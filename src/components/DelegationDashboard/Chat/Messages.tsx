@@ -62,10 +62,10 @@ const Messages = ({ className, chat, chatId }: Props) => {
 			senderImage: picture,
 			senderUsername: username
 		};
-		const { data, error } = await nextApiClientFetch<IMessage[]>('api/v1/delegate-chat/send-message', requestData);
+		const { data, error } = await nextApiClientFetch<IMessage>('api/v1/delegate-chat/send-message', requestData);
 		if (data) {
 			setLoading(false);
-			setMessages(data);
+			setMessages([...messages, data]);
 			queueNotification({
 				header: 'Success!',
 				message: 'Message sent successfully',

@@ -9,6 +9,7 @@ import { sortOptions } from 'src/global/sortOptions';
 import { Divider } from 'antd';
 import styled from 'styled-components';
 import { poppins } from 'pages/_app';
+import { useTranslation } from 'react-i18next';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -20,6 +21,7 @@ interface SortByDropdownProps {
 
 const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sortBy, isUsedInTrackListing, className }) => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 
 	const dropdownMenu = (
 		<div className={`${poppins.className} ${poppins.variable} rounded-xl bg-white dark:bg-[#282A2D]`}>
@@ -29,7 +31,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sor
 			>
 				{sortBy && (
 					<div className='flex justify-end'>
-						<span className='my-1 mr-2 cursor-pointer text-[10px] text-pink_primary'>Clear Filter</span>
+						<span className='my-1 mr-2 cursor-pointer text-[10px] text-pink_primary'>{t('clear_filters')}</span>
 					</div>
 				)}
 				<Divider
@@ -71,7 +73,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sor
 			className={`${className} ${poppins.className} ${poppins.variable}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
-				<span className='sm:mr-1 sm:mt-0.5'>Sort By</span>
+				<span className='sm:mr-1 sm:mt-0.5'>{t('sort_by')}</span>
 				<SwapOutlined
 					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}
 					rotate={90}

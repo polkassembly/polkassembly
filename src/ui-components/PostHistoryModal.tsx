@@ -16,6 +16,7 @@ import { CloseIcon } from './CustomIcons';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import { diffChars } from 'diff';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -36,6 +37,7 @@ enum EExpandType {
 
 const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
@@ -52,12 +54,12 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		return {
 			children: !item?.expanded ? (
 				<div className={'-mt-1 ml-3 flex h-[50px] flex-col gap-2 text-sm font-medium tracking-[0.01em] text-[#334D6E] dark:text-blue-dark-medium max-sm:ml-0 max-sm:w-full'}>
-					Edited on {getRelativeCreatedAt(date)}
+					{t('edited_on')} {getRelativeCreatedAt(date)}
 					<div
 						className='-mt-2 flex cursor-pointer justify-start text-sm text-pink_primary'
 						onClick={() => handleExpand(index, EExpandType.Expanded)}
 					>
-						<span className='text-xs'>See Details</span>
+						<span className='text-xs'>{t('see_details')}</span>
 					</div>
 				</div>
 			) : (
@@ -68,7 +70,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				>
 					<div className='flex items-center max-sm:flex-col max-sm:items-start max-sm:justify-start  max-sm:gap-2'>
 						<div className='flex items-center max-sm:justify-start'>
-							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
+							<span className='mr-1 text-xs text-[#90A0B7]'>{t('by')}</span>
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
@@ -114,7 +116,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							onClick={() => handleExpand(index, EExpandType.ExpandedContent)}
 							className='mt-1 cursor-pointer text-xs font-medium text-pink_primary'
 						>
-							{item?.expandedContent ? 'Show less' : 'Show more'}
+							{item?.expandedContent ? t('show_less') : t('show_more')}
 						</span>
 					)}
 				</div>
@@ -182,7 +184,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			className={`closeIcon shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>Proposal Edit History</label>}
+			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>{t('proposal_edit_history')}</label>}
 		>
 			<div className='post-history-timeline -mb-6 mt-9 flex flex-col px-4'>
 				<Timeline items={items} />

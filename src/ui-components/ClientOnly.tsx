@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState, useEffect, FC } from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 
 const ClientOnly: FC<any> = ({ children }) => {
 	const [hasMounted, setHasMounted] = useState(false);
@@ -18,6 +19,7 @@ export default ClientOnly;
 
 const Search: FC<{ network: string }> = (props) => {
 	const { network } = props;
+	const { t } = useTranslation('common');
 	return (
 		<>
 			<Helmet>
@@ -32,7 +34,7 @@ const Search: FC<{ network: string }> = (props) => {
 			></div>
 			<div className='pb-2 pt-4 text-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 				{' '}
-				If you&apos;d like to enable search and super search for your chain, please reach out to us on{' '}
+				{t('if_you')}&apos;{t('reach_out')}{' '}
 				<a
 					className='text-pink_primary'
 					href='mailto:hello@polkassembly.io'

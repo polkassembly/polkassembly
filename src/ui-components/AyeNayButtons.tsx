@@ -7,6 +7,7 @@ import { Button } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
@@ -22,6 +23,7 @@ interface Props {
 const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, customWidth }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { id } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
 	const openModal = () => {
@@ -40,7 +42,7 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 					onClick={!id ? openModal : onClickAye}
 				>
 					<LikeFilled className='mr-1' />
-					Aye
+					{t('aye')}
 				</Button>
 				<Button
 					name='nay'
@@ -51,7 +53,7 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 					onClick={!id ? openModal : onClickNay}
 				>
 					<DislikeFilled className='mr-1' />
-					Nay
+					{t('nay')}
 				</Button>
 			</div>
 			<ReferendaLoginPrompts

@@ -17,6 +17,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
 	display: flex;
@@ -71,6 +72,7 @@ const MultisigAccountSelectionForm = ({
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const client = new Polkasafe();
 	const { network } = useNetworkSelector();
 	const [loader, setLoader] = useState<boolean>(false);
@@ -149,11 +151,11 @@ const MultisigAccountSelectionForm = ({
 					<div className='mb-[2px] flex items-center gap-2'>
 						{title && (
 							<>
-								<h3 className='mb-0 text-sm font-normal'>Choose linked multisig account</h3>
+								<h3 className='mb-0 text-sm font-normal'>{t('choose_linked_multisig_account')}</h3>
 								{!withoutInfo && <HelperTooltip text='You can choose an multisig account that are linked from the selected address.' />}
 								{showMultisigBalance && walletAddress && (
 									<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium`}>
-										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+										{t('available')}: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 									</div>
 								)}
 							</>

@@ -40,6 +40,7 @@ import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
 import { useTheme } from 'next-themes';
 import ImageIcon from './ImageIcon';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -71,6 +72,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 	const { resolvedTheme: theme } = useTheme();
 	const { addresses } = userProfile;
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS, EHeading.ACTIONS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -195,7 +197,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 		const onSuccess = () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Your Vote has been Cleared successfully.',
+				message: t('your_vote_has_been_cleared_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 			const filteredData: IVotesData[] = votesData?.filter((vote) => vote?.proposal?.id !== postIndex) || [];
@@ -230,7 +232,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 			if (Number(chainId.toString()) !== chainProperties[network].chainId) {
 				queueNotification({
 					header: 'Wrong Network!',
-					message: `Please change to ${network} network`,
+					message: `${t('please_change_to')} ${network} ${t('network')}`,
 					status: NotificationStatus.ERROR
 				});
 				setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: false });
@@ -274,7 +276,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<VotesIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
-						Votes
+						{t('votes')}
 						<span className='flex items-end text-sm font-normal'>({totalVotes})</span>
 					</div>
 				</div>
@@ -288,7 +290,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 								onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
 							>
 								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									Select Addresses
+									{t('select_addresses')}
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 									</span>
@@ -399,13 +401,13 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 													<span className='w-[10%]'>
 														<div className='flex w-[10%] justify-start gap-4'>
 															{isSubscanSupport(network) && (
-																<Tooltip title='View Subscan'>
+																<Tooltip title={t('view_subscan')}>
 																	<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${vote?.extrinsicIndex}`, '_blank')}>
 																		<SubscanIcon className='cursor-pointer text-xl text-lightBlue dark:text-[#9E9E9E] max-md:hidden' />
 																	</span>
 																</Tooltip>
 															)}
-															<Tooltip title='View Vote'>
+															<Tooltip title={t('view_vote')}>
 																<span onClick={() => handleExpand(index, vote)}>
 																	<ViewVoteIcon className='cursor-pointer text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 																</span>
@@ -435,12 +437,12 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 														{vote?.decision === 'yes' ? (
 															<span className='flex items-center justify-end text-[#2ED47A]'>
 																<AyeIcon className='mr-1' />
-																Aye
+																{t('aye')}
 															</span>
 														) : (
 															<span className='flex items-center justify-end text-[#F53C3C]'>
 																<NayIcon className='mr-1' />
-																Nay
+																{t('nay')}
 															</span>
 														)}
 														<span className='flex justify-end'>
@@ -484,7 +486,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 									alt='Empty Icon'
 									imgClassName='w-[225px] h-[225px]'
 								/>
-								<h3 className='text-blue-light-high dark:text-blue-dark-high'>No vote found</h3>
+								<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_vote_found')}</h3>
 							</div>
 						)}
 					</div>

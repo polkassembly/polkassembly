@@ -9,6 +9,7 @@ import TwitterIcon from '~assets/icons/twitter.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useQuoteCommentContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'react-i18next';
 
 interface IHiglightMenuProps {
 	markdownRef: React.RefObject<HTMLDivElement>;
@@ -19,6 +20,7 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const { postData } = usePostDataContext();
 
 	const { id } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
@@ -98,14 +100,14 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 				onClick={handleQuote}
 			>
 				<QuoteIcon className='w-3' />
-				Quote
+				{t('qoute')}
 			</div>
 			<div
 				className='flex h-4 cursor-pointer items-center justify-between gap-1'
 				onClick={shareSelection}
 			>
 				<TwitterIcon className='w-3 fill-white' />
-				Share
+				{t('share')}
 			</div>
 		</div>
 	);

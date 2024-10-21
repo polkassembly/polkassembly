@@ -9,6 +9,7 @@ import { getStatusesFromCustomStatus, ProposalType } from '~src/global/proposalT
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import ConfusedModalShareProposalDetails from './ConfusedModalShareProposalDetails';
 import { useGlobalSelector } from '~src/redux/selectors';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	status: string;
@@ -20,6 +21,7 @@ interface Props {
 
 const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Props) => {
 	const { is_sidebar_collapsed } = useGlobalSelector();
+	const { t } = useTranslation('common');
 
 	const [isNudgeVisible, setNudgeVisible] = useState(false);
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -47,7 +49,7 @@ const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Pro
 				} font-poppins text-[12px] font-medium text-white`}
 			>
 				<div className='flex gap-2'>
-					<p className='pt-3 '>Confused about making a decision?</p>
+					<p className='pt-3 '>{t('confused_about_making_a_decision')}</p>
 					<div
 						onClick={() => setModalOpen(true)}
 						className='mt-2 flex h-6 cursor-pointer gap-2 rounded-md bg-[#0000004D] bg-opacity-[30%] px-2 pt-1'
@@ -59,9 +61,9 @@ const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Pro
 							width={16}
 							height={16}
 						/>
-						<p>Share proposal</p>
+						<p>{t('share_proposal')}</p>
 					</div>
-					<p className='pt-3'>with a friend to get their opinion!</p>
+					<p className='pt-3'>{t('with_a_friend_to_get_their_opinion')}</p>
 				</div>
 				<div
 					onClick={() => {

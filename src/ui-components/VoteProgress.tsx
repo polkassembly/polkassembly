@@ -9,6 +9,7 @@ import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
 
 interface IVoteProgressProps {
 	ayeVotes?: BN;
@@ -67,6 +68,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 	const { network } = useNetworkSelector();
 
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -84,7 +86,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 		<div className={`${className} relative -mt-7 flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>{t('aye')}</span>
 			</div>
 			{/* {
 				turnoutPercentage?
@@ -112,7 +114,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#E84865] dark:text-[#BD2020]'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>{t('nay')}</span>
 			</div>
 		</div>
 	);

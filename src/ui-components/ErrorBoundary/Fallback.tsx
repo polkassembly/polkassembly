@@ -6,6 +6,7 @@ import { Result } from 'antd';
 import Link from 'next/link';
 import React, { FC } from 'react';
 import ImageIcon from '../ImageIcon';
+import { useTranslation } from 'react-i18next';
 
 // import NothingFoundSVG from '~assets/nothing-found.svg';
 
@@ -14,6 +15,7 @@ interface IFallbackProps {
 }
 
 const Fallback: FC<IFallbackProps> = (props) => {
+	const { t } = useTranslation('common');
 	return (
 		<section className='absolute inset-0 z-[9999999] flex h-screen w-screen flex-col items-center justify-center bg-[#F5F6F8] dark:bg-section-dark-background'>
 			<Result
@@ -33,7 +35,7 @@ const Fallback: FC<IFallbackProps> = (props) => {
 						href='/'
 						className='h-[50px] w-[215px] rounded-md border-white bg-pink_primary px-6 py-2 text-lg text-white hover:bg-pink_secondary dark:border-[#3B444F]'
 					>
-						Go To Home
+						{t('go_to_home')}
 					</Link>
 				}
 			/>

@@ -396,6 +396,7 @@ export interface Post {
 	allowedCommentors?: EAllowedCommentor[];
 	progress_report?: IProgressReport;
 	link?: string;
+	updated_at?: Date;
 }
 
 export interface IPostTag {

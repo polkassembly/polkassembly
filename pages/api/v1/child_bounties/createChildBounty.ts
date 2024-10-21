@@ -72,6 +72,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 			tags: tags || [],
 			title,
 			topic_id: 4,
+			updated_at: new Date(),
 			user_id: user.id
 		};
 

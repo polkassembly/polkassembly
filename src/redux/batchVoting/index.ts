@@ -17,6 +17,7 @@ const initialState: IBatchVoteStore = {
 		nyeVoteBalance: '0',
 		voteOption: 'aye'
 	},
+	batch_voting_address: '',
 	edit_vote_details: {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
@@ -32,6 +33,7 @@ const initialState: IBatchVoteStore = {
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
+	show_post_info: false,
 	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
 	vote: EVoteDecisionType.AYE,
@@ -81,6 +83,7 @@ export const batchVoteStore = createSlice({
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
 				batch_vote_details: {},
+				batch_voting_address: '',
 				edit_vote_details: {},
 				is_cancel_button_clicked: false,
 				is_default_selected: true,
@@ -88,6 +91,7 @@ export const batchVoteStore = createSlice({
 				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
+				show_post_info: false,
 				total_active_posts: 0,
 				total_proposals_added_in_Cart: 0,
 				vote: EVoteDecisionType.AYE,
@@ -105,6 +109,9 @@ export const batchVoteStore = createSlice({
 				voted_post_ids_array: [],
 				voted_proposal_id: 0
 			};
+		},
+		setBatchVotingAddress: (state, action: PayloadAction<string>) => {
+			state.batch_voting_address = action.payload;
 		},
 		setBatchVoting_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
 			const obj = action.payload;
@@ -188,6 +195,9 @@ export const batchVoteStore = createSlice({
 		},
 		setShowDefaultOptionsModal: (state, action: PayloadAction<boolean>) => {
 			state.show_default_options_modal = action.payload;
+		},
+		setShowPostInfo: (state, action: PayloadAction<boolean>) => {
+			state.show_post_info = action.payload;
 		},
 		setTotalActivePosts: (state, action: PayloadAction<number>) => {
 			state.total_active_posts = action.payload;

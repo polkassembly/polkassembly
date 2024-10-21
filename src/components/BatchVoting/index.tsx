@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
-import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
 import { batchVotesActions } from '~src/redux/batchVoting';
@@ -23,6 +23,12 @@ const BatchVotingWeb = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
 	const { is_default_selected } = useBatchVotesSelector();
+	const { loginAddress } = useUserDetailsSelector();
+
+	useEffect(() => {
+		dispatch(batchVotesActions.setBatchVotingAddress(loginAddress));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
 
 	return (
 		<section className='flex flex-col gap-y-6'>

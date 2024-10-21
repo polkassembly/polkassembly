@@ -121,9 +121,14 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		if (!apiReady) {
 			return;
 		}
-		nextApiClientFetch<IVotesHistoryResponse>(
-			`api/v1/votes/history?page=${1}&voterAddress=${address}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${motionId}`
-		)
+		nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
+			listingLimit: 1,
+			network: network,
+			page: 1,
+			proposalIndex: motionId,
+			proposalType: proposalType,
+			voterAddress: address
+		})
 			.then((res) => {
 				if (res.error) {
 					console.log('error');

@@ -1166,7 +1166,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									<>
 										{canVote && (
 											<>
-												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
+												{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) ? (
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 

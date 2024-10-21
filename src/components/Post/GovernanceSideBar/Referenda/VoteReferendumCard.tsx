@@ -5,7 +5,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
@@ -21,7 +21,7 @@ import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
@@ -30,7 +30,12 @@ import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoCo
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import Image from 'next/image';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { formatedBalance } from '~src/util/formatedBalance';
+import Input from '~src/basic-components/Input';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
@@ -45,12 +50,13 @@ interface Props {
 	forSpecificPost?: boolean;
 	postEdit?: any;
 	currentDecision?: string;
+	postData?: any;
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
+			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
 			const num = res.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
@@ -91,10 +97,11 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost, postData }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
+	const { batch_voting_address } = useBatchVotesSelector();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -103,6 +110,27 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { vote } = useBatchVotesSelector();
+	const { loginAddress } = useUserDetailsSelector();
+	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+
+	const getDelegateData = async () => {
+		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: [batch_voting_address],
+			trackNo: postData?.track_number
+		});
+		if (data) {
+			const bnVotingPower = new BN(data?.votingPower || '0');
+			setDelegatedVotingPower(bnVotingPower);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		getDelegateData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
 
 	if (!id) {
 		return <LoginToVote isUsedInDefaultValueModal={true} />;
@@ -226,6 +254,19 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				options={decisionOptions}
 				disabled={!api || !apiReady}
 			/>
+			{forSpecificPost && delegatedVotingPower.gt(ZERO_BN) && (
+				<div className='mb-5 mt-6 flex flex-col gap-0.5 text-sm'>
+					<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
+						{' '}
+						Delegated power <HelperTooltip text='Total amount of voting power' />
+					</span>
+					<Input
+						value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}
+						disabled
+						className='h-10 rounded-[4px] border-[1px] border-solid dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high'
+					/>
+				</div>
+			)}
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 				<VotingFormCard
 					form={ayeNayForm}
@@ -374,20 +415,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 					forSpecificPost={forSpecificPost}
 				/>
 			)}
-
-			<div className='mt-[60px] flex h-[46px] w-full items-center justify-between rounded-md bg-lightWhite p-3 dark:bg-highlightBg'>
-				<div className='flex items-center gap-x-1'>
-					<Image
-						src='/assets/icons/lock-icon.svg'
-						alt='lock-icon'
-						width={24}
-						height={24}
-						className={theme === 'dark' ? 'dark-icons' : ''}
-					/>
-					<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
-				</div>
-				<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>No lockup period</p>
-			</div>
 		</>
 	);
 	return VoteUI;

@@ -5,7 +5,6 @@ import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { useState } from 'react';
-import { ChangeResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -37,11 +36,11 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 	};
 	const [loading, setLoading] = useState(false);
 
-	const createSubscription = async (postId: number | string) => {
-		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
-		if (error) console.error('Error subscribing to post', error);
-		if (data) console.log(data.message);
-	};
+	// const createSubscription = async (postId: number | string) => {
+	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
+	// if (error) console.error('Error subscribing to post', error);
+	// if (data) console.log(data.message);
+	// };
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -53,8 +52,8 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		form.resetFields();
 		global.window.localStorage.removeItem(commentKey());
 
-		if (post.post_id) {
-			await createSubscription(post.post_id);
+		if (post?.post_id) {
+			// await createSubscription(post.post_id);
 		}
 
 		try {
@@ -130,7 +129,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<div className='flex items-center gap-[4px]  md:gap-2 md:pt-0 '>
 							<NameLabel
 								defaultAddress={post?.proposer}
-								username={post.proposerProfile?.username}
+								username={post?.proposerProfile?.username}
 								truncateUsername={true}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
@@ -147,7 +146,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 									alt='timer'
 									className=' h-4 w-4 pt-1 text-blue-light-medium dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
-								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post?.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>

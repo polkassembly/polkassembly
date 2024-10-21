@@ -4,6 +4,7 @@
 
 import { EVoteDecisionType } from '~src/types';
 export interface IBatchVoteStore {
+	batch_voting_address: string;
 	batch_vote_details: IBatchVotesDetails;
 	edit_vote_details: IBatchVotesDetails;
 	vote_card_info: IVoteCardInfo;
@@ -11,6 +12,7 @@ export interface IBatchVoteStore {
 	vote_card_info_array: IVoteCardInfo[];
 	show_cart_menu: boolean;
 	show_default_options_modal: boolean;
+	show_post_info: boolean;
 	total_active_posts: number;
 	voted_post_ids_array: number[];
 	voted_proposal_id: number;

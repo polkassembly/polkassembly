@@ -10,6 +10,8 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import BatchVotingWeb from '~src/components/BatchVoting';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface IBatchVoting {
 	network: string;
@@ -18,6 +20,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const network = getNetworkFromReqHeaders(context.req.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	if (!isOpenGovSupported(network) || [AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
+			}
+		};
+	}
 
 	return {
 		props: {
@@ -42,7 +52,7 @@ const BatchVoting: FC<IBatchVoting> = (props) => {
 				network={network}
 			/>
 			{network === 'polkadot' && (
-				<div className='batch-voting-mobile-container block sm:hidden'>
+				<div className='batch-voting-mobile-container mb-4 block overflow-y-hidden px-4 sm:hidden'>
 					<VotingCards />
 				</div>
 			)}

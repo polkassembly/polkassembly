@@ -37,6 +37,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const isTwitterVerified = useRef(false);
 	const isMatrixVerified = useRef(false);
 	const [messageApi, contextHolder] = message.useMessage();
+	const [matrixDisplayName, setMatrixDisplayname] = useState<string>('');
 
 	const success = (msg: string) => {
 		messageApi.open({
@@ -48,9 +49,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 
 	const items: TimelineItemProps[] = [];
 
-	const handleUpdatedUserName = (name: string) => {
-		if (!name?.length || !identityAddress) return '';
-		const updatedUsername = `${name.split(':')[0]}_${identityAddress.slice(0, 5)}`;
+	const handleUpdatedUserName = () => {
+		if (!matrixDisplayName?.length || !identityAddress) return '';
+		const updatedUsername = `${matrixDisplayName?.split(':')?.[0]}:${identityAddress.slice(0, 5)}`;
 		return updatedUsername;
 	};
 
@@ -125,17 +126,18 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 									<div
 										className='flex cursor-pointer items-center gap-2 text-xs text-white'
 										onClick={() => {
-											copyLink(handleUpdatedUserName(matrix?.value || ''));
-											success('Update username has been copied');
+											copyLink(handleUpdatedUserName());
+											success('Update display name has been copied');
 										}}
 									>
-										Copy updated username
+										Copy updated display name
 										<CopyIcon className='ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive' />
 									</div>
 								}
 							>
-								To verify your Matrix ID, please set your Element display name to {handleUpdatedUserName(matrix?.value || '')}. Make sure to follow this format for successful
-								verification.
+								<div className='hover:text-xs'>
+									To verify your Matrix ID, please set your Element display name to {handleUpdatedUserName()}. Make sure to follow this format for successful verification.
+								</div>
 							</Tooltip>
 						</div>
 					}
@@ -155,10 +157,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			key: 3
 		});
 	}
-
-	const handleMatrixVerificationClick = async () => {
-		if (!matrix?.value?.length) return;
-		let matrixDisplayName = '';
+	const getMatrixDisplayName = async () => {
+		if (!matrix?.value?.length) return '';
+		let displayName = '';
 		try {
 			const homeUrl = matrix.value.split(':')[1];
 
@@ -169,7 +170,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			});
 
 			const resJSON = await response.json();
-			matrixDisplayName = resJSON?.displayname || '';
+			displayName = resJSON?.displayname || '';
 		} catch (err) {
 			queueNotification({
 				header: 'Error!',
@@ -177,11 +178,17 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				status: NotificationStatus.ERROR
 			});
 
-			return;
+			return '';
 		}
+		return displayName;
+	};
+
+	const handleMatrixVerificationClick = async () => {
+		if (!matrix?.value?.length) return;
+		const displayName = await getMatrixDisplayName();
 		setFieldLoading({ ...fieldLoading, matrix: true });
 
-		if (`@${matrixDisplayName}`?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
+		if (`${displayName}`?.toLowerCase() == handleUpdatedUserName()?.toLowerCase()) {
 			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
 				matrixHandle: matrix?.value || ''
 			});
@@ -355,6 +362,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		})();
 		if (matrix?.value?.length) {
 			(async () => {
+				const displayName = await getMatrixDisplayName();
+				setMatrixDisplayname(displayName || '');
 				await handleVerify(ESocials.MATRIX, true);
 			})();
 		}

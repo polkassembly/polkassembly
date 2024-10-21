@@ -766,6 +766,7 @@ export interface IChildBounty {
 	createdAt?: Date;
 	source?: 'polkassembly' | 'subsquare';
 	categories?: string[];
+	payee?: string;
 }
 export interface IChildBountiesResponse {
 	child_bounties: IChildBounty[];

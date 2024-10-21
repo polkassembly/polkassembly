@@ -72,11 +72,6 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		if (data) {
 			setLoading(false);
 			handleOpenChat(data);
-			queueNotification({
-				header: 'Success!',
-				message: 'Message sent successfully',
-				status: NotificationStatus.SUCCESS
-			});
 		} else if (error) {
 			console.log(error);
 			queueNotification({

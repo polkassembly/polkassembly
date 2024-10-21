@@ -14,7 +14,6 @@ import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import * as admin from 'firebase-admin';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import generateChatId from './util/generateChatId';
 
 const firestore_db = admin.firestore();
 
@@ -40,9 +39,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
 
-	// if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
-	// 	return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
-	// }
+	if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
+		return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
+	}
 
 	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });

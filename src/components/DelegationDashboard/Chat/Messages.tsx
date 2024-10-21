@@ -144,7 +144,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 								<div className={`max-w-[80%] rounded-lg px-3 py-2 ${isSent ? 'bg-[#3B47DF] text-white' : 'bg-[#D2D8E04D] text-black'}`}>
 									<Markdown
 										md={message?.content || ''}
-										className={`{isSent ? 'text-white' : 'text-black'} text-xs`}
+										className={`${isSent ? 'text-white' : 'text-black'} text-xs`}
 										isPreview={true}
 									/>
 								</div>

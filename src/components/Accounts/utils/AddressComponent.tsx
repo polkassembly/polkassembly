@@ -62,16 +62,11 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 								href={`https://${network}.subscan.io/address/${address}`}
 								passHref
 							>
-								<a
-									target='_blank'
-									rel='noopener noreferrer'
-								>
-									<SubscanIcon className='-ml-1 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-								</a>
+								<SubscanIcon className='-ml-1 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 							</Link>
 							{isMultisigAddress && <ProxyTypeBadges text={'MULTISIG SIGNATORY'} />}
 							{isPureProxy && <ProxyTypeBadges text={'PURE PROXY'} />}
-							{proxyType && proxyType !== 'Any' && <ProxyTypeBadges text={isPureProxy ? 'PURE PROXY' : proxyType} />}
+							{proxyType && proxyType !== 'Any' && !isPureProxy && <ProxyTypeBadges text={proxyType} />}
 						</div>
 						<span className='absolute left-[94px] top-9'>
 							<BalanceDetails address={address} />

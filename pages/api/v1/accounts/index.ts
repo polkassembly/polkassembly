@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import messages from '~src/auth/utils/messages';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 
@@ -27,17 +28,12 @@ export const getAccountsFromAddress = async ({ address, network }: { address: st
 			};
 		}
 
-		const response = await fetch(apiUrl, {
+		const data = await (await fetchWithTimeout(apiUrl, {
 			body: JSON.stringify({ key: address }),
 			headers: subscanApiHeaders,
-			method: 'POST'
-		});
-
-		if (!response.ok) {
-			throw new Error(`Error fetching account data: ${response.statusText}`);
-		}
-
-		const data = await response.json();
+			method: 'POST',
+			timeout: 10000
+		})).json();
 
 		return {
 			data,

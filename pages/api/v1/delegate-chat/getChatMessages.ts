@@ -32,7 +32,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	if (!chatId && !chatId?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
-		const chatMessagesSnapshot = await firestore_db.collection('chats').doc(String(chatId)).collection('messages').orderBy('created_at', 'desc').limit(1).get();
+		const chatMessagesSnapshot = await firestore_db.collection('chats').doc(String(chatId)).collection('messages').orderBy('created_at', 'asc').get();
 
 		const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
 

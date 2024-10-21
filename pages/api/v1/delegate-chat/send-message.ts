@@ -54,13 +54,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 	};
 
 	try {
-		const batch = firestore_db.batch();
-		const newMessageRef = messageSnapshot.doc();
+		const newMessageRef = await messageSnapshot.add(newMessage);
 
-		batch.set(newMessageRef, newMessage);
-		batch.update(chatSnapshot, { latestMessage: newMessage, updated_at: new Date() });
-
-		await batch.commit();
+		await chatSnapshot.update({ latestMessage: newMessage, updated_at: new Date() });
 
 		const message = {
 			...newMessage,
@@ -68,8 +64,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 		};
 		return res.status(200).json(message);
 	} catch (error) {
-		console.error('Error adding message: ', error);
-		return res.status(500).json({ message: messages.ERROR_IN_ADDING_EVENT });
+		return res.status(500).json({ message: error.message || messages.ERROR_IN_ADDING_EVENT });
 	}
 }
 

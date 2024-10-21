@@ -35,7 +35,7 @@ const ZERO_BN = new BN(0);
 
 const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
-	const { bountyId, ModalTitle, open, setOpen, editing, submission } = props;
+	const { bountyId, ModalTitle, open, setOpen, editing = false, submission } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const [title, setTitle] = useState<string>('');
 	const [content, setContent] = useState<string>('');

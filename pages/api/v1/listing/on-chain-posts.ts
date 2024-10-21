@@ -502,7 +502,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			if (Object.keys(parentBountyIndexes)?.length) {
 				for (const index of Object.keys(parentBountyIndexes)) {
-					const { data } = await getAllchildBountiesFromBountyIndex({ curator: '', network, parentBountyIndex: Number(index), status: '' });
+					const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
 					if (data) {
 						parentBountyIndexes[index] = data?.child_bounties;
 					}
@@ -1087,7 +1087,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 				if (Object.keys(parentBountyIndexes)?.length) {
 					for (const index of Object.keys(parentBountyIndexes)) {
-						const { data } = await getAllchildBountiesFromBountyIndex({ curator: '', network, parentBountyIndex: Number(index), status: '' });
+						const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
 						if (data) {
 							parentBountyIndexes[index] = data?.child_bounties;
 						}

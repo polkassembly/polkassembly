@@ -78,7 +78,7 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		if (!userAddress?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+		if (!userAddress?.length || !getEncodedAddress(userAddress, network)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 		const allChildBounties: { createdAt: string; reward: string }[] = [];
 
@@ -124,7 +124,7 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 			const subsquidChildBountyData = subsquidChildBountiesRes?.data?.proposals || [];
 
 			let claimedAmount = ZERO_BN;
-			const totalChildBountiesCount = 0;
+			let totalChildBountiesCount = 0;
 
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string; createdAt: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
@@ -135,10 +135,10 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 						allChildBounties?.push({ createdAt: childBounty?.createdAt, reward: childBounty?.reward || '0' });
 					}
 				} else {
-					resObj.childBounties.unclaimedAmount = new BN(resObj?.activeBounties?.amount || '0').add(new BN(childBounty?.reward || '0')).toString();
+					resObj.childBounties.unclaimedAmount = new BN(resObj?.childBounties?.unclaimedAmount || '0').add(new BN(childBounty?.reward || '0')).toString();
 				}
-				resObj.childBounties.totalAmount = new BN(resObj?.activeBounties?.amount || '0').add(new BN(childBounty?.reward || '0')).toString();
-
+				resObj.childBounties.totalAmount = new BN(resObj?.childBounties?.totalAmount || '0').add(new BN(childBounty?.reward || '0')).toString();
+				totalChildBountiesCount = totalChildBountiesCount + 1;
 				resObj.childBounties.count += 1;
 			});
 

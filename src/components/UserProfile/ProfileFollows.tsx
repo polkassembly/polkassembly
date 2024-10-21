@@ -13,6 +13,7 @@ import ImageComponent from '../ImageComponent';
 import FollowButton from './Follow/FollowButton';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ProfileFollowIcon } from '~src/ui-components/CustomIcons';
+import Link from 'next/link';
 
 interface FollowerData {
 	follower_user_id: number;
@@ -66,7 +67,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 						<div className='flex items-baseline gap-1 text-bodyBlue dark:text-white'>
-							Follows<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>({followers.length})</span>
+							Connections<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>({followers.length})</span>
 						</div>
 					</div>
 				</div>
@@ -86,7 +87,12 @@ const ProfileFollows = ({ className }: { className: string }) => {
 									/>
 									<div className='flex flex-col gap-2'>
 										<div className='flex items-center gap-[6px]'>
-											<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{follower.username}</span>
+											<Link
+												href={`/user/${follower.username}`}
+												className='cursor-pointer'
+											>
+												<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{follower.username}</span>
+											</Link>
 											<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>followed you</span>
 										</div>
 

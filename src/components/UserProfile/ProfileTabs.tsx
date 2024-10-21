@@ -171,11 +171,11 @@ const ProfileTabs = ({
 	if (userId === userProfile.user_id) {
 		tabItems.push({
 			children: <ProfileFollows className='' />,
-			key: 'Follows',
+			key: 'Connections',
 			label: (
 				<div className='flex items-center'>
 					<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
-					Follows
+					Connections
 					{/* <span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span> */}
 				</div>
 			)

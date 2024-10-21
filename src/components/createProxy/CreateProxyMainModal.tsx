@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
@@ -60,7 +61,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [form] = Form.useForm();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
-	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE }); 
+	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -136,9 +137,15 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	};
 
 	const handleSubmit = async () => {
+		if (!api || !apiReady) {
+			console.log('NO API READY');
+
+			return;
+		}
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
 		const values = form.getFieldsValue();
-		if (!api || !apiReady || !values.proxyType) {
+		console.log('Form Values:', values);
+		if (!values.proxyType) {
 			return;
 		}
 
@@ -149,7 +156,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		if (values.proxyAddress && !values.createPureProxy) {
 			txn = api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType as any, 0);
 		}
-		if (!txn) return;
+		if (!txn) {
+			console.log('NO TXN');
+			return;
+		}
 		const { partialFee: txGasFee } = (await txn.paymentInfo(address || loginAddress)).toJSON();
 		setGasFee(new BN(String(txGasFee)));
 
@@ -231,18 +241,32 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				<div className='px-6 py-3'>
 					<Form
 						form={form}
+						initialValues={{
+							loginAddress,
+							proxyType: ProxyTypeEnum.Any,
+							createPureProxy: false,
+							proxyAddress: '',
+							after_blocks: advancedDetails.afterNoOfBlocks ? advancedDetails.afterNoOfBlocks.toString() : BN_HUNDRED.toString(),
+							at_block:
+								advancedDetails.atBlockNo && currentBlock && advancedDetails.atBlockNo.lt(currentBlock)
+									? currentBlock.toString()
+									: advancedDetails.atBlockNo
+									? advancedDetails.atBlockNo.toString()
+									: BN_ONE.toString(),
+							enactment: enactment.key
+						}}
 						disabled={loadingStatus.isLoading}
-						initialValues={{ loginAddress }}
 						onFinish={handleSubmit}
 					>
-						<div className=''>
+						{/* Address */}
+						<Form.Item name='loginAddress'>
 							<AccountSelectionForm
 								title='Your Address'
 								isTruncateUsername={false}
 								accounts={accounts}
 								address={loginAddress}
 								withBalance={false}
-								onAccountChange={(address) => form.setFieldsValue({ address })}
+								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
 								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
@@ -250,8 +274,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								theme={theme}
 								isVoting
 							/>
-						</div>
-						<div className='mt-5'>
+						</Form.Item>
+
+						{/* Proxy Address */}
+						<Form.Item
+							name='proxyAddress'
+							className=' mb-0'
+						>
 							<AccountSelectionForm
 								title='Proxy Address'
 								isTruncateUsername={false}
@@ -267,18 +296,23 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								isDisabled={form.getFieldValue('createPureProxy')}
 								isVoting
 							/>
-							<div className='mt-1'>
-								<Checkbox
-									checked={form.getFieldValue('createPureProxy')}
-									onChange={(e) => form.setFieldsValue({ createPureProxy: e.target.checked })}
-									className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
-								>
-									Create Pure Proxy
-								</Checkbox>
-							</div>
-						</div>
-						<div className='mt-5'>
-							<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Proxy Type</label>
+						</Form.Item>
+
+						<Form.Item
+							className='mt-0 pt-0'
+							name='createPureProxy'
+							valuePropName='checked'
+						>
+							<Checkbox
+								onChange={(e) => form.setFieldsValue({ createPureProxy: e.target.checked })}
+								className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
+							>
+								Create Pure Proxy
+							</Checkbox>
+						</Form.Item>
+
+						{/* Proxy Type Selection */}
+						<Form.Item name='proxyType'>
 							<Select
 								className='w-full rounded-[4px] py-1'
 								style={{ width: '100%' }}
@@ -286,16 +320,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								size='large'
 								suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
-								defaultValue={ProxyTypeEnum.Any}
 								options={Object.values(ProxyTypeEnum).map((type) => ({
 									label: type,
 									value: type
 								}))}
 							/>
-						</div>
+						</Form.Item>
 
-						{/* Advanced Details and Enactment logic remains unchanged */}
-
+						{/* Advanced Details */}
 						<div
 							className='mt-6 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
@@ -303,109 +335,79 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
 							<DownArrow className='down-icon' />
 						</div>
+
 						{openAdvanced && (
 							<div className='preimage mt-3 flex flex-col'>
+								{/* Enactment */}
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Enactment{' '}
-									<span>
-										<HelperTooltip
-											text='A custom delay can be set for enactment of approved proposals.'
-											className='ml-1'
-										/>
-									</span>
+									<HelperTooltip
+										text='A custom delay can be set for enactment of approved proposals.'
+										className='ml-1'
+									/>
 								</label>
-								<Radio.Group
-									className='enactment mt-1 flex flex-col gap-2'
-									value={enactment.key}
-									onChange={(e) => {
-										setEnactment({ ...enactment, key: e.target.value });
-									}}
-								>
-									<Radio
-										value={EEnactment.At_Block_No}
-										className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+								<Form.Item name='enactment'>
+									<Radio.Group
+										className='enactment mt-1 flex flex-col gap-2'
+										value={enactment.key}
+										onChange={(e) => setEnactment({ ...enactment, key: e.target.value })}
 									>
-										<div className='flex h-10 items-center gap-4'>
-											<span>
-												At Block no.
-												<HelperTooltip
-													className='ml-1'
-													text='Allows you to choose a custom block number for enactment.'
-												/>
-											</span>
-											<span>
+										<Radio
+											value={EEnactment.At_Block_No}
+											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+										>
+											<div className='flex h-10 items-center gap-4'>
+												<span>
+													At Block no.
+													<HelperTooltip
+														className='ml-1'
+														text='Allows you to choose a custom block number for enactment.'
+													/>
+												</span>
 												{enactment.key === EEnactment.At_Block_No && (
 													<Form.Item
 														name='at_block'
-														rules={[
-															{
-																message: 'Invalid Block no.',
-																validator(rule, value, callback) {
-																	const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
-
-																	if (callback && value?.length > 0 && ((currentBlock && bnValue?.lt(currentBlock)) || (value?.length && Number(value) <= 0))) {
-																		callback(rule.message?.toString());
-																	} else {
-																		callback();
-																	}
-																}
-															}
-														]}
+														rules={[{ required: true, message: 'Invalid Block no.' }]}
 													>
 														<Input
-															name='at_block'
-															value={String(advancedDetails.atBlockNo?.toString())}
 															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 														/>
 													</Form.Item>
 												)}
-											</span>
-										</div>
-									</Radio>
-									<Radio
-										value={EEnactment.After_No_Of_Blocks}
-										className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
-									>
-										<div className='flex h-[30px] items-center gap-2'>
-											<span className='w-[150px]'>
-												After no. of Blocks
-												<HelperTooltip
-													text='Allows you to choose a custom delay in terms of blocks for enactment.'
-													className='ml-1'
-												/>
-											</span>
-											<span>
+											</div>
+										</Radio>
+
+										<Radio
+											value={EEnactment.After_No_Of_Blocks}
+											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+										>
+											<div className='flex h-[30px] items-center gap-2'>
+												<span className='w-[150px]'>
+													After no. of Blocks
+													<HelperTooltip
+														text='Allows you to choose a custom delay in terms of blocks for enactment.'
+														className='ml-1'
+													/>
+												</span>
 												{enactment.key === EEnactment.After_No_Of_Blocks && (
 													<Form.Item
 														name='after_blocks'
-														rules={[
-															{
-																message: 'Invalid no. of Blocks',
-																validator(rule, value, callback) {
-																	const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
-																	if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
-																		callback(rule.message?.toString());
-																	} else {
-																		callback();
-																	}
-																}
-															}
-														]}
+														rules={[{ required: true, message: 'Invalid no. of Blocks' }]}
 													>
 														<Input
-															name='after_blocks'
 															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
 														/>
 													</Form.Item>
 												)}
-											</span>
-										</div>
-									</Radio>
-								</Radio.Group>
+											</div>
+										</Radio>
+									</Radio.Group>
+								</Form.Item>
 							</div>
 						)}
+
 						{/* Fee display */}
 						{gasFee && gasFee != ZERO_BN && (
 							<Alert
@@ -419,6 +421,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								}
 							/>
 						)}
+
 						{/* Insufficient balance check */}
 						{availableBalance.lt(gasFee) && (
 							<Alert

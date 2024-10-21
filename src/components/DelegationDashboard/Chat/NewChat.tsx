@@ -55,9 +55,9 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		}
 	};
 
-	const handleStartChat = async (address?: string) => {
+	const handleStartChat = async (recipientAddr?: string) => {
 		setLoading(true);
-		const recipientAddress = address ?? searchAddress.trim();
+		const recipientAddress = recipientAddr ?? searchAddress.trim();
 
 		if (!recipientAddress) {
 			setLoading(false);

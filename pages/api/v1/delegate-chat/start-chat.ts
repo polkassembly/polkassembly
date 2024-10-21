@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
 
-	if (paDelegatesSnapshot.empty && !paDelegatesSnapshot?.docs?.[0]) {
+	if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
 		return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
 	}
 
@@ -76,7 +76,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 		return res.status(200).json(chat);
 	} catch (error) {
-		return res.status(500).json({ message: error || messages.ERROR_IN_ADDING_EVENT });
+		return res.status(500).json({ message: error.message || messages.ERROR_IN_ADDING_EVENT });
 	}
 }
 

@@ -13,7 +13,7 @@ interface Props {
 	handleOpenChat: (chat: IChat) => void;
 }
 
-const RenderChats = ({ className, handleOpenChat, chats }: Props) => {
+const RenderChats = React.memo(({ className, handleOpenChat, chats }: Props) => {
 	return (
 		<div className={`${className} h-full w-full overflow-y-auto`}>
 			<List
@@ -31,5 +31,6 @@ const RenderChats = ({ className, handleOpenChat, chats }: Props) => {
 			/>
 		</div>
 	);
-};
+});
+
 export default RenderChats;

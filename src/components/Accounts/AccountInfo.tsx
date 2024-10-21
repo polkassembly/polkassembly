@@ -16,7 +16,7 @@ interface Props {
 
 const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 	return (
-		<div className={`${poppins.className} ${poppins.variable} w-full rounded-[14px] bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-4`}>
+		<div className={`${poppins.className} ${poppins.variable} `}>
 			<div className='relative flex w-full items-start justify-between '>
 				<div>
 					{accountData?.address && (

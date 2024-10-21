@@ -72,13 +72,15 @@ const AddressesComponent = () => {
 				spinning={isLoading}
 				className='min-h-screen'
 			>
-				<AccountInfo
-					accountData={accountData}
-					loginAddress={loginAddress}
-				/>
-				<Signatories accountData={accountData} />
-				<ProxyDetails accountData={accountData} />
-				<MultisigDetails accountData={accountData} />
+				<div className='w-full rounded-[14px] bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
+					<AccountInfo
+						accountData={accountData}
+						loginAddress={loginAddress}
+					/>
+					<Signatories accountData={accountData} />
+					<ProxyDetails accountData={accountData} />
+					<MultisigDetails accountData={accountData} />
+				</div>
 			</Spin>
 		</section>
 	);

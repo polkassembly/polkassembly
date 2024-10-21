@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
-import fetch from 'node-fetch';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -28,12 +27,14 @@ export const getAccountsFromAddress = async ({ address, network }: { address: st
 			};
 		}
 
-		const data = await (await fetchWithTimeout(apiUrl, {
-			body: JSON.stringify({ key: address }),
-			headers: subscanApiHeaders,
-			method: 'POST',
-			timeout: 10000
-		})).json();
+		const data = await (
+			await fetchWithTimeout(apiUrl, {
+				body: JSON.stringify({ key: address }),
+				headers: subscanApiHeaders,
+				method: 'POST',
+				timeout: 10000
+			})
+		).json();
 
 		return {
 			data,

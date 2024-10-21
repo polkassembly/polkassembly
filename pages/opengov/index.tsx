@@ -29,6 +29,8 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import BatchVotingWebView from '~src/components/Home/LatestActivity/BatchVotingWebView';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
 	loading: () => <Skeleton active />,
@@ -46,7 +48,7 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -102,11 +104,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
 	}
 
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	const props: Props = {
 		error: '',
 		gov2LatestPosts,
 		network,
-		networkSocialsData
+		networkSocialsData,
+		...translations
 	};
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
@@ -120,6 +125,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -136,7 +142,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mt-3 flex items-start justify-between'>
-				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('overview')}</h1>
 				<div className='flex flex-col items-end gap-2 lg:flex-row xl:mr-[6px] xl:justify-end'>
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>

@@ -20,6 +20,7 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'react-i18next';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -72,6 +73,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
 		const currentComment = item && item.content;
 		const previousComment = index < historyData?.length - 1 ? historyData[index + 1]?.content : null;
@@ -136,7 +138,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							onClick={() => handleExpand(index, !item?.expanded)}
 							className='mt-1 cursor-pointer text-xs font-medium text-pink_primary'
 						>
-							{item?.expanded ? 'Show less' : 'Show more'}
+							{item?.expanded ? t('show_less') : t('show_more')}
 						</span>
 					)}
 				</div>
@@ -175,7 +177,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]  max-sm:w-full dark:[&>.ant-modal-content>.ant-modal-header]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-blue-dark-high'>Comment Edit History</label>}
+			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-blue-dark-high'>{t('comment_edit_history')}</label>}
 		>
 			<div className='post-history-timeline -mb-5 mt-9 flex flex-col px-4'>
 				<Timeline items={items} />

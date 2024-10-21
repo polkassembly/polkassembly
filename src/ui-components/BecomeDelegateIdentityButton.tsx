@@ -6,6 +6,7 @@ import ImageIcon from './ImageIcon';
 import OnchainIdentity from '~src/components/OnchainIdentity';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	closeModal: () => void;
@@ -15,6 +16,7 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 	const { loginAddress } = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 
 	const handleIdentityButtonClick = () => {
 		if (loginAddress?.length) {
@@ -27,7 +29,7 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 	return (
 		<>
 			<span className='text-xs text-blue-light-medium dark:text-blue-dark-high sm:text-sm'>
-				To add socials to your delegate profile{' '}
+				{t('to_add_socials_to_your_delegate_profile')}{' '}
 				<span
 					onClick={() => {
 						handleIdentityButtonClick(), closeModal();
@@ -39,9 +41,9 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 						alt='shield icon'
 						imgClassName='-mt-[3px] mr-[1.5px]'
 					/>{' '}
-					Set identity
+					{t('set_identity')}
 				</span>{' '}
-				with Polkassembly
+				{t('with_polkassembly')}
 			</span>
 			{onchainIdentitySupportedNetwork.includes(network) && (
 				<OnchainIdentity

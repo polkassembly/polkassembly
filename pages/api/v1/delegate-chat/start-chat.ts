@@ -40,18 +40,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
 
-	if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
-		return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
-	}
+	// if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
+	// 	return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
+	// }
 
 	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
-	const chatId = generateChatId(senderAddress, receiverAddress);
+	const chatId = senderAddress.slice(0, 7) + receiverAddress.slice(-7);
 
 	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
-	const newChat = {
-		chatId,
+	const newChat: any = {
+		chatId: String(chatId),
 		created_at: new Date(),
 		receiverAddress,
 		senderAddress,
@@ -67,11 +67,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 		const chat: IChat = {
 			chatId: data?.chatId,
-			created_at: data?.created_at,
+			created_at: data?.created_at?.toDate(),
 			latestMessage: data?.latestMessage,
 			receiverAddress: data?.receiverAddress,
 			senderAddress: data?.senderAddress,
-			updated_at: data?.updated_at
+			updated_at: data?.updated_at?.toDate()
 		};
 
 		return res.status(200).json(chat);

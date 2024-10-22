@@ -12,6 +12,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import BatchVotingWeb from '~src/components/BatchVoting';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface IBatchVoting {
 	network: string;
@@ -28,10 +29,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			}
 		};
 	}
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
 
 	return {
 		props: {
-			network
+			network,
+			...translations
 		}
 	};
 };

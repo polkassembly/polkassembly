@@ -3,10 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import NotificationsContent from '~src/components/InAppNotification/NotificationsContent';
@@ -17,11 +19,12 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 	if (!AVAILABLE_NETWORK.includes(network)) {
 		return {
 			props: {},
@@ -31,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		};
 	}
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 interface Props {
@@ -41,6 +44,7 @@ interface Props {
 const InAppNotifications: FC<Props> = ({ network }) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { networkPreferences, id: userId } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -59,29 +63,29 @@ const InAppNotifications: FC<Props> = ({ network }) => {
 						alt='notific...'
 						className={theme === 'dark' ? 'dark-icons' : ''}
 					/>
-					Notifications
+					{t('notifications')}
 				</div>
 				{!userId ? (
 					<div className='flex items-center text-base'>
-						Please
+						{t('please')}
 						<Link
 							href={'/login'}
 							className='mx-1 text-pink_primary dark:to-blue-dark-helper'
 						>
-							login
+							{t('login')}
 						</Link>
-						to use notifications.
+						{t('to_use_notifications')}.
 					</div>
 				) : (
 					<div className='flex items-center text-base'>
-						Please enable notifications via{' '}
+						{t('please_enable_notifications_via')}{' '}
 						<Link
 							href={'/settings?tab=notifications'}
 							className='mx-1 text-pink_primary dark:to-blue-dark-helper'
 						>
-							settings
+							{t('settings')}
 						</Link>{' '}
-						page .
+						{t('page')} .
 					</div>
 				)}
 			</div>

@@ -21,8 +21,10 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
 import TrackListingTabs from '~src/components/Listing/Tracks/TrackListingTabs';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -90,9 +92,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	const props: IOverviewListingProps = {
 		network,
-		posts: {}
+		posts: {},
+		...translations
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];
@@ -113,6 +118,8 @@ interface IOverviewListingProps {
 const OverviewListing: FC<IOverviewListingProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,7 +136,7 @@ const OverviewListing: FC<IOverviewListingProps> = (props) => {
 			/>
 			<div className='flex items-center gap-x-2 xs:mt-2 md:mt-0'>
 				<OverviewIcon className='text-lg font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>All Referenda</h2>
+				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>{t('all_referenda')}</h2>
 			</div>
 			<TrackListingTabs
 				className='mt-8'

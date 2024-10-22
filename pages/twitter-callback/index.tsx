@@ -5,6 +5,7 @@
 import { WarningOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -16,11 +17,12 @@ import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { oauth_verifier: oauthVerifier, oauth_token: oauthRequestToken } = query;
 	const { data, error } = await getTwitterCallback({
@@ -30,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	});
 
 	if (data) {
-		return { props: { network, twitterHandle: data } };
+		return { props: { network, twitterHandle: data, ...translations } };
 	}
 	return { props: { error: error || 'Error in getting twitter handle', network } };
 };

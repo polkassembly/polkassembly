@@ -22,18 +22,21 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	const translations = await serverSideTranslations(locale || '', ['common']);
 	if (networkRedirect) return networkRedirect;
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const Settings: FC<Props> = (props) => {
@@ -43,6 +46,7 @@ const Settings: FC<Props> = (props) => {
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsSelector();
 	const [searchQuery, setSearchQuery] = useState<string>('');
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const handleTabClick = (key: string) => {
 		router.push(`/settings?tab=${key}`);
@@ -93,17 +97,17 @@ const Settings: FC<Props> = (props) => {
 
 			<Col className='h-full w-full'>
 				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
-					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
+					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>{t('settings')}</h3>
 					{!id ? (
 						<p className='m-0 mt-6 p-0 text-bodyBlue dark:text-white'>
-							Please login to change settings{' '}
+							{t('please_login_to_change_settings')}{' '}
 							<span
 								onClick={() => {
 									router.push('/login');
 								}}
 								className='cursor-pointer text-pink_primary'
 							>
-								Login
+								{t('login')}
 							</span>
 							.
 						</p>

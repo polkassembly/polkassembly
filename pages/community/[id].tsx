@@ -25,22 +25,25 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const proposalType = ProposalType.COMMUNITY_PIPS;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { data, error, network, status } };
+	return { props: { data, error, network, status, ...translations } };
 };
 
 interface ITechCommPostProps {
@@ -56,6 +59,7 @@ const CommunityPIPsPost: FC<ITechCommPostProps> = (props) => {
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { t } = useTranslation('common');
 	const { id } = router.query;
 
 	useEffect(() => {
@@ -77,8 +81,8 @@ const CommunityPIPsPost: FC<ITechCommPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>

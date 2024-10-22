@@ -30,6 +30,8 @@ import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverview/index'), {
 	ssr: false
@@ -39,11 +41,12 @@ const Gov1TreasuryProposal = dynamic(() => import('~src/components/Gov1TreasuryP
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.TREASURY_PROPOSALS;
@@ -56,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface ITreasuryProps {
@@ -71,6 +74,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 	const dispatch = useDispatch();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -105,7 +109,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			<div className='mt-3 flex w-full flex-col sm:flex-row sm:items-center'>
 				<h1 className='mx-2 mb-2 flex flex-1 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiamondIcon className='mr-2 justify-self-center' />
-					Treasury Proposals ({count})
+					{t('treasury_proposals')} ({count})
 				</h1>
 				{isCreationOfTreasuryProposalSupported(network) && (
 					<OpenGovTreasuryProposal
@@ -121,8 +125,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			{/* Intro and Create Post Button */}
 			<div className='mt-8'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain treasury proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able
-					to edit them.
+					{t('treasury_proposals_desc')}
 					{['moonbeam', 'moonriver', 'moonbase'].includes(network) ? (
 						<div>
 							<a
@@ -131,7 +134,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 								target='_blank'
 								rel='noreferrer'
 							>
-								Guidelines of the Interim Treasury.
+								{t('guidelines_of_the_interim_treasury')}
 							</a>
 						</div>
 					) : null}

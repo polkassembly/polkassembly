@@ -18,23 +18,27 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { Tabs } from '~src/ui-components/Tabs';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const Parachains = ({ className, network }: Props) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
@@ -98,7 +102,7 @@ const Parachains = ({ className, network }: Props) => {
 				network={network}
 			/>
 			<div className={className}>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-blue-light-high dark:text-blue-dark-high'>Polkadot and Kusama ecosystem and directory</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-blue-light-high dark:text-blue-dark-high'>{t('polkadot_and_Kusama_ecosystem_and_directory')}</h1>
 
 				<Row
 					gutter={[{ lg: 16 }, 16]}
@@ -127,7 +131,7 @@ const Parachains = ({ className, network }: Props) => {
 				</Row>
 
 				<div className={`${className} h-[650px] rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}>
-					<h2 className=' mb-3 mt-2 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high sm:mt-0 md:mb-6 md:mt-6'>Projects</h2>
+					<h2 className=' mb-3 mt-2 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high sm:mt-0 md:mb-6 md:mt-6'>{t('projects')}</h2>
 					<Tabs
 						theme={theme as any}
 						type='card'

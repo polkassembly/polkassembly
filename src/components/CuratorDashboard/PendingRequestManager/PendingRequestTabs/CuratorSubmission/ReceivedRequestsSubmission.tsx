@@ -45,7 +45,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmis
 	const [isApproveModalVisible, setIsApproveModalVisible] = useState<boolean>(false);
 	const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
 	const [comment, setComment] = useState<string>('');
-	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(receivedSubmissions)); // State for grouped bounties
+	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(receivedSubmissions));
 
 	const toggleBountyDescription = (parentBountyIndex: number) => {
 		setExpandedBountyId(expandedBountyId === parentBountyIndex ? null : parentBountyIndex);

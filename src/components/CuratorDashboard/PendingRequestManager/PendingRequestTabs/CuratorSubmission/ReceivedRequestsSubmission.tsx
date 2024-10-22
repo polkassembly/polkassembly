@@ -138,9 +138,7 @@ function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmis
 									height={350}
 								/>
 								<span className='-mt-10 text-xl font-semibold text-[#243A57] dark:text-white'>No Submissions Found</span>
-								<span className='flex items-center gap-1 pt-3 text-center text-[#243A57] dark:text-white'>
-									<span className='cursor-pointer font-semibold text-pink_primary'>Make</span> or Receive submissions to view them here
-								</span>
+								<span className='flex items-center gap-1 pt-3 text-center text-[#243A57] dark:text-white'>No Received submissions to view them here</span>
 							</div>
 						) : (
 							<>

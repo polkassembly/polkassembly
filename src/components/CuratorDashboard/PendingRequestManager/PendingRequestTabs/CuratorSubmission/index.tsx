@@ -32,7 +32,10 @@ function CuratorSubmission({
 	const [bountyId, setBountyId] = useState('');
 
 	const handleNewSubmission = useCallback(async () => {
+		setLoadingSubmission(true);
 		await fetchSubmissions('/api/v1/bounty/curator/submissions/getReceivedSubmissions', { curatorAddress: currentUser?.loginAddress }, setReceivedSubmissions, setLoading);
+		await fetchSubmissions('/api/v1/bounty/curator/submissions/getSentSubmissions', { userAddress: currentUser?.loginAddress }, setSentSubmissions, setLoadingSubmission);
+		setLoadingSubmission(false);
 		setIsModalVisible(false);
 		setEditSubmission(undefined);
 		setIsEditing(false);

@@ -123,8 +123,8 @@ function SentSubmissions({
 
 		if (data) {
 			updateGroupedBounties(selectedSubmission);
-			const updatedSubmissions = sentSubmissions.map((submission: any) => (submission.id === selectedSubmission.id ? { ...submission } : submission));
-			setSentSubmissions(updatedSubmissions);
+			const newSubmissions = sentSubmissions.filter((sub: IChildBountySubmission) => sub?.id !== submission?.id);
+			setSentSubmissions(newSubmissions);
 			setEditSubmission(undefined);
 			message.success('Submission status updated successfully');
 		}
@@ -195,7 +195,7 @@ function SentSubmissions({
 															alt='timer'
 															className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 														/>
-														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData.createdAt).format('Do MMM YYYY')}</p>
+														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData?.createdAt).format('Do MMM YYYY')}</p>
 													</div>
 													<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 													<span className='ml-1 text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>

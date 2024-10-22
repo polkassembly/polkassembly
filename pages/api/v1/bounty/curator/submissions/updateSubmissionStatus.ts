@@ -26,7 +26,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMessage, updatedStatus } = req.body;
 		if (
 			!proposerAddress?.length ||
+			!getEncodedAddress(proposerAddress, network) ||
 			!curatorAddress?.length ||
+			!getEncodedAddress(curatorAddress, network) ||
 			!submissionId?.length ||
 			![EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED, EChildbountySubmissionStatus.DELETED].includes(updatedStatus)
 		) {

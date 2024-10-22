@@ -84,6 +84,7 @@ interface SidebarProps {
 	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
 	setLoginOpen: (open: boolean) => void;
+	setIdentityOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -98,7 +99,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	sidedrawer,
 	isIdentityUnverified,
 	setOpenAddressLinkedModal,
-	setLoginOpen
+	setLoginOpen,
+	setIdentityOpen
 }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -220,11 +222,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}};
 		}
 
-	.ant-menu-submenu-title {
-  ${(props: any) =>
-		!props.sidebarCollapsed && props.sidedrawer
-			? isMobile
-				? `
+		.ant-menu-submenu-title {
+			${(props: any) =>
+				!props.sidebarCollapsed && props.sidedrawer
+					? isMobile
+						? `
         padding-left: 18px !important;  /* Adjust mobile-specific values here */
         border-right-width: 15px;
         margin-right: 15px;
@@ -234,7 +236,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 15px;
 
       `
-				: `
+						: `
         padding-left: 16px !important; /* Adjust non-mobile values here */
         border-right-width: 20px;
         margin-right: 10px;
@@ -244,11 +246,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 20px;
         width: 199px;
       `
-			: ''}
-}
+					: ''}
+		}
 
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-		  ${() => {
+			${() => {
 				if (isMobile) {
 					return `padding-left: 16px !important;
 			margin-left: 25px !important;`;
@@ -257,6 +259,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			margin-left: 20px !important;`;
 				}
 			}}
+		}
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
@@ -309,6 +312,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 		if (isMobile) {
 			setIdentityMobileModal(true);
 		} else {
+			console.log(currentUser);
+			if (currentUser?.multisigAssociatedAddress && currentUser?.loginAddress) {
+				localStorage.setItem('identityAddress', currentUser?.loginAddress);
+				setIdentityOpen(true);
+				return;
+			}
 			if (address?.length) {
 				setOpen(!open);
 			} else {

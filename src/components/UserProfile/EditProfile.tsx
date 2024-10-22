@@ -19,11 +19,13 @@ import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useGlobalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import AstralsModal from './AstralsModal';
+import { GlobalActions } from '~src/redux/global';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -52,6 +54,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false, onConfirm } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
+	const profileData = data;
+	const { is_bio_changed, is_profile_changed, is_tag_changed, is_title_changed } = useGlobalSelector();
 	const [loading, setLoading] = useState(false);
 	const [errorCheck, setErrorCheck] = useState({
 		basicInformationError: '',
@@ -153,6 +157,19 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	}, [populateData]);
 
 	const updateProfileData = async () => {
+		if (profileData?.bio === '' && profile?.bio !== '') {
+			dispatch(GlobalActions.setIsBioChanged(true));
+		}
+		if (profileData?.title === '' && profile?.title !== '') {
+			dispatch(GlobalActions.setIsTitleChanged(true));
+		}
+		if (profileData?.image === '' && profile?.image !== '') {
+			dispatch(GlobalActions.setIsProfileChanged(true));
+		}
+		if (profileData?.badges?.length === 0 && profile?.badges?.length !== 0) {
+			dispatch(GlobalActions.setIsTagChanged(true));
+		}
+
 		if (!profile) {
 			setErrorCheck({ ...errorCheck, basicInformationError: 'Please fill in the required fields.' });
 			return;
@@ -215,6 +232,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		setOpen(false);
 		setOpenModal?.(false);
 	};
+
 	return (
 		<div>
 			<Modal
@@ -330,6 +348,23 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					<span className='max-md:hidden'>Edit</span>
 				</button>
 			)}
+			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`mt-[160px] h-full max-h-[774px] w-full max-w-[508px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				onCancel={() => {
+					dispatch(GlobalActions.setIsBioChanged(false));
+					dispatch(GlobalActions.setIsProfileChanged(false));
+					dispatch(GlobalActions.setIsTagChanged(false));
+					dispatch(GlobalActions.setIsTitleChanged(false));
+				}}
+				title={null}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				footer={null}
+				zIndex={1002}
+				open={(is_bio_changed || is_profile_changed || is_title_changed || is_tag_changed) && !loading}
+			>
+				<AstralsModal />
+			</Modal>
 		</div>
 	);
 };

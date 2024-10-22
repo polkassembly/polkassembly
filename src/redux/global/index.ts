@@ -6,7 +6,11 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { IGlobalStore } from './@types';
 
 const initialState: IGlobalStore = {
-	is_sidebar_collapsed: false
+	is_bio_changed: false,
+	is_profile_changed: false,
+	is_sidebar_collapsed: false,
+	is_tag_changed: false,
+	is_title_changed: false
 };
 
 export const globalStore = createSlice({
@@ -24,11 +28,27 @@ export const globalStore = createSlice({
 		reset: (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
-				is_sidebar_collapsed: false
+				is_bio_changed: false,
+				is_profile_changed: false,
+				is_sidebar_collapsed: false,
+				is_tag_changed: false,
+				is_title_changed: false
 			};
+		},
+		setIsBioChanged: (state, action: PayloadAction<boolean>) => {
+			state.is_bio_changed = action.payload;
+		},
+		setIsProfileChanged: (state, action: PayloadAction<boolean>) => {
+			state.is_profile_changed = action.payload;
 		},
 		setIsSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
 			state.is_sidebar_collapsed = action.payload;
+		},
+		setIsTagChanged: (state, action: PayloadAction<boolean>) => {
+			state.is_tag_changed = action.payload;
+		},
+		setIsTitleChanged: (state, action: PayloadAction<boolean>) => {
+			state.is_title_changed = action.payload;
 		}
 	}
 });

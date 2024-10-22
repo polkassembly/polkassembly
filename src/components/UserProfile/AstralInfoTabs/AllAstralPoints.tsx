@@ -207,7 +207,7 @@ const AllAstralPoints = ({ userId, type }: Props) => {
 							<ImageIcon
 								src={'/assets/Gifs/empty-state.gif'}
 								alt='Empty Icon'
-								imgClassName='w-[555px] h-[462px]'
+								imgClassName='w-[555px] h-[552px]'
 							/>
 							<h3 className='m-0 -mt-[120px] p-0 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Nothing to see here</h3>
 							<p className='m-0 p-0 text-center text-sm text-bodyBlue dark:text-blue-dark-medium'>

@@ -48,7 +48,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages?.PARENT_BOUNTY_IS_NOT_ACTIVE });
 		}
 
-		if (![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator)) {
+		if (
+			![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator) &&
+			[EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED].includes(updatedStatus)
+		) {
 			return res.status(400).json({ message: messages.UNAUTHORISED });
 		}
 

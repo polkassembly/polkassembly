@@ -5,7 +5,7 @@ import { Button, Divider, message, Modal } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { CheckCircleOutlined, CloseCircleOutlined, DownOutlined, EditOutlined, UpOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useTheme } from 'next-themes';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -17,6 +17,7 @@ import Markdown from '~src/ui-components/Markdown';
 import Skeleton from '~src/basic-components/Skeleton';
 import AddressDropdown from '~src/ui-components/AddressDropdown';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
@@ -36,7 +37,23 @@ const groupBountyData = (bounties: IChildBountySubmission[]) => {
 
 	return groupedBounties;
 };
-function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { isloading: boolean; sentSubmissions: any; setSentSubmissions: any }) {
+function SentSubmissions({
+	isloading,
+	sentSubmissions,
+	setSentSubmissions,
+	setIsEditing,
+	setEditSubmission,
+	setIsModalVisible,
+	setBountyId
+}: {
+	isloading: boolean;
+	sentSubmissions: any;
+	setSentSubmissions: any;
+	setIsEditing: (isEditing: boolean) => void;
+	setEditSubmission: any;
+	setIsModalVisible: any;
+	setBountyId: any;
+}) {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -50,8 +67,10 @@ function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { i
 	};
 
 	const showEditModal = (submission: any) => {
-		setSelectedSubmission(submission);
-		setIsSubmitModalVisible(true);
+		setIsModalVisible(true);
+		setIsEditing(true);
+		setEditSubmission(submission);
+		setBountyId(submission.parentBountyIndex);
 	};
 
 	const handleCancel = () => {
@@ -83,15 +102,16 @@ function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { i
 		}
 	};
 
-	const handleStatusUpdate = async (updatedStatus: EChildbountySubmissionStatus) => {
-		if (!selectedSubmission) return;
+	const handleDelete = async (submission: IChildBountySubmission) => {
+		setSelectedSubmission(submission);
+
 		const payload = {
 			curatorAddress: currentUser?.loginAddress,
-			parentBountyIndex: selectedSubmission?.parentBountyIndex,
-			proposerAddress: selectedSubmission?.proposer,
+			parentBountyIndex: submission?.parentBountyIndex,
+			proposerAddress: submission?.proposer,
 			rejectionMessage: '',
-			submissionId: selectedSubmission?.id,
-			updatedStatus
+			submissionId: submission?.id,
+			updatedStatus: EChildbountySubmissionStatus.DELETED
 		};
 
 		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
@@ -102,20 +122,12 @@ function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { i
 		}
 
 		if (data) {
-			message.success('Submission status updated successfully');
 			updateGroupedBounties(selectedSubmission);
-			const updatedSubmissions = sentSubmissions.map((submission: any) => (submission.id === selectedSubmission.id ? { ...submission, status: updatedStatus } : submission));
+			const updatedSubmissions = sentSubmissions.map((submission: any) => (submission.id === selectedSubmission.id ? { ...submission } : submission));
 			setSentSubmissions(updatedSubmissions);
+			setEditSubmission(undefined);
+			message.success('Submission status updated successfully');
 		}
-
-		handleCancel();
-	};
-
-	const handleDelete = (submission: any) => {
-		setSelectedSubmission(submission);
-		handleStatusUpdate(EChildbountySubmissionStatus.DELETED);
-		const updatedSubmissions = sentSubmissions.filter((s: any) => s.id !== submission.id);
-		setSentSubmissions(updatedSubmissions);
 	};
 
 	return (
@@ -138,7 +150,18 @@ function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { i
 								/>
 								<span className='-mt-10 text-xl font-semibold text-[#243A57] dark:text-white'>No Submissions Found</span>
 								<span className='flex items-center gap-1 pt-3 text-center text-[#243A57] dark:text-white'>
-									<span className='cursor-pointer font-semibold text-pink_primary'>Make</span> or Receive submissions to view them here
+									<span
+										onClick={() => {
+											setBountyId(50);
+											setIsEditing(false);
+											setEditSubmission(undefined);
+											setIsModalVisible(true);
+										}}
+										className='cursor-pointer font-semibold text-pink_primary'
+									>
+										Make
+									</span>{' '}
+									or Receive submissions to view them here
 								</span>
 							</div>
 						) : (
@@ -269,44 +292,22 @@ function SentSubmissions({ isloading, sentSubmissions, setSentSubmissions }: { i
 																<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1}</span>
 																<span className='pl-2 text-[17px] font-medium text-blue-light-high dark:text-white'>{request?.title}</span>
 																<div className='flex flex-col'>
-																	<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{request?.content}</span>
+																	<Markdown
+																		md={request?.content}
+																		className='mt-1 text-[14px] text-blue-light-high dark:text-white'
+																	/>
 																	<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 																</div>
 															</div>
 															<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 															<div className='flex justify-between gap-4 p-2 px-4'>
-																{request.status === EChildbountySubmissionStatus.APPROVED ? (
-																	<span className='w-full cursor-default rounded-md bg-[#E0F7E5] py-2 text-center text-[16px] font-medium text-[#07641C]'>
-																		<CheckCircleOutlined /> Approved
-																	</span>
-																) : request.status === EChildbountySubmissionStatus.REJECTED ? (
-																	<>
-																		<span className='w-1/2 cursor-default rounded-md bg-[#ffe3e7] py-2 text-center text-[16px] font-medium text-[#FB123C]'>
-																			<CloseCircleOutlined /> Rejected
-																		</span>
-																		<span
-																			onClick={() => showEditModal(request)}
-																			className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
-																		>
-																			<EditOutlined /> Edit & Resubmit
-																		</span>
-																	</>
-																) : (
-																	<>
-																		<span
-																			onClick={() => handleDelete(request)}
-																			className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
-																		>
-																			Delete
-																		</span>
-																		<span
-																			onClick={() => showEditModal(request)}
-																			className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
-																		>
-																			<EditOutlined /> Edit
-																		</span>
-																	</>
-																)}
+																<SubmissionAction
+																	submission={request}
+																	loginAddress={currentUser?.loginAddress}
+																	network={network}
+																	handleDelete={handleDelete}
+																	handleEditClick={showEditModal}
+																/>
 															</div>
 														</div>
 													))}

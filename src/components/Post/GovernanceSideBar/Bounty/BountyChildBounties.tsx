@@ -8,7 +8,6 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import StatusTag from 'src/ui-components/StatusTag';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -32,7 +31,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	};
 	useEffect(() => {
 		setLoading(true);
-		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`)
+		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${5}&postId=${bountyId}`)
 			.then((res) => {
 				const data = res.data;
 				setBountiesRes(data);
@@ -50,7 +49,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 				indicator={<LoadingOutlined />}
 				spinning={loading}
 			>
-				<h4 className='dashboard-heading mb-6 dark:text-white'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
+				<h4 className='dashboard-heading mb-6 dark:text-white'>Child Bounties ({bountiesRes?.child_bounties_count ?? 0})</h4>
 				{bountiesRes && bountiesRes.child_bounties_count > 0 ? (
 					bountiesRes?.child_bounties.map(
 						(childBounty) =>
@@ -89,7 +88,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 						className='pagination-container'
 						current={currentPage}
 						total={bountiesRes?.child_bounties_count}
-						pageSize={VOTES_LISTING_LIMIT}
+						pageSize={5}
 						showSizeChanger={false}
 						responsive={true}
 						hideOnSinglePage={true}

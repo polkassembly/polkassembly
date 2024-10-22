@@ -4,7 +4,7 @@
 
 import { Form } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
@@ -29,7 +29,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
-	label?: string;
+	label?: string | ReactNode;
 	helpText?: string;
 	onChange?: (balance: BN) => void;
 	placeholder?: string;

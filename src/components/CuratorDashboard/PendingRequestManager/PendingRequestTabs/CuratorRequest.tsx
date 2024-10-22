@@ -115,7 +115,7 @@ function ReceivedRequests() {
 							>
 								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 									<div className='flex gap-1 pt-2'>
-										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive dark:text-white'>{bounty.proposer} </span>
+										<span className='text-[14px] font-medium text-blue-light-medium dark:text-white'>{bounty.proposer} </span>
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>
@@ -285,7 +285,7 @@ function SentRequests() {
 							>
 								<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 									<div className='flex gap-1 pt-2'>
-										<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive dark:text-white'>{bounty.proposer} </span>
+										<span className='text-[14px] font-medium text-blue-light-medium dark:text-white'>{bounty.proposer} </span>
 
 										<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 										<div className='-mt-1  flex items-center gap-1'>

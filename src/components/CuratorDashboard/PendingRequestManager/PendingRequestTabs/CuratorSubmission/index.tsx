@@ -2,30 +2,77 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { spaceGrotesk } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReceivedSubmissions from './ReceivedRequestsSubmission';
 import SentSubmissions from './SentRequestsSubmission';
+import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBar/Bounty/Curator/MakeChildBountySubmision';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IChildBountySubmission } from '~src/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 function CuratorSubmission({
-	isloading,
-	isloadingSubmissions,
 	sentSubmissions,
 	receivedSubmissions,
 	setReceivedSubmissions,
 	setSentSubmissions
 }: {
-	isloading: boolean;
 	receivedSubmissions: any;
-	isloadingSubmissions: boolean;
 	sentSubmissions: any;
 	setReceivedSubmissions: (submissions: any) => void;
 	setSentSubmissions: (submissions: any) => void;
 }) {
 	const [activeTab, setActiveTab] = useState('received');
+	const currentUser = useUserDetailsSelector();
+	const [isloadingSubmissions, setLoadingSubmission] = useState<boolean>(false);
+	const [isloading, setLoading] = useState<boolean>(false);
+
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editSubmission, setEditSubmission] = useState<any>();
+	const [bountyId, setBountyId] = useState('');
+
+	const handleNewSubmission = useCallback(async () => {
+		await fetchSubmissions('/api/v1/bounty/curator/submissions/getReceivedSubmissions', { curatorAddress: currentUser?.loginAddress }, setReceivedSubmissions, setLoading);
+		setIsModalVisible(false);
+		setEditSubmission(undefined);
+		setIsEditing(false);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const fetchSubmissions = async (url: string, params: Record<string, any>, setData: React.Dispatch<any>, setLoading: React.Dispatch<boolean>) => {
+		try {
+			setLoading(true);
+			const { data, error } = await nextApiClientFetch<IChildBountySubmission>(url, params);
+			if (error) {
+				console.error('Error fetching submissions:', error);
+				setLoading(false);
+				return;
+			}
+			setData(data);
+		} catch (e) {
+			console.error('API call failed:', e);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleTabClick = (tab: string) => {
 		setActiveTab(tab);
 	};
+	const getReceivedRequests = () => {
+		fetchSubmissions('/api/v1/bounty/curator/submissions/getReceivedSubmissions', { curatorAddress: currentUser?.loginAddress }, setReceivedSubmissions, setLoading);
+	};
+
+	const getSentRequests = () => {
+		fetchSubmissions('/api/v1/bounty/curator/submissions/getSentSubmissions', { userAddress: currentUser?.loginAddress }, setSentSubmissions, setLoadingSubmission);
+	};
+
+	useEffect(() => {
+		getReceivedRequests();
+		getSentRequests();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUser]);
 
 	return (
 		<div className='curator-request-container'>
@@ -64,9 +111,22 @@ function CuratorSubmission({
 						isloading={isloadingSubmissions}
 						sentSubmissions={sentSubmissions}
 						setSentSubmissions={setSentSubmissions}
+						setIsModalVisible={setIsModalVisible}
+						setIsEditing={setIsEditing}
+						setEditSubmission={setEditSubmission}
+						setBountyId={setBountyId}
 					/>
 				)}
 			</div>
+			<MakeChildBountySubmisionModal
+				bountyId={bountyId}
+				open={isModalVisible}
+				setOpen={setIsModalVisible}
+				editing={isEditing}
+				submission={isEditing ? editSubmission : undefined}
+				ModalTitle={isEditing ? 'Edit Submission' : undefined}
+				onSubmissionCreated={handleNewSubmission}
+			/>
 		</div>
 	);
 }

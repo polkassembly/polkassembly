@@ -270,7 +270,10 @@ function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmis
 																<span className='text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1}</span>
 																<span className='pl-2 text-[17px] font-medium text-blue-light-high dark:text-white'>{request?.title}</span>
 																<div className='flex flex-col'>
-																	<span className='mt-1 text-[14px] text-blue-light-high dark:text-white'>{request?.content}</span>
+																	<Markdown
+																		md={request?.content}
+																		className='mt-1 text-[14px] text-blue-light-high dark:text-white'
+																	/>{' '}
 																	<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 																</div>
 															</div>

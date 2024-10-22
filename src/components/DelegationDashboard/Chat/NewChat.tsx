@@ -36,6 +36,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates', { address });
 		if (data) {
 			setAllDelegates(data);
+			setSearchedDelegates(data);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);

@@ -25,11 +25,33 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 
 		let userActivityQuery = firestore_db.collection('user_activities').where('by', '==', user_id).where('is_deleted', '==', false);
 
+		const usersQuery = await firestore_db.collection('users').doc(String(user_id)).get();
+		if (!usersQuery.exists) {
+			return {
+				data: null,
+				error: 'User not found',
+				status: 500
+			};
+		}
+
 		if (activityTypesToFetch.length) {
 			userActivityQuery = userActivityQuery.where('type', 'in', activityTypesToFetch);
 		}
 
-		const totalUserActivitiesCount = (await userActivityQuery.count().get()).data().count || 0;
+		const count = (await userActivityQuery.count().get()).data().count || 0;
+
+		const totalUserActivitiesCount = await userActivityQuery.get();
+		let totalPoints: number = 0;
+
+		if (!totalUserActivitiesCount.empty) {
+			totalUserActivitiesCount.forEach((doc) => {
+				const data = doc.data();
+				const type = data.type;
+				const points = Object.values(REPUTATION_SCORES).find((activity) => activity.category === activity_category && activity.type === type) as any;
+				console.log(points);
+				totalPoints += points?.value || 0;
+			});
+		}
 
 		const activities = (
 			await userActivityQuery
@@ -47,7 +69,7 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		});
 
 		return {
-			data: { count: totalUserActivitiesCount, data: activities } as LeaderboardPointsResponse,
+			data: { count, data: activities, points: totalPoints || 0 },
 			error: null,
 			status: 200
 		};

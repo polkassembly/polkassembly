@@ -110,7 +110,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		let tx = curatorTx ? api?.tx?.utility?.batchAll([childBountyTx, curatorTx]) : childBountyTx;
 
 		if (multisigData?.threshold > 0) {
-			tx = api?.tx?.multisig?.asMulti(multisigData?.threshold, multisigData?.signatories?.map((item) => item), null, tx, {
+			tx = api?.tx?.multisig?.asMulti(multisigData?.threshold, multisigData?.signatories || [], null, tx, {
 				proofSize: null,
 				refTime: null
 			});

@@ -92,7 +92,6 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 			apiReady: peopleChainApiReady,
 			network
 		});
-		console.log(transferableBalance.toString());
 		setDefaultChainUserBalanceForSignatory(transferableBalance);
 	};
 
@@ -180,6 +179,45 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 		let tx;
 		if (requestJudgement) {
 			tx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+				if (!currentUser?.multisigAssociatedAddress) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig associated address not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const multisigInfo = currentUser.multisigAddressInfo;
+				if (!multisigInfo) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig info not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const signatories = multisigInfo?.multisig?.multi_account_member?.map((obj: any) => getSubstrateAddress(obj.address)) || [];
+				const threshold = multisigInfo?.multisig?.threshold || null;
+				if (!signatories.length || !threshold) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig signatories or threshold not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const weight = (await tx.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
+					threshold,
+					signatories.filter((signatory: string) => {
+						return signatory != getSubstrateAddress(currentUser?.multisigAssociatedAddress || '');
+					}),
+					null,
+					tx,
+					weight
+				);
+			}
 		} else {
 			const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 			const identityTx = (peopleChainApi ?? api).tx?.identity?.setIdentity(info);

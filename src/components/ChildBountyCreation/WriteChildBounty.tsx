@@ -37,7 +37,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 				validateMessages={{ required: "Please add the '${name}'" }}
 			>
 				<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
-					{link?.length && !link?.startsWith('https:') && (
+					{!!link?.length && !link?.startsWith('https:') && (
 						<Alert
 							showIcon
 							type='info'

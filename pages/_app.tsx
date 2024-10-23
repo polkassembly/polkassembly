@@ -97,13 +97,19 @@ function App({ Component, pageProps }: AppProps) {
 		return (
 			<div
 				style={{ background: '#000000', minHeight: '100vh', minWidth: '100vw' }}
-				className='transition-all'
+				className='flex flex-col items-center justify-center gap-2'
 			>
 				<Image
-					style={{ left: 'calc(50vw - 50px)', position: 'absolute', top: 'calc(50vh - 40px)' }}
-					width={120}
+					src='/assets/Gifs/layout-loading.gif'
+					alt='empty state'
+					width={320}
+					height={142}
 					className='bg-transparent'
-					height={45}
+				/>
+				<Image
+					width={172}
+					className='bg-transparent'
+					height={57}
 					src='/assets/PALogoDark.svg'
 					alt={'Loading'}
 				/>

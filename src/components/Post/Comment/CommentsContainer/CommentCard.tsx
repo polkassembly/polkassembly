@@ -96,7 +96,7 @@ const CommentCard: FC<ICommentProps> = (props) => {
 
 	const modifiedContent = modifyQuoteComment(comment.content);
 	return (
-		<div className={`${className} mb-9 flex gap-x-4 `}>
+		<div className={`${className} mb-3 flex gap-x-4 `}>
 			<div className='w-full overflow-hidden '>
 				<CreationLabelForComments
 					className=' rounded-t-md px-2 py-2 pt-4 md:px-4'

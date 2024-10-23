@@ -1451,8 +1451,8 @@ export const EditPencilIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={EditIconSVG}
 		{...props}
-		/>
-)
+	/>
+);
 export const DetailsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={DetailsIconSVG}

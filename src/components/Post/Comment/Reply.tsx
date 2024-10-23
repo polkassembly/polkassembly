@@ -43,7 +43,7 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 		>
 			<div className='comment-box'>
 				<CreationLabelForComments
-					className='-mt-1 rounded-t-md py-2 pt-4'
+					className='-mt-1 rounded-t-md'
 					created_at={created_at}
 					defaultAddress={proposer}
 					username={username}

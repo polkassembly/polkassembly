@@ -657,7 +657,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					<>
 						<Markdown
 							theme={theme}
-							className='rounded-b-md py-2 text-sm '
+							className='rounded-b-md pt-2 text-sm '
 							md={content}
 							isUsedInComments={true}
 						/>

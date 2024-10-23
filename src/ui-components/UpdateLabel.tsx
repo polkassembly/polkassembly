@@ -27,7 +27,7 @@ const UpdateLabel = ({ className, created_at, updated_at, isHistory, isUsedInCom
 				title={title}
 			>
 				<span
-					className={`${poppins.variable} ${poppins.className} text-xs leading-4 ${
+					className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 sm:text-xs ${
 						isUsedInComments ? ' text-blue-light-medium dark:text-blue-dark-medium' : isHistory ? 'text-pink_primary' : ''
 					}`}
 				>

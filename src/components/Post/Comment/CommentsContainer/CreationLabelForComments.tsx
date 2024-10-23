@@ -59,6 +59,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 	const getSentimentLabel = (sentiment: ESentiment) => {
 		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 640;
 
 	const items = [
 		{
@@ -68,32 +69,45 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between gap-1 bg-none sm:gap-3`}>
+		<div className={`${className} flex w-full flex-wrap items-center justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} gap-1 max-sm:gap-1 md:flex-row md:items-center`}>
 				<NameLabel
 					defaultAddress={defaultAddress}
 					username={username}
+					truncateUsername={isMobile ? true : false}
 					disableAddressClick={commentSource !== 'polkassembly'}
 					usernameClassName='text-xs text-ellipsis overflow-hidden'
 				/>
-				<div className={' flex items-center text-lightBlue dark:text-blue-dark-medium max-md:pt-1 max-xs:ml-1'}>
+				<div className='flex flex-shrink-0 items-baseline gap-1 text-lightBlue dark:text-blue-dark-medium'>
 					{vote && (
 						<div className='flex items-center justify-center'>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
+									<LikeFilled className='text-[green]' />{' '}
+									<span className='font-medium capitalize text-[green]'>
+										<span className='hidden sm:flex'>Voted</span> {vote}
+									</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted {vote}</span>
+									<DislikeFilled className='text-[red]' />{' '}
+									<span className='mb-[5px] font-medium capitalize text-[red]'>
+										<span className='hidden sm:flex'>Voted</span> {vote}
+									</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<div className='align-center mb-[-1px] flex justify-center'>
-									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted {vote}</span>
+									<SplitYellow className='mr-1' />{' '}
+									<span className='font-medium capitalize text-[#FECA7E]'>
+										<span className='hidden sm:flex'>Voted</span> {vote}
+									</span>
 								</div>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Voted {vote}</span>
+									<AbstainGray className='mr-1' />{' '}
+									<span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>
+										<span className='hidden sm:flex'>Voted</span> {vote}
+									</span>
 								</div>
 							) : null}
 						</div>
@@ -107,23 +121,23 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 								if (votesArr.length >= 1) setShowVotesModal(!showVotesModal);
 							}}
 						>
-							<span className={`${poppins.variable} ${poppins.className} mr-[6px] text-xs text-blue-light-high dark:text-blue-dark-high`}>voted</span>
+							<span className={`${poppins.variable} ${poppins.className} mr-[6px] hidden text-xs text-blue-light-high dark:text-blue-dark-high sm:mt-[2px] sm:flex`}>voted</span>
 							{votesArr[0].decision == 'yes' ? (
-								<p className='mb-[-0.1px]'>
+								<div className=''>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'> Aye</span>
-								</p>
+								</div>
 							) : votesArr[0].decision == 'no' ? (
-								<p className='mb-[-1px]'>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[2px] font-medium capitalize text-[red]'> Nay</span>
-								</p>
+								<div className='mt-[2px]'>
+									<DislikeFilled className='text-[red]' /> <span className='-mt-2 font-medium capitalize text-[red]'> Nay</span>
+								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-								<p className='mb-[-1px]'>
+								<div className='mb-[-1px]'>
 									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'> Split</span>
-								</p>
+								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-								<p className='mb-[-1px]'>
+								<div className='mb-[-1px]'>
 									<AbstainGray className='mb-[-1px] mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'> Abstain</span>
-								</p>
+								</div>
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
 							<Modal
@@ -152,21 +166,21 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 					) : null}
 				</div>
 				{relativeCreatedAt && (
-					<div className={`${poppins.variable} ${poppins.className} flex items-center`}>
+					<div className={`${poppins.variable} ${poppins.className} flex flex-shrink-0 items-center`}>
 						<Divider
-							className='ml-1 mr-2 mt-[2px] hidden border-lightBlue dark:border-blue-dark-medium  md:inline-block'
+							className='ml-1 mr-2 mt-[2px] border-lightBlue dark:border-blue-dark-medium'
 							type='vertical'
 						/>
-						<span className={`flex items-center text-blue-light-medium dark:text-blue-dark-medium max-[450px]:text-[9px] md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+						<div className={`flex items-center text-blue-light-medium dark:text-blue-dark-medium max-[450px]:text-[9px] md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
 							<ClockCircleOutlined className={'mr-1'} />
 							{relativeCreatedAt}
-						</span>
+						</div>
 					</div>
 				)}
 				{children && (
-					<div className='flex items-center'>
+					<div className='flex items-center '>
 						<Divider
-							className='ml-[2px] mt-[2px] hidden border-lightBlue dark:border-blue-dark-medium  md:inline-block'
+							className='ml-[2px] mt-[2px] border-lightBlue dark:border-blue-dark-medium'
 							type='vertical'
 						/>
 						{children}
@@ -174,7 +188,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 				)}
 			</div>
 
-			<div className='flex'>
+			<div className='flex flex-shrink-0 items-center'>
 				<Dropdown
 					overlayClassName='sentiment-hover'
 					placement='topCenter'

@@ -53,7 +53,7 @@ const Comments: FC<ICommentsProps> = (props) => {
 					disableEdit={props.disableEdit}
 					comment={comment}
 					key={comment.id}
-					className={`${index !== visibleComments.length - 1 ? 'border border-l-0 border-r-0 border-t-0 border-solid border-[#D2D8E0B2] pb-4 dark:border-[#4B4B4BB2]' : ''}`}
+					className={`${index !== visibleComments.length - 1 ? 'border border-l-0 border-r-0 border-t-0 border-solid border-[#D2D8E0B2] pb-3 dark:border-[#4B4B4BB2]' : ''}`}
 				/>
 			))}
 

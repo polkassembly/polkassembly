@@ -16,7 +16,8 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
+import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -49,35 +50,11 @@ interface Args {
 	network: string;
 }
 
-enum EBountiesStatuses {
-	ACTIVE = 'active',
-	PROPOSED = 'proposed',
-	CLAIMED = 'claimed',
-	CANCELLED = 'cancelled',
-	REJECTED = 'rejected'
-}
-
-const getBountyStatuses = (status: EBountiesStatuses) => {
-	switch (status) {
-		case EBountiesStatuses.ACTIVE:
-			return [bountyStatus.ACTIVE, bountyStatus.EXTENDED];
-		case EBountiesStatuses.PROPOSED:
-			return [bountyStatus.PROPOSED];
-		case EBountiesStatuses.CANCELLED:
-			return [bountyStatus.CANCELLED];
-		case EBountiesStatuses.REJECTED:
-			return [bountyStatus.REJECTED];
-		case EBountiesStatuses.CLAIMED:
-			return [bountyStatus.AWARDED, bountyStatus.CLAIMED];
-		default:
-			return [];
-	}
-};
 export async function getAllBounties({ categories, page, status, network }: Args): Promise<IApiResponse<{ bounties: IBountyListing[]; totalBountiesCount: number }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		const statuses = getBountyStatuses(status);
+		const statuses = getBountiesCustomStatuses(status);
 
 		if (isNaN(page) || (statuses?.length && !!statuses?.some((status: string) => !bountyStatuses.includes(status)))) throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
@@ -144,7 +121,7 @@ export async function getAllBounties({ categories, page, status, network }: Args
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
 
-				if ([bountyStatus.CLAIMED, bountyStatus.AWARDED].includes(childBounty.status)) {
+				if ([bountyStatus.CLAIMED].includes(childBounty.status)) {
 					claimedAmount = claimedAmount.add(amount);
 				}
 			});

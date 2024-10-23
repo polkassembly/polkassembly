@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import ActivityFeedAbout from '~src/components/ActivityFeed/ActivityFeedAbout';
 import ActivityFeedRankCard from '~src/components/ActivityFeed/ActivityFeedRankCard';
 import ActivityFeedProposalCard from '~src/components/ActivityFeed/ActivityFeedProposalCard';
 import ActivityFeedFeaturesSection from '~src/components/ActivityFeed/ActivityFeedFeaturesSection';
@@ -13,6 +12,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
+import AboutNetwork from '../Home/AboutNetwork';
 
 const ActivityFeedTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityFeedTreasury'), {
 	loading: () => <Skeleton active />,
@@ -33,7 +33,7 @@ const ActivityFeedSidebar: React.FC<IActivitySidebarProps> = ({ networkSocialsDa
 		<div className='hidden shrink-0 xl:block xl:max-w-[270px] 2xl:max-w-[305px]'>
 			<div className='mx-1 mt-2 md:mt-6'>
 				{networkSocialsData && (
-					<ActivityFeedAbout
+					<AboutNetwork
 						networkSocialsData={networkSocialsData.data}
 						showGov2Links
 					/>

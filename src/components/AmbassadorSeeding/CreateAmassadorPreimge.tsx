@@ -27,6 +27,7 @@ import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { useTranslation } from 'react-i18next';
 
 const EMPTY_HASH = blake2AsHex('');
 const ZERO_BN = new BN(0);
@@ -46,6 +47,7 @@ const CreateAmassadorPreimge = ({
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
+	const { t } = useTranslation('common'); // using t for translations
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -127,8 +129,8 @@ const CreateAmassadorPreimge = ({
 
 	const onFailed = () => {
 		queueNotification({
-			header: 'failed!',
-			message: 'Transaction failed!',
+			header: t('failed'),
+			message: t('transaction_failed'),
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
@@ -138,14 +140,14 @@ const CreateAmassadorPreimge = ({
 
 	const handleCreatePreimage = async () => {
 		if (!api || !apiReady || !xcmCallData || !proposer) return;
-		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
+		setLoading({ isLoading: true, message: t('awaiting_confirmation') });
 
 		const preimage: any = getState(api, xcmCallData as HexString);
 		await executeTx({
 			address: proposer || loginAddress,
 			api,
 			apiReady,
-			errorMessageFallback: 'failed!',
+			errorMessageFallback: t('failed'),
 			network,
 			onFailed,
 			onSuccess: () => onSuccess(preimage),
@@ -167,9 +169,9 @@ const CreateAmassadorPreimge = ({
 		>
 			<div className={classNames(className, 'flex w-full flex-shrink-0 flex-col items-center justify-center')}>
 				<div className='flex flex-col gap-3 py-6'>
-					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Details: </span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('details')}</span>
 					<div className='flex items-start justify-start gap-5'>
-						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'> Proposer Address:</span>
+						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>{t('proposer_address')}:</span>
 						<Address
 							iconSize={22}
 							address={proposer}
@@ -180,7 +182,7 @@ const CreateAmassadorPreimge = ({
 					</div>
 
 					<div className='flex items-start justify-start gap-5'>
-						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Applicant Address:</span>
+						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>{t('applicant_address')}:</span>
 						<Address
 							iconSize={22}
 							address={applicantAddress}
@@ -192,7 +194,7 @@ const CreateAmassadorPreimge = ({
 
 					{!!removingApplicantAddress && (
 						<div className='flex items-start justify-start gap-5'>
-							<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Removing Address:</span>
+							<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>{t('removing_address')}:</span>
 							<Address
 								iconSize={22}
 								address={removingApplicantAddress}
@@ -203,7 +205,7 @@ const CreateAmassadorPreimge = ({
 						</div>
 					)}
 					<div className='flex items-start justify-start gap-5'>
-						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Rank:</span>
+						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>{t('rank')}:</span>
 						<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 							{getRankNameByRank(rank)} ({rank})
 						</span>
@@ -215,15 +217,9 @@ const CreateAmassadorPreimge = ({
 					type='info'
 					className='mt-6 rounded-[4px] text-bodyBlue '
 					showIcon
-					description={
-						<span className='text-xs dark:text-blue-dark-high'>
-							Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
-						</span>
-					}
+					description={<span className='text-xs dark:text-blue-dark-high'>{t('gas_fees_description', { gasFee: formatedBalance(String(gasFee.toString()), unit), unit })}</span>}
 					message={
-						<span className='text-[13px] dark:text-blue-dark-high'>
-							{formatedBalance(String(baseDeposit.toString()), unit)} {unit} Base deposit is required to create a preimage.
-						</span>
+						<span className='text-[13px] dark:text-blue-dark-high'>{t('base_deposit_required', { baseDeposit: formatedBalance(String(baseDeposit.toString()), unit), unit })}</span>
 					}
 				/>
 			)}
@@ -232,16 +228,17 @@ const CreateAmassadorPreimge = ({
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
 					onClick={() => handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_APPLICANT)}
 				>
-					Back
+					{t('back')}
 				</Button>
 				<Button
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-sm font-medium text-white'
 					onClick={() => handleCreatePreimage()}
 				>
-					Create Preimage
+					{t('create_preimage')}
 				</Button>
 			</div>
 		</Spin>
 	);
 };
+
 export default CreateAmassadorPreimge;

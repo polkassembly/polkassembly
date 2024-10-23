@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Modal } from 'antd';
@@ -18,6 +17,7 @@ import { useAmbassadorReplacementSelector, useUserDetailsSelector } from '~src/r
 import ReplacementCall from './ReplacementCall';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
+import { useTranslation } from 'react-i18next';
 
 interface IReplaceAmbassador {
 	className?: string;
@@ -26,6 +26,7 @@ interface IReplaceAmbassador {
 }
 
 const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => {
+	const { t } = useTranslation('common');
 	const { loginAddress } = useUserDetailsSelector();
 	const {
 		ambassadorPostIndex = null,
@@ -79,14 +80,12 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Ambassador Proposal Creation
+						{t('exit_ambassador_proposal_creation')}
 					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your ambassador proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
-					</span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{t('exit_warning_message')}</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
@@ -95,7 +94,7 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 								setOpenWarningModal(false);
 							}}
 							buttonsize='sm'
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							variant='default'
 						/>
 						<CustomButton
@@ -105,7 +104,7 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 							}}
 							height={40}
 							width={200}
-							text='No, Continue Editing'
+							text={t('no_continue_editing')}
 							variant='primary'
 						/>
 					</div>

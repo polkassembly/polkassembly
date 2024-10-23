@@ -5,6 +5,7 @@
 import { Form } from 'antd';
 import React, { useState } from 'react';
 import Input from '~src/basic-components/Input';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -19,7 +20,7 @@ type ValidationResult = {
 	validateStatus: ValidationStatus;
 };
 
-const validateTitle = (content: string): ValidationResult => {
+const validateTitle = (content: string, t: (key: string) => string): ValidationResult => {
 	if (content) {
 		return {
 			errorMsg: null,
@@ -27,21 +28,22 @@ const validateTitle = (content: string): ValidationResult => {
 		};
 	}
 	return {
-		errorMsg: 'Please add the title.',
+		errorMsg: t('please_add_title'),
 		validateStatus: 'error'
 	};
 };
 
 const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
+	const { t } = useTranslation('common');
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
 		validateStatus: 'success'
 	});
 
 	const onChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const validationStatus = validateTitle(event.currentTarget.value);
+		const validationStatus = validateTitle(event.currentTarget.value, t);
 		setValidation(validationStatus);
-		if (onchange) {
+		if (onChange) {
 			onChange!(event);
 		}
 
@@ -51,7 +53,7 @@ const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
 	return (
 		<div className={className}>
 			<Form>
-				<label className='mb-3 flex items-center text-sm font-bold text-sidebarBlue'>Title</label>
+				<label className='mb-3 flex items-center text-sm font-bold text-sidebarBlue'>{t('title')}</label>
 				<Form.Item
 					name='title'
 					validateStatus={validationStatus.validateStatus}
@@ -62,7 +64,7 @@ const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
 						className='text-sm text-sidebarBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						name={'title'}
 						onChange={onChangeWrapper}
-						placeholder='Your title...'
+						placeholder={t('your_title')}
 						value={value}
 					/>
 				</Form.Item>

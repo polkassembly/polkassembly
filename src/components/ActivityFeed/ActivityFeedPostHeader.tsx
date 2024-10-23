@@ -37,6 +37,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -67,6 +68,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 	updateTally: boolean;
 	isLoading: boolean;
 }) => {
+	const { t } = useTranslation('common');
 	const currentUserdata = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const userid = currentUserdata?.id;
@@ -263,7 +265,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								username={post.proposerProfile?.username}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
-							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>{t('in')}</span>
 							<TopicTag
 								topic={post?.topic?.name}
 								className={post?.topic?.name}
@@ -308,7 +310,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								className='flex h-9 cursor-pointer items-center gap-1 rounded-lg border-[1px] border-solid border-[#E5007A] p-0 px-3 text-pink_primary'
 							>
 								<VoteIcon className=' mt-[1px]' />
-								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
+								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? t('cast_vote') : t('cast_vote_again')}</p>
 							</div>
 
 							<div className='flex items-center gap-2'>
@@ -318,9 +320,9 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 											<Tooltip
 												overlayClassName='max-w-none'
 												title={
-													<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
-														decidingBlock !== 0 ? `#${decidingBlock}` : ''
-													}`}</div>
+													<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`${t(
+														'deciding_ends_in'
+													)} ${remainingTime} ${decidingBlock !== 0 ? `#${decidingBlock}` : ''}`}</div>
 												}
 												color='#575255'
 											>
@@ -381,8 +383,8 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
 				image='/assets/Gifs/login-vote.gif'
-				title={'Join Polkassembly to Vote on this proposal.'}
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly_to_vote')}
+				subtitle={t('discuss_contribute_get_updates')}
 			/>
 		</>
 	);

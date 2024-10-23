@@ -13,6 +13,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTranslation } from 'react-i18next';
 
 const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
 	try {
@@ -92,7 +93,6 @@ const LatestActivityExplore: React.FC = () => {
 			})
 		);
 
-		// Filter out any posts that encountered an error
 		setPostData(detailedPosts?.filter((post) => !post.error));
 
 		setLoading(false);
@@ -122,7 +122,7 @@ const LatestActivityExplore: React.FC = () => {
 		<div className=''>
 			{loading ? (
 				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
-					<Skeleton active />{' '}
+					<Skeleton active />
 				</div>
 			) : (
 				<div className=''>
@@ -139,26 +139,33 @@ const LatestActivityExplore: React.FC = () => {
 	);
 };
 
-const LoginButton = ({ onClick }: { onClick: () => void }) => (
-	<p
-		onClick={onClick}
-		className='w-full cursor-pointer rounded-md bg-[#E5007A] px-4 py-2 text-center text-[14px] text-white lg:w-[400px]'
-	>
-		Log In
-	</p>
-);
+const LoginButton = ({ onClick }: { onClick: () => void }) => {
+	const { t } = useTranslation('common');
+	return (
+		<p
+			onClick={onClick}
+			className='w-full cursor-pointer rounded-md bg-[#E5007A] px-4 py-2 text-center text-[14px] text-white lg:w-[400px]'
+		>
+			{t('login')}
+		</p>
+	);
+};
 
-const SignupButton = ({ onClick }: { onClick: () => void }) => (
-	<p
-		onClick={onClick}
-		className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-[14px] text-pink_primary lg:w-[400px] lg:border'
-	>
-		Sign Up
-	</p>
-);
+const SignupButton = ({ onClick }: { onClick: () => void }) => {
+	const { t } = useTranslation('common');
+	return (
+		<p
+			onClick={onClick}
+			className='w-full cursor-pointer rounded-md border-[1px] border-solid border-[#E5007A] px-4 py-2 text-center text-[14px] text-pink_primary lg:w-[400px] lg:border'
+		>
+			{t('sign_up')}
+		</p>
+	);
+};
 
 const LatestActivityFollowing: React.FC = () => {
 	const currentuser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const [subscribedPosts, setSubscribedPosts] = useState<IPostData[]>([]);
@@ -208,6 +215,7 @@ const LatestActivityFollowing: React.FC = () => {
 	useEffect(() => {
 		fecthAllSubscribedPosts();
 	}, [currentTab, network]);
+
 	return (
 		<div className=''>
 			{loading ? (
@@ -236,17 +244,17 @@ const LatestActivityFollowing: React.FC = () => {
 								>
 									<Image
 										src='/assets/Gifs/login-like.gif'
-										alt='empty state'
+										alt={t('empty_state')}
 										className='h-80 w-80 p-0'
 										width={320}
 										height={320}
 									/>
-									<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>You&apos;re all caught up!</p>
+									<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>{t('all_caught_up')}</p>
 									<p
 										className='p-0 text-center text-[#243A57] dark:text-white'
 										style={{ lineHeight: '1.8' }}
 									>
-										Why not explore other categories or topics?
+										{t('explore_other_categories')}
 									</p>
 								</div>
 							)}
@@ -258,18 +266,17 @@ const LatestActivityFollowing: React.FC = () => {
 					>
 						<Image
 							src='/assets/Gifs/login-like.gif'
-							alt='empty state'
+							alt={t('empty_state')}
 							className='h-80 w-80 p-0'
 							width={320}
 							height={320}
 						/>
-						<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>No Activity Found</p>
+						<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>{t('no_activity_found')}</p>
 						<p
 							className='p-0 text-center text-[#243A57] dark:text-white'
 							style={{ lineHeight: '1.8' }}
 						>
-							Follow or Subscribe to people and posts to view personalized <br />
-							content on your feed!
+							{t('follow_or_subscribe')}
 						</p>
 					</div>
 				)
@@ -279,13 +286,13 @@ const LatestActivityFollowing: React.FC = () => {
 				>
 					<Image
 						src='/assets/Gifs/login-dislike.gif'
-						alt='empty state'
+						alt={t('empty_state')}
 						className='h-80 w-80 p-0'
 						width={320}
 						height={320}
 					/>
-					<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>Join Polkassembly to see your Following tab!</p>
-					<p className='p-0 text-center text-[#243A57] dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
+					<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>{t('join_polkassembly_follow')}</p>
+					<p className='p-0 text-center text-[#243A57] dark:text-white'>{t('discuss_contribute')}</p>
 					<div className='pt-3'>
 						<LoginButton onClick={() => setLoginOpen(true)} />
 						<SignupButton onClick={() => setSignupOpen(true)} />

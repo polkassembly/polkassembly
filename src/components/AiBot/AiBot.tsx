@@ -1,14 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Button, FloatButton, List } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-// import Script from 'next/script';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-// import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
 import CreateDiscussionIconDark from '~assets/icons/create-icon-dark.svg';
@@ -23,6 +20,7 @@ import { trackEvent } from 'analytics';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTranslation } from 'react-i18next';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -61,28 +59,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-
-	// useEffect(() => {
-	// if (!isAIChatBotOpen) return;
-
-	// const docsBotElement = ((window as any).DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-	// docsBotElement.style.position = 'fixed';
-	// docsBotElement.style.right = '1em';
-	// docsBotElement.style.bottom = '80px';
-	// }, [isAIChatBotOpen, floatButtonOpen]);
-
-	// useEffect(() => {
-	// check for the presence of a dom element inside a setInterval until it is found
-	// const interval = setInterval(() => {
-	// const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-	// if (!docsBotElement) return;
-
-	// clearInterval(interval);
-	// docsBotElement.style.display = 'none';
-	// }, 600);
-
-	// return () => clearInterval(interval);
-	// }, []);
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -111,22 +88,10 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					<div className='ml-[-50px] mt-[5px] cursor-pointer'>{theme == 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}</div>
-					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>{t('create_discussion_post')}</p>
 				</div>
 			)
 		},
-		// {
-		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue dark:text-blue-dark-medium hover:text-bodyBlue dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-		// onClick={() => {
-		// if (!grillChat)
-		// (window as any).DocsBotAI.toggle();
-		// setIsAIChatBotOpen(!isAIChatBotOpen);
-		// }}
-		// >
-		// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-		// <p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
-		// </div>
-		// },
 		{
 			component: (
 				<a
@@ -137,7 +102,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				>
 					<div className='flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle transition delay-150  duration-300 hover:bg-[#e5007a12]'>
 						<CautionIcon className='ml-[-108px] mt-[5px] cursor-pointer' />
-						<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>Report An Issue</p>
+						<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>{t('report_an_issue')}</p>
 					</div>
 				</a>
 			)
@@ -158,15 +123,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	return (
 		<>
-			{/* Script for AI Bot */}
-			{/* <Script id='ai-bot-script'>
-				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
-			</Script>
-
-			<Script id='ai-bot-init'>
-				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
-			</Script> */}
-
 			{!router?.pathname?.includes('batch-voting') && (
 				<FloatButton.Group
 					trigger='click'
@@ -193,8 +149,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 							style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 							onClick={() => {
 								setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
-								// (window as any).DocsBotAI.close();
-								// setIsAIChatBotOpen(false);
 							}}
 						>
 							<CloseWhite className='mt-1' />
@@ -212,7 +166,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
 						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue dark:text-white'>
-							<p className='mt-2 h-[25px]'>Menu</p>
+							<p className='mt-2 h-[25px]'>{t('menu')}</p>
 							<CloseIcon
 								className='mt-4 cursor-pointer'
 								onClick={() => {
@@ -237,8 +191,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				modalOpen={openDiscussionLoginPrompt}
 				setModalOpen={setOpenDiscussionLoginPrompt}
 				image='/assets/Gifs/login-discussion.gif'
-				title='Join Polkassembly to Start a New Discussion.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly')}
+				subtitle={t('discussion_contribute_get_updates')}
 			/>
 		</>
 	);

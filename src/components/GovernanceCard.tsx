@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Modal } from 'antd';
 import dynamic from 'next/dynamic';
@@ -52,6 +51,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import ProgressReportRatingModal from './ProgressReport/RatingModal';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useTranslation } from 'react-i18next';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -161,6 +161,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		progress_report
 	} = props;
 
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -202,9 +203,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [userVotesData, setUserVotesData] = useState<IUserVotesProps | null>(null);
 
 	const decisionType = {
-		abstain: 'ABSTAIN',
-		no: 'NAY',
-		yes: 'AYE'
+		abstain: t('abstain'),
+		no: t('nay'),
+		yes: t('aye')
 	};
 
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -249,8 +250,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			setLoading(false);
 			console.error('Error saving rating', editError);
 			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your rating.',
+				header: t('error'),
+				message: t('error_in_saving_rating'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -259,8 +260,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			setLoading(false);
 			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
 			queueNotification({
-				header: 'Success!',
-				message: 'Your rating is now added',
+				header: t('success'),
+				message: t('rating_added'),
 				status: NotificationStatus.SUCCESS
 			});
 			dispatch(progressReportActions.setOpenRatingModal(false));
@@ -372,19 +373,19 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									color='#363636'
 									title={
 										<span className='break-all text-xs'>
-											{userVotesData.decision === 'ABSTAIN'
-												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+											{userVotesData.decision === t('abstain')
+												? `${t('voted')} ${userVotesData.decision} ${t('with')} ${userVotesData.amount}`
+												: `${t('voted')} ${userVotesData.decision} ${t('with')} ${userVotesData.amount}, ${userVotesData.conviction}x ${t('conviction')}`}
 										</span>
 									}
 								>
-									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
+									<VoteIcon className={`mx-2 ${userVotesData.decision === t('nay') ? 'fill-red-600' : userVotesData.decision === t('aye') ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
 							{status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progress_report?.progress_file && (
 								<Tooltip
 									color='#363636'
-									title='Rate Progress Report'
+									title={t('rate_progress_report')}
 								>
 									<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6] dark:bg-transparent'>
 										<StarFilled className='text-[14px] text-[#FFBF60]' />
@@ -442,7 +443,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								}}
 								className='m-0 p-0 text-xs text-pink_primary'
 							>
-								See More
+								{t('see_more')}
 							</p>
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
@@ -538,7 +539,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`${t('deciding_ends_in')} ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}
@@ -629,11 +630,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' />
 								{end > currentBlock ? (
 									<span>
-										<BlockCountdown endBlock={end} /> remaining
+										<BlockCountdown endBlock={end} /> {t('remaining')}
 									</span>
 								) : (
 									<span>
-										ended <BlockCountdown endBlock={end} />
+										{t('ended')} <BlockCountdown endBlock={end} />
 									</span>
 								)}
 							</div>
@@ -676,7 +677,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<div className='flex items-center justify-center'>
 								<Tooltip
 									color='#E5007A'
-									title='This post could be a spam.'
+									title={t('spam_warning')}
 								>
 									<WarningMessageIcon className='text-xl text-[#FFA012]' />
 								</Tooltip>
@@ -768,7 +769,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									}}
 									className='m-0 p-0 text-xs text-pink_primary'
 								>
-									See More
+									{t('see_more')}
 								</p>
 								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 							</div>
@@ -835,7 +836,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
 							variant='default'
-							text='Cancel'
+							text={t('cancel')}
 							buttonsize='sm'
 							disabled={loading}
 							onClick={() => {
@@ -844,7 +845,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						/>
 						<CustomButton
 							variant='primary'
-							text='Rate'
+							text={t('rate')}
 							buttonsize='sm'
 							disabled={loading}
 							onClick={() => {
@@ -861,7 +862,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				title={
 					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<StarFilled className='mr-2' />
-						Rate Delivery of Progress Report
+						{t('rate_delivery_of_progress_report')}
 					</div>
 				}
 			>

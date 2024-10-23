@@ -1009,6 +1009,7 @@ export enum EUserActivityType {
 
 export interface LeaderboardPointsResponse {
 	count: number;
+	points: number;
 	data: any[];
 }
 

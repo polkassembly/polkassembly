@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
-import { ASTRAL_LISTING_LIMIT } from '~src/global/listingLimit';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { EUserActivityCategory, EUserActivityType, LeaderboardPointsResponse } from '~src/types';
 import REPUTATION_SCORES from '~src/util/reputationScores';
@@ -17,27 +17,47 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		let activityTypesToFetch: EUserActivityType[] = [];
 
 		if (activity_category) {
-			//find all activity types for the given category from REPUTATION_SCORES
 			activityTypesToFetch = Object.values(REPUTATION_SCORES)
 				.filter((activity) => activity.category === activity_category)
 				.map((activity) => activity.type);
 		}
 
-		let userActivityQuery = firestore_db.collection('user_activities').where('by', '==', user_id).where('is_deleted', '==', false);
+		let userActivityQuery = firestore_db.collection('user_activities')
+			.where('by', '==', user_id)
+			.where('is_deleted', '==', false);
+
+		const usersQuery = await firestore_db.collection('users').doc(String(user_id)).get();
+		if (!usersQuery.exists) {
+			return {
+				data: null,
+				error: 'User not found',
+				status: 500
+			};
+		}
 
 		if (activityTypesToFetch.length) {
 			userActivityQuery = userActivityQuery.where('type', 'in', activityTypesToFetch);
 		}
 
-		// Add orderBy for created_at in descending order
-		userActivityQuery = userActivityQuery.orderBy('created_at', 'desc');
+		const count = (await userActivityQuery.count().get()).data().count || 0;
 
-		const totalUserActivitiesCount = (await userActivityQuery.count().get()).data().count || 0;
+		const totalUserActivitiesCount = await userActivityQuery.get();
+		let totalPoints: number = 0;
+
+		if (!totalUserActivitiesCount.empty) {
+			totalUserActivitiesCount.forEach((doc) => {
+				const data = doc.data();
+				const type = data.type;
+				const points = Object.values(REPUTATION_SCORES).find((activity) => activity.category === activity_category && activity.type === type) as any;
+				totalPoints += points?.value || 0;
+			});
+		}
 
 		const activities = (
 			await userActivityQuery
-				.offset((Number(page) - 1) * ASTRAL_LISTING_LIMIT)
-				.limit(ASTRAL_LISTING_LIMIT)
+				.orderBy('created_at', 'desc') // Sort by created_at in descending order
+				.offset((Number(page) - 1) * LISTING_LIMIT)
+				.limit(LISTING_LIMIT)
 				.get()
 		).docs.map((doc) => {
 			const data = doc.data();
@@ -49,7 +69,7 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		});
 
 		return {
-			data: { count: totalUserActivitiesCount, data: activities } as LeaderboardPointsResponse,
+			data: { count, data: activities, points: totalPoints || 0 },
 			error: null,
 			status: 200
 		};
@@ -65,7 +85,7 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 const handler: NextApiHandler<LeaderboardPointsResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	//get user_id from req.query
+	// Get user_id from req.query
 	const { page = 1, user_id, activity_category = null } = req.query;
 
 	if (!Number.isInteger(Number(page)) || Number(page) < 1 || !Number.isInteger(Number(user_id)) || Number(user_id) < 1) {

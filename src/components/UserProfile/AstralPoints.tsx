@@ -62,8 +62,8 @@ const AstralPoints = ({ className, userProfile }: Props) => {
 			]);
 
 			setScores({
-				offChain: offChainRes.data?.count || 0,
-				onChain: onChainRes.data?.count || 0
+				offChain: offChainRes.data?.points || 0,
+				onChain: onChainRes.data?.points || 0
 			});
 		} catch (error) {
 			console.error(error);

@@ -35,8 +35,8 @@ const ScoreTag = ({ score, className, iconWrapperClassName, scale = 1, userId, s
 			]);
 
 			setScores({
-				offChain: offChainRes.data?.count || 0,
-				onChain: onChainRes.data?.count || 0
+				offChain: offChainRes.data?.points || 0,
+				onChain: onChainRes.data?.points || 0
 			});
 		} catch (error) {
 			console.error(error);

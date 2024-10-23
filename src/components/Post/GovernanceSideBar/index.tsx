@@ -19,7 +19,6 @@ import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } 
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
-import BountyChildBounties from './Bounty/BountyChildBounties';
 import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -83,6 +82,7 @@ import Details from './Bounty/Details';
 import Submission from './Bounty/Curator/Submission';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
+import BountyChildBounties from './Bounty/BountyChildBounties';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -98,6 +98,7 @@ interface IGovernanceSidebarProps {
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
 	bountyIndex?: any;
+	curator?: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;

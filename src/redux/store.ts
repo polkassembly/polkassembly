@@ -32,6 +32,7 @@ import { claimPayoutStore } from './claimProposalPayout';
 import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
+import { childBountyCreationStore } from './childBountyCreation';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -130,7 +131,8 @@ export const makeStore = () => {
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
 		[claimPayoutStore.name]: claimPayoutStore.reducer,
-		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer
+		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer,
+		[childBountyCreationStore.name]: childBountyCreationStore.reducer
 	});
 
 	if (isServer) {
@@ -159,7 +161,8 @@ export const makeStore = () => {
 				'addAmbassador',
 				'ambassadorRemoval',
 				'ambassadorReplacement',
-				'claimPayout'
+				'claimPayout',
+				'childBountyCreation'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

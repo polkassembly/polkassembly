@@ -355,6 +355,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
+						curator={post?.curator || ''}
 					/>
 				</div>
 

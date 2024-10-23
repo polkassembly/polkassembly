@@ -4,10 +4,10 @@
 
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-export const checkIsAddressMultisig = async (address: string) => {
+export const getMultisigAddressDetails = async (address: string) => {
 	const { data: addressDetail, error } = await nextApiClientFetch<any>('api/v1/getOnChainAddressData', { address });
 	if (error) {
 		console.log(error);
 	}
-	return addressDetail?.account?.multisig?.multi_account_member?.length > 0;
+	return addressDetail?.account?.multisig;
 };

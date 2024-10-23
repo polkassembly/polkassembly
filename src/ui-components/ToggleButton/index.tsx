@@ -23,8 +23,10 @@ const ToggleButton = () => {
 			>
 				{/* {theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}{' '} */}
 				<Image
-					src='/assets/Gifs/theme-button.gif'
+					src={theme === 'dark' ? '/assets/Gifs/dark-mode-icon.png' : '/assets/Gifs/light-mode-icon.png'}
 					alt='theme logo'
+					// width={theme === 'dark' ? 40 : 50}
+					// height={theme === 'dark' ? 40 : 50}
 					width={40}
 					height={40}
 				/>

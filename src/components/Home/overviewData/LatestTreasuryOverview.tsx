@@ -124,7 +124,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<div>
 										{!isUsedInGovAnalytics && (
 											<div className='my-1 flex items-center gap-x-[6px]'>
-												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
 												<HelperTooltip
 													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -298,7 +298,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										<div className='sm:mb-2'>
 											<div className='flex items-center'>
 												<span
-													className={`${poppins.className} ${poppins.variable} mr-2 pt-[3px] text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
+													className={`${poppins.className} ${poppins.variable} mr-2 pt-[3px] text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
 												>
 													Spend Period Remaining
 												</span>

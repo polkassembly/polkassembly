@@ -197,7 +197,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		};
 
 		await executeTx({
-			address: multisigAssociatedAddress || '',
+			address: multisigAssociatedAddress || loginAddress,
 			api,
 			apiReady,
 			errorMessageFallback: 'Transaction failed.',

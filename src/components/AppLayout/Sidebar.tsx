@@ -1938,17 +1938,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<Link
-										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
-										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
-									>
+									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<Image
-												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-												alt='polkassembly logo'
-												width={150}
-												height={50}
-											/>
+											<div className={`flex ${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
+												<Image
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+													alt='polkassembly logo'
+													width={150}
+													height={50}
+												/>
+											</div>
 										) : (
 											<PaLogo sidedrawer={sidedrawer} />
 										)}

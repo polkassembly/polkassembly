@@ -102,8 +102,8 @@ function App({ Component, pageProps }: AppProps) {
 				<Image
 					src='/assets/Gifs/layout-loading.gif'
 					alt='empty state'
-					width={320}
-					height={142}
+					width={265}
+					height={520}
 					className='bg-transparent'
 				/>
 				<Image

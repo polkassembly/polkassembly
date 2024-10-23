@@ -1940,16 +1940,24 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<div className={`flex ${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
+											<div className='-mb-2 ml-28 flex h-full items-center justify-center'>
 												<Image
 													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
-													width={150}
+													width={110}
+													height={40}
+												/>
+												<Image
+													src='/assets/Gifs/candy-GIF.gif'
+													alt='polkassembly logo'
+													width={100}
 													height={50}
 												/>
 											</div>
 										) : (
-											<PaLogo sidedrawer={sidedrawer} />
+											<div className='ml-5 h-full'>
+												<PaLogo sidedrawer={sidedrawer} />
+											</div>
 										)}
 									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>

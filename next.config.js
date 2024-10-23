@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable indent */
 /* eslint-disable sort-keys */
+const { i18n } = require('./next-i18next.config');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -51,6 +52,7 @@ const nextConfig = {
 			]
 		};
 	},
+	i18n,
 	images: {
 		domains: ['parachains.info']
 	},

@@ -74,6 +74,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 				<NameLabel
 					defaultAddress={defaultAddress}
 					username={username}
+					disableIdenticon={true}
 					truncateUsername={isMobile ? true : false}
 					disableAddressClick={commentSource !== 'polkassembly'}
 					usernameClassName='text-xs text-ellipsis overflow-hidden'

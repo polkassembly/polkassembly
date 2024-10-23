@@ -13,6 +13,9 @@ import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
 import Replies from '../Replies';
 import EditableCommentContent from '../EditableCommentContent';
 import CreationLabelForComments from './CreationLabelForComments';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export interface IComment {
 	user_id: number;
@@ -55,6 +58,32 @@ const CommentCard: FC<ICommentProps> = (props) => {
 		postData: { postIndex, postType }
 	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [profileDetails, setProfileDetails] = useState({
+		image: '',
+		username: ''
+	});
+
+	const getData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${comment.proposer}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				image: data?.profile?.image || '',
+				username: data?.username
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (!comment.proposer) return;
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [comment.proposer]);
+
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -95,37 +124,47 @@ const CommentCard: FC<ICommentProps> = (props) => {
 	}
 
 	const modifiedContent = modifyQuoteComment(comment.content);
+
 	return (
 		<div className={`${className} mb-3 flex gap-x-4 `}>
 			<div className='w-full overflow-hidden '>
-				<CreationLabelForComments
-					className=' rounded-t-md px-2 py-2 pt-4 md:px-4'
-					created_at={created_at}
-					defaultAddress={comment.proposer}
-					voterAddress={comment?.votes?.[0]?.voter}
-					username={comment.username}
-					sentiment={newSentiment}
-					commentSource={comment_source}
-					spam_users_count={spam_users_count}
-					vote={vote}
-					votesArr={comment?.votes}
-					isRow={true}
-				>
-					{history && history.length > 0 && (
-						<div
-							className='cursor-pointer'
-							onClick={() => setOpenModal(true)}
-						>
-							<UpdateLabel
-								className='-ml-[2px]'
-								created_at={created_at}
-								updated_at={updated_at}
-								isHistory={history && history?.length > 0}
-								isUsedInComments={true}
-							/>
-						</div>
-					)}
-				</CreationLabelForComments>
+				<div className='flex items-center gap-2'>
+					<ImageIcon
+						alt='user'
+						src={profileDetails?.image ? profileDetails.image : '/assets/icons/user-profile.png'}
+						imgClassName=' h-8 w-8 rounded-full'
+						imgWrapperClassName='rounded-full h-8 w-8 mt-1 mr-[2px]'
+					/>
+
+					<CreationLabelForComments
+						className=' rounded-t-md py-2'
+						created_at={created_at}
+						defaultAddress={comment.proposer}
+						voterAddress={comment?.votes?.[0]?.voter}
+						username={comment.username}
+						sentiment={newSentiment}
+						commentSource={comment_source}
+						spam_users_count={spam_users_count}
+						vote={vote}
+						votesArr={comment?.votes}
+						isRow={true}
+					>
+						{history && history.length > 0 && (
+							<div
+								className='cursor-pointer'
+								onClick={() => setOpenModal(true)}
+							>
+								<UpdateLabel
+									className='-ml-[2px]'
+									created_at={created_at}
+									updated_at={updated_at}
+									isHistory={history && history?.length > 0}
+									isUsedInComments={true}
+								/>
+							</div>
+						)}
+					</CreationLabelForComments>
+				</div>
 				<div className='pl-10 pr-7'>
 					<EditableCommentContent
 						userId={user_id}

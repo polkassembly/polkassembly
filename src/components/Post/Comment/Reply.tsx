@@ -3,12 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
 import { IComment } from './Comment';
 import CreationLabelForComments from './CommentsContainer/CreationLabelForComments';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import ImageIcon from '~src/ui-components/ImageIcon';
 interface Props {
 	className?: string;
 	reply: any;
@@ -23,6 +26,32 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
+	const [profileDetails, setProfileDetails] = useState({
+		image: '',
+		username: ''
+	});
+
+	const getData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${proposer}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				image: data?.profile?.image || '',
+				username: data?.username
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (proposer) return;
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [proposer]);
+
 	useEffect(() => {
 		if (typeof window !== undefined) return;
 		const hashArr = asPath.split('#');
@@ -42,18 +71,26 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 			className={`${className} flex gap-x-4`}
 		>
 			<div className='comment-box'>
-				<CreationLabelForComments
-					className='-mt-1 rounded-t-md'
-					created_at={created_at}
-					defaultAddress={proposer}
-					username={username}
-					spam_users_count={reply.spam_users_count}
-					commentSource={reply.reply_source}
-					isRow={true}
-				></CreationLabelForComments>
+				<div className='flex items-center gap-2'>
+					<ImageIcon
+						alt='user'
+						src={profileDetails?.image ? profileDetails.image : '/assets/icons/user-profile.png'}
+						imgClassName='h-8 w-8 rounded-full'
+						imgWrapperClassName='rounded-full h-8 w-8 mr-[2px]'
+					/>
+					<CreationLabelForComments
+						className=' rounded-t-md'
+						created_at={created_at}
+						defaultAddress={proposer}
+						username={username}
+						spam_users_count={reply.spam_users_count}
+						commentSource={reply.reply_source}
+						isRow={true}
+					></CreationLabelForComments>
+				</div>
 				<EditableReplyContent
 					userId={user_id}
-					className='ml-5 rounded-md'
+					className='ml-10 rounded-md'
 					commentId={commentId}
 					reply={reply}
 					replyId={id}

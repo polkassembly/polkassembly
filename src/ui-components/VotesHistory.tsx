@@ -413,7 +413,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 																</span>
 															</Tooltip>
 															{userProfile.user_id === id && vote?.proposal.type === getSubsquidProposalType(ProposalType.OPEN_GOV) && (
-																<Tooltip title='Remove Vote'>
+																<Tooltip title={t('remove_vote')}>
 																	<span
 																		className={classNames(
 																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))

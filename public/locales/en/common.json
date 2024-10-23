@@ -276,5 +276,6 @@
     "select_addresses": "Select Addresses",
     "view_subscan": "View Subscan",
     "view_vote": "View Vote",
+    "remove_vote": "Remove Vote",
     "no_vote_found": "No Vote Found"
 }

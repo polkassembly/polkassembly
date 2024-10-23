@@ -292,7 +292,7 @@ const ActivityFeedSidebar = () => {
 								<div className='mb-2 justify-between sm:flex'>
 									<div>
 										<div className='my-1 flex items-center gap-x-[6px]'>
-											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+											<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
 											<HelperTooltip
 												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
 												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -430,7 +430,7 @@ const ActivityFeedSidebar = () => {
 									<div className='mt-2  h-12'>
 										<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
 											<div className=' flex items-center gap-x-[6px]'>
-												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
+												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
 												<HelperTooltip
 													text=''
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'

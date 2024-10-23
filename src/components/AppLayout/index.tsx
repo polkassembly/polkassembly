@@ -520,7 +520,7 @@ export default styled(AppLayout)`
     }
     .sidebar .ant-menu-item-selected span {
         color: var(--pink_primary) !important;
-        font-weight: 500;
+        font-weight: 600 !important;
     }
 
     .sidebar .ant-menu-item-selected .opacity {

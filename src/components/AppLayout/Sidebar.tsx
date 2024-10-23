@@ -187,7 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		};
 
 		const capitalizedLabel = capitalizeLabel(label);
-		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
+		label = <span className={`w-5 text-sm font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
 
 		return {
 			children,
@@ -1108,7 +1108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			3,
 			0,
 			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
+				<div className='flex w-fit gap-2 text-sm font-medium'>
 					<span>Gov Analytics</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
@@ -1135,7 +1135,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
-					<span>Batch Voting</span>
+					<span className='text-sm font-normal'>Batch Voting</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/batch-voting',
@@ -1741,7 +1741,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								}`}
 							>
 								<ParachainsIcon className='-ml-1 mt-3 scale-90 text-xl font-medium ' />
-								<span className='ml-2 pl-1 text-xs font-medium lg:block'>Parachains</span>
+								<span className='ml-2 pl-1 text-sm font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,

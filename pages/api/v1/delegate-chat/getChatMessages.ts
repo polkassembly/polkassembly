@@ -10,10 +10,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import * as admin from 'firebase-admin';
+import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
-const firestore_db = admin.firestore();
 
 async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMessage[] } | MessageType>) {
 	storeApiKeyUsage(req);
@@ -22,31 +20,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(401).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const { chatId } = req.body;
-
-	if (!chatId && !chatId?.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!chatId || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
 		const chatMessagesSnapshot = await firestore_db.collection('chats').doc(String(chatId)).collection('messages').orderBy('created_at', 'asc').get();
 
-		const messagesData = chatMessagesSnapshot.docs.map((doc) => doc?.data());
-
-		const messages: IMessage[] = messagesData.map((message) => ({
-			content: message?.content,
-			created_at: message?.created_at?.toDate(),
-			id: message?.id,
-			receiverAddress: message?.receiverAddress,
-			senderAddress: message?.senderAddress,
-			senderImage: message?.senderImage,
-			senderUsername: message?.senderUsername,
-			updated_at: message?.updated_at?.toDate(),
-			viewed_by: message?.viewed_by || []
-		}));
+		const messages: IMessage[] = chatMessagesSnapshot.docs.map((doc) => {
+			const message = doc?.data();
+			return {
+				content: message?.content,
+				created_at: message?.created_at?.toDate(),
+				id: message?.id,
+				receiverAddress: message?.receiverAddress,
+				senderAddress: message?.senderAddress,
+				senderImage: message?.senderImage,
+				senderUsername: message?.senderUsername,
+				updated_at: message?.updated_at?.toDate(),
+				viewed_by: message?.viewed_by || []
+			};
+		});
 
 		return res.status(200).json({ messages });
 	} catch (error) {

@@ -12,10 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import * as admin from 'firebase-admin';
+import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
-const firestore_db = admin.firestore();
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -24,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(401).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });

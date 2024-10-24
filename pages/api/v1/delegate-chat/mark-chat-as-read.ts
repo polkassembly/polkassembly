@@ -12,10 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import * as admin from 'firebase-admin';
+import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
-const firestore_db = admin.firestore();
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);

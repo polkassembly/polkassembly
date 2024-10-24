@@ -68,20 +68,12 @@ const handler: NextApiHandler<{ curator: number; submissions: number } | Message
 			.count()
 			.get();
 
-		return {
-			data: {
-				curator: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0 + curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0,
-				submissions: receivedSubmissions?.data()?.count || 0 + sentSubmissions?.data()?.count || 0
-			},
-			error: null,
-			status: 200
-		};
+		return res.status(200).json({
+			curator: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0 + curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0,
+			submissions: receivedSubmissions?.data()?.count || 0 + sentSubmissions?.data()?.count || 0
+		});
 	} catch (error) {
-		return {
-			data: null,
-			error: error || messages.API_FETCH_ERROR,
-			status: 500
-		};
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 };
 

@@ -75,6 +75,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 
 	useEffect(() => {
 		handlePromotesCall();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {

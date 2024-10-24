@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import { Layout, Menu as AntdMenu, Modal } from 'antd';
@@ -30,6 +28,7 @@ import Sidebar from './Sidebar';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { GlobalActions } from '~src/redux/global';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -52,8 +51,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
-	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
@@ -67,11 +64,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	// const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-
+	const { t } = useTranslation('common');
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
 	const getTotalActiveProposalsCount = async () => {
@@ -84,6 +80,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+
 	useEffect(() => {
 		const handleResize = () => {
 			const isMobile = window.innerWidth < 1024;
@@ -226,7 +223,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										>
 											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
-												alt='close nav'
+												alt={t('close_nav')}
 											/>
 										</div>
 									) : (
@@ -241,7 +238,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										>
 											<ImageIcon
 												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
-												alt='open nav'
+												alt={t('open_nav')}
 											/>
 										</div>
 									)}
@@ -379,15 +376,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
+				title={
+					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>{t('on_chain_identity')}</span>
+				}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
+						alt={t('delegation_empty_state_icon')}
 					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
+					<span className='dark:text-white'>{t('use_desktop_to_verify')}</span>
 				</div>
 			</Modal>
 		</div>

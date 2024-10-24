@@ -68,6 +68,7 @@ import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
+import { useTranslation } from 'next-i18next';
 
 const { Sider } = Layout;
 
@@ -101,6 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	setLoginOpen
 }) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { username, picture, loginAddress } = currentUser;
 	const router = useRouter();
@@ -1619,6 +1621,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
+		t: t,
 		username: username || ''
 	});
 

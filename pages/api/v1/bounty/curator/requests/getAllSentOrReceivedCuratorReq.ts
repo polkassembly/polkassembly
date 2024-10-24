@@ -16,6 +16,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsquare-content';
 import { EPendingCuratorReqType, IPendingCuratorReq } from '~src/types';
 import { getDefaultContent } from '~src/util/getDefaultContent';
+import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import authServiceInstance from '~src/auth/auth';
 
 interface ISubsquidBounty {
 	proposer: string;
@@ -43,8 +45,15 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 			!getEncodedAddress(userAddress, network) ||
 			![EPendingCuratorReqType.RECEIVED, EPendingCuratorReqType?.SENT].includes(reqType) ||
 			![ProposalType.BOUNTIES, ProposalType.CHILD_BOUNTIES].includes(proposalType || '')
-		)
+		) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
+		}
+
+		const token = getTokenFromReq(req);
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
+
+		const user = await authServiceInstance.GetUser(token);
+		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
 		const encodedUserAddress = getEncodedAddress(userAddress, network);
 

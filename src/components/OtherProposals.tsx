@@ -14,7 +14,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 

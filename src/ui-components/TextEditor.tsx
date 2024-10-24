@@ -17,7 +17,7 @@ import { useTheme } from 'next-themes';
 import { useQuoteCommentContext } from '~src/context';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import { EditorEvent } from 'tinymce';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,

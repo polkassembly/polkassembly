@@ -6,7 +6,7 @@ import ImageIcon from './ImageIcon';
 import OnchainIdentity from '~src/components/OnchainIdentity';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	closeModal: () => void;

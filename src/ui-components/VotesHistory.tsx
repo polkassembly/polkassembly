@@ -40,7 +40,7 @@ import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
 import { useTheme } from 'next-themes';
 import ImageIcon from './ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

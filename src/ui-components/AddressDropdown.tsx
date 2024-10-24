@@ -16,7 +16,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { userDetailsActions } from '~src/redux/userDetails';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;

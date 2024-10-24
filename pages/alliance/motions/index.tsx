@@ -18,7 +18,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { useTheme } from 'next-themes';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {

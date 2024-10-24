@@ -16,7 +16,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageComponent from '../ImageComponent';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();

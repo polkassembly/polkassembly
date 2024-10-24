@@ -41,7 +41,7 @@ import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initia
 import Alert from '~src/basic-components/Alert';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

@@ -15,7 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	modalOpen: boolean;

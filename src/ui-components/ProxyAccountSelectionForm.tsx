@@ -18,7 +18,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useApiContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import NetworkIcon from '~assets/icons/USB.svg';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	proxyAddresses: string[];

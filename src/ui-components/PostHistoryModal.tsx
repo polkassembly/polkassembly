@@ -16,7 +16,7 @@ import { CloseIcon } from './CustomIcons';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import { diffChars } from 'diff';
 import { useTheme } from 'next-themes';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 interface Props {
 	className?: string;
 	open: boolean;

@@ -8,7 +8,7 @@ import { IUserDetailsStore } from '~src/redux/userDetails/@types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { RightOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IRankCardProps {
 	currentUser: IUserDetailsStore | null;

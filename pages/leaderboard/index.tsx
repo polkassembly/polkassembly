@@ -17,7 +17,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const LeaderBoardTable = dynamic(() => import('src/components/Leaderboard/LeaderBoardTable'), {
 	loading: () => <Skeleton active />,

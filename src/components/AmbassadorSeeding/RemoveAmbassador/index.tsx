@@ -17,7 +17,7 @@ import { EAmbassadorActions, EAmbassadorSeedingRanks } from '../types';
 import { useAmbassadorRemovalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IRemoveAmbassador {
 	className?: string;

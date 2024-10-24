@@ -9,7 +9,7 @@ import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IVoteProgressProps {
 	ayeVotes?: BN;

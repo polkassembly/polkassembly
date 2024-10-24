@@ -5,7 +5,7 @@ import { Radio } from 'antd';
 import React from 'react';
 import { EAllowedCommentor } from '~src/types';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

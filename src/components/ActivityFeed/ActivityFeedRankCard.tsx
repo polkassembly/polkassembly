@@ -10,7 +10,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import Address from '~src/ui-components/Address';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IRankCardProps {
 	setLoginOpen: (open: boolean) => void;

@@ -16,7 +16,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
 import { GlobalActions } from '~src/redux/global';
 import { useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 type DropdownMenuItemType = {
 	key: any;

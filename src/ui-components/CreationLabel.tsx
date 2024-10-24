@@ -25,7 +25,7 @@ import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
 import Tooltip from '~src/basic-components/Tooltip';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const Styled = styled.div`
 	padding: 0;

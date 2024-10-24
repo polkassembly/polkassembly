@@ -11,7 +11,7 @@ import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

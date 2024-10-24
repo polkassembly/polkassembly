@@ -13,7 +13,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Skeleton from '~src/basic-components/Skeleton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
 	try {

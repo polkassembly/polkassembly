@@ -10,7 +10,7 @@ import { ESentiment } from '~src/types';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;

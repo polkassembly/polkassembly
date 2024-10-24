@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {

@@ -20,7 +20,7 @@ import { trackEvent } from 'analytics';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (

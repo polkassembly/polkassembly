@@ -15,7 +15,7 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false

@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import { useNetworkSelector } from '~src/redux/selectors';
 import { poppins } from 'pages/_app';

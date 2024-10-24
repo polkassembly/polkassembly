@@ -24,7 +24,7 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { getGeneralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 

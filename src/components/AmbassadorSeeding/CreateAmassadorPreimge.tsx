@@ -27,7 +27,7 @@ import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const EMPTY_HASH = blake2AsHex('');
 const ZERO_BN = new BN(0);

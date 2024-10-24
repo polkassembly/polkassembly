@@ -24,7 +24,7 @@ import ActivityFeedCommentSection from './ActivityFeedCommentSection';
 import ActivityFeedPostContent from './ActivityFeedPostContent';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 

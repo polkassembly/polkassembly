@@ -25,7 +25,7 @@ import { useTheme } from 'next-themes';
 import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface IDiscussionsProps {

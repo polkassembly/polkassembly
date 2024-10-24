@@ -9,7 +9,7 @@ import TwitterIcon from '~assets/icons/twitter.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useQuoteCommentContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IHiglightMenuProps {
 	markdownRef: React.RefObject<HTMLDivElement>;

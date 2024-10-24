@@ -24,7 +24,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { RoundedDollarIcon } from '~src/ui-components/CustomIcons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {

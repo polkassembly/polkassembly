@@ -22,7 +22,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
 import TrackListingTabs from '~src/components/Listing/Tracks/TrackListingTabs';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

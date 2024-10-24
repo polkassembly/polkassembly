@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { CloseIcon } from './CustomIcons';
 import ImageIcon from './ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 interface Props {
 	username: string;
 	closeModal: () => void;

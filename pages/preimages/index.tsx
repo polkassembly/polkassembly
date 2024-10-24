@@ -22,7 +22,7 @@ import styled, { DefaultTheme } from 'styled-components';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,

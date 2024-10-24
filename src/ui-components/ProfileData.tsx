@@ -21,7 +21,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
 import ImageIcon from './ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 interface IProfileData {

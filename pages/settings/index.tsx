@@ -23,7 +23,7 @@ import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	network: string;

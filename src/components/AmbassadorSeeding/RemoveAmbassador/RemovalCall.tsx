@@ -19,7 +19,7 @@ import getCollectiveApi from '../utils/getCollectiveApi';
 import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IRemovalCall {
 	className?: string;

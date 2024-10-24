@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import Skeleton from '~src/basic-components/Skeleton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Post = dynamic(() => import('src/components/Post/Post'), {

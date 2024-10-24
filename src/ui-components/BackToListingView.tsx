@@ -6,7 +6,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { EMembersType } from 'pages/members';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { PageLink, PostCategory } from 'src/global/post_categories';
 
 interface Props {

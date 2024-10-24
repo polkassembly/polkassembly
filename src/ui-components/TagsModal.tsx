@@ -10,7 +10,7 @@ import TagsIcon from '~assets/icons/tags-icon.svg';
 import TagsWhiteIcon from '~assets/icons/tags-white-icon.svg';
 import { useRouter } from 'next/router';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface ITagsModalProps {
 	className?: string;

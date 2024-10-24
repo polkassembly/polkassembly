@@ -7,7 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Image from 'next/image';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { FC, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 

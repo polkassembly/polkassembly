@@ -6,7 +6,7 @@ import SkeletonButton from 'antd/es/skeleton/Button';
 import { BN } from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';

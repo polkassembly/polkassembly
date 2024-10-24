@@ -25,7 +25,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

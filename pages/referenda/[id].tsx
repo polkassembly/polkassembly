@@ -20,7 +20,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { PostCategory } from '~src/global/post_categories';
 import ConfusedNudge from '~src/ui-components/ConfusedNudge';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {

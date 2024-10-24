@@ -25,7 +25,7 @@ import Alert from '~src/basic-components/Alert';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import UsernameSkipAlertModal from './UsernameSkipAlertContent';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	setLoginOpen?: (pre: boolean) => void;

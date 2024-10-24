@@ -8,7 +8,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { InfoIcon } from '../CustomIcons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const Container = styled.div`
 	border-radius: 14px;

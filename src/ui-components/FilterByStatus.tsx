@@ -29,7 +29,7 @@ import styled from 'styled-components';
 import { poppins } from 'pages/_app';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import Popover from '~src/basic-components/Popover';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;

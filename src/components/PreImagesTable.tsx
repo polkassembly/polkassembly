@@ -28,7 +28,7 @@ import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];

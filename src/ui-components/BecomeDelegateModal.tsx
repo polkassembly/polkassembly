@@ -16,7 +16,7 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
 import ContentForm from '~src/components/ContentForm';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IDetailsState {
 	userId: number | null;

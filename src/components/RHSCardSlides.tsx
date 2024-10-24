@@ -23,7 +23,7 @@ import UploadReport from './ProgressReport/UploadReport';
 import { showProgressReportUploadFlow } from './ProgressReport/utils';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false

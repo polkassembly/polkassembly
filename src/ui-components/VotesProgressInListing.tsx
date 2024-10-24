@@ -18,7 +18,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 

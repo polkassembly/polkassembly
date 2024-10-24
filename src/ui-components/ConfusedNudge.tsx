@@ -9,7 +9,7 @@ import { getStatusesFromCustomStatus, ProposalType } from '~src/global/proposalT
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import ConfusedModalShareProposalDetails from './ConfusedModalShareProposalDetails';
 import { useGlobalSelector } from '~src/redux/selectors';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	status: string;

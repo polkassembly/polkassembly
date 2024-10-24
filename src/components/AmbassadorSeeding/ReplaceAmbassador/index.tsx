@@ -17,7 +17,7 @@ import { useAmbassadorReplacementSelector, useUserDetailsSelector } from '~src/r
 import ReplacementCall from './ReplacementCall';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IReplaceAmbassador {
 	className?: string;

@@ -6,7 +6,7 @@ import { Result } from 'antd';
 import Link from 'next/link';
 import React, { FC } from 'react';
 import ImageIcon from '../ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 // import NothingFoundSVG from '~assets/nothing-found.svg';
 

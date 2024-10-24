@@ -19,7 +19,7 @@ import { useTheme } from 'next-themes';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

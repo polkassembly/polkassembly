@@ -32,7 +32,7 @@ import Link from 'next/link';
 import ImageComponent from '../ImageComponent';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const ActivityFeedPostActions: React.FC<{
 	post: any;

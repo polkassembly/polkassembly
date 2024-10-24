@@ -4,7 +4,7 @@
 import React, { FC } from 'react';
 import { WarningMessageIcon } from './CustomIcons';
 import { usePostDataContext } from '~src/context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface ISpamAlertProps {}
 

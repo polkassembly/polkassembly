@@ -15,7 +15,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import { GlobalActions } from '~src/redux/global';
 import { useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface ISearchBarProps {
 	className?: string;

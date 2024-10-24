@@ -5,7 +5,7 @@
 import { Space } from 'antd';
 import { ITimelineData } from '~src/context/PostDataContext';
 import HelperTooltip from './HelperTooltip';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] }) => {
 	const { t } = useTranslation('common');

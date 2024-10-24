@@ -26,7 +26,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import ScoreTag from './ScoreTag';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,

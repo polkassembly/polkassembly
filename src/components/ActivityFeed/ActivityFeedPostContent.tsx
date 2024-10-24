@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ActivityFeedPostContent: React.FC<{
 	post: any;

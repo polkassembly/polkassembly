@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { EMembersType } from 'pages/members';
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';

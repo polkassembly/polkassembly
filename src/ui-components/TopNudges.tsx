@@ -6,7 +6,7 @@ import { useApiContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import ImageIcon from './ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const TopNudges = () => {
 	const { api, apiReady } = useApiContext();

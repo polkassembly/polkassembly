@@ -16,8 +16,13 @@ const languages = [
 	{
 		code: 'fr',
 		name: 'Français'
+	},
+	{
+		code: 'zh',
+		name: '中文'
 	}
 ];
+
 function LanguageSwitcher() {
 	const { resolvedTheme: theme } = useTheme();
 	const [isDropdownActive, setIsDropdownActive] = useState(false);

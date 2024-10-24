@@ -18,7 +18,7 @@ import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => {
 	const { t } = useTranslation('common');

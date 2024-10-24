@@ -23,7 +23,7 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IProps {
 	className?: string;

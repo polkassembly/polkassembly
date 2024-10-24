@@ -24,7 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { poppins } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface ITokenPrice {
 	value: string;

@@ -105,7 +105,7 @@
 // `;
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const VoteProgressAntdPie = () => {
 	const { t } = useTranslation('common');

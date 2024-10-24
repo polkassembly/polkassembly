@@ -14,7 +14,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import ScoringDetails from '../../src/components/AstralScoring/ScoringDetails';
 import { scoringData } from '../../src/components/AstralScoring/utils';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

@@ -27,7 +27,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);

@@ -26,7 +26,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const proposalType = ProposalType.UPGRADE_PIPS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {

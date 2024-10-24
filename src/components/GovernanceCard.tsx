@@ -51,7 +51,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import ProgressReportRatingModal from './ProgressReport/RatingModal';
 import { gov2ReferendumStatus } from '~src/global/statuses';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,

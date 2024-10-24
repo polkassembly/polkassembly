@@ -22,7 +22,7 @@ import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;

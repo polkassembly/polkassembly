@@ -30,7 +30,7 @@ import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverview/index'), {

@@ -8,7 +8,7 @@ import Beneficiary from './Beneficiary';
 import { BeneficiaryIcon, BeneficiaryGreyIcon } from '../CustomIcons';
 import { useTheme } from 'next-themes';
 import Popover from '~src/basic-components/Popover';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

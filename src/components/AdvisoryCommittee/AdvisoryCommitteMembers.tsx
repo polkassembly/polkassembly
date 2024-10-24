@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import MembersListing from '../Listing/Members/MembersListing';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

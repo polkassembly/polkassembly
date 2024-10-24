@@ -22,7 +22,7 @@ import { EAmbassadorActions, IAmbassadorProposalCreation } from './types';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();

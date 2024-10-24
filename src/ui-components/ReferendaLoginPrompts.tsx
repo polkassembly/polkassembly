@@ -11,7 +11,7 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	image: String;

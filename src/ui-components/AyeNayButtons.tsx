@@ -7,7 +7,7 @@ import { Button } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 

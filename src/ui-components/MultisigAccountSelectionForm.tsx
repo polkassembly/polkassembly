@@ -17,7 +17,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const Container = styled.div`
 	display: flex;

@@ -9,7 +9,7 @@ import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
 import classNames from 'classnames';
 import { trackEvent } from 'analytics';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const BigToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();

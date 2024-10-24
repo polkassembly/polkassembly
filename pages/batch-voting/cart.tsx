@@ -21,7 +21,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import CopyContentIcon from '~assets/icons/content_copy_small.svg';
 import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCart'), {
 	loading: () => <Skeleton active />,

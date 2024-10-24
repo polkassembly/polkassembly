@@ -15,7 +15,7 @@ import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/pars
 import { formatedBalance } from '~src/util/formatedBalance';
 import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Args {
 	className?: string;

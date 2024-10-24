@@ -5,7 +5,7 @@
 import { Form } from 'antd';
 import React, { useState } from 'react';
 import Input from '~src/basic-components/Input';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

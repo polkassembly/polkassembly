@@ -21,7 +21,7 @@ import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IBountiesListingProps {
 	data?: {

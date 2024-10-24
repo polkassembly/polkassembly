@@ -20,7 +20,7 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import Tooltip from '~src/basic-components/Tooltip';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 interface Props {
 	className?: string;
 	open: boolean;

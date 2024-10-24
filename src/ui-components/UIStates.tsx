@@ -10,7 +10,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import ImageIcon from './ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export const LoadingState = () => {
 	return (

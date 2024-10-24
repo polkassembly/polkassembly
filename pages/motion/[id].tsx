@@ -23,7 +23,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const proposalType = ProposalType.COUNCIL_MOTIONS;

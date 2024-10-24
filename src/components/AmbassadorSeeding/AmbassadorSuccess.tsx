@@ -16,7 +16,7 @@ import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types'
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	open: boolean;

@@ -5,7 +5,7 @@ import * as React from 'react';
 import getExtensionUrl from 'src/util/getExtensionUrl';
 import Alert from '~src/basic-components/Alert';
 import { Wallet } from '~src/types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	chosenWallet?: string;

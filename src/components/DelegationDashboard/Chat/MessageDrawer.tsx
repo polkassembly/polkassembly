@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Drawer, Button } from 'antd';
+import { Drawer } from 'antd';
 import { poppins } from 'pages/_app';
-import Image from 'next/image';
 import { IChat } from '~src/types';
 import Messages from './Messages';
 import NewChat from './NewChat';
+import MessageDrawerHeader from './MessageDrawerHeader';
 
 interface Props {
 	className?: string;
@@ -20,32 +20,7 @@ interface Props {
 const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, isNewChat }: Props) => {
 	return (
 		<Drawer
-			title={
-				<div className='flex items-center gap-2 text-xl font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-					<Image
-						src='/assets/icons/delegation-chat/chat-icon.svg'
-						height={24}
-						width={24}
-						className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
-						alt='chat icon'
-					/>
-					New Message
-					<div className='ml-auto flex items-center gap-3'>
-						<Button
-							onClick={() => handleChatToggle(null)}
-							className='flex h-6 w-6 items-center justify-center border-none bg-transparent p-0 shadow-none'
-						>
-							<Image
-								src='/assets/icons/delegation-chat/close-icon.svg'
-								height={24}
-								width={24}
-								alt='close icon'
-								className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
-							/>
-						</Button>
-					</div>
-				</div>
-			}
+			title={<MessageDrawerHeader handleCloseChat={() => handleChatToggle(null)} />}
 			open={isDrawerOpen}
 			placement='bottom'
 			height={500}
@@ -59,7 +34,6 @@ const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, 
 			{isNewChat ? (
 				<NewChat handleOpenChat={handleChatToggle} />
 			) : (
-				openedChat &&
 				openedChat?.chatId && (
 					<Messages
 						chatId={openedChat?.chatId}

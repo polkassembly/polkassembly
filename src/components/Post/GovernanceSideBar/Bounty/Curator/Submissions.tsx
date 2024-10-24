@@ -274,7 +274,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 							handleSubmissionClick();
 						}
 					}}
-					disabled={!hasSubmitted}
+					disabled={hasSubmitted}
 				>
 					<ImageIcon
 						src='/assets/icons/Document.svg'

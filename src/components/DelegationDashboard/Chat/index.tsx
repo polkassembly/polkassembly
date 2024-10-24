@@ -7,6 +7,7 @@ import { poppins } from 'pages/_app';
 import { useState } from 'react';
 import Image from 'next/image';
 import UserChats from './UserChats';
+import ChatHeader from './ChatHeader';
 
 interface Props {
 	className?: string;
@@ -62,35 +63,7 @@ const ChatWithDelegates = ({ className }: Props) => {
 				/>
 			</Button>
 			<Drawer
-				title={
-					<div className='flex items-center gap-2 text-xl font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						<Image
-							src='/assets/icons/delegation-chat/chat-icon.svg'
-							height={24}
-							width={24}
-							className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
-							alt='chat icon'
-						/>
-						Messages
-						<div className='ml-auto flex items-center gap-3'>
-							{chatHeaderActions.map((action) => (
-								<Button
-									key={action.title}
-									onClick={action.onClick}
-									className={`flex h-6 w-6 items-center justify-center border-none bg-transparent p-0 shadow-none ${action?.className}`}
-								>
-									<Image
-										src={action.icon}
-										height={24}
-										width={24}
-										alt={action.title}
-										className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
-									/>
-								</Button>
-							))}
-						</div>
-					</div>
-				}
+				title={<ChatHeader actions={chatHeaderActions} />}
 				open={isModalOpen}
 				placement='bottom'
 				height={isMinimized ? 60 : 500}

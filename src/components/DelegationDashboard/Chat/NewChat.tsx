@@ -2,20 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { List, Spin, Card, Input, Button } from 'antd';
+import { Spin, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IChat, IDelegateAddressDetails, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector, useNetworkSelector } from '~src/redux/selectors';
-import Identicon from '@polkadot/react-identicon';
-import EthIdenticon from '~src/ui-components/EthIdenticon';
-import shortenAddress from '~src/util/shortenAddress';
-import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import queueNotification from '~src/ui-components/QueueNotification';
+import DelegateList from './DelegateList';
+import EmptyState from './EmptyState';
 
 interface Props {
-	className?: string;
 	handleOpenChat: (chat: IChat) => void;
 }
 
@@ -104,60 +100,17 @@ const NewChat = ({ handleOpenChat }: Props) => {
 				className='h-[250px]'
 			>
 				{!searchedDelegates?.length && !loading ? (
-					//empty state
-					<div className='mt-14 flex flex-col items-center justify-center gap-4'>
-						<DelegateDelegationIcon className='text-[200px]' />
-						<div className='flex flex-col items-center gap-5'>
-							<span className='text-lightBlue dark:text-blue-dark-high '>No results found</span>
-							{searchAddress.length > 10 && !!getEncodedAddress(searchAddress, network) && !!address?.length && (
-								<Button
-									className={`flex h-10 w-full items-center justify-center space-x-2 border-none bg-[#485F7D99] text-sm font-medium tracking-wide text-white ${
-										loading ? '' : 'opacity-60'
-									}`}
-									type='primary'
-									onClick={() => handleStartChat()}
-									disabled={loading}
-								>
-									<span className='text-white'>Chat with this address</span>
-								</Button>
-							)}
-						</div>
-					</div>
+					<EmptyState
+						searchAddress={searchAddress}
+						network={network}
+						address={address}
+						onChatStart={handleStartChat}
+						loading={loading}
+					/>
 				) : (
-					<List
-						itemLayout='horizontal'
-						dataSource={searchedDelegates}
-						renderItem={(delegate) => (
-							<List.Item
-								key={delegate?.address}
-								onClick={() => handleStartChat(delegate?.address)}
-								className='cursor-pointer border-section-light-container p-0'
-							>
-								<Card
-									key={delegate?.address}
-									className='w-full rounded-none border-t-0'
-									bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
-									size='small'
-								>
-									{delegate?.address && delegate?.address?.startsWith('0x') ? (
-										<EthIdenticon
-											size={32}
-											address={delegate?.address || ''}
-										/>
-									) : (
-										<Identicon
-											value={delegate?.address || ''}
-											size={32}
-											theme={'polkadot'}
-										/>
-									)}
-
-									<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
-										{delegate?.username ? delegate?.username : shortenAddress(delegate?.address, 5)}
-									</span>
-								</Card>
-							</List.Item>
-						)}
+					<DelegateList
+						delegates={searchedDelegates}
+						onStartChat={handleStartChat}
 					/>
 				)}
 			</Spin>

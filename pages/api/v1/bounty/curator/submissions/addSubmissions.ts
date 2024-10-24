@@ -43,10 +43,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
 
 		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
 		const { data } = await getBountyInfo({
 			bountyIndex: parentBountyIndex,
@@ -63,10 +63,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			?.where('proposer', '==', getEncodedAddress(proposerAddress, network))
 			.where('parent_bounty_index', '==', parentBountyIndex)
 			.where('status', '==', ESubmissionStatus.PENDING)
+			.where('user_id', '==', user?.id)
 			.get();
 
 		if (!submissionDocs?.empty) {
-			return res.status(403).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS });
+			return res.status(404).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS });
 		}
 		const submissionDocRef = submissionSnapshot?.doc();
 

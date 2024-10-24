@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
-
 import { Divider, Spin } from 'antd';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
@@ -16,6 +15,8 @@ import { ProfileFollowIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import Image from 'next/image';
 import useImagePreloader from '~src/hooks/useImagePreloader';
+import { Pagination } from '../Pagination';
+import { useTheme } from 'next-themes';
 
 interface FollowerData {
 	follower_user_id: number;
@@ -30,8 +31,12 @@ interface FollowerResponse {
 	followers: FollowerData[];
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const ProfileFollows = ({ className }: { className: string }) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [followers, setFollowers] = useState<FollowerData[]>([]);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
 		loading: false,
 		error: null
@@ -53,6 +58,8 @@ const ProfileFollows = ({ className }: { className: string }) => {
 			setIsLoading({ loading: false, error: 'An error occurred while fetching followers.' });
 		}
 	};
+
+	const currentFollowers = followers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
 	useEffect(() => {
 		fetchFollowers();
@@ -88,7 +95,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 								priority={true}
 							/>
 						</div>
-					) : followers.length == 0 ? (
+					) : currentFollowers.length == 0 ? (
 						<div className='flex flex-col items-center pb-10'>
 							<Image
 								src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
@@ -98,11 +105,11 @@ const ProfileFollows = ({ className }: { className: string }) => {
 								className='-my-[40px]'
 								priority={true}
 							/>
-							<span className='font-medium text-blue-light-medium dark:text-blue-dark-medium'>Oops! Nothing to show please come back later</span>
+							<span className='font-medium text-blue-light-medium dark:text-blue-dark-medium'>Oops! Nothing to show, please come back later</span>
 						</div>
 					) : (
 						<>
-							{followers.map((follower, index) => (
+							{currentFollowers.map((follower, index) => (
 								<div key={follower.follower_user_id}>
 									<div className={`${poppins.variable} ${poppins.className} mb-4 mt-3 flex items-start gap-3`}>
 										<ImageComponent
@@ -133,7 +140,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 										/>
 									</div>
 
-									{index !== followers.length - 1 && (
+									{index !== currentFollowers.length - 1 && (
 										<Divider
 											type='horizontal'
 											className='my-0 bg-[#D2D8E0B2] dark:bg-separatorDark'
@@ -143,6 +150,20 @@ const ProfileFollows = ({ className }: { className: string }) => {
 							))}
 						</>
 					)}
+
+					<Pagination
+						theme={theme as any}
+						defaultCurrent={1}
+						current={currentPage}
+						pageSize={ITEMS_PER_PAGE}
+						total={followers.length}
+						showSizeChanger={false}
+						hideOnSinglePage={true}
+						onChange={(page: number) => {
+							setCurrentPage(page);
+						}}
+						responsive={true}
+					/>
 				</div>
 			</Spin>
 		</div>

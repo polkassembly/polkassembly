@@ -9,13 +9,13 @@ import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { Post } from '~src/types';
+import { Post, IProgressReport } from '~src/types';
 import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { deleteKeys, redisDel } from '~src/auth/redis';
 
-const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
+const handler: NextApiHandler<{ message: string; progress_report?: IProgressReport[] }> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
@@ -39,62 +39,62 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		}
 
 		const { postId, proposalType, progress_report } = req.body;
-
-		if (!postId || !proposalType || !progress_report) {
-			return res.status(401).json({ message: messages.INVALID_PARAMS });
+		if (!postId || !proposalType || !progress_report || !isProposalTypeValid(proposalType)) {
+			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
-		if (!isProposalTypeValid(proposalType)) {
-			return res.status(401).json({ message: messages.INVALID_PARAMS });
-		}
-
-		const updatedProgressReport = {
-			...progress_report,
-			created_at: new Date()
+		const newProgressReport: IProgressReport = {
+			created_at: new Date(),
+			progress_file: progress_report.progress_file,
+			progress_summary: progress_report.progress_summary,
+			ratings: progress_report.ratings || []
 		};
 
-		const TreasuryRes = await fetchSubsquid({
-			network: network,
+		const proposalTypeQuery = getSubsquidProposalType(proposalType);
+		const treasuryRes = await fetchSubsquid({
+			network,
 			query: CHECK_IF_OPENGOV_PROPOSAL_EXISTS,
 			variables: {
 				proposalIndex: Number(postId),
-				type_eq: getSubsquidProposalType(proposalType)
+				type_eq: proposalTypeQuery
 			}
 		});
 
-		const post = TreasuryRes?.data?.proposals?.[0];
+		const post = treasuryRes?.data?.proposals?.[0];
 
 		const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 		const postDoc = await postDocRef.get();
 
-		if (post?.index !== Number(postId) && !postDoc.exists) {
+		if (!post && !postDoc.exists) {
 			return res.status(404).json({ message: 'Post not found.' });
 		}
+
+		const existingProgressReports = (postDoc.exists && postDoc.data()?.progress_report) || [];
+		const updatedProgressReports: IProgressReport[] = [newProgressReport, ...existingProgressReports];
 
 		const updatedPost: Partial<Post> = {
 			created_at: new Date(post?.createdAt),
 			id: post?.index,
 			last_edited_at: new Date(post?.updatedAt),
-			progress_report: updatedProgressReport,
+			progress_report: updatedProgressReports,
 			proposer_address: post?.proposer
 		};
 
 		await postDocRef.update(updatedPost);
-		const subsquidProposalType = getSubsquidProposalType(proposalType);
-		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
-			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post?.trackNumber}_*`;
-			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
-			await deleteKeys(trackListingKey);
-			await redisDel(referendumDetailsKey);
+
+		if (proposalType === ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED === '1') {
+			const trackListingKey = `${network}_${proposalTypeQuery}_trackId_${post?.trackNumber}_*`;
+			const referendumDetailsKey = `${network}_OpenGov_${proposalTypeQuery}_postId_${postId}`;
+			await Promise.all([deleteKeys(trackListingKey), redisDel(referendumDetailsKey)]);
 		}
 
 		return res.status(200).json({
 			message: 'Progress report added and post updated successfully.',
-			progress_report: updatedProgressReport
+			progress_report: updatedProgressReports
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(500).json({ message: messages.API_FETCH_ERROR });
 	}
 };
 

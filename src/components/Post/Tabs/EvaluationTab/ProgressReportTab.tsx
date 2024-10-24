@@ -178,26 +178,30 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{postData.userId === currentUser?.id ? (
+					{postData.userId !== currentUser?.id ? (
 						<>
-							<UploadModalContent />
-							<div className='mt-4 flex justify-end'>
-								<CustomButton
-									variant='primary'
-									text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
-									buttonsize='sm'
-									loading={loading}
-									className={`${loading ? 'opacity-60' : ''} ${
-										(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
-											? 'opacity-60'
-											: ''
-									} `}
-									disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
-									onClick={() => {
-										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
-									}}
-								/>
-							</div>
+							{!postData?.progress_report?.[0]?.progress_file ? (
+								<>
+									<UploadModalContent />
+									<div className='mt-4 flex justify-end'>
+										<CustomButton
+											variant='primary'
+											text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
+											buttonsize='sm'
+											loading={loading}
+											className={`${loading ? 'opacity-60' : ''} ${
+												(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
+													? 'opacity-60'
+													: ''
+											} `}
+											disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
+											onClick={() => {
+												postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
+											}}
+										/>
+									</div>
+								</>
+							) : null}
 						</>
 					) : postData?.progress_report?.progress_file ? (
 						<ProgressReportInfo />

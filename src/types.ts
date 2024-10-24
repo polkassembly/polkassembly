@@ -394,7 +394,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	link?: string;
 	updated_at?: Date;
 }

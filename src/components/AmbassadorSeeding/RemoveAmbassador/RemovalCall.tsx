@@ -81,6 +81,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 
 	useEffect(() => {
 		handleRemoveAmbassador();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
 
 	return (

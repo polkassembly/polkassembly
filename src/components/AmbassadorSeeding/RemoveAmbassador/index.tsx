@@ -61,6 +61,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 			dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
 		dispatch(ambassadorRemovalActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

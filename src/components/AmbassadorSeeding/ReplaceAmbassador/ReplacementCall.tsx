@@ -85,6 +85,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 
 	useEffect(() => {
 		handlePromotesCall();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, removingApplicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {

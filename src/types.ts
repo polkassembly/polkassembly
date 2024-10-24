@@ -1017,3 +1017,35 @@ export interface INetworkWalletErr {
 	description: string;
 	error: number;
 }
+
+export interface IChildBountySubmission {
+	content: string;
+	createdAt: Date;
+	link: string;
+	parentBountyIndex: number;
+	proposer: string;
+	reqAmount: string;
+	status: ESubmissionStatus;
+	tags: string[];
+	title: string;
+	updatedAt: Date;
+	userId: number;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
+	id: string;
+	rejectionMessage?: string;
+}
+
+export enum ESubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
+}

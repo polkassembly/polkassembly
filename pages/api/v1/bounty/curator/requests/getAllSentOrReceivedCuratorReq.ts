@@ -114,17 +114,9 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 			}
 		});
 
-		return {
-			data: { data: resolvedResults || [], totalCount: resolvedResults?.length || 0 },
-			error: null,
-			status: 200
-		};
+		return res.status(200).json({ data: resolvedResults || [], totalCount: resolvedResults?.length || 0 });
 	} catch (error) {
-		return {
-			data: null,
-			error: error || messages.API_FETCH_ERROR,
-			status: 500
-		};
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 };
 

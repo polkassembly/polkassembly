@@ -71,7 +71,6 @@ import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
-// import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 import _ from 'lodash';
@@ -79,7 +78,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import Details from './Bounty/Details';
-import Submission from './Bounty/Curator/Submission';
+import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
 import BountyChildBounties from './Bounty/BountyChildBounties';
@@ -1365,7 +1364,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<>
 								<Details bountyId={onchainId} />
 								<BountyChildBounties bountyId={onchainId} />
-								<Submission bountyId={onchainId} />
+								<Submissions bountyId={onchainId} />
 							</>
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (

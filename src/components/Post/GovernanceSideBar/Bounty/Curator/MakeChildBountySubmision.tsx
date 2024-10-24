@@ -28,7 +28,7 @@ interface IBountyChildBountiesProps {
 	setOpen: (pre: boolean) => void;
 	open: boolean;
 	editing?: boolean;
-	submission?: IChildBountySubmission;
+	submission?: IChildBountySubmission | null;
 	onSubmissionCreated: (created: boolean) => void;
 }
 

@@ -5,6 +5,7 @@
 import Link from 'next/link';
 import { CloseIcon } from './CustomIcons';
 import ImageIcon from './ImageIcon';
+import { useTranslation } from 'react-i18next';
 interface Props {
 	username: string;
 	closeModal: () => void;
@@ -13,6 +14,8 @@ interface Props {
 const format = /^[a-zA-Z0-9_@]*$/;
 
 const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className='h-52'>
 			<div>
@@ -31,11 +34,11 @@ const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 						<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 					</div>
 
-					<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>We have assigned you a temporary username </p>
+					<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>{t('we_have_assigned_you_a_temporary_username')} </p>
 					{(!!username?.length && format.test(username)) ||
 						(username.length <= 30 && (
 							<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
-								You can visit
+								{t('you_can_visit')}
 								<Link
 									href={`/user/${format.test(username) ? username : ''}`}
 									onClick={(e) => {
@@ -45,9 +48,9 @@ const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 										}
 									}}
 								>
-									Profile
+									{t('profile')}
 								</Link>{' '}
-								and change it anytime
+								{t('and_change_it_anytime')}
 							</p>
 						))}
 				</div>

@@ -24,6 +24,7 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { getGeneralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { useTranslation } from 'react-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -77,6 +78,7 @@ const BalanceInput = ({
 	onAssetConfirm
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const unit = `${chainProperties[network].tokenSymbol}`;
 	const [asset, setAsset] = useState<{ img: string; label: string; value: string | null }>({
 		img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo,
@@ -151,7 +153,7 @@ const BalanceInput = ({
 						? []
 						: [
 								{
-									message: 'Invalid Balance',
+									message: t('invalid_balance'),
 									validator(rule, value, callback) {
 										if (
 											callback &&

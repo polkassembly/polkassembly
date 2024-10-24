@@ -10,12 +10,13 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import ImageIcon from './ImageIcon';
+import { useTranslation } from 'react-i18next';
 
 export const LoadingState = () => {
 	return (
 		<Result
 			icon={<LoadingOutlined className='text-pink_primary' />}
-			title={<div className='dark:text-white'>Loading...</div>}
+			title={<div className='dark:text-white'>loading...</div>}
 		/>
 	);
 };
@@ -26,6 +27,8 @@ interface IErrorStateProps {
 }
 
 export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true }) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<Result
 			icon={<FrownOutlined className='text-pink_primary dark:text-blue-dark-high' />}
@@ -37,7 +40,7 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 						<CustomButton
 							onClick={() => window.location.reload()}
 							variant='primary'
-							text='Refresh'
+							text={t('refresh')}
 							className='transition-colors duration-300'
 						/>
 					</div>
@@ -58,6 +61,7 @@ interface IPostEmptyStateProps {
 export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle, text }) => {
 	const { resolvedTheme: theme } = useTheme();
 	text = text ? text : '';
+	const { t } = useTranslation('common');
 
 	return (
 		<div className={`my-[60px] flex flex-col items-center gap-6 ${className}`}>
@@ -71,7 +75,15 @@ export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, descriptio
 				/>
 			)}
 			<h3 className='text-blue-light-high dark:text-blue-dark-high'>
-				{postCategory ? <>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</> : description ? description : text}
+				{postCategory ? (
+					<>
+						{t('no_result')} {postCategory.replaceAll('_', ' ')}.
+					</>
+				) : description ? (
+					description
+				) : (
+					text
+				)}
 			</h3>
 		</div>
 	);

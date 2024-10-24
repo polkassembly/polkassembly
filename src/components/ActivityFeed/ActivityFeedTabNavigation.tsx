@@ -27,6 +27,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, setCurrentTab, gov2LatestPosts, network }) => {
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -34,6 +35,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const tabItems: ITabItem[] = Object.keys(networkTrackInfo[network] || {}).reduce((acc: ITabItem[], trackName) => {
 		const trackInfo = networkTrackInfo[network][trackName];
@@ -168,7 +170,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 	}, []);
 	const popoverContent = (
 		<div className='left-2 w-40 py-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
-			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>TRACKS</li>
+			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>{t('tracks')}</li>
 			{['Treasury', 'Whitelist']?.map((category) => (
 				<React.Fragment key={category}>
 					<Popover

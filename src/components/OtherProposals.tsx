@@ -12,9 +12,9 @@ import { LoadingLatestActivity } from 'src/ui-components/LatestActivityStates';
 import StatusTag from 'src/ui-components/StatusTag';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'react-i18next';
 
 const { Panel } = Collapse;
 
@@ -26,6 +26,7 @@ interface IOtherProposalsProps {
 }
 
 const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, currPostOnchainID, proposerAddress }) => {
+	const { t } = useTranslation('common');
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [proposals, setProposals] = useState<IProposalsObj>({
@@ -60,7 +61,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 	return (
 		<div className={className}>
 			<h4 className='dashboard-heading mb-6 flex items-center dark:text-white'>
-				Other Proposals by{' '}
+				{t('other_proposals_by')}{' '}
 				<span className='ml-2'>
 					<Address
 						address={proposerAddress}
@@ -91,7 +92,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 							defaultActiveKey={['1']}
 						>
 							<Panel
-								header='Democracy Proposals'
+								header={t('democracy_proposals')}
 								key='1'
 							>
 								{proposals.democracy.map((post) => {
@@ -107,7 +108,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 													<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4'>
 														<div className='flex justify-between gap-x-2'>
 															<div>
-																<h5 className='text-sm font-medium text-sidebarBlue'>{post.title || `#${post.index} Untitled`}</h5>
+																<h5 className='text-sm font-medium text-sidebarBlue'>{post.title || `#${post.index} ${t('untitled')}`}</h5>
 																<div className='flex items-center text-sm font-normal text-pink_primary'>
 																	{' '}
 																	<ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}
@@ -136,7 +137,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 							defaultActiveKey={['1']}
 						>
 							<Panel
-								header='Treasury Proposals'
+								header={t('treasury_proposals')}
 								key='1'
 							>
 								{proposals.treasury.map((post) => {
@@ -152,7 +153,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 													<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4'>
 														<div className='flex justify-between'>
 															<div>
-																<h5>{post.title || `#${post.index} Untitled`}</h5>
+																<h5>{post.title || `#${post.index} ${t('untitled')}`}</h5>
 																<div className='flex items-center'>
 																	{' '}
 																	<ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}
@@ -179,7 +180,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 
 			{!loading && !error && proposals && proposals.treasury.length === 0 && proposals.democracy.length === 0 && (
 				<div className='mt-36 flex items-center justify-center'>
-					<PostEmptyState description='No other proposals found' />
+					<PostEmptyState description={t('no_other_proposals_found')} />
 				</div>
 			)}
 		</div>

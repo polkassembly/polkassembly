@@ -5,8 +5,11 @@
 import { Space } from 'antd';
 import { ITimelineData } from '~src/context/PostDataContext';
 import HelperTooltip from './HelperTooltip';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] }) => {
+	const { t } = useTranslation('common');
+
 	const confirmationAttempts: number =
 		timeline?.filter((timelineObj) => timelineObj.type === 'ReferendumV2')?.[0]?.statuses?.filter((statusObj: any) => statusObj.status === 'ConfirmStarted')?.length || 0;
 
@@ -15,13 +18,13 @@ const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] 
 			{confirmationAttempts > 1 && (
 				<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 					<>
-						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Attempts</span>
+						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{t('confirmation_attempts')}</span>
 
 						<Space>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{confirmationAttempts}</span>
 							<HelperTooltip
 								placement={'topLeft'}
-								text={<span className='text-xs'>Number of times proposal entered confirmation period as both support & approval were greater than threshold</span>}
+								text={<span className='text-xs'>{t('number_of_times_proposal_entered_confirmation_period_as_both_support_approval_were_greater_than_threshold')}</span>}
 							/>
 						</Space>
 					</>

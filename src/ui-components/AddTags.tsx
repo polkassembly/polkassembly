@@ -12,6 +12,7 @@ import handleFilterResults from '~src/util/handleFilterResults';
 import { useTheme } from 'next-themes';
 import { NoTagFoundIcon } from './CustomIcons';
 import Input from '~src/basic-components/Input';
+import { t } from 'i18next';
 
 interface Props {
 	tags: string[];
@@ -109,8 +110,8 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 							<span className='text-3xl'>
 								<NoTagFoundIcon />
 							</span>
-							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>No tag found.</span>
-							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>Press enter to add new tag.</span>
+							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>{t('no_tag_found')}</span>
+							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>{t('press_enter_to_add_new_tag')}</span>
 						</div>
 					)
 			  }
@@ -185,7 +186,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 											className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-4 py-1 text-xs text-pink_primary dark:bg-section-dark-overlay'
 										>
 											<PlusOutlined className='mr-1' />
-											Add new tag
+											{t('add_new_tag')}
 										</Tag>
 								  )}
 						</div>
@@ -206,9 +207,13 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 						))}
 					</div>
 				</Dropdown>
-				{!disabled && <div className={`w-[80px] text-xs ${5 - tags.length === 0 ? 'text-pink_primary' : 'text-[#90A0B7]'}`}>{5 - tags.length} Tags left</div>}
+				{!disabled && (
+					<div className={`w-[80px] text-xs ${5 - tags.length === 0 ? 'text-pink_primary' : 'text-[#90A0B7]'}`}>
+						{5 - tags.length} {t('tags_left')}
+					</div>
+				)}
 			</div>
-			{charLimitReached && <h2 className='mt-1 text-xs font-medium tracking-wide text-red-500'>Character limit reached</h2>}
+			{charLimitReached && <h2 className='mt-1 text-xs font-medium tracking-wide text-red-500'>{t('character_limit_reached')}</h2>}
 		</div>
 	);
 };

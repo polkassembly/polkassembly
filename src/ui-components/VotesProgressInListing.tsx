@@ -18,6 +18,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { useTranslation } from 'react-i18next';
 
 const ZERO = new BN(0);
 
@@ -33,6 +34,7 @@ interface Props {
 const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO,
 		nays: ZERO
@@ -210,14 +212,14 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 					title={
 						<div className={`flex flex-col gap-1 whitespace-nowrap p-1.5 text-xs ${poppins.className} ${poppins.variable}`}>
 							<span>
-								Aye ={' '}
+								{t('aye')} ={' '}
 								{usingTallyForAyeNayVotes
 									? ayes
 									: formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
 								({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%){' '}
 							</span>
 							<span>
-								Nay ={' '}
+								{t('nay')} ={' '}
 								{usingTallyForAyeNayVotes
 									? nays
 									: formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}

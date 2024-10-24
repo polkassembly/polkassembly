@@ -25,6 +25,7 @@ import Alert from '~src/basic-components/Alert';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import UsernameSkipAlertModal from './UsernameSkipAlertContent';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	setLoginOpen?: (pre: boolean) => void;
@@ -36,6 +37,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const [optionalUsername, setOptionalUsername] = useState('');
 	const [showSuccessModal, setShowSuccessModal] = useState(true);
@@ -157,13 +159,13 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									className='absolute -top-[80px]'
 								/>
 							</div>
-							<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>
+							<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>{t('you_are_successfully_logged_in')}</p>
 							<div className='flex flex-col gap-y-1'>
 								<label
 									className='text-base text-lightBlue dark:text-blue-dark-medium '
 									htmlFor='username'
 								>
-									Enter Username
+									{t('enter_username')}
 									<span className='text-pink_primary'>*</span>
 								</label>
 								<Form.Item
@@ -200,14 +202,14 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							{!isError ? (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm'
-									message={<span className='dark:text-blue-dark-high'>You can update your username from the profile page.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('you_can_update_your_username_from_the_profile_page')}</span>}
 									type='info'
 									showIcon
 								/>
 							) : (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm'
-									message={<span className='dark:text-blue-dark-high'>Username already exists. Please try again </span>}
+									message={<span className='dark:text-blue-dark-high'>{t('username_already_exists_please_try_again')}</span>}
 									type='error'
 									showIcon
 								/>
@@ -227,7 +229,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								variant='default'
 								buttonsize='sm'
 								className='tracking-wide'
-								text='Skip'
+								text={t('skip')}
 							/>
 							<CustomButton
 								loading={loading}
@@ -235,7 +237,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								variant='primary'
 								buttonsize='sm'
 								className='ml-0 tracking-wide'
-								text='Next'
+								text={t('next')}
 							/>
 						</div>
 					</div>
@@ -247,7 +249,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 						<div className='my-4 ml-7 flex justify-between dark:text-white'>
 							<div className='flex'>
 								{theme === 'dark' ? <WhiteMailIcon className='mr-2 text-2xl' /> : <MailIcon className='mr-2 text-2xl' />}
-								<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
+								<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>{t('add_your_email')}</p>
 							</div>
 							<div
 								className='mr-4'
@@ -269,7 +271,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									htmlFor='email'
 									className='text-base text-lightBlue dark:text-blue-dark-medium'
 								>
-									Email
+									{t('email')}
 								</label>
 								<Form.Item
 									name='email'
@@ -296,7 +298,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
 									htmlFor='first_password'
 								>
-									Set Password
+									{t('set_password')}
 								</label>
 								<Form.Item
 									name='first_password'
@@ -326,14 +328,14 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							{!emailError ? (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm'
-									message={<span className='dark:text-blue-dark-high'>You can set your email later from the settings page.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('you_can_set_your_email_later_from_the_settings_page')}</span>}
 									type='info'
 									showIcon
 								/>
 							) : (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm'
-									message={<span className='dark:text-blue-dark-high'>Email already exists. Please use a different email or link your address with the existing account.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('email_already_exists')}</span>}
 									type='error'
 									showIcon
 								/>
@@ -349,7 +351,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									onClick={handleOptionalSkip}
 									variant='default'
 									buttonsize='sm'
-									text='Skip'
+									text={t('skip')}
 								/>
 							)}
 							{(email || firstPassword) && (
@@ -360,7 +362,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									variant='primary'
 									className={`${!email || !firstPassword ? 'opacity-50' : ''}`}
 									buttonsize='sm'
-									text='Done'
+									text={t('done')}
 								/>
 							)}
 						</div>

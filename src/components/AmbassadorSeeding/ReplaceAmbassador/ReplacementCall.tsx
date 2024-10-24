@@ -19,12 +19,14 @@ import getCollectiveApi from '../utils/getCollectiveApi';
 import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { useTranslation } from 'react-i18next';
 
 interface IReplacementCall {
 	className?: string;
 }
 
 const ReplacementCall = ({ className }: IReplacementCall) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -83,7 +85,6 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 
 	useEffect(() => {
 		handlePromotesCall();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, removingApplicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {
@@ -106,13 +107,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-							<label className='text-sm text-bodyBlue dark:text-blue-dark-medium'>
-								Your Address{' '}
-								{/* <HelperTooltip
-									className='ml-1'
-									text='Please note the verification cannot be transferred to another address.'
-								/> */}
-							</label>
+							<label className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('your_address')}</label>
 							{(!!proposer || loginAddress) && (
 								<Balance
 									address={proposer || loginAddress}
@@ -132,14 +127,14 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 						</div>
 					</div>
 					<div className='mt-4'>
-						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Applicant Address</div>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('applicant_address')}</div>
 						<div className='flex w-full items-end gap-2 text-sm'>
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
 								defaultAddress={applicantAddress || ''}
 								name={'applicantAddress'}
-								placeholder='Enter Applicant Address'
+								placeholder={t('enter_applicant_address')}
 								iconClassName={'ml-[10px]'}
 								identiconSize={26}
 								onChange={(address) => handleInductAddressChange(getEncodedAddress(address, network) || address)}
@@ -148,23 +143,22 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 					</div>
 
 					<div className='mt-4'>
-						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Remove (Who)</div>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('remove_who')}</div>
 						<div className='flex w-full items-end gap-2 text-sm'>
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
 								defaultAddress={removingApplicantAddress || ''}
 								name={'removalApplicantAddress'}
-								placeholder='Enter Removal Address'
+								placeholder={t('enter_removal_address')}
 								iconClassName={'ml-[10px]'}
 								identiconSize={26}
 								onChange={(address) => dispatch(ambassadorReplacementActions.updateRemovingAddress(getEncodedAddress(address, network) || address))}
 							/>
 						</div>
 					</div>
-					{/* ambassador ranks */}
 					<div className='mt-4 flex gap-1.5 text-sm text-bodyBlue dark:text-blue-dark-medium'>
-						Promote Rank <HelperTooltip text={<div className='text-xs'>This indicate at what rank you would like to promote yourself</div>} />
+						{t('promote_rank')} <HelperTooltip text={<div className='text-xs'>{t('promote_rank_tooltip')}</div>} />
 					</div>
 
 					<div>
@@ -190,7 +184,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
 							onClick={() => dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>
-							Next
+							{t('next')}
 						</Button>
 					</div>
 				</Form>

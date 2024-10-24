@@ -19,6 +19,7 @@ import { useTheme } from 'next-themes';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -39,6 +40,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
 		if (error) console.error('Error in getting all-tags', error);
@@ -135,7 +137,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				<div
 					className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${poppins.variable} ${poppins.className} dark:text-blue-dark-high`}
 				>
-					Tags
+					{t('tags')}
 					{!isSearch && (
 						<span
 							className='flex cursor-pointer justify-center text-[10px] font-normal text-pink_primary'
@@ -145,7 +147,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 								setSearchInput('');
 							}}
 						>
-							Clear Filters
+							{t('clear_filter')}
 						</span>
 					)}
 				</div>
@@ -164,7 +166,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
 				<div className='flex-col'>
-					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className} dark:text-white`}>Suggestion :</div>}
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className} dark:text-white`}>{t('suggestions')}</div>}
 
 					{trendingTags.slice(0, 5).map((tag, index) => (
 						<div
@@ -197,7 +199,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			{filteredTags.length === 0 && searchInput.length > 0 ? (
 				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2 text-[50px] dark:text-white'>
 					<NoTagFoundIcon />
-					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} dark:text-white`}>No tag found.</span>
+					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} dark:text-white`}>{t('no_tags_found')}</span>
 				</div>
 			) : null}
 		</div>
@@ -216,7 +218,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		>
 			{!isSearch ? (
 				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
-					<span className='text-xs opacity-70 dark:text-[#96A4B6] dark:opacity-100'>Tags</span>
+					<span className='text-xs opacity-70 dark:text-[#96A4B6] dark:opacity-100'>{t('tags')}</span>
 					<DropdownGreyIcon className='ml-1' />
 				</div>
 			) : (
@@ -225,7 +227,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 						disabled ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
 					} max-sm:text-[10px]`}
 				>
-					Tags
+					{t('tags')}
 					<span className='font-semibold text-[#96A4B6]'>
 						{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1' /> : <DownOutlined className='ml-2.5 mt-1 max-md:ml-1' />}
 					</span>

@@ -25,6 +25,7 @@ import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'react-i18next';
 
 const Styled = styled.div`
 	padding: 0;
@@ -107,6 +108,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		inPostHeading,
 		assetId
 	} = props;
+	const { t } = useTranslation('common');
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
 	const handleContentClick = (e: React.MouseEvent) => {
@@ -134,7 +136,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
-						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
+						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>{t('proposer')}</span>}
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
@@ -145,7 +147,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						{text}&nbsp;
 						{topic && (
 							<div className='topic-container ml-1 flex items-center'>
-								<span className='mr-2 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
+								<span className='mr-2 text-lightBlue dark:text-blue-dark-medium'>{t('in')}</span>{' '}
 								<TopicTag
 									topic={topic}
 									className={topic}
@@ -176,7 +178,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									href={`https://ipfs.io/ipfs/${cid}`}
 									target='_blank'
 								>
-									<PaperClipOutlined /> IPFS
+									<PaperClipOutlined /> {t('IPFS')}
 								</Link>
 							</>
 						) : null}
@@ -223,19 +225,31 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
+									<LikeFilled className='text-[green]' />{' '}
+									<span className='font-medium capitalize text-[green]'>
+										{t('voted')} {vote}
+									</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted {vote}</span>
+									<DislikeFilled className='text-[red]' />{' '}
+									<span className='mb-[5px] font-medium capitalize text-[red]'>
+										{t('voted')} {vote}
+									</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<div className='align-center mb-[-1px] flex justify-center'>
-									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted {vote}</span>
+									<SplitYellow className='mr-1' />{' '}
+									<span className='font-medium capitalize text-[#FECA7E]'>
+										{t('voted')} {vote}
+									</span>
 								</div>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Voted {vote}</span>
+									<AbstainGray className='mr-1' />{' '}
+									<span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>
+										{t('voted')} {vote}
+									</span>
 								</div>
 							) : null}
 						</div>
@@ -255,19 +269,19 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{votesArr[0].decision == 'yes' ? (
 								<p className='aye-voted-icon voted-icon mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
+									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>{t('voted_aye')}</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
 								<div className='nye-voted-icon voted-icon'>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
+									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>{t('voted_nay')}</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
 								<div className='split-voted-icon voted-icon align-center mb-[-1px] flex justify-center'>
-									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
+									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>{t('voted_split')}</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
 								<div className='abstain-voted-icon voted-icon align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Voted Abstain</span>
+									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{t('voted_abstain')}</span>
 								</div>
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
@@ -280,7 +294,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								wrapClassName='dark:bg-modalOverlayDark'
 								title={
 									<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-										<span className='ml-6 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
+										<span className='ml-6 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('votes')}</span>
 									</div>
 								}
 							>
@@ -340,7 +354,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<HelperTooltip
 							text={
 								<span className='dark:text-blue-dark-high'>
-									This comment is imported from <span className='dark-pink'>Subsquare</span>
+									{t('this_comment_is_imported_from')} <span className='dark-pink'>{t('subsquare')}</span>
 								</span>
 							}
 							placement={'leftTop'}

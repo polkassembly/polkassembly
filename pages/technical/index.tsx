@@ -21,12 +21,15 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { useTheme } from 'next-themes';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TECHNICAL_PIPS;
@@ -38,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface ITechCommProposalsProps {
@@ -51,6 +54,7 @@ const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -78,13 +82,12 @@ const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On-chain Technical Committee PIPs</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('on_chain_tech_committee_pips')}</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain Technical PIPs. Technical Committee PIPs are proposed by the Technical Committee and approved by the Polymesh Governance Council.
-					Only the Technical Committee can amend these PIPs
+					{t('on_chain_tech_committee_pips_desc')}
 				</p>
 			</div>
 

@@ -15,6 +15,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import { GlobalActions } from '~src/redux/global';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 interface ISearchBarProps {
 	className?: string;
@@ -24,6 +25,7 @@ interface ISearchBarProps {
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { className, isSmallScreen, setSidedrawer } = props;
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
@@ -107,7 +109,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark [&>.ant-modal-content]:bg-section-dark-overlay'
 						title={
 							<div className='-mx-6 flex items-center px-6 text-base font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
-								Search
+								{t('search')}
 							</div>
 						}
 						closable={false}

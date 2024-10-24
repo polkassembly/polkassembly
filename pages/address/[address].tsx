@@ -20,6 +20,7 @@ import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
 import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface IUserProfileProps {
 	activitiesCounts: {
@@ -37,8 +38,9 @@ interface IUserProfileProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const { params, req } = context;
+	const { params, req, locale } = context;
 	const network = getNetworkFromReqHeaders(req.headers);
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -106,7 +108,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				username: ''
 			},
 			error: ''
-		}
+		},
+		...translations
 	};
 	return {
 		props

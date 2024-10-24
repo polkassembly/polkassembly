@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import { useNetworkSelector } from '~src/redux/selectors';
 import { poppins } from 'pages/_app';
@@ -22,27 +23,32 @@ import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 
-export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => (
-	<Tooltip
-		color='#363636'
-		title={`${title}${percentage !== null ? ` - ${percentage}%` : ''}`}
-		placement='top'
-	>
-		<div
-			className='-mt-[10px] flex items-center justify-center gap-2 rounded-full border-none bg-transparent text-2xl transition-all duration-200 hover:scale-110'
-			style={{ cursor: 'pointer' }}
+export const EmojiOption = ({ icon, title, percentage }: { icon: React.ReactNode; title: string; percentage: number | null }) => {
+	const { t } = useTranslation('common');
+
+	return (
+		<Tooltip
+			color='#363636'
+			title={`${t(title)}${percentage !== null ? ` - ${percentage}%` : ''}`}
+			placement='top'
 		>
-			{icon}
-			{percentage !== null && <span className='text-[10px] text-[#d12274]'>{percentage}%</span>}
-		</div>
-	</Tooltip>
-);
+			<div
+				className='-mt-[10px] flex items-center justify-center gap-2 rounded-full border-none bg-transparent text-2xl transition-all duration-200 hover:scale-110'
+				style={{ cursor: 'pointer' }}
+			>
+				{icon}
+				{percentage !== null && <span className='text-[10px] text-[#d12274]'>{percentage}%</span>}
+			</div>
+		</Tooltip>
+	);
+};
 
 export const ActivityFeedPostReactions: React.FC<{
 	reactionState: any;
 	post: any;
 }> = ({ reactionState, post }: { reactionState: any; post: any }) => {
 	const { firstVoterProfileImg, commentsCount } = post;
+	const { t } = useTranslation('common');
 	const username = reactionState?.likesUsernames?.[0] || '';
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const displayUsername = !isMobile ? username : username.length > 5 ? `${username.slice(0, 5)}...` : username;
@@ -64,7 +70,7 @@ export const ActivityFeedPostReactions: React.FC<{
 					>
 						<ImageComponent
 							src={userImages && userImages[index] && userImages[index]}
-							alt='User Picture'
+							alt={t('user_picture')}
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
@@ -73,19 +79,20 @@ export const ActivityFeedPostReactions: React.FC<{
 				))}
 			</div>
 		) : (
-			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>{t('no_reactions_yet')}</p>
 		);
 	};
+
 	const percentage = Math?.min(post?.highestSentiment?.percentage || 0, 100);
 	const sentimentLevels = [
-		{ threshold: 20, title: 'Completely Against' },
-		{ threshold: 40, title: 'Slightly Against' },
-		{ threshold: 60, title: 'Neutral' },
-		{ threshold: 80, title: 'Slightly For' },
-		{ threshold: 100, title: 'Completely For' }
+		{ threshold: 20, title: 'completely_against' },
+		{ threshold: 40, title: 'slightly_against' },
+		{ threshold: 60, title: 'neutral' },
+		{ threshold: 80, title: 'slightly_for' },
+		{ threshold: 100, title: 'completely_for' }
 	];
 
-	const sentimentTitle = sentimentLevels?.find((level) => percentage <= level?.threshold)?.title || 'Completely For';
+	const sentimentTitle = sentimentLevels?.find((level) => percentage <= level?.threshold)?.title || 'completely_for';
 
 	const renderSentimentIcon = (sentiment: number) => {
 		const sentimentIcons: Record<number, React.ReactNode> = {
@@ -101,19 +108,19 @@ export const ActivityFeedPostReactions: React.FC<{
 	};
 
 	return (
-		<div className='-mt-2 flex items-center  justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
+		<div className='-mt-2 flex items-center justify-between text-sm text-gray-500 dark:text-[#9E9E9E]'>
 			<div>
 				{reactionState?.likesCount > 0 && reactionState?.likesUsernames?.length > 0 && (
 					<div className='mt-1 flex items-center'>
 						<ImageComponent
 							src={firstVoterProfileImg}
-							alt='User Picture'
+							alt={t('user_picture')}
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 						/>
 						<div className='ml-1 text-[10px] md:ml-2 md:pt-5 md:text-[12px]'>
 							{reactionState?.likesCount === 1 ? (
-								<p className='md:-mt-2'>{`${displayUsername} has liked this post`}</p>
+								<p className='md:-mt-2'>{`${displayUsername} ${t('has_liked_this_post')}`}</p>
 							) : (
 								<Popover
 									placement='bottom'
@@ -123,8 +130,8 @@ export const ActivityFeedPostReactions: React.FC<{
 								>
 									<p className='cursor-pointer text-[10px] md:-mt-2 md:text-[12px]'>
 										{`${displayUsername} & `}
-										<span className='text-pink_primary underline'>{`${reactionState?.likesCount - 1} others`}</span>
-										{' liked this post'}
+										<span className='text-pink_primary underline'>{`${reactionState?.likesCount - 1} ${t('others')}`}</span>
+										{` ${t('liked_this_post')}`}
 									</p>
 								</Popover>
 							)}
@@ -143,14 +150,16 @@ export const ActivityFeedPostReactions: React.FC<{
 							arrow={true}
 						>
 							<p className='cursor-pointer whitespace-nowrap text-[10px] text-gray-600 hover:underline dark:text-[#9E9E9E] md:text-[12px]'>
-								{reactionState?.dislikesCount} dislikes
+								{reactionState?.dislikesCount} {t('dislikes')}
 							</p>
 						</Popover>
 					</span>
 				</div>
 				<p className='pt-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
-				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{commentsCount || 0} Comments</p>
-				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-blue-light-medium dark:text-[#9E9E9E]  lg:hidden'>|</p>}
+				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px]'>
+					{commentsCount || 0} {t('comments')}
+				</p>
+				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-blue-light-medium dark:text-[#9E9E9E] lg:hidden'>|</p>}
 				<div className='block lg:hidden'>
 					<div className='mt-2 flex items-center space-x-1 md:mt-5'>
 						{post?.highestSentiment?.sentiment >= 0 && (

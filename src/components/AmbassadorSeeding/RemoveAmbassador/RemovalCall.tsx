@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React, { useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Button, Form, Radio, Spin } from 'antd';
@@ -20,11 +19,13 @@ import getCollectiveApi from '../utils/getCollectiveApi';
 import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { useTranslation } from 'react-i18next';
 
 interface IRemovalCall {
 	className?: string;
 }
 const RemovalCall = ({ className }: IRemovalCall) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -80,7 +81,6 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 
 	useEffect(() => {
 		handleRemoveAmbassador();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
 
 	return (
@@ -93,7 +93,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 							<label className='text-sm text-bodyBlue dark:text-blue-dark-medium'>
-								Your Address{' '}
+								{t('your_address')}{' '}
 								{/* <HelperTooltip
 									className='ml-1'
 									text='Please note the verification cannot be transferred to another address.'
@@ -118,14 +118,14 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 						</div>
 					</div>
 					<div className='mt-4'>
-						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Remove (Who)</div>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('remove_who')}</div>
 						<div className='flex w-full items-end gap-2 text-sm'>
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
 								defaultAddress={applicantAddress || ''}
 								name={'removalApplicantAddress'}
-								placeholder='Enter Removal Address'
+								placeholder={t('enter_removal_address')}
 								iconClassName={'ml-[10px]'}
 								identiconSize={26}
 								onChange={(address) => handleInductAddressChange(getEncodedAddress(address, network) || address)}
@@ -133,7 +133,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 						</div>
 					</div>
 					<div className='mt-4 flex gap-1.5 text-sm text-bodyBlue dark:text-blue-dark-medium'>
-						Promote Rank <HelperTooltip text={<div className='text-xs'>This indicate at which rank you would like to remove</div>} />
+						{t('promote_rank')} <HelperTooltip text={<div className='text-xs'>{t('promote_rank_tooltip')}</div>} />
 					</div>
 
 					<div>
@@ -158,7 +158,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
 							onClick={() => dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>
-							Next
+							{t('next')}
 						</Button>
 					</div>
 				</Form>

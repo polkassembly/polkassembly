@@ -77,7 +77,6 @@ import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
-import Details from './Bounty/Details';
 import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
@@ -1362,7 +1361,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
-								<Details bountyId={onchainId} />
 								<BountyChildBounties bountyId={onchainId} />
 								<Submissions bountyId={onchainId} />
 							</>

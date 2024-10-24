@@ -13,3 +13,9 @@ export const activityCollRef = (networkName: string) => networkDocRef(networkNam
 export const activityDocRef = (networkName: string, activityId: string) => activityCollRef(networkName).doc(activityId);
 export const activityReactionCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('reactions');
 export const activityViewsCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('views');
+
+export const delegatesColRef = (networkName: string) => networkDocRef(networkName).collection('pa_delegates');
+
+export const chatCollRef = firestore_db.collection('chats');
+export const chatDocRef = (chatId: string) => chatCollRef.doc(chatId);
+export const chatMessagesRef = (chatId: string) => chatDocRef(chatId).collection('messages');

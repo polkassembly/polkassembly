@@ -76,9 +76,20 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 				})
 				.catch((error) => {
 					console.error('Error fetching council members:', error);
+					setCurrentCouncil([]);
+					queueNotification({
+						header: 'Failed!',
+						message: 'Could not fetch council members. Some features may be limited.',
+						status: NotificationStatus.ERROR
+					});
 				});
 		} else {
 			console.error('Council pallet is not available on this network.');
+			queueNotification({
+				header: 'Notice',
+				message: 'Council features are not available on this network.',
+				status: NotificationStatus.WARNING
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);

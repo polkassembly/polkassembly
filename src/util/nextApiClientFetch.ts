@@ -24,7 +24,12 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknow
 		headers['Content-Type'] = 'application/json';
 	}
 
-	const response = await fetch(`${window?.location?.origin}/${url}`, {
+	const origin = typeof window !== 'undefined' ? window?.location?.origin : process.env.NEXT_PUBLIC_API_URL;
+	if (!origin) {
+		throw new Error('Unable to determine API origin');
+	}
+
+	const response = await fetch(`${origin}/${url}`, {
 		body: data instanceof FormData ? data : JSON.stringify(data),
 		credentials: 'include',
 		headers,

@@ -22,29 +22,45 @@ interface FollowerData {
 interface FollowerResponse {
 	message: string;
 	followers: FollowerData[];
+	total: number;
 }
+
+const LISTING_LIMIT = 10;
 
 async function handler(req: NextApiRequest, res: NextApiResponse<FollowerResponse>) {
 	storeApiKeyUsage(req);
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Missing user token', followers: [] });
+	if (!token) return res.status(400).json({ message: 'Missing user token', followers: [], total: 0 });
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ message: 'Missing or invalid network name in request headers', followers: [] });
+		return res.status(400).json({ message: 'Missing or invalid network name in request headers', followers: [], total: 0 });
 	}
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(400).json({ message: 'User not found', followers: [] });
+	if (!user) return res.status(400).json({ message: 'User not found', followers: [], total: 0 });
+
+	const { page = '1' } = req.query;
+
+	const pageNumber = Number(page) > 0 ? Number(page) : 1;
 
 	try {
-		const followersSnapshot = await followsCollRef().where('network', '==', network).where('followed_user_id', '==', user.id).where('isFollow', '==', true).get();
+		const totalFollowersSnapshot = await followsCollRef().where('network', '==', network).where('followed_user_id', '==', user.id).where('isFollow', '==', true).get();
+		const total = totalFollowersSnapshot.size;
+
+		const followersSnapshot = await followsCollRef()
+			.where('network', '==', network)
+			.where('followed_user_id', '==', user.id)
+			.where('isFollow', '==', true)
+			.offset((pageNumber - 1) * LISTING_LIMIT)
+			.limit(LISTING_LIMIT)
+			.get();
 
 		const followerIds = followersSnapshot.docs.map((doc) => doc.data().follower_user_id);
 
 		if (followerIds.length === 0) {
-			return res.status(200).json({ message: 'No followers found', followers: [] });
+			return res.status(200).json({ message: 'No followers found', followers: [], total });
 		}
 
 		// Fetch user profile data (username and image) for the followers
@@ -75,10 +91,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowerRespons
 
 		followers.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
 
-		return res.status(200).json({ message: 'Followers fetched successfully', followers });
+		return res.status(200).json({ message: 'Followers fetched successfully', followers, total });
 	} catch (err) {
 		console.error('Error fetching followers:', err);
-		return res.status(500).json({ message: 'Failed to fetch followers', followers: [] });
+		return res.status(500).json({ message: 'Failed to fetch followers', followers: [], total: 0 });
 	}
 }
 

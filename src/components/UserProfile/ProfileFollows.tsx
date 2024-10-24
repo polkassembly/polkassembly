@@ -15,8 +15,8 @@ import { ProfileFollowIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import Image from 'next/image';
 import useImagePreloader from '~src/hooks/useImagePreloader';
-import { Pagination } from '../Pagination';
 import { useTheme } from 'next-themes';
+import { Pagination } from '../Pagination';
 
 interface FollowerData {
 	follower_user_id: number;
@@ -29,6 +29,7 @@ interface FollowerData {
 interface FollowerResponse {
 	message: string;
 	followers: FollowerData[];
+	total: number;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -37,21 +38,23 @@ const ProfileFollows = ({ className }: { className: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [followers, setFollowers] = useState<FollowerData[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalFollowers, setTotalFollowers] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
 		loading: false,
 		error: null
 	});
 	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 
-	const fetchFollowers = async () => {
+	const fetchFollowers = async (page: number) => {
 		setIsLoading({ loading: true, error: null });
 
 		try {
-			const { data, error } = await nextApiClientFetch<FollowerResponse>('/api/v1/fetch-follows');
+			const { data, error } = await nextApiClientFetch<FollowerResponse>(`/api/v1/fetch-follows?page=${page}`);
 			if (error) {
 				setIsLoading({ loading: false, error: 'Failed to fetch followers' });
 			} else if (data) {
 				setFollowers(data.followers);
+				setTotalFollowers(data.total);
 				setIsLoading({ loading: false, error: null });
 			}
 		} catch (err) {
@@ -59,11 +62,9 @@ const ProfileFollows = ({ className }: { className: string }) => {
 		}
 	};
 
-	const currentFollowers = followers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
 	useEffect(() => {
-		fetchFollowers();
-	}, []);
+		fetchFollowers(currentPage);
+	}, [currentPage]);
 
 	return (
 		<div
@@ -77,7 +78,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 						<div className='flex items-baseline gap-1 text-bodyBlue dark:text-white'>
-							Connections<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>({followers.length})</span>
+							Connections<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>({totalFollowers})</span>
 						</div>
 					</div>
 				</div>
@@ -95,7 +96,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 								priority={true}
 							/>
 						</div>
-					) : currentFollowers.length == 0 ? (
+					) : followers.length === 0 ? (
 						<div className='flex flex-col items-center pb-10'>
 							<Image
 								src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
@@ -109,7 +110,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 						</div>
 					) : (
 						<>
-							{currentFollowers.map((follower, index) => (
+							{followers.map((follower, index) => (
 								<div key={follower.follower_user_id}>
 									<div className={`${poppins.variable} ${poppins.className} mb-4 mt-3 flex items-start gap-3`}>
 										<ImageComponent
@@ -140,7 +141,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 										/>
 									</div>
 
-									{index !== currentFollowers.length - 1 && (
+									{index !== followers.length - 1 && (
 										<Divider
 											type='horizontal'
 											className='my-0 bg-[#D2D8E0B2] dark:bg-separatorDark'
@@ -156,7 +157,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 						defaultCurrent={1}
 						current={currentPage}
 						pageSize={ITEMS_PER_PAGE}
-						total={followers.length}
+						total={totalFollowers}
 						showSizeChanger={false}
 						hideOnSinglePage={true}
 						onChange={(page: number) => {

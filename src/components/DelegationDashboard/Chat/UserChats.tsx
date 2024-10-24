@@ -30,16 +30,20 @@ const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 	const [openedChat, setOpenedChat] = useState<IChat | null>(null);
 	const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
-	const handleCloseChat = () => {
-		setIsChatOpen(false);
-		setIsNewChat(false);
-		setOpenedChat(null);
-	};
-
-	const handleOpenChat = (chat: IChat) => {
-		setIsNewChat(false);
-		setIsChatOpen(true);
-		setOpenedChat(chat);
+	const handleChatToggle = (chat?: IChat | null) => {
+		if (chat) {
+			if (!chat.chatId) {
+				console.error('Invalid chat');
+				return;
+			}
+			setIsNewChat(false);
+			setIsChatOpen(true);
+			setOpenedChat(chat);
+		} else {
+			setIsChatOpen(false);
+			setIsNewChat(false);
+			setOpenedChat(null);
+		}
 	};
 
 	const handleDataFetch = async () => {
@@ -76,7 +80,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 					className='h-[250px]'
 				>
 					<RenderChats
-						handleOpenChat={handleOpenChat}
+						handleOpenChat={handleChatToggle}
 						chats={selectedChatTab === 'sent' ? sentChats : receivedChats}
 					/>
 				</Spin>
@@ -86,8 +90,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 				openedChat={openedChat}
 				isNewChat={isNewChat}
 				isDrawerOpen={isNewChat || isChatOpen}
-				handleCloseChat={handleCloseChat}
-				handleOpenChat={handleOpenChat}
+				handleChatToggle={handleChatToggle}
 			/>
 		</>
 	);

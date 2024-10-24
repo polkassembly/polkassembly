@@ -103,12 +103,12 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 
 		(async () => {
 			if (network === 'picasso') {
-				const totalIssuance = await api.query.openGovBalances.totalIssuance();
-				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+				const totalIssuance = await api?.query?.openGovBalances?.totalIssuance();
+				const inactiveIssuance = await api?.query?.openGovBalances?.inactiveIssuance();
 				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
 			} else {
-				const totalIssuance = await api.query.balances.totalIssuance();
-				const inactiveIssuance = await api.query.balances.inactiveIssuance();
+				const totalIssuance = await api?.query?.balances?.totalIssuance();
+				const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
 			}
 		})();

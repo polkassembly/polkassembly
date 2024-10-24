@@ -36,7 +36,7 @@ export const SubmissionsEmptyState = ({ activeTab }: { activeTab: ESubmissionSta
 				width={320}
 				height={320}
 			/>
-			<span className='-mt-20 mb-5 text-base font-medium text-blue-light-medium dark:text-white'>No {activeTab} submissions</span>
+			<span className='-mt-20 mb-5 text-base font-medium text-lightBlue dark:text-white'>No {activeTab} submissions</span>
 		</div>
 	);
 };
@@ -54,6 +54,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState<ESubmissionStatus | null>(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | undefined>(undefined);
+
 	const handleNewSubmission = useCallback(async (created: boolean) => {
 		if (created) {
 			await fetchBountySubmission();
@@ -84,9 +87,6 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			setLoading(false);
 		}
 	};
-
-	const [isEditing, setIsEditing] = useState(false);
-	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | undefined>(undefined);
 
 	const handleEditClick = (submission: IChildBountySubmission) => {
 		setEditSubmission(submission);
@@ -178,7 +178,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === null
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						All
@@ -188,7 +188,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === ESubmissionStatus.PENDING
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						Pending
@@ -198,7 +198,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === ESubmissionStatus.REJECTED
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						Rejected
@@ -232,9 +232,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 											<ImageIcon
 												src={theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}
 												alt='timer'
-												className='text-xs text-blue-light-medium dark:text-icon-dark-inactive'
+												className='text-xs text-lightBlue dark:text-icon-dark-inactive'
 											/>
-											<span className='whitespace-nowrap text-xs text-blue-light-medium dark:text-icon-dark-inactive'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</span>
+											<span className='whitespace-nowrap text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</span>
 										</div>
 										<Divider
 											type='vertical'
@@ -243,8 +243,8 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 										<span className='ml-1 whitespace-nowrap text-xs font-semibold text-pink_primary'>{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}</span>
 									</div>
 									<div className='mt-2 pb-2'>
-										<span className='text-sm font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
-										<span className='text-sm font-medium text-blue-light-high hover:underline dark:text-white'>{submission?.title}</span>
+										<span className='text-sm font-medium text-lightBlue dark:text-icon-dark-inactive'>#{index + 1} </span>
+										<span className='text-sm font-medium text-bodyBlue hover:underline dark:text-white'>{submission?.title}</span>
 									</div>
 									<div className='flex w-full'>
 										<SubmissionAction
@@ -266,7 +266,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			{!!loginAddress?.length && (
 				<CustomButton
 					variant='primary'
-					className='flex w-full cursor-pointer items-center justify-center rounded-md border-none'
+					className='mt-4 flex w-full cursor-pointer items-center justify-center gap-1 rounded-md border-none'
 					onClick={() => {
 						if (hasSubmitted) {
 							message.error('You can only make one submission per bounty.');
@@ -279,6 +279,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					<ImageIcon
 						src='/assets/icons/Document.svg'
 						alt='submit'
+						className='text-sm'
 					/>
 					<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
 				</CustomButton>

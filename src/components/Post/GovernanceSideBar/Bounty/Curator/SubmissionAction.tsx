@@ -43,6 +43,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, loginAd
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
 
 	const handleDeleteSubmission = async () => {
+		setIsDeleteConfirm(false);
 		setLoading(true);
 		await handleDelete(submission);
 		setLoading(false);
@@ -93,7 +94,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, loginAd
 			>
 				<div className='mt-6 px-6'>
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
+						Your submission information (Title, Description & catgories) would be lost. Are you sure you want to delete submission?
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
@@ -106,9 +107,8 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, loginAd
 							onClick={() => {
 								setIsDeleteConfirm(false);
 							}}
-							height={40}
-							width={200}
 							text='Cancel'
+							buttonsize='sm'
 							variant='primary'
 						/>
 					</div>

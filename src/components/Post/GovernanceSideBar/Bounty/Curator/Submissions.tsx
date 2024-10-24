@@ -217,13 +217,18 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 								className='mb-3 rounded-lg border-[1px] border-solid border-section-light-container p-3 dark:border-[#4B4B4B]'
 							>
 								<div>
-									<div className='flex items-center gap-1'>
+									<div className='flex flex-wrap items-center gap-1'>
 										<Address
 											address={submission?.proposer}
 											displayInline
 											isTruncateUsername={true}
 											className='text-xs'
 										/>
+										<Divider
+											type='vertical'
+											className='border-l-1 m-0 border-lightBlue p-0 dark:border-icon-dark-inactive'
+										/>
+										<span className='ml-1 whitespace-nowrap text-xs font-semibold text-pink_primary'>{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}</span>
 										<Divider
 											type='vertical'
 											className='border-l-1 m-0 border-lightBlue p-0 dark:border-icon-dark-inactive'
@@ -236,12 +241,8 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 											/>
 											<span className='whitespace-nowrap text-xs text-blue-light-medium dark:text-icon-dark-inactive'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</span>
 										</div>
-										<Divider
-											type='vertical'
-											className='border-l-1 m-0 border-lightBlue p-0 dark:border-icon-dark-inactive'
-										/>
-										<span className='ml-1 whitespace-nowrap text-xs font-semibold text-pink_primary'>{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}</span>
 									</div>
+
 									<div className='mt-2 pb-2'>
 										<span className='text-sm font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
 										<span className='text-sm font-medium text-blue-light-high hover:underline dark:text-white'>{submission?.title}</span>

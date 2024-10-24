@@ -10,12 +10,11 @@ import messages from '~src/auth/utils/messages';
 import { GET_ALL_BOUNTIES_WITHOUT_PAGINATION, GET_CURATOR_RECIVED_SENT_COUNT } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { IPendingCuratorReq } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
 
-const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ curator: number; submissions: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
@@ -71,14 +70,8 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 
 		return {
 			data: {
-				curator: {
-					bounties: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0,
-					childBounties: curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0
-				},
-				submission: {
-					received: receivedSubmissions?.data()?.count || 0,
-					sent: sentSubmissions?.data()?.count || 0
-				}
+				curator: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0 + curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0,
+				submissions: receivedSubmissions?.data()?.count || 0 + sentSubmissions?.data()?.count || 0
 			},
 			error: null,
 			status: 200

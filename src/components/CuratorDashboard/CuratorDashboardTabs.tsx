@@ -8,6 +8,7 @@ import CuratorProfile from './CuratorProfile';
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
+import CuratorPendingRequestManager from './PendingRequestManager';
 
 interface Props {
 	handleClick: () => void;
@@ -15,7 +16,8 @@ interface Props {
 
 enum ECuratorDashboardTabs {
 	GENERAL = 'general',
-	CURATED = 'curated'
+	CURATED = 'curated',
+	PENDING_REQUESTS = 'pending-requests'
 }
 
 const CuratorDashboardTabItems = ({ handleClick }: Props) => {
@@ -36,6 +38,13 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: ECuratorDashboardTabs.CURATED,
 			title: 'Bounties Curated'
+		},
+		{
+			children: <CuratorPendingRequestManager />,
+			description: 'Review curator and child bounty requests',
+			icon: '/assets/icons/curator-dashboard/pending-request.svg',
+			key: ECuratorDashboardTabs.PENDING_REQUESTS,
+			title: 'Pending Requests'
 		}
 	];
 

@@ -3311,3 +3311,31 @@ export const GET_CONVICTION_VOTE_CREATED_AT = `
   }
 }
 `;
+
+export const GET_SENT_CURATOR_REQUESTS = `query GET_SENT_CURATOR_REQUESTS($address: String, $limit:Int, $offset: Int, $type_eq:ProposalType){
+proposals(where: {proposer_eq: $address, status_eq:CuratorProposed, type_eq:$type_eq} ,offset:$offset,limit:$limit){
+    index
+    status
+    proposer
+    curator
+    reward
+    createdAt
+    type
+    proposer
+    payee
+  }
+}`;
+
+export const GET_RECEIVED_CURATOR_REQUESTS = `query GET_SENT_CURATOR_REQUESTS($address: String, $limit:Int, $offset: Int, $type_eq:ProposalType){
+proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type_eq} ,offset:$offset,limit:$limit){
+    index
+    status
+    proposer
+    curator
+    reward
+    createdAt
+    type
+    proposer
+    payee
+  }
+}`;

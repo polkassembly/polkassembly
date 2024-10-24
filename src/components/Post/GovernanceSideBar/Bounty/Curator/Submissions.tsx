@@ -250,7 +250,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 									{submission?.status === EChildbountySubmissionStatus.OUTDATED && (
 										<Alert
 											showIcon={true}
-											message={'This proposal is outdated'}
+											message={'This Bounty has been closed'}
 											className='mb-2'
 										/>
 									)}

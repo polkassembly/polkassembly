@@ -291,7 +291,7 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isLoading, re
 															{request?.status === EChildbountySubmissionStatus.OUTDATED && (
 																<Alert
 																	showIcon={true}
-																	message={'This proposal is outdated'}
+																	message={'This Bounty has been closed'}
 																	className='mx-4 mb-2'
 																/>
 															)}

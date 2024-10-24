@@ -269,9 +269,7 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isLoading, re
 																			alt='timer'
 																			className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 																		/>
-																		<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>
-																			{new Date(request?.createdAt)?.toLocaleDateString()}
-																		</p>
+																		<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(request?.createdAt).format('Do MMM YYYY')} </p>
 																	</div>
 																	<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 																	<span className='ml-1 whitespace-nowrap text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
@@ -291,13 +289,11 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isLoading, re
 																</div>
 															</div>
 															{request?.status === EChildbountySubmissionStatus.OUTDATED && (
-																<>
-																	<Alert
-																		showIcon={true}
-																		message={'This proposal is outdated'}
-																		className='mx-4 mb-2'
-																	/>
-																</>
+																<Alert
+																	showIcon={true}
+																	message={'This proposal is outdated'}
+																	className='mx-4 mb-2'
+																/>
 															)}
 															<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 															<div className='flex justify-between gap-4 p-2'>

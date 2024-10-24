@@ -95,7 +95,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 				size='small'
 			>
-				{recipientAddress && recipientAddress?.startsWith('0x') ? (
+				{recipientAddress?.startsWith('0x') ? (
 					<EthIdenticon
 						size={32}
 						address={recipientAddress || ''}

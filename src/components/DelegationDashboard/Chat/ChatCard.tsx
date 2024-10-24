@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
@@ -21,36 +21,45 @@ const ChatCard = ({ chat }: Props) => {
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
 	const address = delegationDashboardAddress || loginAddress;
-	const latestMessage = chat?.latestMessage;
+	const { latestMessage } = chat;
 	const isReadMessage = latestMessage?.viewed_by?.includes(address);
 
-	return (
-		<div className={`flex w-full gap-2 overflow-hidden px-5 py-2 ${isReadMessage ? '' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}>
-			{latestMessage?.senderImage ? (
+	const renderUsername = latestMessage?.senderUsername ?? shortenAddress(latestMessage?.senderAddress || '');
+
+	const renderUserImage = useMemo(() => {
+		if (latestMessage?.senderImage) {
+			return (
 				<Image
-					src={latestMessage?.senderImage}
+					src={latestMessage.senderImage}
 					height={32}
 					width={32}
 					alt='user avatar'
 				/>
-			) : latestMessage?.senderAddress?.startsWith('0x') ? (
+			);
+		} else if (latestMessage?.senderAddress?.startsWith('0x')) {
+			return (
 				<EthIdenticon
 					size={32}
-					address={latestMessage?.senderAddress || ''}
+					address={latestMessage.senderAddress || ''}
 				/>
-			) : (
+			);
+		} else {
+			return (
 				<Identicon
 					value={latestMessage?.senderAddress || ''}
 					size={32}
 					theme={'polkadot'}
 				/>
-			)}
+			);
+		}
+	}, [latestMessage?.senderImage, latestMessage?.senderAddress]);
 
+	return (
+		<div className={`flex w-full gap-2 overflow-hidden px-5 py-2 ${isReadMessage ? '' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}>
+			{renderUserImage}
 			<div className='flex flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
 				<div className='flex items-center gap-2'>
-					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						{latestMessage?.senderUsername ? latestMessage?.senderUsername : shortenAddress(latestMessage?.senderAddress, 5)}
-					</span>
+					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{renderUsername}</span>
 					<Image
 						src='/assets/icons/timer.svg'
 						height={16}
@@ -61,7 +70,7 @@ const ChatCard = ({ chat }: Props) => {
 					<span className='text-xs'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
 				</div>
 				<Markdown
-					md={latestMessage?.content?.length > 100 ? `${latestMessage?.content.slice(0, 100)}...` : latestMessage?.content}
+					md={latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
 					className={'line-clamp-2 w-full break-words text-xs'}
 					isPreview={true}
 				/>
@@ -69,4 +78,5 @@ const ChatCard = ({ chat }: Props) => {
 		</div>
 	);
 };
+
 export default ChatCard;

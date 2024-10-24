@@ -376,11 +376,12 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 				/>
 			)}
 
+			{/* Added Halloween Login Prompt */}
 			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
-				image='/assets/Gifs/login-vote.gif'
+				image='/assets/Gifs/halloween-login.gif'
 				title={'Join Polkassembly to Vote on this proposal.'}
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>

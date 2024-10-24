@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, message, Modal } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { CheckCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useTheme } from 'next-themes';
@@ -54,6 +54,7 @@ function SentSubmissions({
 	setIsModalVisible: any;
 	setBountyId: any;
 }) {
+	console.log('sentSubmissions', sentSubmissions);
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -129,6 +130,10 @@ function SentSubmissions({
 			message.success('Submission status updated successfully');
 		}
 	};
+
+	useEffect(() => {
+		setGroupedBounties(groupBountyData(sentSubmissions));
+	}, [sentSubmissions]);
 
 	return (
 		<div>

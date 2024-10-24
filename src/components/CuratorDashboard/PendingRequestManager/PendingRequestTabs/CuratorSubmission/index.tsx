@@ -52,7 +52,12 @@ function CuratorSubmission({
 				setLoading(false);
 				return;
 			}
-			setData(data);
+			if (Array.isArray(data)) {
+				setData([...data]);
+			} else {
+				console.warn('Fetched data is not an array:', data);
+				setData([]);
+			}
 		} catch (e) {
 			console.error('API call failed:', e);
 		} finally {

@@ -36,7 +36,13 @@ const groupBountyData = (bounties: IChildBountySubmission[]) => {
 
 	return groupedBounties;
 };
-function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmissions }: { isloading: boolean; receivedSubmissions: any; setReceivedSubmissions: any }) {
+interface ReceivedSubmissionsProps {
+	isloading: boolean;
+	receivedSubmissions: IChildBountySubmission[];
+	setReceivedSubmissions: (submissions: IChildBountySubmission[]) => void;
+}
+
+const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, receivedSubmissions, setReceivedSubmissions }) => {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -423,6 +429,6 @@ function ReceivedSubmissions({ isloading, receivedSubmissions, setReceivedSubmis
 			)}
 		</div>
 	);
-}
+};
 
 export default ReceivedSubmissions;

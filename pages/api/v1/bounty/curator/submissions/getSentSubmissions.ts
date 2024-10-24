@@ -42,7 +42,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
 
-		const submissionsDocs = await submissionsSnapshot?.where('proposer', '==', getEncodedAddress(userAddress, network)).get();
+		const submissionsDocs = await submissionsSnapshot
+			?.where('proposer', '==', getEncodedAddress(userAddress, network))
+			.where('user_id', '==', user?.id)
+			.get();
 
 		if (submissionsDocs?.empty) {
 			return res.status(404).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });

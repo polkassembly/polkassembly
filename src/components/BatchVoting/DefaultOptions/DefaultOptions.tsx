@@ -18,9 +18,12 @@ import { Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { poppins } from 'pages/_app';
+import { useTranslation } from 'next-i18next';
+
 const ZERO_BN = new BN(0);
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
+	const { t } = useTranslation('common');
 	const dispatch = useAppDispatch();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const { loginAddress } = useUserDetailsSelector();
@@ -52,7 +55,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
 			<header>
 				<div className='mb-4 mt-4 h-[48px] border-0 border-b-[1px] border-solid border-section-light-container px-6 text-lg font-semibold tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-					Set Defaults
+					{t('set_defaults')}
 				</div>
 			</header>
 			<article className='-full w-full items-center justify-start gap-x-3 px-6'>
@@ -62,19 +65,17 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					className='mt-8 px-4'
 					message={
 						<p className='m-0 p-0 p-2 text-[13px] dark:text-white'>
-							You can adjust for delegated voting power from edit button on each proposal.
+							{t('delegated_voting_info')}
 							<Tooltip
 								color='#363636'
 								title={
 									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
-										<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
-										<p className='m-0 p-0 text-white'>
-											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.
-										</p>
+										<p className='m-0 p-0 text-white'>{t('add_proposal_info_1')}</p>
+										<p className='m-0 p-0 text-white'>{t('add_proposal_info_2')}</p>
 									</div>
 								}
 							>
-								<span className='ml-2 font-semibold text-pink_primary '>Know more</span>
+								<span className='ml-2 font-semibold text-pink_primary '>{t('know_more')}</span>
 							</Tooltip>
 						</p>
 					}
@@ -93,7 +94,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 							displayInline
 						/>
 						<CustomButton
-							text='Change Wallet'
+							text={t('change_wallet')}
 							onClick={() => {
 								setOpen(true);
 							}}
@@ -118,7 +119,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 			<div className='mb-2 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
 				<CustomButton
 					variant='default'
-					text='Skip'
+					text={t('skip')}
 					buttonsize='sm'
 					onClick={() => {
 						dispatch(batchVotesActions.setIsDefaultSelected(false));
@@ -126,7 +127,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				/>
 				<CustomButton
 					variant='primary'
-					text='Next'
+					text={t('next')}
 					buttonsize='sm'
 					onClick={() => {
 						dispatch(batchVotesActions.setIsDefaultSelected(false));
@@ -136,7 +137,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 			<AddressConnectModal
 				open={open}
 				setOpen={setOpen}
-				walletAlertTitle='Batch Voting.'
+				walletAlertTitle={t('batch_voting')}
 				onConfirm={(address: string) => {
 					setOpen(true);
 					dispatch(batchVotesActions.setBatchVotingAddress(address));

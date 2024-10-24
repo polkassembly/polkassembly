@@ -472,5 +472,10 @@
   "townhall": "Townhall",
   "staking": "Staking",
   "free_balance": "Free Balance",
-  "transferable_balance": "Transferable Balance"
+  "transferable_balance": "Transferable Balance",
+  "set_defaults": "Set Defaults",
+  "delegated_voting_info": "You can adjust for delegated voting power from edit button on each proposal.",
+  "add_proposal_info_1": "1. Add proposal to cart by choosing your vote: aye, nay, or abstain.",
+  "add_proposal_info_2": "2. Click on the edit button on the proposal, and you will now be able to see and adjust delegated votes based on the proposal track.",
+  "know_more": "Know more"
 }

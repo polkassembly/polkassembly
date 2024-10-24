@@ -58,33 +58,44 @@ const ActivityFeedTreasury = () => {
 		)
 	);
 
-	useEffect(() => {
-		fetchTreasuryData();
-		fetchDailyTreasuryData();
-		fetchGraphData().then(setGraphData);
-	}, [network]);
+	const RenderAsset = ({ value, label, index }: { value: string; label: string; index: number }) => {
+		const supportedAssets = chainProperties?.[network]?.supportedAssets;
 
-	useEffect(() => {
-		if (api && apiReady) {
-			calculateTreasuryValues(api, network, currentTokenPrice, setAvailable, setNextBurn, setTokenValue);
-		}
-	}, [api, apiReady, currentTokenPrice, network]);
+		return supportedAssets?.[index] ? (
+			<>
+				<Divider
+					className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0 dark:bg-separatorDark'
+					type='vertical'
+				/>
+				<div className='ml-1 text-xs text-blue-light-high dark:text-blue-dark-high'>
+					{value}
+					<span className='ml-[3px] font-normal'>{label}</span>
+				</div>
+			</>
+		) : null;
+	};
 
 	useEffect(() => {
 		if (network) {
+			fetchTreasuryData();
+			fetchDailyTreasuryData();
+			fetchGraphData().then(setGraphData);
 			GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		}
 	}, [network]);
 
 	useEffect(() => {
-		if (!currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
-		fetchWeekAgoTokenPrice(network, currentTokenPrice, setPriceWeeklyChange);
-	}, [currentTokenPrice, network]);
+		if (api && apiReady && currentTokenPrice.value && !currentTokenPrice.isLoading) {
+			calculateTreasuryValues(api, network, currentTokenPrice, setAvailable, setNextBurn, setTokenValue);
+			fetchWeekAgoTokenPrice(network, currentTokenPrice, setPriceWeeklyChange);
+		}
+	}, [api, apiReady, currentTokenPrice, network]);
 
 	useEffect(() => {
 		if (assethubApiReady) fetchAssetsAmount();
 		if (hydrationApiReady) fetchHydrationAssetsAmount();
-	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [assethubApiReady, hydrationApiReady]);
 
 	return (
 		<div
@@ -164,30 +175,10 @@ const ActivityFeedTreasury = () => {
 													</div>
 												</div>
 
-												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<div className='ml-1 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='text-xs'>
-															{assetValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
-														</div>
-													</div>
-												)}
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0  dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='ml-1 text-xs text-blue-light-high dark:text-blue-dark-high'>
-															{assetValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
+												<div className='flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+													{RenderAsset({ index: 2, label: 'USDT', value: assetValueUSDT })}
+													{RenderAsset({ index: 1, label: 'USDC', value: assetValueUSDC })}
+												</div>
 											</div>
 										)}
 									</div>
@@ -209,30 +200,8 @@ const ActivityFeedTreasury = () => {
 														{formatUSDWithUnits(hydrationValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 													</div>
 												</div>
-												{chainProperties?.[network]?.supportedAssets?.[2] && (
-													<div className='ml-2 flex items-center gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-														<Divider
-															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='ml-1 text-xs'>
-															{hydrationValueUSDT}
-															<span className='ml-[3px] font-normal'>USDT</span>
-														</div>
-													</div>
-												)}
-												{chainProperties?.[network]?.supportedAssets?.[1] && (
-													<>
-														<Divider
-															className='mx-[1px] ml-1 mt-1 bg-section-light-container p-0 dark:bg-separatorDark'
-															type='vertical'
-														/>
-														<div className='ml-1 text-xs text-blue-light-high dark:text-blue-dark-high'>
-															{hydrationValueUSDC}
-															<span className='ml-[3px] font-normal'>USDC</span>
-														</div>
-													</>
-												)}
+												{RenderAsset({ index: 2, label: 'USDT', value: hydrationValueUSDT })}
+												{RenderAsset({ index: 1, label: 'USDC', value: hydrationValueUSDC })}
 											</div>
 										)}
 									</div>

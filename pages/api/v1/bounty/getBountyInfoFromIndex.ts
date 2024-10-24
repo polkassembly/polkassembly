@@ -18,7 +18,7 @@ interface Args {
 	network: string;
 }
 
-export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IApiResponse<{ status: string }>> {
+export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IApiResponse<{ status: string; reqAmount?: string; curator?: string; createdAt?: string }>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -38,7 +38,12 @@ export async function getBountyInfo({ bountyIndex, network }: Args): Promise<IAp
 
 		const status = subsquidBountiesRes?.data?.bounties?.[0]?.status || null;
 		return {
-			data: { status: status },
+			data: {
+				createdAt: subsquidBountiesRes?.data?.bounties?.[0]?.createdAt,
+				curator: subsquidBountiesRes?.data?.bounties?.[0]?.curator || '',
+				reqAmount: subsquidBountiesRes?.data?.bounties?.[0]?.reward || '0',
+				status: status
+			},
 			error: null,
 			status: 200
 		};

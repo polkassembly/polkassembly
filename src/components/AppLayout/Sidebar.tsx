@@ -1944,7 +1944,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<div className='-mb-2 ml-28 flex h-full items-center justify-center'>
+											<div className='-mb-2 ml-24 flex h-full items-center justify-center'>
 												<Image
 													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
@@ -1954,7 +1954,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												<Image
 													src='/assets/Gifs/candy-GIF.gif'
 													alt='polkassembly logo'
-													width={100}
+													width={75}
 													height={50}
 												/>
 											</div>

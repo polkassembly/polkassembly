@@ -4,10 +4,10 @@
 
 import React from 'react';
 import { useTheme } from 'next-themes';
-// import DarkModeSwitcher from '~assets/icons/darkmodeswitcher.svg';
-// import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
+import LightModeSwitcher from '~assets/Gifs/light-mode-icon.svg';
+import DarkModeSwitcher from '~assets/Gifs/dark-mode-icon.svg';
+
 import classNames from 'classnames';
-import Image from 'next/image';
 
 const ToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
@@ -19,17 +19,9 @@ const ToggleButton = () => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('flex w-full cursor-pointer items-center gap-2 rounded-full border-none bg-transparent px-2 py-2 pt-[6px] ')}
+				className={classNames('flex w-full cursor-pointer items-center gap-2 rounded-full border-none bg-transparent')}
 			>
-				{/* {theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}{' '} */}
-				<Image
-					src={theme === 'dark' ? '/assets/Gifs/dark-mode-icon.png' : '/assets/Gifs/light-mode-icon.png'}
-					alt='theme logo'
-					// width={theme === 'dark' ? 40 : 50}
-					// height={theme === 'dark' ? 40 : 50}
-					width={40}
-					height={40}
-				/>
+				{theme === 'dark' ? <DarkModeSwitcher /> : <LightModeSwitcher />}
 			</button>
 		</div>
 	);

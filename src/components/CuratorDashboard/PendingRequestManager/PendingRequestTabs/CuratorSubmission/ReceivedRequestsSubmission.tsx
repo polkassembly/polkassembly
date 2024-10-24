@@ -17,6 +17,8 @@ import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import AddressDropdown from '~src/ui-components/AddressDropdown';
 import Image from 'next/image';
+import Alert from '~src/basic-components/Alert';
+import Link from 'next/link';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
@@ -37,19 +39,19 @@ const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	return groupedBounties;
 };
 interface ReceivedSubmissionsProps {
-	isloading: boolean;
+	isLoading: boolean;
 	receivedSubmissions: IChildBountySubmission[];
 	setReceivedSubmissions: (submissions: IChildBountySubmission[]) => void;
 }
 
-const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, receivedSubmissions, setReceivedSubmissions }) => {
+const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isLoading, receivedSubmissions, setReceivedSubmissions }) => {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
 	const [isApproveModalVisible, setIsApproveModalVisible] = useState<boolean>(false);
-	const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+	const [selectedSubmission, setSelectedSubmission] = useState<IChildBountySubmission | null>(null);
 	const [comment, setComment] = useState<string>('');
 	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(receivedSubmissions));
 
@@ -79,7 +81,9 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, re
 		setGroupedBounties((prevBounties) => {
 			const updatedBounties = { ...prevBounties };
 			const parentBounty = updatedBounties[selectedSubmission.parentBountyIndex];
-			const updatedRequests = parentBounty?.requests?.map((request: any) => (request?.id === selectedSubmission?.id ? { ...request, status: updatedStatus } : request));
+			const updatedRequests = parentBounty?.requests?.map((request: IChildBountySubmission) =>
+				request?.id === selectedSubmission?.id ? { ...request, status: updatedStatus } : request
+			);
 
 			updatedBounties[selectedSubmission?.parentBountyIndex] = {
 				...parentBounty,
@@ -127,7 +131,7 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, re
 	};
 	return (
 		<div>
-			{isloading ? (
+			{isLoading ? (
 				<>
 					<Skeleton active />
 				</>
@@ -231,7 +235,12 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, re
 															md={trimmedContentForComment}
 														/>
 													</span>
-													<span className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
+													<Link
+														href={`/bounty/${parentBountyIndex}`}
+														className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'
+													>
+														Read More
+													</Link>
 												</div>
 											</div>
 
@@ -281,6 +290,15 @@ const ReceivedSubmissions: React.FC<ReceivedSubmissionsProps> = ({ isloading, re
 																	<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 																</div>
 															</div>
+															{request?.status === EChildbountySubmissionStatus.OUTDATED && (
+																<>
+																	<Alert
+																		showIcon={true}
+																		message={'This proposal is outdated'}
+																		className='mx-4 mb-2'
+																	/>
+																</>
+															)}
 															<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 															<div className='flex justify-between gap-4 p-2'>
 																{request?.status === EChildbountySubmissionStatus.APPROVED ? (

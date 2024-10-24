@@ -18,6 +18,8 @@ import Skeleton from '~src/basic-components/Skeleton';
 import AddressDropdown from '~src/ui-components/AddressDropdown';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
+import Alert from '~src/basic-components/Alert';
+import Link from 'next/link';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
@@ -54,7 +56,6 @@ function SentSubmissions({
 	setIsModalVisible: any;
 	setBountyId: any;
 }) {
-	console.log('sentSubmissions', sentSubmissions);
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
@@ -79,7 +80,6 @@ function SentSubmissions({
 	};
 
 	const handleSubmit = () => {
-		console.log('selectedSubmission', selectedSubmission);
 		setIsSubmitModalVisible(false);
 	};
 
@@ -254,7 +254,12 @@ function SentSubmissions({
 															md={trimmedContentForComment}
 														/>
 													</span>
-													<span className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
+													<Link
+														href={`/bounty/${parentBountyIndex}`}
+														className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'
+													>
+														Read More
+													</Link>{' '}
 												</div>
 											</div>
 
@@ -268,7 +273,7 @@ function SentSubmissions({
 													)}
 													{requests?.map((request, index) => (
 														<div
-															key={index}
+															key={request.id}
 															className='mt-3 rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-[#1a1a1a]'
 														>
 															<div className='flex items-center justify-between gap-3 px-4 pt-2'>
@@ -304,6 +309,15 @@ function SentSubmissions({
 																	<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 																</div>
 															</div>
+															{request?.status === EChildbountySubmissionStatus.OUTDATED && (
+																<>
+																	<Alert
+																		showIcon={true}
+																		message={'This proposal is outdated'}
+																		className='mx-4 mb-2'
+																	/>
+																</>
+															)}
 															<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 															<div className='flex justify-between gap-4 p-2 px-4'>
 																<SubmissionAction

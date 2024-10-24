@@ -109,7 +109,7 @@ function CuratorSubmission({
 			<div className='pt-5'>
 				{activeTab === 'received' && (
 					<ReceivedSubmissions
-						isloading={isloading}
+						isLoading={isloading}
 						receivedSubmissions={receivedSubmissions}
 						setReceivedSubmissions={setReceivedSubmissions}
 					/>

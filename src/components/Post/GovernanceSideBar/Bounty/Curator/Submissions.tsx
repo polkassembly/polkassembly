@@ -21,6 +21,7 @@ import Image from 'next/image';
 import MakeChildBountySubmisionModal from './MakeChildBountySubmision';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import SubmissionAction from './SubmissionAction';
+import Alert from '~src/basic-components/Alert';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -246,6 +247,13 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 										<span className='text-sm font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
 										<span className='text-sm font-medium text-blue-light-high hover:underline dark:text-white'>{submission?.title}</span>
 									</div>
+									{submission?.status === EChildbountySubmissionStatus.OUTDATED && (
+										<Alert
+											showIcon={true}
+											message={'This proposal is outdated'}
+											className='mb-2'
+										/>
+									)}
 									<div className='flex w-full'>
 										<SubmissionAction
 											submission={submission}

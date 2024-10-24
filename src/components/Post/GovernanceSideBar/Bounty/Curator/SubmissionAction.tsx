@@ -32,15 +32,15 @@ const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
 			)}
 		>
 			<span>
-				{status == EChildbountySubmissionStatus.PENDING ? (
+				{status === EChildbountySubmissionStatus.PENDING || status === EChildbountySubmissionStatus.OUTDATED ? (
 					<ExclamationCircleOutlined />
-				) : status == EChildbountySubmissionStatus.APPROVED ? (
+				) : status === EChildbountySubmissionStatus.APPROVED ? (
 					<CheckCircleOutlined />
 				) : (
 					<CloseCircleOutlined />
 				)}
 			</span>
-			<span>{status}</span>
+			<span>{status === EChildbountySubmissionStatus.OUTDATED ? 'Pending' : status}</span>
 		</div>
 	);
 };

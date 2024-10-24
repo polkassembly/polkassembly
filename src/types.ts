@@ -1061,3 +1061,13 @@ export interface IPendingCuratorReq extends IBountyListing {
 	proposalType: ProposalType;
 	content: string;
 }
+
+export interface ISubsquidChildBontyAndBountyRes {
+	proposer: string;
+	index: number;
+	status: string;
+	reward: string;
+	payee: string;
+	curator: string;
+	createdAt: string;
+}

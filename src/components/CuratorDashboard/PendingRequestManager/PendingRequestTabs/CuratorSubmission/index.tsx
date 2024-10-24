@@ -10,21 +10,13 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IChildBountySubmission } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 
-function CuratorSubmission({
-	sentSubmissions,
-	receivedSubmissions,
-	setReceivedSubmissions,
-	setSentSubmissions
-}: {
-	receivedSubmissions: any;
-	sentSubmissions: any;
-	setReceivedSubmissions: (submissions: any) => void;
-	setSentSubmissions: (submissions: any) => void;
-}) {
+function CuratorSubmission() {
 	const [activeTab, setActiveTab] = useState('received');
 	const currentUser = useUserDetailsSelector();
 	const [isloadingSubmissions, setLoadingSubmission] = useState<boolean>(false);
 	const [isloading, setLoading] = useState<boolean>(false);
+	const [receivedSubmissions, setReceivedSubmissions] = useState<any>([]);
+	const [sentSubmissions, setSentSubmissions] = useState<any>([]);
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);

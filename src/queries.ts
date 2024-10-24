@@ -3345,7 +3345,7 @@ bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq
   totalCount
 
 }
-  childBounties:bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
+  childBounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
   totalCount
 
 }

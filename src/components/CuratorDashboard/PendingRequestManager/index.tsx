@@ -2,35 +2,44 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { spaceGrotesk } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CuratorRequest from './PendingRequestTabs/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 function CuratorPendingRequestManager() {
 	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
-	const [receivedSubmissions, setReceivedSubmissions] = useState<any>([]);
-	const [sentSubmissions, setSentSubmissions] = useState<any>([]);
-
-	const totalSubmissionCount = receivedSubmissions.length + sentSubmissions.length;
-
+	const currentUser = useUserDetailsSelector();
+	const [requestCount, setRequestCount] = useState(0);
 	const tabs = [
 		{ count: 0, id: 'curatorRequests', label: 'Curator Requests' },
-		{ count: totalSubmissionCount, id: 'submissions', label: 'Submissions' }
+		{ count: 0, id: 'submissions', label: 'Submissions' }
 	];
+
+	const fetchbountyreqcount = async () => {
+		const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getReqCount', {
+			userAddress: currentUser?.loginAddress
+		});
+		if (data) setRequestCount(data);
+		if (error) console.log(error, 'error');
+	};
+
+	useEffect(
+		() => {
+			fetchbountyreqcount();
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+	console.log(requestCount, 'requestCount');
 
 	const renderTabContent = () => {
 		switch (selectedTab) {
 			case 'curatorRequests':
 				return <CuratorRequest />;
 			case 'submissions':
-				return (
-					<CuratorSubmission
-						receivedSubmissions={receivedSubmissions}
-						sentSubmissions={sentSubmissions}
-						setReceivedSubmissions={setReceivedSubmissions}
-						setSentSubmissions={setSentSubmissions}
-					/>
-				);
+				return <CuratorSubmission />;
 			default:
 				return null;
 		}
@@ -40,7 +49,7 @@ function CuratorPendingRequestManager() {
 		<div
 			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
-			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests ({totalSubmissionCount})</p>
+			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests (0)</p>
 
 			<div className='mt-4 flex gap-1'>
 				{tabs.map((tab) => (

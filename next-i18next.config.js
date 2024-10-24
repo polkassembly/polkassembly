@@ -5,6 +5,6 @@
 module.exports = {
 	i18n: {
 		defaultLocale: 'en',
-		locales: ['en', 'fr'] // Same as in next.config.js
+		locales: ['en', 'fr', 'zh'] // Same as in next.config.js
 	}
 };

@@ -26,7 +26,22 @@ interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
 }
 
-const Submission: FC<IBountyChildBountiesProps> = (props) => {
+export const SubmissionsEmptyState = ({ activeTab }: { activeTab: EChildbountySubmissionStatus }) => {
+	return (
+		<div className='flex flex-col items-center text-center text-sm text-bodyBlue dark:text-white'>
+			<Image
+				src='/assets/Gifs/watering.gif'
+				alt='document'
+				className='-mt-16 h-80 w-80'
+				width={320}
+				height={320}
+			/>
+			<span className='-mt-20 mb-5 text-base font-medium text-blue-light-medium dark:text-white'>No {activeTab} submissions</span>
+		</div>
+	);
+};
+
+const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	const { bountyId } = props;
 	const {
 		postData: { curator }
@@ -244,18 +259,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 							</div>
 						))
 					) : activeTab === EChildbountySubmissionStatus.PENDING || activeTab === EChildbountySubmissionStatus.REJECTED ? (
-						<div className='flex flex-col items-center text-center text-sm text-bodyBlue dark:text-white'>
-							<Image
-								src='/assets/Gifs/watering.gif'
-								alt='document'
-								className='-mt-16 h-80 w-80'
-								width={320}
-								height={320}
-							/>
-							<span className='-mt-20 mb-5 text-base font-medium text-blue-light-medium dark:text-white'>
-								{activeTab === EChildbountySubmissionStatus.PENDING ? 'No pending submissions' : 'No rejected submissions'}
-							</span>
-						</div>
+						<SubmissionsEmptyState activeTab={activeTab} />
 					) : null}
 				</>
 			)}
@@ -270,7 +274,7 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 							handleSubmissionClick();
 						}
 					}}
-					disabled={!hasSubmitted}
+					disabled={hasSubmitted}
 				>
 					<ImageIcon
 						src='/assets/icons/Document.svg'
@@ -284,12 +288,12 @@ const Submission: FC<IBountyChildBountiesProps> = (props) => {
 				open={isModalVisible}
 				setOpen={setIsModalVisible}
 				editing={isEditing}
-				submission={isEditing ? editSubmission : undefined}
-				ModalTitle={isEditing ? 'Edit Submission' : undefined}
+				submission={isEditing ? editSubmission : null}
+				ModalTitle={isEditing ? 'Edit Submission' : 'Add Submission'}
 				onSubmissionCreated={handleNewSubmission}
 			/>
 		</GovSidebarCard>
 	);
 };
 
-export default Submission;
+export default Submissions;

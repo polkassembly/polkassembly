@@ -19,7 +19,6 @@ import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } 
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
-import BountyChildBounties from './Bounty/BountyChildBounties';
 import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -72,17 +71,16 @@ import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
-// import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
-import Details from './Bounty/Details';
-import Submission from './Bounty/Curator/Submission';
+import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
+import BountyChildBounties from './Bounty/BountyChildBounties';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -98,6 +96,7 @@ interface IGovernanceSidebarProps {
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
 	bountyIndex?: any;
+	curator?: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -1362,9 +1361,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
-								<Details bountyId={onchainId} />
 								<BountyChildBounties bountyId={onchainId} />
-								<Submission bountyId={onchainId} />
+								<Submissions bountyId={onchainId} />
 							</>
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (

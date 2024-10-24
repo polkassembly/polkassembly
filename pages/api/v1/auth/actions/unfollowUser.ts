@@ -51,9 +51,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		return res.status(400).json({ message: 'User not followed' });
 	}
 
-	//delete the follow entry
-
-	await followsDoc.docs[0].ref.delete();
+	await followsDoc.docs[0].ref.update({
+		isFollow: false,
+		updated_at: new Date()
+	});
 
 	//TODO: delete activity for the user unfollowed
 	//TODO: send notification to the user unfollowed

@@ -19,45 +19,28 @@ const FollowButton = ({ userId, isUsedInProfileTab }: { userId: number; isUsedIn
 		}
 	};
 
+	const buttonClass = isUsedInProfileTab ? 'rounded-md border-none px-3 py-0 text-xs text-white' : 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
+	const buttonHeight = isUsedInProfileTab ? 28 : undefined;
+	const buttonText = isFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
+
 	return (
-		<div>
-			{isUsedInProfileTab ? (
-				<CustomButton
-					shape='circle'
-					variant='primary'
-					className={`rounded-md border-none px-3 py-0 text-xs text-white ${!id && 'opacity-50'}`}
-					onClick={handleFollowClick}
-					disabled={!id || loading}
-					height={28}
-				>
-					<Image
-						src={'/assets/profile/profile-follow.svg'}
-						className='mr-1 rounded-full'
-						height={20}
-						width={20}
-						alt={isFollowing ? 'unfollow logo' : 'follow logo'}
-					/>
-					<span className='max-md:hidden'>{loading ? 'loading...' : isFollowing ? 'Unfollow' : 'Follow Back'}</span>
-				</CustomButton>
-			) : (
-				<CustomButton
-					shape='circle'
-					variant='primary'
-					className={`rounded-full border-none px-4 py-2.5 text-white max-md:p-3 ${!id && 'opacity-50'}`}
-					onClick={handleFollowClick}
-					disabled={!id || loading}
-				>
-					<Image
-						src={'/assets/profile/profile-follow.svg'}
-						className='mr-1 rounded-full'
-						height={20}
-						width={20}
-						alt={isFollowing ? 'unfollow logo' : 'follow logo'}
-					/>
-					<span className='max-md:hidden'>{loading ? 'loading...' : isFollowing ? 'Unfollow' : 'Follow'}</span>
-				</CustomButton>
-			)}
-		</div>
+		<CustomButton
+			shape='circle'
+			variant='primary'
+			className={`${buttonClass} ${!id && 'opacity-50'}`}
+			onClick={handleFollowClick}
+			disabled={!id || loading}
+			height={buttonHeight}
+		>
+			<Image
+				src={'/assets/profile/profile-follow.svg'}
+				className='mr-1 rounded-full'
+				height={20}
+				width={20}
+				alt={isFollowing ? 'unfollow logo' : 'follow logo'}
+			/>
+			<span className='max-md:hidden'>{loading ? 'loading...' : buttonText}</span>
+		</CustomButton>
 	);
 };
 

@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowerRespons
 	if (!user) return res.status(400).json({ message: 'User not found', followers: [] });
 
 	try {
-		const followersSnapshot = await followsCollRef().where('network', '==', network).where('followed_user_id', '==', user.id).get();
+		const followersSnapshot = await followsCollRef().where('network', '==', network).where('followed_user_id', '==', user.id).where('isFollow', '==', true).get();
 
 		const followerIds = followersSnapshot.docs.map((doc) => doc.data().follower_user_id);
 
@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowerRespons
 			return {
 				follower_user_id,
 				followed_user_id: doc.data().followed_user_id,
-				created_at: doc.data().created_at.toDate(), // Ensure created_at is stored as a Date
+				created_at: doc.data().created_at.toDate(),
 				username: usersData[follower_user_id]?.username || 'Unknown',
 				image: usersData[follower_user_id]?.image || null
 			};

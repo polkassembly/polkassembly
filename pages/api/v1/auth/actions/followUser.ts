@@ -50,7 +50,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).get();
 
 	if (!followsDoc.empty) {
-		return res.status(400).json({ message: 'User already followed' });
+		await followsDoc.docs[0].ref.update({
+			isFollow: true,
+			updated_at: new Date()
+		});
+		return res.status(200).json({ message: 'User followed' });
 	}
 
 	const newFollowDoc = followsRef.doc();
@@ -60,6 +64,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		followed_user_id: userIdToFollow,
 		follower_user_id: user.id,
 		id: newFollowDoc.id,
+		isFollow: true,
 		network,
 		updated_at: new Date()
 	};

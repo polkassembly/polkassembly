@@ -1021,4 +1021,5 @@ export interface IFollowEntry {
 	follower_user_id: number;
 	followed_user_id: number;
 	updated_at: Date;
+	isFollow: boolean;
 }

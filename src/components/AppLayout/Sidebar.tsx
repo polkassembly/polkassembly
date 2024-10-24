@@ -68,6 +68,7 @@ import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
+import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 
 const { Sider } = Layout;
 
@@ -312,8 +313,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		if (isMobile) {
 			setIdentityMobileModal(true);
 		} else {
-			console.log(currentUser);
-			if (currentUser?.multisigAssociatedAddress && currentUser?.loginAddress) {
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
 				localStorage.setItem('identityAddress', currentUser?.loginAddress);
 				setIdentityOpen(true);
 				return;

@@ -145,7 +145,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 			} else {
 				const identityHash = await (peopleChainApi ?? api)?.query?.identity
 					?.identityOf(identityAddress)
-					.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
+					.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 				if (!identityHash) {
 					setStartLoading({ isLoading: false, message: '' });
 					console.log('Error in unwraping identityHash');
@@ -292,9 +292,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 				...payload,
 				address: currentUser?.multisigAssociatedAddress || ''
 			};
-		}
-
-		if (selectedProxyAddress?.length && showProxyDropdown) {
+		} else if (selectedProxyAddress?.length && showProxyDropdown) {
 			payload = {
 				...payload,
 				proxyAddress: selectedProxyAddress || ''
@@ -704,41 +702,45 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						</div>
 					</>
 				)}
-				{!!proxyAddresses && proxyAddresses?.length > 0 && (
-					<div className='mt-2'>
-						<Checkbox
-							value=''
-							className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-							onChange={() => {
-								setShowProxyDropdown(!showProxyDropdown);
-							}}
-						>
-							<p className='m-0 mt-1 p-0'>Use proxy address</p>
-						</Checkbox>
-					</div>
-				)}
-				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
-					<ProxyAccountSelectionForm
-						proxyAddresses={proxyAddresses}
-						theme={theme as string}
-						address={identityAddress || currentUser.loginAddress}
-						withBalance
-						heading={'Proxy Address'}
-						isUsedInIdentity={true}
-						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-						inputClassName='rounded-[4px] px-3 py-0.5'
-						wallet={wallet}
-						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
-						setSelectedProxyAddress={setSelectedProxyAddress}
-						selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
-					/>
-				)}
-				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
-					<div className='mt-2 flex items-center gap-x-1'>
-						<InfoIcon />
-						<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
-					</div>
-				)}
+				{!isCurrentlyLoggedInUsingMultisig(currentUser) ? (
+					<>
+						{!!proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='mt-2'>
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={() => {
+										setShowProxyDropdown(!showProxyDropdown);
+									}}
+								>
+									<p className='m-0 mt-1 p-0'>Use proxy address</p>
+								</Checkbox>
+							</div>
+						)}
+						{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
+							<ProxyAccountSelectionForm
+								proxyAddresses={proxyAddresses}
+								theme={theme as string}
+								address={identityAddress || currentUser.loginAddress}
+								withBalance
+								heading={'Proxy Address'}
+								isUsedInIdentity={true}
+								className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-0.5'
+								wallet={wallet}
+								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+								setSelectedProxyAddress={setSelectedProxyAddress}
+								selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
+							/>
+						)}
+						{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
+							<div className='mt-2 flex items-center gap-x-1'>
+								<InfoIcon />
+								<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+							</div>
+						)}
+					</>
+				) : null}
 				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>

@@ -9,6 +9,10 @@ module.exports = {
 	content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{jsx,tsx}'],
 	theme: {
 		extend: {
+			cursor: {
+				pointer:
+					'url("https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2Fcursor.svg?alt=media&token=c2350867-019a-4f1c-b3ee-e75542122e2b"), pointer'
+			},
 			fontFamily: {
 				poppins: ['var(--font-poppins)'],
 				pixeboy: ['Pixeboy', 'sans-serif'],

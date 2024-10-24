@@ -12,8 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { chatCollRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -34,11 +34,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 
 	const encodedAddress = getEncodedAddress(address, network);
 
-	const chatSnapshot = firestore_db.collection('chats');
 	try {
 		const [sentChatsSnapshot, receivedChatsSnapshot] = await Promise.all([
-			chatSnapshot.where('senderAddress', '==', encodedAddress).get(),
-			chatSnapshot.where('receiverAddress', '==', encodedAddress).get()
+			chatCollRef.where('senderAddress', '==', encodedAddress).get(),
+			chatCollRef.where('receiverAddress', '==', encodedAddress).get()
 		]);
 
 		const mapChatData = (docs: FirebaseFirestore.QueryDocumentSnapshot[]): IChat[] =>

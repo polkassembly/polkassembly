@@ -10,8 +10,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { chatMessagesRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMessage[] } | MessageType>) {
 	storeApiKeyUsage(req);
@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	if (!chatId || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
-		const chatMessagesSnapshot = await firestore_db.collection('chats').doc(String(chatId)).collection('messages').orderBy('created_at', 'asc').get();
+		const chatMessagesSnapshot = await chatMessagesRef(chatId).orderBy('created_at', 'asc').get();
 
 		const messages: IMessage[] = chatMessagesSnapshot.docs.map((doc) => {
 			const message = doc?.data();

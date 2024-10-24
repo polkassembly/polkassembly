@@ -12,8 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { chatDocRef, delegatesColRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);
@@ -34,7 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 
 	const encodedAddress = getEncodedAddress(address, network);
 
-	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
+	const paDelegatesSnapshot = await delegatesColRef(network).where('address', '==', encodedAddress).limit(1).get();
 
 	if (paDelegatesSnapshot.empty && !paDelegatesSnapshot?.docs?.[0]) {
 		return res.status(400).json({ message: `User with address ${address} is not a Polkassembly delegate` });
@@ -44,7 +44,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 
-	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
+	const chatSnapshot = chatDocRef(chatId);
 	const viewed_by = [senderAddress, receiverAddress];
 
 	try {

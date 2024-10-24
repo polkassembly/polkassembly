@@ -12,8 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { chatDocRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | MessageType>) {
 	storeApiKeyUsage(req);
@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 
-	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
+	const chatSnapshot = chatDocRef(chatId);
 	const messageSnapshot = chatSnapshot.collection('messages');
 
 	const newMessage = {

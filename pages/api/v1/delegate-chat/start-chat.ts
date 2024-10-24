@@ -12,8 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
-import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { chatDocRef, delegatesColRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChat | MessageType>) {
 	storeApiKeyUsage(req);
@@ -35,7 +35,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 	const encodedAddress = getEncodedAddress(receiverAddress, network);
 
-	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').where('address', '==', encodedAddress).limit(1).get();
+	const paDelegatesSnapshot = await delegatesColRef(network).where('address', '==', encodedAddress).limit(1).get();
 
 	if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
 		return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	}
 	const chatId = senderAddress.slice(0, 7) + receiverAddress.slice(-7);
 
-	const chatSnapshot = firestore_db.collection('chats').doc(String(chatId));
+	const chatSnapshot = chatDocRef(chatId);
 	const newChat: any = {
 		chatId: String(chatId),
 		created_at: new Date(),

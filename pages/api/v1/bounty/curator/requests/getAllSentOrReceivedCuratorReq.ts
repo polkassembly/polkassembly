@@ -14,18 +14,10 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsquare-content';
-import { EPendingCuratorReqType, IPendingCuratorReq } from '~src/types';
+import { EPendingCuratorReqType, IPendingCuratorReq, ISubsquidChildBontyAndBountyRes } from '~src/types';
 import { getDefaultContent } from '~src/util/getDefaultContent';
-
-interface ISubsquidBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	curator: string;
-	createdAt: string;
-}
+import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import authServiceInstance from '~src/auth/auth';
 
 const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -43,8 +35,15 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 			!getEncodedAddress(userAddress, network) ||
 			![EPendingCuratorReqType.RECEIVED, EPendingCuratorReqType?.SENT].includes(reqType) ||
 			![ProposalType.BOUNTIES, ProposalType.CHILD_BOUNTIES].includes(proposalType || '')
-		)
+		) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
+		}
+
+		const token = getTokenFromReq(req);
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
+
+		const user = await authServiceInstance.GetUser(token);
+		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
 		const encodedUserAddress = getEncodedAddress(userAddress, network);
 
@@ -67,7 +66,7 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 
 		const postDocs = await postsByTypeRef(network, proposalType).where('id', 'in', subsquidbountiesIndexes).get();
 
-		const bountiesPromises = subsquidBountiesData.map(async (item: ISubsquidBounty) => {
+		const bountiesPromises = subsquidBountiesData.map(async (item: ISubsquidChildBontyAndBountyRes) => {
 			const payload: IPendingCuratorReq = {
 				categories: [],
 				content: '',

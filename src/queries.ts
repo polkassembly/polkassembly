@@ -3326,7 +3326,7 @@ proposals(where: {proposer_eq: $address, status_eq:CuratorProposed, type_eq:$typ
   }
 }`;
 
-export const GET_RECEIVED_CURATOR_REQUESTS = `query GET_SENT_CURATOR_REQUESTS($address: String, $limit:Int, $offset: Int, $type_eq:ProposalType){
+export const GET_RECEIVED_CURATOR_REQUESTS = `query GET_RECEIVED_CURATOR_REQUESTS($address: String, $limit:Int, $offset: Int, $type_eq:ProposalType){
 proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type_eq} ,offset:$offset,limit:$limit){
     index
     status
@@ -3339,3 +3339,15 @@ proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type
     payee
   }
 }`;
+
+export const GET_CURATOR_RECIVED_SENT_COUNT = `query GET_SENT_CURATOR_REQUESTS($address: String){
+bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:Bounty}, orderBy:id_ASC ){
+  totalCount
+
+}
+  childBounties:bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
+  totalCount
+
+}
+}
+`;

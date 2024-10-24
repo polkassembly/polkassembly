@@ -52,16 +52,16 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		if (
 			![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator) &&
-			[EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED].includes(updatedStatus)
+			![EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED].includes(updatedStatus)
 		) {
-			return res.status(400).json({ message: messages.UNAUTHORISED });
+			return res.status(401).json({ message: messages.UNAUTHORISED });
 		}
 
 		const submissionDocRef = firestore_db.collection('curator_submissions').doc(submissionId);
 		const submissionDoc = await submissionDocRef.get();
 
 		if (!submissionDoc?.exists) {
-			return res.status(403).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_NOT_EXISTS });
+			return res.status(404).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_NOT_EXISTS });
 		}
 
 		if (updatedStatus == EChildbountySubmissionStatus.DELETED) {

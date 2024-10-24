@@ -29,13 +29,20 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
 		const token = getTokenFromReq(req);
-		if (!token) return res.status(400).json({ message: messages?.INVALID_JWT });
+		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
+
 		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
+
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
-		const submissionsDocs = await submissionsSnapshot?.where('proposer', '==', getEncodedAddress(userAddress, network)).get();
+
+		const submissionsDocs = await submissionsSnapshot
+			?.where('proposer', '==', getEncodedAddress(userAddress, network))
+			.where('user_id', '==', user?.id)
+			.get();
+
 		if (submissionsDocs?.empty) {
-			return res.status(403).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });
+			return res.status(404).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });
 		}
 		const allSubmissions: IChildBountySubmission[] = [];
 		const submissionsPromises = submissionsDocs?.docs?.map(async (doc) => {

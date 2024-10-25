@@ -91,7 +91,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 	return (
 		<div className='flex h-full w-full flex-col'>
 			<Card
-				className='w-full rounded-none border-t-0'
+				className='w-full rounded-none border-x-0 border-t-0 text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 				size='small'
 			>

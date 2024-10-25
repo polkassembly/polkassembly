@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -38,6 +39,7 @@ interface Props {
 
 const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, setSelectedAddresses }: Props) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
@@ -57,20 +59,14 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => setOpenAddressLinkModal(true)}
 			>
-				Link Address
+				{t('link_address')}
 			</span>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => setOpenProxyLinkModal(true)}
 			>
-				Link Proxy Address
+				{t('link_proxy_address')}
 			</span>
-			{/* <span
-				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => setOpenLinkMultisig(true)}
-			>
-				Link Multisig Address
-			</span> */}
 		</div>
 	);
 
@@ -114,7 +110,6 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	const handleRemoveIdentity = () => {
@@ -140,7 +135,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 						width={24}
 						height={24}
 					/>
-					Linked Addresses
+					{t('linked_addresses')}
 				</span>
 
 				{userProfile?.user_id === id && (
@@ -154,7 +149,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 						<div className='flex h-9 w-[160px] items-center justify-between rounded-md border-[1px] border-solid border-pink_primary p-2 text-sm font-medium capitalize text-pink_primary dark:text-pink_primary'>
 							<span>
 								<PlusOutlined className='mr-1' />
-								<span>Link Address</span>
+								<span>{t('link_address')}</span>
 							</span>
 							<span className='flex items-center'>
 								<DownArrowIcon className={`cursor-pointer text-2xl ${openLinkExpand && 'pink-color rotate-180'}`} />
@@ -200,7 +195,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 												<span className='ml-0.5 text-base text-lightBlue dark:text-blue-dark-medium'>
 													<ClearIdentityOutlinedIcon />
 												</span>
-												<span>Remove Identity</span>
+												<span>{t('remove_identity')}</span>
 											</div>
 										) : (
 											<div
@@ -213,7 +208,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 													width={18}
 													height={18}
 												/>
-												Set Identity
+												{t('set_identity')}
 											</div>
 										)}
 									</div>

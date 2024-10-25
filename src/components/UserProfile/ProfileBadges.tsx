@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { useTranslation } from 'next-i18next';
 import classNames from 'classnames';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -31,6 +32,7 @@ const defaultLockedBadges = [
 ];
 
 const ProfileBadges = ({ className, theme, badges }: Props) => {
+	const { t } = useTranslation('common');
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
@@ -86,19 +88,19 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 						<Image
 							src='/assets/icons/medal.svg'
-							alt=''
+							alt={t('medal')}
 							width={24}
 							height={24}
 						/>
-						Badges
+						{t('badges')}
 					</span>
-					<p className='m-0 mt-2 font-light'>Unlock, receive and earn badges as you engage in polkassembly</p>
+					<p className='m-0 mt-2 font-light'>{t('unlock_engage')}</p>
 				</div>
 				<p
 					className='m-0 mt-2 w-[90px] cursor-pointer whitespace-nowrap text-xs font-medium text-pink_primary'
 					onClick={() => setShowMore(!showMore)}
 				>
-					{showMore ? 'Show Less' : 'Show More'}
+					{showMore ? t('show_less') : t('show_more')}
 				</p>
 			</div>
 
@@ -112,39 +114,30 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 								<span className='flex items-center gap-1 break-all text-xs'>
 									<ImageIcon
 										src='/assets/icons/hourglass_light.svg'
-										alt='hourglass'
+										alt={t('hourglass')}
 									/>
-									{`Unlocked on ${item.unlockedAt.split('T')[0]}`}
+									{`${t('unlocked_on')} ${item.unlockedAt.split('T')[0]}`}
 								</span>
 							) : (
 								<span className='flex items-center gap-1 break-all font-poppins text-xs'>
 									<ImageIcon
 										src='/assets/icons/lock.svg'
-										alt='locked'
+										alt={t('locked')}
 										className='text-white'
 									/>
-									Locked
+									{t('locked')}
 								</span>
 							)
 						}
 					>
 						<div
 							onClick={() => {
-								if (item.isUnlocked) {
-									setOpenModal(true);
-									setSelectedBadge({
-										check: true,
-										name: item.name,
-										unlockedAt: 'unlockedAt' in item ? item.unlockedAt : ''
-									});
-								} else {
-									setOpenModal(true);
-									setSelectedBadge({
-										check: false,
-										name: item.name,
-										unlockedAt: ''
-									});
-								}
+								setOpenModal(true);
+								setSelectedBadge({
+									check: item.isUnlocked,
+									name: item.name,
+									unlockedAt: 'unlockedAt' in item ? item.unlockedAt : ''
+								});
 							}}
 							className='col-span-1 flex cursor-pointer flex-col items-center rounded-lg bg-[#F6F7F9] py-8 dark:bg-[#161616]'
 						>

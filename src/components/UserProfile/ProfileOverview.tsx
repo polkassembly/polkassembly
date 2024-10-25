@@ -14,19 +14,12 @@ import EditProfileModal from './EditProfile';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import { EditIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
-const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
-	ssr: false
-});
-const ProfileLinkedAddress = dynamic(() => import('./ProfileLinkedAddresses'), {
-	ssr: false
-});
-const TotalProfileBalances = dynamic(() => import('./TotalProfileBalances'), {
-	ssr: false
-});
-const ProfileBadges = dynamic(() => import('./ProfileBadges'), {
-	ssr: false
-});
+const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), { ssr: false });
+const ProfileLinkedAddress = dynamic(() => import('./ProfileLinkedAddresses'), { ssr: false });
+const TotalProfileBalances = dynamic(() => import('./TotalProfileBalances'), { ssr: false });
+const ProfileBadges = dynamic(() => import('./ProfileBadges'), { ssr: false });
 
 interface Props {
 	className?: string;
@@ -51,6 +44,7 @@ const ProfileOverview = ({
 	setProfileDetails,
 	onchainIdentity
 }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { username } = useUserDetailsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
@@ -72,23 +66,23 @@ const ProfileOverview = ({
 										width={24}
 										height={24}
 									/>
-									About
+									{t('about')}
 								</span>
 								<span
-									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
+									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer')}
 									onClick={() => {
 										if (username !== userProfile.username) return;
 										setOpenEditModal(true);
 									}}
 								>
-									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
+									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? t('click_to_add_bio') : ''}
 								</span>
 								{(bio?.length || 0) > 300 && (
 									<span
 										className='-mt-4 cursor-pointer text-xs text-pink_primary'
 										onClick={() => setShowFullBio(!showFullBio)}
 									>
-										{showFullBio ? 'Show less' : 'See More'}
+										{showFullBio ? t('show_less') : t('see_more')}
 									</span>
 								)}
 								{!!badges?.length && (
@@ -147,7 +141,7 @@ const ProfileOverview = ({
 											width={24}
 											height={24}
 										/>
-										About
+										{t('about')}
 									</span>
 									{username === userProfile?.username && (
 										<span
@@ -157,19 +151,19 @@ const ProfileOverview = ({
 											}}
 										>
 											<EditIcon className='mr-1 text-pink_primary' />
-											<p className='m-0 p-0 text-pink_primary'>Edit</p>
+											<p className='m-0 p-0 text-pink_primary'>{t('edit')}</p>
 										</span>
 									)}
 								</div>
 								<span className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}>
-									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
+									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? t('click_to_add_bio') : ''}
 								</span>
 								{(bio?.length || 0) > 300 && (
 									<span
 										className='-mt-4 cursor-pointer text-xs text-pink_primary'
 										onClick={() => setShowFullBio(!showFullBio)}
 									>
-										{showFullBio ? 'Show less' : 'See More'}
+										{showFullBio ? t('show_less') : t('see_more')}
 									</span>
 								)}
 								{!!badges?.length && (

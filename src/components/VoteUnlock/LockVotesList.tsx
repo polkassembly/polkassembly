@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { useEffect, useState } from 'react';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { CheckCircleFilled } from '@ant-design/icons';
@@ -15,13 +16,17 @@ import { handlePrevData } from '.';
 import LockIcon from '~assets/icons/vote-lock.svg';
 import UnlockIcon from '~assets/icons/unlock.svg';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
+
 interface Props {
 	totalUnlockableBalance: BN;
 	lockedBalance: BN;
 	showBalances?: boolean;
 	votesCollapsed?: boolean;
 }
+
 const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = true, votesCollapsed = false }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const { address, data } = useUserUnlockTokensDataSelector();
@@ -30,6 +35,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 	const totalUnlockableData = handlePrevData(data?.totalUnlockableData);
 	const [expandUnlocks, setExpandUnlocks] = useState<boolean>(!votesCollapsed);
 	const [tokensData, setTokensData] = useState<IUnlockTokenskData[]>(totalLockData.concat(totalOngoingData));
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -43,6 +49,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, data, address]);
+
 	return (
 		<div>
 			{showBalances && (
@@ -52,7 +59,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 							style={{ color: '#51D36E' }}
 							className='rounded-full border-none bg-transparent text-base'
 						/>
-						Total Unlockable Balance
+						{t('total_unlockable_balance')}
 					</span>
 					<span className='pr-[27px] text-base font-semibold text-bodyBlue dark:text-white'>
 						{formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2)} {unit}
@@ -68,7 +75,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 					>
 						<span className='flex gap-2'>
 							<LockIcon />
-							Locked Balance
+							{t('locked_balance')}
 						</span>
 						<span className='pr-[27px] text-base font-semibold text-bodyBlue dark:text-white'>
 							{formatedBalance((lockedBalance.toString() || '0').toString(), unit, 2)} {unit}
@@ -81,7 +88,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 							<div className='mt-1 flex gap-2'>
 								<UnlockIcon />
 								<span className='flex flex-col gap-0.5 dark:text-blue-dark-medium'>
-									{totalLockData.length ? `Next unlock in ${blockToTime(totalLockData?.[0]?.endBlock, network).time}` : `Ongoing: #${totalOngoingData[0]?.refId}`}
+									{totalLockData.length ? `${t('next_unlock_in')} ${blockToTime(totalLockData?.[0]?.endBlock, network).time}` : `${t('ongoing')}: #${totalOngoingData[0]?.refId}`}
 								</span>
 							</div>
 							<span
@@ -96,7 +103,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 										{unit}
 									</span>
 									{tokensData.length > 1 && (
-										<span className='flex justify-end text-xs font-normal text-pink_primary'>{expandUnlocks ? 'Hide All Unlocks' : 'View All Unlocks'}</span>
+										<span className='flex justify-end text-xs font-normal text-pink_primary'>{expandUnlocks ? t('hide_all_unlocks') : t('view_all_unlocks')}</span>
 									)}
 								</span>
 								{tokensData.length > 1 && <DownArrowIcon className={`cursor-pointer text-2xl ${expandUnlocks && 'pink-color rotate-180'} -mt-4 ml-1`} />}
@@ -112,7 +119,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 										<div className='flex items-center gap-2'>
 											<UnlockIcon />
 											<span className='flex flex-col gap-0.5 dark:text-blue-dark-medium'>
-												{lock.endBlock.eq(BN_MAX_INTEGER) ? `Ongoing: #${lock?.refId}` : `Next unlock in ${blockToTime(lock?.endBlock, network).time}`}
+												{lock.endBlock.eq(BN_MAX_INTEGER) ? `${t('ongoing')}: #${lock?.refId}` : `${t('next_unlock_in')} ${blockToTime(lock?.endBlock, network).time}`}
 											</span>
 										</div>
 										<span className='flex items-center pr-[27px] text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>
@@ -128,4 +135,5 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 		</div>
 	);
 };
+
 export default LockVotesList;

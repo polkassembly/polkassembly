@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Divider, Spin } from 'antd';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -9,6 +8,7 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IStats } from '.';
 import { ClipboardIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -20,20 +20,22 @@ interface Props {
 }
 
 const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsArr, setStatsArr }: Props) => {
+	const { t } = useTranslation('common');
 	const { user_id: userId, addresses } = userProfile;
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 768) || false;
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const getIcon = (state: string) => {
 		switch (state) {
-			case 'Proposal Created':
+			case t('proposal_created'):
 				return <ClipboardIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
-			case 'Discussion Created':
+			case t('discussion_created'):
 				return <ClipboardIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
-			case 'Proposals Voted':
+			case t('proposals_voted'):
 				return <VotesIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
 		}
 	};
+
 	const fetchData = async () => {
 		let payload;
 		setLoading(true);
@@ -46,14 +48,17 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 		if (data) {
 			setStatsArr([
 				{
-					label: 'Proposal Created',
+					label: t('proposal_created'),
 					value: data?.proposals
 				},
 				{
-					label: 'Discussion Created',
+					label: t('discussion_created'),
 					value: data?.discussions
 				},
-				{ label: 'Proposals Voted', value: data?.votes }
+				{
+					label: t('proposals_voted'),
+					value: data?.votes
+				}
 			]);
 			setLoading(false);
 		} else {
@@ -61,9 +66,9 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 			setLoading(false);
 		}
 	};
+
 	useEffect(() => {
 		fetchData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userProfile]);
 
 	return (

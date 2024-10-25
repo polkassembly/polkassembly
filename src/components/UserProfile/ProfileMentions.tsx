@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -38,7 +39,9 @@ export interface IProfileMentions {
 	activityIn: EUserActivityIn;
 	commentId: string;
 }
+
 const ProfileMentions = ({ className, userProfile, count }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
@@ -64,7 +67,6 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 	};
 	useEffect(() => {
 		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, page, user_id]);
 
 	return (
@@ -81,7 +83,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileMentionsIcon className='text-2xl text-lightBlue dark:text-[#9e9e9e]' />
-						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Mentions</div>
+						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>{t('mentions')}</div>
 						<span className='text-sm font-normal'>({count})</span>
 					</div>
 				</div>
@@ -108,7 +110,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 															@{activity?.by}
 														</Link>
 														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
-															mentioned {userProfile.user_id === userId ? 'you' : `@${userProfile.username}`} in
+															{t('mentioned')} {userProfile.user_id === userId ? t('you') : `@${userProfile.username}`} {t('in')}
 														</span>
 													</div>
 													<ActivityBottomContent activity={activity} />
@@ -133,7 +135,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 										alt='Empty Icon'
 										imgClassName='w-[225px] h-[225px]'
 									/>
-									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No mentions found</h3>
+									<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_mentions_found')}</h3>
 								</div>
 						  )}
 				</div>

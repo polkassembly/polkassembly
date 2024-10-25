@@ -95,7 +95,6 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 		</section>
 	);
 };
-// background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#F5F7FF')} !important;
 
 export default styled(UploadMultipleReports)`
 	.ant-timeline .ant-timeline-item-head {
@@ -103,5 +102,6 @@ export default styled(UploadMultipleReports)`
 	}
 	.ant-timeline .ant-timeline-item-tail {
 		border-inline-start: 1.5px solid #485f7d !important;
+		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1.5px solid #4b4b4b' : '1.5px solid #485f7d')} !important;
 	}
 `;

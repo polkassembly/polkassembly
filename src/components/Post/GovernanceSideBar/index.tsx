@@ -1031,7 +1031,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{extensionNotFound ? <ExtensionNotDetected /> : null}
 							</GovSidebarCard>
 						) : null}
-						{(proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) && (
+						{[ProposalType.COUNCIL_MOTIONS, ProposalType.ADVISORY_COMMITTEE, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType) && (
 							<>
 								{canVote && !extensionNotFound && (
 									<VoteMotion
@@ -1042,6 +1042,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 								{post.motion_votes && (post.motion_votes?.length || 0) > 0 && <MotionVoteInfo councilVotes={post.motion_votes} />}
@@ -1058,6 +1059,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 

@@ -62,23 +62,35 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 	const [voteCount, setVoteCount] = useState<number>(0);
 
 	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-
+		if (!api || !apiReady) return;
 		if (accounts.length === 0) {
 			getAccounts();
 		}
 
-		api.query?.council?.members().then((memberAccounts) => {
-			const members = memberAccounts.map((member) => member.toString());
-			setCurrentCouncil(members.filter((member) => !!member) as string[]);
-		});
-
+		if (api?.query?.council) {
+			api.query.council
+				.members()
+				.then((memberAccounts) => {
+					const members = memberAccounts.map((member) => member.toString());
+					setCurrentCouncil(members.filter((member) => !!member) as string[]);
+				})
+				.catch((error) => {
+					console.error('Error fetching council members:', error);
+					setCurrentCouncil([]);
+					queueNotification({
+						header: 'Failed!',
+						message: 'Could not fetch council members. Some features may be limited.',
+						status: NotificationStatus.ERROR
+					});
+				});
+		} else {
+			console.error('Council pallet is not available on this network.');
+			queueNotification({
+				header: 'Notice',
+				message: 'Council features are not available on this network.',
+				status: NotificationStatus.WARNING
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 

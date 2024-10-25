@@ -16,7 +16,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { usePostDataContext } from '~src/context';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
@@ -29,7 +28,6 @@ const UploadReport = () => {
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
-	const router = useRouter();
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -76,7 +74,6 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
 			localStorage.removeItem('progress_report');
-			router.reload();
 		} else {
 			console.error('failed to save report');
 		}

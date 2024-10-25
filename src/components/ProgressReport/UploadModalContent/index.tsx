@@ -158,34 +158,6 @@ const UploadModalContent = () => {
 					message={<span className='dark:text-blue-dark-high'>Progress Report Pending!</span>}
 				/>
 			)}
-			{/* {postData?.progress_report?.[0]?.progress_file && (
-				<div className='flex flex-col'>
-					<p className='m-0 flex items-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
-						<Markdown
-							className='post-content'
-							md={postData?.progress_report?.[0]?.progress_summary}
-							theme={theme}
-						/>
-					</p>
-					<div className='-mt-2 flex items-center justify-between gap-x-1'>
-						<Button
-							className='m-0 -mt-0.5 flex items-center gap-x-1 border-none bg-transparent p-0 text-sm text-pink_primary'
-							onClick={() => {
-								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
-							}}
-						>
-							<ImageIcon
-								src='/assets/icons/edit-pencil.svg'
-								alt='edit-icon'
-							/>{' '}
-							{postData?.progress_report?.[0]?.progress_summary ? 'Edit Summary' : 'Add Summary'}
-						</Button>
-						{(postData?.progress_report?.[0]?.isEdited || is_summary_edited) && (
-							<p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>
-						)}
-					</div>
-				</div>
-			)} */}
 
 			<div className='flex items-center justify-start gap-x-2'>
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Please update your progress report for users to rate it.</p>

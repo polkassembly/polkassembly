@@ -80,7 +80,6 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 		const existingProgressReports =
 			postDoc.exists && Array.isArray(postDoc.data()?.progress_report) ? postDoc.data()?.progress_report : postDoc.data()?.progress_report ? [postDoc.data()?.progress_report] : [];
 
-		// Now add the new progress report to the array
 		const updatedProgressReports: IProgressReport[] = [newProgressReport, ...existingProgressReports];
 
 		const updatedPost: Partial<Post> = {

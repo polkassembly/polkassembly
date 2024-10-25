@@ -101,7 +101,6 @@ export default styled(UploadMultipleReports)`
 		background-color: transparent !important;
 	}
 	.ant-timeline .ant-timeline-item-tail {
-		border-inline-start: 1.5px solid #485f7d !important;
 		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1.5px solid #4b4b4b' : '1.5px solid #485f7d')} !important;
 	}
 `;

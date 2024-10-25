@@ -54,22 +54,16 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		const postData = postDoc.data() as Post;
 		const progressReports = postData.progress_report || [];
 
-		// Find the progress report with the matching reportId
 		const updatedProgressReports = progressReports.map((report: IProgressReport) => {
 			if (report.id === reportId) {
-				// Update the ratings for the matched progress report
 				let ratings = report.ratings || [];
-				// Remove any existing rating by the same user
 				ratings = ratings.filter((r: { user_id: string }) => r.user_id !== user_id);
-				// Add the new rating
 				ratings.push({ rating, user_id });
-				// Return the updated report
 				return {
 					...report,
 					ratings
 				};
 			}
-			// Return other reports unchanged
 			return report;
 		});
 

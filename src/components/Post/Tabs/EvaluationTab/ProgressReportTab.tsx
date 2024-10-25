@@ -10,7 +10,6 @@ import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
-import ProgressReportInfo from '~src/components/ProgressReport/ProgressReportInfo';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -18,7 +17,7 @@ import { NotificationStatus } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
+import UserReportInfo from '~src/components/ProgressReport/ProgressReportInfo/UserReportInfo';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -43,8 +42,6 @@ const ProgressReportTab = ({ className }: Props) => {
 	const { summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
 
-	const router = useRouter();
-
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -61,7 +58,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const addProgressReport = async () => {
 		const progress_report = {
 			progress_file: progress_report_link,
-			progress_summary: summary_content,
+			progress_summary: summary_content || '',
 			ratings: []
 		};
 		setLoading(true);
@@ -98,7 +95,6 @@ const ProgressReportTab = ({ className }: Props) => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-			router.reload();
 		} else {
 			console.log('failed to save report');
 		}
@@ -162,7 +158,7 @@ const ProgressReportTab = ({ className }: Props) => {
 							)}
 						</>
 					) : postData?.progress_report?.[0]?.progress_file ? (
-						<ProgressReportInfo />
+						<UserReportInfo theme={theme} />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>
 							<ImageIcon

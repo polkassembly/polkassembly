@@ -38,7 +38,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 
 		const { postId, proposalType, summary, reportId } = req.body;
 
-		if (!postId || !proposalType || !summary || !reportId) {
+		if (!postId || !proposalType || !reportId) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
@@ -59,17 +59,15 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			return res.status(400).json({ message: 'No progress reports found for the specified post.' });
 		}
 
-		// Find the report that matches the passed reportId
 		const updatedProgressReports = existingPost.progress_report.map((report) => {
 			if (report.id === reportId) {
-				// Update the matching progress report
 				return {
 					...report,
 					isEdited: true,
 					progress_summary: summary
 				};
 			}
-			return report; // Return other reports unchanged
+			return report;
 		});
 
 		await postDocRef.update({ progress_report: updatedProgressReports }).catch((error) => {

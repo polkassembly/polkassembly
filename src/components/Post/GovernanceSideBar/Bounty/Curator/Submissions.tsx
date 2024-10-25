@@ -257,8 +257,6 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 									<div className='flex w-full'>
 										<SubmissionAction
 											submission={submission}
-											loginAddress={loginAddress}
-											network={network}
 											handleDelete={handleDelete}
 											handleEditClick={handleEditClick}
 										/>

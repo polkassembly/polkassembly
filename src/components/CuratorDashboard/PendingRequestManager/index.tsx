@@ -66,7 +66,7 @@ function CuratorPendingRequestManager() {
 								selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A] dark:border-black' : 'shadow-[0_0_0_1px_#667488] dark:border-[#667488]'
 							}`}
 							checked={selectedTab === tab.id}
-							onChange={() => handleTabChange(tab.id as EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS)}
+							onChange={() => handleTabChange(tab.id)}
 						/>
 						{`${tab.label} (${tab.count})`}
 					</label>

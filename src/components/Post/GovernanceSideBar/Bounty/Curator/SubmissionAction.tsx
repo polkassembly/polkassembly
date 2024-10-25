@@ -14,8 +14,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 
 interface SubmissionActionProps {
 	submission: any;
-	showApproveModal: (submission: any) => void;
-	showRejectModal: (submission: any) => void;
+	showApproveModal?: (submission: any) => void;
+	showRejectModal?: (submission: any) => void;
 	handleDelete: (submission: any) => Promise<void>;
 	handleEditClick: (submission: any) => void;
 }
@@ -67,13 +67,13 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleD
 					<>
 						{' '}
 						<span
-							onClick={() => showRejectModal(submission)}
+							onClick={() => showRejectModal && showRejectModal(submission)}
 							className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
 						>
 							Reject
 						</span>
 						<span
-							onClick={() => showApproveModal(submission)}
+							onClick={() => showApproveModal && showApproveModal(submission)}
 							className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
 						>
 							Approve

@@ -26,7 +26,7 @@ const AstralsModal = () => {
 
 	const onShareTwitter = () => {
 		const text = `${encodeURIComponent("I've just updated my profile at Polkassembly. Do check that out at")}%0A%0A${encodeURIComponent(
-			`Check out the proposal and own the decision by casting your vote too! ${window.location.href || ''}`
+			`Check out the my profile ${window.location.href || ''}`
 		)}%0A%0A`;
 
 		const url = `https://twitter.com/intent/tweet?text=${text}`;

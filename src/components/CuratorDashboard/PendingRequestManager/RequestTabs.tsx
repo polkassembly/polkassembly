@@ -9,8 +9,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBar/Bounty/Curator/MakeChildBountySubmision';
-import CuratorRequest from './PendingRequestTabs/CuratorRequest/CuratorRequest';
-import CuratorSubmission from './PendingRequestTabs/CuratorSubmission/CuratorSubmission';
+import CuratorRequests from './PendingRequestTabs/CuratorRequests';
+import CuratorSubmissions from './PendingRequestTabs/CuratorSubmissions';
 import Alert from '~src/basic-components/Alert';
 import { EPendingCuratorSectionType } from '../types/types';
 
@@ -162,7 +162,7 @@ const RequestTabs = () => {
 					}`}
 					onClick={() => handleTabClick(EPendingCuratorReqType.RECEIVED)}
 				>
-					Received Requests
+					Received Requests ({activeSection === EPendingCuratorSectionType.SUBMISSIONS ? receivedSubmissions.length : bountyRequests.length})
 				</div>
 				<div
 					className={`w-1/2 cursor-pointer py-2 text-center text-[14px] ${
@@ -172,7 +172,7 @@ const RequestTabs = () => {
 					}`}
 					onClick={() => handleTabClick(EPendingCuratorReqType.SENT)}
 				>
-					Sent Requests
+					Sent Requests ({activeSection === EPendingCuratorSectionType.SUBMISSIONS ? sentSubmissions.length : childBountyRequests.length})
 				</div>
 			</div>
 			{activeSection === EPendingCuratorSectionType.CURATORREQUESTS && (
@@ -186,7 +186,7 @@ const RequestTabs = () => {
 							message='Requests to become a curator for bounties can be viewed here'
 						/>
 					)}
-					<CuratorRequest
+					<CuratorRequests
 						isBountyExpanded={isBountyExpanded}
 						bountyRequests={bountyRequests}
 						childBountyRequests={childBountyRequests}
@@ -200,7 +200,7 @@ const RequestTabs = () => {
 			)}
 			{activeSection === EPendingCuratorSectionType.SUBMISSIONS && (
 				<div className='pt-5'>
-					<CuratorSubmission
+					<CuratorSubmissions
 						receivedSubmissions={receivedSubmissions}
 						setReceivedSubmissions={setReceivedSubmissions}
 						isLoading={isloadingSubmissions}

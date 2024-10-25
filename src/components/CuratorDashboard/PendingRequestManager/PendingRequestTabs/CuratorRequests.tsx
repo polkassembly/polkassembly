@@ -19,7 +19,7 @@ import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/type
 import dayjs from 'dayjs';
 import Markdown from '~src/ui-components/Markdown';
 
-const CuratorRequest = ({
+const CuratorRequests = ({
 	isBountyExpanded,
 	bountyRequests,
 	childBountyRequests,
@@ -274,4 +274,4 @@ const CuratorRequest = ({
 	);
 };
 
-export default CuratorRequest;
+export default CuratorRequests;

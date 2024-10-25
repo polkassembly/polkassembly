@@ -19,8 +19,8 @@ import Image from 'next/image';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
 import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
-import RejectModal from '../../RejectModal';
-import ApproveModal from '../../ApproveModal';
+import RejectModal from '../CuratorActionModals/RejectModal';
+import ApproveModal from '../CuratorActionModals/ApproveModal';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
@@ -250,10 +250,14 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({
 										>
 											<div className='flex items-center justify-between gap-3 px-3 pt-3'>
 												<div className='flex gap-1 pt-2'>
-													<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
-														<NameLabel defaultAddress={bountyData?.curator} />
-													</span>
-													<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
+													{bountyData?.curator && (
+														<>
+															<span className='text-[14px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>
+																<NameLabel defaultAddress={bountyData?.curator} />
+															</span>
+															<p className='ml-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
+														</>
+													)}
 													<div className='-mt-1 flex items-center gap-1'>
 														<ImageIcon
 															src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}

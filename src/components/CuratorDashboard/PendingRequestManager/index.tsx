@@ -7,15 +7,22 @@ import CuratorRequest from './PendingRequestTabs/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useRouter } from 'next/router';
 
 function CuratorPendingRequestManager() {
 	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
 	const currentUser = useUserDetailsSelector();
-	const [requestCount, setRequestCount] = useState(0);
+	const router = useRouter();
+
+	const [requestCount, setRequestCount] = useState<{ curator: number; submissions: number }>({ curator: 0, submissions: 0 });
 	const tabs = [
-		{ count: 0, id: 'curatorRequests', label: 'Curator Requests' },
-		{ count: 0, id: 'submissions', label: 'Submissions' }
+		{ count: requestCount?.curator, id: 'curatorRequests', label: 'Curator Requests' },
+		{ count: requestCount?.submissions, id: 'submissions', label: 'Submissions' }
 	];
+	const handleTabChange = (tabId: 'curatorRequests' | 'submissions') => {
+		setSelectedTab(tabId);
+		router.push(`/bounty-dashboard/curator-dashboard?section=${tabId}`);
+	};
 
 	const fetchbountyreqcount = async () => {
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getReqCount', {
@@ -32,8 +39,7 @@ function CuratorPendingRequestManager() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
-	console.log(requestCount, 'requestCount');
-
+	const TotalSubmissionCount = requestCount?.curator + requestCount?.submissions;
 	const renderTabContent = () => {
 		switch (selectedTab) {
 			case 'curatorRequests':
@@ -49,7 +55,7 @@ function CuratorPendingRequestManager() {
 		<div
 			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
-			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests (0)</p>
+			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests ({TotalSubmissionCount})</p>
 
 			<div className='mt-4 flex gap-1'>
 				{tabs.map((tab) => (
@@ -63,7 +69,7 @@ function CuratorPendingRequestManager() {
 								selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A] dark:border-black' : 'shadow-[0_0_0_1px_#667488] dark:border-[#667488]'
 							}`}
 							checked={selectedTab === tab.id}
-							onChange={() => setSelectedTab(tab.id as 'curatorRequests' | 'submissions')}
+							onChange={() => handleTabChange(tab.id as 'curatorRequests' | 'submissions')}
 						/>
 						{`${tab.label} (${tab.count})`}
 					</label>

@@ -61,7 +61,11 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 						<Timeline.Item
 							key={key}
 							className='-mt-6'
-							dot={<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>{index + 1}</div>}
+							dot={
+								<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
+									{Object.keys(postData?.progress_report).length - index}
+								</div>
+							}
 						>
 							<>
 								<ReportInfo

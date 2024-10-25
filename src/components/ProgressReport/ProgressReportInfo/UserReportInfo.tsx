@@ -88,8 +88,12 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 					Object.entries(postData.progress_report).map(([key, report]: any, index) => (
 						<Timeline.Item
 							key={key}
-							className='-mt-7'
-							dot={<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>{index + 1}</div>}
+							className='-mt-6'
+							dot={
+								<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
+									{Object.keys(postData?.progress_report).length - index}
+								</div>
+							}
 						>
 							<>
 								<Collapse
@@ -98,13 +102,13 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 									expandIconPosition='end'
 									expandIcon={({ isActive }) =>
-										isActive ? <ArrowDownIcon className='mt-1 rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='mt-1 dark:text-blue-dark-medium' />
+										isActive ? <ArrowDownIcon className='mt-1.5 rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='mt-1.5 dark:text-blue-dark-medium' />
 									}
 									defaultActiveKey={index === 0 ? ['1'] : []}
 								>
 									<Panel
 										header={
-											<div className='flex w-full items-center justify-between space-x-4'>
+											<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
 												<div className='flex items-center gap-x-2'>
 													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
 														Object.keys(postData?.progress_report).length - index

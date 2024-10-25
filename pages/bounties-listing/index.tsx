@@ -20,10 +20,7 @@ import { useRouter } from 'next/router';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsSelector } from '~src/redux/selectors';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import CuratorDashboardButton from '~src/components/CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesListingProps {
 	data?: {
@@ -73,38 +70,6 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	};
 	const bounties = data?.bounties ?? [];
 	const totalBountiesCount = data?.totalBountiesCount ?? 0;
-	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
-	const [curatorData, setCuratorData] = React.useState<any>();
-	const [curatorrequestdata, setCuratorRequestData] = React.useState<any>();
-
-	const fetchCuratorBountiesData = async () => {
-		if (address) {
-			const substrateAddress = getSubstrateAddress(address);
-			const { data } = await nextApiClientFetch<any>('api/v1/bounty/curator/getCuratorGeneralInfo', {
-				userAddress: substrateAddress
-			});
-			const { data: curatorrequestdata } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getReqCount', {
-				userAddress: currentUser?.loginAddress
-			});
-			if (curatorrequestdata) {
-				setCuratorRequestData(curatorrequestdata);
-			}
-			if (data) {
-				setCuratorData(data);
-			}
-		}
-	};
-	const hasBounties = curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0;
-	const hasCuratorRequests = curatorrequestdata?.curator > 0;
-	const hasSubmissions = curatorrequestdata?.submissions > 0;
-
-	const shouldRenderLink = hasBounties || hasCuratorRequests || hasSubmissions;
-
-	useEffect(() => {
-		fetchCuratorBountiesData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
 
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
@@ -141,22 +106,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					</span>
 					<div className='flex gap-2'>
 						<BountyProposalActionButton className='hidden md:block' />
-						{shouldRenderLink && (
-							<Link
-								href='/bounty-dashboard/curator-dashboard'
-								className={`cursor-pointer rounded-xl text-base font-bold text-white hover:text-white ${spaceGrotesk.className} ${spaceGrotesk.variable} px-6 py-3`}
-								style={{
-									background: `
-									radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%),
-									radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%),
-									radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)
-								`,
-									boxShadow: '1px 1px 4px 0px rgba(255, 255, 255, 0.50) inset'
-								}}
-							>
-								Curator Dashboard <ArrowRightOutlined className='-rotate-45 font-bold' />
-							</Link>
-						)}
+						<CuratorDashboardButton />
 					</div>
 				</div>
 

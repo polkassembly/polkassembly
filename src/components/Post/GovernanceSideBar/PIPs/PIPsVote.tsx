@@ -121,7 +121,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 
 	const getPolymeshCommitteeMembers = async () => {
 		try {
-			if (!api || !apiReady || !api.query) return;
+			if (!api || !apiReady || !api.query || network !== AllNetworks.POLYMESH) return;
 			const members = await api.query.polymeshCommittee.members();
 			if (!members) {
 				setIsPolymeshCommitteeMember(false);

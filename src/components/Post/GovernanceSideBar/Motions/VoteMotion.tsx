@@ -29,6 +29,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Alert from '~src/basic-components/Alert';
+import _ from 'lodash';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -74,10 +75,33 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			getAccounts();
 		}
 
-		api.query?.council?.members().then((memberAccounts) => {
-			const members = memberAccounts.map((member) => member.toString());
-			setCurrentCouncil(members.filter((member) => !!member) as string[]);
-		});
+		if (proposalType === ProposalType.TECH_COMMITTEE_PROPOSALS) {
+			api.query.technicalCommittee
+				.members()
+				.then((members) => {
+					let membersArr: string[] = [];
+
+					if (!members.length) {
+						return;
+					}
+
+					members.forEach((m: any) => {
+						membersArr.push(m.toString());
+					});
+
+					membersArr = _.orderBy(membersArr, ['rank'], ['asc']);
+
+					setCurrentCouncil(membersArr.filter((member) => !!member));
+				})
+				.catch((err) => {
+					console.log(err, 'err');
+				});
+		} else {
+			api.query?.council?.members().then((memberAccounts) => {
+				const members = memberAccounts.map((member) => member.toString());
+				setCurrentCouncil(members.filter((member) => !!member) as string[]);
+			});
+		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);

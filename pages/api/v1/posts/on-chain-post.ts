@@ -749,6 +749,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
+
 		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
@@ -1077,7 +1078,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
+		if (
+			[ProposalType.COUNCIL_MOTIONS, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType as ProposalType) ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')
+		) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {

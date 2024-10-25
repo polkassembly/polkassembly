@@ -1056,6 +1056,11 @@ export enum EPendingCuratorReqType {
 	RECEIVED = 'received'
 }
 
+export enum EPendingCuratorSectionType {
+	CURATORREQUESTS = 'curatorRequests',
+	SUBMISSIONS = 'submissions'
+}
+
 export interface IPendingCuratorReq extends IBountyListing {
 	reqType: EPendingCuratorReqType;
 	proposalType: ProposalType;

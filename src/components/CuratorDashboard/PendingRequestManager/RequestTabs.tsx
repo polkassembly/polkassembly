@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { EPendingCuratorReqType, IChildBountySubmission, IPendingCuratorReq } from '~src/types';
+import { EPendingCuratorReqType, EPendingCuratorSectionType, IChildBountySubmission, IPendingCuratorReq } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
@@ -174,7 +174,7 @@ const RequestTabs = () => {
 					Sent Requests
 				</div>
 			</div>
-			{activeSection === 'curatorRequests' && (
+			{activeSection === EPendingCuratorSectionType.CURATORREQUESTS && (
 				<div>
 					{activeTab === EPendingCuratorReqType.RECEIVED && (
 						<Alert
@@ -197,7 +197,7 @@ const RequestTabs = () => {
 					/>
 				</div>
 			)}
-			{activeSection === 'submissions' && (
+			{activeSection === EPendingCuratorSectionType.SUBMISSIONS && (
 				<div className='pt-5'>
 					<CuratorSubmission
 						receivedSubmissions={receivedSubmissions}

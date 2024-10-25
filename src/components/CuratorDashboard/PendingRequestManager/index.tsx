@@ -7,8 +7,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import RequestTabs from './RequestTabs';
+import { EPendingCuratorSectionType } from '~src/types';
 
-type TabId = 'curatorRequests' | 'submissions';
+type TabId = EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS;
 
 interface RequestCount {
 	curator: number;
@@ -16,16 +17,16 @@ interface RequestCount {
 }
 
 function CuratorPendingRequestManager() {
-	const [selectedTab, setSelectedTab] = useState<TabId>('curatorRequests');
+	const [selectedTab, setSelectedTab] = useState<TabId>(EPendingCuratorSectionType.CURATORREQUESTS);
 	const currentUser = useUserDetailsSelector();
 	const router = useRouter();
 
 	const [requestCount, setRequestCount] = useState<RequestCount>({ curator: 0, submissions: 0 });
 	const tabs = [
-		{ count: requestCount?.curator, id: 'curatorRequests', label: 'Curator Requests' },
-		{ count: requestCount?.submissions, id: 'submissions', label: 'Submissions' }
+		{ count: requestCount?.curator, id: EPendingCuratorSectionType.CURATORREQUESTS, label: 'Curator Requests' },
+		{ count: requestCount?.submissions, id: EPendingCuratorSectionType.SUBMISSIONS, label: 'Submissions' }
 	];
-	const handleTabChange = (tabId: 'curatorRequests' | 'submissions') => {
+	const handleTabChange = (tabId: EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS) => {
 		setSelectedTab(tabId);
 		router.push(`/bounty-dashboard/curator-dashboard?section=${tabId}`);
 	};
@@ -65,7 +66,7 @@ function CuratorPendingRequestManager() {
 								selectedTab === tab.id ? 'bg-pink_primary shadow-[0_0_0_1px_#E5007A] dark:border-black' : 'shadow-[0_0_0_1px_#667488] dark:border-[#667488]'
 							}`}
 							checked={selectedTab === tab.id}
-							onChange={() => handleTabChange(tab.id as 'curatorRequests' | 'submissions')}
+							onChange={() => handleTabChange(tab.id as EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS)}
 						/>
 						{`${tab.label} (${tab.count})`}
 					</label>

@@ -29,6 +29,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Alert from '~src/basic-components/Alert';
+import _ from 'lodash';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -67,30 +68,54 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			getAccounts();
 		}
 
-		if (api?.query?.council) {
-			api.query.council
+		if (proposalType === ProposalType.TECH_COMMITTEE_PROPOSALS) {
+			api.query.technicalCommittee
 				.members()
-				.then((memberAccounts) => {
-					const members = memberAccounts.map((member) => member.toString());
-					setCurrentCouncil(members.filter((member) => !!member) as string[]);
-				})
-				.catch((error) => {
-					console.error('Error fetching council members:', error);
-					setCurrentCouncil([]);
-					queueNotification({
-						header: 'Failed!',
-						message: 'Could not fetch council members. Some features may be limited.',
-						status: NotificationStatus.ERROR
+				.then((members) => {
+					let membersArr: string[] = [];
+
+					if (!members.length) {
+						return;
+					}
+
+					members.forEach((m: any) => {
+						membersArr.push(m.toString());
 					});
+
+					membersArr = _.orderBy(membersArr, ['rank'], ['asc']);
+
+					setCurrentCouncil(membersArr.filter((member) => !!member));
+				})
+				.catch((err) => {
+					console.log(err, 'err');
 				});
 		} else {
-			console.error('Council pallet is not available on this network.');
-			queueNotification({
-				header: 'Notice',
-				message: 'Council features are not available on this network.',
-				status: NotificationStatus.WARNING
-			});
+			if (api?.query?.council) {
+				api.query.council
+					.members()
+					.then((memberAccounts) => {
+						const members = memberAccounts.map((member) => member.toString());
+						setCurrentCouncil(members.filter((member) => !!member) as string[]);
+					})
+					.catch((error) => {
+						console.error('Error fetching council members:', error);
+						setCurrentCouncil([]);
+						queueNotification({
+							header: 'Failed!',
+							message: 'Could not fetch council members. Some features may be limited.',
+							status: NotificationStatus.ERROR
+						});
+					});
+			} else {
+				console.error('Council pallet is not available on this network.');
+				queueNotification({
+					header: 'Notice',
+					message: 'Council features are not available on this network.',
+					status: NotificationStatus.WARNING
+				});
+			}
 		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 

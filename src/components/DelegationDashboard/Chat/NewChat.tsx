@@ -130,13 +130,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 				className='h-[250px]'
 			>
 				{!searchedDelegates?.length && !loading ? (
-					<EmptyState
-						searchAddress={searchAddress}
-						network={network}
-						address={address}
-						onChatStart={handleStartChat}
-						loading={loading}
-					/>
+					<EmptyState />
 				) : (
 					<DelegateList
 						delegates={searchedDelegates}

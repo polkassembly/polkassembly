@@ -13,7 +13,7 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { chatDocRef, delegatesColRef } from '~src/api-utils/firestore_refs';
+import { chatDocRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChat | MessageType>) {
 	storeApiKeyUsage(req);
@@ -32,14 +32,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	if (!address || !senderAddress.length || !receiverAddress.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress))))
 		return res.status(400).json({ message: 'Invalid address' });
-
-	const encodedAddress = getEncodedAddress(receiverAddress, network);
-
-	const paDelegatesSnapshot = await delegatesColRef(network).where('address', '==', encodedAddress).limit(1).get();
-
-	if (paDelegatesSnapshot.empty || !paDelegatesSnapshot?.docs?.[0]) {
-		return res.status(400).json({ message: `User with address ${receiverAddress} is not a Polkassembly delegate` });
-	}
 
 	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });

@@ -3,11 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { spaceGrotesk } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import CuratorRequest from './PendingRequestTabs/CuratorRequest';
-import CuratorSubmission from './PendingRequestTabs/CuratorSubmission';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
+import RequestTabs from './RequestTabs';
 
 type TabId = 'curatorRequests' | 'submissions';
 
@@ -47,16 +46,6 @@ function CuratorPendingRequestManager() {
 		[]
 	);
 	const TotalSubmissionCount = requestCount?.curator + requestCount?.submissions;
-	const renderTabContent = () => {
-		switch (selectedTab) {
-			case 'curatorRequests':
-				return <CuratorRequest />;
-			case 'submissions':
-				return <CuratorSubmission />;
-			default:
-				return null;
-		}
-	};
 
 	return (
 		<div
@@ -83,7 +72,9 @@ function CuratorPendingRequestManager() {
 				))}
 			</div>
 
-			<div className='mt-4'>{renderTabContent()}</div>
+			<div className='mt-4'>
+				<RequestTabs />
+			</div>
 		</div>
 	);
 }

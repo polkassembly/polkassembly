@@ -15,40 +15,40 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import dayjs from 'dayjs';
 import Markdown from '~src/ui-components/Markdown';
 
-const SentRequests = ({
+const CuratorRequest = ({
+	isBountyExpanded,
 	bountyRequests,
 	childBountyRequests,
+	isChildBountyExpanded,
 	handleBountyClick,
 	handleChildBountyClick,
-	isBountyExpanded,
-	isChildBountyExpanded,
 	loadingBounty,
 	loadingChildBounty
 }: {
+	isBountyExpanded: boolean;
 	bountyRequests: IPendingCuratorReq[];
 	childBountyRequests: IPendingCuratorReq[];
+	isChildBountyExpanded: boolean;
 	handleBountyClick: () => void;
 	handleChildBountyClick: () => void;
-	isBountyExpanded: boolean;
-	isChildBountyExpanded: boolean;
 	loadingBounty: boolean;
 	loadingChildBounty: boolean;
 }) => {
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 
 	const toggleBountyDescription = (id: number) => {
 		setExpandedBountyId(expandedBountyId === id ? null : id);
 	};
 
-	const router = useRouter();
-
 	const onPaginationChange = (page: number, type: string) => {
-		router.push({
+		router?.push({
 			query: {
 				page,
 				type
@@ -61,13 +61,17 @@ const SentRequests = ({
 		<div>
 			<div className='mb-4'>
 				<div
-					className='mb-4 flex cursor-pointer justify-between pr-5'
-					onClick={handleBountyClick}
+					className='mb-4 mt-5 flex cursor-pointer justify-between pr-5'
+					onClick={() => {
+						if (bountyRequests?.length > 0) {
+							handleBountyClick();
+						}
+					}}
 				>
 					<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
 						ON-CHAIN BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>({bountyRequests?.length})</span>
 					</span>
-					<DownOutlined className={`${isBountyExpanded ? '-rotate-180' : ''} transition-transform`} />
+					{bountyRequests?.length > 0 && <DownOutlined className={`${isBountyExpanded ? '-rotate-180' : ''} transition-transform`} />}
 				</div>
 				<Divider className='m-0 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 				{loadingBounty ? (
@@ -78,14 +82,14 @@ const SentRequests = ({
 					<>
 						{isBountyExpanded && (
 							<div className='mt-5'>
-								{bountyRequests?.length === 0 ? (
+								{bountyRequests?.length == 0 ? (
 									<p>No Bounty Data Found</p>
 								) : (
 									bountyRequests?.map((bounty) => (
 										<div
 											key={bounty.index}
 											className={`mt-3 rounded-lg border-solid ${
-												expandedBountyId === bounty.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
+												expandedBountyId === bounty?.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
 											} bg-white  dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 										>
 											<div className='flex items-center justify-between gap-3 px-3 pt-3'>
@@ -109,19 +113,19 @@ const SentRequests = ({
 													</span>
 												</div>
 												<div className='-mt-1 flex items-center gap-3'>
-													{bounty.status === 'Pending' ? (
+													{bounty.status === EBountiesStatuses.ACTIVE ? (
 														<span className='w-40 whitespace-nowrap rounded-md bg-pink_primary py-2 text-center text-[14px] font-medium text-white'>Approve</span>
 													) : (
 														<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'>
 															<CheckCircleOutlined /> Approved
 														</span>
 													)}{' '}
-													{bounty.content && (
+													{bounty?.content && (
 														<div
 															className='cursor-pointer'
 															onClick={() => toggleBountyDescription(bounty?.index)}
 														>
-															{expandedBountyId === bounty.index ? (
+															{expandedBountyId === bounty?.index ? (
 																<UpOutlined className='rounded-full p-2 text-white' />
 															) : (
 																<DownOutlined className='rounded-full p-2 text-white dark:text-icon-dark-inactive' />
@@ -136,12 +140,12 @@ const SentRequests = ({
 												<span className='text-[17px] font-medium text-blue-light-high hover:underline dark:text-white'>{bounty?.title}</span>
 											</div>
 
-											{expandedBountyId === bounty?.index && bounty?.content && (
+											{expandedBountyId === bounty.index && bounty.content && (
 												<div className='px-3 pb-3'>
 													<Markdown
 														md={bounty?.content}
 														className='mt-1 text-[14px] text-blue-light-high dark:text-white'
-													/>{' '}
+													/>
 													<br />
 													<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 													<div className='mt-3 flex justify-between rounded-lg border-[1px] border-solid border-[#D2D8E0] px-5 py-3'>
@@ -151,12 +155,7 @@ const SentRequests = ({
 															<Image
 																src='/assets/more.svg'
 																alt=''
-																style={{
-																	filter:
-																		theme === 'dark'
-																			? 'brightness(0) saturate(100%) invert(69%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(86%) contrast(87%)'
-																			: 'brightness(0) saturate(100%) invert(33%) sepia(14%) saturate(1156%) hue-rotate(174deg) brightness(102%) contrast(92%)'
-																}}
+																className={theme === 'dark' ? 'image-dark' : 'image-light'}
 																width={15}
 																height={15}
 															/>
@@ -164,11 +163,11 @@ const SentRequests = ({
 													</div>
 												</div>
 											)}
-											{bountyRequests.length > 10 && (
+											{bountyRequests?.length > 10 && (
 												<Pagination
 													defaultCurrent={1}
 													pageSize={BOUNTIES_LISTING_LIMIT}
-													total={bountyRequests.length}
+													total={bountyRequests?.length}
 													showSizeChanger={false}
 													hideOnSinglePage={true}
 													onChange={(page: number) => onPaginationChange(page, ProposalType.BOUNTIES)}
@@ -186,12 +185,16 @@ const SentRequests = ({
 				<div className='mt-5'>
 					<div
 						className='mb-4 mt-5 flex cursor-pointer justify-between pr-5'
-						onClick={handleChildBountyClick}
+						onClick={() => {
+							if (childBountyRequests?.length > 0) {
+								handleChildBountyClick();
+							}
+						}}
 					>
 						<span className={'text-[16px] font-semibold text-blue-light-high dark:text-white'}>
 							CHILD BOUNTY REQUESTS <span className='text-[14px] font-medium dark:text-icon-dark-inactive'>({childBountyRequests?.length})</span>
 						</span>
-						<DownOutlined className={`${isChildBountyExpanded ? '-rotate-180' : ''} transition-transform`} />
+						{childBountyRequests?.length > 0 && <DownOutlined className={`${isBountyExpanded ? '-rotate-180' : ''} transition-transform`} />}
 					</div>
 					<Divider className='m-0 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 					{loadingChildBounty ? (
@@ -202,14 +205,14 @@ const SentRequests = ({
 						<>
 							{isChildBountyExpanded && (
 								<>
-									{childBountyRequests.length === 0 ? (
+									{childBountyRequests?.length === 0 ? (
 										<p className='mt-5'>No Child Bounty Data Found</p>
 									) : (
-										childBountyRequests.map((childBounty) => (
+										childBountyRequests?.map((childBounty) => (
 											<div
-												key={childBounty.index}
+												key={childBounty?.index}
 												className={`mt-3 rounded-lg border-solid ${
-													expandedBountyId === childBounty.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
+													expandedBountyId === childBounty?.index ? 'border-[1px] border-[#E5007A] dark:border-[#E5007A]' : 'border-[0.7px] border-[#D2D8E0]'
 												} bg-white  dark:border-[#4B4B4B] dark:bg-[#0d0d0d]`}
 											>
 												<div className='flex items-center justify-between gap-3 px-3 pt-3'>
@@ -233,7 +236,7 @@ const SentRequests = ({
 														</span>
 													</div>
 													<div className='-mt-1 flex items-center gap-3'>
-														{childBounty.status === 'Pending' ? (
+														{childBounty?.status === 'Pending' ? (
 															<span className='w-40 whitespace-nowrap rounded-md bg-pink_primary py-2 text-center text-[14px] font-medium text-white'>Approve</span>
 														) : (
 															<span className='w-40 whitespace-nowrap rounded-md bg-[#E0F7E5] py-2 text-center text-[14px] font-medium text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'>
@@ -244,8 +247,8 @@ const SentRequests = ({
 												</div>
 												<Divider className='m-0 mb-2 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 												<div className='px-3 pb-3'>
-													<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{childBounty?.index} </span>
-													<span className={'text-[17px] font-medium text-blue-light-high hover:underline dark:text-white'}>{childBounty?.title}</span>
+													<span className=' text-[17px] font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{childBounty.index} </span>
+													<span className={'text-[17px] font-medium text-blue-light-high hover:underline dark:text-white'}>{childBounty.title}</span>
 												</div>
 											</div>
 										))
@@ -271,4 +274,4 @@ const SentRequests = ({
 	);
 };
 
-export default SentRequests;
+export default CuratorRequest;

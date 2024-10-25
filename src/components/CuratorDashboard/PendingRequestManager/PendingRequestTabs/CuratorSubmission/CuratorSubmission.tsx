@@ -1,30 +1,30 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider, message, Modal } from 'antd';
+import { Button, Divider, Input, message, Modal } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { CheckCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useTheme } from 'next-themes';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, EPendingCuratorReqType, IChildBountySubmission } from '~src/types';
 import NameLabel from '~src/ui-components/NameLabel';
 import dayjs from 'dayjs';
 import Markdown from '~src/ui-components/Markdown';
 import Skeleton from '~src/basic-components/Skeleton';
-import AddressDropdown from '~src/ui-components/AddressDropdown';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
+import AddressDropdown from '~src/ui-components/AddressDropdown';
+import Image from 'next/image';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
+import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
 
 const groupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; requests: IChildBountySubmission[] } } = {};
 
-	bounties.forEach((bounty) => {
+	bounties?.forEach((bounty) => {
 		const parentBountyIndex = bounty?.parentBountyIndex;
 
 		if (!groupedBounties[parentBountyIndex]) {
@@ -39,34 +39,47 @@ const groupBountyData = (bounties: IChildBountySubmission[]) => {
 
 	return groupedBounties;
 };
-function SentSubmissions({
-	isloading,
-	sentSubmissions,
-	setSentSubmissions,
-	setIsEditing,
-	setEditSubmission,
-	setIsModalVisible,
-	setBountyId
-}: {
-	isloading: boolean;
+interface ReceivedSubmissionsProps {
+	isLoading: boolean;
+	receivedSubmissions: IChildBountySubmission[];
+	setReceivedSubmissions: (submissions: IChildBountySubmission[]) => void;
 	sentSubmissions: any;
 	setSentSubmissions: any;
 	setIsEditing: (isEditing: boolean) => void;
 	setEditSubmission: any;
 	setIsModalVisible: any;
 	setBountyId: any;
-}) {
+	activeTab: string;
+}
+
+const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({
+	isLoading,
+	receivedSubmissions,
+	setReceivedSubmissions,
+	sentSubmissions,
+	setSentSubmissions,
+	setIsEditing,
+	activeTab,
+	setEditSubmission,
+	setIsModalVisible,
+	setBountyId
+}) => {
 	const { theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
-	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(sentSubmissions));
 	const { network } = useNetworkSelector();
-	const [isSumbitModalVisible, setIsSubmitModalVisible] = useState<boolean>(false);
-	const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
-
-	const toggleBountyDescription = (parentBountyIndex: number) => {
-		setExpandedBountyId(expandedBountyId === parentBountyIndex ? null : parentBountyIndex);
-	};
+	const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
+	const [isApproveModalVisible, setIsApproveModalVisible] = useState<boolean>(false);
+	const [selectedSubmission, setSelectedSubmission] = useState<IChildBountySubmission | null>(null);
+	const [comment, setComment] = useState<string>('');
+	const [groupedBounties, setGroupedBounties] = useState(groupBountyData(receivedSubmissions));
+	useEffect(() => {
+		if (activeTab === EPendingCuratorReqType.SENT) {
+			setGroupedBounties(groupBountyData(sentSubmissions));
+		} else {
+			setGroupedBounties(groupBountyData(receivedSubmissions));
+		}
+	}, [activeTab, receivedSubmissions, sentSubmissions]);
 
 	const showEditModal = (submission: any) => {
 		setIsModalVisible(true);
@@ -75,15 +88,29 @@ function SentSubmissions({
 		setBountyId(submission.parentBountyIndex);
 	};
 
-	const handleCancel = () => {
-		setIsSubmitModalVisible(false);
+	const toggleBountyDescription = (parentBountyIndex: number) => {
+		setExpandedBountyId(expandedBountyId === parentBountyIndex ? null : parentBountyIndex);
 	};
 
-	const handleSubmit = () => {
-		setIsSubmitModalVisible(false);
+	const showRejectModal = (submission: any) => {
+		setSelectedSubmission(submission);
+		setIsRejectModalVisible(true);
+	};
+
+	const showApproveModal = (submission: any) => {
+		setSelectedSubmission(submission);
+		setIsApproveModalVisible(true);
+	};
+
+	const handleCancel = () => {
+		setComment('');
+		setIsRejectModalVisible(false);
+		setIsApproveModalVisible(false);
 	};
 
 	const updateGroupedBounties = (submission: any) => {
+		if (!selectedSubmission) return;
+
 		const parentBountyIndex = submission?.parentBountyIndex;
 		const updatedRequests = groupedBounties[parentBountyIndex]?.requests?.filter((req) => req?.id !== submission?.id);
 
@@ -101,6 +128,42 @@ function SentSubmissions({
 			};
 			setGroupedBounties(updatedGroupedBounties);
 		}
+	};
+
+	const handleStatusUpdate = async (updatedStatus: EChildbountySubmissionStatus.APPROVED | EChildbountySubmissionStatus.REJECTED, rejectionMessage = '') => {
+		if (!selectedSubmission) return;
+
+		const payload = {
+			curatorAddress: currentUser?.loginAddress,
+			parentBountyIndex: selectedSubmission?.parentBountyIndex,
+			proposerAddress: selectedSubmission?.proposer,
+			rejectionMessage,
+			submissionId: selectedSubmission?.id,
+			updatedStatus
+		};
+
+		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
+
+		if (error) {
+			console.error('Error updating submission status:', error);
+			return;
+		}
+		if (data) {
+			message.success('Submission status updated successfully');
+			updateGroupedBounties(updatedStatus);
+			const updatedSubmissions = receivedSubmissions.map((submission: any) => (submission.id === selectedSubmission.id ? { ...submission, status: updatedStatus } : submission));
+			setReceivedSubmissions(updatedSubmissions);
+		}
+
+		handleCancel();
+	};
+
+	const handleReject = () => {
+		handleStatusUpdate(EChildbountySubmissionStatus.REJECTED, comment);
+	};
+
+	const handleApprove = () => {
+		handleStatusUpdate(EChildbountySubmissionStatus.APPROVED);
 	};
 
 	const handleDelete = async (submission: IChildBountySubmission) => {
@@ -131,13 +194,9 @@ function SentSubmissions({
 		}
 	};
 
-	useEffect(() => {
-		setGroupedBounties(groupBountyData(sentSubmissions));
-	}, [sentSubmissions]);
-
 	return (
 		<div>
-			{isloading ? (
+			{isLoading ? (
 				<>
 					<Skeleton active />
 				</>
@@ -200,7 +259,7 @@ function SentSubmissions({
 															alt='timer'
 															className='-mt-3 h-4 text-blue-light-medium dark:text-[#9E9E9E]'
 														/>
-														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData?.createdAt).format('Do MMM YYYY')}</p>
+														<p className='pt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] xl:text-[12px]'>{dayjs(bountyData?.createdAt)?.format('Do MMM YYYY')}</p>
 													</div>
 													<p className='text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 													<span className='ml-1 text-[16px] font-bold text-pink_primary dark:text-[#FF4098]'>
@@ -259,7 +318,7 @@ function SentSubmissions({
 														className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'
 													>
 														Read More
-													</Link>{' '}
+													</Link>
 												</div>
 											</div>
 
@@ -273,7 +332,7 @@ function SentSubmissions({
 													)}
 													{requests?.map((request, index) => (
 														<div
-															key={request.id}
+															key={index}
 															className='mt-3 rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-[#1a1a1a]'
 														>
 															<div className='flex items-center justify-between gap-3 px-4 pt-2'>
@@ -303,7 +362,7 @@ function SentSubmissions({
 																	<Markdown
 																		md={request?.content}
 																		className='mt-1 text-[14px] text-blue-light-high dark:text-white'
-																	/>
+																	/>{' '}
 																	<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
 																</div>
 															</div>
@@ -315,11 +374,11 @@ function SentSubmissions({
 																/>
 															)}
 															<Divider className='m-0 mb-2 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
-															<div className='flex justify-between gap-4 p-2 px-4'>
+															<div className='flex justify-between gap-4 p-2'>
 																<SubmissionAction
 																	submission={request}
-																	loginAddress={currentUser?.loginAddress}
-																	network={network}
+																	showApproveModal={showApproveModal}
+																	showRejectModal={showRejectModal}
 																	handleDelete={handleDelete}
 																	handleEditClick={showEditModal}
 																/>
@@ -338,10 +397,10 @@ function SentSubmissions({
 					<Modal
 						title={
 							<>
-								<CheckCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>Edit Submission</span>
+								<CheckCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>Approve Submission</span>
 							</>
 						}
-						visible={isSumbitModalVisible}
+						visible={isApproveModalVisible}
 						onCancel={handleCancel}
 						footer={[
 							<Button
@@ -355,9 +414,9 @@ function SentSubmissions({
 								key='reject'
 								type='primary'
 								className='w-24 rounded-md bg-pink_primary pb-2 text-center font-medium text-white'
-								onClick={handleSubmit}
+								onClick={handleApprove}
 							>
-								Submit
+								Approve
 							</Button>
 						]}
 					>
@@ -381,10 +440,70 @@ function SentSubmissions({
 							/>
 						</div>
 					</Modal>
+					<Modal
+						title={
+							<>
+								<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>Reject Submission</span>
+							</>
+						}
+						visible={isRejectModalVisible}
+						onCancel={handleCancel}
+						footer={[
+							<Button
+								key='cancel'
+								onClick={handleCancel}
+								className='w-24 rounded-md border border-solid border-pink_primary pb-2 text-center text-[14px] font-medium text-pink_primary'
+							>
+								Cancel
+							</Button>,
+							<Button
+								key='reject'
+								type='primary'
+								className='w-24 rounded-md bg-pink_primary pb-2 text-center font-medium text-white'
+								onClick={handleReject}
+							>
+								Reject
+							</Button>
+						]}
+					>
+						<Divider
+							className='m-0 mb-3'
+							style={{ borderColor: '#D2D8E0' }}
+						/>
+						<div>
+							<label
+								htmlFor='account'
+								className='mb-1 block text-sm text-blue-light-medium'
+							>
+								Account
+							</label>
+							<AddressDropdown
+								accounts={currentUser?.addresses?.map((address) => ({ address })) || []}
+								defaultAddress={currentUser?.loginAddress}
+								onAccountChange={(newAddress) => {
+									console.log('Account changed to:', newAddress);
+								}}
+							/>
+
+							<label
+								htmlFor='comment'
+								className='mb-1 mt-3 block text-sm text-blue-light-medium'
+							>
+								Add Comment <span className='text-pink_primary'>*</span>
+							</label>
+							<Input.TextArea
+								id='comment'
+								placeholder='Add Comment'
+								rows={4}
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+							/>
+						</div>
+					</Modal>
 				</div>
 			)}
 		</div>
 	);
-}
+};
 
-export default SentSubmissions;
+export default CuratorSubmission;

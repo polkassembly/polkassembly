@@ -10,11 +10,12 @@ import { EChildbountySubmissionStatus } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface SubmissionActionProps {
 	submission: any;
-	loginAddress: string;
-	network: string;
+	showApproveModal: (submission: any) => void;
+	showRejectModal: (submission: any) => void;
 	handleDelete: (submission: any) => Promise<void>;
 	handleEditClick: (submission: any) => void;
 }
@@ -45,8 +46,11 @@ const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
 	);
 };
 
-const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, loginAddress, network, handleDelete, handleEditClick }) => {
+const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleDelete, handleEditClick, showApproveModal, showRejectModal }) => {
 	const [loading, setLoading] = useState(false);
+	const currentUser = useUserDetailsSelector();
+	const loginAddress = currentUser?.loginAddress;
+	const { network } = useNetworkSelector();
 	const encodedAddress = getEncodedAddress(loginAddress, network);
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
 
@@ -59,7 +63,23 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, loginAd
 	return (
 		<>
 			<div className='flex w-full'>
-				{submission.proposer === encodedAddress && submission.status === EChildbountySubmissionStatus.PENDING ? (
+				{submission?.bountyData?.curator === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
+					<>
+						{' '}
+						<span
+							onClick={() => showRejectModal(submission)}
+							className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
+						>
+							Reject
+						</span>
+						<span
+							onClick={() => showApproveModal(submission)}
+							className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
+						>
+							Approve
+						</span>
+					</>
+				) : submission?.proposer === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
 					<div className='flex w-full gap-2'>
 						<CustomButton
 							variant='default'

@@ -11,7 +11,8 @@ import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import dynamic from 'next/dynamic';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { gov2ReferendumStatus } from '~src/global/statuses';
-import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+// import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
@@ -45,7 +46,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const { api, apiReady } = useApiContext();
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
-	const { show_nudge } = useProgressReportSelector();
+	// const { show_nudge } = useProgressReportSelector();
 	const { network } = useNetworkSelector();
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -187,10 +188,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		}
 
 		if (
-			postData?.userId === id &&
-			showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
-			!postData?.progress_report?.progress_file &&
-			show_nudge
+			postData?.userId !== id &&
+			showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData)
+			// && !postData?.progress_report?.[0]?.progress_file && show_nudge
 		) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];

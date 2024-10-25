@@ -45,15 +45,15 @@ const PostProgressReport = ({ className }: Props) => {
 					style={{ backgroundColor: '#F0EEFE' }}
 				>
 					<section className='w-full bg-[#F0EEFE]'>
-						{postData?.progress_report?.progress_summary && (
+						{postData?.progress_report?.[0]?.progress_summary && (
 							<div className='-mt-2 flex flex-col gap-y-2'>
 								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
-								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
+								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.[0]?.progress_summary}</p>
 							</div>
 						)}
 						<div className='mt-4 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] bg-white p-4'>
 							<iframe
-								src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
+								src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.[0]?.progress_file)}&embedded=true`}
 								width='100%'
 								height='180px'
 								title='PDF Preview'

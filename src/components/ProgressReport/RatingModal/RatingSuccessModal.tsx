@@ -14,7 +14,7 @@ const RatingSuccessModal = () => {
 	const [averageRating, setAverageRating] = useState<number>();
 
 	const getRatingInfo = () => {
-		setAverageRating(postData?.progress_report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+		setAverageRating(postData?.progress_report?.[0]?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.[0]?.ratings?.length);
 	};
 
 	useEffect(() => {
@@ -40,7 +40,7 @@ const RatingSuccessModal = () => {
 					))}{' '}
 				</div>
 				<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>
-					{postData?.progress_report?.ratings?.length} user(s) rated and the Average Delivery rating is {averageRating}/5
+					{postData?.progress_report?.[0]?.ratings?.length} user(s) rated and the Average Delivery rating is {averageRating}/5
 				</p>
 			</div>
 		</section>

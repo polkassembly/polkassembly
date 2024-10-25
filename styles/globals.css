@@ -995,3 +995,6 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 .dark .ant-steps .ant-steps-item-wait .ant-steps-item-icon {
   background-color: #dde4ed !important;
 }
+.ant-timeline .ant-timeline-item-head {
+  background-color: transparent !important;
+}

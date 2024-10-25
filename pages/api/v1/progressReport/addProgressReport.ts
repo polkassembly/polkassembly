@@ -43,8 +43,16 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
+		const generateUniqueId = () => {
+			const timestamp = Date.now();
+			const randomNumber = Math.floor(Math.random() * 10000);
+			return `${postId}-${timestamp}-${randomNumber}`;
+		};
+
 		const newProgressReport: IProgressReport = {
 			created_at: new Date(),
+			id: generateUniqueId(),
+			is_edited: false,
 			progress_file: progress_report.progress_file,
 			progress_summary: progress_report.progress_summary,
 			ratings: progress_report.ratings || []
@@ -69,7 +77,10 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
-		const existingProgressReports = (postDoc.exists && postDoc.data()?.progress_report) || [];
+		const existingProgressReports =
+			postDoc.exists && Array.isArray(postDoc.data()?.progress_report) ? postDoc.data()?.progress_report : postDoc.data()?.progress_report ? [postDoc.data()?.progress_report] : [];
+
+		// Now add the new progress report to the array
 		const updatedProgressReports: IProgressReport[] = [newProgressReport, ...existingProgressReports];
 
 		const updatedPost: Partial<Post> = {

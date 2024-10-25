@@ -1006,7 +1006,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.progress_file && id !== postData?.userId && (
+						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.[0]?.progress_file && id !== postData?.userId && (
 							<Alert
 								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								showIcon

@@ -28,7 +28,6 @@ const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const {
@@ -83,45 +82,6 @@ const UploadReport = () => {
 		}
 	};
 
-	const editProgressReport = async () => {
-		setLoading(true);
-
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
-			postId: postIndex,
-			proposalType,
-			summary: summary_content
-		});
-
-		if (editError || !data) {
-			setLoading(false);
-			console.error('Error saving post', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if (data) {
-			setLoading(false);
-			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
-				status: NotificationStatus.SUCCESS
-			});
-			dispatch(progressReportActions.setIsSummaryEdited(true));
-			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.log('failed to save report');
-		}
-	};
-
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -139,13 +99,13 @@ const UploadReport = () => {
 					/>
 					<CustomButton
 						variant='primary'
-						text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
+						text='Done'
 						buttonsize='sm'
 						loading={loading}
 						className={`${loading ? 'opacity-60' : ''}`}
-						disabled={!report_uploaded && !postData?.progress_report?.progress_file}
+						disabled={!report_uploaded}
 						onClick={() => {
-							postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
+							addProgressReport();
 						}}
 					/>
 				</div>

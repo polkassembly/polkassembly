@@ -35,11 +35,11 @@ const ProgressReportRatingModal = () => {
 	return (
 		<>
 			<section className='flex flex-col gap-y-1'>
-				{postData?.progress_report?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
+				{postData?.progress_report?.[0]?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
 						className='post-content m-0 p-0 dark:text-blue-dark-medium'
-						md={postData?.progress_report?.progress_summary}
+						md={postData?.progress_report?.[0]?.progress_summary}
 						theme={theme}
 					/>
 				</p>
@@ -52,7 +52,7 @@ const ProgressReportRatingModal = () => {
 				>
 					View Progress Report in detail
 				</p>
-				{postData?.progress_report?.progress_summary && (
+				{postData?.progress_report?.[0]?.progress_summary && (
 					<Divider
 						dashed={true}
 						className='my-3'
@@ -81,9 +81,9 @@ const ProgressReportRatingModal = () => {
 							/>
 						)}
 					</>
-					{postData?.progress_report?.ratings?.length > 0 && (
+					{postData?.progress_report?.[0]?.ratings?.length > 0 && (
 						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-							{postData?.progress_report?.ratings?.length} users have already rated the progress report.
+							{postData?.progress_report?.[0]?.ratings?.length} users have already rated the progress report.
 						</p>
 					)}
 				</div>

@@ -62,9 +62,7 @@ const ProgressReportInfo = () => {
 				status: NotificationStatus.SUCCESS
 			});
 			const { progress_report } = data;
-			console.log('progress: ', report_rating);
-			console.log('progress2: ', data);
-			// const ratingData = postData?.progress_report?.ratings;
+			// const ratingData = postData?.progress_report?.[0]?.ratings;
 			setPostData((prev) => ({
 				...prev,
 				progress_report
@@ -77,7 +75,7 @@ const ProgressReportInfo = () => {
 	};
 
 	const getRatingInfo = () => {
-		setAverageRating(postData?.progress_report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.ratings?.length);
+		setAverageRating(postData?.progress_report?.[0]?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / postData?.progress_report?.[0]?.ratings?.length);
 	};
 
 	useEffect(() => {
@@ -151,28 +149,30 @@ const ProgressReportInfo = () => {
 						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
-					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.created_at).format('DD MMM YYYY')}</p>
-					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.[0]?.created_at).format('DD MMM YYYY')}</p>
+					{(postData?.progress_report?.[0]?.isEdited || is_summary_edited) && (
+						<p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>
+					)}
 				</header>
 				<article className='flex flex-col gap-y-1'>
 					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue dark:text-white'>{postData?.title}</h1>
-					{postData?.progress_report?.progress_summary && (
+					{postData?.progress_report?.[0]?.progress_summary && (
 						<p className='m-0 mt-1 p-0 text-sm text-bodyBlue dark:text-white'>
 							<Markdown
 								className='post-content m-0 p-0'
-								md={postData?.progress_report?.progress_summary}
+								md={postData?.progress_report?.[0]?.progress_summary}
 								theme={theme}
 							/>
 						</p>
 					)}
-					{postData?.progress_report?.ratings?.length > 0 && (
+					{postData?.progress_report?.[0]?.ratings?.length > 0 && (
 						<p className='m-0 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-							Average Rating({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
+							Average Rating({postData?.progress_report?.[0]?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
 						</p>
 					)}
 					<div className='mt-2 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
 						<iframe
-							src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
+							src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.[0]?.progress_file)}&embedded=true`}
 							width='100%'
 							height='180px'
 							title='PDF Preview'

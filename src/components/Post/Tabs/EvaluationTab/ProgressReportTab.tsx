@@ -23,6 +23,10 @@ const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/
 	loading: () => <Skeleton active />,
 	ssr: false
 });
+const UploadMultipleReports = dynamic(() => import('~src/components/ProgressReport/MultipleReports'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 const { Panel } = Collapse;
 
@@ -36,13 +40,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const [loading, setLoading] = useState<boolean>(false);
-	const { report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
-	const [originalSummary, setOriginalSummary] = useState<string>(summary_content);
-
-	useEffect(() => {
-		setOriginalSummary(summary_content);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const { summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
 
 	const router = useRouter();
@@ -53,11 +51,12 @@ const ProgressReportTab = ({ className }: Props) => {
 	} = usePostDataContext();
 
 	useEffect(() => {
-		if (postData?.progress_report?.progress_file) {
-			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
-			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
+		if (postData?.progress_report?.[0]?.progress_file) {
+			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.[0]?.progress_summary || ''));
+			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.[0]?.progress_file || ''));
 		}
-	}, [postData?.progress_report?.progress_file, postData, dispatch]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postData?.progress_report?.[0]?.progress_file, postData, dispatch]);
 
 	const addProgressReport = async () => {
 		const progress_report = {
@@ -105,44 +104,6 @@ const ProgressReportTab = ({ className }: Props) => {
 		}
 	};
 
-	const editProgressReport = async () => {
-		setLoading(true);
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
-			postId: postIndex,
-			proposalType,
-			summary: summary_content
-		});
-
-		if (editError || !data) {
-			setLoading(false);
-			console.error('Error saving post', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if (data) {
-			setLoading(false);
-			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
-				status: NotificationStatus.SUCCESS
-			});
-			dispatch(progressReportActions.setIsSummaryEdited(true));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.log('failed to save report');
-		}
-		dispatch(progressReportActions.setAddSummaryCTAClicked(false));
-	};
-
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -164,7 +125,7 @@ const ProgressReportTab = ({ className }: Props) => {
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 								Progress Reports
 							</h3>
-							{!postData?.progress_report?.progress_file && (
+							{!postData?.progress_report?.[0]?.progress_file && (
 								<div className='ml-auto flex items-center justify-end gap-x-1'>
 									<ImageIcon
 										src='/assets/delegation-tracks/info-icon-blue.svg'
@@ -186,24 +147,21 @@ const ProgressReportTab = ({ className }: Props) => {
 									<div className='mt-4 flex justify-end'>
 										<CustomButton
 											variant='primary'
-											text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
+											text='Done'
 											buttonsize='sm'
 											loading={loading}
-											className={`${loading ? 'opacity-60' : ''} ${
-												(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
-													? 'opacity-60'
-													: ''
-											} `}
-											disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
+											className={`${loading ? 'opacity-60' : ''}`}
 											onClick={() => {
-												postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
+												addProgressReport();
 											}}
 										/>
 									</div>
 								</>
-							) : null}
+							) : (
+								<UploadMultipleReports theme={theme} />
+							)}
 						</>
-					) : postData?.progress_report?.progress_file ? (
+					) : postData?.progress_report?.[0]?.progress_file ? (
 						<ProgressReportInfo />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>

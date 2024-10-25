@@ -88,7 +88,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 					Object.entries(postData.progress_report).map(([key, report]: any, index) => (
 						<Timeline.Item
 							key={key}
-							className='-mt-6'
+							className='-mt-7'
 							dot={<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>{index + 1}</div>}
 						>
 							<>
@@ -139,7 +139,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 								</Collapse>
 								<Divider
 									style={{ background: '#D2D8E0', flexGrow: 1 }}
-									className='mt-6 dark:bg-separatorDark'
+									className='mt-4 dark:bg-separatorDark'
 								/>
 							</>
 						</Timeline.Item>

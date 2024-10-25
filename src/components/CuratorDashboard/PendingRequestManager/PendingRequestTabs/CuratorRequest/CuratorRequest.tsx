@@ -59,9 +59,9 @@ const CuratorRequest = ({
 
 	return (
 		<div>
-			<div className='mb-4'>
+			<div>
 				<div
-					className='mb-4 mt-5 flex cursor-pointer justify-between pr-5'
+					className='my-4 flex cursor-pointer justify-between pr-5'
 					onClick={() => {
 						if (bountyRequests?.length > 0) {
 							handleBountyClick();

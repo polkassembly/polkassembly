@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBar/Bounty/Curator/MakeChildBountySubmision';
 import CuratorRequest from './PendingRequestTabs/CuratorRequest/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission/CuratorSubmission';
+import Alert from '~src/basic-components/Alert';
 
 const RequestTabs = () => {
 	const router = useRouter();
@@ -174,7 +175,16 @@ const RequestTabs = () => {
 				</div>
 			</div>
 			{activeSection === 'curatorRequests' && (
-				<div className='pt-5'>
+				<div>
+					{activeTab === EPendingCuratorReqType.RECEIVED && (
+						<Alert
+							type='info'
+							showIcon
+							className='mt-4'
+							closable
+							message='Requests to become a curator for bounties can be viewed here'
+						/>
+					)}
 					<CuratorRequest
 						isBountyExpanded={isBountyExpanded}
 						bountyRequests={bountyRequests}

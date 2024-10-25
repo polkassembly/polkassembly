@@ -395,6 +395,8 @@ export interface Post {
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
 	progress_report?: IProgressReport;
+	link?: string;
+	updated_at?: Date;
 }
 
 export interface IPostTag {
@@ -766,6 +768,7 @@ export interface IChildBounty {
 	createdAt?: Date;
 	source?: 'polkassembly' | 'subsquare';
 	categories?: string[];
+	payee?: string;
 }
 export interface IChildBountiesResponse {
 	child_bounties: IChildBounty[];
@@ -1014,6 +1017,15 @@ export interface INetworkWalletErr {
 	description: string;
 	error: number;
 }
+export interface IFollowEntry {
+	id: string;
+	network: string;
+	created_at: Date;
+	follower_user_id: number;
+	followed_user_id: number;
+	updated_at: Date;
+	isFollow: boolean;
+}
 
 export interface IMessage {
 	id: string;
@@ -1027,15 +1039,12 @@ export interface IMessage {
 	viewed_by: string[];
 }
 
-export interface ICreateChatPayload {
+export interface IChat {
 	chatId: string;
 	senderAddress: string;
 	receiverAddress: string;
 	created_at: Date;
 	updated_at: Date;
-}
-
-export interface IChat extends ICreateChatPayload {
 	latestMessage: IMessage;
 }
 

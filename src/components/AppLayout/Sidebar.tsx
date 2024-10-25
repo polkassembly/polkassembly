@@ -1370,7 +1370,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		if (['polkadot'].includes(network)) {
 			bountiesSubItems.push(
-				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+				getSiderMenuItem(
+					<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>,
+					'/bounty-dashboard',
+					null
+				)
 			);
 		}
 		if (isOpenGovSupported(network)) {
@@ -1938,19 +1942,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<Link
-										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
-										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
-									>
+									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<Image
-												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-												alt='polkassembly logo'
-												width={150}
-												height={50}
-											/>
+											<div className='-mb-2 ml-24 flex h-full items-center justify-center'>
+												<Image
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+													alt='polkassembly logo'
+													width={110}
+													height={40}
+												/>
+												<Image
+													src='/assets/Gifs/candy-GIF.gif'
+													alt='polkassembly logo'
+													width={75}
+													height={50}
+												/>
+											</div>
 										) : (
-											<PaLogo sidedrawer={sidedrawer} />
+											<div className='ml-5 h-full'>
+												<PaLogo sidedrawer={sidedrawer} />
+											</div>
 										)}
 									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>

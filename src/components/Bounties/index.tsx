@@ -44,6 +44,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const [curatorData, setCuratorData] = React.useState<any>();
+	const [curatorrequestdata, setCuratorRequestData] = React.useState<any>();
 
 	const fetchCuratorBountiesData = async () => {
 		if (address) {
@@ -51,11 +52,22 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			const { data } = await nextApiClientFetch<any>('api/v1/bounty/curator/getCuratorGeneralInfo', {
 				userAddress: substrateAddress
 			});
+			const { data: curatorrequestdata } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getReqCount', {
+				userAddress: currentUser?.loginAddress
+			});
+			if (curatorrequestdata) {
+				setCuratorRequestData(curatorrequestdata);
+			}
 			if (data) {
 				setCuratorData(data);
 			}
 		}
 	};
+	const hasBounties = curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0;
+	const hasCuratorRequests = curatorrequestdata?.curator > 0;
+	const hasSubmissions = curatorrequestdata?.submissions > 0;
+
+	const shouldRenderLink = hasBounties || hasCuratorRequests || hasSubmissions;
 
 	useEffect(() => {
 		fetchCuratorBountiesData();
@@ -67,13 +79,16 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				<span className='font-pixelify text-3xl font-bold text-bodyBlue dark:text-blue-dark-high'>Dashboard</span>
 				<div className='flex gap-2'>
 					<BountyProposalActionButton className='hidden md:block' />
-					{(curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0) && (
+					{shouldRenderLink && (
 						<Link
-							href='/curator-dashboard'
+							href='/bounty-dashboard/curator-dashboard'
 							className={`cursor-pointer rounded-xl text-base font-bold text-white hover:text-white ${spaceGrotesk.className} ${spaceGrotesk.variable} px-6 py-3`}
 							style={{
-								background:
-									'radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%), radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%), radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)',
+								background: `
+									radial-gradient(395.27% 77.56% at 25.57% 34.38%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%),
+									radial-gradient(192.36% 96% at -3.98% 12.5%, #4B33FF 13.96%, #83F 64.39%, rgba(237, 66, 179, 0.00) 100%),
+									radial-gradient(107.92% 155.46% at 50% 121.74%, #F512EE 0%, #62A0FD 80.98%)
+								`,
 								boxShadow: '1px 1px 4px 0px rgba(255, 255, 255, 0.50) inset'
 							}}
 						>

@@ -9,12 +9,19 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 
+type TabId = 'curatorRequests' | 'submissions';
+
+interface RequestCount {
+	curator: number;
+	submissions: number;
+}
+
 function CuratorPendingRequestManager() {
-	const [selectedTab, setSelectedTab] = useState<'curatorRequests' | 'submissions'>('curatorRequests');
+	const [selectedTab, setSelectedTab] = useState<TabId>('curatorRequests');
 	const currentUser = useUserDetailsSelector();
 	const router = useRouter();
 
-	const [requestCount, setRequestCount] = useState<{ curator: number; submissions: number }>({ curator: 0, submissions: 0 });
+	const [requestCount, setRequestCount] = useState<RequestCount>({ curator: 0, submissions: 0 });
 	const tabs = [
 		{ count: requestCount?.curator, id: 'curatorRequests', label: 'Curator Requests' },
 		{ count: requestCount?.submissions, id: 'submissions', label: 'Submissions' }

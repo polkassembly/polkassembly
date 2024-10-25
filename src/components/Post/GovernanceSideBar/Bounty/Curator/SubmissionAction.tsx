@@ -67,13 +67,21 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleD
 					<>
 						{' '}
 						<span
-							onClick={() => showRejectModal && showRejectModal(submission)}
+							role='button'
+							tabIndex={0}
+							aria-label='Reject submission'
+							onKeyDown={(e) => e.key === 'Enter' && showRejectModal?.(submission)}
+							onClick={() => showRejectModal?.(submission)}
 							className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
 						>
 							Reject
 						</span>
 						<span
-							onClick={() => showApproveModal && showApproveModal(submission)}
+							role='button'
+							tabIndex={0}
+							aria-label='Approve submission'
+							onKeyDown={(e) => e.key === 'Enter' && showApproveModal?.(submission)}
+							onClick={() => showApproveModal?.(submission)}
 							className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
 						>
 							Approve

@@ -163,7 +163,7 @@ const CuratorRequest = ({
 													</div>
 												</div>
 											)}
-											{bountyRequests?.length > 10 && (
+											{bountyRequests?.length > BOUNTIES_LISTING_LIMIT && (
 												<Pagination
 													defaultCurrent={1}
 													pageSize={BOUNTIES_LISTING_LIMIT}
@@ -253,7 +253,7 @@ const CuratorRequest = ({
 											</div>
 										))
 									)}
-									{childBountyRequests?.length > 10 && (
+									{childBountyRequests?.length > BOUNTIES_LISTING_LIMIT && (
 										<Pagination
 											defaultCurrent={1}
 											pageSize={BOUNTIES_LISTING_LIMIT}

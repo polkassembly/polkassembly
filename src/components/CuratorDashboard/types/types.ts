@@ -29,3 +29,13 @@ export interface RequestCount {
 	curator: number;
 	submissions: number;
 }
+
+export interface CuratorData {
+	allBounties: { count: number; amount: string };
+	childBounties: { count: number; totalAmount: string; unclaimedAmount: string };
+}
+
+export interface CuratorRequestData {
+	curator: number;
+	submissions: number;
+}

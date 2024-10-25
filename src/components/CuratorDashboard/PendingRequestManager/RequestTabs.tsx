@@ -24,8 +24,8 @@ const RequestTabs = () => {
 	const [isBountyExpanded, setBountyExpanded] = useState(false);
 	const [isChildBountyExpanded, setChildBountyExpanded] = useState(false);
 	const [isloadingSubmissions, setLoadingSubmission] = useState<boolean>(false);
-	const [receivedSubmissions, setReceivedSubmissions] = useState<any>([]);
-	const [sentSubmissions, setSentSubmissions] = useState<any>([]);
+	const [receivedSubmissions, setReceivedSubmissions] = useState<IChildBountySubmission[]>([]);
+	const [sentSubmissions, setSentSubmissions] = useState<IChildBountySubmission[]>([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editSubmission, setEditSubmission] = useState<any>();

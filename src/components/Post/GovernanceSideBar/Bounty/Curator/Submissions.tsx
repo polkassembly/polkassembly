@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Divider, message } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -132,20 +132,26 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyId, handleNewSubmission]);
 
-	const getFilteredSubmissions = () => {
+	const getFilteredSubmissions = (): IChildBountySubmission[] => {
 		switch (activeTab) {
 			case EChildbountySubmissionStatus.PENDING:
-				return bountySubmission?.filter((item: IChildBountySubmission) => item?.status == EChildbountySubmissionStatus.PENDING);
+				return bountySubmission?.filter((item) => item?.status == EChildbountySubmissionStatus.PENDING);
 			case EChildbountySubmissionStatus.REJECTED:
-				return bountySubmission?.filter((item: IChildBountySubmission) => item?.status == EChildbountySubmissionStatus.REJECTED);
+				return bountySubmission?.filter((item) => item?.status == EChildbountySubmissionStatus.REJECTED);
 			default:
-				return bountySubmission || [];
+				return bountySubmission;
 		}
 	};
-	const canViewAll = bountySubmission.some((submission) =>
-		[getEncodedAddress(curator, network), getEncodedAddress(submission?.proposer, network)].includes(getEncodedAddress(loginAddress, network))
+	const memoizedValues = useMemo(
+		() => ({
+			canViewAll: bountySubmission.some((submission) =>
+				[getEncodedAddress(curator, network), getEncodedAddress(submission?.proposer, network)].includes(getEncodedAddress(loginAddress, network))
+			),
+			hasSubmitted: bountySubmission.some((submission) => submission?.proposer === getEncodedAddress(loginAddress, network))
+		}),
+		[bountySubmission, curator, network, loginAddress]
 	);
-	const hasSubmitted = bountySubmission.some((submission) => submission?.proposer === getEncodedAddress(loginAddress, network));
+	const { canViewAll, hasSubmitted } = memoizedValues;
 
 	return (
 		<GovSidebarCard>
@@ -176,6 +182,8 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 				<div className='mb-2 flex items-center justify-between gap-3 rounded-lg bg-section-light-background px-2 py-2 text-center text-sm text-bodyBlue dark:bg-section-dark-garyBackground dark:text-white'>
 					<Button
 						onClick={() => setActiveTab(null)}
+						aria-label='Show all submissions'
+						aria-pressed={activeTab === null}
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === null
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
@@ -212,7 +220,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			) : (
 				<>
 					{getFilteredSubmissions()?.length > 0 ? (
-						getFilteredSubmissions()?.map((submission: any, index: number) => (
+						getFilteredSubmissions()?.map((submission: IChildBountySubmission, index: number) => (
 							<div
 								key={submission?.id}
 								className='mb-3 rounded-lg border-[1px] border-solid border-section-light-container p-3 dark:border-[#4B4B4B]'
@@ -282,9 +290,14 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					}}
 					disabled={hasSubmitted}
 				>
-					<ImageIcon
-						src='/assets/icons/Document.svg'
+					<Image
+						src='/assets/icons/curator-dashboard/Document.svg'
 						alt='submit'
+						style={{
+							filter: 'invert(100%) brightness(200%)'
+						}}
+						width={20}
+						height={20}
 					/>
 					<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
 				</CustomButton>

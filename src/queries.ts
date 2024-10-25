@@ -3344,7 +3344,7 @@ export const GET_CURATOR_RECIVED_SENT_COUNT = `query GET_SENT_CURATOR_REQUESTS($
 bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:Bounty}, orderBy:id_ASC ){
   totalCount
 }
-  childBounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
+childBounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
   totalCount
 }
 }

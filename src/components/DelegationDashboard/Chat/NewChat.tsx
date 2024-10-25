@@ -6,8 +6,10 @@ import { Spin, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IChat, IDelegateAddressDetails, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useUserDetailsSelector, useNetworkSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateList from './DelegateList';
 import EmptyState from './EmptyState';
 
@@ -19,6 +21,8 @@ const NewChat = ({ handleOpenChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 
 	const address = delegationDashboardAddress || loginAddress;
 
@@ -28,11 +32,30 @@ const NewChat = ({ handleOpenChat }: Props) => {
 	const [searchAddress, setSearchAddress] = useState<string>('');
 
 	const handleDelegatesDataFetch = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates', { address });
+
+		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
 		if (data) {
-			setAllDelegates(data);
-			setSearchedDelegates(data);
+			//putting polkassembly Delegate first;
+			const updatedDelegates = data || [];
+
+			updatedDelegates.sort((a: any, b: any) => {
+				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
+				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
+				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+
+				if (aIndex !== -1 && bIndex !== -1) {
+					return aIndex - bIndex;
+				}
+
+				if (aIndex !== -1) return -1;
+				if (bIndex !== -1) return 1;
+				return 0;
+			});
+
+			setAllDelegates(updatedDelegates);
+			setSearchedDelegates(updatedDelegates);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -40,16 +63,17 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		}
 	};
 
-	const handleSearch = (searchTerm: string) => {
-		setSearchAddress(searchTerm);
-		if (searchTerm) {
-			const filteredDelegates = allDelegates.filter(
-				(delegate) => delegate.address.toLowerCase().includes(searchTerm.toLowerCase()) || (delegate.username && delegate.username.toLowerCase().includes(searchTerm.toLowerCase()))
-			);
-			setSearchedDelegates(filteredDelegates);
-		} else {
+	const handleSearch = () => {
+		if (!searchAddress.length) {
 			setSearchedDelegates(allDelegates);
+			return;
 		}
+
+		const filteredDelegates = allDelegates.filter(
+			(delegate) =>
+				delegate.address.toLowerCase().includes(searchAddress.toLowerCase()) || (delegate.username && delegate.username.toLowerCase().includes(searchAddress.toLowerCase()))
+		);
+		setSearchedDelegates(filteredDelegates);
 	};
 
 	const handleStartChat = async (recipientAddr?: string) => {
@@ -83,7 +107,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 	useEffect(() => {
 		handleDelegatesDataFetch();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network]);
 
 	return (
 		<div className='flex h-full w-full flex-col'>
@@ -91,8 +115,15 @@ const NewChat = ({ handleOpenChat }: Props) => {
 				<Input
 					type='search'
 					value={searchAddress}
-					onChange={(e) => handleSearch(e.target.value)}
+					onChange={(e) => {
+						if (!e.target.value?.length) {
+							setSearchedDelegates(allDelegates || []);
+						}
+						setSearchAddress(e.target.value.trim());
+					}}
+					onPressEnter={handleSearch}
 					placeholder='Enter an address to send message'
+					className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 				/>
 			</div>
 			<Spin

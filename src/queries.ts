@@ -3305,7 +3305,7 @@ query GetVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_
 `;
 
 export const GET_CONVICTION_VOTE_CREATED_AT = `
- query GetConvictionVoteCreatedAt($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
+ query GET_CONVICTION_VOTE_CREATED_AT($index_eq: Int!, $type_eq: ProposalType!, $voter_address_eq: String!) {
   convictionVotes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}, voter_address_eq: $voter_address_eq}) {
     createdAt
   }
@@ -3340,12 +3340,19 @@ proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type
   }
 }`;
 
-export const GET_CURATOR_RECIVED_SENT_COUNT = `query GET_SENT_CURATOR_REQUESTS($address: String){
+export const GET_CURATOR_RECIVED_SENT_COUNT = `query GET_CURATOR_RECIVED_SENT_COUNT($address: String){
 bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:Bounty}, orderBy:id_ASC ){
   totalCount
 }
   childBounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
   totalCount
+    edges{
+      node{
+        index
+        proposer
+        curator
+      }
+    }
 }
 }
 `;

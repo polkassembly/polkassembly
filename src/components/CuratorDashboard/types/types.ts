@@ -18,3 +18,14 @@ export interface CuratorData {
 		unclaimedAmount: string;
 	};
 }
+
+export enum EPendingCuratorSectionType {
+	CURATORREQUESTS = 'curatorRequests',
+	SUBMISSIONS = 'submissions'
+}
+export type TabId = EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS;
+
+export interface RequestCount {
+	curator: number;
+	submissions: number;
+}

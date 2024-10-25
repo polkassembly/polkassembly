@@ -7,14 +7,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import RequestTabs from './RequestTabs';
-import { EPendingCuratorSectionType } from '~src/types';
-
-type TabId = EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS;
-
-interface RequestCount {
-	curator: number;
-	submissions: number;
-}
+import { EPendingCuratorSectionType, RequestCount, TabId } from '../types/types';
 
 function CuratorPendingRequestManager() {
 	const [selectedTab, setSelectedTab] = useState<TabId>(EPendingCuratorSectionType.CURATORREQUESTS);

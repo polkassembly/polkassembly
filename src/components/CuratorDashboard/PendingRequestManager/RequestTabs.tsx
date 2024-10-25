@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { EPendingCuratorReqType, EPendingCuratorSectionType, IChildBountySubmission, IPendingCuratorReq } from '~src/types';
+import { EPendingCuratorReqType, IChildBountySubmission, IPendingCuratorReq } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
@@ -12,6 +12,7 @@ import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBa
 import CuratorRequest from './PendingRequestTabs/CuratorRequest/CuratorRequest';
 import CuratorSubmission from './PendingRequestTabs/CuratorSubmission/CuratorSubmission';
 import Alert from '~src/basic-components/Alert';
+import { EPendingCuratorSectionType } from '../types/types';
 
 const RequestTabs = () => {
 	const router = useRouter();

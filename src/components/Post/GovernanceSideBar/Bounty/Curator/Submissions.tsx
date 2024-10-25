@@ -294,8 +294,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						src='/assets/icons/curator-dashboard/Document.svg'
 						alt='submit'
 						style={{
-							filter: 'invert(100%) brightness(200%)'
+							filter: theme === 'dark' ? 'invert(100%) brightness(200%)' : 'none'
 						}}
+						className='h-5 w-5'
 						width={20}
 						height={20}
 					/>

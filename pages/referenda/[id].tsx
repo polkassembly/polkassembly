@@ -19,6 +19,7 @@ import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { PostCategory } from '~src/global/post_categories';
 import ConfusedNudge from '~src/ui-components/ConfusedNudge';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -55,9 +56,11 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 
 	// Calculate trackName outside of the conditional blocks
 	let trackName = '';
-	for (const key of Object.keys(networkTrackInfo[network])) {
-		if (post && networkTrackInfo[network][key].trackId === post.track_number && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
-			trackName = key;
+	if (isOpenGovSupported(network)) {
+		for (const key of Object.keys(networkTrackInfo?.[network])) {
+			if (post && networkTrackInfo[network][key].trackId === post.track_number && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
+				trackName = key;
+			}
 		}
 	}
 

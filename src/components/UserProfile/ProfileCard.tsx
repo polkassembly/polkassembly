@@ -156,7 +156,6 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 							</div>
 						)}
 						<FollowersAndFollowing userId={userProfile?.user_id} />
-
 					</div>
 				</div>
 				<SocialsHandle

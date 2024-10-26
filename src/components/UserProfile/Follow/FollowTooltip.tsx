@@ -12,7 +12,6 @@ import Loader from '~src/ui-components/Loader';
 import FollowButton from './FollowButton';
 
 const FollowTooltip = ({ users, isLoading, isUsedInFollowers }: { users: FollowUserData[]; isLoading: boolean; isUsedInFollowers?: boolean }) => {
-
 	const { network } = useNetworkSelector();
 	return (
 		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>

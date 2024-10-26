@@ -35,10 +35,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<FollowersRespon
 	if (isNaN(Number(userId)) || userId === null || userId === undefined) return res.status(400).json({ message: 'Missing userId in request body', followers: [], following: [] });
 
 	try {
-		const followersSnapshot = await followsCollRef().where('followed_user_id', '==', userId).where('network', '==', network).get();
+		const followersSnapshot = await followsCollRef().where('followed_user_id', '==', userId).where('isFollow', '==', true).where('network', '==', network).get();
 		const followerIds = followersSnapshot.docs.map((doc) => doc.data().follower_user_id);
 
-		const followingSnapshot = await followsCollRef().where('follower_user_id', '==', userId).where('network', '==', network).get();
+		const followingSnapshot = await followsCollRef().where('follower_user_id', '==', userId).where('isFollow', '==', true).where('network', '==', network).get();
 		const followingIds = followingSnapshot.docs.map((doc) => doc.data().followed_user_id);
 
 		let followerUsersData: Record<number, { username: string; image: string | null }> = {};

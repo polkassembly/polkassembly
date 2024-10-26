@@ -3323,6 +3323,7 @@ proposals(where: {proposer_eq: $address, status_eq:CuratorProposed, type_eq:$typ
     type
     proposer
     payee
+    parentBountyIndex
   }
 }`;
 
@@ -3337,14 +3338,15 @@ proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type
     type
     proposer
     payee
+    parentBountyIndex
   }
 }`;
 
 export const GET_CURATOR_RECIVED_SENT_COUNT = `query GET_CURATOR_RECIVED_SENT_COUNT($address: String){
-bounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:Bounty}, orderBy:id_ASC ){
+bounties:proposalsConnection(where: {AND:{proposer_eq: $address, OR: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:Bounty}, orderBy:id_ASC ){
   totalCount
 }
-childBounties:proposalsConnection(where: {OR:{proposer_eq: $address, AND: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
+  childBounties:proposalsConnection(where: {AND:{proposer_eq: $address, OR: {curator_eq:$address}}, status_eq:CuratorProposed, type_eq:ChildBounty}, orderBy:id_ASC ){
   totalCount
     edges{
       node{

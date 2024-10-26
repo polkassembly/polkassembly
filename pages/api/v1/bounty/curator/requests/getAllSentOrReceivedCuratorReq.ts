@@ -73,6 +73,7 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 				createdAt: item?.createdAt,
 				curator: item?.curator,
 				index: item.index,
+				parentBountyIndex: item?.parentBountyIndex,
 				payee: item?.payee,
 				proposalType: proposalType,
 				proposer: item?.proposer,

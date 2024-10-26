@@ -1060,6 +1060,7 @@ export interface IPendingCuratorReq extends IBountyListing {
 	reqType: EPendingCuratorReqType;
 	proposalType: ProposalType;
 	content: string;
+	parentBountyIndex?: number;
 }
 
 export interface ISubsquidChildBontyAndBountyRes {
@@ -1070,6 +1071,7 @@ export interface ISubsquidChildBontyAndBountyRes {
 	payee: string;
 	curator: string;
 	createdAt: string;
+	parentBountyIndex: number;
 }
 export interface IFollowEntry {
 	id: string;

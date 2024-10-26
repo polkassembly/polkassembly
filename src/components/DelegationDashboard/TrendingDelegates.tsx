@@ -316,7 +316,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						placement='bottomRight'
 						zIndex={1056}
 					>
-						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
 								src='/assets/icons/filter-icon-delegates.svg'
 								alt='filter icon'
@@ -330,7 +330,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						placement='topRight'
 						zIndex={1056}
 					>
-						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
 								src='/assets/icons/sort-icon-delegates.svg'
 								alt='sort icon'
@@ -377,7 +377,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					zIndex={1056}
 					className='hidden sm:flex'
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
@@ -391,7 +391,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					zIndex={1056}
 					className='hidden sm:flex'
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/sort-icon-delegates.svg'
 							alt='sort icon'

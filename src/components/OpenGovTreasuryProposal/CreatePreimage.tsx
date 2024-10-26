@@ -1122,7 +1122,7 @@ const CreatePreimage = ({
 								<div className='flex items-center justify-between'>
 									<Button
 										type='text'
-										className='mt-2 flex items-center text-xs text-[#407BFF]'
+										className='mt-2 flex items-center text-xs font-semibold text-[#407BFF]'
 										size='small'
 										onClick={addBeneficiary}
 									>
@@ -1132,7 +1132,7 @@ const CreatePreimage = ({
 
 									<Button
 										type='text'
-										className='mt-2 flex items-center text-xs text-red-light-text dark:text-red-dark-text'
+										className='mt-2 flex items-center text-xs font-semibold text-red-light-text dark:text-red-dark-text'
 										size='small'
 										onClick={removeAllBeneficiaries}
 									>
@@ -1401,13 +1401,13 @@ const CreatePreimage = ({
 								setSteps({ percent: 100, step: 0 });
 								setGeneralIndex(null);
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
+							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium font-semibold tracking-[0.05em] text-white dark:border-pink_primary ${
 								(isPreimage !== null && !isPreimage
 									? !(
 											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&

@@ -313,7 +313,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
-					className={`text-sm ${
+					className={`text-sm font-semibold ${
 						totalUnlockableBalance.eq(ZERO_BN)
 							? 'border-[#407BFF] bg-[#F1F6FF] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: `${

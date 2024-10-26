@@ -354,7 +354,7 @@ const CreateBounty = ({
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -362,7 +362,7 @@ const CreateBounty = ({
 							htmlType='submit'
 							className={`${
 								isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee)) ? 'opacity-50' : ''
-							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
+							} h-10 w-[165px]  rounded-[4px] bg-pink_primary text-center text-sm font-medium font-semibold tracking-[0.05em] text-white
 						dark:border-pink_primary`}
 							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee))}
 						>

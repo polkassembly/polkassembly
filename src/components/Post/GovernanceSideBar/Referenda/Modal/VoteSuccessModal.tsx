@@ -275,7 +275,7 @@ const VoteInitiatedModal = ({
 			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Share your vote on:</p>
 			<div className='mb-1 mt-2 flex items-center justify-center gap-x-2'>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 					onClick={() => {
 						onShareTwitter();
 					}}
@@ -286,7 +286,7 @@ const VoteInitiatedModal = ({
 					/>
 				</Button>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 					onClick={() => {
 						onShareDiscord();
 					}}

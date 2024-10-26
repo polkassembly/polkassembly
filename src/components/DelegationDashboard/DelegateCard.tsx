@@ -239,7 +239,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Button
 						disabled={disabled}
 						onClick={handleClick}
-						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
+						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 font-semibold shadow-none ${!!disabled && 'opacity-50'}`}
 					>
 						<DelegatesProfileIcon />
 					</Button>
@@ -315,7 +315,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Button
 						disabled={disabled}
 						onClick={handleClick}
-						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
+						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 font-semibold shadow-none ${!!disabled && 'opacity-50'}`}
 					>
 						<DelegatesProfileIcon />
 						<span className='text-sm font-medium text-pink_primary max-sm:hidden'>Delegate</span>

@@ -46,7 +46,9 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 								<Button
 									onClick={showModal}
 									disabled={!currentUser.id || !currentUser.loginAddress}
-									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
+									className={`border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
+										(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'
+									}`}
 								>
 									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 								</Button>
@@ -62,7 +64,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 									alt='Become delegate icon'
 									className='-ml-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>STEP 1</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>STEP 1</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
 									<span className='font-semibold '>Select Track for Delegation</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
@@ -80,7 +82,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 									alt='Become delegate icon'
 									imgClassName='mt-[22px] mr-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>STEP 2</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>STEP 2</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
 									<span className='font-semibold'>Select Delegate</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>Choose a delegate based on the stats to complete your delegation process.</span>

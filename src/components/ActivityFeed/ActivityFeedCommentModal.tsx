@@ -170,7 +170,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 									disabled={!content || (typeof content === 'string' && content.trim() === '')}
 									loading={loading}
 									htmlType='submit'
-									className={`my-0 flex h-[40px] w-[100px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
+									className={`my-0 flex h-[40px] w-[100px] items-center justify-center border-none bg-pink_primary font-semibold text-white hover:bg-pink_secondary ${
 										!content ? 'opacity-50' : ''
 									}`}
 								>

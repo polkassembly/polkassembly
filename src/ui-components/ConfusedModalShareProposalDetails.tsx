@@ -136,7 +136,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 				</div>
 				<div className='mt-24 flex justify-center gap-5'>
 					<Button
-						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 						onClick={shareOnTwitter}
 					>
 						<ImageIcon
@@ -145,7 +145,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 					</Button>
 					<Button
-						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 						onClick={copyLinkToClipboard}
 					>
 						<ImageIcon

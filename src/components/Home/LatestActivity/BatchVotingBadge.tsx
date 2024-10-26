@@ -30,7 +30,7 @@ const BatchVotingBadge = () => {
 					imgClassName='-mt-3'
 				/>
 				<Button
-					className='relative -top-[70px] z-[100] mx-auto flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs text-white'
+					className='relative -top-[70px] z-[100] mx-auto flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs font-semibold text-white'
 					onClick={() => {
 						dispatch(batchVotesActions.setShowDefaultOptionsModal(true));
 					}}

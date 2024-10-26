@@ -229,7 +229,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 					placement='bottomLeft'
 					className='sm:hidden'
 				>
-					<Button className={`${poppins.className} ${poppins.variable} flex items-center rounded-full border-none bg-[#fef2f8] px-3 py-2 dark:bg-section-dark-garyBackground `}>
+					<Button
+						className={`${poppins.className} ${poppins.variable} flex items-center rounded-full border-none bg-[#fef2f8] px-3 py-2 font-semibold dark:bg-section-dark-garyBackground `}
+					>
 						<div className='flex items-center'>
 							<Radio
 								checked={true}

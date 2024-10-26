@@ -42,7 +42,7 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 							className=''
 							imgWrapperClassName=''
 						/>
-						<span className={`${poppins.variable} ${poppins.className} text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>STEP 1</span>
+						<span className={`${poppins.variable} ${poppins.className}  whitespace-nowrap text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>STEP 1</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className} flex max-w-[380px] flex-col text-sm`}>
 						<span className='mb-1 text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'>Select Track for Delegation</span>
@@ -65,7 +65,7 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 							className=''
 							imgWrapperClassName=''
 						/>
-						<span className={`${poppins.variable} ${poppins.className} text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>STEP 2</span>
+						<span className={`${poppins.variable} ${poppins.className} whitespace-nowrap text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>STEP 2</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className} flex max-w-[380px] flex-col text-sm`}>
 						<span className='mb-1 text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'>Select Delegate</span>

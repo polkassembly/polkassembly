@@ -94,7 +94,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 				isPreimageSuccess ? (
 					<div>
 						<Button
-							className='h-10 w-full border-none bg-pink_primary text-white'
+							className='h-10 w-full border-none bg-pink_primary font-semibold text-white'
 							onClick={() => {
 								handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_PROPOSAL);
 								setOpen(false);

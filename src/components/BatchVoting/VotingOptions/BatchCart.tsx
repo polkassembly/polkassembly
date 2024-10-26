@@ -225,7 +225,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							</p>
 						</div>
 						<Button
-							className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'
+							className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
 							onClick={voteProposals}
 							disabled={isDisable}
 						>

@@ -1,0 +1,3089 @@
+[
+	{
+		"id": 1,
+		"badges": [
+			"Common Good"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/paritytech/cumulus",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1623939400_statemine_logo.png",
+		"name": "Statemint",
+		"status": "live on polkadot",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 2,
+		"badges": [
+			"Common Good"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/paritytech/cumulus",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1623939400_statemine_logo.png",
+		"name": "Statemine",
+		"status": "live on kusama",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 3,
+		"badges": [
+			"NFT",
+			" Gaming"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/bit-country/Metaverse-Network",
+		"investorsCount": 33,
+		"logoURL": "https://parachains.info/images/parachains/1630932183_Qai7-4OT_400x400.jpg",
+		"name": "Bit.Country Pioneer",
+		"status": "live on kusama",
+		"token": "NEER",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 4,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/AcalaNetwork/Acala",
+		"investorsCount": 32,
+		"logoURL": "https://parachains.info/images/parachains/1618672026_acala2.png",
+		"name": "Acala",
+		"status": "live on polkadot",
+		"token": "ACA",
+		"tokenPriceUSD": 1.54,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 5,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/AcalaNetwork/Acala",
+		"investorsCount": 32,
+		"logoURL": "https://parachains.info/images/parachains/1618695525_karura_black.png",
+		"name": "Karura",
+		"status": "live on kusama",
+		"token": "KAR",
+		"tokenPriceUSD": 1.57,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 6,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/AstarNetwork/Astar",
+		"investorsCount": 32,
+		"logoURL": "https://parachains.info/images/parachains/1624981902_astar_logo.png",
+		"name": "Astar",
+		"status": "live on polkadot",
+		"token": "ASTR",
+		"tokenPriceUSD": 0.238,
+		"w3fGrant": {
+			"received": 6,
+			"completed": 4,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 7,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/AstarNetwork/Astar",
+		"investorsCount": 31,
+		"logoURL": "https://parachains.info/images/parachains/1618692834_shiden_cr.png",
+		"name": "Shiden Network",
+		"status": "live on kusama",
+		"token": "SDN",
+		"tokenPriceUSD": 1.36,
+		"w3fGrant": {
+			"received": 6,
+			"completed": 4,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 8,
+		"badges": [
+			"Bridge",
+			" DeFi",
+			" SmartContracts"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/bifrost-finance/bifrost",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1618696351_photo_2021-03-12_15-24-06.jpg",
+		"name": "Bifrost Kusama",
+		"status": "live on kusama",
+		"token": "BNC",
+		"tokenPriceUSD": 0.963,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 9,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/equilibrium-eosdt/equilibrium-substrate-chain",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/equilibrium.png",
+		"name": "Equilibrium",
+		"status": "live on polkadot",
+		"token": "EQ",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 10,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1618690789_g493.png",
+		"name": "Genshiro",
+		"status": "live on kusama",
+		"token": "GENS",
+		"tokenPriceUSD": 0.012,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 11,
+		"badges": [
+			"Data"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/crustio/crust",
+		"investorsCount": 22,
+		"logoURL": "https://parachains.info/images/parachains/crust_network.jpg",
+		"name": "Crust Shadow",
+		"status": "live on kusama",
+		"token": "CSM",
+		"tokenPriceUSD": 0.019,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 12,
+		"badges": [
+			"IOT",
+			" Data",
+			" Scaling"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/NodleCode/chain",
+		"investorsCount": 22,
+		"logoURL": "https://parachains.info/images/parachains/1637617681_nodle_logo.jpg",
+		"name": "Nodle",
+		"status": "live on polkadot",
+		"token": "NODL",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 13,
+		"badges": [
+			"Privacy",
+			" DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/Manta-Network/Manta",
+		"investorsCount": 20,
+		"logoURL": "https://parachains.info/images/parachains/1624811536_calamari_network_logo.jpg",
+		"name": "Calamari Network",
+		"status": "live on kusama",
+		"token": "KMA",
+		"tokenPriceUSD": 0.007,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 14,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/parallel-finance/parallel",
+		"investorsCount": 18,
+		"logoURL": "https://parachains.info/images/parachains/1629738856_parallel_finance.png",
+		"name": "Parallel Finance",
+		"status": "live on polkadot",
+		"token": "PARA",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 15,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/parallel-finance/parallel",
+		"investorsCount": 18,
+		"logoURL": "https://parachains.info/images/parachains/1629738881_heiko.png",
+		"name": "Heiko Finance",
+		"status": "live on kusama",
+		"token": "HKO",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 16,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/PureStake/moonbeam",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1716448757_moonriver_logo.jpg",
+		"name": "Moonriver",
+		"status": "live on kusama",
+		"token": "MOVR",
+		"tokenPriceUSD": 67.21,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 17,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/PureStake/moonbeam",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg",
+		"name": "Moonbeam",
+		"status": "live on polkadot",
+		"token": "GLMR",
+		"tokenPriceUSD": 3.92,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 18,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/centrifuge/centrifuge-chain/",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/centrifuge.jpg",
+		"name": "Centrifuge",
+		"status": "live on polkadot",
+		"token": "CFG",
+		"tokenPriceUSD": 0.629,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 19,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/centrifuge/centrifuge-chain",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1622988697_4q7E0J8.jpeg",
+		"name": "Altair",
+		"status": "live on kusama",
+		"token": "AIR",
+		"tokenPriceUSD": 0.052,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 20,
+		"badges": [
+			"Data",
+			" Identity",
+			" Privacy"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/litentry/litentry-parachain",
+		"investorsCount": 14,
+		"logoURL": "https://parachains.info/images/parachains/1642597882_litmus_logo.png",
+		"name": "Litmus",
+		"status": "live on kusama",
+		"token": "LIT",
+		"tokenPriceUSD": 1.47,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 21,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/integritee-network/worker",
+		"investorsCount": 12,
+		"logoURL": "https://parachains.info/images/parachains/1625933634_integritee_logo.png",
+		"name": "Integritee Network",
+		"status": "live on kusama",
+		"token": "TEER",
+		"tokenPriceUSD": 1.67,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 22,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/dappforce/subsocial-node",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/1625164937_subsocial.png",
+		"name": "Subsocial",
+		"status": "live on kusama",
+		"token": "SUB",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 23,
+		"badges": [
+			"Data",
+			" Privacy"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/Phala-Network/phala-blockchain",
+		"investorsCount": 9,
+		"logoURL": "https://parachains.info/images/parachains/1619814840_khala.png",
+		"name": "Khala Network",
+		"status": "live on kusama",
+		"token": "PHA",
+		"tokenPriceUSD": 0.295,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 24,
+		"badges": [
+			"Privacy",
+			" Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Phala-Network/phala-blockchain",
+		"investorsCount": 9,
+		"logoURL": "https://parachains.info/images/parachains/phala_network.jpg",
+		"name": "Phala Network",
+		"status": "live on polkadot",
+		"token": "PHA",
+		"tokenPriceUSD": 0.295,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 25,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/galacticcouncil/HydraDX-node",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1625167700_hydradx.png",
+		"name": "HydraDX",
+		"status": "live on polkadot",
+		"token": "HDX",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 26,
+		"badges": [
+			"SmartContracts",
+			" DeFi",
+			" Scaling"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/OAK-Foundation/OAK-blockchain",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1645750066_turing_logo.png",
+		"name": "Turing Network",
+		"status": "live on kusama",
+		"token": "TUR",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 27,
+		"badges": [
+			"Bridge",
+			" NFT",
+			" Gaming"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/darwinia-network/darwinia/tree/main/runtime/crab",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1622122425_darwinia_crab.png",
+		"name": "Crab Network",
+		"status": "live on kusama",
+		"token": "CRAB",
+		"tokenPriceUSD": 0.003,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 28,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/interlay/interbtc",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1638967991_interlay_logo.png",
+		"name": "Interlay",
+		"status": "live on polkadot",
+		"token": "INTR",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 29,
+		"badges": [
+			"DeFi",
+			" Bridge"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/interlay/interbtc",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1630146591_kintsugi_logo.png",
+		"name": "Kintsugi",
+		"status": "live on kusama",
+		"token": "KINT",
+		"tokenPriceUSD": 15.51,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 30,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/galacticcouncil/Basilisk-node",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1622118231_9JoRP47U_400x400.png",
+		"name": "Basilisk",
+		"status": "live on kusama",
+		"token": "BSX",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 31,
+		"badges": [
+			"NFT"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 6,
+		"logoURL": "https://parachains.info/images/parachains/1633127818_quartz_network.png",
+		"name": "Quartz",
+		"status": "live on kusama",
+		"token": "QTZ",
+		"tokenPriceUSD": 0.014,
+		"w3fGrant": {
+			"received": 5,
+			"completed": 5,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 32,
+		"badges": [
+			"Data",
+			" Identity"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/KILTprotocol/mashnet-node",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/1624205913_kilt_logo.png",
+		"name": "KILT Protocol",
+		"status": "live on kusama",
+		"token": "KILT",
+		"tokenPriceUSD": 1.66,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 33,
+		"badges": [
+			"IOT"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/airalab/robonomics",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/robonomics.jpg",
+		"name": "Robonomics",
+		"status": "live on kusama",
+		"token": "XRT",
+		"tokenPriceUSD": 11.81,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 34,
+		"badges": [
+			"DeFi",
+			" Exchange",
+			" Bridge"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/sora-xor",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/1624880932_SORA_logo.png",
+		"name": "SORA",
+		"status": "live on kusama",
+		"token": "XOR",
+		"tokenPriceUSD": 59.72,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 35,
+		"badges": [
+			"DAO",
+			" Common Good"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/encointer/encointer-parachain",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625163231_encointer_logo.png",
+		"name": "Encointer",
+		"status": "live on kusama",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 36,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 29,
+		"logoURL": "https://parachains.info/images/parachains/1640707222_composable_logo_cr.png",
+		"name": "Composable Finance",
+		"status": "live on polkadot",
+		"token": "LAYR",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 37,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 29,
+		"logoURL": "https://parachains.info/images/parachains/1630342278_picasso_logo.png",
+		"name": "Picasso",
+		"status": "live on kusama",
+		"token": "PICA",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 38,
+		"badges": [
+			"NFT",
+			" Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1617650667_efinity.png",
+		"name": "Efinity",
+		"status": "live on polkadot",
+		"token": "EFI",
+		"tokenPriceUSD": 0.421,
+		"w3fGrant": null
+	},
+	{
+		"id": 39,
+		"badges": [
+			"SmartContracts",
+			" DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/clover-network/clover",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/1642752687_clover_logo.png",
+		"name": "Clover Finance",
+		"status": "live on polkadot",
+		"token": "CLV",
+		"tokenPriceUSD": 0.37,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Easy-to-use blockchain infrastructure"
+		}
+	},
+	{
+		"id": 40,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/zeitgeistpm/zeitgeist",
+		"investorsCount": 9,
+		"logoURL": "https://parachains.info/images/parachains/zeitgeist.jpg",
+		"name": "Zeitgeist",
+		"status": "live on kusama",
+		"token": "ZTG",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 41,
+		"badges": [
+			"SmartContracts",
+			" DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/clover-network/clover",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1621334083_sakura.png",
+		"name": "Sakura",
+		"status": "live on kusama",
+		"token": "SKU",
+		"tokenPriceUSD": 0.061,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Easy-to-use blockchain infrastructure"
+		}
+	},
+	{
+		"id": 42,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/mangata-finance/mangata-node",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/1648977800_mangatax_logo..png",
+		"name": "Mangata X",
+		"status": "live on kusama",
+		"token": "MGX",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 43,
+		"badges": [
+			"DAO"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1643629099_9HERowVu_400x400.jpg",
+		"name": "KICO",
+		"status": "live on kusama",
+		"token": "KICO",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 44,
+		"badges": [
+			"DAO"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 39,
+		"logoURL": "https://parachains.info/images/parachains/1616322193_dorafactory.jpeg",
+		"name": "Dora Factory",
+		"status": "in auction on kusama",
+		"token": "DORA",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 45,
+		"badges": [
+			"Oracle",
+			" DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/Kylin-Network/kylin-collator",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1634597368_pichiu_logo.png",
+		"name": "Pichiu",
+		"status": "in auction on kusama",
+		"token": "PCHU",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 46,
+		"badges": [
+			"Data",
+			" Identity",
+			" Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/litentry/litentry-parachain",
+		"investorsCount": 13,
+		"logoURL": "https://parachains.info/images/parachains/1634393751_litentry_logo.png",
+		"name": "Litentry",
+		"status": "in auction on polkadot",
+		"token": "LIT",
+		"tokenPriceUSD": 1.47,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 47,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/aresprotocols/mars",
+		"investorsCount": 6,
+		"logoURL": "https://parachains.info/images/parachains/1634905180_mars_logo.png",
+		"name": "Mars",
+		"status": "in auction on kusama",
+		"token": "AMAS",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 48,
+		"badges": [
+			"NFT"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 6,
+		"logoURL": "https://parachains.info/images/parachains/1633128029_unique_network.png",
+		"name": "Unique Network",
+		"status": "in auction on polkadot",
+		"token": "UNQ",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 5,
+			"completed": 5,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 49,
+		"badges": [
+			"DeFi",
+			" Exchange",
+			" Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Polkadex-Substrate/Polkadex",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1616860225_polkadex.png",
+		"name": "Polkadex",
+		"status": "in auction on polkadot",
+		"token": "PDEX",
+		"tokenPriceUSD": 5.34,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "A decentralized, peer-peer, cryptocurrency exchange for DeFi ecosystem in Substrate"
+		}
+	},
+	{
+		"id": 50,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Coinversation/coinpro",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/coinversation_protocol.jpg",
+		"name": "Coinversation",
+		"status": "in auction on polkadot",
+		"token": "CTO",
+		"tokenPriceUSD": 0.095,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Decentralized exchange for trading synthetic assets"
+		}
+	},
+	{
+		"id": 51,
+		"badges": [
+			"DAO",
+			" NFT"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/1625164888_listen_logo.png",
+		"name": "Listen",
+		"status": "in auction on kusama",
+		"token": "LT",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Decentralized social network focusing on sound"
+		}
+	},
+	{
+		"id": 52,
+		"badges": [
+			"Data"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/DataHighway-DHX/DataHighway-Parachain",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/datahighway.jpg",
+		"name": "Tanganika Network",
+		"status": "in auction on kusama",
+		"token": "DHX",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 53,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1645699666_geminis_logo.png",
+		"name": "Geminis Network",
+		"status": "in auction on polkadot",
+		"token": "GEM",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 54,
+		"badges": [
+			"NFT",
+			" Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/bit-country/Metaverse-Network",
+		"investorsCount": 33,
+		"logoURL": "https://parachains.info/images/parachains/1630954877_bit_country_logo.jpg",
+		"name": "Bit.Country Continuum",
+		"status": "Testing On Westend / Rococo",
+		"token": "NUUM",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 55,
+		"badges": [
+			"DAO"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/SubDAO-Network/subDAO-contracts",
+		"investorsCount": 27,
+		"logoURL": "https://parachains.info/images/parachains/subdao.jpg",
+		"name": "SubDAO",
+		"status": "Testing On Westend / Rococo",
+		"token": "GOV",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 56,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/konomi-network/konomi-node",
+		"investorsCount": 25,
+		"logoURL": "https://parachains.info/images/parachains/1625164819_konomi_logo.png",
+		"name": "Konomi",
+		"status": "Testing On Westend / Rococo",
+		"token": "KONO",
+		"tokenPriceUSD": 0.173,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 57,
+		"badges": [
+			"Bridge",
+			" DeFi",
+			" SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/bifrost-finance/bifrost",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1618696351_photo_2021-03-12_15-24-06.jpg",
+		"name": "Bifrost Polkadot",
+		"status": "Testing On Westend / Rococo",
+		"token": "BNC",
+		"tokenPriceUSD": 0.965,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 58,
+		"badges": [
+			"Oracle",
+			" DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Kylin-Network/kylin-collator",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1625163815_kylin_network_logo.png",
+		"name": "Kylin Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "KYL",
+		"tokenPriceUSD": 0.077,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 59,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/digitalnativeinc/standard-substrate",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1633126596_unorthodox.png",
+		"name": "Unorthodox",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 60,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/digitalnativeinc/standard-substrate",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1618693614_standard_protocol.png",
+		"name": "Standard Protocol",
+		"status": "Testing On Westend / Rococo",
+		"token": "STND",
+		"tokenPriceUSD": 0.22,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 61,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/crustio/crust",
+		"investorsCount": 22,
+		"logoURL": "https://parachains.info/images/parachains/crust_network.jpg",
+		"name": "Crust Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "CRU",
+		"tokenPriceUSD": 4.02,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 62,
+		"badges": [
+			"Privacy",
+			" DeFi",
+			" SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Manta-Network/Manta",
+		"investorsCount": 20,
+		"logoURL": "https://parachains.info/images/parachains/1644265692_manta_logo.png",
+		"name": "Manta Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "MANTA",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 63,
+		"badges": [
+			"Bridge",
+			" Waitlist"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/pontem-network/pontem",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1612707223_34334444.png",
+		"name": "Pontem Nox",
+		"status": "Testing On Westend / Rococo",
+		"token": "NOX",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 64,
+		"badges": [
+			"Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/pontem-network/pontem",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1612707223_34334444.png",
+		"name": "Pontem",
+		"status": "Testing On Westend / Rococo",
+		"token": "PONT",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 65,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 15,
+		"logoURL": "https://parachains.info/images/parachains/apron_network.png",
+		"name": "Apron Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "APN",
+		"tokenPriceUSD": 0.01,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 66,
+		"badges": [
+			"Data"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 15,
+		"logoURL": "https://parachains.info/images/parachains/apron_network.png",
+		"name": "Kpron Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "KPN",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 67,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/idavollnetwork/idavoll",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/1618694468_logo.bfc930b8_cr.png",
+		"name": "Idavoll Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "IDV",
+		"tokenPriceUSD": 0.008,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 68,
+		"badges": [
+			"SmartContracts",
+			" DeFi",
+			" Scaling"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/OAK-Foundation/OAK-blockchain",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1645748245_oak_logo_.png",
+		"name": "OAK Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "OAK",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 69,
+		"badges": [
+			"Bridge",
+			" NFT",
+			" Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/darwinia-network/darwinia",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/darwinia.jpg",
+		"name": "Darwinia",
+		"status": "Testing On Westend / Rococo",
+		"token": "RING",
+		"tokenPriceUSD": 0.02,
+		"w3fGrant": {
+			"received": 3,
+			"completed": 3,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 70,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/aresprotocols/ares",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1634905171_ares_logo.png",
+		"name": "Ares Protocol",
+		"status": "Testing On Westend / Rococo",
+		"token": "ARES",
+		"tokenPriceUSD": 0.009,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 71,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/laminar-protocol/laminar-chain",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/laminar.jpg",
+		"name": "Laminar",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 72,
+		"badges": [
+			"DAO",
+			" NFT"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/InvArch/InvArch-node",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1633998038_invarch.png",
+		"name": "InvArch",
+		"status": "Testing On Westend / Rococo",
+		"token": "VARCH",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 73,
+		"badges": [
+			"DAO",
+			" DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/ImbueNetwork/imbue",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1642710488_imbue_logo.png",
+		"name": "Imbue Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "IMBU",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 74,
+		"badges": [
+			"Gaming"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/subgame.jpg",
+		"name": "SubGame Gamma",
+		"status": "Testing On Westend / Rococo",
+		"token": "GSGB",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 75,
+		"badges": [
+			"Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/subgame.jpg",
+		"name": "SubGame Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "SGB",
+		"tokenPriceUSD": 0.089,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 76,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/ShadowsNetwork/prism",
+		"investorsCount": 26,
+		"logoURL": "https://parachains.info/images/parachains/shadows_network.png",
+		"name": "Shadows Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "DOWS",
+		"tokenPriceUSD": 0.045,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Shadows Network: synthetic assets"
+		}
+	},
+	{
+		"id": 77,
+		"badges": [
+			"DeFi",
+			" SmartContracts"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/polkafoundry/newpolka",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/polkasmith.jpg",
+		"name": "PolkaSmith",
+		"status": "Testing On Westend / Rococo",
+		"token": "PKS",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 78,
+		"badges": [
+			"DeFi",
+			" SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1615753469_polkaf.jpeg",
+		"name": "PolkaFoundry",
+		"status": "Testing On Westend / Rococo",
+		"token": "PKF",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 79,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/subspace/subspace",
+		"investorsCount": 12,
+		"logoURL": "https://parachains.info/images/parachains/subspace.jpg",
+		"name": "Subspace",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 80,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/TrustBase/trustbase",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/trustbase.jpg",
+		"name": "TrustBase",
+		"status": "Testing On Westend / Rococo",
+		"token": "TBE",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 81,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/1625767630_loom.png",
+		"name": "Loom Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "LOOM",
+		"tokenPriceUSD": 0.087,
+		"w3fGrant": null
+	},
+	{
+		"id": 82,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/mathwallet/MathChain",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1618697551_mathwallet.png",
+		"name": "MathChain",
+		"status": "Testing On Westend / Rococo",
+		"token": "MATH",
+		"tokenPriceUSD": 0.273,
+		"w3fGrant": null
+	},
+	{
+		"id": 83,
+		"badges": [
+			"Privacy",
+			" Data"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/zCloak-Network/zcloak-node",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1625163978_zcloak_network_logo.png",
+		"name": "zCloak Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 84,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/chainx-org/ChainX",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/1630056398_sherpax_logo.png",
+		"name": "SherpaX",
+		"status": "Testing On Westend / Rococo",
+		"token": "KSX",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 85,
+		"badges": [
+			"Data",
+			" Waitlist"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/OriginTrail/origintrail-parachain",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/1633099627_origtail.png",
+		"name": "OriginTrail",
+		"status": "Testing On Westend / Rococo",
+		"token": "TRAC",
+		"tokenPriceUSD": 0.688,
+		"w3fGrant": null
+	},
+	{
+		"id": 86,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/valiu.jpg",
+		"name": "Valiu",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 87,
+		"badges": [
+			"DAO"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Joystream/joystream",
+		"investorsCount": 4,
+		"logoURL": "https://parachains.info/images/parachains/1616791155_joystr.png",
+		"name": "Joystream",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 88,
+		"badges": [
+			"NFT"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/capsule-corp-ternoa/chain",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/1614409853_ternoa.png",
+		"name": "Ternoa",
+		"status": "Testing On Westend / Rococo",
+		"token": "CAPS",
+		"tokenPriceUSD": 0.048,
+		"w3fGrant": null
+	},
+	{
+		"id": 89,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/DataHighway-DHX/DataHighway-Parachain",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/datahighway.jpg",
+		"name": "DataHighway",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 90,
+		"badges": [
+			"DAO",
+			" NFT",
+			" Bridge",
+			" Waitlist"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/Kabocha-Network/kabocha-node-old",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1635682298_kabocha_logo.png",
+		"name": "Kabocha",
+		"status": "Testing On Westend / Rococo",
+		"token": "KAB",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 91,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1614411199_zero.png",
+		"name": "Zero",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 92,
+		"badges": [
+			"NFT"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1637168424_uniarts_logo.png",
+		"name": "Uniarts Network",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 93,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1649023418_totem_kapex_logo.png",
+		"name": "Totem KAPEX",
+		"status": "Testing On Westend / Rococo",
+		"token": "KAPEX",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 94,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625163544_patract_logo.png",
+		"name": "Patract",
+		"status": "Testing On Westend / Rococo",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 95,
+		"badges": [
+			"DAO"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1643629099_9HERowVu_400x400.jpg",
+		"name": "DICO",
+		"status": "Testing On Westend / Rococo",
+		"token": "DICO",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 96,
+		"badges": [
+			"Scaling"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/celer-network/goCeler-oss",
+		"investorsCount": 38,
+		"logoURL": "https://parachains.info/images/parachains/1618695802_celer.jpg",
+		"name": "Celer Network",
+		"status": "Project announced",
+		"token": "CELR",
+		"tokenPriceUSD": 0.053,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 97,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 32,
+		"logoURL": "https://parachains.info/images/parachains/1615728501_cere.png",
+		"name": "Cere Network",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 98,
+		"badges": [
+			"Data",
+			" Identity"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/docknetwork/dock-substrate",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/dock.jpg",
+		"name": "Dock",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "DOCK",
+		"tokenPriceUSD": 0.043,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 99,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 13,
+		"logoURL": "https://parachains.info/images/parachains/1618693204_stone.png",
+		"name": "StoneDefi",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 100,
+		"badges": [
+			"Gaming",
+			" NFT",
+			" Scaling"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 13,
+		"logoURL": "https://parachains.info/images/parachains/1642419231_ajuna_logo.png",
+		"name": "Ajuna Network",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 101,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/stafiprotocol/stafi-node",
+		"investorsCount": 12,
+		"logoURL": "https://parachains.info/images/parachains/stafi.jpg",
+		"name": "Stafi",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "FIS",
+		"tokenPriceUSD": 0.713,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 102,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 11,
+		"logoURL": "https://parachains.info/images/parachains/1625164035_nsure_network_logo.png",
+		"name": "Nsure Network",
+		"status": "Project announced",
+		"token": "NSURE",
+		"tokenPriceUSD": 0.059,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 103,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/akropolisio/akropolis",
+		"investorsCount": 9,
+		"logoURL": "https://parachains.info/images/parachains/akropolis.jpg",
+		"name": "Akropolis",
+		"status": "Project announced",
+		"token": "AKRO",
+		"tokenPriceUSD": 0.013,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 104,
+		"badges": [
+			"DeFi",
+			" NFT",
+			" Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/deeper-chain/deeper-chain",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1635256969_deeper_logo.png",
+		"name": "Deeper Network",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "DPR",
+		"tokenPriceUSD": 0.077,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 105,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 7,
+		"logoURL": "https://parachains.info/images/parachains/1646647019_ruby_logo.png",
+		"name": "Ruby Protocol",
+		"status": "Project announced",
+		"token": "RUBY",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 106,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/t3rn/t3rn",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/1624809311_t3rn_logo2.png",
+		"name": "t3rn",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 107,
+		"badges": [
+			"DAO"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/opensquare-network/opensquare",
+		"investorsCount": 2,
+		"logoURL": "https://parachains.info/images/parachains/opensquare_network.jpg",
+		"name": "OpenSquare Network",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 2,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 108,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/LayerXcom/zero-chain",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/layerx_zerochain.jpg",
+		"name": "LayerX (ZeroChain)",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 109,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/datdotorg/datdot-node-rust",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/datdot.jpg",
+		"name": "DatDot",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 110,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/daohub-io/cap9",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/cap9.jpg",
+		"name": "Cap9",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 111,
+		"badges": [
+			"Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/ajuna-network/SubstrateNetApi",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1614419422_dotmog_logo.png",
+		"name": "DOT Mog",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 112,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/EvercityEcosystem/smart-sustainable-bond",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/evercity.jpg",
+		"name": "Evercity",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 2,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 113,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/zeropoolnetwork/zeropool-substrate-groth16-example",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/zeropool.jpg",
+		"name": "Zeropool",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 114,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Caelumlabs/caelumv2",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1618695958_caelum.png",
+		"name": "Caelum Labs",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 115,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/DipoleTech/dipole-oracle",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/dipole.jpg",
+		"name": "Dipole",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 116,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/definex/definex-libs",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1624882614_definex_logo.png",
+		"name": "Definex",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 117,
+		"badges": [
+			"Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/snowfork.jpg",
+		"name": "Snowfork",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 1,
+			"milestoneText": "",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 118,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1645001365_tea_project_logo.png",
+		"name": "TEA Project",
+		"status": "Project announced",
+		"token": "TEA",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	},
+	{
+		"id": 119,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/smartcontractkit/chainlink",
+		"investorsCount": 26,
+		"logoURL": "https://parachains.info/images/parachains/chainlink.jpg",
+		"name": "ChainLink",
+		"status": "Project announced",
+		"token": "LINK",
+		"tokenPriceUSD": 15.42,
+		"w3fGrant": null
+	},
+	{
+		"id": 120,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/subquery/subql",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1616675071_uIBpPMQ.png",
+		"name": "SubQuery Network",
+		"status": "Project announced",
+		"token": "SQT",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 121,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/bluzelle/curium",
+		"investorsCount": 24,
+		"logoURL": "https://parachains.info/images/parachains/1616359735_bluzelle.png",
+		"name": "Bluzelle",
+		"status": "Project announced",
+		"token": "BLZ",
+		"tokenPriceUSD": 0.175,
+		"w3fGrant": null
+	},
+	{
+		"id": 122,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/reef-defi/reef-chain",
+		"investorsCount": 23,
+		"logoURL": "https://parachains.info/images/parachains/1613680583_reef.jpeg",
+		"name": "Reef",
+		"status": "Project announced",
+		"token": "REEF",
+		"tokenPriceUSD": 0.01,
+		"w3fGrant": null
+	},
+	{
+		"id": 123,
+		"badges": [
+			"DeFi",
+			" Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 21,
+		"logoURL": "https://parachains.info/images/parachains/rio_chain.png",
+		"name": "RioDeFi",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "RFUEL",
+		"tokenPriceUSD": 0.026,
+		"w3fGrant": null
+	},
+	{
+		"id": 124,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/TidalFinance/tidal-contracts",
+		"investorsCount": 20,
+		"logoURL": "https://parachains.info/images/parachains/1615584315_logo_tidal.jpeg",
+		"name": "Tidal Finance",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 125,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Linear-finance/linear",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1616358631_linear.jpeg",
+		"name": "Linear",
+		"status": "Project announced",
+		"token": "LINA",
+		"tokenPriceUSD": 0.023,
+		"w3fGrant": null
+	},
+	{
+		"id": 126,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/1636097965_GBWnc5WK_400x400.jpg",
+		"name": "CoverCompared",
+		"status": "Project announced",
+		"token": "CVR",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 127,
+		"badges": [
+			"IOT"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 16,
+		"logoURL": "https://parachains.info/images/parachains/mxc.jpg",
+		"name": "MXC",
+		"status": "Project announced",
+		"token": "MXC",
+		"tokenPriceUSD": 0.112,
+		"w3fGrant": null
+	},
+	{
+		"id": 128,
+		"badges": [
+			"Data",
+			" Oracle"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/paralink-network/paralink-substrate",
+		"investorsCount": 15,
+		"logoURL": "https://parachains.info/images/parachains/paralink_network.jpg",
+		"name": "Paralink Network",
+		"status": "Project announced",
+		"token": "PARA",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 129,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/gear-tech/gear",
+		"investorsCount": 13,
+		"logoURL": "https://parachains.info/images/parachains/1640653024_gear_logo.png",
+		"name": "Gear",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 130,
+		"badges": [
+			"Gaming",
+			" NFT",
+			" Scaling"
+		],
+		"chain": "kusama",
+		"githubURL": "-",
+		"investorsCount": 13,
+		"logoURL": "https://parachains.info/images/parachains/1649424653_bajun_network_logo_2.png",
+		"name": "Bajun Network",
+		"status": "Project announced",
+		"token": "BAJUN",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 131,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/ethalend/ETHALend-v1-Contracts",
+		"investorsCount": 12,
+		"logoURL": "https://parachains.info/images/parachains/etha_lend.jpeg",
+		"name": "ETHA Lend",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "ETHA",
+		"tokenPriceUSD": 0.039,
+		"w3fGrant": null
+	},
+	{
+		"id": 132,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 12,
+		"logoURL": "https://parachains.info/images/parachains/1615733665_fractal.png",
+		"name": "Fractal",
+		"status": "Project announced",
+		"token": "FCL",
+		"tokenPriceUSD": 0.115,
+		"w3fGrant": null
+	},
+	{
+		"id": 133,
+		"badges": [
+			"Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 10,
+		"logoURL": "https://parachains.info/images/parachains/1616778302_royale_cr.png",
+		"name": "Royale",
+		"status": "Project announced",
+		"token": "ROYA",
+		"tokenPriceUSD": 0.018,
+		"w3fGrant": null
+	},
+	{
+		"id": 134,
+		"badges": [
+			"Privacy"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/automata-network/automata",
+		"investorsCount": 9,
+		"logoURL": "https://parachains.info/images/parachains/1625164760_automata_logo.png",
+		"name": "Automata Network",
+		"status": "Project announced",
+		"token": "ATA",
+		"tokenPriceUSD": 0.413,
+		"w3fGrant": null
+	},
+	{
+		"id": 135,
+		"badges": [
+			"Gaming",
+			" NFT"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1616345354_Exeedme_logo.jpg",
+		"name": "Exeedme",
+		"status": "Project announced",
+		"token": "XED",
+		"tokenPriceUSD": 0.194,
+		"w3fGrant": null
+	},
+	{
+		"id": 136,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 8,
+		"logoURL": "https://parachains.info/images/parachains/1616348901_mantradao.png",
+		"name": "Mantra DAO",
+		"status": "Project announced",
+		"token": "OM",
+		"tokenPriceUSD": 0.094,
+		"w3fGrant": null
+	},
+	{
+		"id": 137,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/Edgeware-Network/edgeware-node",
+		"investorsCount": 6,
+		"logoURL": "https://parachains.info/images/parachains/1634904257_edgeware_logo.png",
+		"name": "Edgeware",
+		"status": "Project has Mainnet (live blockchain)",
+		"token": "EDG",
+		"tokenPriceUSD": 0.005,
+		"w3fGrant": null
+	},
+	{
+		"id": 138,
+		"badges": [
+			"Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/chainx-org/ChainX",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/chainx.jpg",
+		"name": "ChainX",
+		"status": "Project announced",
+		"token": "PCX",
+		"tokenPriceUSD": 1.99,
+		"w3fGrant": null
+	},
+	{
+		"id": 139,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/mangata-finance/mangata-node",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/1626035892_mangata_logo.png",
+		"name": "Mangata",
+		"status": "Project announced",
+		"token": "MGA",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 140,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 5,
+		"logoURL": "https://parachains.info/images/parachains/bondly.jpg",
+		"name": "Bondly",
+		"status": "Project announced",
+		"token": "BONDLY",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 141,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/RaiFinance/raiswap-core",
+		"investorsCount": 4,
+		"logoURL": "https://parachains.info/images/parachains/1625163470_rai_finance_logo.png",
+		"name": "RAI Finance",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 142,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/1618696557_bandot.png",
+		"name": "Bandot",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Stablecoin"
+		}
+	},
+	{
+		"id": 143,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 3,
+		"logoURL": "https://parachains.info/images/parachains/1618695610_1_WNv096yF1E_Jfx3D1p-x_Q@2x.png",
+		"name": "Energy Web",
+		"status": "Project announced",
+		"token": "EWT",
+		"tokenPriceUSD": 5.52,
+		"w3fGrant": null
+	},
+	{
+		"id": 144,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/1618694181_oax.png",
+		"name": "OAX Foundation",
+		"status": "Project announced",
+		"token": "OAX",
+		"tokenPriceUSD": 0.119,
+		"w3fGrant": null
+	},
+	{
+		"id": 145,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/1624751156_1618693712_logo.4e127a3f_cr.png",
+		"name": "X Predict Market",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 146,
+		"badges": [
+			"Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 1,
+		"logoURL": "https://parachains.info/images/parachains/1616778734_polkabridge.png",
+		"name": "PolkaBridge",
+		"status": "Project announced",
+		"token": "PBR",
+		"tokenPriceUSD": 0.28,
+		"w3fGrant": null
+	},
+	{
+		"id": 147,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/compound-finance/gateway",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/compound_gateway.jpg",
+		"name": "Compound Gateway",
+		"status": "Project announced",
+		"token": "COMP",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 148,
+		"badges": [
+			"SmartContracts"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/kulupu/kulupu",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/kulupu.jpg",
+		"name": "Kulupu",
+		"status": "Project announced",
+		"token": "KLP",
+		"tokenPriceUSD": 0.008,
+		"w3fGrant": null
+	},
+	{
+		"id": 149,
+		"badges": [
+			"DeFi",
+			" Identity",
+			" IoT"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/peaqnetwork/peaq-network-node",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1646408091_peaq_network.jpg",
+		"name": "peaq",
+		"status": "Project announced",
+		"token": "PEAQ",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 150,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/SealSC/SealABC",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1618692920_seor.png",
+		"name": "Seal Oracle",
+		"status": "Project announced",
+		"token": "SEOR",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 151,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/mapprotocol/ori",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625164142_map_protocol_logo.png",
+		"name": "MAP Protocol",
+		"status": "Project announced",
+		"token": "MAP",
+		"tokenPriceUSD": 0.024,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Map Bridge: Connect Polkadot and other PoW chains"
+		}
+	},
+	{
+		"id": 152,
+		"badges": [],
+		"chain": "kusama",
+		"githubURL": "https://github.com/acuity-social/acuity-substrate",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625164092_acuity_social_logo.png",
+		"name": "Acuity Social",
+		"status": "Project announced",
+		"token": "ACU",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 153,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "https://github.com/sunriseprotocol/sunrise",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1616324312_sunrise.png",
+		"name": "Sunrise Protocol",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 154,
+		"badges": [
+			"DeFi",
+			" Exchange"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/CurioTeam/curio-parachain-node",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1626710260_curio_logo.png",
+		"name": "Curio",
+		"status": "Project announced",
+		"token": "CGT",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 155,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625164595_bestay_logo.png",
+		"name": "Bestay",
+		"status": "Project announced",
+		"token": "BSY",
+		"tokenPriceUSD": 0.005,
+		"w3fGrant": null
+	},
+	{
+		"id": 156,
+		"badges": [
+			"Parathread"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/polimec.jpg",
+		"name": "Polimec",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 157,
+		"badges": [
+			"NFT",
+			" Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1615718018_dego2.jpeg",
+		"name": "DEGO Finance",
+		"status": "Project announced",
+		"token": "DEGO",
+		"tokenPriceUSD": 3.33,
+		"w3fGrant": null
+	},
+	{
+		"id": 158,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625164196_wiv_logo.png",
+		"name": "Wiv",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 0,
+			"completed": 0,
+			"milestoneText": "",
+			"terminated": true,
+			"terminationReason": "Supply chain modules and front-end UI"
+		}
+	},
+	{
+		"id": 159,
+		"badges": [
+			"DAO",
+			" Gaming"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/gamedao.png",
+		"name": "GameDAO",
+		"status": "Project announced",
+		"token": "PLAY",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 160,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1618696026_bitgreen.png",
+		"name": "BitGreen",
+		"status": "Project announced",
+		"token": "BITG",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 161,
+		"badges": [
+			"Exchange"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/summa_network.jpg",
+		"name": "Summa Network",
+		"status": "Project announced",
+		"token": "SUM",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 162,
+		"badges": [
+			"Oracle"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1625163371_hazel_logo.png",
+		"name": "Hazel",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 163,
+		"badges": [
+			"Bridge"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/cdot.png",
+		"name": "Cdot",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 164,
+		"badges": [
+			"Data"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/shift.jpg",
+		"name": "Shift",
+		"status": "Project announced",
+		"token": "SHIFT",
+		"tokenPriceUSD": 0.653,
+		"w3fGrant": null
+	},
+	{
+		"id": 165,
+		"badges": [],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/everlife_ai.jpeg",
+		"name": "EverLife",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 166,
+		"badges": [
+			"Parathread"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1626247376_pulse_network_logo.png",
+		"name": "Pulse Network",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 167,
+		"badges": [
+			"Parathread"
+		],
+		"chain": "polkadot",
+		"githubURL": "-",
+		"investorsCount": 0,
+		"logoURL": "https://parachains.info/images/parachains/1626247376_pulse_network_logo.png",
+		"name": "Pulse Network",
+		"status": "Project announced",
+		"token": "",
+		"tokenPriceUSD": null,
+		"w3fGrant": null
+	},
+	{
+		"id": 168,
+		"badges": [
+			"DeFi"
+		],
+		"chain": "kusama",
+		"githubURL": "https://github.com/pendulum-chain/pendulum",
+		"investorsCount": 6,
+		"logoURL": "https://parachains.info/images/parachains/1656914852_amplitude_logo.jpg",
+		"name": "Amplitude",
+		"status": "live on kusama",
+		"token": "AMPE",
+		"tokenPriceUSD": null,
+		"w3fGrant": {
+			"received": 1,
+			"completed": 0,
+			"milestoneText": "the first milestone delivered",
+			"terminated": false,
+			"terminationReason": ""
+		}
+	}
+]

@@ -134,7 +134,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 			)}
 
 			<div
-				className='mt-1 flex flex-col rounded-md border border-solid border-[#D2D8E0] px-4 py-2 dark:border-separatorDark dark:bg-transparent'
+				className='flex flex-col rounded-md border border-solid border-[#D2D8E0] px-4 py-2 dark:border-separatorDark dark:bg-transparent'
 				style={{
 					background: 'rgba(210, 216, 224, 0.20)'
 				}}

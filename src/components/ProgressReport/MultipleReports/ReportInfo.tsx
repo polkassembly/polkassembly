@@ -165,7 +165,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 			</div>
 			<h1 className='m-0 mt-1 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{postData?.title}</h1>
 			{report?.progress_summary ? (
-				<div className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
+				<div className='m-0 -mt-1 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
 					<Markdown
 						className='post-content m-0 p-0'
 						md={summaryToShow}

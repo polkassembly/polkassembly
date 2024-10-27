@@ -22,6 +22,7 @@ export async function _processProposalCreated({
 	proposerAddress: string;
 }) {
 	// process reputation scores for proposal 'Create Proposal / Referendum', 'Create Tip', 'Create Bounty', 'Create Child Bounty'
+	console.log('Processing proposal created', network, proposalIndex, proposalType, proposerAddress);
 	let score = 0;
 
 	const createdAt = await getProposalCreatedAt(network, proposalIndex, proposalType);

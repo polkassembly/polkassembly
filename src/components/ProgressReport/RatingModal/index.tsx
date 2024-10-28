@@ -99,7 +99,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 							/>
 						)}
 					</>
-					{reportData?.ratings?.length && (
+					{reportData?.ratings?.length && reportData?.ratings?.length > 0 && (
 						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>{reportData?.ratings?.length} users have already rated the progress report.</p>
 					)}
 				</div>

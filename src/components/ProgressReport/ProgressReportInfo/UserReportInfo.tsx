@@ -102,7 +102,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 									expandIconPosition='end'
 									expandIcon={({ isActive }) =>
-										isActive ? <ArrowDownIcon className='mt-1.5 rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='mt-1.5 dark:text-blue-dark-medium' />
+										isActive ? <ArrowDownIcon className=' rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className=' dark:text-blue-dark-medium' />
 									}
 									defaultActiveKey={index === 0 ? ['1'] : []}
 								>

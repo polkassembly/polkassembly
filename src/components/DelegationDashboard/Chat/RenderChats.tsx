@@ -6,15 +6,17 @@ import React from 'react';
 import { IChat } from '~src/types';
 import ChatCard from './ChatCard';
 import { List } from 'antd';
+import Image from 'next/image';
 
 interface Props {
 	className?: string;
 	chats: IChat[];
 	handleOpenChat: (chat: IChat) => void;
+	handleNewChat: () => void;
 }
 
-const RenderChats = ({ className, handleOpenChat, chats }: Props) => {
-	return (
+const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props) => {
+	return chats?.length > 0 ? (
 		<div className={`${className} h-full w-full overflow-y-auto`}>
 			<List
 				itemLayout='horizontal'
@@ -29,6 +31,28 @@ const RenderChats = ({ className, handleOpenChat, chats }: Props) => {
 					</List.Item>
 				)}
 			/>
+		</div>
+	) : (
+		<div className='flex h-full w-full flex-col items-center justify-center text-bodyBlue dark:text-blue-dark-high'>
+			<Image
+				src='/assets/icons/delegation-chat/empty.svg'
+				height={160}
+				width={160}
+				alt='empty chat icon'
+				className='border border-pink_primary'
+			/>
+			<div className='text-center text-bodyBlue dark:text-blue-dark-high'>
+				<h2 className='text-xl font-bold'>No Message Found</h2>
+				<p className='flex items-center justify-center gap-1'>
+					<span
+						className='cursor-pointer border-none font-semibold text-pink_primary'
+						onClick={handleNewChat}
+					>
+						Add
+					</span>
+					New Message
+				</p>
+			</div>
 		</div>
 	);
 };

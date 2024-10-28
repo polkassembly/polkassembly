@@ -15,9 +15,10 @@ interface Props {
 	className?: string;
 	isNewChat: boolean;
 	setIsNewChat: (isNewChat: boolean) => void;
+	handleNewChat: () => void;
 }
 
-const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
+const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
@@ -81,6 +82,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat }: Props) => {
 				>
 					<RenderChats
 						handleOpenChat={handleChatToggle}
+						handleNewChat={handleNewChat}
 						chats={selectedChatTab === 'sent' ? sentChats : receivedChats}
 					/>
 				</Spin>

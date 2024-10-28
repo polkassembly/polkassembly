@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Drawer, Button } from 'antd';
+import { Drawer, Button, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -30,10 +30,14 @@ const ChatWithDelegates = ({ className }: Props) => {
 		setIsMinimized(false);
 	};
 
+	const startNewChat = () => {
+		setIsNewChat(true);
+	};
+
 	const chatHeaderActions: IChatHeaderAction[] = [
 		{
 			icon: '/assets/icons/delegation-chat/add-message-icon.svg',
-			onClick: () => setIsNewChat(true),
+			onClick: startNewChat,
 			title: 'Add message'
 		},
 		{
@@ -51,17 +55,19 @@ const ChatWithDelegates = ({ className }: Props) => {
 
 	return (
 		<>
-			<Button
-				onClick={openChat}
-				className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
-			>
-				<Image
-					src={'/assets/icons/delegation-chat/message-icon.svg'}
-					height={20}
-					width={20}
-					alt='message icon'
-				/>
-			</Button>
+			<Tooltip title='Messages'>
+				<Button
+					onClick={openChat}
+					className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
+				>
+					<Image
+						src={'/assets/icons/delegation-chat/message-icon.svg'}
+						height={20}
+						width={20}
+						alt='message icon'
+					/>
+				</Button>
+			</Tooltip>
 			<Drawer
 				title={<ChatHeader actions={chatHeaderActions} />}
 				open={isModalOpen}
@@ -71,12 +77,13 @@ const ChatWithDelegates = ({ className }: Props) => {
 				closable={false}
 				contentWrapperStyle={{ boxShadow: 'none', transform: 'none' }}
 				style={{ position: 'fixed', right: '50px', top: 'auto', zIndex: '999' }}
-				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
+				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md shadow-xl dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
 				bodyStyle={{ display: isMinimized ? 'none' : 'block', maxHeight: '440px', padding: '0px' }}
 			>
 				<UserChats
 					isNewChat={isNewChat}
 					setIsNewChat={setIsNewChat}
+					handleNewChat={startNewChat}
 				/>
 			</Drawer>
 		</>

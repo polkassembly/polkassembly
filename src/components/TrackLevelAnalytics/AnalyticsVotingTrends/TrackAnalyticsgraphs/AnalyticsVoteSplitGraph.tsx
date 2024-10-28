@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-/* eslint-disable sort-keys */
-
 import { ResponsiveBar } from '@nivo/bar';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
@@ -18,6 +15,7 @@ import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import Skeleton from '~src/basic-components/Skeleton';
 import { IAnalyticsVoteSplitGraph } from '../../types';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 
@@ -50,6 +48,7 @@ const StyledCard = styled(Card)`
 const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScreen }: IAnalyticsVoteSplitGraph) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -81,8 +80,8 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 		return {
 			abstain: bnToIntBalance(item.abstain || ZERO) || 0,
 			aye: bnToIntBalance(item.aye || ZERO) || 0,
-			nay: bnToIntBalance(item.nay || ZERO) || 0,
-			index: item.index
+			index: item.index,
+			nay: bnToIntBalance(item.nay || ZERO) || 0
 		};
 	});
 
@@ -104,19 +103,19 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-base font-semibold sm:text-xl'>Vote Split</h2>
+				<h2 className='text-base font-semibold sm:text-xl'>{t('vote_split')}</h2>
 				<div className='-mt-2 hidden items-center gap-2 sm:flex sm:gap-[14px]'>
 					<div className='flex items-center gap-1'>
 						<div className='h-1 w-1 rounded-full bg-[#6DE1A2]'></div>
-						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Aye</div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>{t('aye')}</div>
 					</div>
 					<div className='flex items-center gap-1'>
 						<div className='h-1 w-1 rounded-full bg-[#FF778F]'></div>
-						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Nay</div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>{t('nay')}</div>
 					</div>
 					<div className='flex items-center gap-1'>
 						<div className='h-1 w-1 rounded-full bg-[#407BFF]'></div>
-						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Abstain</div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>{t('abstain')}</div>
 					</div>
 				</div>
 			</div>
@@ -134,18 +133,14 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							valueScale={{ type: 'linear' }}
 							borderRadius={2}
 							colors={(bar) => colors[bar.id]}
-							defs={[
-								{ id: 'dots', type: 'patternDots', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', size: 4, padding: 1, stagger: true },
-								{ id: 'lines', type: 'patternLines', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', rotation: -45, lineWidth: 6, spacing: 10 }
-							]}
 							borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
 							axisTop={null}
 							axisRight={null}
 							axisBottom={{
-								tickValues: tickValues,
 								tickPadding: 5,
 								tickRotation: 0,
 								tickSize: 5,
+								tickValues: tickValues,
 								truncateTickAt: 0
 							}}
 							axisLeft={{
@@ -205,7 +200,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							}}
 							animate={true}
 							groupMode='stacked'
-							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} ${t('voters')}` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 					{votesSplitData.length > 10 ? (
@@ -222,7 +217,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 									formatter: (value) => {
 										if (value !== undefined && value >= 0 && value < votesSplitData.length) {
 											const dataIndex = votesSplitData[value].index;
-											return `Referenda: ${dataIndex}`;
+											return `${t('referenda')}: ${dataIndex}`;
 										}
 										return '';
 									}

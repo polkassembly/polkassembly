@@ -40,6 +40,7 @@ import { CloseIcon, TipIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Select from '~src/basic-components/Select';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -62,6 +63,7 @@ export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenD
 
 const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { receiverAddress } = useTippingDataSelector();
@@ -285,7 +287,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<TipIcon className='mr-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-						Give a Tip
+						{t('give_a_tip')}
 					</div>
 				}
 				open={open}
@@ -301,7 +303,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
 							buttonsize='xs'
-							text='Go Back'
+							text={t('go_back')}
 						/>
 						<CustomButton
 							variant='primary'
@@ -311,7 +313,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							onClick={handleTip}
 							className={`font-semibold ${disable && 'opacity-50'}`}
 							buttonsize='xs'
-							text='Tip'
+							text={t('tip')}
 						/>
 					</div>
 				}
@@ -321,7 +323,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 					tip={loadingStatus.message}
 				>
 					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('your_address')}</label>
 						{address && (
 							<Balance
 								isBalanceUpdated={isBalanceUpdated}
@@ -353,7 +355,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 					</div>
 					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
 						<div className='mt-6'>
-							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('receiver_address')}</label>
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
@@ -397,7 +399,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 						>
 							<div className='mt-0 border-0 pt-6'>
 								<span className='text-[15px] font-medium tracking-wide text-bodyBlue dark:text-blue-dark-medium'>
-									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
+									{t('select_tip')} {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
 								</span>
 								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium'>
 									{TIPS.map((tip) => {
@@ -427,7 +429,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								</div>
 								<BalanceInput
 									setInputValue={setTipInput}
-									label='Or enter the custom amount you would like to Tip'
+									label={t('enter_custom_amount')}
 									placeholder='Enter Amount'
 									address={address}
 									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
@@ -451,7 +453,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 										className='mt-6 rounded-[4px] text-bodyBlue'
 										showIcon
 										type='error'
-										message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 									/>
 								) : null}
 
@@ -473,7 +475,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) && !!existentialDeposit && (
 							<div className='mt-4 flex items-center gap-4 text-sm'>
 								<span className='font-medium tracking-wide text-lightBlue dark:text-blue-dark-medium'>
-									Existential Deposit
+									{t('existential_deposit')}
 									<HelperTooltip
 										className='ml-1'
 										text='Minimum balance to keep address live'

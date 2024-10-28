@@ -215,7 +215,7 @@ export function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: 
 
 export const SidebarFoot1 = () => {
 	const { resolvedTheme: theme } = useTheme();
-	const { t } = useTranslation('common'); // Initialize the translation function
+	const { t } = useTranslation('common');
 
 	return (
 		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white pb-4 before:pointer-events-none before:absolute before:left-0 before:right-0 before:top-0 before:z-[1] before:h-[3px] before:shadow-[0px_-2px_6px_rgba(0,0,0,0.08)] before:content-[""] dark:bg-section-dark-overlay md:pb-0 lg:pb-5 xl:h-[5vw]'>

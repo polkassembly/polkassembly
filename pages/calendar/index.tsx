@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Checkbox, MenuProps, Spin } from 'antd';
+import { Button, Checkbox, MenuProps, Spin } from 'antd';
 import { Badge, Col, Divider, Row, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
@@ -660,8 +660,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 				{accessible && (
 					<div className='mt-2 flex w-full items-center justify-center gap-2 text-base font-medium text-sidebarBlue dark:text-blue-dark-medium'>
 						Show Pending Events:
-						<button
-							type='button'
+						<Button
 							className={`flex h-5 w-10 items-center rounded-full border border-pink_primary bg-pink-200 outline-none ${
 								queryApprovalStatus == approvalStatus.APPROVED ? 'justify-start' : 'justify-end'
 							}`}
@@ -670,7 +669,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						>
 							<span className='hidden'>toggle pending events button</span>
 							<span className='h-5 w-5 rounded-full border-none bg-pink_primary' />
-						</button>
+						</Button>
 					</div>
 				)}
 
@@ -733,10 +732,6 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 							/>
 						) : (
 							<div className='flex max-h-screen flex-col gap-y-6 overflow-y-hidden px-4'>
-								<Skeleton />
-								<Skeleton />
-								<Skeleton />
-								<Skeleton />
 								<Skeleton />
 							</div>
 						)}

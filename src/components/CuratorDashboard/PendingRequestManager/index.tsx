@@ -6,46 +6,52 @@ import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
-import RequestTabs from './RequestTabs';
-import { EPendingCuratorSectionType, RequestCount, TabId } from '../types/types';
+import { EChildBountyPendingReqSection, RequestCount } from '../types/types';
+import RequestTabs from '../PendingRequestManager/RequestTabs';
 
 function CuratorPendingRequestManager() {
-	const [selectedTab, setSelectedTab] = useState<TabId>(EPendingCuratorSectionType.CURATORREQUESTS);
-	const currentUser = useUserDetailsSelector();
 	const router = useRouter();
+	const { loginAddress } = useUserDetailsSelector();
+	const [selectedTab, setSelectedTab] = useState<EChildBountyPendingReqSection>(EChildBountyPendingReqSection.CURATOR_REQUESTS);
 
 	const [requestCount, setRequestCount] = useState<RequestCount>({ curator: 0, submissions: 0 });
+
 	const tabs = [
-		{ count: requestCount?.curator, id: EPendingCuratorSectionType.CURATORREQUESTS, label: 'Curator Requests' },
-		{ count: requestCount?.submissions, id: EPendingCuratorSectionType.SUBMISSIONS, label: 'Submissions' }
+		{ count: requestCount?.curator, id: EChildBountyPendingReqSection.CURATOR_REQUESTS, label: 'Curator Requests' },
+		{ count: requestCount?.submissions, id: EChildBountyPendingReqSection.SUBMISSION_REQUESTS, label: 'Submissions' }
 	];
-	const handleTabChange = (tabId: EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS) => {
+
+	const handleTabChange = (tabId: EChildBountyPendingReqSection) => {
 		setSelectedTab(tabId);
-		router.push(`/bounty-dashboard/curator-dashboard?section=${tabId}`);
+
+		router.replace({
+			pathname: '',
+			query: {
+				...router?.query,
+				section: tabId
+			}
+		});
 	};
 
-	const fetchbountyreqcount = async () => {
-		const { data, error } = await nextApiClientFetch<any>('/api/v1/bounty/curator/getReqCount', {
-			userAddress: currentUser?.loginAddress
+	const fetchRequestsCount = async () => {
+		if (!loginAddress) return;
+		const { data, error } = await nextApiClientFetch<{ curator: number; submissions: number }>('/api/v1/bounty/curator/getReqCount', {
+			userAddress: loginAddress
 		});
 		if (data) setRequestCount(data);
 		if (error) console.log(error, 'error');
 	};
 
-	useEffect(
-		() => {
-			fetchbountyreqcount();
-		},
+	useEffect(() => {
+		fetchRequestsCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
-	const TotalSubmissionCount = requestCount?.curator + requestCount?.submissions;
+	}, [loginAddress]);
 
 	return (
 		<div
-			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
+			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-section-light-container bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
-			<p className='text-[24px] font-bold text-blue-light-high dark:text-lightWhite'>Pending Requests ({TotalSubmissionCount})</p>
+			<p className='text-2xl font-bold text-bodyBlue dark:text-lightWhite'>Pending Requests ({requestCount?.curator + requestCount.submissions})</p>
 
 			<div className='mt-4 flex gap-1'>
 				{tabs.map((tab) => (

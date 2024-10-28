@@ -29,14 +29,14 @@ interface IBountyChildBountiesProps {
 	open: boolean;
 	editing?: boolean;
 	submission?: IChildBountySubmission | null;
-	onSubmissionCreated: (created: boolean) => void;
+	onSubmissionCreated?: (newSubmissions: any) => void;
 }
 
 const ZERO_BN = new BN(0);
 
 const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
-	const { bountyId, ModalTitle, open, setOpen, editing = false, submission, onSubmissionCreated = false } = props;
+	const { bountyId, ModalTitle, open, setOpen, editing = false, submission, onSubmissionCreated } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const [title, setTitle] = useState<string>('');
 	const [content, setContent] = useState<string>('');
@@ -47,7 +47,6 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 
 	const handleSubmit = async () => {
 		setLoading(true);
-
 		const url = editing ? '/api/v1/bounty/curator/submissions/editSubmission' : '/api/v1/bounty/curator/submissions/addSubmissions';
 		const { data, error } = await nextApiClientFetch<MessageType>(url, {
 			content,
@@ -65,9 +64,14 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 				message: data?.message || 'Child Bounty Sumbission added successfully',
 				status: NotificationStatus.SUCCESS
 			});
-			if (typeof onSubmissionCreated === 'function') {
-				onSubmissionCreated(true);
-			}
+			onSubmissionCreated?.({
+				...submission,
+				content: content || submission?.content || '',
+				link: link || submission?.link || '',
+				parentBountyIndex: Number(bountyId) || submission?.parentBountyIndex,
+				reqAmount: reqAmount || submission?.reqAmount || '0',
+				title: title || submission?.title || ''
+			});
 			setOpen(false);
 		}
 		if (error) {

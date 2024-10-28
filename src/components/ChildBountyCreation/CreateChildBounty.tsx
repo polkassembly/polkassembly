@@ -37,9 +37,10 @@ interface Props {
 	setOpenSuccessModal: (pre: boolean) => void;
 	setCloseModal: () => void;
 	multisigData: { signatories: string[]; threshold: number };
+	handleSuccess?: () => void;
 }
 
-const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData }: Props) => {
+const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData, handleSuccess }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress, multisigAssociatedAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -158,10 +159,11 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		if (data?.post_id) {
 			queueNotification({
 				header: 'Thanks for sharing!',
-				message: 'Bounty created successfully.',
+				message: 'Child Bounty created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
+			handleSuccess?.();
 		}
 	};
 

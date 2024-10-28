@@ -1041,6 +1041,8 @@ export interface IChildBountySubmission {
 	};
 	id: string;
 	rejectionMessage?: string;
+	expand?: boolean;
+	loading?: boolean;
 }
 
 export enum EChildbountySubmissionStatus {
@@ -1061,6 +1063,9 @@ export interface IPendingCuratorReq extends IBountyListing {
 	proposalType: ProposalType;
 	content: string;
 	parentBountyIndex?: number;
+	accepted?: boolean;
+	expand?: boolean;
+	loading?: boolean;
 }
 
 export interface ISubsquidChildBontyAndBountyRes {

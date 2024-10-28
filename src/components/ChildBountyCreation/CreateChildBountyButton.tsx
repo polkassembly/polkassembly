@@ -7,10 +7,10 @@
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ChildBountyCreationForm from '.';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import classNames from 'classnames';
 
-const CreateChildBountyButton = ({ className }: { className?: string }) => {
+const CreateChildBountyButton = ({ className, children, handleSuccess }: { className?: string; children?: ReactNode; handleSuccess?: () => void }) => {
 	const [openModal, setOpenModal] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
@@ -18,19 +18,21 @@ const CreateChildBountyButton = ({ className }: { className?: string }) => {
 		<div className={classNames(className, 'flex items-center justify-center ')}>
 			<CustomButton
 				type='primary'
-				className='w-full cursor-pointer'
+				className='w-full cursor-pointer text-pink_primary'
 				onClick={() => setOpenModal(true)}
 			>
-				<div className='flex items-center justify-center gap-2 text-pink_primary'>
-					<Image
-						src='/assets/icons/child-bounty-icon.svg'
-						height={14}
-						width={14}
-						alt='child_bounties'
-						className={'pink-icons'}
-					/>
-					<span className='text-sm font-semibold text-pink_primary'>Create Child Bounty</span>
-				</div>
+				{children || (
+					<div className='flex items-center justify-center gap-2 text-pink_primary'>
+						<Image
+							src='/assets/icons/child-bounty-icon.svg'
+							height={14}
+							width={14}
+							alt='child_bounties'
+							className={'pink-icons'}
+						/>
+						<span className='text-sm font-semibold text-pink_primary'>Create Child Bounty</span>
+					</div>
+				)}
 			</CustomButton>
 
 			{(openModal || openSuccessModal) && (
@@ -39,6 +41,7 @@ const CreateChildBountyButton = ({ className }: { className?: string }) => {
 					setOpen={setOpenModal}
 					setOpenSuccessModal={setOpenSuccessModal}
 					openSuccessModal={openSuccessModal}
+					handleSuccess={handleSuccess}
 				/>
 			)}
 		</div>

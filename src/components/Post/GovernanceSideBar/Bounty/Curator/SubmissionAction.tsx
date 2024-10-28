@@ -6,18 +6,20 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { EditOutlined, ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EChildbountySubmissionStatus } from '~src/types';
+import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import CreateChildBountyButton from '~src/components/ChildBountyCreation/CreateChildBountyButton';
 
 interface SubmissionActionProps {
 	submission: any;
-	showApproveModal?: (submission: any) => void;
-	showRejectModal?: (submission: any) => void;
-	handleDelete: (submission: any) => Promise<void>;
-	handleEditClick: (submission: any) => void;
+	handleApprove?: () => void;
+	showRejectModal?: (pre: boolean) => void;
+	handleDelete: (re?: IChildBountySubmission) => Promise<void>;
+	handleEditClick: (pre: boolean, sec?: IChildBountySubmission) => void;
+	isApproveButton?: boolean;
 }
 
 const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
@@ -46,10 +48,9 @@ const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
 	);
 };
 
-const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleDelete, handleEditClick, showApproveModal, showRejectModal }) => {
+const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = false, submission, handleDelete, handleEditClick, handleApprove, showRejectModal }) => {
 	const [loading, setLoading] = useState(false);
-	const currentUser = useUserDetailsSelector();
-	const loginAddress = currentUser?.loginAddress;
+	const { loginAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const encodedAddress = getEncodedAddress(loginAddress, network);
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
@@ -59,35 +60,30 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleD
 		await handleDelete(submission);
 		setLoading(false);
 	};
-
 	return (
 		<>
 			<div className='flex w-full'>
 				{submission?.bountyData?.curator === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
-					<>
-						{' '}
-						<span
-							role='button'
-							tabIndex={0}
-							aria-label='Reject submission'
-							onKeyDown={(e) => e.key === 'Enter' && showRejectModal?.(submission)}
-							onClick={() => showRejectModal?.(submission)}
-							className='w-1/2 cursor-pointer rounded-md border border-solid border-pink_primary py-2 text-center text-[14px] font-medium text-pink_primary'
-						>
-							Reject
-						</span>
-						<span
-							role='button'
-							tabIndex={0}
-							aria-label='Approve submission'
-							onKeyDown={(e) => e.key === 'Enter' && showApproveModal?.(submission)}
-							onClick={() => showApproveModal?.(submission)}
-							className='w-1/2 cursor-pointer rounded-md bg-pink_primary py-2 text-center font-medium text-white'
-						>
-							Approve
-						</span>
-					</>
-				) : submission?.proposer === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
+					isApproveButton && (
+						<div className='flex w-full gap-2'>
+							<CustomButton
+								variant='default'
+								aria-label='Reject submission'
+								onKeyDown={(e) => e.key === 'Enter' && showRejectModal?.(true)}
+								onClick={() => showRejectModal?.(true)}
+								className='w-1/2'
+							>
+								Reject
+							</CustomButton>
+							<CreateChildBountyButton
+								className='w-1/2 text-pink_primary'
+								handleSuccess={handleApprove}
+							>
+								Approve
+							</CreateChildBountyButton>
+						</div>
+					)
+				) : getEncodedAddress(submission?.proposer, network) === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
 					<div className='flex w-full gap-2'>
 						<CustomButton
 							variant='default'
@@ -100,7 +96,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleD
 						</CustomButton>
 						<CustomButton
 							variant='primary'
-							onClick={() => handleEditClick(submission)}
+							onClick={() => handleEditClick(true, submission)}
 							disabled={loading}
 							className='h-8 w-full'
 						>
@@ -111,6 +107,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ submission, handleD
 					<StatusUI status={submission?.status} />
 				)}
 			</div>
+			{/* Confirm delete  */}
 			<Modal
 				maskClosable={false}
 				open={isDeleteConfirm}

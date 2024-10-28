@@ -27,9 +27,10 @@ interface ICreateBounty {
 	openSuccessModal: boolean;
 	setOpen: (pre: boolean) => void;
 	setOpenSuccessModal: (pre: boolean) => void;
+	handleSuccess?: () => void;
 }
 
-const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, setOpenSuccessModal }: ICreateBounty) => {
+const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, setOpenSuccessModal, handleSuccess }: ICreateBounty) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -124,6 +125,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 							setOpenSuccessModal={setOpenSuccessModal}
 							setCloseModal={() => setOpen(false)}
 							multisigData={multisigData}
+							handleSuccess={handleSuccess}
 						/>
 					)}
 				</div>

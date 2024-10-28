@@ -37,7 +37,7 @@ export const SubmissionsEmptyState = ({ activeTab }: { activeTab: EChildbountySu
 				width={320}
 				height={320}
 			/>
-			<span className='-mt-20 mb-5 text-base font-medium text-blue-light-medium dark:text-white'>No {activeTab} submissions</span>
+			<span className='-mt-20 mb-5 text-base font-medium text-lightBlue dark:text-white'>No {activeTab} submissions</span>
 		</div>
 	);
 };
@@ -89,10 +89,10 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | undefined>(undefined);
 
-	const handleEditClick = (submission: IChildBountySubmission) => {
+	const handleEditClick = (value: boolean, submission?: IChildBountySubmission) => {
 		setEditSubmission(submission);
-		setIsEditing(true);
-		setIsModalVisible(true);
+		setIsEditing(value);
+		setIsModalVisible(value);
 	};
 
 	const handleSubmissionClick = () => {
@@ -101,7 +101,8 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 		setIsModalVisible(true);
 	};
 
-	const handleDelete = async (submission: IChildBountySubmission) => {
+	const handleDelete = async (submission?: IChildBountySubmission) => {
+		if (!submission) return;
 		const payload = {
 			curatorAddress: currentUser?.loginAddress,
 			parentBountyIndex: submission?.parentBountyIndex,
@@ -187,7 +188,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === null
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						All
@@ -197,7 +198,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === EChildbountySubmissionStatus.PENDING
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						Pending
@@ -207,7 +208,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === EChildbountySubmissionStatus.REJECTED
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-blue-light-medium shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
 						Rejected
@@ -237,23 +238,19 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 											type='vertical'
 											className='border-l-1 m-0 border-lightBlue p-0 dark:border-icon-dark-inactive'
 										/>
-										<div className='flex items-center gap-1'>
-											<ImageIcon
-												src={theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}
-												alt='timer'
-												className='text-xs text-blue-light-medium dark:text-icon-dark-inactive'
-											/>
-											<span className='whitespace-nowrap text-xs text-blue-light-medium dark:text-icon-dark-inactive'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</span>
-										</div>
-										<Divider
-											type='vertical'
-											className='border-l-1 m-0 border-lightBlue p-0 dark:border-icon-dark-inactive'
-										/>
 										<span className='ml-1 whitespace-nowrap text-xs font-semibold text-pink_primary'>{parseBalance(String(submission?.reqAmount || '0'), 2, true, network)}</span>
 									</div>
+									<div className='mt-2 flex items-center gap-1 px-0.5'>
+										<ImageIcon
+											src={theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}
+											alt='timer'
+											className='text-xs text-lightBlue dark:text-icon-dark-inactive'
+										/>
+										<span className='whitespace-nowrap text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(submission?.createdAt)?.format('Do MMM YYYY')}</span>
+									</div>
 									<div className='mt-2 pb-2'>
-										<span className='text-sm font-medium text-blue-light-medium dark:text-icon-dark-inactive'>#{index + 1} </span>
-										<span className='text-sm font-medium text-blue-light-high hover:underline dark:text-white'>{submission?.title}</span>
+										<span className='text-sm font-medium text-lightBlue dark:text-icon-dark-inactive'>#{index + 1} </span>
+										<span className='text-sm font-medium text-lightBlue hover:underline dark:text-white'>{submission?.title}</span>
 									</div>
 									{submission?.status === EChildbountySubmissionStatus.OUTDATED && (
 										<Alert

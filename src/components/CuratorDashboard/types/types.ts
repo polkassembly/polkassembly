@@ -19,12 +19,6 @@ export interface CuratorData {
 	};
 }
 
-export enum EPendingCuratorSectionType {
-	CURATORREQUESTS = 'curatorRequests',
-	SUBMISSIONS = 'submissions'
-}
-export type TabId = EPendingCuratorSectionType.CURATORREQUESTS | EPendingCuratorSectionType.SUBMISSIONS;
-
 export interface RequestCount {
 	curator: number;
 	submissions: number;
@@ -38,4 +32,9 @@ export interface CuratorData {
 export interface CuratorRequestData {
 	curator: number;
 	submissions: number;
+}
+
+export enum EChildBountyPendingReqSection {
+	CURATOR_REQUESTS = 'curator_req',
+	SUBMISSION_REQUESTS = 'sumbission_req'
 }

@@ -3,81 +3,94 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Divider, Input, Modal } from 'antd';
-import AddressDropdown from '~src/ui-components/AddressDropdown';
+import { Divider, Modal } from 'antd';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
+import InputTextarea from '~src/basic-components/Input/InputTextarea';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 function RejectModal({
-	isRejectModalVisible,
-	handleCancel,
+	open,
+	setOpen,
 	handleReject,
 	comment,
 	setComment
 }: {
-	isRejectModalVisible: boolean;
-	handleCancel: () => void;
+	open: boolean;
+	setOpen: (pre: boolean) => void;
 	handleReject: () => void;
+	setComment: (pre: string) => void;
 	comment: string;
-	setComment: (comment: string) => void;
 }) {
-	const currentUser = useUserDetailsSelector();
+	const { loginAddress } = useUserDetailsSelector();
+
 	return (
 		<div>
 			<Modal
+				className={classNames(poppins.className, poppins.variable)}
 				title={
-					<>
-						<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>Reject Submission</span>
-					</>
+					<div className='text-bodyBlue dark:text-white'>
+						<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-lg font-bold'>Reject Submission</span>
+					</div>
 				}
-				visible={isRejectModalVisible}
-				onCancel={handleCancel}
-				footer={[
-					<Button
-						key='cancel'
-						onClick={handleCancel}
-						className='w-24 rounded-md border border-solid border-pink_primary pb-2 text-center text-[14px] font-medium text-pink_primary'
-					>
-						Cancel
-					</Button>,
-					<Button
-						key='reject'
-						type='primary'
-						className='w-24 rounded-md bg-pink_primary pb-2 text-center font-medium text-white'
-						onClick={handleReject}
-					>
-						Reject
-					</Button>
-				]}
+				open={open}
+				onCancel={() => setOpen(false)}
+				footer={
+					<div className='mt-6 flex w-full items-center justify-end gap-1'>
+						<CustomButton
+							variant='default'
+							key='cancel'
+							onClick={() => setOpen(false)}
+							height={30}
+							width={100}
+						>
+							Cancel
+						</CustomButton>
+						<CustomButton
+							key='reject'
+							variant='primary'
+							type='primary'
+							onClick={handleReject}
+							disabled={!comment?.length}
+							height={30}
+							width={100}
+						>
+							Reject
+						</CustomButton>
+					</div>
+				}
 			>
 				<Divider
 					className='m-0 mb-3'
 					style={{ borderColor: '#D2D8E0' }}
 				/>
-				<div>
+				<div className='mt-6'>
 					<label
 						htmlFor='account'
-						className='mb-1 block text-sm text-blue-light-medium'
+						className='mb-0.5 block text-sm text-lightBlue dark:text-white'
 					>
 						Account
 					</label>
-					<AddressDropdown
-						accounts={currentUser?.addresses?.map((address) => ({ address })) || []}
-						defaultAddress={currentUser?.loginAddress}
-						onAccountChange={(newAddress) => {
-							console.log('Account changed to:', newAddress);
-						}}
-					/>
+					<div className='flex h-10 items-center rounded-sm border-[1px] border-solid  border-section-light-container px-3 dark:border-separatorDark'>
+						<Address
+							address={loginAddress}
+							displayInline
+							disableTooltip
+							isTruncateUsername={false}
+						/>
+					</div>
 
 					<label
 						htmlFor='comment'
-						className='mb-1 mt-3 block text-sm text-blue-light-medium'
+						className='mb-0.5 mt-4 block text-sm text-lightBlue dark:text-white'
 					>
 						Add Comment <span className='text-pink_primary'>*</span>
 					</label>
-					<Input.TextArea
+					<InputTextarea
 						id='comment'
 						placeholder='Add Comment'
-						rows={4}
 						value={comment}
 						onChange={(e) => setComment(e.target.value)}
 					/>

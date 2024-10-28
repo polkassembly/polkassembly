@@ -9,7 +9,6 @@ import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
 import CuratorPendingRequestManager from './PendingRequestManager';
-
 interface Props {
 	handleClick: () => void;
 }

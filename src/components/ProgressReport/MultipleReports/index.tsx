@@ -12,6 +12,13 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { usePostDataContext } from '~src/context';
 import ReportInfo from './ReportInfo';
+import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
+import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
+import dayjs from 'dayjs';
+import { ClockCircleOutlined } from '@ant-design/icons';
+
+const { Panel } = Collapse;
 
 interface IUploadMultipleReports {
 	className?: string;
@@ -20,10 +27,12 @@ interface IUploadMultipleReports {
 
 const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 	const { className } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const { postData } = usePostDataContext();
 	const { loginAddress } = useUserDetailsSelector();
+
 	const dispatch = useDispatch();
 
 	return (
@@ -68,14 +77,41 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 							}
 						>
 							<>
-								<ReportInfo
-									report={report}
-									index={index}
-								/>
+								<Collapse
+									size='large'
+									theme={theme as any}
+									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
+									expandIconPosition='end'
+									expandIcon={({ isActive }) =>
+										isActive ? <ArrowDownIcon className='rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='dark:text-blue-dark-medium' />
+									}
+									defaultActiveKey={index === 0 ? ['1'] : []}
+								>
+									<Panel
+										header={
+											<div className='flex items-center justify-between'>
+												<div className='flex items-center gap-x-2'>
+													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
+														Object.keys(postData?.progress_report).length - index
+													}`}</h1>
+													<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
+													<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs.unix(report?.created_at?._seconds).format('DD MMM YYYY')}</p>
+													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+												</div>
+											</div>
+										}
+										key='1'
+									>
+										<ReportInfo
+											report={report}
+											index={index}
+										/>
+									</Panel>
+								</Collapse>
 								{index + 1 !== Object.keys(postData.progress_report).length && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
-										className='mt-6 dark:bg-separatorDark'
+										className='mt-5 dark:bg-separatorDark'
 									/>
 								)}
 							</>
@@ -108,5 +144,23 @@ export default styled(UploadMultipleReports)`
 	}
 	.ant-timeline .ant-timeline-item-tail {
 		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1.5px solid #4b4b4b' : '1.5px solid #485f7d')} !important;
+	}
+	.ant-collapse-header {
+		padding: 0 !important;
+	}
+	.ant-timeline .ant-timeline-item-tail {
+		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1.5px solid #4b4b4b' : '1.5px solid #485f7d')} !important;
+	}
+	.ant-collapse {
+		border: none !important;
+	}
+	.ant-collapse .ant-collapse-content {
+		border: none !important;
+	}
+	.ant-collapse > .ant-collapse-item {
+		border: none !important;
+	}
+	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+		padding: 0 !important;
 	}
 `;

@@ -95,6 +95,7 @@ const ProgressReportTab = ({ className }: Props) => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			dispatch(progressReportActions.setReportUploaded(false));
 		} else {
 			console.log('failed to save report');
 		}

@@ -73,6 +73,7 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			dispatch(progressReportActions.setReportUploaded(false));
 			localStorage.removeItem('progress_report');
 		} else {
 			console.error('failed to save report');

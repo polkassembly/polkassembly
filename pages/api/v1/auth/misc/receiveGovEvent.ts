@@ -30,6 +30,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const network = req.headers['x-network'] as string;
 
+	console.log('Line 33: network:', network);
+
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid x-network header' });
 
 	if (req.headers['x-api-key'] !== process.env.GOV_EVENT_API_KEY) {
@@ -44,12 +46,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		addressTo: string;
 	};
 
+	console.log('Line 48: body:', event, address, proposalIndex, proposalType, addressTo);
+
 	if (!event) return res.status(400).json({ message: 'Missing event in request body' });
 
 	const substrateAddress = getSubstrateAddress(address);
 
+	console.log('Line 54: substrateAddress:', substrateAddress);
+
 	switch (event) {
 		case EReputationEvent.PROPOSAL_ENDED: {
+			console.log('processing... proposal ended');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType)) {
 				return res.status(400).json({ message: 'Missing proposalIndex or proposalType in request body' });
 			}
@@ -65,6 +73,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.PROPOSAL_CREATED: {
+			console.log('processing... proposal created');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -80,6 +90,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.VOTED: {
+			console.log('processing... voted');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -95,6 +107,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.BOUNTY_CLAIMED: {
+			console.log('processing... bounty claimed');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -110,6 +124,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.TIPPED: {
+			console.log('processing... tipped');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -125,6 +141,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.DECISION_DEPOSIT_PLACED: {
+			console.log('processing... decision deposit placed');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -141,6 +159,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.REMOVED_VOTE: {
+			console.log('processing... removed vote');
+
 			if (!proposalIndex || !proposalType || !isValidSubsquidProposalType(proposalType) || !substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -156,6 +176,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.DELEGATED: {
+			console.log('processing... delegated');
 			if (!substrateAddress || !addressTo) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -176,6 +197,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.UNDELEGATED: {
+			console.log('processing... undelegated');
+
 			if (!substrateAddress || !addressTo) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -196,6 +219,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.IDENTITY_VERIFICATION_SIGN_UP: {
+			console.log('processing... identity verification sign up');
 			if (!substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -209,6 +233,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 
 		case EReputationEvent.COMPLETE_JUDGEMENT: {
+			console.log('processing... complete judgement');
 			if (!substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}
@@ -223,6 +248,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 		case EReputationEvent.IDENTITY_CLEARED:
 		case EReputationEvent.IDENTITY_KILLED: {
+			console.log('processing... identity cleared or killed');
 			if (!substrateAddress) {
 				return res.status(400).json({ message: 'Missing parameters in request body' });
 			}

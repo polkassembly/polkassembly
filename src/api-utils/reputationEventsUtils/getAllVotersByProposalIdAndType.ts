@@ -18,6 +18,7 @@ export async function getAllVotersByProposalIdAndType({
 }): Promise<string[]> {
 	// fetch all voters until votes array is returned empty from db
 	const voters: string[] = [];
+	console.log('Fetching all voters for proposal', network, proposalIndex, proposalType);
 
 	let offset = 0;
 	let fetchedVotesLength = 0;

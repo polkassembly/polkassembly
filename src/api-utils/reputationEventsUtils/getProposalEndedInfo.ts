@@ -7,6 +7,7 @@ import { GET_PROPOSAL_ENDED_INFO } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export async function getProposalEndedInfo(network: string, proposalIndex: string, proposalType: TSubsquidProposalType) {
+	console.log('Fetching proposal ended info', network, proposalIndex, proposalType);
 	const subsquidRes = await fetchSubsquid({
 		network,
 		query: GET_PROPOSAL_ENDED_INFO,
@@ -15,6 +16,7 @@ export async function getProposalEndedInfo(network: string, proposalIndex: strin
 			type_eq: proposalType
 		}
 	});
+	console.log('subsquidRes', subsquidRes);
 
 	return {
 		endedAt: (subsquidRes?.data?.proposals?.[0]?.endedAt as string) || null,

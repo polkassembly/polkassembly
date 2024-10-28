@@ -24,7 +24,7 @@ export async function _processRemovedVote({
 	proposalType: TSubsquidProposalType;
 }) {
 	// process reputation scores for proposal 'Removing casted vote or reducing conviction (6+ hours after first vote)'
-
+	console.log('Processing removed vote', network, voterAddress, proposalIndex, proposalType);
 	// find timestamp of first vote on proposal and current vote timestamp
 	const voteTimestampsSubsquidRes = await fetchSubsquid({
 		network,

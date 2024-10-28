@@ -24,6 +24,7 @@ export async function _processVoted({
 }) {
 	// process reputation scores for proposal 'Vote on Treasury Proposal'
 
+	console.log('Processing voted', network, voterAddress, proposalIndex, proposalType);
 	const createdAt = await getVoteCreatedAt(network, proposalIndex, proposalType, voterAddress);
 
 	//create activity for user for proposal voted

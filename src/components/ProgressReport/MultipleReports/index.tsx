@@ -16,7 +16,8 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import dayjs from 'dayjs';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
+import { IRating } from '~src/types';
 
 const { Panel } = Collapse;
 
@@ -34,6 +35,60 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
 
 	const dispatch = useDispatch();
+
+	const getRatingInfo = (ratings: IRating[]) => {
+		return ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / ratings?.length;
+	};
+
+	const renderStars = (report: any) => {
+		if (getRatingInfo(report?.ratings)) {
+			const averageRating = getRatingInfo(report?.ratings);
+			const fullStars = Math.floor(averageRating);
+			const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+			const totalStars = fullStars + halfStar;
+
+			const starsArray = [];
+
+			for (let i = 0; i < fullStars; i++) {
+				starsArray.push(
+					<StarFilled
+						key={i}
+						style={{ color: '#fadb14' }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			if (halfStar) {
+				starsArray.push(
+					<StarFilled
+						key='half'
+						style={{ color: '#fadb14', opacity: 0.5 }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			for (let i = totalStars; i < 5; i++) {
+				starsArray.push(
+					<StarFilled
+						key={`empty-${i}`}
+						style={{ color: '#d9d9d9' }}
+						className='scale-110'
+					/>
+				);
+			}
+
+			return starsArray;
+		}
+
+		return Array.from({ length: 5 }, (_, i) => (
+			<StarFilled
+				key={i}
+				style={{ color: '#d9d9d9' }}
+			/>
+		));
+	};
 
 	return (
 		<section className={`${className} mt-1`}>
@@ -98,6 +153,11 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 													<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs.unix(report?.created_at?._seconds).format('DD MMM YYYY')}</p>
 													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 												</div>
+												{report?.ratings?.length > 0 && (
+													<p className='m-0 ml-auto flex items-center p-0 text-xs font-normal text-sidebarBlue dark:text-blue-dark-medium'>
+														Avg Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars(report)}</div>
+													</p>
+												)}
 											</div>
 										}
 										key='1'

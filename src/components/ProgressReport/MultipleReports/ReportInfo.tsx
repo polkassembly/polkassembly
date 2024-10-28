@@ -1,14 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import { Button } from 'antd';
 import { useTheme } from 'next-themes';
 import { useDispatch } from 'react-redux';
 import { usePostDataContext } from '~src/context';
 import { progressReportActions } from '~src/redux/progressReport';
-import { IRating, NotificationStatus } from '~src/types';
-import { StarFilled } from '@ant-design/icons';
+import { NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 import SummaryContentForm from '~src/components/SummaryContentForm';
@@ -25,37 +24,14 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 	const { report, index } = props;
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
-	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
-	const [showFullSummary, setShowFullSummary] = useState<boolean>(false);
 	const [summary_content, setSummaryContent] = useState<string>(report.progress_summary);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showContentForm, setShowContentForm] = useState<boolean>(false);
-	const [summaryToShow, setSummaryToShow] = useState<string>('');
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
 	} = usePostDataContext();
-
-	useEffect(() => {
-		getRatingInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postData?.progress_report]);
-
-	useEffect(() => {
-		if (report?.progress_summary) {
-			setSummaryToShow(report.progress_summary.length > 300 ? `${report.progress_summary.slice(0, 300)}...` : report.progress_summary);
-		}
-	}, [report?.progress_summary]);
-
-	const getRatingInfo = () => {
-		setAverageRating(report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / report?.ratings?.length);
-	};
-
-	const toggleSummary = () => {
-		setShowFullSummary((prev) => !prev);
-		setSummaryToShow(() => (!showFullSummary && report?.progress_summary?.length > 200 ? report.progress_summary : `${report?.progress_summary.slice(0, 200)}...`));
-	};
 
 	const editProgressReport = async () => {
 		setLoading(true);
@@ -98,55 +74,6 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 		}
 	};
 
-	const renderStars = () => {
-		if (averageRating) {
-			const fullStars = Math.floor(averageRating);
-			const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
-			const totalStars = fullStars + halfStar;
-
-			const starsArray = [];
-
-			for (let i = 0; i < fullStars; i++) {
-				starsArray.push(
-					<StarFilled
-						key={i}
-						style={{ color: '#fadb14' }}
-						className='scale-110'
-					/>
-				);
-			}
-
-			if (halfStar) {
-				starsArray.push(
-					<StarFilled
-						key='half'
-						style={{ color: '#fadb14', opacity: 0.5 }}
-						className='scale-110'
-					/>
-				);
-			}
-
-			for (let i = totalStars; i < 5; i++) {
-				starsArray.push(
-					<StarFilled
-						key={`empty-${i}`}
-						style={{ color: '#d9d9d9' }}
-						className='scale-110'
-					/>
-				);
-			}
-
-			return starsArray;
-		}
-
-		return Array.from({ length: 5 }, (_, i) => (
-			<StarFilled
-				key={i}
-				style={{ color: '#d9d9d9' }}
-			/>
-		));
-	};
-
 	return (
 		<article className='ml-1 mt-4 flex flex-col justify-start gap-y-1'>
 			<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{postData?.title}</h1>
@@ -154,17 +81,9 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 				<div className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
 					<Markdown
 						className='post-content m-0 p-0'
-						md={summaryToShow}
+						md={report?.progress_summary}
 						theme={theme}
 					/>
-					{report?.progress_summary.length > 200 && (
-						<Button
-							className='m-0 mb-1 flex h-3 items-center gap-x-1 border-none bg-transparent p-0 text-xs text-pink_primary shadow-none'
-							onClick={toggleSummary}
-						>
-							{showFullSummary ? 'Show less' : 'Show more'}
-						</Button>
-					)}
 				</div>
 			) : (
 				<div className='mb-1 flex items-center gap-x-2 text-sm font-medium'>
@@ -186,7 +105,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 			<div className='flex items-center justify-between'>
 				{report?.progress_summary && (
 					<Button
-						className='m-0 mr-auto flex h-3 items-center gap-x-1 border-none bg-transparent p-0 text-xs text-pink_primary'
+						className='m-0 mr-auto flex h-3 items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium text-pink_primary'
 						onClick={() => {
 							setShowContentForm(!showContentForm);
 						}}
@@ -197,11 +116,6 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 						/>{' '}
 						Edit Summary
 					</Button>
-				)}
-				{report?.ratings?.length > 0 && (
-					<p className='m-0 ml-auto flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-						Avg Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
-					</p>
 				)}
 			</div>
 			{showContentForm && (

@@ -32,7 +32,7 @@ const ChatHeader = ({ actions }: Props) => {
 					<Button
 						key={action.title}
 						onClick={action.onClick}
-						className={`flex h-6 w-6 items-center justify-center border-none bg-transparent p-0 shadow-none ${action?.className}`}
+						className={`flex h-7 w-7 items-center justify-center rounded-full border-none bg-transparent p-2 shadow-none hover:bg-black/5 ${action?.className}`}
 					>
 						<Image
 							src={action.icon}

@@ -121,8 +121,9 @@ const NewChat = ({ handleOpenChat }: Props) => {
 						setSearchAddress(e.target.value.trim());
 					}}
 					onPressEnter={handleSearch}
+					ref={(input) => input?.focus()}
 					placeholder='Enter an address to send message'
-					className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+					className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white focus:border-pink_primary dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 				/>
 			</div>
 			<Spin

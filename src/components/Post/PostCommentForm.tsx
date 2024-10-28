@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined } from '@ant-design/icons';
-import { Button, Form } from 'antd';
+import { Button, Form, Popover, Radio } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -33,6 +33,10 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import { useQuoteCommentContext } from '~src/context';
+import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
+import Address from '~src/ui-components/Address';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -59,10 +63,10 @@ const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted } = props;
-	const { id, username, picture, loginAddress } = useUserDetailsSelector();
+	const currentUser = useUserDetailsSelector();
+	const { id, username, addresses, picture, loginAddress } = currentUser;
 	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
-
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
@@ -78,6 +82,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [selectedIcon, setSelectedIcon] = useState(null);
 	const [isPosted, setIsPosted] = useState(false);
 	const [formContent, setFormContent] = useState('');
+	const [linkedAddress, setLinkedAddress] = useState(loginAddress);
+	const dispatch = useDispatch();
 
 	const { setQuotedText } = useQuoteCommentContext();
 
@@ -309,16 +315,56 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isComment]);
 
+	const handleAddressChange = (newLinkedAddress: string) => {
+		dispatch(setUserDetailsState({ ...currentUser, loginAddress: newLinkedAddress }));
+		setLinkedAddress(newLinkedAddress);
+	};
+
 	if (!id) return <div>You must log in to comment.</div>;
 
 	return (
 		<div className={className}>
-			<UserAvatar
-				className='mt-4 hidden md:inline-block'
-				username={username || ''}
-				size={'large'}
-				id={id}
-			/>
+			<div className='flex items-start gap-2'>
+				<UserAvatar
+					className='mt-4 hidden md:inline-block'
+					username={username || ''}
+					size={'large'}
+					id={id}
+				/>
+				{addresses && addresses.length > 1 && (
+					<Popover
+						placement='top'
+						content={
+							<Radio.Group
+								onChange={(e) => handleAddressChange(e.target.value)}
+								value={linkedAddress}
+								className='flex flex-col'
+							>
+								{addresses.map((address) => (
+									<div
+										key={address}
+										className='flex w-full items-center justify-between gap-2 py-2'
+									>
+										<div className='flex items-center'>
+											<Address
+												iconSize={22}
+												address={address}
+												displayInline
+												isTruncateUsername={false}
+												disableTooltip
+											/>
+										</div>
+
+										<Radio value={address} />
+									</div>
+								))}
+							</Radio.Group>
+						}
+					>
+						<ArrowDownIcon className='mt-7' />
+					</Popover>
+				)}
+			</div>
 			{isPosted ? (
 				<div className='comment-message -mt-[4px]'>
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>

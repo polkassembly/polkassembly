@@ -45,7 +45,7 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 			page: page || 1,
 			proposalType: proposalType,
 			reqType,
-			userAddress: '12GkpkHocU4y1vFV2CpnA2AhkjzGGRtwucHFY77A5yyiQKp5'
+			userAddress: loginAddress
 		});
 
 		if (data?.data?.length) {

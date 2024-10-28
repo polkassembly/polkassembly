@@ -174,7 +174,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					</h4>
 				</div>
 				{canViewAll && (
-					<Link href='/curator-dashboard'>
+					<Link href='/bounty-dashboard/curator-dashboard'>
 						<p className='text-sm font-medium text-pink_primary'>View All</p>
 					</Link>
 				)}

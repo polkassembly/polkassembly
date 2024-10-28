@@ -63,14 +63,15 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		}
 	};
 
-	const handleSearch = () => {
+	const handleSearch = (searchAddress: string) => {
 		if (!searchAddress.length) {
 			setSearchedDelegates(allDelegates);
 			return;
 		}
 
 		const filteredDelegates = allDelegates.filter(
-			(delegate) => delegate.address.toLowerCase().match(searchAddress.toLowerCase()) || (delegate.username && delegate.username.toLowerCase().match(searchAddress.toLowerCase()))
+			(delegate) =>
+				delegate.address.toLowerCase().includes(searchAddress.toLowerCase()) || (delegate.username && delegate.username.toLowerCase().includes(searchAddress.toLowerCase()))
 		);
 		setSearchedDelegates(filteredDelegates);
 	};
@@ -119,8 +120,8 @@ const NewChat = ({ handleOpenChat }: Props) => {
 							setSearchedDelegates(allDelegates || []);
 						}
 						setSearchAddress(e.target.value.trim());
+						handleSearch(e.target.value.trim());
 					}}
-					onPressEnter={handleSearch}
 					ref={(input) => input?.focus()}
 					placeholder='Enter an address to send message'
 					className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white focus:border-pink_primary dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

@@ -15,6 +15,7 @@ import { EAllowedCommentor } from '~src/types';
 import BN from 'bn.js';
 import { BN_HUNDRED } from '@polkadot/util';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess'), {
 	ssr: false
@@ -52,9 +53,9 @@ interface Props {
 }
 
 enum ESteps {
-	WRITE_PROPOSAL = 'Write a Proposal',
-	CREATE_BOUNTY = 'Create Bounty',
-	CREATE_REFERENDUM = 'Create Referendum'
+	WRITE_PROPOSAL = 'write_proposal',
+	CREATE_BOUNTY = 'create_bounty',
+	CREATE_REFERENDUM = 'create_referendum'
 }
 
 const BountyActionModal = ({
@@ -69,6 +70,7 @@ const BountyActionModal = ({
 	setProposerAddress,
 	theme
 }: Props) => {
+	const { t } = useTranslation();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [writeProposalForm] = Form.useForm();
@@ -87,7 +89,6 @@ const BountyActionModal = ({
 	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 	const [isBounty, setIsBounty] = useState<boolean | null>(null);
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
-	// const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
 	const [bountyId, setBountyId] = useState<number | null>(null);
@@ -124,20 +125,20 @@ const BountyActionModal = ({
 					isProposalCreation
 					closable
 					linkAddressNeeded
-					accountSelectionFormTitle='Select Proposer Address'
+					accountSelectionFormTitle={t('select_proposer_address')}
 					onConfirm={(address: string) => {
 						setOpenModal(true);
 						setProposerAddress(address);
 					}}
-					walletAlertTitle={'Creating a Bounty Proposal'}
-					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
+					walletAlertTitle={t('creating_bounty_proposal')}
+					accountAlertTitle={t('install_wallet_create_address')}
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 					usedInIdentityFlow={false}
 				/>
 			)}
 
-			{/* cross button modal */}
+			{/* Exit confirmation modal */}
 			<Modal
 				maskClosable={false}
 				open={closeConfirm}
@@ -151,19 +152,17 @@ const BountyActionModal = ({
 				closable={false}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Proposal Creation
+						{t('exit_proposal_creation')}
 					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
-					</span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{t('exit_confirmation_message')}</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleClose}
 							buttonsize='sm'
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							variant='default'
 						/>
 						<CustomButton
@@ -173,14 +172,14 @@ const BountyActionModal = ({
 							}}
 							height={40}
 							width={200}
-							text='No, Continue Editing'
+							text={t('no_continue_editing')}
 							variant='primary'
 						/>
 					</div>
 				</div>
 			</Modal>
 
-			{/* main modal */}
+			{/* Main modal */}
 			<Modal
 				open={openModal}
 				maskClosable={false}
@@ -195,7 +194,7 @@ const BountyActionModal = ({
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
-						Create Bounty Proposal
+						{t('create_bounty_proposal')}
 					</div>
 				}
 			>
@@ -208,13 +207,13 @@ const BountyActionModal = ({
 						labelPlacement='vertical'
 						items={[
 							{
-								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.WRITE_PROPOSAL}</span>
+								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{t(ESteps.WRITE_PROPOSAL)}</span>
 							},
 							{
-								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.CREATE_BOUNTY}</span>
+								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{t(ESteps.CREATE_BOUNTY)}</span>
 							},
 							{
-								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.CREATE_REFERENDUM}</span>
+								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{t(ESteps.CREATE_REFERENDUM)}</span>
 							}
 						]}
 					/>
@@ -298,8 +297,8 @@ const BountyActionModal = ({
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
 				image='/assets/Gifs/login-treasury.gif'
-				title='Join Polkassembly to Create a New proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_create_proposal')}
+				subtitle={t('discuss_contribute_updates')}
 			/>
 		</div>
 	);

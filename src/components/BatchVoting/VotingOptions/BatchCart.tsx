@@ -25,12 +25,14 @@ import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuc
 import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 interface IBatchCartProps {
 	className?: string;
 }
 
 const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
+	const { t } = useTranslation();
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -67,21 +69,20 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 
 	useEffect(() => {
 		getVoteCartData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const onFailed = (error: string) => {
 		queueNotification({
-			header: 'failed!',
-			message: error || 'Transaction failed!',
+			header: t('failed'),
+			message: error || t('transaction_failed'),
 			status: NotificationStatus.ERROR
 		});
 	};
 
 	const onSuccess = async () => {
 		queueNotification({
-			header: 'success!',
-			message: 'Transaction successful!',
+			header: t('success'),
+			message: t('transaction_successful'),
 			status: NotificationStatus.SUCCESS
 		});
 		setIsDisable(true);
@@ -158,7 +159,6 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		if (vote_cart_data && vote_cart_data?.length > 0) {
 			getGASFees();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [vote_cart_data]);
 
 	return (
@@ -169,7 +169,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						type='info'
 						showIcon
 						className='icon-alert mt-2'
-						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-white'>All Votes will be made with</span>}
+						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-white'>{t('all_votes_made_with')}</span>}
 						description={
 							<Address
 								disableTooltip
@@ -180,7 +180,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						}
 					/>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
-						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
+						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>{t('summary')}</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
 					{!isLoading && vote_cart_data.length <= 0 && !!loginAddress.length && (
@@ -188,7 +188,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							<PostEmptyState
 								description={
 									<div className='p-5 text-center'>
-										<p>Currently no active proposals found in cart</p>
+										<p>{t('no_active_proposals_in_cart')}</p>
 									</div>
 								}
 							/>
@@ -215,11 +215,11 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
 					<div className='flex flex-col gap-y-2'>
 						<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>{t('total_proposals')}</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 						</div>
 						<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{t('gas_fees')}</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
@@ -229,7 +229,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							onClick={voteProposals}
 							disabled={isDisable}
 						>
-							Confirm Batch Voting
+							{t('confirm_batch_voting')}
 						</Button>
 					</div>
 				</article>
@@ -243,7 +243,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					<CustomButton
 						variant='primary'
 						className='w-full'
-						text='close'
+						text={t('close')}
 						onClick={() => {
 							setOpenSuccessModal(false);
 						}}

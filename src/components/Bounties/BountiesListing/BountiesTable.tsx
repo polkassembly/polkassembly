@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect, useState } from 'react';
 import { Progress, Spin, Tag } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CaretUpOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Popover from '~src/basic-components/Popover';
 import Address from '~src/ui-components/Address';
@@ -22,6 +21,7 @@ import { IBountyListing } from './types/types';
 import Link from 'next/link';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { BN } from 'bn.js';
+import { useTranslation } from 'next-i18next';
 
 interface IOnchainBountiesProps {
 	bounties: IBountyListing[];
@@ -30,8 +30,9 @@ interface IOnchainBountiesProps {
 const ZERO_BN = new BN(0);
 
 const Categories = ({ categories }: { categories: string[] }) => {
+	const { t } = useTranslation();
 	if (!categories?.length) {
-		return <span>N/A</span>;
+		return <span>{t('not_available')}</span>;
 	}
 
 	return (
@@ -50,12 +51,14 @@ const Categories = ({ categories }: { categories: string[] }) => {
 };
 
 const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
+	const { t } = useTranslation();
 	const { resolvedTheme: theme = 'light' } = useTheme();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
 	const [bounties, setBounties] = useState<IBountyListing[]>(props.bounties);
+
 	const handleRowClick = (record: IBountyListing) => {
 		router.push(`/bounty/${record?.index}`);
 	};
@@ -129,7 +132,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					)}
 				</div>
 			),
-			title: 'Curator'
+			title: t('curator')
 		},
 		{
 			className: 'max-w-[227px] w-[227px] m-0 p-0 px-5',
@@ -144,7 +147,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Title'
+			title: t('title')
 		},
 		{
 			className: 'w-[100px]',
@@ -158,7 +161,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				) : (
 					'-'
 				),
-			title: 'Amount'
+			title: t('amount')
 		},
 		{
 			className: 'w-[90px]',
@@ -190,7 +193,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Claimed'
+			title: t('claimed')
 		},
 		{
 			className: 'w-[120px]',
@@ -216,14 +219,13 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</>
 				);
 			},
-			title: 'Date'
+			title: t('date')
 		},
-
 		{
 			dataIndex: 'status',
 			key: 'status',
 			render: (status: string) => <div>{status ? <StatusTag status={status} /> : '-'}</div>,
-			title: 'Status'
+			title: t('status')
 		},
 		{
 			dataIndex: 'categories',
@@ -231,7 +233,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			render: (categories: string[]) => {
 				return <Categories categories={categories || []} />;
 			},
-			title: 'Categories',
+			title: t('categories'),
 			width: 100
 		}
 	];
@@ -265,7 +267,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 									/>
 								) : (
 									<Popover
-										content={<p className='m-0 dark:text-white'>Expand to view Child Bounties</p>}
+										content={<p className='m-0 dark:text-white'>{t('expand_to_view_child_bounties')}</p>}
 										placement='top'
 										trigger='hover'
 									>
@@ -309,13 +311,13 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 																	<ImageIcon
 																		src='/assets/bountieslistingchildlevelzero.svg'
 																		className='-mt-7 h-5 w-5'
-																		alt='Last child level'
+																		alt={t('last_child_level')}
 																	/>
 																) : (
 																	<ImageIcon
 																		src='/assets/bountieslistingchildlevelone.svg'
 																		className=' -mt-7 h-5 w-5'
-																		alt='Child level'
+																		alt={t('child_level')}
 																	/>
 																)}
 
@@ -354,11 +356,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 												})}
 											</div>
 										) : (
-											<p className='pl-4 pt-4 '>No child bounties available.</p>
+											<p className='pl-4 pt-4 '>{t('no_child_bounties_available')}</p>
 										)}
 									</div>
 								) : (
-									<p className=''>No child bounties available.</p>
+									<p className=''>{t('no_child_bounties_available')}</p>
 								)}
 							</div>
 						),

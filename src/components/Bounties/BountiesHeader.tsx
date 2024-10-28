@@ -14,8 +14,10 @@ import { StatItem } from './utils/Statitem';
 import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { poppins } from 'pages/_app';
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 const BountiesHeader = () => {
+	const { t } = useTranslation(); // Translation function
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = chainProperties?.[network]?.tokenSymbol;
@@ -66,7 +68,7 @@ const BountiesHeader = () => {
 				<div className='flex'>
 					<div className='hidden gap-6 md:flex'>
 						<div>
-							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
+							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>{t('bounties_header.available_bounty_pool')}</span>
 							<div className='font-pixeboy text-[46px]'>
 								{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}
 								{!isNaN(Number(currentTokenPrice.value)) && (
@@ -82,31 +84,31 @@ const BountiesHeader = () => {
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-icon.svg'
-										alt='bounty icon'
+										alt={t('bounties_header.bounty_icon_alt')}
 										imgWrapperClassName='w-[308px] h-[113px]'
 									/>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-arrow-icon.svg'
-										alt='arrow icon'
+										alt={t('bounties_header.arrow_icon_alt')}
 									/>
 								</div>
 							</div>
 						</div>
 						<div className='grid grid-cols-2 gap-x-24 py-7'>
 							<StatItem
-								label='Active Bounties'
+								label={t('bounties_header.active_bounties')}
 								value={statsData.activeBounties}
 							/>
 							<StatItem
-								label='Claimants'
+								label={t('bounties_header.claimants')}
 								value={statsData.peopleEarned}
 							/>
 							<StatItem
-								label='Total Rewarded'
+								label={t('bounties_header.total_rewarded')}
 								value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
 							/>
 							<StatItem
-								label='Total Bounty Pool'
+								label={t('bounties_header.total_bounty_pool')}
 								value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
 							/>
 						</div>
@@ -116,7 +118,7 @@ const BountiesHeader = () => {
 						<div className='absolute -top-6 left-1/2 h-10 w-20 rotate-180 rounded-t-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 						<ImageIcon
 							src='/assets/bounty-icons/dashed-line.svg'
-							alt='bounty icon'
+							alt={t('bounties_header.dashed_line_alt')}
 							imgClassName='ml-[38px] mt-6'
 							imgWrapperClassName='w-[3px] h-[209px]'
 						/>
@@ -126,36 +128,36 @@ const BountiesHeader = () => {
 					<div className='hidden gap-x-10 md:flex'>
 						<ImageIcon
 							src={theme == 'dark' ? '/assets/bounty-icons/create-white.svg' : '/assets/bounty-icons/create.svg'}
-							alt='bounty icon'
+							alt={t('bounties_header.create_icon_alt')}
 							imgClassName='ml-32 mt-6'
 							imgWrapperClassName='h-[69px]'
 						/>
 						<ImageIcon
 							src={theme == 'dark' ? '/assets/bounty-icons/barcode-white.svg' : '/assets/bounty-icons/bounty-barcode.svg'}
-							alt='bounty icon'
+							alt={t('bounties_header.barcode_icon_alt')}
 							imgClassName='mt-6'
 							imgWrapperClassName=''
 						/>
 					</div>
 					<div className='flex flex-col gap-6 md:hidden'>
 						<div>
-							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
+							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>{t('bounties_header.available_bounty_pool')}</span>
 							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
-							<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
+							<div className='grid grid-cols-2 gap-y-8 py-7 pr-4'>
 								<StatItem
-									label='Active Bounties'
+									label={t('bounties_header.active_bounties')}
 									value={statsData.activeBounties}
 								/>
 								<StatItem
-									label='No. of People Earned'
+									label={t('bounties_header.people_earned')}
 									value={statsData.peopleEarned}
 								/>
 								<StatItem
-									label='Total Rewarded'
+									label={t('bounties_header.total_rewarded')}
 									value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
 								/>
 								<StatItem
-									label='Total Bounty Pool'
+									label={t('bounties_header.total_bounty_pool')}
 									value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
 								/>
 							</div>
@@ -163,7 +165,7 @@ const BountiesHeader = () => {
 								<div className='left-0 h-20 w-10 rounded-r-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 								<ImageIcon
 									src='/assets/bounty-icons/dashed-horizontal-line.svg'
-									alt='bounty icon'
+									alt={t('bounties_header.horizontal_dashed_line_alt')}
 									imgWrapperClassName='h-[3px] w-[209px]'
 								/>
 								<div className='first-letter  right-0 h-20 w-10 rounded-l-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
@@ -171,13 +173,13 @@ const BountiesHeader = () => {
 							<div className='-ml-4 mt-12 flex w-full flex-col items-center gap-x-4'>
 								<ImageIcon
 									src={theme == 'dark' ? '/assets/bounty-icons/create-mb-white.svg' : '/assets/bounty-icons/create-mb.svg'}
-									alt='bounty icon'
+									alt={t('bounties_header.create_mb_icon_alt')}
 									imgClassName='scale-125'
 									imgWrapperClassName='h-[24px]'
 								/>
 								<ImageIcon
 									src={theme == 'dark' ? '/assets/bounty-icons/barcode-mb-white.svg' : '/assets/bounty-icons/barcode-mb.svg'}
-									alt='bounty icon'
+									alt={t('bounties_header.barcode_mb_icon_alt')}
 									imgClassName='mt-6 scale-125'
 									imgWrapperClassName=''
 								/>
@@ -186,13 +188,13 @@ const BountiesHeader = () => {
 								<div className='mb-8 flex items-end gap-3'>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-icon.svg'
-										alt='bounty icon'
+										alt={t('bounties_header.bounty_icon_alt')}
 										className='scale-90'
 										imgWrapperClassName='w-[308px] h-[113px]'
 									/>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-arrow-icon.svg'
-										alt='arrow icon'
+										alt={t('bounties_header.arrow_icon_alt')}
 										className='pr-2'
 									/>
 								</div>

@@ -35,6 +35,7 @@ import { ApiPromise } from '@polkadot/api';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -96,6 +97,7 @@ const CreateReferendum = ({
 	setPreimageLength,
 	bountyId
 }: Props) => {
+	const { t } = useTranslation();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const currentBlock = useCurrentBlock();
@@ -173,7 +175,7 @@ const CreateReferendum = ({
 
 		if (apiError || !data?.post_id) {
 			queueNotification({
-				header: 'Error',
+				header: t('error'),
 				message: apiError,
 				status: NotificationStatus.ERROR
 			});
@@ -245,8 +247,8 @@ const CreateReferendum = ({
 			const onFailed = async () => {
 				setLoading(false);
 				queueNotification({
-					header: 'Failed!',
-					message: 'Transaction failed!',
+					header: t('failed'),
+					message: t('transaction_failed'),
 					status: NotificationStatus.ERROR
 				});
 			};
@@ -255,9 +257,9 @@ const CreateReferendum = ({
 		} catch (error) {
 			setLoading(false);
 			console.log(':( transaction failed');
-			console.error('ERROR:', error);
+			console.error(t('error'), error);
 			queueNotification({
-				header: 'Failed!',
+				header: t('failed'),
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});
@@ -310,13 +312,13 @@ const CreateReferendum = ({
 				form.setFieldValue('preimage_length', 0);
 
 				queueNotification({
-					header: 'Incorrect Preimage Added!',
-					message: 'Please enter a preimage for a treasury related track.',
+					header: t('incorrect_preimage'),
+					message: t('enter_treasury_related_preimage'),
 					status: NotificationStatus.ERROR
 				});
 			}
 		} else if (error || data?.message) {
-			console.log('fetching data from polkadotjs');
+			console.log(t('fetching_data_from_polkadotjs'));
 		}
 		setLoading(false);
 	};
@@ -356,7 +358,7 @@ const CreateReferendum = ({
 				const preimage = getState(api, api.tx.bounties.approveBounty(bountyId));
 
 				if (!preimage.notePreimageTx) {
-					setError('Error in creating preimage');
+					setError(t('error_creating_preimage'));
 					return;
 				}
 				txns.push(preimage.notePreimageTx);
@@ -394,7 +396,7 @@ const CreateReferendum = ({
 		const txns = [];
 
 		if (isPreimage && !preimageLength) {
-			setError('Your Preimage length is not valid');
+			setError(t('invalid_preimage_length'));
 			return;
 		}
 
@@ -402,7 +404,7 @@ const CreateReferendum = ({
 			const preimage = getState(api, api.tx.bounties.approveBounty(bountyId));
 
 			if (!preimage.notePreimageTx) {
-				setError('Error in creating preimage');
+				setError(t('error_creating_preimage'));
 				return;
 			}
 			txns.push(preimage.notePreimageTx);
@@ -421,7 +423,7 @@ const CreateReferendum = ({
 		const onFailed = (message: string) => {
 			setLoading(false);
 			queueNotification({
-				header: 'Failed!',
+				header: t('failed'),
 				message,
 				status: NotificationStatus.ERROR
 			});
@@ -430,8 +432,8 @@ const CreateReferendum = ({
 		const onSuccess = async () => {
 			setLoading(false);
 			queueNotification({
-				header: 'Success!',
-				message: 'Proposal created successfully.',
+				header: t('success'),
+				message: t('proposal_created_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 			setOpenModal(false);
@@ -462,7 +464,7 @@ const CreateReferendum = ({
 					/>
 				)}
 				<div className='my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Do you have an existing preimage? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('do_you_have_existing_preimage')}</label>
 					<Radio.Group
 						onChange={(e) => {
 							setIsPreimage(e.target.value);
@@ -477,13 +479,13 @@ const CreateReferendum = ({
 							value={true}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							Yes
+							{t('yes')}
 						</Radio>
 						<Radio
 							value={false}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							No
+							{t('no')}
 						</Radio>
 					</Radio.Group>
 				</div>
@@ -503,10 +505,10 @@ const CreateReferendum = ({
 						<>
 							<div className='preimage mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Preimage Hash{' '}
+									{t('preimage_hash')}{' '}
 									<span>
 										<HelperTooltip
-											text='A unique hash is generate for your preimage and it is used to populate proposal details.'
+											text={t('preimage_hash_tooltip')}
 											className='ml-1'
 										/>
 									</span>
@@ -521,7 +523,7 @@ const CreateReferendum = ({
 								</Form.Item>
 							</div>
 							<div className='mt-6'>
-								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('preimage_length')}</label>
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
@@ -541,8 +543,8 @@ const CreateReferendum = ({
 										theme={theme}
 										balance={newBountyAmount || bountyAmount}
 										formItemName='bounty_amount'
-										placeholder='Enter Bounty Amount'
-										label='Bounty Amount'
+										placeholder={t('enter_bounty_amount')}
+										label={t('bounty_amount')}
 										inputClassName='dark:text-blue-dark-high text-bodyBlue'
 										className='mb-0'
 										noRules
@@ -553,10 +555,10 @@ const CreateReferendum = ({
 							</div>
 							<div className='mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Select Track{' '}
+									{t('select_track')}{' '}
 									<span>
 										<HelperTooltip
-											text='Track selection is done based on the amount requested.'
+											text={t('select_track_tooltip')}
 											className='ml-1'
 										/>
 									</span>
@@ -577,17 +579,17 @@ const CreateReferendum = ({
 							className='mt-6 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
-							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<span className='text-sm font-medium text-pink_primary'>{t('advanced_details')}</span>
 							<DownArrow className='down-icon' />
 						</div>
 					)}
 					{openAdvanced && (
 						<div className='preimage mt-3 flex flex-col'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Enactment{' '}
+								{t('enactment')}{' '}
 								<span>
 									<HelperTooltip
-										text='A custom delay can be set for enactment of approved proposals.'
+										text={t('enactment_tooltip')}
 										className='ml-1'
 									/>
 								</span>
@@ -605,10 +607,10 @@ const CreateReferendum = ({
 								>
 									<div className='flex h-10 items-center gap-4'>
 										<span>
-											At Block no.
+											{t('at_block_no')}
 											<HelperTooltip
 												className='ml-1'
-												text='Allows you to choose a custom block number for enactment.'
+												text={t('at_block_no_tooltip')}
 											/>
 										</span>
 										<span>
@@ -617,7 +619,7 @@ const CreateReferendum = ({
 													name='at_block'
 													rules={[
 														{
-															message: 'Invalid Block no.',
+															message: t('invalid_block_no'),
 															validator(rule, value, callback) {
 																const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
 
@@ -647,9 +649,9 @@ const CreateReferendum = ({
 								>
 									<div className='flex h-[30px] items-center gap-2'>
 										<span className='w-[150px]'>
-											After no. of Blocks
+											{t('after_no_of_blocks')}
 											<HelperTooltip
-												text='Allows you to choose a custom delay in terms of blocks for enactment.'
+												text={t('after_no_of_blocks_tooltip')}
 												className='ml-1'
 											/>
 										</span>
@@ -659,7 +661,7 @@ const CreateReferendum = ({
 													name='after_blocks'
 													rules={[
 														{
-															message: 'Invalid no. of Blocks',
+															message: t('invalid_no_of_blocks'),
 															validator(rule, value, callback) {
 																const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
 																if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
@@ -691,10 +693,10 @@ const CreateReferendum = ({
 							showIcon
 							description={
 								<span className='text-xs dark:text-blue-dark-high'>
-									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+									{t('gas_fees_applied')} {formatedBalance(String(gasFee.toString()), unit)} {unit}.
 								</span>
 							}
-							message='Gas Fee'
+							message={t('gas_fee')}
 						/>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-section-dark-container'>
@@ -704,7 +706,7 @@ const CreateReferendum = ({
 							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
-							Back
+							{t('back')}
 						</Button>
 						<Button
 							htmlType='submit'
@@ -714,7 +716,7 @@ const CreateReferendum = ({
 							onClick={() => handleSubmitCreateReferendum()}
 							disabled={loading || !eligibleToCreateRef}
 						>
-							Create Referendum
+							{t('create_referendum')}
 						</Button>
 					</div>
 				</Form>

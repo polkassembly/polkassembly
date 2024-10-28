@@ -29,6 +29,7 @@ import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
+import { useTranslation } from 'next-i18next';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const userDetails = useUserDetailsSelector();
@@ -43,6 +44,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const currentUser = useUserDetailsSelector();
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
+	const { t } = useTranslation('common');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 
 	const calculateLock = (convictionValue: number): number => {
@@ -152,7 +154,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					) : (
 						<LikeGray className='mb-[3px] mr-1' />
 					)}
-					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('aye')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -171,7 +173,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					) : (
 						<DislikeGray className='-mb-[3px] mr-1' />
 					)}
-					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('nay')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -189,7 +191,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 							}`}
 						>
 							<StopOutlined className={`mr-1 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
-							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('abstain')}</span>
 						</div>
 					),
 					value: 'abstain'
@@ -452,7 +454,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			<article className={`${className} flex items-center justify-between`}>
 				<div className='w-[48%]'>
 					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-						<span className='flex items-center'>Set Conviction</span>
+						<span className='flex items-center'>{t('set_conviction')}</span>
 						<Slider
 							marks={marks}
 							tooltip={{ open: false }}
@@ -488,7 +490,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 							height={24}
 							className={theme === 'dark' ? 'dark-icons' : ''}
 						/>
-						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Locking period</p>
+						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>{t('locking_period')}</p>
 					</div>
 					<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>{lockingPeriodMessage}</p>
 				</div>

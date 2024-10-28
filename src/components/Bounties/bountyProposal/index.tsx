@@ -7,6 +7,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import BountyActionModal from './BountyActionModal';
 import { spaceGrotesk } from 'pages/_app';
+import { useTranslation } from 'react-i18next';
 
 interface IBountyProposalActionButtonProps {
 	className?: string;
@@ -21,6 +22,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	const { t } = useTranslation();
 
 	const handleClick = (num: number) => {
 		if (id) {
@@ -47,7 +49,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 					alt='bounty icon'
 					imgClassName=''
 				/>
-				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty Proposal</span>
+				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>{t('create_bounty_proposal')}</span>
 			</button>
 			<BountyActionModal
 				theme={theme}

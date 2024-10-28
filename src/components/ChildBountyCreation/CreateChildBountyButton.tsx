@@ -9,8 +9,21 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ChildBountyCreationForm from '.';
 import { ReactNode, useState } from 'react';
 import classNames from 'classnames';
+import { childBountyCreationActions } from '~src/redux/childBountyCreation';
+import { useDispatch } from 'react-redux';
 
-const CreateChildBountyButton = ({ className, children, handleSuccess }: { className?: string; children?: ReactNode; handleSuccess?: () => void }) => {
+const CreateChildBountyButton = ({
+	className,
+	children,
+	handleSuccess,
+	defaultCurator
+}: {
+	className?: string;
+	children?: ReactNode;
+	handleSuccess?: () => void;
+	defaultCurator?: string;
+}) => {
+	const dispatch = useDispatch();
 	const [openModal, setOpenModal] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
@@ -19,7 +32,10 @@ const CreateChildBountyButton = ({ className, children, handleSuccess }: { class
 			<CustomButton
 				type='primary'
 				className='w-full cursor-pointer text-pink_primary'
-				onClick={() => setOpenModal(true)}
+				onClick={() => {
+					setOpenModal(true);
+					dispatch(childBountyCreationActions.setChildBountyCurator(defaultCurator || ''));
+				}}
 			>
 				{children || (
 					<div className='flex items-center justify-center gap-2 text-pink_primary'>
@@ -42,6 +58,7 @@ const CreateChildBountyButton = ({ className, children, handleSuccess }: { class
 					setOpenSuccessModal={setOpenSuccessModal}
 					openSuccessModal={openSuccessModal}
 					handleSuccess={handleSuccess}
+					defaultCurator={defaultCurator}
 				/>
 			)}
 		</div>

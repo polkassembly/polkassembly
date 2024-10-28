@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useState } from 'react';
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { EditOutlined, ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
@@ -14,7 +14,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import CreateChildBountyButton from '~src/components/ChildBountyCreation/CreateChildBountyButton';
 
 interface SubmissionActionProps {
-	submission: any;
+	submission: IChildBountySubmission;
 	handleApprove?: () => void;
 	showRejectModal?: (pre: boolean) => void;
 	handleDelete: (re?: IChildBountySubmission) => Promise<void>;
@@ -78,6 +78,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							<CreateChildBountyButton
 								className='w-1/2 text-pink_primary'
 								handleSuccess={handleApprove}
+								defaultCurator={submission?.proposer}
 							>
 								Approve
 							</CreateChildBountyButton>
@@ -119,33 +120,36 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 				wrapClassName={'dark:bg-modalOverlayDark'}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Delete Your Submission
 					</div>
 				}
 			>
-				<div className='mt-6 px-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
-					</span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<CustomButton
-							onClick={handleDeleteSubmission}
-							buttonsize='sm'
-							text='Yes'
-							variant='default'
-						/>
-						<CustomButton
-							onClick={() => {
-								setIsDeleteConfirm(false);
-							}}
-							height={40}
-							width={200}
-							text='Cancel'
-							variant='primary'
-						/>
+				<Spin spinning={loading}>
+					<div className='-mx-6 mt-6 px-6'>
+						<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
+							Your Submission information (Title, Description & Tags) would be delete. Are you sure you want to delete your submission?{' '}
+						</span>
+						<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+							<CustomButton
+								onClick={handleDeleteSubmission}
+								text='Yes'
+								variant='default'
+								width={100}
+								height={32}
+							/>
+							<CustomButton
+								onClick={() => {
+									setIsDeleteConfirm(false);
+								}}
+								height={32}
+								width={100}
+								text='Cancel'
+								variant='primary'
+							/>
+						</div>
 					</div>
-				</div>
+				</Spin>
 			</Modal>
 		</>
 	);

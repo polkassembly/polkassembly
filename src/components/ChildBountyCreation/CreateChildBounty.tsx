@@ -38,9 +38,10 @@ interface Props {
 	setCloseModal: () => void;
 	multisigData: { signatories: string[]; threshold: number };
 	handleSuccess?: () => void;
+	defaultCurator?: string;
 }
 
-const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData, handleSuccess }: Props) => {
+const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData, handleSuccess, defaultCurator }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress, multisigAssociatedAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -325,15 +326,16 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 						/>{' '}
 					</section>
 					<section className='mt-0'>
-						<label className='mb-0.5'>Child Bounty Curator (optional)</label>
+						<label className='mb-0.5'>Child Bounty Curator {getEncodedAddress(defaultCurator, network) ? '' : '(optional)'}</label>
 						<AddressInput
 							skipFormatCheck
 							className='-mt-6 w-full'
-							defaultAddress={curator}
+							defaultAddress={curator || defaultCurator}
 							name='childbountyCurator'
 							placeholder='Enter Curator Address'
 							iconClassName={'ml-[10px]'}
 							identiconSize={26}
+							disabled={!!getEncodedAddress(defaultCurator, network)}
 							onChange={(address: string) => {
 								dispatch(childBountyCreationActions.setChildBountyCurator(address));
 								debounceGetGasFee();

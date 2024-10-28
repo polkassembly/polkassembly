@@ -81,6 +81,8 @@ import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
 import BountyChildBounties from './Bounty/BountyChildBounties';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -137,7 +139,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex, curator } = props;
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [updateTally, setUpdateTally] = useState<boolean>(false);
 
@@ -488,7 +490,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 					}
 				} catch (error) {
-					// console.log(error);
+					console.log(error);
 				}
 				let progress = {
 					approval: 0,
@@ -1364,7 +1366,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
 								<BountyChildBounties bountyId={onchainId} />
-								<Submissions bountyId={onchainId} />
+								{getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status || '') && !!getEncodedAddress(curator, network) && <Submissions bountyId={onchainId} />}
 							</>
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (

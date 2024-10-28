@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Divider, message } from 'antd';
+import { Button, Divider, message, Spin } from 'antd';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
@@ -12,7 +12,6 @@ import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 import dayjs from 'dayjs';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
-import Skeleton from '~src/basic-components/Skeleton';
 import Link from 'next/link';
 import { usePostDataContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -22,6 +21,7 @@ import MakeChildBountySubmisionModal from './MakeChildBountySubmision';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import SubmissionAction from './SubmissionAction';
 import Alert from '~src/basic-components/Alert';
+import classNames from 'classnames';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -55,11 +55,12 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState<EChildbountySubmissionStatus | null>(null);
+
 	const handleNewSubmission = useCallback(async (created: boolean) => {
 		if (created) {
 			await fetchBountySubmission();
 			setIsModalVisible(false);
-			setEditSubmission(undefined);
+			setEditSubmission(null);
 			setIsEditing(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,16 +88,16 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	};
 
 	const [isEditing, setIsEditing] = useState(false);
-	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | undefined>(undefined);
+	const [editSubmission, setEditSubmission] = useState<IChildBountySubmission | null>(null);
 
 	const handleEditClick = (value: boolean, submission?: IChildBountySubmission) => {
-		setEditSubmission(submission);
+		setEditSubmission(submission || null);
 		setIsEditing(value);
 		setIsModalVisible(value);
 	};
 
 	const handleSubmissionClick = () => {
-		setEditSubmission(undefined);
+		setEditSubmission(null);
 		setIsEditing(false);
 		setIsModalVisible(true);
 	};
@@ -121,7 +122,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 
 		if (data) {
 			setBountySubmission((prevSubmissions) => prevSubmissions.filter((sub) => sub.id !== submission.id));
-			setEditSubmission(undefined);
+			setEditSubmission(null);
 			message.success('Submission status updated successfully');
 		}
 	};
@@ -140,7 +141,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			case EChildbountySubmissionStatus.REJECTED:
 				return bountySubmission?.filter((item) => item?.status == EChildbountySubmissionStatus.REJECTED);
 			default:
-				return bountySubmission;
+				return bountySubmission || [];
 		}
 	};
 	const memoizedValues = useMemo(
@@ -148,7 +149,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			canViewAll: bountySubmission.some((submission) =>
 				[getEncodedAddress(curator, network), getEncodedAddress(submission?.proposer, network)].includes(getEncodedAddress(loginAddress, network))
 			),
-			hasSubmitted: bountySubmission.some((submission) => submission?.proposer === getEncodedAddress(loginAddress, network))
+			hasSubmitted: bountySubmission.some(
+				(submission) => submission?.proposer === getEncodedAddress(loginAddress, network) && submission?.status == EChildbountySubmissionStatus.PENDING
+			)
 		}),
 		[bountySubmission, curator, network, loginAddress]
 	);
@@ -180,11 +183,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 				)}
 			</div>
 			{bountySubmission?.length > 0 && (
-				<div className='mb-2 flex items-center justify-between gap-3 rounded-lg bg-section-light-background px-2 py-2 text-center text-sm text-bodyBlue dark:bg-section-dark-garyBackground dark:text-white'>
+				<div className='mb-2 mt-4 flex items-center justify-between gap-3 rounded-lg bg-section-light-background px-2 py-2 text-center text-sm text-bodyBlue dark:bg-section-dark-garyBackground dark:text-white'>
 					<Button
 						onClick={() => setActiveTab(null)}
-						aria-label='Show all submissions'
-						aria-pressed={activeTab === null}
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === null
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
@@ -194,7 +195,9 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						All
 					</Button>
 					<Button
-						onClick={() => setActiveTab(EChildbountySubmissionStatus.PENDING)}
+						onClick={() => {
+							setActiveTab(EChildbountySubmissionStatus.PENDING);
+						}}
 						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === EChildbountySubmissionStatus.PENDING
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
@@ -216,10 +219,11 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 				</div>
 			)}
 
-			{loading ? (
-				<Skeleton active />
-			) : (
-				<>
+			<Spin
+				spinning={loading}
+				className='mb-4'
+			>
+				<div className='my-4 flex flex-col gap-4'>
 					{getFilteredSubmissions()?.length > 0 ? (
 						getFilteredSubmissions()?.map((submission: IChildBountySubmission, index: number) => (
 							<div
@@ -272,12 +276,12 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					) : activeTab === EChildbountySubmissionStatus.PENDING || activeTab === EChildbountySubmissionStatus.REJECTED ? (
 						<SubmissionsEmptyState activeTab={activeTab} />
 					) : null}
-				</>
-			)}
+				</div>
+			</Spin>
 			{!!loginAddress?.length && (
 				<CustomButton
 					variant='primary'
-					className='flex w-full cursor-pointer items-center justify-center rounded-md border-none'
+					className={classNames('flex w-full cursor-pointer items-center justify-center gap-x-1 rounded-md border-none', hasSubmitted || loading ? 'opacity-50' : '')}
 					onClick={() => {
 						if (hasSubmitted) {
 							message.error('You can only make one submission per bounty.');
@@ -285,7 +289,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 							handleSubmissionClick();
 						}
 					}}
-					disabled={hasSubmitted}
+					disabled={hasSubmitted || loading}
 				>
 					<Image
 						src='/assets/icons/curator-dashboard/Document.svg'
@@ -294,12 +298,13 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 							filter: theme === 'dark' ? 'invert(100%) brightness(200%)' : 'none'
 						}}
 						className='h-5 w-5'
-						width={20}
-						height={20}
+						width={18}
+						height={18}
 					/>
 					<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
 				</CustomButton>
 			)}
+
 			<MakeChildBountySubmisionModal
 				bountyId={bountyId}
 				open={isModalVisible}

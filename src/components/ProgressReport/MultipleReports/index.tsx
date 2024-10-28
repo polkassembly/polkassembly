@@ -72,10 +72,12 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 									report={report}
 									index={index}
 								/>
-								<Divider
-									style={{ background: '#D2D8E0', flexGrow: 1 }}
-									className='mt-6 dark:bg-separatorDark'
-								/>
+								{index + 1 !== Object.keys(postData.progress_report).length && (
+									<Divider
+										style={{ background: '#D2D8E0', flexGrow: 1 }}
+										className='mt-6 dark:bg-separatorDark'
+									/>
+								)}
 							</>
 						</Timeline.Item>
 					))

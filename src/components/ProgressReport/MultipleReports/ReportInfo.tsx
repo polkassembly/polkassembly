@@ -159,7 +159,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 				</div>
 				{report?.ratings?.length > 0 && (
 					<p className='m-0 ml-auto flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-						Average Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
+						Avg Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
 					</p>
 				)}
 			</div>
@@ -181,7 +181,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 					)}
 				</div>
 			) : (
-				<div className='flex items-center gap-x-2 text-sm font-medium'>
+				<div className='-mt-1 mb-1 flex items-center gap-x-2 text-sm font-medium'>
 					<p className='m-0 p-0 text-bodyBlue dark:text-blue-dark-medium'>Please update your progress report for users to rate it.</p>
 					<span
 						className='flex items-center gap-x-1 text-pink_primary'

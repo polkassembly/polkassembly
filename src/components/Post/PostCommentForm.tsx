@@ -352,6 +352,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 												displayInline
 												isTruncateUsername={false}
 												disableTooltip
+												isProfileView={true}
 											/>
 										</div>
 

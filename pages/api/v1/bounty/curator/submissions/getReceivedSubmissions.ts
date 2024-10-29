@@ -61,10 +61,14 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
 
-		const submissionsDocs = await submissionsSnapshot?.where('parent_bounty_index', 'in', allSubsquidBountiesIndexes).get();
+		let submissionsDocs: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData> | null = null;
 
-		if (submissionsDocs?.empty) {
-			return res.status(404).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });
+		if (allSubsquidBountiesIndexes?.length) {
+			submissionsDocs = await submissionsSnapshot?.where('parent_bounty_index', 'in', allSubsquidBountiesIndexes).get();
+		}
+
+		if (submissionsDocs?.empty || !submissionsDocs) {
+			return res.status(200).json([]);
 		}
 
 		const allSubmissions: IChildBountySubmission[] = [];
@@ -108,6 +112,9 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 		});
 
 		let allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
+		if (!allSubmissionsBountyIndexes?.length) {
+			return res.status(200).json([]);
+		}
 		allSubmissionsBountyIndexes = [...new Set(allSubmissionsBountyIndexes)];
 
 		const chunkArray = (arr: any[], chunkSize: number) => {

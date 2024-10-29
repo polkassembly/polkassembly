@@ -131,10 +131,9 @@ const messages = {
 	PARENT_BOUNTY_IS_NOT_ACTIVE: 'Parent Bounty is not active.',
 	CHILD_BOUNTY_SUBMISSION_DONE: 'Child bounty submission successfully added',
 	CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS: 'Child bounty submission already exists',
-	CHILD_BOUNTY_SUBMISSION_NOT_EXISTS: 'Child bounty submission not exists.',
+	CHILD_BOUNTY_SUBMISSION_NOT_EXISTS: 'Child bounty submission does not exists.',
 	CHILD_BOUNTY_SUBMISSION_EDITED_SUCCESSFULLY: 'Child bounty submission edited successfully',
-	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully',
-	NO_CHILD_BOUNTY_SUBMISSION_FOUND: 'No child bounty submission found.'
+	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully'
 };
 
 export default messages;

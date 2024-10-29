@@ -8,10 +8,8 @@ import { poppins } from 'pages/_app';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import dynamic from 'next/dynamic';
-import Skeleton from '~src/basic-components/Skeleton';
 
 const Tipping = dynamic(() => import('src/components/Tipping'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 

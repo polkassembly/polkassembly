@@ -6,18 +6,20 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IAccountData } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { Spin } from 'antd';
-import ImageIcon from '~src/ui-components/ImageIcon';
-import ErrorAlert from '~src/ui-components/ErrorAlert';
+import Image from 'next/image';
 import AccountInfo from './AccountInfo';
 import ProxyDetails from './ProxyDetails';
 import Signatories from './Signatories';
 import MultisigDetails from './MultisigDetails';
+import useImagePreloader from '~src/hooks/useImagePreloader';
+import Alert from '~src/basic-components/Alert';
 
 const AddressesComponent = () => {
 	const userDetails = useUserDetailsSelector();
 	const { loginAddress } = userDetails;
 	const [accountData, setAccountData] = useState<IAccountData | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 
 	const fetchData = async () => {
 		setIsLoading(true);
@@ -49,16 +51,22 @@ const AddressesComponent = () => {
 	if (!accountData) {
 		return (
 			<div className='mx-auto max-w-[600px]'>
-				<ErrorAlert
+				<Alert
+					type='info'
+					showIcon
 					className={'my-5 dark:text-white'}
-					errorMsg='Something went wrong while fetching Accounts data.'
+					message='Please wait while fetching Accounts data.'
 				/>
-				<ImageIcon
-					src='/assets/user-not-found.svg'
-					alt='user not found icon'
-					imgWrapperClassName='w-full h-full flex justify-center items-center'
-					imgClassName='max-w-[400px] max-h-[400px]'
-				/>
+				<div className='flex items-center justify-center'>
+					<Image
+						src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
+						alt='search-icon'
+						width={400}
+						height={400}
+						className='-my-[40px]'
+						priority={true}
+					/>
+				</div>
 			</div>
 		);
 	}

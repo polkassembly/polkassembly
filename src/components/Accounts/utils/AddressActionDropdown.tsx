@@ -7,11 +7,9 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-import Skeleton from '~src/basic-components/Skeleton';
 import { Dropdown } from '~src/ui-components/Dropdown';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 

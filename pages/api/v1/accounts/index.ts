@@ -61,7 +61,7 @@ const handler: NextApiHandler = async (req, res) => {
 	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}
-	if (!address || typeof address !== 'string') {
+	if (!address || typeof address !== 'string' || address == '') {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

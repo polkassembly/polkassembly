@@ -82,6 +82,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			status: EChildbountySubmissionStatus.PENDING,
 			tags: tags || [],
 			title: title || '',
+			updated_at: new Date(),
 			user_id: user?.id
 		};
 

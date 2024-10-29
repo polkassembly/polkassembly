@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Input, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import { useEffect, useState } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import { NotificationStatus } from '~src/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -77,11 +78,12 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 					className='-mt-4'
 				>
 					<section className='mt-6'>
-						<Input.TextArea
+						<InputTextarea
 							rows={4}
 							placeholder='Enter your curator bio'
 							value={curatorBio || ''}
 							onChange={(e) => setCuratorBio(e.target.value)}
+							className='dark:border-separatorDark'
 						/>
 					</section>
 

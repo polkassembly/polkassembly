@@ -81,7 +81,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			req_amount: reqAmount || '0',
 			tags: tags || [],
 			title: title || '',
-			updatedAt: new Date()
+			updated_at: new Date()
 		};
 
 		await submissionDocRef?.update(payload);

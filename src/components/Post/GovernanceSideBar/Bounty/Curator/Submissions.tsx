@@ -132,7 +132,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			fetchBountySubmission();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bountyId, handleNewSubmission]);
+	}, [bountyId]);
 
 	const getFilteredSubmissions = (): IChildBountySubmission[] => {
 		switch (activeTab) {
@@ -295,7 +295,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						src='/assets/icons/curator-dashboard/Document.svg'
 						alt='submit'
 						style={{
-							filter: theme === 'dark' ? 'invert(100%) brightness(200%)' : 'none'
+							filter: 'invert(100%) brightness(200%)'
 						}}
 						className='h-5 w-5'
 						width={18}

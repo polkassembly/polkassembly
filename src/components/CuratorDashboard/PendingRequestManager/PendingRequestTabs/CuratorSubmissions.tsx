@@ -53,15 +53,20 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqT
 	const getSubmissions = async () => {
 		if (!loginAddress) return;
 		setLoading(true);
-		const url = reqType === EPendingCuratorReqType.RECEIVED ? '/api/v1/bounty/curator/submissions/getReceivedSubmissions' : '/api/v1/bounty/curator/submissions/getSentSubmissions';
-		const payload = reqType === EPendingCuratorReqType.RECEIVED ? { curatorAddress: loginAddress } : { userAddress: loginAddress };
-		const { data, error } = await nextApiClientFetch<IChildBountySubmission[]>(url, payload);
+		try {
+			const url =
+				reqType === EPendingCuratorReqType.RECEIVED ? '/api/v1/bounty/curator/submissions/getReceivedSubmissions' : '/api/v1/bounty/curator/submissions/getSentSubmissions';
+			const payload = reqType === EPendingCuratorReqType.RECEIVED ? { curatorAddress: loginAddress } : { userAddress: loginAddress };
+			const { data, error } = await nextApiClientFetch<IChildBountySubmission[]>(url, payload);
 
-		if (data?.length) {
-			setSubmissions(data);
-		} else {
-			setSubmissions([]);
-			console.log('error', error);
+			if (data?.length) {
+				setSubmissions(data);
+			} else {
+				setSubmissions([]);
+				console.log('error', error);
+			}
+		} catch (err) {
+			console.log(err);
 		}
 
 		setLoading(false);

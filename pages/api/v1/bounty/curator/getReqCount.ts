@@ -59,10 +59,11 @@ const handler: NextApiHandler<{ curator: number; submissions: number } | Message
 
 		const submissionsSnapshot = firestore_db.collection('curator_submissions');
 
-		let receivedSubmissions;
+		let receivedSubmissionsCount = 0;
 
 		if (allSubsquidBountiesIndexes?.length) {
-			receivedSubmissions = await submissionsSnapshot?.where('parent_bounty_index', 'in', allSubsquidBountiesIndexes).count().get();
+			const receivedSubmissionsSnapshot = await submissionsSnapshot?.where('parent_bounty_index', 'in', allSubsquidBountiesIndexes).count().get();
+			receivedSubmissionsCount = receivedSubmissionsSnapshot?.data()?.count || 0;
 		}
 
 		//sent submission
@@ -74,7 +75,7 @@ const handler: NextApiHandler<{ curator: number; submissions: number } | Message
 
 		return res.status(200).json({
 			curator: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0 + curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0,
-			submissions: receivedSubmissions ? receivedSubmissions?.data()?.count || 0 : 0 + sentSubmissions?.data()?.count || 0
+			submissions: receivedSubmissionsCount ? receivedSubmissionsCount || 0 : 0 + sentSubmissions?.data()?.count || 0
 		});
 	} catch (error) {
 		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });

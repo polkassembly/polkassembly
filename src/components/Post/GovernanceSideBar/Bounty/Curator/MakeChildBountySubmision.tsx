@@ -47,7 +47,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 
 	const handleSubmit = async () => {
 		setLoading(true);
-		const url = editing ? '/api/v1/bounty/curator/submissions/editSubmission' : '/api/v1/bounty/curator/submissions/addSubmissions';
+		const url = editing ? '/api/v1/bounty/curator/submissions/editSubmission' : '/api/v1/bounty/curator/submissions/addSubmission';
 		const { data, error } = await nextApiClientFetch<MessageType>(url, {
 			content,
 			link,

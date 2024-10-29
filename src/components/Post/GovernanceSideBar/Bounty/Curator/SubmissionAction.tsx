@@ -56,9 +56,13 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
 
 	const handleDeleteSubmission = async () => {
-		setLoading(true);
-		await handleDelete(submission);
-		setLoading(false);
+		try {
+			setLoading(true);
+			await handleDelete(submission);
+			setLoading(false);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	return (
 		<>
@@ -92,6 +96,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							disabled={loading}
 							className='h-8 w-full'
 							loading={loading}
+							height={32}
 						>
 							Delete
 						</CustomButton>
@@ -100,6 +105,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							onClick={() => handleEditClick(true, submission)}
 							disabled={loading}
 							className='h-8 w-full'
+							height={32}
 						>
 							<EditOutlined /> Edit
 						</CustomButton>

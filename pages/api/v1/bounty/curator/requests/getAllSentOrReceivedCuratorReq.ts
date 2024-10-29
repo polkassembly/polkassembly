@@ -58,11 +58,11 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 			}
 		});
 
-		if (!subsquidBountiesRes?.data?.proposals?.length) return res.status(400).json({ message: 'No Curator Request Sent!' });
+		if (!subsquidBountiesRes?.data?.proposals?.length) return res.status(200).json({ data: [], totalCount: 0 });
 
 		const subsquidBountiesData = subsquidBountiesRes?.data?.proposals || [];
 
-		const subsquidbountiesIndexes = subsquidBountiesData.map((bounty: { index: number }) => bounty?.index);
+		const subsquidbountiesIndexes = subsquidBountiesData?.map((bounty: { index: number }) => bounty?.index);
 
 		const postDocs = await postsByTypeRef(network, proposalType).where('id', 'in', subsquidbountiesIndexes).get();
 

@@ -19,8 +19,6 @@ const RatingSuccessModal: FC<IRatingSuccessModal> = (props) => {
 	const [averageRating, setAverageRating] = useState<number>();
 	const reportData = postData?.progress_report?.find((report: IProgressReport) => report.id === reportId);
 
-	console.log(reportData);
-
 	const getRatingInfo = () => {
 		setAverageRating(reportData?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / reportData?.ratings?.length);
 	};

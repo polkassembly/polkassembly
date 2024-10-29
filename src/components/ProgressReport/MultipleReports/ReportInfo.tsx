@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes';
 import { useDispatch } from 'react-redux';
 import { usePostDataContext } from '~src/context';
 import { progressReportActions } from '~src/redux/progressReport';
-import { NotificationStatus } from '~src/types';
+import { IProgressReport, NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 import SummaryContentForm from '~src/components/SummaryContentForm';
@@ -16,7 +16,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IReportInfo {
-	report: any;
+	report: IProgressReport;
 	index: number;
 }
 
@@ -25,7 +25,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-	const [summary_content, setSummaryContent] = useState<string>(report.progress_summary);
+	const [summary_content, setSummaryContent] = useState<string | undefined>(report.progress_summary);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showContentForm, setShowContentForm] = useState<boolean>(false);
 	const {

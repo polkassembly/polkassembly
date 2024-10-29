@@ -5,14 +5,14 @@ import React, { FC, useState, useEffect } from 'react';
 import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import { usePostDataContext } from '~src/context';
-import { IRating } from '~src/types';
+import { IProgressReport, IRating } from '~src/types';
 import { StarFilled } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 import NameLabel from '~src/ui-components/NameLabel';
 
 interface IReportDetails {
-	report: any;
+	report: IProgressReport;
 	index: number;
 }
 
@@ -28,7 +28,13 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 	}, [postData?.progress_report]);
 
 	const getRatingInfo = () => {
-		setAverageRating(report?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / report?.ratings?.length);
+		const ratings = report?.ratings;
+		if (!ratings?.length) {
+			setAverageRating(undefined);
+			return;
+		}
+		const sum = ratings.reduce((acc: number, curr: IRating) => acc + curr.rating, 0);
+		setAverageRating(Number((sum / ratings.length).toFixed(1)));
 	};
 
 	const renderStars = () => {
@@ -89,14 +95,14 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					truncateUsername
 					usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden font-normal dark:text-blue-dark-medium'
 				/>
-				{report?.ratings?.length > 0 && (
+				{report?.ratings && report?.ratings?.length > 0 && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'
 						type='vertical'
 						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
 					/>
 				)}
-				{report?.ratings?.length > 0 && (
+				{report?.ratings && report?.ratings?.length > 0 && (
 					<p className='m-0 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
 						Average Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
 					</p>

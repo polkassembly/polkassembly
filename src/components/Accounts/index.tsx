@@ -9,7 +9,7 @@ const AccountsMain = () => {
 	return (
 		<div>
 			<div className='flex items-center justify-between'>
-				<h2 className={`${poppins.className} ${poppins.variable} text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high`}>Accounts</h2>{' '}
+				<h2 className={`${poppins.className} ${poppins.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
 			</div>
 			{/* <Alert
 				showIcon

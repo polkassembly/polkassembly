@@ -65,14 +65,14 @@ const AddressesComponent = () => {
 
 	return (
 		<section>
-			<h3 className='mt-5 text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
+			<h3 className='mt-2 md:mt-5 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-2xl'>
 				{accountData?.multisig?.multi_account_member?.length > 0 ? 'Multisig Address' : 'Addresses'}
 			</h3>
 			<Spin
 				spinning={isLoading}
 				className='min-h-screen'
 			>
-				<div className='w-full rounded-[14px] bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
+				<div className='w-full rounded-[14px] bg-white p-[10px] drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
 					<AccountInfo
 						accountData={accountData}
 						loginAddress={loginAddress}

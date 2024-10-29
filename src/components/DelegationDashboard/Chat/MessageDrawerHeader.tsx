@@ -23,7 +23,7 @@ const MessageDrawerHeader = ({ handleCloseChat }: Props) => {
 			<div className='ml-auto flex items-center gap-3'>
 				<Button
 					onClick={handleCloseChat}
-					className='flex h-7 w-7 items-center justify-center rounded-full border-none bg-transparent p-2 shadow-none hover:bg-black/5'
+					className='flex h-7 w-7 items-center justify-center rounded-full border-none bg-transparent p-2 shadow-none hover:bg-black/5 dark:hover:bg-white/10'
 				>
 					<Image
 						src='/assets/icons/delegation-chat/close-icon.svg'

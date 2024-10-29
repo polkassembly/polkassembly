@@ -315,23 +315,29 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 														<Component {...pageProps} />
 													</Content>
 												</div>
-												
+
 												{(!userId || !loginAddress) && hideCommentLoginBanner ? (
-													<div className={`fixed top-[91%] z-1000 flex items-center justify-between ${is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'} w-full bg-[#0095F6] py-[14px] pr-20`}>
+													<div
+														className={`z-1000 fixed top-[91%] flex items-center justify-between ${
+															is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'
+														} w-full bg-[#0095F6] py-[14px] pr-20`}
+													>
 														<div className='flex flex-col'>
-															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>Join Polkassembly to Comment on this {router.pathname.includes('referenda/') ? 'proposal' : 'post'}.</span>
+															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>
+																Join Polkassembly to Comment on this {router.pathname.includes('referenda/') ? 'proposal' : 'post'}.
+															</span>
 															<span className={`${poppins.className} ${poppins.variable} text-sm text-white`}>Discuss, contribute and get regular updates from Polkassembly.</span>
 														</div>
 														<div className='flex gap-4'>
 															<button
 																onClick={() => setLoginOpen(true)}
-																className={`${poppins.className} ${poppins.variable} w-[150px] flex h-10 items-center justify-center rounded-md border border-solid border-[#0095F6] bg-white text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-[#0095F6] `}
+																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-[#0095F6] bg-white text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-[#0095F6] `}
 															>
 																Log In
 															</button>
 															<button
 																onClick={() => setSignupOpen(true)}
-																className={`${poppins.className} ${poppins.variable} w-[150px] flex h-10 items-center justify-center rounded-md border border-solid border-white bg-[#0095F6] px-4 py-1 text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-white`}
+																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-white bg-[#0095F6] px-4 py-1 text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-white`}
 															>
 																Sign Up
 															</button>

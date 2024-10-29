@@ -189,6 +189,10 @@ const UploadModalContent = () => {
 			{add_summary_cta_clicked && (
 				<SummaryContentForm
 					onChange={(content: string) => {
+						if (content.length > 400) {
+							message.error('Summary cannot exceed 400 characters.');
+							return;
+						}
 						dispatch(progressReportActions.setSummaryContent(content));
 						const progress_report = JSON.parse(localStorage.getItem('progress_report') || '{}');
 						progress_report.summary = content;

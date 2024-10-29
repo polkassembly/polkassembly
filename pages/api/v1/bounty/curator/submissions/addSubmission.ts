@@ -28,18 +28,24 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, link, reqAmount, proposerAddress, parentBountyIndex } = req.body;
-		if (
-			!title?.length ||
-			!content?.length ||
-			!reqAmount ||
-			new BN(reqAmount || 0).eq(ZERO_BN) ||
-			!proposerAddress?.length ||
-			!getEncodedAddress(proposerAddress, network) ||
-			(link?.length && !(link as string)?.startsWith('https:')) ||
-			(tags?.length && !!tags?.some((tag: string) => typeof tag !== 'string')) ||
-			isNaN(parentBountyIndex)
-		) {
-			return res.status(400).json({ message: messages?.INVALID_PARAMS });
+
+		if (!reqAmount || new BN(reqAmount || 0).eq(ZERO_BN)) {
+			return res.status(400).json({ message: 'Invalid Requested Amount' });
+		}
+		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
+			return res.status(400).json({ message: 'Invalid Proposer Address' });
+		}
+		if (isNaN(parentBountyIndex)) {
+			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
+		}
+		if (!title?.length || !content?.length) {
+			return res.status(400).json({ message: 'Title or Content is Missing in request body' });
+		}
+		if (isNaN(parentBountyIndex)) {
+			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
+		}
+		if ((link?.length && !(link as string)?.startsWith('https:')) || (tags?.length && !!tags?.some((tag: string) => typeof tag !== 'string'))) {
+			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
 		const token = getTokenFromReq(req);

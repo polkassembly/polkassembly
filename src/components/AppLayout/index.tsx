@@ -72,6 +72,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const hideFooter = router?.pathname?.includes('/batch-voting') && isMobile;
+	const hideCommentLoginBanner = router.pathname.includes('referenda/') || router.pathname.includes('post/');
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -315,30 +316,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 												
-												{!userId || !loginAddress ? (
-													<div className={`flex  ${is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'} w-full bg-[#0095F6] py-[14px] pr-20`}>
+												{(!userId || !loginAddress) && hideCommentLoginBanner ? (
+													<div className={`fixed top-[91%] z-1000 flex items-center justify-between ${is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'} w-full bg-[#0095F6] py-[14px] pr-20`}>
 														<div className='flex flex-col'>
-															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>Join Polkassembly to Comment on this proposal.</span>
+															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>Join Polkassembly to Comment on this {router.pathname.includes('referenda/') ? 'proposal' : 'post'}.</span>
 															<span className={`${poppins.className} ${poppins.variable} text-sm text-white`}>Discuss, contribute and get regular updates from Polkassembly.</span>
 														</div>
-														<div className='flex gap-y-4'>
+														<div className='flex gap-4'>
 															<button
-																onClick={() => {
-																	setOpen(false);
-																	router.push('/signup');
-																}}
-																className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
-															>
-																Sign Up
-															</button>
-															<button
-																onClick={() => {
-																	setOpen(false);
-																	router.push('/login');
-																}}
-																className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+																onClick={() => setLoginOpen(true)}
+																className={`${poppins.className} ${poppins.variable} w-[150px] flex h-10 items-center justify-center rounded-md border border-solid border-[#0095F6] bg-white text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-[#0095F6] `}
 															>
 																Log In
+															</button>
+															<button
+																onClick={() => setSignupOpen(true)}
+																className={`${poppins.className} ${poppins.variable} w-[150px] flex h-10 items-center justify-center rounded-md border border-solid border-white bg-[#0095F6] px-4 py-1 text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-white`}
+															>
+																Sign Up
 															</button>
 														</div>
 													</div>

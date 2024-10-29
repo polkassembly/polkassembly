@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Divider, Form } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
@@ -9,6 +8,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import AuthForm from '~src/ui-components/AuthForm';
 import FilteredError from '~src/ui-components/FilteredError';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -19,14 +19,16 @@ interface Props {
 }
 
 const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) => {
+	const { t } = useTranslation();
+
 	return (
 		<AuthForm
 			onSubmit={onSubmit}
 			className={`${className} flex flex-col gap-y-3`}
 		>
 			<div className='flex flex-col gap-y-1 px-5'>
-				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
-				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
+				<h1 className='text-sidebarBlue'>{t('two_factor_authentication')}</h1>
+				<p className='text-sidebarBlue'>{t('two_factor_auth_instruction')}</p>
 
 				{error && (
 					<FilteredError
@@ -39,14 +41,14 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 					className='text-sm text-[#485F7D] dark:text-blue-dark-medium '
 					htmlFor='authCode'
 				>
-					Authentication Code
+					{t('authentication_code')}
 				</label>
 				<Form.Item
 					name='authCode'
 					validateTrigger={['onSubmit']}
 					rules={[
 						{
-							message: 'Please provide a valid authentication code.',
+							message: t('valid_auth_code_message'),
 							validator(rule, value = '', callback) {
 								if (callback && (!value || value.length !== 6 || isNaN(Number(value)))) {
 									callback(rule?.message?.toString());
@@ -68,7 +70,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 
 				<div className='flex flex-col items-center justify-center gap-y-4'>
 					<CustomButton
-						text='Login'
+						text={t('login')}
 						htmlType='submit'
 						loading={loading}
 						width={224}
@@ -80,7 +82,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						<Divider className='border-[0.5px] border-[#90A0B7]'>
 							<CustomButton
 								onClick={onBack}
-								text='Go back'
+								text={t('go_back')}
 								htmlType='button'
 								disabled={loading}
 								variant='default'

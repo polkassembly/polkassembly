@@ -43,6 +43,7 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import FilteredError from '~src/ui-components/FilteredError';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -87,6 +88,7 @@ const Web3Login: FC<Props> = ({
 	const dispatch = useDispatch();
 
 	const [error, setError] = useState('');
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [address, setAddress] = useState<string>('');
@@ -484,7 +486,7 @@ const Web3Login: FC<Props> = ({
 				<div>
 					<div className='mb-1 mt-2 flex items-center'>
 						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-						<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+						<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : t('login')}</h3>
 					</div>
 					<Divider
 						style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -517,23 +519,19 @@ const Web3Login: FC<Props> = ({
 						</h3>
 						{fetchAccounts ? (
 							<div className='-mt-3 flex flex-col items-center justify-center'>
-								<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
-									{withPolkasafe
-										? 'To fetch your Multisig details, please select a wallet extension'
-										: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
-								</p>
+								<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? t('fetch_multisig_details') : t('fetch_addresses')}</p>
 								<Divider
 									style={{ background: '#D2D8E0', flexGrow: 1 }}
 									className='m-0 mt-5 p-0 dark:bg-separatorDark'
 								/>
 								<div className='flex w-full justify-start'>
 									<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
-										<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>{t('dont_have_account')}</label>
 										<div
 											onClick={handleClick}
 											className='signup-button cursor-pointer text-base text-pink_primary'
 										>
-											&nbsp; Sign Up{' '}
+											&nbsp; {t('sign_up')}
 										</div>
 									</div>
 								</div>
@@ -543,7 +541,7 @@ const Web3Login: FC<Props> = ({
 								/>
 								<div className='web3-button-container ml-auto flex'>
 									<CustomButton
-										text='Go Back'
+										text={t('go_back')}
 										variant='default'
 										buttonsize='sm'
 										onClick={() => handleBackToLogin()}
@@ -553,7 +551,7 @@ const Web3Login: FC<Props> = ({
 									{!withPolkasafe && (
 										<CustomButton
 											icon={<CheckOutlined />}
-											text='Got it!'
+											text={t('got_it')}
 											variant='primary'
 											buttonsize='sm'
 											onClick={() => {
@@ -597,8 +595,8 @@ const Web3Login: FC<Props> = ({
 										{accountsNotFound && (
 											<div className='my-5 flex items-center justify-center px-4'>
 												<Alert
-													message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
-													description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
+													message={<span className='dark:text-blue-dark-high'>{t('need_one_account')}</span>}
+													description={<span className='dark:text-blue-dark-high'>{t('reload_after_adding')}</span>}
 													type='info'
 													showIcon
 												/>
@@ -609,7 +607,7 @@ const Web3Login: FC<Props> = ({
 												<Loader
 													size='large'
 													timeout={3000}
-													text='Requesting Web3 accounts'
+													text={t('requesting_web3_accounts')}
 												/>
 											</div>
 										) : (
@@ -620,7 +618,7 @@ const Web3Login: FC<Props> = ({
 															<MultisigAccountSelectionForm
 																multisigBalance={multisigBalance}
 																setMultisigBalance={setMultisigBalance}
-																title='Choose linked account'
+																title={t('choose_linked_account')}
 																accounts={accounts}
 																address={address}
 																onAccountChange={onAccountChange}
@@ -630,7 +628,7 @@ const Web3Login: FC<Props> = ({
 														) : (
 															<AccountSelectionForm
 																isTruncateUsername={false}
-																title='Choose linked account'
+																title={t('choose_linked_account')}
 																accounts={accounts}
 																address={address}
 																onAccountChange={onAccountChange}
@@ -645,12 +643,12 @@ const Web3Login: FC<Props> = ({
 															type='info'
 															message={
 																<span className='dark:text-blue-dark-high'>
-																	By Signing up you agree to the terms of the{' '}
+																	{t('sign_up_agreement')}{' '}
 																	<Link
 																		href='/terms-and-conditions'
 																		className='text-pink_primary'
 																	>
-																		Polkassembly end user agreement
+																		{t('user_agreement')}
 																	</Link>
 																	.
 																</span>
@@ -659,14 +657,14 @@ const Web3Login: FC<Props> = ({
 													)}
 													<div className='my-2 flex items-center justify-center gap-x-2 px-4'>
 														<CustomButton
-															text='Go Back'
+															text={t('go_back')}
 															variant='default'
 															buttonsize='sm'
 															onClick={() => handleBackToLogin()}
 															className='mr-3'
 														/>
 														<CustomButton
-															text='Login'
+															text={t('login')}
 															variant='primary'
 															buttonsize='sm'
 															loading={loading}
@@ -693,7 +691,7 @@ const Web3Login: FC<Props> = ({
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<CustomButton
-											text='Go Back'
+											text={t('go_back')}
 											variant='default'
 											buttonsize='sm'
 											onClick={() => handleBackToLogin()}

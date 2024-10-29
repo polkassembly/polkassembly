@@ -17,6 +17,7 @@ import { socialLinks } from '~src/components/UserProfile/Socials';
 import Address from '~src/ui-components/Address';
 import SocialLink from '~src/ui-components/SocialLinks';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import { useTranslation } from 'next-i18next';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -32,6 +33,7 @@ interface Props {
 
 const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		achievement_badges: [],
 		addresses: [],
@@ -165,7 +167,7 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 								className='max-lg:w-auto'
 							>
 								<EditIcon className='text-sm tracking-wide text-pink_primary ' />
-								<span className='max-md:hidden'>Edit</span>
+								<span className='max-md:hidden'>{t('edit')}</span>
 							</CustomButton>
 						)}
 					</span>

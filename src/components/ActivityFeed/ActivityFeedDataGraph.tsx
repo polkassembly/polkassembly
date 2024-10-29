@@ -34,17 +34,19 @@ const ActivityFeedDataGraph = ({
 }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0).sort((a, b) => monthOrder.indexOf(a.month.slice(0, 3)) - monthOrder.indexOf(b.month.slice(0, 3)));
+	const filteredData = graphData
+		?.filter((item) => parseFloat(item.balance) !== 0)
+		?.sort((a, b) => monthOrder?.indexOf(a?.month?.slice(0, 3)) - monthOrder?.indexOf(b?.month?.slice(0, 3)));
 	const firstMonth = filteredData[0]?.month;
-	const lastMonth = filteredData[filteredData.length - 1]?.month;
+	const lastMonth = filteredData[filteredData?.length - 1]?.month;
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData.map((item) => ({
-				x: item.month.slice(0, 3),
+			data: filteredData?.map((item) => ({
+				x: item?.month?.slice(0, 3),
 				y: formatUSDWithUnits(
 					formatBnBalance(
-						item.balance,
+						item?.balance,
 						{
 							numberAfterComma: 0,
 							withThousandDelimitor: false,
@@ -57,7 +59,7 @@ const ActivityFeedDataGraph = ({
 		}
 	];
 
-	if (filteredData.length === 0) {
+	if (filteredData?.length === 0) {
 		return (
 			<div className='mt-3 flex h-full w-full items-center justify-center'>
 				<LoadingOutlined />
@@ -79,7 +81,7 @@ const ActivityFeedDataGraph = ({
 					tickPadding: 25,
 					tickRotation: 0,
 					format: (value) => {
-						if (value === firstMonth.slice(0, 3) || value === lastMonth.slice(0, 3)) {
+						if (value === firstMonth?.slice(0, 3) || value === lastMonth?.slice(0, 3)) {
 							return '';
 						}
 						return value;
@@ -87,7 +89,7 @@ const ActivityFeedDataGraph = ({
 				}}
 				axisLeft={null}
 				tooltip={CustomTooltip}
-				tooltipFormat={(value) => `${Number(value).toFixed(2)}`}
+				tooltipFormat={(value) => `${Number(value)?.toFixed(2)}`}
 				colors={['#ADC2F9']}
 				pointSize={10}
 				pointColor={{ theme: 'background' }}

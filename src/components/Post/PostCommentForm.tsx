@@ -9,7 +9,6 @@ import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
-import { ChangeResponseType } from '~src/auth/types';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -161,11 +160,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		return content.length ? content : null;
 	};
 
-	const createSubscription = async (postId: number | string) => {
-		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: postType });
-		if (error) console.error('Error subscribing to post', error);
-		if (data) console.log(data.message);
-	};
+	// const createSubscription = async (postId: number | string) => {
+	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: postType });
+	// if (error) console.error('Error subscribing to post', error);
+	// if (data) console.log(data.message);
+	// };
 
 	const handleModalOpen = async () => {
 		await form.validateFields();
@@ -193,7 +192,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		form.setFieldValue('content', '');
 		setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
-		postIndex && createSubscription(postIndex);
+		// postIndex && createSubscription(postIndex);
 		const commentId = v4();
 		const comment = {
 			comment_reactions: {

@@ -156,6 +156,7 @@ import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
 import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
 import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
+import ProfileFollowSVG from '~assets/profile/profile-follows.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
 import MailFilled from '~assets/icons/email-notification.svg';
 import SlackIconSVG from '~assets/icons/slack.svg';
@@ -194,6 +195,7 @@ import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
+import DetailsIconSVG from '~assets/icons/details-icons.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1204,6 +1206,12 @@ export const ProfileReactionsIcon = (props: Partial<CustomIconComponentProps>) =
 		{...props}
 	/>
 );
+export const ProfileFollowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileFollowSVG}
+		{...props}
+	/>
+);
 
 export const OnChainIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1449,6 +1457,13 @@ export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
 export const AnalyticsSVGIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AnalyticsSVG}
+		{...props}
+	/>
+);
+
+export const DetailsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DetailsIconSVG}
 		{...props}
 	/>
 );

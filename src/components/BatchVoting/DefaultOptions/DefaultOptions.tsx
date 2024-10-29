@@ -1,72 +1,52 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import OptionWrapper from './OptionWrapper';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { ILastVote, Wallet } from '~src/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { ILastVote } from '~src/types';
 import Alert from '~src/basic-components/Alert';
 import { ProposalType } from '~src/global/proposalType';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useAppDispatch } from '~src/redux/store';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import AddressDropdown from '~src/ui-components/AddressDropdown';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useApiContext } from '~src/context';
 import { IDefaultOptions } from '../types';
+import Balance from '~src/components/Balance';
+import BN from 'bn.js';
+import { Tooltip } from 'antd';
+import Address from '~src/ui-components/Address';
+import AddressConnectModal from '~src/ui-components/AddressConnectModal';
+import { poppins } from 'pages/_app';
+const ZERO_BN = new BN(0);
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const dispatch = useAppDispatch();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	const { loginAddress, loginWallet } = useUserDetailsSelector();
+	const { loginAddress } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>(loginAddress);
+	const [open, setOpen] = useState(false);
+
 	const onAccountChange = (address: string) => {
 		setAddress(address);
 	};
-
 	const { api, apiReady } = useApiContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
-	const { network } = useNetworkSelector();
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
-		if (loginWallet) {
-			const injectedWindow = window as Window & InjectedWindow;
-			const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-			if (!extensionAvailable) {
-				setExtensionNotFound(true);
-			} else {
-				setExtensionNotFound(false);
-			}
-			(async () => {
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-				setAccounts(accountsData?.accounts || []);
-				onAccountChange(accountsData?.account || '');
-			})();
-		} else {
-			if (!window) return;
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				const injectedWindow = window as Window & InjectedWindow;
-				const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-				if (!extensionAvailable) {
-					setExtensionNotFound(true);
-				} else {
-					setExtensionNotFound(false);
-				}
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-					onAccountChange(accountsData?.account || '');
-				})();
-			}
+	const handleOnAvailableBalanceChange = async (balanceStr: string) => {
+		if (!api || !apiReady) {
+			return;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress]);
+		let balance = ZERO_BN;
+
+		try {
+			balance = new BN(balanceStr);
+			setAvailableBalance(balance);
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
 	return (
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
@@ -76,19 +56,53 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				</div>
 			</header>
 			<article className='-full w-full items-center justify-start gap-x-3 px-6'>
-				{!forSpecificPost && (
-					<Alert
-						type='info'
-						showIcon
-						message={<span className='text-[13px] dark:text-white'>Select default values for votes. These can be edited before making a final transaction</span>}
+				<Alert
+					type='info'
+					showIcon
+					className='mt-8 px-4'
+					message={
+						<p className='m-0 p-0 p-2 text-[13px] dark:text-white'>
+							You can adjust for delegated voting power from edit button on each proposal.
+							<Tooltip
+								color='#363636'
+								title={
+									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
+										<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
+										<p className='m-0 p-0 text-white'>
+											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.
+										</p>
+									</div>
+								}
+							>
+								<span className='ml-2 font-semibold text-pink_primary '>Know more</span>
+							</Tooltip>
+						</p>
+					}
+				/>
+				<div className='mt-6 flex justify-end'>
+					<Balance
+						address={address}
+						onChange={handleOnAvailableBalanceChange}
 					/>
-				)}
-				<div className='mt-8'>
-					<AddressDropdown
-						accounts={accounts}
-						defaultAddress={address}
-						onAccountChange={onAccountChange}
-					/>
+				</div>
+				<div className='flex w-full items-end gap-2 text-sm '>
+					<div className='flex h-[44px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+						<Address
+							address={address}
+							isTruncateUsername={false}
+							displayInline
+						/>
+						<CustomButton
+							text='Change Wallet'
+							onClick={() => {
+								setOpen(true);
+							}}
+							width={120}
+							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+							height={24}
+							variant='primary'
+						/>
+					</div>
 				</div>
 
 				<OptionWrapper
@@ -119,6 +133,17 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					}}
 				/>
 			</div>
+			<AddressConnectModal
+				open={open}
+				setOpen={setOpen}
+				walletAlertTitle='Batch Voting.'
+				onConfirm={(address: string) => {
+					setOpen(true);
+					dispatch(batchVotesActions.setBatchVotingAddress(address));
+					setAddress(address);
+				}}
+				isUsedInBatchVoting={true}
+			/>
 		</section>
 	);
 };

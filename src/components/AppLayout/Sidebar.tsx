@@ -566,7 +566,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'treasury_group',
 					null,
 					isOpenGovSupported(network)
-						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
+						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
 							? [
@@ -632,7 +632,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
@@ -1129,7 +1129,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 
-	if (isOpenGovSupported(network)) {
+	if (isOpenGovSupported(network) && ![AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2OverviewItems.splice(
 			3,
 			0,
@@ -1140,7 +1140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					<BatchVotingIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<BatchVotingIcon className='text-8xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
@@ -1365,12 +1365,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	let bountiesSubItems: ItemType[] = [];
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 
 		if (['polkadot'].includes(network)) {
 			bountiesSubItems.push(
-				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+				getSiderMenuItem(
+					<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>,
+					'/bounty-dashboard',
+					null
+				)
 			);
 		}
 		if (isOpenGovSupported(network)) {
@@ -1570,7 +1574,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		</div>
 	);
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		gov2CollapsedItems.splice(
 			8,
 			0,
@@ -1938,19 +1942,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<Link
-										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
-										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
-									>
+									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<Image
-												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-												alt='polkassembly logo'
-												width={150}
-												height={50}
-											/>
+											<div className='-mb-2 ml-24 flex h-full items-center justify-center'>
+												<Image
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+													alt='polkassembly logo'
+													width={110}
+													height={40}
+												/>
+												<Image
+													src='/assets/Gifs/candy-GIF.gif'
+													alt='polkassembly logo'
+													width={75}
+													height={50}
+												/>
+											</div>
 										) : (
-											<PaLogo sidedrawer={sidedrawer} />
+											<div className='ml-5 h-full'>
+												<PaLogo sidedrawer={sidedrawer} />
+											</div>
 										)}
 									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>

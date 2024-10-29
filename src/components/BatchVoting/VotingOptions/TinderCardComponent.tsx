@@ -21,8 +21,8 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	};
 
 	return (
-		<div className='flex overflow-x-hidden'>
-			<div className='h-[500px] overflow-y-auto rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
+		<div className='flex overflow-hidden'>
+			<div className='h-[500px] rounded-2xl bg-white px-4 py-6 dark:border dark:border-solid dark:border-separatorDark dark:bg-black'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}
@@ -32,7 +32,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						post={proposal}
 					/>
 					<Button
-						className='border-none bg-transparent p-0 text-pink_primary'
+						className='border-none bg-transparent p-0 text-pink_primary shadow-none'
 						onClick={() => onSkip(proposal.id)}
 					>
 						Skip &gt;

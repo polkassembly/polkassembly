@@ -7,6 +7,7 @@ import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposal
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
+import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 
 declare global {
 	interface Window {
@@ -1016,6 +1017,61 @@ export interface INetworkWalletErr {
 	message: string;
 	description: string;
 	error: number;
+}
+
+export interface IChildBountySubmission {
+	content: string;
+	createdAt: Date;
+	link: string;
+	parentBountyIndex: number;
+	proposer: string;
+	reqAmount: string;
+	status: ESubmissionStatus;
+	tags: string[];
+	title: string;
+	updatedAt: Date;
+	userId: number;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
+	id: string;
+	rejectionMessage?: string;
+}
+
+export enum ESubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
+}
+
+export enum EPendingCuratorReqType {
+	SENT = 'sent',
+	RECEIVED = 'received'
+}
+
+export interface IPendingCuratorReq extends IBountyListing {
+	reqType: EPendingCuratorReqType;
+	proposalType: ProposalType;
+	content: string;
+	parentBountyIndex?: number;
+}
+
+export interface ISubsquidChildBontyAndBountyRes {
+	proposer: string;
+	index: number;
+	status: string;
+	reward: string;
+	payee: string;
+	curator: string;
+	createdAt: string;
+	parentBountyIndex: number;
 }
 export interface IFollowEntry {
 	id: string;

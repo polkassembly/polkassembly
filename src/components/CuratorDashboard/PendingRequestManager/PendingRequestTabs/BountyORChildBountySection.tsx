@@ -9,7 +9,7 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { EPendingCuratorReqType, IPendingCuratorReq, NotificationStatus } from '~src/types';
+import { EPendingCuratorReqType, IPendingCuratorReq, NotificationStatus, Wallet } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 import { Pagination } from '~src/ui-components/Pagination';
@@ -22,6 +22,9 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { getMultisigAddressDetails } from '~src/components/DelegationDashboard/utils/getMultisigAddressDetails';
 
 interface Props {
 	proposalType: ProposalType.BOUNTIES | ProposalType.CHILD_BOUNTIES;
@@ -32,12 +35,49 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, loginWallet, multisigAssociatedAddress } = useUserDetailsSelector();
 	const [pendingReq, setPendingReq] = useState<IPendingCuratorReq[]>([]);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isExpand, setIsExpand] = useState<boolean>(false);
 	const [totalCount, setTotalCount] = useState(0);
+	const [multisigData, setMultisigData] = useState<{ threshold: number; signatories: string[] }>({
+		signatories: [],
+		threshold: 0
+	});
+
+	const handleMultisigAddress = async () => {
+		if (!api || !apiReady || !loginAddress?.length || !network) return;
+		let defaultWallet: Wallet | null = loginWallet;
+		if (!defaultWallet) {
+			defaultWallet = (window.localStorage.getItem('loginWallet') as Wallet) || null;
+		}
+
+		if (!defaultWallet) return;
+		//for setting signer
+		await getAccountsFromWallet({ api, apiReady, chosenWallet: defaultWallet || loginWallet, loginAddress: '', network });
+
+		const data = await getMultisigAddressDetails(loginAddress);
+		if (data?.threshold) {
+			const filteredSignaories: string[] = [];
+
+			data?.multi_account_member?.map((addr: { address: string }) => {
+				if (getEncodedAddress(addr?.address || '', network) !== getEncodedAddress(multisigAssociatedAddress || '', network)) {
+					filteredSignaories?.push(addr?.address);
+				}
+			});
+
+			setMultisigData({
+				signatories: filteredSignaories,
+				threshold: data?.threshold || 0
+			});
+		}
+	};
+
+	useEffect(() => {
+		handleMultisigAddress();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, multisigAssociatedAddress, loginAddress]);
 
 	const getRequests = async () => {
 		setLoading(true);
@@ -80,13 +120,33 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 		} else {
 			tx = api.tx.bounties?.acceptCurator(data?.index);
 		}
+		if (multisigData?.threshold > 0) {
+			tx = api?.tx?.multisig?.asMulti(multisigData?.threshold, multisigData?.signatories || [], null, tx, {
+				proofSize: null,
+				refTime: null
+			});
+		}
 
 		const onSuccess = () => {
 			handleUpdateReq(data?.index, { accepted: true, loading: false });
 
 			queueNotification({
+				durationInSeconds: 5,
 				header: 'Success!',
-				message: 'Curator Request Accepted Successfully',
+				message:
+					multisigData?.threshold > 0 ? (
+						<div className='text-xs'>
+							An approval request has been sent to signatories to confirm transaction.{' '}
+							<Link
+								href={'https://app.polkasafe.xyz'}
+								className='text-xs text-pink_primary'
+							>
+								View Details
+							</Link>
+						</div>
+					) : (
+						'Curator Request Accepted Successfully'
+					),
 				status: NotificationStatus.SUCCESS
 			});
 		};

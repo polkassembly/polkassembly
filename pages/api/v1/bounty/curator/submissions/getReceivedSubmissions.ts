@@ -81,7 +81,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					parentBountyIndex: data?.parent_bounty_index,
 					proposer: data?.proposer,
 					reqAmount: data?.req_amount,
-					status: data?.staus,
+					status: data?.status,
 					tags: data?.tags || [],
 					title: data?.title || '',
 					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at,

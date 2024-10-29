@@ -23,7 +23,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMesssage, updatedStatus } = req.body;
+		const { curatorAddress, proposerAddress, submissionId, parentBountyIndex, rejectionMessage, updatedStatus } = req.body;
 		if (
 			!proposerAddress?.length ||
 			!getEncodedAddress(proposerAddress, network) ||
@@ -50,11 +50,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages?.PARENT_BOUNTY_IS_NOT_ACTIVE });
 		}
 
-		if (
-			![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator) &&
-			![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)
-		) {
-			return res.status(401).json({ message: messages.UNAUTHORISED });
+		if ([ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)) {
+			if (![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator)) {
+				return res.status(401).json({ message: messages.UNAUTHORISED });
+			}
 		}
 
 		const submissionDocRef = firestore_db.collection('curator_submissions').doc(submissionId);
@@ -73,7 +72,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		const payload = {
-			rejection_msg: rejectionMesssage || '',
+			rejection_msg: rejectionMessage || '',
 			status: updatedStatus,
 			updatedAt: new Date()
 		};

@@ -114,7 +114,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 														Object.keys(postData?.progress_report).length - index
 													}`}</h1>
 													<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
-													<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs.unix(report?.created_at?._seconds).format('DD MMM YYYY')}</p>
+													<p className='m-0 p-0 text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs.unix(report?.created_at?._seconds).format('DD MMM YYYY')}</p>
 													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 												</div>
 												<Button
@@ -141,10 +141,12 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 										/>
 									</Panel>
 								</Collapse>
-								<Divider
-									style={{ background: '#D2D8E0', flexGrow: 1 }}
-									className='mt-4 dark:bg-separatorDark'
-								/>
+								{index + 1 !== Object.keys(postData.progress_report).length && (
+									<Divider
+										style={{ background: '#D2D8E0', flexGrow: 1 }}
+										className='mt-5 dark:bg-separatorDark'
+									/>
+								)}
 							</>
 						</Timeline.Item>
 					))
@@ -243,5 +245,8 @@ export default styled(UserReportInfo)`
 	}
 	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
 		padding: 0 !important;
+	}
+	.ant-timeline .ant-timeline-item-tail {
+		height: calc(100% - 15px) !important;
 	}
 `;

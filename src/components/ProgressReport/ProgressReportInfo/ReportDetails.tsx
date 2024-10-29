@@ -93,17 +93,17 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 				<NameLabel
 					defaultAddress={postData?.proposer || ''}
 					truncateUsername
-					usernameClassName='text-xs text-ellipsis text-sidebarBlue overflow-hidden font-normal dark:text-blue-dark-medium'
+					usernameClassName='text-xs text-ellipsis text-lightBlue overflow-hidden font-normal dark:text-blue-dark-medium'
 				/>
 				{report?.ratings && report?.ratings?.length > 0 && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'
 						type='vertical'
-						style={{ borderLeft: '1px solid var(--sidebarBlue)' }}
+						style={{ borderLeft: '1px solid var(--lightBlue)' }}
 					/>
 				)}
 				{report?.ratings && report?.ratings?.length > 0 && (
-					<p className='m-0 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
+					<p className='m-0 flex items-center p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 						Average Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
 					</p>
 				)}
@@ -111,7 +111,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 			{report?.progress_summary && (
 				<div className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
 					<Markdown
-						className='post-content m-0 p-0'
+						className='post-content m-0 p-0 font-normal'
 						md={report?.progress_summary}
 						theme={theme}
 					/>

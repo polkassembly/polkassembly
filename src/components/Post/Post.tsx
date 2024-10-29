@@ -491,7 +491,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{post?.progress_report?.progress_file && <PostProgressReport />}
+					{post?.progress_report && <PostProgressReport />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

@@ -120,6 +120,7 @@ interface IMediumSpenderProps {
 const MediumSpender: FC<IMediumSpenderProps> = (props) => {
 	const { posts, error } = props;
 	const dispatch = useDispatch();
+	console.log('medium: ', posts);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

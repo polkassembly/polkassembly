@@ -223,4 +223,7 @@ export default styled(UploadMultipleReports)`
 	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
 		padding: 0 !important;
 	}
+	.ant-timeline .ant-timeline-item-tail {
+		height: calc(100% - 15px) !important;
+	}
 `;

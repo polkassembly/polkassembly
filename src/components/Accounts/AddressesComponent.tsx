@@ -48,6 +48,28 @@ const AddressesComponent = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress]);
 
+	if (!loginAddress) {
+		return (
+			<div className='mx-auto max-w-[600px]'>
+				<Alert
+					type='info'
+					showIcon
+					className={'my-5 dark:text-white'}
+					message='Please Login to continue'
+				/>
+				<div className='flex items-center justify-center'>
+					<Image
+						src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
+						alt='search-icon'
+						width={400}
+						height={400}
+						className='-my-[40px]'
+						priority={true}
+					/>
+				</div>
+			</div>
+		);
+	}
 	if (!accountData) {
 		return (
 			<div className='mx-auto max-w-[600px]'>

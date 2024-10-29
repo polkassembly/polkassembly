@@ -25,7 +25,7 @@ import { getFormattedValue } from './utils/formatBalanceUsd';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
 import { removeSymbols } from '~src/util/htmlDiff';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const CardHeader = styled.div`
 	&:after {

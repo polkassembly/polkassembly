@@ -12,7 +12,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import NameLabel from '~src/ui-components/NameLabel';
 import { chainProperties } from '~src/global/networkConstants';
 import { getDisplayValue } from './utils/formatBalanceUsd';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const BountyActivities = () => {
 	const { t } = useTranslation();

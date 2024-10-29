@@ -29,7 +29,7 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { removeSymbols } from '~src/util/htmlDiff';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export interface BountiesProposalsCardProps {
 	activeData: any;

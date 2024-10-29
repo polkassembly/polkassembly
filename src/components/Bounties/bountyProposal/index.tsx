@@ -7,7 +7,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import BountyActionModal from './BountyActionModal';
 import { spaceGrotesk } from 'pages/_app';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IBountyProposalActionButtonProps {
 	className?: string;

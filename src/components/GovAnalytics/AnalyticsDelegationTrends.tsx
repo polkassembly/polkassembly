@@ -15,7 +15,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import DelegationCapitalDetails from './DelegationCapitalDetails';
 import { IDelegationInfo } from './types';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 

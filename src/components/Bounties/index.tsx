@@ -14,7 +14,7 @@ import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;

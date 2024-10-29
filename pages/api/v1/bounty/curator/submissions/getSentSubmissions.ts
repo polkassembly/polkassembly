@@ -42,7 +42,7 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			.get();
 
 		if (submissionsDocs?.empty) {
-			return res.status(404).json({ message: messages?.NO_CHILD_BOUNTY_SUBMISSION_FOUND });
+			return res.status(200).json([]);
 		}
 		const allSubmissions: IChildBountySubmission[] = [];
 		const submissionsPromises = submissionsDocs?.docs?.map(async (doc) => {

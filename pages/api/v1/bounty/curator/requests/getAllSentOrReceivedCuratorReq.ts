@@ -64,7 +64,10 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 
 		const subsquidbountiesIndexes = subsquidBountiesData?.map((bounty: { index: number }) => bounty?.index);
 
-		const postDocs = await postsByTypeRef(network, proposalType).where('id', 'in', subsquidbountiesIndexes).get();
+		let postDocs: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData> | null = null;
+		if (subsquidbountiesIndexes?.length) {
+			postDocs = await postsByTypeRef(network, proposalType).where('id', 'in', subsquidbountiesIndexes).get();
+		}
 
 		const bountiesPromises = subsquidBountiesData.map(async (item: ISubsquidChildBontyAndBountyRes) => {
 			const payload: IPendingCuratorReq = {

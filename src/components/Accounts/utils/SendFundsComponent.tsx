@@ -57,9 +57,9 @@ const SendFundsComponent = ({ address }: Props) => {
 					}));
 				}}
 				htmlType='submit'
-				className={'my-0 w-full flex h-8 items-center rounded-md border-none bg-pink_primary pl-[10px] text-white hover:bg-pink_secondary '}
+				className={'my-0 flex h-8 w-full items-center rounded-md border-none bg-pink_primary pl-[10px] text-white hover:bg-pink_secondary '}
 			>
-				<div className='flex mx-auto items-center justify-between'>
+				<div className='mx-auto flex items-center justify-between'>
 					<Image
 						className='-mt-[2.5px] h-5 w-5 rounded-full object-contain'
 						src={'/assets/icons/accounts/funds-icon.svg'}

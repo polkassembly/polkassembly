@@ -387,7 +387,7 @@ const Address = (props: Props) => {
 										))}
 
 									<div
-										className={`flex items-center font-semibold text-bodyBlue ${isUsedInAccountsPage && 'ml-1 md:ml-3 md:mt-1 text-xl'} dark:text-blue-dark-high  ${
+										className={`flex items-center font-semibold text-bodyBlue ${isUsedInAccountsPage && 'ml-1 text-xl md:ml-3 md:mt-1'} dark:text-blue-dark-high  ${
 											!disableAddressClick && 'cursor-pointer hover:underline'
 										}`}
 									>

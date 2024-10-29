@@ -41,7 +41,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 	}, [address, network, loginAddress, api, apiReady]);
 
 	return (
-		<div className={`${poppins.className} ${poppins.variable} mt-1 md:mt-0 flex justify-between md:justify-start items-center md:gap-2`}>
+		<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center justify-between md:mt-0 md:justify-start md:gap-2`}>
 			<div className='flex flex-col items-center '>
 				<div className='flex items-center gap-1 md:gap-[6px]'>
 					<Image

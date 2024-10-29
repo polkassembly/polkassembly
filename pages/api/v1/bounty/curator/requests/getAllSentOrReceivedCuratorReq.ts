@@ -121,7 +121,7 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 			}
 		});
 
-		return res.status(200).json({ data: resolvedResults || [], totalCount: resolvedResults?.length || 0 });
+		return res.status(200).json({ data: resolvedResults || [], totalCount: subsquidBountiesRes?.data?.proposalsConnection?.totalCount || 0 });
 	} catch (error) {
 		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}

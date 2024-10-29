@@ -13,7 +13,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { getBountyInfo } from '../../getBountyInfoFromIndex';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
-import { ESubmissionStatus } from '~src/types';
+import { EChildbountySubmissionStatus } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -30,7 +30,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			!curatorAddress?.length ||
 			!getEncodedAddress(curatorAddress, network) ||
 			!submissionId?.length ||
-			![ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED, ESubmissionStatus.DELETED].includes(updatedStatus)
+			![EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED, EChildbountySubmissionStatus.DELETED].includes(updatedStatus)
 		) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
@@ -50,7 +50,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages?.PARENT_BOUNTY_IS_NOT_ACTIVE });
 		}
 
-		if ([ESubmissionStatus.APPROVED, ESubmissionStatus.REJECTED].includes(updatedStatus)) {
+		if ([EChildbountySubmissionStatus.APPROVED, EChildbountySubmissionStatus.REJECTED].includes(updatedStatus)) {
 			if (![getEncodedAddress(curatorAddress, network), curatorAddress].includes(data?.curator)) {
 				return res.status(401).json({ message: messages.UNAUTHORISED });
 			}
@@ -63,7 +63,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(404).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_NOT_EXISTS });
 		}
 
-		if (updatedStatus == ESubmissionStatus.DELETED) {
+		if (updatedStatus == EChildbountySubmissionStatus.DELETED) {
 			if (submissionDoc?.data()?.user_id !== user?.id) {
 				return res.status(401).json({ message: messages.UNAUTHORISED });
 			}

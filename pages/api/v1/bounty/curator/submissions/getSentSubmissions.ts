@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -9,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { ESubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -20,20 +19,15 @@ import { getSubSquareContentAndTitle } from 'pages/api/v1/posts/subsqaure/subsqu
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { getDefaultContent } from '~src/util/getDefaultContent';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-
 const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
-
 	try {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
 		const { userAddress } = req.body;
-
 		if (!userAddress?.length || !getEncodedAddress(userAddress, network)) {
 			return res.status(400).json({ message: messages?.INVALID_PARAMS });
 		}
-
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
 
@@ -50,13 +44,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 		if (submissionsDocs?.empty) {
 			return res.status(200).json([]);
 		}
-
 		const allSubmissions: IChildBountySubmission[] = [];
-
 		const submissionsPromises = submissionsDocs?.docs?.map(async (doc) => {
 			if (doc?.exists) {
 				const data = doc?.data();
-
 				const payload: IChildBountySubmission = {
 					content: data?.content || '',
 					createdAt: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
@@ -71,15 +62,13 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					updatedAt: data?.updated_at?.toDate ? data?.updated_at?.toDate() : data?.updated_at,
 					userId: data?.user_id
 				};
-
 				//is Bounty active
 				const { data: subsquidRes } = await getBountyInfo({
 					bountyIndex: payload?.parentBountyIndex,
 					network: network
 				});
-
 				if (!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(subsquidRes?.status || '')) {
-					payload.status = ESubmissionStatus.OUTDATED;
+					payload.status = EChildbountySubmissionStatus.OUTDATED;
 				}
 				payload.bountyData = {
 					...(payload?.bountyData || {}),
@@ -88,11 +77,9 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					reqAmount: subsquidRes?.reqAmount || '0',
 					status: subsquidRes?.status || ''
 				};
-
 				allSubmissions.push(payload);
 			}
 		});
-
 		await Promise.allSettled(submissionsPromises);
 
 		let allSubmissionsBountyIndexes = allSubmissions?.map((data: IChildBountySubmission) => data?.parentBountyIndex);
@@ -104,14 +91,10 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 			}
 			return chunks;
 		};
-
 		const chunks = chunkArray(allSubmissionsBountyIndexes, 30);
-
 		const bountiesDocsPromises = chunks.map((chunk) => postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', chunk).get());
 		const bountiesDocsSnapshots = await Promise.all(bountiesDocsPromises);
-
 		const bountiesDocs = bountiesDocsSnapshots.flatMap((snapshot) => snapshot.docs);
-
 		const resultsPromises = allSubmissions?.map(async (submission: IChildBountySubmission) => {
 			const bountiesDataPromises = bountiesDocs?.map(async (bounty) => {
 				if (bounty?.exists) {
@@ -125,35 +108,27 @@ const handler: NextApiHandler<IChildBountySubmission[] | MessageType> = async (r
 					}
 				}
 			});
-
 			if (!submission?.bountyData?.title?.length || !submission?.bountyData?.content?.length) {
 				const subsqaureRes = await getSubSquareContentAndTitle(ProposalType.BOUNTIES, network, submission?.parentBountyIndex);
-
 				submission.bountyData = {
 					...(submission?.bountyData || {}),
 					content: subsqaureRes?.content || getDefaultContent({ proposalType: ProposalType.BOUNTIES, proposer: userAddress || '' }) || '',
 					title: subsqaureRes?.title || getProposalTypeTitle(ProposalType.BOUNTIES) || ''
 				};
 			}
-
 			await Promise.allSettled(bountiesDataPromises);
 			return submission;
 		});
-
 		const resultRes = await Promise.allSettled(resultsPromises);
-
 		const results: IChildBountySubmission[] = [];
-
 		resultRes.map((promise) => {
 			if (promise?.status == 'fulfilled') {
 				results?.push(promise.value);
 			}
 		});
-
 		return res.status(200).json(results);
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}
 };
-
 export default withErrorHandling(handler);

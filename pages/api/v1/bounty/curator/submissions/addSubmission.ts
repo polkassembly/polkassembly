@@ -16,7 +16,7 @@ import { getBountyInfo } from '../../getBountyInfoFromIndex';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { ESubmissionStatus } from '~src/types';
+import { EChildbountySubmissionStatus } from '~src/types';
 
 const ZERO_BN = new BN(0);
 
@@ -68,7 +68,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const submissionDocs = await submissionSnapshot
 			?.where('proposer', '==', getEncodedAddress(proposerAddress, network))
 			.where('parent_bounty_index', '==', parentBountyIndex)
-			.where('status', '==', ESubmissionStatus.PENDING)
+			.where('status', '==', EChildbountySubmissionStatus.PENDING)
 			.where('user_id', '==', user?.id)
 			.get();
 
@@ -85,7 +85,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			parent_bounty_index: parentBountyIndex,
 			proposer: getEncodedAddress(proposerAddress, network) || '',
 			req_amount: reqAmount || '0',
-			status: ESubmissionStatus.PENDING,
+			status: EChildbountySubmissionStatus.PENDING,
 			tags: tags || [],
 			title: title || '',
 			updated_at: new Date(),

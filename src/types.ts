@@ -1026,7 +1026,7 @@ export interface IChildBountySubmission {
 	parentBountyIndex: number;
 	proposer: string;
 	reqAmount: string;
-	status: ESubmissionStatus;
+	status: EChildbountySubmissionStatus;
 	tags: string[];
 	title: string;
 	updatedAt: Date;
@@ -1041,9 +1041,11 @@ export interface IChildBountySubmission {
 	};
 	id: string;
 	rejectionMessage?: string;
+	expand?: boolean;
+	loading?: boolean;
 }
 
-export enum ESubmissionStatus {
+export enum EChildbountySubmissionStatus {
 	APPROVED = 'approved',
 	REJECTED = 'rejected',
 	PENDING = 'pending',
@@ -1061,6 +1063,9 @@ export interface IPendingCuratorReq extends IBountyListing {
 	proposalType: ProposalType;
 	content: string;
 	parentBountyIndex?: number;
+	accepted?: boolean;
+	expand?: boolean;
+	loading?: boolean;
 }
 
 export interface ISubsquidChildBontyAndBountyRes {

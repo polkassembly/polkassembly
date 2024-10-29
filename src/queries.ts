@@ -3325,6 +3325,9 @@ proposals(where: {proposer_eq: $address, status_eq:CuratorProposed, type_eq:$typ
     payee
     parentBountyIndex
   }
+    proposalsConnection(where: {proposer_eq: $address, status_eq:CuratorProposed, type_eq:$type_eq} ,orderBy: id_ASC){
+   totalCount
+  }
 }`;
 
 export const GET_RECEIVED_CURATOR_REQUESTS = `query GET_RECEIVED_CURATOR_REQUESTS($address: String, $limit:Int, $offset: Int, $type_eq:ProposalType){
@@ -3339,6 +3342,9 @@ proposals(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type
     proposer
     payee
     parentBountyIndex
+  }
+    proposalsConnection(where: {curator_eq: $address, status_eq:CuratorProposed, type_eq:$type_eq} ,orderBy: id_ASC){
+   totalCount
   }
 }`;
 

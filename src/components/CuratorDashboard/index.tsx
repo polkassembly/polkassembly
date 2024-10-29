@@ -48,7 +48,7 @@ const CuratorDashboard = ({ className }: Props) => {
 						<CustomButton
 							variant='primary'
 							onClick={handleClick}
-							className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
+							className='bounty-button flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border-none px-[22px] py-3 md:w-auto md:justify-normal '
 						>
 							<ImageIcon
 								src='/assets/bounty-icons/proposal-icon.svg'

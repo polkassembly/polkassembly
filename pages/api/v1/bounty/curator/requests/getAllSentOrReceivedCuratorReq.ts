@@ -29,13 +29,16 @@ const handler: NextApiHandler<{ data: IPendingCuratorReq[]; totalCount: number }
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		if (
-			isNaN(page) ||
-			!userAddress?.length ||
-			!getEncodedAddress(userAddress, network) ||
-			![EPendingCuratorReqType.RECEIVED, EPendingCuratorReqType?.SENT].includes(reqType) ||
-			![ProposalType.BOUNTIES, ProposalType.CHILD_BOUNTIES].includes(proposalType || '')
-		) {
+		if (isNaN(page)) {
+			return res.status(400).json({ message: 'Invalid Page Number' });
+		}
+		if (!userAddress?.length || !getEncodedAddress(userAddress, network)) {
+			return res.status(400).json({ message: 'Invalid User Address' });
+		}
+		if (![ProposalType.BOUNTIES, ProposalType.CHILD_BOUNTIES].includes(proposalType || '')) {
+			return res.status(400).json({ message: 'Invalid Proposal Type' });
+		}
+		if (![EPendingCuratorReqType.RECEIVED, EPendingCuratorReqType?.SENT].includes(reqType)) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 

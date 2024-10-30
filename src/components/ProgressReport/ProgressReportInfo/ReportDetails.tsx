@@ -50,9 +50,8 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 			for (let i = 0; i < fullStars; i++) {
 				starsArray.push(
 					<StarFilled
+						className='text-[#FFAE06]'
 						key={i}
-						style={{ color: '#fadb14' }}
-						className='scale-110'
 					/>
 				);
 			}
@@ -61,8 +60,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 				starsArray.push(
 					<StarFilled
 						key='half'
-						style={{ color: '#fadb14', opacity: 0.5 }}
-						className='scale-110'
+						className='scale-110 text-[#FFAE06]'
 					/>
 				);
 			}

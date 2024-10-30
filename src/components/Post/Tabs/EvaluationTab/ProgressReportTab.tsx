@@ -73,7 +73,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	useEffect(() => {
 		getProgressReportViews();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
+	}, [currentUser?.loginAddress, postIndex]);
 
 	useEffect(() => {
 		if (postData?.progress_report?.[0]?.progress_file) {

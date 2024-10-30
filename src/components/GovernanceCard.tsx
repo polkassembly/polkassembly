@@ -161,6 +161,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [progressReport, setProgressReport] = useState<IProgressReport[]>();
+	const [isLoadingReport, setIsLoadingReport] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	let titleString = title || method || tipReason || noTitle;
@@ -234,7 +235,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const isAllRefPage = router.pathname.includes('all-posts');
 
 	const getProgressReport = async () => {
-		console.log(onchainId, proposalType);
+		setIsLoadingReport(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/progressReport/getProgressReport', {
 			postId: onchainId,
 			type: proposalType
@@ -242,13 +243,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 		if (error || !data) {
 			setProgressReport([]);
-			console.log(error, onchainId);
 		}
 
 		if (data) {
 			setProgressReport(data?.progress_report);
-			console.log('progress: ', data);
 		}
+		setIsLoadingReport(false);
 	};
 
 	useEffect(() => {
@@ -362,7 +362,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && (
+							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && (
 								<Tooltip
 									color='#363636'
 									title={

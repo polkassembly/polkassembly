@@ -1110,6 +1110,6 @@ export interface IChat {
 }
 
 export interface IChatsResponse {
-	sentChats: IChat[];
-	receivedChats: IChat[];
+	messages: IChat[];
+	requests: IChat[];
 }

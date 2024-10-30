@@ -55,10 +55,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 				})
 				.filter((chat) => chat.latestMessage.senderAddress);
 
-		const sentChats: IChat[] = mapChatData(sentChatsSnapshot.docs);
-		const receivedChats: IChat[] = mapChatData(receivedChatsSnapshot.docs);
+		const messages: IChat[] = mapChatData(sentChatsSnapshot.docs);
+		const requests: IChat[] = mapChatData(receivedChatsSnapshot.docs);
 
-		return res.status(200).json({ receivedChats, sentChats });
+		return res.status(200).json({ messages, requests });
 	} catch (error) {
 		return res.status(500).json({ message: error.message || messages.API_FETCH_ERROR });
 	}

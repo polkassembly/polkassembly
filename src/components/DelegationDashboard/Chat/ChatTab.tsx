@@ -6,35 +6,35 @@ import { Segmented } from 'antd';
 import React from 'react';
 
 interface Props {
-	setSelectedChatTab: (selectedChatTab: 'sent' | 'received') => void;
-	selectedChatTab: 'sent' | 'received';
-	sentCount: number;
-	receivedCount: number;
+	setSelectedChatTab: (selectedChatTab: 'messages' | 'requests') => void;
+	selectedChatTab: 'messages' | 'requests';
+	requestsCount: number;
+	messagesCount: number;
 }
 
-const ChatTab = ({ selectedChatTab, setSelectedChatTab, receivedCount, sentCount }: Props) => {
+const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsCount }: Props) => {
 	return (
 		<Segmented
 			options={[
 				{
 					label: (
 						<div className='p-1'>
-							<div>Received ({receivedCount})</div>
+							<div>Messages ({messagesCount})</div>
 						</div>
 					),
-					value: 'received'
+					value: 'messages'
 				},
 				{
 					label: (
 						<div className='p-1'>
-							<div>Sent ({sentCount})</div>
+							<div>Requests ({requestsCount})</div>
 						</div>
 					),
-					value: 'sent'
+					value: 'requests'
 				}
 			]}
 			value={selectedChatTab}
-			onChange={(value) => setSelectedChatTab(String(value) as 'sent' | 'received')}
+			onChange={(value) => setSelectedChatTab(String(value) as 'messages' | 'requests')}
 			className='[&_.ant-segmented-item-selected]:font-semibold [&_.ant-segmented-item-selected_.ant-segmented-item-label]:text-bodyBlue [&_.ant-segmented-item-selected_.ant-segmented-item-label]:dark:text-blue-dark-high'
 			block
 		/>

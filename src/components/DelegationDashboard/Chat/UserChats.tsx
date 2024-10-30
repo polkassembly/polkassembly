@@ -25,9 +25,9 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 	const address = delegationDashboardAddress || loginAddress;
 
 	const [loading, setLoading] = useState<boolean>(false);
-	const [sentChats, setSentChats] = useState<IChat[]>([]);
-	const [receivedChats, setReceivedChats] = useState<IChat[]>([]);
-	const [selectedChatTab, setSelectedChatTab] = useState<'sent' | 'received'>('received');
+	const [messages, setMessages] = useState<IChat[]>([]);
+	const [requests, setRequests] = useState<IChat[]>([]);
+	const [selectedChatTab, setSelectedChatTab] = useState<'messages' | 'requests'>('messages');
 	const [openedChat, setOpenedChat] = useState<IChat | null>(null);
 	const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
@@ -51,8 +51,8 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IChatsResponse>('api/v1/delegate-chat/getDelegateChats', { address });
 		if (data) {
-			setSentChats(data?.sentChats);
-			setReceivedChats(data?.receivedChats);
+			setMessages(data?.messages);
+			setRequests(data?.requests);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -72,8 +72,8 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 					<ChatTab
 						setSelectedChatTab={setSelectedChatTab}
 						selectedChatTab={selectedChatTab}
-						sentCount={sentChats?.length || 0}
-						receivedCount={receivedChats?.length || 0}
+						messagesCount={messages?.length || 0}
+						requestsCount={requests?.length || 0}
 					/>
 				</div>
 				<Spin
@@ -83,7 +83,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 					<RenderChats
 						handleOpenChat={handleChatToggle}
 						handleNewChat={handleNewChat}
-						chats={selectedChatTab === 'sent' ? sentChats : receivedChats}
+						chats={selectedChatTab === 'messages' ? messages : requests}
 					/>
 				</Spin>
 			</div>

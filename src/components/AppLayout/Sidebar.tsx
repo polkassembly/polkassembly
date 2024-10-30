@@ -1398,7 +1398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							)}
 						</span>
 					</div>,
-					'/bounties',
+					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 					null
 				),
 				getSiderMenuItem(

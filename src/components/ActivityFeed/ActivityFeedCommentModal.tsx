@@ -129,7 +129,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<div className='flex items-center gap-[4px]  md:gap-2 md:pt-0 '>
 							<NameLabel
 								defaultAddress={post?.proposer}
-								username={post.proposerProfile?.username}
+								username={post?.proposerProfile?.username}
 								truncateUsername={true}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
@@ -146,7 +146,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 									alt='timer'
 									className=' h-4 w-4 pt-1 text-blue-light-medium dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
-								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post.created_at)}</p>
+								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post?.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>

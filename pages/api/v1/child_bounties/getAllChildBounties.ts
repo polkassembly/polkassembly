@@ -14,8 +14,19 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
-export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, network }: { parentBountyIndex: number; network: string }) => {
+export const getAllchildBountiesFromBountyIndex = async ({
+	parentBountyIndex,
+	network,
+	curator,
+	status
+}: {
+	parentBountyIndex: number;
+	network: string;
+	status?: string;
+	curator?: string;
+}) => {
 	if (!network || !isValidNetwork(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
@@ -29,6 +40,13 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 		const variables: any = {
 			parentBountyIndex_eq: numPostId
 		};
+
+		if (status) {
+			variables.status_eq = status;
+		}
+		if (curator && !!getEncodedAddress(curator, network)) {
+			variables.curator_eq = getEncodedAddress(curator, network);
+		}
 
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -68,20 +86,24 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 
 		const childBountiesPromises = childBountiesProposals?.map(async (subsquidChildBounty: any) => {
 			const payload: IChildBounty = {
+				categories: [],
 				createdAt: subsquidChildBounty?.createdAt,
 				curator: subsquidChildBounty?.curator || '',
 				description: subsquidChildBounty?.description || '',
 				index: subsquidChildBounty?.index,
+				payee: subsquidChildBounty?.payee || '',
 				reward: subsquidChildBounty?.reward,
 				source: 'polkassembly',
 				status: subsquidChildBounty?.status,
 				title: ''
 			};
+
 			childBountiesDocs?.map((childBounty) => {
 				if (childBounty.exists) {
 					const data = childBounty.data();
 					if (data?.id === subsquidChildBounty.index) {
 						payload.title = data?.title || '';
+						payload.categories = data?.tags || [];
 					}
 				}
 			});
@@ -119,12 +141,17 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
 	storeApiKeyUsage(req);
 
-	const { parentBountyIndex } = req.body;
+	const { parentBountyIndex, status, curator } = req.body;
 
 	const network = String(req.headers['x-network']);
 
 	const numPostId = Number(parentBountyIndex);
-	const { data, error } = await getAllchildBountiesFromBountyIndex({ network: network, parentBountyIndex: numPostId });
+	const { data, error } = await getAllchildBountiesFromBountyIndex({
+		curator: curator || '',
+		network: network,
+		parentBountyIndex: numPostId,
+		status: status || ''
+	});
 
 	if (data) {
 		return res.status(200).json(data);

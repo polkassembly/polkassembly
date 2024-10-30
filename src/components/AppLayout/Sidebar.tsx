@@ -41,7 +41,8 @@ import {
 	SelectedPreimages,
 	AnalyticsSVGIcon,
 	AllPostIcon,
-	BatchVotingIcon
+	BatchVotingIcon,
+	SelectedCalendar
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -1078,7 +1079,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 			</>
 		),
 
-		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='-ml-[7px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />),
+		getSiderMenuItem(
+			'Calendar',
+			'/calendar',
+			<>
+				{router.pathname === '/calendar' ? (
+					<SelectedCalendar className='-ml-[10px] -mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<CalendarIcon className='-ml-[7px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</>
+		),
 
 		getSiderMenuItem(
 			'Preimages',

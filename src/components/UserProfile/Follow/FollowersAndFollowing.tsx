@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import { Divider, Popover } from 'antd';
 import { poppins } from 'pages/_app';
-import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
+import { FollowersResponse, FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import FollowTooltip from './FollowTooltip';
@@ -32,6 +32,31 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 		}
 	};
 
+	const addToFollowing = (user: FollowUserData) => {
+		setData(
+			(prev) =>
+				({
+					...prev, // Retain other fields
+					following: [...(prev?.following || []), user], // Add the new user to the following list
+					message: prev?.message || '',
+					followers: prev?.followers || []
+				}) as FollowersResponse
+		);
+	};
+
+	// Remove a user from the following list by `followed_user_id`
+	const removeFromFollowing = (followedUserId: number) => {
+		setData(
+			(prev) =>
+				({
+					...prev, // Retain other fields
+					following: prev?.following?.filter((user) => user.followed_user_id !== followedUserId) || [],
+					message: prev?.message || '',
+					followers: prev?.followers || []
+				}) as FollowersResponse
+		);
+	};
+
 	useEffect(() => {
 		fetchFollowers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +80,8 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 										users={data.followers}
 										isLoading={isLoading.loading}
 										isUsedInFollowers={true}
+										addToFollowing={addToFollowing}
+										removeFromFollowing={removeFromFollowing}
 									/>
 								}
 							>
@@ -78,6 +105,8 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 									<FollowTooltip
 										users={data?.following}
 										isLoading={isLoading.loading}
+										addToFollowing={addToFollowing}
+										removeFromFollowing={removeFromFollowing}
 									/>
 								}
 							>

@@ -6,17 +6,35 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useFollowStatus } from '~src/hooks/useFollowStatus';
+import { FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 
-const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders }: { userId: number; isUsedInProfileTab?: boolean; isUsedInProfileHeaders?: boolean }) => {
+const FollowButton = ({
+	userId,
+	isUsedInProfileTab,
+	isUsedInProfileHeaders,
+	addToFollowing,
+	removeFromFollowing,
+	user
+}: {
+	userId: number;
+	isUsedInProfileTab?: boolean;
+	isUsedInProfileHeaders?: boolean;
+	addToFollowing?: (user: FollowUserData) => void;
+	removeFromFollowing?: (userId: number) => void;
+	user?: FollowUserData;
+}) => {
 	const { id } = useUserDetailsSelector();
-	const { isFollowing, loading, followUser, unfollowUser } = useFollowStatus(userId);
+	const { isFollowing, loading, followUser, unfollowUser, setIsFollowing } = useFollowStatus(userId);
 
 	const handleFollowClick = () => {
 		if (isFollowing) {
 			unfollowUser(userId);
+			removeFromFollowing?.(userId);
 		} else {
 			followUser(userId);
+			user && addToFollowing?.(user);
 		}
+		setIsFollowing(!isFollowing);
 	};
 
 	const buttonClass = isUsedInProfileTab ? 'rounded-md border-none px-3 py-0 text-xs text-white' : 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';

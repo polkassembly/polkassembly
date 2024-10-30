@@ -11,7 +11,19 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Loader from '~src/ui-components/Loader';
 import FollowButton from './FollowButton';
 
-const FollowTooltip = ({ users, isLoading, isUsedInFollowers }: { users: FollowUserData[]; isLoading: boolean; isUsedInFollowers?: boolean }) => {
+const FollowTooltip = ({
+	users,
+	isLoading,
+	isUsedInFollowers,
+	addToFollowing,
+	removeFromFollowing
+}: {
+	users: FollowUserData[];
+	isLoading: boolean;
+	isUsedInFollowers?: boolean;
+	addToFollowing: (user: FollowUserData) => void;
+	removeFromFollowing: (userId: number) => void;
+}) => {
 	const { network } = useNetworkSelector();
 	return (
 		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>
@@ -41,6 +53,9 @@ const FollowTooltip = ({ users, isLoading, isUsedInFollowers }: { users: FollowU
 								<FollowButton
 									userId={isUsedInFollowers ? user.follower_user_id : user.followed_user_id}
 									isUsedInProfileHeaders={true}
+									addToFollowing={addToFollowing}
+									user={user}
+									removeFromFollowing={removeFromFollowing}
 								/>
 							</div>
 						);

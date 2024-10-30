@@ -136,7 +136,7 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{postData.userId !== currentUser?.id ? (
+					{postData.userId === currentUser?.id ? (
 						<>
 							{!postData?.progress_report?.[0]?.progress_file ? (
 								<>

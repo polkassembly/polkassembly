@@ -18,6 +18,7 @@ import {
 	OverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
+	CalendarIcon,
 	ReferendaIcon,
 	StakingAdminIcon,
 	TipsIcon,
@@ -1072,10 +1073,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/discussions' ? (
 					<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<DiscussionsIcon className='-ml-[7px]  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
+
+		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='-ml-[7px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />),
 
 		getSiderMenuItem(
 			'Preimages',

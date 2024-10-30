@@ -16,7 +16,7 @@ interface Props {
 interface IChatHeaderAction {
 	icon: string;
 	onClick: () => void;
-	title: string;
+	label: string;
 	className?: string;
 }
 
@@ -37,19 +37,19 @@ const ChatWithDelegates = ({ className }: Props) => {
 	const chatHeaderActions: IChatHeaderAction[] = [
 		{
 			icon: '/assets/icons/delegation-chat/add-message-icon.svg',
-			onClick: startNewChat,
-			title: 'Add message'
+			label: 'New Message',
+			onClick: startNewChat
 		},
 		{
 			className: isMinimized ? 'transform rotate-180' : '',
 			icon: '/assets/icons/delegation-chat/minimize-icon.svg',
-			onClick: () => setIsMinimized((prev) => !prev),
-			title: 'Minimize'
+			label: 'Collapse',
+			onClick: () => setIsMinimized((prev) => !prev)
 		},
 		{
 			icon: '/assets/icons/delegation-chat/close-icon.svg',
-			onClick: () => setIsModalOpen(false),
-			title: 'Close'
+			label: 'Close',
+			onClick: () => setIsModalOpen(false)
 		}
 	];
 

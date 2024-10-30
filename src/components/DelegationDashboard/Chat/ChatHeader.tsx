@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import Image from 'next/image';
 
 interface IChatHeaderAction {
 	icon: string;
 	onClick: () => void;
-	title: string;
+	label: string;
 	className?: string;
 }
 
@@ -29,19 +29,23 @@ const ChatHeader = ({ actions }: Props) => {
 			Messages
 			<div className='ml-auto flex items-center gap-3'>
 				{actions.map((action) => (
-					<Button
-						key={action.title}
-						onClick={action.onClick}
-						className={`flex h-7 w-7 items-center justify-center rounded-full border-none bg-transparent p-2 shadow-none hover:bg-black/5 dark:hover:bg-white/10 ${action?.className}`}
+					<Tooltip
+						key={action.label}
+						title={action.label}
 					>
-						<Image
-							src={action.icon}
-							height={24}
-							width={24}
-							alt={action.title}
-							className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
-						/>
-					</Button>
+						<Button
+							onClick={action.onClick}
+							className={`flex h-7 w-7 items-center justify-center rounded-full border-none bg-transparent p-2 shadow-none hover:bg-black/5 dark:hover:bg-white/10 ${action?.className}`}
+						>
+							<Image
+								src={action.icon}
+								height={24}
+								width={24}
+								alt={action.label}
+								className='dark:brightness-0 dark:contrast-100 dark:grayscale dark:invert dark:filter'
+							/>
+						</Button>
+					</Tooltip>
 				))}
 			</div>
 		</div>

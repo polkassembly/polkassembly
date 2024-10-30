@@ -47,6 +47,34 @@ const ProgressReportTab = ({ className }: Props) => {
 		setPostData
 	} = usePostDataContext();
 
+	const getProgressReportViews = async () => {
+		setLoading(true);
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/getProgressReportViews', {
+			postId: postIndex,
+			proposalType
+		});
+
+		if (editError || !data) {
+			setLoading(false);
+			console.error('Error saving post', editError);
+		}
+
+		if (data) {
+			setLoading(false);
+			console.log(data);
+			const { progress_report_views } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report_views
+			}));
+		}
+	};
+
+	useEffect(() => {
+		getProgressReportViews();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postIndex]);
+
 	useEffect(() => {
 		if (postData?.progress_report?.[0]?.progress_file) {
 			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.[0]?.progress_summary || ''));

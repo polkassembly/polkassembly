@@ -10,6 +10,7 @@ import { StarFilled } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
 import NameLabel from '~src/ui-components/NameLabel';
+import Image from 'next/image';
 
 interface IReportDetails {
 	report: IProgressReport;
@@ -19,6 +20,7 @@ interface IReportDetails {
 const ReportDetails: FC<IReportDetails> = (props) => {
 	const { report, index } = props;
 	const { postData } = usePostDataContext();
+	console.log(postData);
 	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -95,6 +97,25 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					truncateUsername
 					usernameClassName='text-xs text-ellipsis text-lightBlue overflow-hidden font-normal dark:text-blue-dark-medium'
 				/>
+				{postData?.progress_report_views && postData?.progress_report_views?.length > 0 && (
+					<Divider
+						className='hidden dark:border-separatorDark md:inline-block'
+						type='vertical'
+						style={{ borderLeft: '1px solid var(--lightBlue)' }}
+					/>
+				)}
+				{postData?.progress_report_views && postData?.progress_report_views?.length > 0 && (
+					<p className='m-0 flex items-center gap-x-1 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+						<Image
+							src='/assets/icons/view-icon.svg'
+							alt='view-icon'
+							height={16}
+							width={16}
+							className={theme == 'dark' ? 'dark-icons' : ''}
+						></Image>
+						{postData?.progress_report_views?.length}
+					</p>
+				)}
 				{report?.ratings && report?.ratings?.length > 0 && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'

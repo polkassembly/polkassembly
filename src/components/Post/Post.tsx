@@ -140,13 +140,12 @@ const Post: FC<IPostProps> = (props) => {
 
 	const handleTabChange = (key: string) => {
 		setSelectedTabKey(key);
-		router.push(
+		router.replace(
 			{
 				pathname: router.pathname,
 				query: { ...router.query, tab: key }
-			},
-			undefined,
-			{ shallow: true }
+			}
+			// { shallow: true }
 		);
 	};
 
@@ -356,6 +355,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
+						curator={post?.curator || ''}
 					/>
 				</div>
 

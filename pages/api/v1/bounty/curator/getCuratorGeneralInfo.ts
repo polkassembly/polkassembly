@@ -15,16 +15,7 @@ import { EBountiesStatuses, IBountyListing } from '~src/components/Bounties/Boun
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import dayjs from 'dayjs';
-
-interface ISubsquidBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	curator: string;
-	createdAt: string;
-}
+import { ISubsquidChildBontyAndBountyRes } from '~src/types';
 
 interface IRes {
 	activeBounties: {
@@ -111,7 +102,7 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 
 		const subsquidBountiesData = subsquidBountiesRes?.data?.bounties || [];
 
-		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidBounty) => {
+		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidChildBontyAndBountyRes) => {
 			const subsquidChildBountiesRes = await fetchSubsquid({
 				network,
 				query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,

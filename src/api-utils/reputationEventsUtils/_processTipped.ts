@@ -25,6 +25,8 @@ export async function _processTipped({
 }) {
 	// 2. process reputation scores for 'User tips a new unique user at Polkassembly with > 0.1 DOT'
 
+	console.log('Processing tipped', network, tipperAddress, proposalIndex, proposalType);
+
 	// get payee address from proposal from subsquid
 	const subsquidRes = await fetchSubsquid({
 		network,

@@ -4,11 +4,12 @@
 
 /* eslint-disable sort-keys */
 import { notification } from 'antd';
+import { ReactNode } from 'react';
 import { NotificationStatus } from 'src/types';
 
 interface Props {
 	header: string;
-	message?: string;
+	message?: string | ReactNode;
 	durationInSeconds?: number;
 	status: NotificationStatus;
 }

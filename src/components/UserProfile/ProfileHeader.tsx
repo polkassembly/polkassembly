@@ -18,6 +18,7 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import FollowButton from './Follow/FollowButton';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -103,24 +104,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									<span className='max-md:hidden'>Delegate</span>
 								</CustomButton>
 							)}
-							{/* <CustomButton
-								shape='circle'
-								variant='primary'
-								className={`rounded-full border-none px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
-								onClick={() => {
-									if (disableState) return;
-								}}
-								disabled={!id}
-							>
-								<Image
-									src='/assets/profile/profile-follow.svg'
-									className='mr-1 rounded-full'
-									height={20}
-									width={20}
-									alt='edit logo'
-								/>
-								<span className='max-md:hidden'>Follow</span>
-							</CustomButton> */}
+							<FollowButton userId={userProfile.user_id} />
 						</div>
 					)}
 				</div>
@@ -151,7 +135,7 @@ export default styled(ProfileHeader)`
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
-		background-image: url(${(props) =>
-			props?.isValidCoverImage && !!props?.profileDetails?.cover_image?.length ? props?.profileDetails?.cover_image : '/assets/profile/cover-image1.svg'}) !important;
+		background-image: ${(props) =>
+			`url(${props.isValidCoverImage && props.profileDetails?.cover_image?.length ? props.profileDetails.cover_image : '/assets/profile/cover-image1.svg'})`} !important;
 	}
 `;

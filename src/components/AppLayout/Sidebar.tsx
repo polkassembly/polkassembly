@@ -582,7 +582,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 												</span>
 											</div>,
-											'/bounties',
+											network == AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 											<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 										),
 										getSiderMenuItem(
@@ -1398,7 +1398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							)}
 						</span>
 					</div>,
-					'/bounties',
+					network == AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 					null
 				),
 				getSiderMenuItem(
@@ -1647,7 +1647,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (network === 'polkadot') {
 		menuItems.push(
 			getSiderMenuItem('Democracy', '/democracy', <DemocracyProposalsIcon className='scale-90' />),
-			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90' />),
+			getSiderMenuItem('Bounties', network == AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties', <BountiesIcon className='scale-90' />),
 			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='-ml-2 scale-90' />)
 		);
 	} else if (network === 'kusama') {

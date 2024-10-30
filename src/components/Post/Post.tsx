@@ -139,13 +139,12 @@ const Post: FC<IPostProps> = (props) => {
 
 	const handleTabChange = (key: string) => {
 		setSelectedTabKey(key);
-		router.push(
+		router.replace(
 			{
 				pathname: router.pathname,
 				query: { ...router.query, tab: key }
-			},
-			undefined,
-			{ shallow: true }
+			}
+			// { shallow: true }
 		);
 	};
 

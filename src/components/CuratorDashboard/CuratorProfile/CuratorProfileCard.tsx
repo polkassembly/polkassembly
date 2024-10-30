@@ -158,7 +158,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								width={18}
 								height={18}
 							/>
-							{!curatorBio?.length ? 'Add' : 'Edit'}
+							{!curatorBio?.length ? 'Add Bio' : 'Edit Bio'}
 						</CustomButton>
 					</div>
 					<div className='flex gap-3 text-sm font-bold'>

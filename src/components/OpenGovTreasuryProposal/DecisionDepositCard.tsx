@@ -163,7 +163,12 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 
 				setAddress(accounts[0]?.address);
 				if (defaultWalletAddress) {
-					setAddress(accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0]?.address);
+					const matchingAccount = accounts?.find((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress));
+					if (matchingAccount) {
+						setAddress(matchingAccount?.address);
+					} else {
+						console.warn('No matching account found');
+					}
 				}
 			}
 		}

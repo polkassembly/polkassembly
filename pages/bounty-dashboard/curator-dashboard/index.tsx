@@ -10,8 +10,14 @@ import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { LeftOutlined } from '@ant-design/icons';
 import SEOHead from '~src/global/SEOHead';
-import CuratorDashboard from '~src/components/CuratorDashboard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { Skeleton } from 'antd';
+import dynamic from 'next/dynamic';
+
+const CuratorDashboard = dynamic(() => import('src/components/CuratorDashboard'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 interface ICuratorProfileProps {
 	network: string;

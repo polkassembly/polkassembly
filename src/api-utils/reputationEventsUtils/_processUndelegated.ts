@@ -9,6 +9,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import REPUTATION_SCORES from '~src/util/reputationScores';
 
 export async function _processUndelegated({ network, delegateAddress, delegatorAddress }: { network: string; delegateAddress: string; delegatorAddress: string }) {
+	console.log('Processing undelegated', network, delegateAddress, delegatorAddress);
 	const delegatorActivityPayload = {
 		by: getSubstrateAddress(delegatorAddress),
 		created_at: new Date(),

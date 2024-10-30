@@ -19,7 +19,6 @@ import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } 
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
-import BountyChildBounties from './Bounty/BountyChildBounties';
 import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -72,15 +71,18 @@ import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
-// import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
+import BountyChildBounties from './Bounty/BountyChildBounties';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -488,7 +490,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 					}
 				} catch (error) {
-					// console.log(error);
+					console.log(error);
 				}
 				let progress = {
 					approval: 0,
@@ -1031,7 +1033,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{extensionNotFound ? <ExtensionNotDetected /> : null}
 							</GovSidebarCard>
 						) : null}
-						{(proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) && (
+						{[ProposalType.COUNCIL_MOTIONS, ProposalType.ADVISORY_COMMITTEE, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType) && (
 							<>
 								{canVote && !extensionNotFound && (
 									<VoteMotion
@@ -1042,6 +1044,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 								{post.motion_votes && (post.motion_votes?.length || 0) > 0 && <MotionVoteInfo councilVotes={post.motion_votes} />}
@@ -1058,6 +1061,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 
@@ -1361,11 +1365,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
-								<BountyChildBounties
-									bountyId={onchainId}
-									curator={curator}
-									bountyStatus={status || ''}
-								/>
+								<BountyChildBounties bountyId={onchainId} />
+								{getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status || '') && !!getEncodedAddress(curator, network) && <Submissions bountyId={onchainId} />}
 							</>
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (

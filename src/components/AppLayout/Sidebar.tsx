@@ -566,7 +566,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'treasury_group',
 					null,
 					isOpenGovSupported(network)
-						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
+						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
 							? [
@@ -632,7 +632,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
@@ -1365,7 +1365,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	let bountiesSubItems: ItemType[] = [];
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 
 		if (['polkadot'].includes(network)) {
@@ -1381,7 +1381,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
 					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+						Bounties
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
@@ -1398,7 +1398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							)}
 						</span>
 					</div>,
-					'/bounties',
+					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 					null
 				),
 				getSiderMenuItem(
@@ -1574,7 +1574,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		</div>
 	);
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		gov2CollapsedItems.splice(
 			8,
 			0,

@@ -29,7 +29,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
-	label?: ReactNode | string;
+	label?: string | ReactNode;
 	helpText?: string;
 	onChange?: (balance: BN) => void;
 	placeholder?: string;

@@ -55,7 +55,6 @@ const NewChat = ({ handleOpenChat }: Props) => {
 			});
 
 			setAllDelegates(updatedDelegates);
-			setSearchedDelegates(updatedDelegates);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -65,7 +64,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 
 	const handleSearch = (searchAddress: string) => {
 		if (!searchAddress.length) {
-			setSearchedDelegates(allDelegates);
+			setSearchedDelegates([]);
 			return;
 		}
 
@@ -117,7 +116,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 					value={searchAddress}
 					onChange={(e) => {
 						if (!e.target.value?.length) {
-							setSearchedDelegates(allDelegates || []);
+							setSearchedDelegates([]);
 						}
 						setSearchAddress(e.target.value.trim());
 						handleSearch(e.target.value.trim());

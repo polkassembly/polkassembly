@@ -8,6 +8,7 @@ import Identicon from '@polkadot/react-identicon';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import { IDelegateAddressDetails } from '~src/types';
+import Image from 'next/image';
 
 interface DelegateCardProps {
 	delegate: IDelegateAddressDetails;
@@ -37,6 +38,17 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 				/>
 			)}
 			<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.username ? delegate?.username : shortenAddress(delegate?.address, 5)}</span>
+
+			{delegate?.dataSource?.includes('nova') ? (
+				<div className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'>
+					<Image
+						src='/assets/wallet/nova-wallet-star.svg'
+						height={24}
+						width={24}
+						alt='nova wallet icon'
+					/>
+				</div>
+			) : null}
 		</Card>
 	</List.Item>
 );

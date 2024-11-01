@@ -3,14 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Image from 'next/image';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import Markdown from '~src/ui-components/Markdown';
 import dayjs from 'dayjs';
+import { Card } from 'antd';
 
 interface Props {
 	chat: IChat;
@@ -22,11 +24,29 @@ const ChatCard = ({ chat }: Props) => {
 
 	const address = delegationDashboardAddress || loginAddress;
 	const { latestMessage } = chat;
-	const isReadMessage = latestMessage?.viewed_by?.includes(address);
+	const [isReadMessage, setIsReadMessage] = useState<boolean>(latestMessage?.viewed_by?.includes(address));
 
 	const recipientAddress = latestMessage?.receiverAddress === address ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
 
 	const renderUsername = shortenAddress(recipientAddress || '');
+
+	const handleReadChat = async () => {
+		if (isReadMessage) {
+			return;
+		}
+		const requestData = {
+			address,
+			chatId: chat?.chatId,
+			receiverAddress: chat?.receiverAddress,
+			senderAddress: chat?.senderAddress
+		};
+		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/mark-chat-as-read', requestData);
+		if (data) {
+			setIsReadMessage(true);
+		} else if (error) {
+			console.log(error);
+		}
+	};
 
 	const renderUserImage = useMemo(() => {
 		if (recipientAddress?.startsWith('0x')) {
@@ -48,7 +68,12 @@ const ChatCard = ({ chat }: Props) => {
 	}, [recipientAddress]);
 
 	return (
-		<div className={`flex w-full gap-2 overflow-hidden px-5 py-2 ${isReadMessage ? '' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}>
+		<Card
+			onClick={handleReadChat}
+			size='small'
+			bodyStyle={{ display: 'flex', gap: '0.5rem', width: '100%' }}
+			className={`flex w-full gap-2 overflow-hidden rounded-none border-none shadow-sm ${isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}
+		>
 			{renderUserImage}
 			<div className='flex flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
 				<div className='flex items-center gap-2'>
@@ -68,7 +93,7 @@ const ChatCard = ({ chat }: Props) => {
 					isPreview={true}
 				/>
 			</div>
-		</div>
+		</Card>
 	);
 };
 

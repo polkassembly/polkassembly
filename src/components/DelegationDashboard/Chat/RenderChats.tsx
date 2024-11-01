@@ -5,7 +5,7 @@
 import React from 'react';
 import { IChat } from '~src/types';
 import ChatCard from './ChatCard';
-import { List } from 'antd';
+import { Button, List } from 'antd';
 import Image from 'next/image';
 
 interface Props {
@@ -44,12 +44,13 @@ const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props)
 			<div className='text-center text-bodyBlue dark:text-blue-dark-high'>
 				<h2 className='text-xl font-bold'>No Message Found</h2>
 				<p className='flex items-center justify-center gap-1'>
-					<span
-						className='cursor-pointer border-none font-semibold text-pink_primary'
+					<Button
+						type='text'
+						className='cursor-pointer border-none p-0 font-semibold text-pink_primary'
 						onClick={handleNewChat}
 					>
 						Add
-					</span>
+					</Button>
 					New Message
 				</p>
 			</div>

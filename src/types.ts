@@ -1100,12 +1100,19 @@ export interface IMessage {
 	viewed_by: string[];
 }
 
+export enum EChatRequestStatus {
+	ACCEPTED = 'accepted',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
 export interface IChat {
 	chatId: string;
 	senderAddress: string;
 	receiverAddress: string;
 	created_at: Date;
 	updated_at: Date;
+	requestStatus: EChatRequestStatus;
 	latestMessage: IMessage;
 }
 

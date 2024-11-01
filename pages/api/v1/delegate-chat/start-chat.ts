@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { IChat } from '~src/types';
+import { EChatRequestStatus, IChat } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -43,6 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 		chatId: String(chatId),
 		created_at: new Date(),
 		receiverAddress,
+		requestStatus: EChatRequestStatus.PENDING,
 		senderAddress,
 		updated_at: new Date()
 	};
@@ -59,6 +60,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 			created_at: data?.created_at?.toDate(),
 			latestMessage: data?.latestMessage,
 			receiverAddress: data?.receiverAddress,
+			requestStatus: data?.requestStatus,
 			senderAddress: data?.senderAddress,
 			updated_at: data?.updated_at?.toDate()
 		};

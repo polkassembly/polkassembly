@@ -24,35 +24,28 @@ const ChatCard = ({ chat }: Props) => {
 	const { latestMessage } = chat;
 	const isReadMessage = latestMessage?.viewed_by?.includes(address);
 
-	const renderUsername = latestMessage?.senderUsername ?? shortenAddress(latestMessage?.senderAddress || '');
+	const recipientAddress = latestMessage?.receiverAddress === address ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
+
+	const renderUsername = shortenAddress(recipientAddress || '');
 
 	const renderUserImage = useMemo(() => {
-		if (latestMessage?.senderImage) {
-			return (
-				<Image
-					src={latestMessage.senderImage}
-					height={32}
-					width={32}
-					alt='user avatar'
-				/>
-			);
-		} else if (latestMessage?.senderAddress?.startsWith('0x')) {
+		if (recipientAddress?.startsWith('0x')) {
 			return (
 				<EthIdenticon
 					size={32}
-					address={latestMessage.senderAddress || ''}
+					address={recipientAddress || ''}
 				/>
 			);
 		} else {
 			return (
 				<Identicon
-					value={latestMessage?.senderAddress || ''}
+					value={recipientAddress || ''}
 					size={32}
 					theme={'polkadot'}
 				/>
 			);
 		}
-	}, [latestMessage?.senderImage, latestMessage?.senderAddress]);
+	}, [recipientAddress]);
 
 	return (
 		<div className={`flex w-full gap-2 overflow-hidden px-5 py-2 ${isReadMessage ? '' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}>

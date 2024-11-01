@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { IChat, IChatsResponse } from '~src/types';
+import { EChatRequestStatus, IChat, IChatsResponse } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -35,10 +35,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	const encodedAddress = getEncodedAddress(address, network);
 
 	try {
-		const [sentChatsSnapshot, receivedChatsSnapshot] = await Promise.all([
-			chatCollRef.where('senderAddress', '==', encodedAddress).get(),
-			chatCollRef.where('receiverAddress', '==', encodedAddress).get()
-		]);
+		const receiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '==', 'accepted').get();
+
+		const senderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).get();
+
+		const [receiverSnapshot, senderSnapshot] = await Promise.all([receiverQuery, senderQuery]);
+
+		const messagesSnapshot = [...receiverSnapshot.docs, ...senderSnapshot.docs].sort((a, b) => b.data().createdAt - a.data().createdAt);
+
+		const requestsSnapshot = await chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
 
 		const mapChatData = (docs: FirebaseFirestore.QueryDocumentSnapshot[]): IChat[] =>
 			docs
@@ -56,8 +61,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 				})
 				.filter((chat) => chat.latestMessage.senderAddress);
 
-		const messages: IChat[] = mapChatData(sentChatsSnapshot.docs);
-		const requests: IChat[] = mapChatData(receivedChatsSnapshot.docs);
+		const messages: IChat[] = mapChatData(messagesSnapshot);
+		const requests: IChat[] = mapChatData(requestsSnapshot.docs);
 
 		return res.status(200).json({ messages, requests });
 	} catch (error) {

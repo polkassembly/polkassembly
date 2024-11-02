@@ -4,7 +4,7 @@
 
 import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
-import { IChat } from '~src/types';
+import { EChatRequestStatus, IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -13,6 +13,7 @@ import shortenAddress from '~src/util/shortenAddress';
 import Markdown from '~src/ui-components/Markdown';
 import dayjs from 'dayjs';
 import { Card } from 'antd';
+import PendingRequestTab from './PendingRequestTab';
 
 interface Props {
 	chat: IChat;
@@ -25,6 +26,8 @@ const ChatCard = ({ chat }: Props) => {
 	const address = delegationDashboardAddress || loginAddress;
 	const { latestMessage } = chat;
 	const [isReadMessage, setIsReadMessage] = useState<boolean>(latestMessage?.viewed_by?.includes(address));
+	const [isRejectedRequest, setIsRejectedRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.REJECTED);
+	const [isPendingRequest, setIsPendingRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.PENDING);
 
 	const recipientAddress = latestMessage?.receiverAddress === address ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
 
@@ -75,8 +78,8 @@ const ChatCard = ({ chat }: Props) => {
 			className={`flex w-full gap-2 overflow-hidden rounded-none border-none shadow-sm ${isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}
 		>
 			{renderUserImage}
-			<div className='flex flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
-				<div className='flex items-center gap-2'>
+			<div className='flex w-full flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
+				<div className='flex w-full items-center gap-2'>
 					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{renderUsername}</span>
 					<Image
 						src='/assets/icons/timer.svg'
@@ -86,12 +89,25 @@ const ChatCard = ({ chat }: Props) => {
 						alt='timer icon'
 					/>
 					<span className='text-xs'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
+					{isRejectedRequest ? (
+						<div className='ml-auto flex items-center gap-1.5'>
+							<span className='h-2 w-2 rounded-full bg-[#FB123C]'></span>
+							<span className='text-xs font-medium text-[#FB123C]'>Rejected</span>
+						</div>
+					) : null}
 				</div>
 				<Markdown
 					md={latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
 					className={'line-clamp-2 w-full break-words text-xs'}
 					isPreview={true}
 				/>
+				{isPendingRequest ? (
+					<PendingRequestTab
+						chat={chat}
+						setIsRejectedRequest={setIsRejectedRequest}
+						setIsPendingRequest={setIsPendingRequest}
+					/>
+				) : null}
 			</div>
 		</Card>
 	);

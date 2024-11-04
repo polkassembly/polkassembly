@@ -13,9 +13,18 @@ interface Props {
 	chats: IChat[];
 	handleOpenChat: (chat: IChat) => void;
 	handleNewChat: () => void;
+	setFilteredMessages: React.Dispatch<React.SetStateAction<IChat[]>>;
+	setFilteredRequests: React.Dispatch<React.SetStateAction<IChat[]>>;
 }
 
-const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props) => {
+const RenderChats = ({ className, handleOpenChat, chats, handleNewChat, setFilteredMessages, setFilteredRequests }: Props) => {
+	const handleAcceptRequestSuccess = (chat: IChat) => {
+		setFilteredMessages((prevChatData: IChat[]) => [...prevChatData, chat]);
+
+		setFilteredRequests((prevRequests: IChat[]) => {
+			return prevRequests.filter((chatData) => chatData.chatId !== chat.chatId);
+		});
+	};
 	return chats?.length > 0 ? (
 		<div className={`${className} h-full w-full overflow-y-auto`}>
 			<List
@@ -27,7 +36,10 @@ const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props)
 						onClick={() => handleOpenChat(chat)}
 						className='cursor-pointer border-section-light-container p-0'
 					>
-						<ChatCard chat={chat} />
+						<ChatCard
+							chat={chat}
+							handleAcceptRequestSuccess={handleAcceptRequestSuccess}
+						/>
 					</List.Item>
 				)}
 			/>

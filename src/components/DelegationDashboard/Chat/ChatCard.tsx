@@ -17,9 +17,10 @@ import PendingRequestTab from './PendingRequestTab';
 
 interface Props {
 	chat: IChat;
+	handleAcceptRequestSuccess: (chat: IChat) => void;
 }
 
-const ChatCard = ({ chat }: Props) => {
+const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
@@ -106,6 +107,7 @@ const ChatCard = ({ chat }: Props) => {
 						chat={chat}
 						setIsRejectedRequest={setIsRejectedRequest}
 						setIsPendingRequest={setIsPendingRequest}
+						handleAcceptRequestSuccess={handleAcceptRequestSuccess}
 					/>
 				) : null}
 			</div>

@@ -126,6 +126,8 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 					<RenderChats
 						handleOpenChat={handleChatToggle}
 						handleNewChat={handleNewChat}
+						setFilteredMessages={setFilteredMessages}
+						setFilteredRequests={setFilteredRequests}
 						chats={selectedChatTab === 'messages' ? filteredMessages : filteredRequests}
 					/>
 				</Spin>

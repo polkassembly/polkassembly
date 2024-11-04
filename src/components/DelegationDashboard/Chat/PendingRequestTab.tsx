@@ -12,9 +12,10 @@ interface Props {
 	chat: IChat;
 	setIsRejectedRequest: (state: boolean) => void;
 	setIsPendingRequest: (state: boolean) => void;
+	handleAcceptRequestSuccess: (chat: IChat) => void;
 }
 
-const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest }: Props) => {
+const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, handleAcceptRequestSuccess }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
@@ -38,11 +39,29 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest }: 
 		}
 	};
 
+	const handleAcceptRequest = async (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+		e.stopPropagation();
+
+		const requestData = {
+			address,
+			chatId: chat?.chatId,
+			requestStatus: EChatRequestStatus.ACCEPTED
+		};
+
+		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/update-request-status', requestData);
+		if (data) {
+			handleAcceptRequestSuccess(chat);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<div className='flex items-center gap-2'>
 			<Button
 				type='primary'
 				className='rounded-lg px-5'
+				onClick={handleAcceptRequest}
 			>
 				Accept
 			</Button>

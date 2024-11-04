@@ -23,6 +23,7 @@ import UploadReport from './ProgressReport/UploadReport';
 import { showProgressReportUploadFlow } from './ProgressReport/utils';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import ExpertBodyCard from './ExpertBody';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -290,6 +291,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					setOpenModal={setOpenDecisionDeposit}
 				/>
 			)}
+			<ExpertBodyCard />
 			<PostEditOrLinkCTA
 				open={openLinkCta}
 				setOpen={setOpenLinkCta}

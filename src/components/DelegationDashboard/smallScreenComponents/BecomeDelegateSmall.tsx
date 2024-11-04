@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTranslation } from 'react-i18next';
 
 const DelegateInfoModal = dynamic(() => import('./DelegateInfoModal'), {
 	loading: () => <Skeleton active />,
@@ -12,16 +13,18 @@ const DelegateInfoModal = dynamic(() => import('./DelegateInfoModal'), {
 });
 
 const BecomeDelegateSmall = () => {
+	const { t } = useTranslation('common');
 	const [openModal, setOpenModal] = useState<boolean>(false);
+
 	return (
 		<>
 			<div className={`${poppins.className} ${poppins.variable} mb-4 flex items-center justify-between sm:hidden`}>
-				<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Delegation on Polkassembly</span>
+				<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('delegation_on_polkassembly')}</span>
 				<span
 					onClick={() => setOpenModal(true)}
 					className='text-[10px] font-medium text-pink_primary underline'
 				>
-					Learn More
+					{t('learn_more')}
 				</span>
 			</div>
 			<DelegateInfoModal

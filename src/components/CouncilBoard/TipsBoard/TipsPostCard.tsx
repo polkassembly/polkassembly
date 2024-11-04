@@ -1,26 +1,28 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { ClockCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const TipsPostCard = ({ className }: { className?: string }) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className={className}>
-			<div className='tip-history tipped/not-tipped'>Not Tipped</div>
+			<div className='tip-history tipped/not-tipped'>{t('not_tipped')}</div>
 
-			<h5>Talisman Proposal: Cross-Chain Transaction</h5>
-			<p>Working on finishing up the tickets for the bigger project files. Working on finishing up the tickets for</p>
+			<h5>{t('talisman_proposal_title')}</h5>
+			<p>{t('talisman_proposal_description')}</p>
 
 			<div className='info-bar'>
-				<div className='tip-post-status opened/rewarded'>Opened</div>
+				<div className='tip-post-status opened/rewarded'>{t('opened')}</div>
 
 				<div className='right-info d-flex'>
 					<div className='time'>
 						<ClockCircleOutlined />
-						20h ago
+						{t('time_ago', { time: '20h' })}
 					</div>
 				</div>
 			</div>

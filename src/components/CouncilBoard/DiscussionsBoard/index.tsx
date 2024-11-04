@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import DiscussionPostCard from './DiscussionPostCard';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -18,6 +19,7 @@ const DiscussionsBoard = ({ className, openSidebar }: Props) => {
 	const [posts, setPosts] = useState<IPostListing[]>();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		setLoading(true);
@@ -37,9 +39,11 @@ const DiscussionsBoard = ({ className, openSidebar }: Props) => {
 	}, []);
 	return (
 		<div className={className}>
-			{!loading && error && <h3>Error fetching discussions</h3>}
+			{!loading && error && <h3>{t('error_fetching_discussions')}</h3>}
 
-			<h3>Discussions {!loading && !error && posts && <span className='card-count'>{posts.length}</span>}</h3>
+			<h3>
+				{t('discussions')} {!loading && !error && posts && <span className='card-count'>{posts.length}</span>}
+			</h3>
 			{!loading && !error && posts && (
 				<>
 					{posts.length > 0 ? (

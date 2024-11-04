@@ -1,14 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { IPostListing, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect, useState } from 'react';
-
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
 import ReferendaPostCard from './ReferendaPostCard';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -16,6 +14,7 @@ interface Props {
 }
 
 const ReferendaBoard = ({ className, openSidebar }: Props) => {
+	const { t } = useTranslation('common');
 	const [posts, setPosts] = useState<IPostListing[]>();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -36,9 +35,12 @@ const ReferendaBoard = ({ className, openSidebar }: Props) => {
 				setLoading(false);
 			});
 	}, []);
+
 	return (
 		<div className={className}>
-			<h3>Referenda {!loading && !error && posts && <span className='card-count'>{posts.length}</span>}</h3>
+			<h3>
+				{t('referenda')} {!loading && !error && posts && <span className='card-count'>{posts.length}</span>}
+			</h3>
 
 			{!loading && !error && posts && (
 				<>
@@ -64,7 +66,7 @@ const ReferendaBoard = ({ className, openSidebar }: Props) => {
 							);
 						})
 					) : (
-						<p>No Referenda found.</p>
+						<p>{t('no_referenda_found')}</p>
 					)}
 				</>
 			)}

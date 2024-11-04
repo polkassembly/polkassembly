@@ -1,11 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React from 'react';
 import styled from 'styled-components';
-
-// import TipsPostCard from './TipsPostCard';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	className?: string;
@@ -13,18 +11,14 @@ interface Props {
 }
 
 const TipsBoard = ({ className }: Props) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className={className}>
 			<h3>
-				Tips <span className='card-count'></span>
+				{t('tips')} <span className='card-count'></span>
 			</h3>
-			<p>Coming Soon...</p>
-
-			{/* {[1,2,3,4].map(item => (
-				<div key={item} className='post-card-div' onClick={() => openSidebar(item)}>
-					<TipsPostCard />
-				</div>
-			))} */}
+			<p>{t('coming_soon')}</p>
 		</div>
 	);
 };

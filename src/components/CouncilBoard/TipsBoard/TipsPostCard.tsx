@@ -4,7 +4,7 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const TipsPostCard = ({ className }: { className?: string }) => {
 	const { t } = useTranslation('common');

@@ -15,7 +15,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Markdown from '../../ui-components/Markdown';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next'; // Import for translations
+import { useTranslation } from 'next-i18next'; // Import for translations
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,

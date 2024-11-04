@@ -16,7 +16,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import Skeleton from '~src/basic-components/Skeleton';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

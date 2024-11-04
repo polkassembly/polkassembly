@@ -21,7 +21,7 @@ import { poppins } from 'pages/_app';
 import classNames from 'classnames';
 import ImageComponent from '../ImageComponent';
 import { removeSymbols } from '~src/util/htmlDiff';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	delegate: IDelegateAddressDetails;

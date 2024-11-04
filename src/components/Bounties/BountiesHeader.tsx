@@ -14,7 +14,7 @@ import { StatItem } from './utils/Statitem';
 import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { poppins } from 'pages/_app';
-import { useTranslation } from 'react-i18next'; // Import translation hook
+import { useTranslation } from 'next-i18next'; // Import translation hook
 
 const BountiesHeader = () => {
 	const { t } = useTranslation(); // Translation function

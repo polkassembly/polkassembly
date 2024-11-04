@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ReferendaPostCard from './ReferendaPostCard';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

@@ -9,7 +9,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Loader from '~src/ui-components/Loader';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const BecomeDelegateModal = dynamic(() => import('../../ui-components/BecomeDelegateModal'), {
 	loading: () => <Loader />,

@@ -14,7 +14,7 @@ import { MessageType } from '~src/auth/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 

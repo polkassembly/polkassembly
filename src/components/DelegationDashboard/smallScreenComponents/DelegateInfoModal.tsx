@@ -8,7 +8,7 @@ import { styled } from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	openModal: boolean;

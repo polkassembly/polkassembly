@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 const DelegateInfoModal = dynamic(() => import('./DelegateInfoModal'), {
 	loading: () => <Skeleton active />,

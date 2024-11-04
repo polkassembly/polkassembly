@@ -11,7 +11,7 @@ import StatusTag from 'src/ui-components/StatusTag';
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

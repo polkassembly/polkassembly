@@ -958,7 +958,26 @@
     "Become a Delegate": "Become a Delegate",
     "Voting power description": "This represents the total balance delegated to this profile.",
     "Voted proposals description": "Number of proposals voted on in the past 30 days.",
-    "Received Delegation description": "Total number of delegations received."
+    "Received Delegation description": "Total number of delegations received.",
+    "get_started_with_delegation": "To get started with delegation on Polkadot",
+    "connect_wallet": "Connect Wallet",
+    "transferable": "Transferable",
+    "total_locked": "Total Locked",
+    "total_delegators": "Total Delegators",
+    "received_delegation": "Received Delegation",
+    "undelegated": "Undelegated",
+    "no_delegated_tracks": "No Delegated Tracks",
+    "no_undelegated_tracks": "No Undelegated Tracks",
+    "no_received_delegation": "No Delegation Received",
+    "no_received_delegation_description": "You have not received delegations for any of the tracks",
+    "no_undelegated_tracks_description": "All tracks have been delegated. Undelegate a track to view here",
+    "trending_delegates": "Trending Delegates",
+    "delegate_prompt": "Enter an address or select from the list below to delegate your voting power",
+    "search_placeholder": "Enter username or address to Delegate vote",
+    "clear_all": "Clear All",
+    "received_delegations": "Received Delegation(s)",
+    "no_results_found": "No results found",
+    "delegate_to_address": "Delegate to this address"
 }
     
 

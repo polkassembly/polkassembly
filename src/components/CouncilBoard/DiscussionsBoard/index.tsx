@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import DiscussionPostCard from './DiscussionPostCard';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;

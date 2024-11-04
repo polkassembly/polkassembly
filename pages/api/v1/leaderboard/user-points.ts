@@ -38,16 +38,18 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 			userActivityQuery = userActivityQuery.where('type', 'in', activityTypesToFetch);
 		}
 
-		const count = (await userActivityQuery.count().get()).data().count || 0;
-
 		const totalUserActivitiesCount = await userActivityQuery.get();
 		let totalPoints: number = 0;
 
 		if (!totalUserActivitiesCount.empty) {
 			totalUserActivitiesCount.forEach((doc) => {
 				const data = doc.data();
-				const type = data.type;
-				const points = Object.values(REPUTATION_SCORES).find((activity) => activity.category === activity_category && activity.type === type) as any;
+				const points = Object.values(REPUTATION_SCORES).find((activity) => {
+					if (activity_category) {
+						return activity.category === activity_category && activity.type === data.type;
+					}
+					return activity.type === data.type;
+				}) as any;
 				totalPoints += points?.value || 0;
 			});
 		}
@@ -68,7 +70,7 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		});
 
 		return {
-			data: { count, data: activities, points: totalPoints || 0 } as LeaderboardPointsResponse,
+			data: { count: totalUserActivitiesCount.size, data: activities, points: totalPoints || 0 } as LeaderboardPointsResponse,
 			error: null,
 			status: 200
 		};

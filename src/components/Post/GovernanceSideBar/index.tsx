@@ -83,6 +83,7 @@ import { showProgressReportUploadFlow } from '~src/components/ProgressReport/uti
 import BountyChildBounties from './Bounty/BountyChildBounties';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
+import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -1371,6 +1372,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
+								<AwardChildBountyButton bountyIndex={bountyIndex || null} />
 								<ChildBounties
 									bountyIndex={bountyIndex}
 									status={status as string}

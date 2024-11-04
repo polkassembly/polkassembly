@@ -40,13 +40,12 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const canCreateChildBounty = () => {
-		if (!network || !isBountiesDashboardSupportedNetwork(network)) return false;
+		if (!network || !isBountiesDashboardSupportedNetwork(network) || !loginAddress || !curator) return false;
 
 		return (
-			!!(
-				[getEncodedAddress(loginAddress || '', network), loginAddress].includes(getEncodedAddress(curator, network) || curator || '') &&
-				getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status)
-			) || false
+			(!![getEncodedAddress(loginAddress, network), loginAddress].includes(getEncodedAddress(curator, network) || curator) &&
+				!!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status)) ||
+			false
 		);
 	};
 

@@ -1,0 +1,94 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
+import React, { useEffect, useState } from 'react';
+import { Input, Popover, Button } from 'antd';
+import Image from 'next/image';
+import { EChatFilter } from '~src/types';
+
+interface ChatFilterProps {
+	onSearch: (searchText: string) => void;
+	onFilterChange: (filterType: EChatFilter) => void;
+	selectedChatTab: 'messages' | 'requests';
+}
+
+const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selectedChatTab }) => {
+	const [searchText, setSearchText] = useState('');
+	const [isFilterTabOpen, setIsFilterTabOpen] = useState<boolean>(false);
+	const [filter, setFilter] = useState<EChatFilter>(EChatFilter.ALL);
+
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const text = e.target.value;
+		setSearchText(text);
+		onSearch(text);
+	};
+
+	const handleChatFilterChange = (value: EChatFilter) => {
+		onFilterChange(value);
+	};
+
+	useEffect(() => {
+		setSearchText('');
+		onSearch('');
+		setFilter(EChatFilter.ALL);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedChatTab]);
+
+	return (
+		<div className='w-full p-5 pb-0'>
+			<Input
+				placeholder='Search'
+				value={searchText}
+				onChange={handleSearch}
+				size='large'
+				className='[&_.ant-input-group-addon]:bg-transparent [&_.ant-input]:border-r-0'
+				styles={{
+					suffix: { background: 'red' }
+				}}
+				addonAfter={
+					<Popover
+						placement='bottomRight'
+						content={Object.values(EChatFilter).map((option) => {
+							return option === EChatFilter.ALL ? null : (
+								<Button
+									key={option}
+									className={`flex w-44 items-center justify-between border-none px-2 capitalize shadow-none ${
+										filter === option ? 'bg-[#FCE5F2] text-pink_primary' : 'bg-transparent'
+									}`}
+									onClick={() => {
+										setFilter(filter === option ? EChatFilter.ALL : option);
+										handleChatFilterChange(filter === option ? EChatFilter.ALL : option);
+										setIsFilterTabOpen(false);
+									}}
+								>
+									{option}
+								</Button>
+							);
+						})}
+						trigger='click'
+						arrow={false}
+						open={isFilterTabOpen}
+						onOpenChange={setIsFilterTabOpen}
+					>
+						<Button
+							className={`flex h-7 w-7 items-center justify-center rounded-full border-none p-2 hover:bg-black/5 hover:dark:bg-white/10 ${
+								filter !== EChatFilter.ALL ? 'bg-[#FCE5F2]' : 'bg-transparent'
+							}`}
+						>
+							<Image
+								src={`/assets/icons/delegation-chat/${filter === EChatFilter.ALL ? 'filter-default' : 'filter-active'}.svg`}
+								width={16}
+								height={18}
+								alt='chat filter icon'
+							/>
+						</Button>
+					</Popover>
+				}
+			/>
+		</div>
+	);
+};
+
+export default ChatFilter;

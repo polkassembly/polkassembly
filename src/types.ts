@@ -1106,6 +1106,12 @@ export enum EChatRequestStatus {
 	PENDING = 'pending'
 }
 
+export enum EChatFilter {
+	ALL = 'all',
+	UNREAD = 'unread',
+	READ = 'read'
+}
+
 export interface IChat {
 	chatId: string;
 	senderAddress: string;

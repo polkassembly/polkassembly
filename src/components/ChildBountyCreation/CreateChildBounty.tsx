@@ -243,7 +243,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 						message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
-				{!isValidBounty && isValidBounty !== null && (
+				{!isValidBounty && isValidBounty !== null && !!parentBountyIndex && isNaN(parentBountyIndex) && (
 					<Alert
 						type='info'
 						message={'Parent Bounty is not active.'}

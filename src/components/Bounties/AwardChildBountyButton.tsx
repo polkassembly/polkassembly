@@ -24,6 +24,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import Alert from '~src/basic-components/Alert';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import Link from 'next/link';
 
 interface Props {
 	bountyIndex?: number | null;
@@ -56,7 +57,6 @@ const AwardChildBountyModal = ({
 
 	const getOnChainTx = async () => {
 		if (!api || !apiReady || bountyIndex == null || isNaN(bountyIndex)) return null;
-		const childbountyIndex = Number(await api?.query?.childBounties?.childBountyCount());
 
 		let tx = api?.tx?.childBounties.awardChildBounty(bountyIndex, childBountyIndex, beneficiary);
 		if (multisigData?.threshold > 0) {
@@ -66,14 +66,12 @@ const AwardChildBountyModal = ({
 			});
 		}
 
-		return { childbountyIndex: childbountyIndex || null, tx: tx || null };
+		return tx || null;
 	};
 
 	const getGasFee = async () => {
 		if ((!multisigAssociatedAddress && !loginAddress) || !api || !apiReady) return;
-		const txDetails = await getOnChainTx();
-
-		const tx = txDetails?.tx;
+		const tx = await getOnChainTx();
 
 		const paymentInfo = await tx?.paymentInfo(multisigAssociatedAddress || loginAddress);
 
@@ -121,9 +119,9 @@ const AwardChildBountyModal = ({
 	const handleAward = async () => {
 		if (!api || !apiReady || bountyIndex == null || isNaN(bountyIndex)) return;
 
-		const txDetails = await getOnChainTx();
+		const tx = await getOnChainTx();
 
-		if (!txDetails?.tx || (txDetails?.childbountyIndex && isNaN(txDetails?.childbountyIndex))) return;
+		if (!tx) return;
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation!' });
 
 		const onFailed = async (message: string) => {
@@ -138,7 +136,20 @@ const AwardChildBountyModal = ({
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Child Bounty Awarded Successfully',
+				message:
+					multisigData?.threshold > 0 ? (
+						<div className='text-xs'>
+							An approval request has been sent to signatories to confirm transaction.{' '}
+							<Link
+								href={'https://app.polkasafe.xyz'}
+								className='text-xs text-pink_primary'
+							>
+								View Details
+							</Link>
+						</div>
+					) : (
+						'Child Bounty Awarded Successfully'
+					),
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -153,7 +164,7 @@ const AwardChildBountyModal = ({
 			onFailed,
 			onSuccess,
 			setStatus: (message: string) => setLoadingStatus({ isLoading: true, message: message }),
-			tx: txDetails.tx
+			tx: tx
 		});
 	};
 

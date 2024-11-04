@@ -84,6 +84,7 @@ import BountyChildBounties from './Bounty/BountyChildBounties';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
+import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -1373,6 +1374,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
 								<AwardChildBountyButton bountyIndex={bountyIndex || null} />
+
+								<ClaimChildBountyButton bountyIndex={bountyIndex || null} />
 								<ChildBounties
 									bountyIndex={bountyIndex}
 									status={status as string}

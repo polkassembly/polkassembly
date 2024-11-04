@@ -48,7 +48,6 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 				const data = doc.data();
 				const type = data.type;
 				const points = Object.values(REPUTATION_SCORES).find((activity) => activity.category === activity_category && activity.type === type) as any;
-				console.log(points);
 				totalPoints += points?.value || 0;
 			});
 		}
@@ -69,7 +68,7 @@ export const getUserLeaderboardPoints = async ({ page, user_id, activity_categor
 		});
 
 		return {
-			data: { count, data: activities, points: totalPoints || 0 },
+			data: { count, data: activities, points: totalPoints || 0 } as LeaderboardPointsResponse,
 			error: null,
 			status: 200
 		};

@@ -11,7 +11,7 @@ import { useUserDetailsSelector, useNetworkSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateList from './DelegateList';
-import EmptyState from './EmptyState';
+import EmptyState from './feedbacks/EmptyState';
 
 interface Props {
 	handleOpenChat: (chat: IChat) => void;

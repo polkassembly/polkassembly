@@ -4,7 +4,7 @@
 
 import { Spin, Card, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { IChat, IMessage, NotificationStatus } from '~src/types';
+import { EChatRequestStatus, IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
@@ -14,6 +14,7 @@ import AuthForm from '~src/ui-components/AuthForm';
 import ContentForm from '~src/components/ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Markdown from '~src/ui-components/Markdown';
+import RequestStatus from './feedbacks/RequestStatus';
 
 interface Props {
 	className?: string;
@@ -33,6 +34,8 @@ const Messages = ({ className, chat, chatId }: Props) => {
 	const [newMessage, setNewMessage] = useState<string>('');
 
 	const recipientAddress = chat?.senderAddress === address ? chat?.receiverAddress : chat?.senderAddress;
+
+	const isRequestSent = chat.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
 	const handleDataFetch = async () => {
 		setLoading(true);
@@ -134,24 +137,31 @@ const Messages = ({ className, chat, chatId }: Props) => {
 					})}
 				</div>
 			</Spin>
+			{chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
 			<AuthForm
 				onSubmit={handleSubmit}
 				className='mt-auto justify-self-end pb-1 pt-2'
 			>
-				<ContentForm
-					value={newMessage}
-					height={120}
-					className='[&_.ant-form-item]:m-0 [&_.tox-statusbar]:hidden [&_.tox]:rounded-none [&_.tox_.tox-toolbar\_\_primary]:bg-[#D2D8E0]'
-					onChange={(content: string) => {
-						setNewMessage(content);
-					}}
-				/>
+				{isRequestSent ? (
+					<div className='bg-[#D2D8E0] px-5 py-2'>
+						<span className='text-sm text-[#576D8BCC]'>You can chat once message request is accepted</span>
+					</div>
+				) : (
+					<ContentForm
+						value={newMessage}
+						height={120}
+						className='[&_.ant-form-item]:m-0 [&_.tox-statusbar]:hidden [&_.tox]:rounded-none [&_.tox_.tox-toolbar\_\_primary]:bg-[#D2D8E0]'
+						onChange={(content: string) => {
+							setNewMessage(content);
+						}}
+					/>
+				)}
 				<Button
 					className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
-						!newMessage || loading ? 'opacity-60' : ''
+						!newMessage || loading || isRequestSent ? 'opacity-60' : ''
 					}`}
 					type='primary'
-					disabled={!newMessage || loading}
+					disabled={!newMessage || loading || isRequestSent}
 					onClick={handleSubmit}
 				>
 					<span className='text-white'>Post</span>

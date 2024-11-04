@@ -244,15 +244,11 @@ const Post: FC<IPostProps> = (props) => {
 	const productData = useCallback(async () => {
 		try {
 			if (networkModified) {
-				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
-					headers: {
-						Accept: 'application/vnd.github.v3+json',
-						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28'
-					}
-				});
-				if (response.ok) {
-					const data = await response.json();
+				// api/v1/posts/githubAction
+				const { data = null } = (await nextApiClientFetch(`api/v1/posts/githubAction?network=${networkModified}&postType=${postType}&postTypeInfo=${postTypeInfo}`)) as {
+					data: IDataType[];
+				};
+				if (data) {
 					setAuditData(data);
 					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
 					setTotalAuditCount(count);

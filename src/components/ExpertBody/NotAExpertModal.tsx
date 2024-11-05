@@ -2,10 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider, message, Modal } from 'antd';
+import { Button, Divider, Form, message, Modal } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import ContentForm from '../ContentForm';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -20,6 +19,8 @@ import dynamic from 'next/dynamic';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import TextEditor from '~src/ui-components/TextEditor';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -75,14 +76,29 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 		if (error) message.error('Failed to load social media data. Please try again later.');
 	};
 
-	const handleContributionSubmit = () => {
+	const handleContributionSubmit = async () => {
 		if (contribution.trim() === '') {
 			message.error('Please provide some contributions.');
 			return;
 		}
-		setSuccessSubmission(true);
-		setContribution('');
-		setReason('');
+		if (address) {
+			const substrateAddress = getSubstrateAddress(address);
+			const { data, error } = await nextApiClientFetch<any>('api/v1/expertBody/becomeExpert', {
+				contribution: contribution,
+				reason: reason,
+				userAddress: substrateAddress
+			});
+			if (data) {
+				setSuccessSubmission(true);
+				message.success('Application submitted successfully!');
+				setSuccessSubmission(true);
+				setContribution('');
+				setReason('');
+			}
+			if (error) {
+				message.error('Failed to submit application. Please try again later.');
+			}
+		}
 	};
 
 	const shareOnTwitter = () => {
@@ -110,9 +126,6 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			});
 	};
 
-	const handleBecomeExpert = () => {
-		setIsInitial(false);
-	};
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	const handleIdentityButtonClick = () => {
@@ -145,7 +158,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 					<div className='pb-3 text-center'>
 						<Button
 							className='h-10 w-96 bg-[#E5007A] text-white'
-							onClick={handleBecomeExpert}
+							onClick={() => {
+								setIsInitial(false);
+							}}
 						>
 							Become an expert!
 						</Button>
@@ -254,17 +269,29 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				return (
 					<>
 						<p className='mt-5 text-sm font-medium text-[#243A57]'>Why do you want to become an expert?</p>
-						<ContentForm
-							value={reason}
-							onChange={(content: any) => setReason(content)}
-							height={150}
-						/>
+						<Form.Item
+							name='reason'
+							rules={[{ message: 'Please provide a reason', required: true }]}
+						>
+							<TextEditor
+								name='reason'
+								value={reason}
+								onChange={(content: any) => setReason(content)}
+								height={150}
+							/>
+						</Form.Item>
 						<p className='text-sm font-medium text-[#243A57]'>Share any relevant contributions you&apos;ve made in the past for the Polkadot ecosystem.</p>
-						<ContentForm
-							value={contribution}
-							onChange={(content: any) => setContribution(content)}
-							height={150}
-						/>
+						<Form.Item
+							name='contribution'
+							rules={[{ message: 'Please provide a contribution', required: true }]}
+						>
+							<TextEditor
+								name='contribution'
+								value={contribution}
+								onChange={(content: any) => setContribution(content)}
+								height={150}
+							/>
+						</Form.Item>
 
 						<div className='pt-4 text-right'>
 							<Button

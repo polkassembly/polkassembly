@@ -16,8 +16,6 @@ function ExpertBodyCard() {
 	const [reviewsCount, setReviewsCount] = useState(0);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isExpert, setIsExpert] = useState(false);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [isVerified, setIsVerified] = useState(false);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -81,7 +79,6 @@ function ExpertBodyCard() {
 					<NotAExpertModal
 						isModalVisible={isModalVisible}
 						handleCancel={handleCancel}
-						isVerified={isVerified}
 					/>
 				))}
 		</StyledCard>

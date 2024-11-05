@@ -17,23 +17,31 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import dynamic from 'next/dynamic';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
-const NotAExpertModal = ({ isModalVisible, handleCancel, isVerified }: { isModalVisible: boolean; handleCancel: () => void; isVerified: boolean }) => {
+const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-
+	const currentUser = useUserDetailsSelector();
+	const address = currentUser?.loginAddress;
+	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
+	const isVerified = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
 	const [successSubmission, setSuccessSubmission] = useState(false);
 	const [contribution, setContribution] = useState('');
-	const { network } = useNetworkSelector();
 	const [reason, setReason] = useState('');
 	const { resolvedTheme: theme } = useTheme();
-	const currentUser = useUserDetailsSelector();
 	const [isInitial, setIsInitial] = useState(true);
 	const [socialsData, setSocialsData] = useState<NetworkSocials>({
 		block_explorer: '',
@@ -46,6 +54,16 @@ const NotAExpertModal = ({ isModalVisible, handleCancel, isVerified }: { isModal
 		twitter: '',
 		youtube: ''
 	});
+	const handleIdentityInfo = async () => {
+		if (!api || !address || !apiReady) return;
+
+		const info = await getIdentityInformation({
+			address: address,
+			api: peopleChainApi ?? api,
+			network: network
+		});
+		setIdentity(info);
+	};
 
 	const getSocials = async () => {
 		const { data, error } = await nextApiClientFetch<NetworkSocials>('/api/v1/network-socials', {
@@ -56,11 +74,6 @@ const NotAExpertModal = ({ isModalVisible, handleCancel, isVerified }: { isModal
 		}
 		if (error) message.error('Failed to load social media data. Please try again later.');
 	};
-
-	useEffect(() => {
-		getSocials();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
 
 	const handleContributionSubmit = () => {
 		if (contribution.trim() === '') {
@@ -273,6 +286,16 @@ const NotAExpertModal = ({ isModalVisible, handleCancel, isVerified }: { isModal
 		}
 	};
 
+	useEffect(() => {
+		getSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		handleIdentityInfo();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, address, peopleChainApi, peopleChainApiReady]);
 	return (
 		<div>
 			<Modal

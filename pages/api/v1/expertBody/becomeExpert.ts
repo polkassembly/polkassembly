@@ -30,7 +30,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		if (!reason?.length || !contribution?.length) {
-			return res.status(400).json({ message: 'Title or Contribution is Missing in request body' });
+			return res.status(400).json({ message: 'reason or Contribution is Missing in request body' });
 		}
 
 		const token = getTokenFromReq(req);

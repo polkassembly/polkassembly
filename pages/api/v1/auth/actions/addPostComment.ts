@@ -32,7 +32,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;
+	const { userId, content, postId, postType, sentiment, trackNumber = null, isExpertComment } = req.body;
 	if (!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
@@ -68,6 +68,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const newComment: PostComment = {
 		content: content,
 		created_at: new Date(),
+		expertComment: Boolean(isExpertComment) || false,
 		history: [],
 		id: newCommentRef.id,
 		isDeleted: false,

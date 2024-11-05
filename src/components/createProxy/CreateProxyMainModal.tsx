@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
@@ -117,6 +117,28 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginWallet, address, userDetails]);
 
+	const calculateGasFee = useCallback(async () => {
+		if (!api || !apiReady) return;
+
+		const values = form.getFieldsValue();
+		if (!values.proxyType) return;
+
+		const proxyTx = values.createPureProxy
+			? api.tx.proxy.createPure(values.proxyType, 0, 0)
+			: values.proxyAddress
+			? api.tx.proxy.addProxy(values.proxyAddress, values.proxyType, 0)
+			: null;
+
+		if (proxyTx) {
+			const accountData = await api.query.system.account(address);
+			const availableBalance = new BN(accountData?.data?.free.toString() || '0');
+			setAvailableBalance(availableBalance);
+
+			const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+			setGasFee(new BN(gasFee));
+		}
+	}, [api, apiReady, form, address]);
+
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
 		try {
@@ -223,7 +245,11 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) || availableBalance.lt(gasFee)}
+						disabled={
+							form.getFieldsError().some((field) => field.errors.length > 0) ||
+							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+							availableBalance.lt(gasFee)
+						}
 						height={40}
 						width={145}
 						text='Create Proxy'
@@ -259,7 +285,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						onFinish={handleSubmit}
 					>
 						{/* Address */}
-						<Form.Item name='loginAddress'>
+						<Form.Item
+							name='loginAddress'
+							rules={[{ required: true, message: 'Address is required' }]}
+						>
 							<AccountSelectionForm
 								title='Your Address'
 								isTruncateUsername={false}
@@ -280,6 +309,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						<Form.Item
 							name='proxyAddress'
 							className=' mb-0'
+							rules={[{ required: !form.getFieldValue('createPureProxy'), message: 'Proxy Address is required' }]}
 						>
 							<AccountSelectionForm
 								title='Proxy Address'
@@ -304,15 +334,43 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							valuePropName='checked'
 						>
 							<Checkbox
-								onChange={(e) => form.setFieldsValue({ createPureProxy: e.target.checked })}
-								className='m-0 text-sm text-[#7F8FA4] dark:text-blue-dark-medium'
+								onChange={(e) => {
+									form.setFieldsValue({ createPureProxy: e.target.checked });
+									if (e.target.checked) {
+										form.setFieldsValue({ proxyAddress: '' });
+									}
+								}}
 							>
 								Create Pure Proxy
 							</Checkbox>
 						</Form.Item>
 
 						{/* Proxy Type Selection */}
-						<Form.Item name='proxyType'>
+						<Form.Item
+							name='proxyType'
+							rules={[
+								{
+									required: true,
+									message: 'Proxy Type is required'
+								},
+								{
+									validator: async (_, value) => {
+										if (!value) {
+											return Promise.reject(new Error('Please select a Proxy Type'));
+										}
+
+										// Call calculateGasFee when a valid proxy type is selected
+										try {
+											await calculateGasFee();
+											return Promise.resolve();
+										} catch (error) {
+											return Promise.reject(new Error('Failed to calculate gas fee'));
+										}
+									}
+								}
+							]}
+						>
+							<span className='text-sm text-blue-light-medium dark:text-blue-dark-helper'>Proxy Type</span>
 							<Select
 								className='w-full rounded-[4px] py-1'
 								style={{ width: '100%' }}

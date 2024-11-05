@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { message } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import ExpertPostModal from './ExpertPostModal';
@@ -11,16 +10,27 @@ import NotAExpertModal from './NotAExpertModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { v4 } from 'uuid';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
+import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
+import { IComment } from '../Post/Comment/Comment';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
 
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [review, setReview] = useState('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [reviewsCount, setReviewsCount] = useState(0);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isExpert, setIsExpert] = useState(false);
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
+	const { id, username, picture, loginAddress } = useUserDetailsSelector();
+	const {
+		postData: { postIndex, postType, track_number }
+	} = usePostDataContext();
+	const { comments, setComments } = useCommentDataContext();
+	console.log('comments', comments);
 
 	const checkExpert = async () => {
 		if (address) {
@@ -46,8 +56,106 @@ function ExpertBodyCard() {
 		setReview('');
 	};
 
-	const handleDone = () => {
-		message.success('Review submitted');
+	const handleDone = async () => {
+		const commentId = v4();
+		const comment = {
+			comment_reactions: {
+				'👍': {
+					count: 0,
+					userIds: [],
+					usernames: []
+				},
+				'👎': {
+					count: 0,
+					userIds: [],
+					usernames: []
+				}
+			},
+			content: review,
+			created_at: new Date(),
+			expertComment: true,
+			history: [],
+			id: commentId || '',
+			isError: false,
+			profile: picture || '',
+			proposer: loginAddress,
+			replies: [],
+			sentiment: 0,
+			updated_at: new Date(),
+			user_id: id as any,
+			username: username || ''
+		};
+
+		const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
+			content: review,
+			isExpertComment: true,
+			postId: postIndex,
+			postType: postType,
+			sentiment: 0,
+			trackNumber: track_number,
+			userId: id
+		});
+		if (error || !data) {
+			console.error('API call failed:', error);
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of Object.keys(comments)) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment: IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								newComment.isError = true;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
+				}
+				return comments;
+			});
+			queueNotification({
+				header: 'Failed!',
+				message: error,
+				status: NotificationStatus.ERROR
+			});
+		} else if (data) {
+			queueNotification({
+				header: 'Success!',
+				message: 'Comment created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of Object.keys(comments)) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment: IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								newComment.id = data.id;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
+				}
+				return comments;
+			});
+			comment.id = data.id || '';
+		}
+
 		setIsModalVisible(false);
 		setReview('');
 	};

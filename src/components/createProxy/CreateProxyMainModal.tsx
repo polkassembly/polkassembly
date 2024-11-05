@@ -63,6 +63,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
+	const [baseDepositValue, setBaseDepositValue] = useState<BN>(ZERO_BN); 
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -117,27 +118,33 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginWallet, address, userDetails]);
 
-	const calculateGasFee = useCallback(async () => {
+	const calculateGasFee = async () => {
 		if (!api || !apiReady) return;
-
+		
 		const values = form.getFieldsValue();
 		if (!values.proxyType) return;
 
 		const proxyTx = values.createPureProxy
-			? api.tx.proxy.createPure(values.proxyType, 0, 0)
+			? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
 			: values.proxyAddress
-			? api.tx.proxy.addProxy(values.proxyAddress, values.proxyType, 0)
+			? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
 			: null;
 
-		if (proxyTx) {
-			const accountData = await api.query.system.account(address);
+			if (proxyTx) {
+			const accountData = await api?.query?.system?.account(address);
 			const availableBalance = new BN(accountData?.data?.free.toString() || '0');
 			setAvailableBalance(availableBalance);
-
+			const baseDeposit = api?.consts?.proxy?.proxyDepositBase;
+			setBaseDepositValue(new BN(baseDeposit));
 			const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
 			setGasFee(new BN(gasFee));
 		}
-	}, [api, apiReady, form, address]);
+	}
+
+	useEffect(()=>{
+		if (!api || !apiReady) return;
+		calculateGasFee()
+	},[api,apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')])
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -161,12 +168,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
 			console.log('NO API READY');
-
 			return;
 		}
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
 		const values = form.getFieldsValue();
-		console.log('Form Values:', values);
 		if (!values.proxyType) {
 			return;
 		}
@@ -237,6 +242,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			footer={
 				<div className='my-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
+						onClick={() => setOpenModal(false)}
 						buttonsize='sm'
 						text='Cancel'
 						height={40}
@@ -248,7 +254,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						disabled={
 							form.getFieldsError().some((field) => field.errors.length > 0) ||
 							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee)
+							availableBalance.lt(gasFee.add(baseDepositValue))
 						}
 						height={40}
 						width={145}
@@ -287,7 +293,22 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						{/* Address */}
 						<Form.Item
 							name='loginAddress'
-							rules={[{ required: true, message: 'Address is required' }]}
+							rules={[
+								{ required: true, message: 'Address is required' },
+								{
+									validator: async (_, value) => {
+										if (!value) {
+											return Promise.reject(new Error('Please enter a valid address'));
+										}
+										try {
+											await calculateGasFee();
+											return Promise.resolve();
+										} catch (error) {
+											return Promise.reject(new Error('Failed to calculate gas fee or base deposit'));
+										}
+									}
+								}
+							]}
 						>
 							<AccountSelectionForm
 								title='Your Address'
@@ -309,7 +330,24 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						<Form.Item
 							name='proxyAddress'
 							className=' mb-0'
-							rules={[{ required: !form.getFieldValue('createPureProxy'), message: 'Proxy Address is required' }]}
+							rules={[
+								{ required: !form.getFieldValue('createPureProxy'), message: 'Proxy Address is required' },
+								{
+									validator: async (_, value) => {
+										if (form.getFieldValue('createPureProxy')) return Promise.resolve();
+					
+										if (!value) {
+											return Promise.reject(new Error('Please enter a valid proxy address'));
+										}
+										try {
+											await calculateGasFee();
+											return Promise.resolve();
+										} catch (error) {
+											return Promise.reject(new Error('Failed to calculate gas fee or base deposit'));
+										}
+									}
+								}
+							]}
 						>
 							<AccountSelectionForm
 								title='Proxy Address'
@@ -332,6 +370,18 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							className='mt-0 pt-0'
 							name='createPureProxy'
 							valuePropName='checked'
+							rules={[
+								{
+									validator: async (_, value) => {
+										try {
+											await calculateGasFee();
+											return Promise.resolve();
+										} catch (error) {
+											return Promise.reject(new Error('Failed to calculate gas fee or base deposit'));
+										}
+									}
+								}
+							]}
 						>
 							<Checkbox
 								onChange={(e) => {

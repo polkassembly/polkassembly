@@ -11,8 +11,7 @@ import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-
-const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
+import { useTranslation } from 'next-i18next';
 
 const ProgressReportRatingModal = () => {
 	const dispatch = useDispatch();
@@ -20,6 +19,9 @@ const ProgressReportRatingModal = () => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
 	const { report_rating } = useProgressReportSelector();
+	const { t } = useTranslation('common');
+	const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
+
 	const customIcons = Object.fromEntries(
 		[1, 2, 3, 4, 5].map((key, index) => [
 			key,
@@ -35,7 +37,7 @@ const ProgressReportRatingModal = () => {
 	return (
 		<>
 			<section className='flex flex-col gap-y-1'>
-				{postData?.progress_report?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
+				{postData?.progress_report?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>{t('summary_of_progress_report')}</h1>}
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
 						className='post-content m-0 p-0 dark:text-blue-dark-medium'
@@ -50,7 +52,7 @@ const ProgressReportRatingModal = () => {
 						dispatch(progressReportActions.setOpenRatingModal(false));
 					}}
 				>
-					View Progress Report in detail
+					{t('view_progress_report_detail')}
 				</p>
 				{postData?.progress_report?.progress_summary && (
 					<Divider
@@ -59,7 +61,7 @@ const ProgressReportRatingModal = () => {
 					/>
 				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
+					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>{t('rate_delivery')}</h1>
 					<>
 						<Rate
 							tooltips={desc}
@@ -83,7 +85,7 @@ const ProgressReportRatingModal = () => {
 					</>
 					{postData?.progress_report?.ratings?.length > 0 && (
 						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-							{postData?.progress_report?.ratings?.length} users have already rated the progress report.
+							{t('users_already_rated', { count: postData?.progress_report?.ratings?.length })}
 						</p>
 					)}
 				</div>

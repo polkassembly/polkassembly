@@ -9,6 +9,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { usePostDataContext } from '~src/context';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
+
 const { Panel } = Collapse;
 
 interface Props {
@@ -18,6 +20,7 @@ interface Props {
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
+	const { t } = useTranslation('common');
 
 	return (
 		<div className={`${className} mt-2 rounded-lg border-solid border-[#796EEC]`}>
@@ -37,7 +40,7 @@ const PostProgressReport = ({ className }: Props) => {
 								alt='progress-file-icon'
 								className='mr-1 mt-[2px] scale-125 '
 							/>
-							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high md:text-[14px]'>A new Progress Report was added for this referenda.</p>
+							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high md:text-[14px]'>{t('new_progress_report')}</p>
 						</div>
 					}
 					key='1'
@@ -47,7 +50,7 @@ const PostProgressReport = ({ className }: Props) => {
 					<section className='w-full bg-[#F0EEFE]'>
 						{postData?.progress_report?.progress_summary && (
 							<div className='-mt-2 flex flex-col gap-y-2'>
-								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
+								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue'>{t('progress_report_summary')}</h1>
 								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.progress_summary}</p>
 							</div>
 						)}
@@ -85,7 +88,7 @@ const PostProgressReport = ({ className }: Props) => {
 								});
 							}}
 						>
-							Show more
+							{t('show_more')}
 						</p>
 					</section>
 				</Panel>

@@ -25,6 +25,7 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ILoading, NotificationStatus } from '~src/types';
+import { useTranslation } from 'react-i18next';
 
 interface IPeopleChainTeleport {
 	className?: string;
@@ -36,6 +37,7 @@ interface IPeopleChainTeleport {
 const ZERO_BN = new BN(0);
 
 const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddress, onConfirm }: IPeopleChainTeleport) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
@@ -53,24 +55,22 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 	useEffect(() => {
 		form.setFieldValue('balance', formatedBalance(String(defaultAmount || ZERO_BN), unit));
 		setAmount(defaultAmount);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultAmount]);
 
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
-
 		try {
 			balance = new BN(balanceStr);
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 		}
 		setAvailableBalance(balance);
 	};
 
 	const onFailed = (error: string) => {
 		queueNotification({
-			header: 'failed!',
-			message: error || 'Transaction failed!',
+			header: t('notification_failed_header'),
+			message: error || t('transaction_failed'),
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
@@ -79,13 +79,13 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 		onConfirm?.(amount, true);
 		form.setFieldValue('balance', '');
 		setOpen(false);
-		setLoading({ isLoading: false, message: 'Success!' });
+		setLoading({ isLoading: false, message: t('transaction_success') });
 	};
 
 	const getPeopleChainTeleportTx = async () => {
 		if (!api || !apiReady) return null;
 
-		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
+		setLoading({ isLoading: true, message: t('awaiting_confirmation') });
 
 		const tx = api.tx.xcmPallet.limitedTeleportAssets(
 			{
@@ -120,7 +120,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 			address,
 			api,
 			apiReady,
-			errorMessageFallback: 'Failed!',
+			errorMessageFallback: t('transaction_failed'),
 			network,
 			onFailed,
 			onSuccess,
@@ -138,14 +138,10 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 				showIcon
 				message={
 					<div className='m-0 flex items-center justify-between p-0 text-xs dark:text-blue-dark-high'>
-						<span>
-							You have to teleport {formatedBalance(defaultAmount.toString(), unit)} {unit} to People chain to continue.
-						</span>
+						<span>{t('teleport_prompt', { amount: formatedBalance(defaultAmount.toString(), unit), unit })}</span>
 						<CustomButton
-							text='Teleport'
-							onClick={() => {
-								setOpen(true);
-							}}
+							text={t('teleport_button')}
+							onClick={() => setOpen(true)}
 							width={91}
 							className='change-address mr-1 flex w-[70px] items-center justify-center text-[10px] tracking-wide'
 							height={21}
@@ -166,7 +162,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Teleport funds to People Chain
+						{t('teleport_modal_title')}
 					</div>
 				}
 				footer={
@@ -180,7 +176,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							}}
 							disabled={loading.isLoading}
 							className={classNames('rounded-[4px] text-xs tracking-wide')}
-							text='Cancel'
+							text={t('cancel')}
 							variant='default'
 							width={140}
 							height={38}
@@ -189,7 +185,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							onClick={() => getPeopleChainTeleportTx()}
 							disabled={!(availableBalance && availableBalance.gt(amount)) || loading.isLoading}
 							className={classNames('rounded-[4px] text-xs tracking-wide', !(availableBalance && availableBalance.gt(amount)) || loading.isLoading ? 'opacity-50' : '')}
-							text='Confirm'
+							text={t('confirm')}
 							variant='primary'
 							width={140}
 							height={38}
@@ -204,10 +200,10 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Your Address{' '}
+								{t('your_address')}
 								<HelperTooltip
 									className='ml-1'
-									text='Please note the verification cannot be transferred to another address.'
+									text={t('address_tooltip')}
 								/>
 							</label>
 							{!!address && (
@@ -226,7 +222,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 									displayInline
 								/>
 								<CustomButton
-									text='Change Wallet'
+									text={t('change_wallet')}
 									onClick={() => {
 										setOpenAddressSelectModal(true);
 										setOpen(false);
@@ -245,14 +241,14 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 					>
 						<div className='mt-4'>
 							<div>
-								<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Beneficiary Address</div>
+								<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('beneficiary_address')}</div>
 								<div className='flex w-full items-end gap-2 text-sm'>
 									<AddressInput
 										skipFormatCheck
 										className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
 										defaultAddress={beneficiaryAddress || defaultBeneficiaryAddress || ''}
 										name={'beneficiary'}
-										placeholder='Enter Beneficiary Address'
+										placeholder={t('beneficiary_placeholder')}
 										iconClassName={'ml-[10px]'}
 										identiconSize={26}
 										onChange={(address) => setBeneficiaryAddress(address)}
@@ -263,7 +259,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 								<BalanceInput
 									balance={amount}
 									theme={theme}
-									label='Amount'
+									label={t('amount')}
 									onChange={(amount: BN) => setAmount(amount)}
 								/>
 							</div>
@@ -274,10 +270,9 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 			<AddressConnectModal
 				open={openAddressSelectModal}
 				setOpen={setOpenAddressSelectModal}
-				walletAlertTitle='Teleport People Chain'
+				walletAlertTitle={t('teleport_wallet_title')}
 				onConfirm={(address: string) => {
 					setAddress(address);
-					// form.setFieldValue('beneficiary', address);
 					setOpen(true);
 				}}
 				usedInIdentityFlow={false}

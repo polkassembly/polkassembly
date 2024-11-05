@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { useEffect, useState } from 'react';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -26,10 +27,12 @@ import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
 const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnChainIdentity) => {
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
@@ -176,7 +179,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			<AddressConnectModal
 				open={openAddressModal ? openAddressModal : openAddressSelectModal}
 				setOpen={setOpenAddressModal ? setOpenAddressModal : setOpenAddressSelectModal}
-				walletAlertTitle='On chain identity.'
+				walletAlertTitle={t('on_chain_identity')}
 				onConfirm={(address: string) => {
 					form.setFieldValue('address', address);
 					dispatch(onchainIdentityActions.setOnchainIdentityAddress(address));
@@ -200,12 +203,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Verification
+						{t('exit_verification')}
 					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>Your verification is pending. Are you sure you want to exit verification process? </span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{t('pending_verification_exit')}</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 						<CustomButton
 							onClick={() => {
@@ -214,7 +217,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								setLoading({ ...loading, isLoading: false });
 								router.replace('?setidentity=true', isOpenGovSupported(network) ? '/opengov' : '/');
 							}}
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							height={38}
 							width={145}
 							variant='default'
@@ -224,7 +227,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								setIsExitModal(false);
 								setOpen(true);
 							}}
-							text='No, continue verification'
+							text={t('no_continue_verification')}
 							height={38}
 							width={215}
 							variant='primary'
@@ -249,7 +252,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						) : (
 							<OnChainIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						)}
-						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? t('on_chain_identity') : t('social_verification')}</span>
 						{step === ESetIdentitySteps.SET_IDENTITY_FORM && identityInfo.verifiedByPolkassembly ? (
 							<div>
 								<Alert
@@ -257,7 +260,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 									type='success'
 									showIcon
 									icon={<VerifiedIcon className='text-base' />}
-									message={<p className='m-0 p-0 text-xs text-[#51D36E]'>Verified</p>}
+									message={<p className='m-0 p-0 text-xs text-[#51D36E]'>{t('verified')}</p>}
 								/>
 							</div>
 						) : null}
@@ -305,7 +308,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			<DelegationSuccessPopup
 				open={openJudgementSuccessModal}
 				setOpen={setOpenJudgementSuccessModal}
-				title='On-chain identity verified successfully'
+				title={t('verification_successful')}
 			/>
 			<IdentitySuccessState
 				open={openIdentitySuccessModal}

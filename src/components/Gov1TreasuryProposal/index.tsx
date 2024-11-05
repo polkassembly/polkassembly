@@ -20,12 +20,14 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import CreateProposal from './CreateProposal';
 import Gov1TreasuryProposalSuccess from './Gov1TreasuryProposalSuccess';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
 	isUsedInTreasuryPage?: boolean;
 }
 const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
@@ -66,7 +68,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				) : (
 					<CreatePropoosalIcon className={`${isUsedInTreasuryPage ? 'scale-200' : 'ml-[-31px] cursor-pointer'} text-3xl`} />
 				)}
-				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
+				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>{t('create_treasury_proposal')}</div>
 			</CustomButton>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
@@ -74,13 +76,13 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					setOpen={setOpenAddressLinkedModal}
 					closable
 					linkAddressNeeded
-					accountSelectionFormTitle='Select Proposer Address'
+					accountSelectionFormTitle={t('select_proposer_address')}
 					onConfirm={(address: string) => {
 						setOpen(true);
 						dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: address }));
 					}}
-					walletAlertTitle='Treasury proposal creation'
-					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
+					walletAlertTitle={t('treasury_proposal_creation')}
+					accountAlertTitle={t('wallet_creation_prompt')}
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 					usedInIdentityFlow={false}
@@ -104,7 +106,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 							width={26}
 							height={26}
 						/>
-						<span className='text-xl font-semibold'>Create Treasury Proposal</span>
+						<span className='text-xl font-semibold'>{t('create_treasury_proposal')}</span>
 					</div>
 				}
 			>
@@ -147,8 +149,8 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
 				image='/assets/Gifs/login-treasury.gif'
-				title='Join Polkassembly to Create a New proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly')}
+				subtitle={t('join_polkassembly_subtitle')}
 			/>
 		</div>
 	);

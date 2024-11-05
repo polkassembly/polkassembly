@@ -8,8 +8,11 @@ import { ISocialLayout } from './types';
 import { Spin } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ESocials, VerificationStatus } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<Spin
 			spinning={loading}
@@ -19,7 +22,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<span className='w-16 py-1.5 text-sm'>{title}</span>
 				<div className='w-full'>
 					<div
-						className={`flex h-10  items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
+						className={`flex h-10 items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
 							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
 						}`}
 					>
@@ -27,7 +30,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 						{verified ? (
 							<span className='flex items-center justify-center gap-2 text-xs text-[#8d99a9]'>
 								<VerifiedIcon className='text-xl' />
-								Verified
+								{t('verified')}
 							</span>
 						) : (
 							<CustomButton
@@ -40,8 +43,8 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 								variant='primary'
 							>
 								{status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)
-									? 'Confirm'
-									: 'Verify'}
+									? t('confirm')
+									: t('verify')}
 							</CustomButton>
 						)}
 					</div>

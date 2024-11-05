@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-/* eslint-disable sort-keys */
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
@@ -31,29 +30,28 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const columns: ColumnsType<IPostsRowData> = [
 		{
-			title: '#',
 			dataIndex: 'post_id',
+			fixed: 'left',
 			key: 'id',
 			render: (post_id: any) => <div className='truncate'>{post_id}</div>,
-			width: 80,
-			fixed: 'left'
+			title: '#',
+			width: 80
 		},
 		{
-			title: t('title'),
 			dataIndex: 'title',
-			key: 'title',
-			width: 340,
 			fixed: 'left',
+			key: 'title',
 			render: (title) => {
 				return (
 					<>
 						<h4 className='m-0 truncate'>{title}</h4>
 					</>
 				);
-			}
+			},
+			title: t('title'),
+			width: 340
 		},
 		{
-			title: t('posted_by'),
 			dataIndex: 'username',
 			key: 'postedBy',
 			onCell: () => {
@@ -75,20 +73,20 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					/>
 				</div>
 			),
+			title: t('posted_by'),
 			width: 200
 		},
 		{
-			title: t('created'),
-			key: 'created',
 			dataIndex: 'created_at',
+			key: 'created',
 			render: (createdAt) => {
 				const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 				return <span>{relativeCreatedAt}</span>;
 			},
+			title: t('created'),
 			width: 140
 		},
 		{
-			title: t('origin'),
 			dataIndex: 'origin',
 			key: 'type',
 			render: (postOrigin) => {
@@ -98,10 +96,10 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					</span>
 				);
 			},
+			title: t('origin'),
 			width: 160
 		},
 		{
-			title: t('status'),
 			dataIndex: 'status',
 			key: 'status',
 			render: (status: any, obj: any) => {
@@ -127,6 +125,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 						</div>
 					);
 			},
+			title: t('status'),
 			width: 160
 		}
 	];
@@ -160,14 +159,17 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					key: post.post_id,
 					post_id: post.post_id,
 					title,
+					// eslint-disable-next-line sort-keys
 					proposer: post.proposer,
 					username: post?.username,
+					// eslint-disable-next-line sort-keys
 					created_at: post.created_at,
 					origin: post.origin || post.type || null,
 					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type,
+					// eslint-disable-next-line sort-keys
 					spam_users_count: post.spam_users_count || 0
 				};
 

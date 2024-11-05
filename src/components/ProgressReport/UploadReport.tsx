@@ -19,6 +19,8 @@ import { NotificationStatus } from '~src/types';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
+
 const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -31,6 +33,8 @@ const UploadReport = () => {
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
+	const { t } = useTranslation('common');
+
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -54,7 +58,7 @@ const UploadReport = () => {
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
-				message: 'Error in saving your post.',
+				message: t('error_saving_post'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -63,7 +67,7 @@ const UploadReport = () => {
 			setLoading(false);
 			queueNotification({
 				header: 'Success!',
-				message: 'Your post is now edited',
+				message: t('post_edited_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 
@@ -97,7 +101,7 @@ const UploadReport = () => {
 			console.error('Error saving post', editError);
 			queueNotification({
 				header: 'Error!',
-				message: 'Error in saving your post.',
+				message: t('error_saving_post'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -106,7 +110,7 @@ const UploadReport = () => {
 			setLoading(false);
 			queueNotification({
 				header: 'Success!',
-				message: 'Your post is now edited',
+				message: t('post_edited_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 			dispatch(progressReportActions.setIsSummaryEdited(true));
@@ -131,7 +135,7 @@ const UploadReport = () => {
 				<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 					<CustomButton
 						variant='default'
-						text='Cancel'
+						text={t('cancel')}
 						buttonsize='sm'
 						onClick={() => {
 							dispatch(progressReportActions.setAddProgressReportModalOpen(false));
@@ -139,7 +143,7 @@ const UploadReport = () => {
 					/>
 					<CustomButton
 						variant='primary'
-						text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
+						text={postData?.progress_report?.progress_file ? t('edit') : t('done')}
 						buttonsize='sm'
 						loading={loading}
 						className={`${loading ? 'opacity-60' : ''}`}
@@ -164,7 +168,7 @@ const UploadReport = () => {
 						height={24}
 						className={theme === 'dark' ? 'dark-icons mr-2' : 'mr-2'}
 					/>
-					Upload Progress Report{' '}
+					{t('upload_progress_report')}
 				</div>
 			}
 		>

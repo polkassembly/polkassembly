@@ -21,6 +21,7 @@ import { IUploadResponseType } from 'pages/api/v1/progressReport/uploadReport';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import SummaryContentForm from '~src/components/SummaryContentForm';
+import { useTranslation } from 'next-i18next';
 
 const { Dragger } = Upload;
 
@@ -30,6 +31,7 @@ const UploadModalContent = () => {
 	const [canUpload, setCanUpload] = useState(true);
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const { postIndex } = postData;
 	const { report_uploaded, add_summary_cta_clicked, open_success_modal, is_summary_edited, summary_content, progress_report_link } = useProgressReportSelector();
@@ -86,17 +88,17 @@ const UploadModalContent = () => {
 		try {
 			const { data, error } = await nextApiClientFetch<{ message: string }>('/api/v1/progressReport/removeReport');
 			if (data) {
-				message.success('Last uploaded file removed successfully');
+				message.success(t('remove_file_success'));
 				dispatch(progressReportActions.setReportUploaded(false));
 				setCanUpload(true);
 			} else {
 				console.error('Error removing last uploaded file:', error);
-				message.error('Failed to remove last uploaded file');
+				message.error(t('remove_file_fail'));
 				setCanUpload(false);
 			}
 		} catch (error) {
 			console.error('Unexpected error:', error);
-			message.error('An unexpected error occurred');
+			message.error(t('unexpected_error'));
 			setCanUpload(false);
 		} finally {
 			setIsLoading(false);
@@ -107,7 +109,7 @@ const UploadModalContent = () => {
 		action: window.location.href,
 		customRequest: async ({ file, onSuccess, onError }) => {
 			if (!canUpload) {
-				message.error('Cannot upload a new file until the previous one is removed.');
+				message.error(t('remove_file_prompt'));
 				return;
 			}
 			try {
@@ -143,9 +145,9 @@ const UploadModalContent = () => {
 			const { status } = info.file;
 			if (status === 'done') {
 				dispatch(progressReportActions.setReportUploaded(true));
-				message.success(`${info.file.name} file uploaded successfully.`);
+				message.success(t('upload_success', { name: info.file.name }));
 			} else if (status === 'error') {
-				message.error(`${info.file.name} file upload failed.`);
+				message.error(t('upload_fail', { name: info.file.name }));
 			}
 		},
 		onDrop() {}
@@ -158,7 +160,7 @@ const UploadModalContent = () => {
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
 					type='info'
-					message={<span className='dark:text-blue-dark-high'>Progress Report Pending!</span>}
+					message={<span className='dark:text-blue-dark-high'>{t('progress_report_pending')}</span>}
 				/>
 			)}
 			{postData?.progress_report?.progress_file && (
@@ -181,7 +183,7 @@ const UploadModalContent = () => {
 								src='/assets/icons/edit-pencil.svg'
 								alt='edit-icon'
 							/>{' '}
-							{postData?.progress_report?.progress_summary ? 'Edit Summary' : 'Add Summary'}
+							{postData?.progress_report?.progress_summary ? t('edit_summary') : t('add_summary')}
 						</Button>
 						{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 					</div>
@@ -189,7 +191,7 @@ const UploadModalContent = () => {
 			)}
 			{!postData?.progress_report?.progress_file && (
 				<div className='flex items-center justify-start gap-x-2'>
-					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Please update your progress report for users to rate it.</p>
+					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('update_progress_report')}</p>
 					{report_uploaded && !postData?.progress_report?.progress_file && (
 						<Button
 							className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'
@@ -197,7 +199,7 @@ const UploadModalContent = () => {
 								dispatch(progressReportActions.setAddSummaryCTAClicked(true));
 							}}
 						>
-							<PlusCircleOutlined className='m-0 p-0' /> Add summary
+							<PlusCircleOutlined className='m-0 p-0' /> {t('add_summary')}
 						</Button>
 					)}
 				</div>
@@ -209,7 +211,7 @@ const UploadModalContent = () => {
 					className='-mt-2 flex cursor-pointer items-center justify-start gap-x-2'
 					rel='noreferrer'
 				>
-					<p className='m-0 p-0 text-sm text-pink_primary'>View Template for making a Progress Report</p>
+					<p className='m-0 p-0 text-sm text-pink_primary'>{t('view_template')}</p>
 					<Button className='m-0 border-none bg-transparent p-0 text-sm text-pink_primary'>
 						<ExportOutlined className='m-0 p-0' />
 					</Button>
@@ -236,8 +238,8 @@ const UploadModalContent = () => {
 							alt='upload-icon'
 						/>
 						<div className='flex flex-col items-start justify-start gap-y-2'>
-							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>{isLoading ? 'Uploading...' : 'Upload'}</p>
-							<p className='ant-upload-hint m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Drag and drop your files here.</p>
+							<p className='ant-upload-text m-0 p-0 text-base text-bodyBlue dark:text-white'>{isLoading ? t('uploading') : t('upload')}</p>
+							<p className='ant-upload-hint m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('drag_drop_files')}</p>
 						</div>
 					</div>
 				</Dragger>
@@ -275,7 +277,7 @@ const UploadModalContent = () => {
 									src='/assets/icons/pink_edit_icon.svg'
 									alt='edit-icon'
 								/>
-								<p className='m-0 p-0 text-sm text-pink_primary'>Replace</p>
+								<p className='m-0 p-0 text-sm text-pink_primary'>{t('replace')}</p>
 							</div>
 						)}
 					</div>

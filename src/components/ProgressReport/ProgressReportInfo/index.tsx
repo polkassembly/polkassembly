@@ -24,6 +24,7 @@ import { useTheme } from 'next-themes';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import dayjs from 'dayjs';
+import { useTranslation } from 'next-i18next';
 
 const ProgressReportInfo = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -36,6 +37,7 @@ const ProgressReportInfo = () => {
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 
 	const { report_rating, open_rating_modal, open_rating_success_modal, is_summary_edited } = useProgressReportSelector();
+	const { t } = useTranslation('common');
 
 	const addUserRating = async () => {
 		setLoading(true);
@@ -49,7 +51,7 @@ const ProgressReportInfo = () => {
 			console.error('Error saving rating', editError);
 			queueNotification({
 				header: 'Error!',
-				message: 'Error in saving your rating.',
+				message: t('error_saving_rating'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -58,13 +60,12 @@ const ProgressReportInfo = () => {
 			setLoading(false);
 			queueNotification({
 				header: 'Success!',
-				message: 'Your rating is now added',
+				message: t('success_rating_added'),
 				status: NotificationStatus.SUCCESS
 			});
 			const { progress_report } = data;
 			console.log('progress: ', report_rating);
 			console.log('progress2: ', data);
-			// const ratingData = postData?.progress_report?.ratings;
 			setPostData((prev) => ({
 				...prev,
 				progress_report
@@ -82,7 +83,6 @@ const ProgressReportInfo = () => {
 
 	useEffect(() => {
 		getRatingInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postData?.progress_report]);
 
 	const renderStars = () => {
@@ -113,7 +113,6 @@ const ProgressReportInfo = () => {
 				);
 			}
 
-			// Fill up the remaining stars to always show a total of 5 stars
 			for (let i = totalStars; i < 5; i++) {
 				starsArray.push(
 					<StarFilled
@@ -127,7 +126,6 @@ const ProgressReportInfo = () => {
 			return starsArray;
 		}
 
-		// Default case when there's no rating
 		return Array.from({ length: 5 }, (_, i) => (
 			<StarFilled
 				key={i}
@@ -152,7 +150,9 @@ const ProgressReportInfo = () => {
 					/>
 					<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
 					<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(postData?.progress_report?.created_at).format('DD MMM YYYY')}</p>
-					{(postData?.progress_report?.isEdited || is_summary_edited) && <p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+					{(postData?.progress_report?.isEdited || is_summary_edited) && (
+						<p className='m-0 ml-auto mt-1 p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>{t('edited')}</p>
+					)}
 				</header>
 				<article className='flex flex-col gap-y-1'>
 					<h1 className='m-0 p-0 text-base font-semibold text-sidebarBlue dark:text-white'>{postData?.title}</h1>
@@ -167,7 +167,7 @@ const ProgressReportInfo = () => {
 					)}
 					{postData?.progress_report?.ratings?.length > 0 && (
 						<p className='m-0 flex items-center p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-							Average Rating({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
+							{t('average_rating')} ({postData?.progress_report?.ratings?.length}): <div className='ml-2 flex'>{renderStars()}</div>
 						</p>
 					)}
 					<div className='mt-2 flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4 dark:border-[#3B444F]'>
@@ -185,10 +185,9 @@ const ProgressReportInfo = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>{`Progress Report - ${postData?.postType.replaceAll(
-								'_',
-								' '
-							)} - ${postData?.postIndex}`}</p>
+							<p className='m-0 p-0 text-xs capitalize text-sidebarBlue dark:text-blue-dark-medium '>
+								Progress Report - ${postData?.postType.replaceAll('_', ' ')} - ${postData?.postIndex}
+							</p>
 						</div>
 					</div>
 				</article>
@@ -203,7 +202,7 @@ const ProgressReportInfo = () => {
 					}}
 				>
 					<StarFilled />
-					<p className='m-0 p-0'>Rate Delievery</p>
+					<p className='m-0 p-0'>{t('rate_delivery')}</p>
 				</Button>
 			</section>
 			<SignupPopup
@@ -226,7 +225,7 @@ const ProgressReportInfo = () => {
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
 							variant='default'
-							text='Cancel'
+							text={t('cancel')}
 							buttonsize='sm'
 							disabled={loading}
 							onClick={() => {
@@ -237,7 +236,7 @@ const ProgressReportInfo = () => {
 							variant='primary'
 							loading={loading}
 							className={`${loading ? 'opacity-60' : ''}`}
-							text='Rate'
+							text={t('rate')}
 							buttonsize='sm'
 							disabled={loading}
 							onClick={() => {
@@ -254,7 +253,7 @@ const ProgressReportInfo = () => {
 				title={
 					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<StarFilled className='mr-2' />
-						Rate Delivery of Progress Report
+						{t('rate_delivery_of_progress_report')}
 					</div>
 				}
 			>
@@ -264,7 +263,6 @@ const ProgressReportInfo = () => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
 				open={open_rating_success_modal}
-				// open={true}
 				maskClosable={false}
 				footer={null}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}

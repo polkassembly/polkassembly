@@ -62,8 +62,11 @@ interface Props {
 	allowedCommentors?: EAllowedCommentor;
 }
 export const getDiscussionIdFromLink = (discussion: string) => {
-	const splitedArr = discussion?.split('/');
-	return splitedArr[splitedArr.length - 1];
+	const splitedArr = discussion?.trim()?.split('/');
+	if (discussion.includes('post')) {
+		return splitedArr[splitedArr.length - 1];
+	}
+	return null;
 };
 
 const CreateProposal = ({

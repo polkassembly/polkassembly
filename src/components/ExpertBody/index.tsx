@@ -1,13 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { message } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import ExpertPostModal from './ExpertPostModal';
 import NotAExpertModal from './NotAExpertModal';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -16,6 +19,23 @@ function ExpertBodyCard() {
 	const [reviewsCount, setReviewsCount] = useState(0);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isExpert, setIsExpert] = useState(false);
+	const currentUser = useUserDetailsSelector();
+	const address = currentUser?.loginAddress;
+
+	const checkExpert = async () => {
+		if (address) {
+			const substrateAddress = getSubstrateAddress(address);
+			const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertAddressCheck', {
+				userAddress: substrateAddress
+			});
+
+			setIsExpert(data.isExpert);
+		}
+	};
+	useEffect(() => {
+		checkExpert();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const showModal = () => {
 		setIsModalVisible(true);

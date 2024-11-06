@@ -40,6 +40,7 @@ export interface IComment {
 	votes?: any[];
 	isRow?: boolean;
 	isDeleted?: boolean;
+	expertComment?: boolean;
 }
 
 interface ICommentProps {
@@ -126,6 +127,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					expertComment={comment.expertComment}
 					vote={vote}
 					votesArr={comment?.votes}
 					isRow={true}

@@ -83,6 +83,7 @@ interface ICreationLabelProps {
 	beneficiaries?: IBeneficiary[];
 	inPostHeading?: boolean;
 	assetId?: null | string;
+	expertComment?: boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -105,7 +106,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		isRow,
 		voterAddress,
 		inPostHeading,
-		assetId
+		assetId,
+		expertComment
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
@@ -308,6 +310,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</Tooltip>
 					</div>
 				) : null}
+				<div>{expertComment && <p className='mx-3 rounded-lg bg-[#F57B60] px-1 py-0.5 text-[10px] text-white'>EXPERT</p>}</div>
+
 				{votesArr.length > 0 ? (
 					<div
 						className={votesArr.length >= 1 ? 'ml-1 flex items-center justify-center hover:cursor-pointer' : 'ml-1 flex items-center justify-center'}

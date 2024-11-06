@@ -393,6 +393,7 @@ export async function getComments(
 						comment_source: 'polkassembly',
 						content: '[Deleted]',
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						expertComment: data?.expertComment || false,
 						history: [],
 						id: data.id,
 						is_custom_username: false,
@@ -413,6 +414,7 @@ export async function getComments(
 						comment_source: data.comment_source || 'polkassembly',
 						content: data.content,
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						expertComment: data?.expertComment || false,
 						history: history,
 						id: data.id,
 						is_custom_username: false,
@@ -521,7 +523,7 @@ export async function getComments(
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments = comments.concat(subsquareComments);
+	comments = comments.concat(subsquareComments as any[]);
 
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {

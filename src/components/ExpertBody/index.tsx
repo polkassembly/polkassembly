@@ -16,11 +16,12 @@ import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostCommen
 import { IComment } from '../Post/Comment/Comment';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import { getSortedComments } from '../Post/Comment/CommentsContainer';
+import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [review, setReview] = useState('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [reviewsCount, setReviewsCount] = useState(0);
 	const [isExpert, setIsExpert] = useState(false);
 	const currentUser = useUserDetailsSelector();
@@ -29,8 +30,30 @@ function ExpertBodyCard() {
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
-	const { comments, setComments } = useCommentDataContext();
-	console.log('comments', comments);
+	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
+
+	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
+		const key = `${postId}_${type}`;
+		const commentsPayload = {
+			...comments,
+			[key]: [...(comments[key] || []), comment]
+		};
+		setComments(getSortedComments(commentsPayload));
+
+		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
+		setTimelines(timelinePayload);
+	};
+
+	useEffect(() => {
+		if (comments) {
+			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>;
+			const subsquidpropsaltype = getSubsquidProposalType(validProposalType);
+			const key = postIndex && postType ? `${postIndex.toString()}_${subsquidpropsaltype}` : null;
+			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment.expertComment) : [];
+			const expertCommentsCount = expertComments?.length;
+			setReviewsCount(expertCommentsCount);
+		}
+	}, [comments, postIndex, postType]);
 
 	const checkExpert = async () => {
 		if (address) {
@@ -38,7 +61,6 @@ function ExpertBodyCard() {
 			const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertAddressCheck', {
 				userAddress: substrateAddress
 			});
-
 			setIsExpert(data.isExpert);
 		}
 	};
@@ -125,12 +147,6 @@ function ExpertBodyCard() {
 				status: NotificationStatus.ERROR
 			});
 		} else if (data) {
-			queueNotification({
-				header: 'Success!',
-				message: 'Comment created successfully.',
-				status: NotificationStatus.SUCCESS
-			});
-
 			setComments((prev) => {
 				const comments: any = Object.assign({}, prev);
 				for (const key of Object.keys(comments)) {
@@ -153,9 +169,14 @@ function ExpertBodyCard() {
 				}
 				return comments;
 			});
+			handleCurrentCommentAndTimeline(postIndex.toString(), postType, comment);
 			comment.id = data.id || '';
+			queueNotification({
+				header: 'Success!',
+				message: 'Comment created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
 		}
-
 		setIsModalVisible(false);
 		setReview('');
 	};

@@ -26,6 +26,7 @@ import { IAssetsCurrentPriceStore } from './assetsCurrentPrices/@types';
 import { IProgressReportStore } from './progressReport/@types';
 import { IGlobalStore } from './global/@types';
 import { IChildBountyCreationStore } from './childBountyCreation/@types';
+import { ICommunityTabStore } from './communityTab/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -96,6 +97,10 @@ const useBatchVotesSelector = () => {
 	return useSelector<TAppState, IBatchVoteStore>((state) => state.batchVote);
 };
 
+const useCommunityTabSelector = () => {
+	return useSelector<TAppState, ICommunityTabStore>((state) => state.communityTab);
+};
+
 const useProgressReportSelector = () => {
 	return useSelector<TAppState, IProgressReportStore>((state) => state.progressReport);
 };
@@ -138,5 +143,6 @@ export {
 	useAssetsCurrentPriceSelector,
 	useProgressReportSelector,
 	useGlobalSelector,
-	useChildBountyCreationSelector
+	useChildBountyCreationSelector,
+	useCommunityTabSelector
 };

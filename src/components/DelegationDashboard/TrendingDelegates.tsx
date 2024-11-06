@@ -235,7 +235,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 											height={20}
 											width={20}
 											alt=''
-											className={source == EDelegationSourceFilters.NA ? (theme == 'dark' ? 'dark-icons' : '') : ''}
+											className={source == EDelegationSourceFilters.NA ? (theme == 'dark ' ? 'dark-icons' : '') : ''}
 										/>
 									</span>
 									<span className='text-xs tracking-wide'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>

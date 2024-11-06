@@ -33,6 +33,7 @@ import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
+import { communityTabStore } from './communityTab';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -127,6 +128,7 @@ export const makeStore = () => {
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
 		[batchVoteStore.name]: batchVoteStore.reducer,
+		[communityTabStore.name]: communityTabStore.reducer,
 		[progressReportStore.name]: progressReportStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,

@@ -228,7 +228,7 @@ const treasury = {
 		{
 			icon: <BountiesSVG />,
 			name: 'Bounties',
-			pathname: '/bounties',
+			pathname: '/bounties-listing',
 			value: 'bounties'
 		},
 		{

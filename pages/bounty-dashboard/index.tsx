@@ -7,10 +7,8 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import BountiesContainer from '~src/components/Bounties';
-import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import SEOHead from '~src/global/SEOHead';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProposalType, getStatusesFromCustomStatus } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { setNetwork } from '~src/redux/network';
@@ -23,14 +21,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (!isBountiesDashboardSupportedNetwork(network)) {
-		return {
-			props: {},
-			redirect: {
-				destination: isOpenGovSupported(network) ? '/opengov' : '/'
-			}
-		};
-	}
 	const LISTING_LIMIT = 12;
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = context.query;
 	const proposalType = ProposalType.BOUNTIES;

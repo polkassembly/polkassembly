@@ -1,19 +1,21 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { useRouter } from 'next/router';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import CreationLabel from 'src/ui-components/CreationLabel';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { usePostDataContext } from '~src/context';
-import EditableCommentContent from './EditableCommentContent';
-import Replies from './Replies';
 import { ICommentHistory } from '~src/types';
 import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
+import Replies from '../Replies';
+import EditableCommentContent from '../EditableCommentContent';
+import CreationLabelForComments from './CreationLabelForComments';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export interface IComment {
 	user_id: number;
@@ -46,7 +48,7 @@ interface ICommentProps {
 	disableEdit?: boolean;
 }
 
-export const Comment: FC<ICommentProps> = (props) => {
+const CommentCard: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
 	const { user_id, content, created_at, id, replies, updated_at, sentiment, comment_source = 'polkassembly', history, spam_users_count, vote = null } = comment;
 	const { asPath } = useRouter();
@@ -56,6 +58,32 @@ export const Comment: FC<ICommentProps> = (props) => {
 		postData: { postIndex, postType }
 	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [profileDetails, setProfileDetails] = useState({
+		image: '',
+		username: ''
+	});
+
+	const getData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${comment.proposer}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				image: data?.profile?.image || '',
+				username: data?.username
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (!comment.proposer) return;
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [comment.proposer]);
+
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -97,65 +125,76 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	const modifiedContent = modifyQuoteComment(comment.content);
 
-	// TODO: author address
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (
-		<div className={`${className} mb-9 flex gap-x-4 `}>
-			<div className='w-full overflow-hidden'>
-				<CreationLabel
-					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
-					created_at={created_at}
-					defaultAddress={comment.proposer}
-					voterAddress={comment?.votes?.[0]?.voter}
-					username={comment.username}
-					sentiment={newSentiment}
-					commentSource={comment_source}
-					spam_users_count={spam_users_count}
-					vote={vote}
-					votesArr={comment?.votes}
-					isRow={true}
-				>
-					{history && history.length > 0 && (
-						<div
-							className='cursor-pointer'
-							onClick={() => setOpenModal(true)}
-						>
-							<UpdateLabel
-								created_at={created_at}
-								updated_at={updated_at}
-								isHistory={history && history?.length > 0}
-							/>
-						</div>
-					)}
-				</CreationLabel>
-				<EditableCommentContent
-					userId={user_id}
-					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]'}`}
-					comment={comment}
-					commentId={id}
-					content={modifiedContent || content}
-					postId={postIndex}
-					proposalType={postType}
-					disableEdit={props.disableEdit}
-					sentiment={newSentiment}
-					setSentiment={setNewSentiment}
-					prevSentiment={sentiment || 0}
-					isSubsquareUser={comment_source === 'subsquare'}
-					userName={comment?.username}
-					proposer={comment?.proposer}
-					is_custom_username={comment?.is_custom_username}
-				/>
-				{replies && replies.length > 0 && (
-					<Replies
-						className='comment-content'
-						commentId={id}
-						repliesArr={replies}
-						comment={comment}
-						isSubsquareUser={comment_source === 'subsquare'}
-						isReactionOnReply={true}
+		<div className={`${className} mb-3 flex gap-x-4 `}>
+			<div className='w-full overflow-hidden '>
+				<div className='flex items-center gap-2'>
+					<ImageIcon
+						alt='user'
+						src={profileDetails?.image ? profileDetails.image : '/assets/icons/user-profile.png'}
+						imgClassName=' h-8 w-8 rounded-full'
+						imgWrapperClassName='rounded-full h-8 w-8 mt-1 mr-[2px]'
 					/>
-				)}
+
+					<CreationLabelForComments
+						className=' rounded-t-md py-2'
+						created_at={created_at}
+						defaultAddress={comment.proposer}
+						voterAddress={comment?.votes?.[0]?.voter}
+						username={comment.username}
+						sentiment={newSentiment}
+						commentSource={comment_source}
+						spam_users_count={spam_users_count}
+						vote={vote}
+						votesArr={comment?.votes}
+						isRow={true}
+					>
+						{history && history.length > 0 && (
+							<div
+								className='cursor-pointer'
+								onClick={() => setOpenModal(true)}
+							>
+								<UpdateLabel
+									className='-ml-[2px]'
+									created_at={created_at}
+									updated_at={updated_at}
+									isHistory={history && history?.length > 0}
+									isUsedInComments={true}
+								/>
+							</div>
+						)}
+					</CreationLabelForComments>
+				</div>
+				<div className='pl-10 pr-7'>
+					<EditableCommentContent
+						userId={user_id}
+						created_at={created_at}
+						className={''}
+						comment={comment}
+						commentId={id}
+						content={modifiedContent || content}
+						postId={postIndex}
+						proposalType={postType}
+						disableEdit={props.disableEdit}
+						sentiment={newSentiment}
+						setSentiment={setNewSentiment}
+						prevSentiment={sentiment || 0}
+						isSubsquareUser={comment_source === 'subsquare'}
+						userName={comment?.username}
+						proposer={comment?.proposer}
+						is_custom_username={comment?.is_custom_username}
+					/>
+					{replies && replies.length > 0 && (
+						<Replies
+							className='comment-content'
+							commentId={id}
+							repliesArr={replies}
+							comment={comment}
+							isSubsquareUser={comment_source === 'subsquare'}
+							isReactionOnReply={true}
+						/>
+					)}
+				</div>
 			</div>
 			{history && history.length > 0 && (
 				<CommentHistoryModal
@@ -171,4 +210,4 @@ export const Comment: FC<ICommentProps> = (props) => {
 	);
 };
 
-export default Comment;
+export default CommentCard;

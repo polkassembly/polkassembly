@@ -27,8 +27,8 @@ import { IComment } from './Comment';
 
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
-import DeleteIcon from '~assets/icons/delete.svg';
-import EditIcon from '~assets/icons/edit-i.svg';
+import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
 import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import {
@@ -42,7 +42,8 @@ import {
 	NeutralUnfilledIcon,
 	SlightlyForUnfilledIcon,
 	ForUnfilledIcon,
-	CopyIcon
+	CopyIcon,
+	EditPencilIcon
 } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
@@ -523,7 +524,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 1,
 					label: (
 						<div
-							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${poppins.variable} ${poppins.className}`}
+							className={`flex items-center text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 							onClick={() => {
 								toggleEdit();
 								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
@@ -533,10 +534,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								});
 							}}
 						>
-							<span className='flex items-center'>
-								<EditIcon className='mr-1 text-bodyBlue dark:text-white' />
-								<p className='m-0 -ml-[3px] p-0'>Edit</p>
-							</span>
+							<EditPencilIcon className='-ml-[2px] mr-1 text-xl ' />
+							Edit
 						</div>
 					)
 			  }
@@ -545,16 +544,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key: 2,
 			label: (
 				<div
-					className={`flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className}`}
+					className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 					onClick={() => {
 						copyLink();
 					}}
 				>
-					<CopyIcon
-						className='-ml-2 text-2xl'
-						style={{ transform: 'scale(0.6)' }}
-					/>{' '}
-					Copy link
+					<CopyIcon className='-ml-1 mr-[2px] text-xl text-blue-light-medium dark:text-blue-dark-medium' /> Copy link
 				</div>
 			)
 		},
@@ -569,6 +564,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							commentId={commentId}
 							postId={postIndex}
 							isButtonOnComment={true}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -578,7 +575,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 4,
 					label: (
 						<div
-							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className} border-none`}
+							className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
 							onClick={() => {
 								deleteComment();
 								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
@@ -588,7 +585,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								});
 							}}
 						>
-							<DeleteIcon className='mr-1' />
+							{theme == 'light' ? <DeleteIcon className='mr-[2px]' /> : <DeleteIconDark className='mr-[2px]' />}
 							Delete
 						</div>
 					)
@@ -605,6 +602,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							onSuccess={removeCommentContent}
 							commentId={commentId}
 							postId={(comment.post_index as any) || postIndex}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -640,14 +639,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	return (
 		<>
 			<div className={className}>
-				{error && (
+				{error ? (
 					<div>
 						<ErrorAlert
 							errorMsg={error}
 							className='mb-4'
 						/>
 					</div>
-				)}
+				) : null}
 				{isEditing ? (
 					<Form
 						form={form}
@@ -725,56 +724,60 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<Markdown
 							theme={theme}
 							md={content}
-							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							className='rounded-b-md text-sm '
 							isUsedInComments={true}
 						/>
 
-						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
-							<CommentReactionBar
-								className='reactions mr-0'
-								commentId={commentId}
-								comment_reactions={comment.comment_reactions}
-								importedReactions={props.isSubsquareUser}
-							/>
-							{id && (
-								<Button
-									disabled={props.disableEdit || !isCommentAllowed}
-									className={classNames(
-										props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
-										'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'
-									)}
-									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
-								>
-									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
-								</Button>
-							)}
-							<Dropdown
-								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown z-[1056]'
-								placement='bottomRight'
-								menu={{ items }}
-							>
-								{theme === 'dark' ? (
-									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								) : (
-									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								)}
-							</Dropdown>
-							{comment.isError && (
-								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
-									<div
-										onClick={handleRetry}
-										className='retry-container relative flex w-[66px] cursor-pointer px-1'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+						<div className='-mt-3 flex flex-row flex-wrap items-center justify-between gap-[1px] bg-white dark:bg-section-dark-overlay'>
+							<div className='flex items-center'>
+								<CommentReactionBar
+									className='reactions mr-0'
+									commentId={commentId}
+									comment_reactions={comment.comment_reactions}
+									importedReactions={props.isSubsquareUser}
+								/>
+								{id && (
+									<Button
+										disabled={props.disableEdit || !isCommentAllowed}
+										className={classNames(
+											props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
+											'-mt-[2px] flex items-center justify-start border-none pl-1 pr-1 text-xs font-medium text-[#485F7DCC] shadow-none dark:bg-transparent dark:text-[#9E9E9ECC]'
+										)}
+										onClick={props.isSubsquareUser ? toggleReply : toggleReply}
 									>
-										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1  ' />} Reply
+									</Button>
+								)}
+							</div>
+							<div>
+								<Dropdown
+									theme={theme}
+									className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+									overlayClassName='sentiment-dropdown z-[1056]'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									{theme === 'dark' ? (
+										<ThreeDotsIconDark className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
+									) : (
+										<ThreeDotsIcon className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
+									)}
+								</Dropdown>
+								{comment.isError && (
+									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
+							</div>
 						</div>
 
 						{/* Add Reply Form*/}

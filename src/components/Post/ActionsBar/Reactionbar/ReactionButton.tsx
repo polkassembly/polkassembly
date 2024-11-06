@@ -5,13 +5,16 @@
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import Tooltip from '~src/basic-components/Tooltip';
+import { poppins } from 'pages/_app';
+import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
+import TooltipContent from './TooltipContent';
+import Popover from '~src/basic-components/Popover';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -49,16 +52,42 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
+	const { network } = useNetworkSelector();
 	const { id, username } = useUserDetailsSelector();
-
+	const userIds = reactions?.[reaction as IReaction].userIds;
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
 	const currentUser = useUserDetailsSelector();
+	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
+	const getUserProfile = async (userIds: string[]) => {
+		if (userIds?.length) {
+			setIsLoading(true);
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			if (data) {
+				setUserImageData(data);
+				setIsLoading(false);
+			} else {
+				console.log('There is error in fetching data');
+				setIsLoading(false);
+			}
+		} else {
+			setUserImageData([]);
+		}
+	};
+
+	useEffect(() => {
+		if (userIds && userIds.length > 0) {
+			getUserProfile([...userIds].map(String));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
-				<LikeFilled className='-mt-1' />
+				<LikeFilled className='-mt-[2px] ' />
 			) : (
 				<div
 					onClick={() => {
@@ -71,7 +100,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined />
+					<LikeOutlined className='text-[#485F7DCC] dark:text-[#9E9E9ECC]' />
 				</div>
 			);
 		}
@@ -80,7 +109,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			return reacted ? (
 				<LikeFilled
 					rotate={180}
-					className='-mt-1'
+					className='-mt-[2px]'
 				/>
 			) : (
 				<div
@@ -94,7 +123,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined rotate={180} />
+					<LikeOutlined
+						rotate={180}
+						className='text-[#485F7DCC] dark:text-[#9E9E9ECC]'
+					/>
 				</div>
 			);
 		}
@@ -150,34 +182,41 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			<CustomButton
 				variant='default'
 				onClick={handleReact}
-				className='m-0 mr-3 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
+				className='m-0 border-none px-2 hover:bg-[#0000000A] disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}
 				height={40}
 			>
 				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
-					<span className='ml-2 text-xs'>{reactions?.[reaction as IReaction].count}</span>
+					<span
+						className={`${poppins.variable} ${poppins.className} ml-[5px] text-xs font-medium ${
+							!reacted ? 'text-[#485F7DCC] dark:text-[#9E9E9ECC]' : 'text-pink_primary dark:text-blue-dark-helper'
+						} `}
+					>
+						{reactions?.[reaction as IReaction].count}
+					</span>
 				</span>
 			</CustomButton>
 		</span>
 	);
 
-	let popupContent = '';
-	if (importedReactions) {
-		popupContent = 'Likes are disabled for imported comments.';
-	} else if (usernames?.length > 10) {
-		popupContent = `${usernames.slice(0, 10).join(', ')} and ${usernames.length - 10} others`;
-	} else {
-		popupContent = usernames?.join(', ');
-	}
-
 	return usernames?.length > 0 ? (
-		<Tooltip
-			color='#E5007A'
-			title={popupContent}
+		<Popover
+			placement='bottomLeft'
+			content={
+				importedReactions ? (
+					'Likes are disabled for imported comments.'
+				) : (
+					<TooltipContent
+						usernames={usernames}
+						users={userImageData}
+						isLoading={isLoading}
+					/>
+				)
+			}
 		>
 			{button}
-		</Tooltip>
+		</Popover>
 	) : (
 		button
 	);

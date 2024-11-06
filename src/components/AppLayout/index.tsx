@@ -50,7 +50,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
@@ -72,6 +72,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const hideFooter = router?.pathname?.includes('/batch-voting') && isMobile;
+	const hideCommentLoginBanner = router.pathname.includes('referenda/') || router.pathname.includes('post/');
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -315,6 +316,35 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
+												{(!userId || !loginAddress) && hideCommentLoginBanner ? (
+													<div
+														className={`z-1000 fixed top-[91%] flex items-center justify-between ${
+															is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'
+														} w-full bg-[#0095F6] py-[14px] pr-20`}
+													>
+														<div className='flex flex-col'>
+															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>
+																Join Polkassembly to Comment on this {router.pathname.includes('referenda/') ? 'proposal' : 'post'}.
+															</span>
+															<span className={`${poppins.className} ${poppins.variable} text-sm text-white`}>Discuss, contribute and get regular updates from Polkassembly.</span>
+														</div>
+														<div className='flex gap-4'>
+															<button
+																onClick={() => setLoginOpen(true)}
+																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-[#0095F6] bg-white text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-[#0095F6] `}
+															>
+																Log In
+															</button>
+															<button
+																onClick={() => setSignupOpen(true)}
+																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-white bg-[#0095F6] px-4 py-1 text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-white`}
+															>
+																Sign Up
+															</button>
+														</div>
+													</div>
+												) : null}
+
 												{!hideFooter && (
 													<Footer
 														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
@@ -401,258 +431,259 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 };
 
 export default styled(AppLayout)`
-    .ant-layout {
-        position: relative;
-    }
+	.ant-layout {
+		position: relative;
+	}
 
-    .ant-layout-sider {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-    }
+	.ant-layout-sider {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+	}
 
-    @media (max-width: 768px) {
-        .ant-layout-header,
-        .ant-layout-content {
-            margin-left: 0;
-        }
-    }
+	@media (max-width: 768px) {
+		.ant-layout-header,
+		.ant-layout-content {
+			margin-left: 0;
+		}
+	}
 
-    .svgLogo svg {
-        height: 60%;
-    }
+	.svgLogo svg {
+		height: 60%;
+	}
 
-    .border-bottom {
-        border-bottom: 1px solid #d2d8e0;
-    }
-    .border-right {
-        border-right: 1px solid #d2d8e0;
-    }
+	.border-bottom {
+		border-bottom: 1px solid #d2d8e0;
+	}
+	.border-right {
+		border-right: 1px solid #d2d8e0;
+	}
 
-    #rc-menu-uuid-75314-4- {
-        border-bottom: 1px solid gray;
-    }
+	#rc-menu-uuid-75314-4- {
+		border-bottom: 1px solid gray;
+	}
 
-    #rc-menu-uuid-44115-4- .logo-container {
-        height: 100px !important;
-    }
+	#rc-menu-uuid-44115-4- .logo-container {
+		height: 100px !important;
+	}
 
-    .ant-drawer .ant-drawer-mask {
-        position: fixed !important;
-    }
+	.ant-drawer .ant-drawer-mask {
+		position: fixed !important;
+	}
 
-    .ant-drawer .ant-drawer-content {
-        height: auto !important;
-    }
+	.ant-drawer .ant-drawer-content {
+		height: auto !important;
+	}
 
-    .ant-drawer-content-wrapper,
-    .ant-drawer-content {
-        max-width: 236px !important;
-        box-shadow: none !important;
-        min-width: 60px !important;
-    }
+	.ant-drawer-content-wrapper,
+	.ant-drawer-content {
+		max-width: 236px !important;
+		box-shadow: none !important;
+		min-width: 60px !important;
+	}
 
-    .ant-drawer-body {
-        text-transform: capitalize !important;
-        padding: 0 !important;
-    }
-    .mobile-margin {
-        margin-top: 60px !important;
-    }
+	.ant-drawer-body {
+		text-transform: capitalize !important;
+		padding: 0 !important;
+	}
+	.mobile-margin {
+		margin-top: 60px !important;
+	}
 
-    .ant-menu-item .anticon,
-    .ant-menu-item-icon {
-        font-size: 20px !important;
-    }
+	.ant-menu-item .anticon,
+	.ant-menu-item-icon {
+		font-size: 20px !important;
+	}
 
-    .ant-menu-item .delegation {
-        font-size: 12px !important;
-    }
-    .ant-menu-item .delegation .opacity {
-        opacity: 1 !important;
-        margin-top: -17px !important;
-    }
+	.ant-menu-item .delegation {
+		font-size: 12px !important;
+	}
+	.ant-menu-item .delegation .opacity {
+		opacity: 1 !important;
+		margin-top: -17px !important;
+	}
 
-    .ant-menu-item-selected {
-        .ant-menu-title-content {
-            color: var(--pink_primary) !important;
-        }
-    }
+	.ant-menu-item-selected {
+		.ant-menu-title-content {
+			color: var(--pink_primary) !important;
+		}
+	}
 
-    .ant-menu-title-content:hover {
-        color: var(--pink_primary) !important;
-    }
+	.ant-menu-title-content:hover {
+		color: var(--pink_primary) !important;
+	}
 
-    .ant-menu-item::after {
-        border-right: none !important;
-    }
-    li .ant-menu-item-only-child {
-        padding-left: 35px !important;
-        margin-left: 20px !important;
-    }
+	.ant-menu-item::after {
+		border-right: none !important;
+	}
+	li .ant-menu-item-only-child {
+		padding-left: 35px !important;
+		margin-left: 20px !important;
+	}
 
-    li .ant-menu-item {
-        margin-left: 20px !important;
-    }
-    .ant-menu .ant-menu-submenu-arrow {
-        color: var(--lightBlue) !important;
-    }
-    .ant-menu-title-content {
-        color: #485f7d !important;
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 21px;
-        letter-spacing: 0.01em;
-    }
+	li .ant-menu-item {
+		margin-left: 20px !important;
+	}
+	.ant-menu .ant-menu-submenu-arrow {
+		color: var(--lightBlue) !important;
+	}
+	.ant-menu-title-content {
+		color: #485f7d !important;
+		font-weight: 500;
+		font-size: 12px;
+		line-height: 21px;
+		letter-spacing: 0.01em;
+	}
 
-    .auth-sider-menu {
-        list-style: none !important;
-    }
+	.auth-sider-menu {
+		list-style: none !important;
+	}
 
-    .ant-empty-image {
-        display: flex;
-        justify-content: center;
-    }
+	.ant-empty-image {
+		display: flex;
+		justify-content: center;
+	}
 
-    .sidebar .ant-menu-item-selected .anticon {
-        filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
-    }
-    .sidebar .ant-menu-item-selected span {
-        color: var(--pink_primary) !important;
-        font-weight: 500;
-    }
+	.sidebar .ant-menu-item-selected .anticon {
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
+	.sidebar .ant-menu-item-selected span {
+		color: var(--pink_primary) !important;
+		font-weight: 500;
+	}
 
-    .sidebar .ant-menu-item-selected .opacity {
-        background-color: var(--pink_primary) !important;
-    }
-    .ant-menu-inline-collapsed-noicon {
-        color: var(--lightBlue);
-    }
+	.sidebar .ant-menu-item-selected .opacity {
+		background-color: var(--pink_primary) !important;
+	}
+	.ant-menu-inline-collapsed-noicon {
+		color: var(--lightBlue);
+	}
 
-    .ant-menu-item-selected {
-        .ant-menu-inline-collapsed-noicon {
-            color: var(--pink_primary);
-        }
-    }
+	.ant-menu-item-selected {
+		.ant-menu-inline-collapsed-noicon {
+			color: var(--pink_primary);
+		}
+	}
 
-    .ant-menu-sub {
-        background: #fff !important;
-    }
+	.ant-menu-sub {
+		background: #fff !important;
+	}
 
-    .ant-menu-item > .logo-container {
-        height: 100px;
-    }
-    .open-sider .ant-menu-item {
-        display: flex;
-        margin-block: 2px !important;
-    }
-    .menu-container {
-        top: 0px;
-    }
+	.ant-menu-item > .logo-container {
+		height: 100px;
+	}
+	.open-sider .ant-menu-item {
+		display: flex;
+		margin-block: 2px !important;
+	}
+	.menu-container {
+		top: 0px;
+	}
 
-    .ant-menu-inline-collapsed-noicon {
-        color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
-    }
-    .no-scroll {
-        overflow: hidden; /* This will disable scrolling */
-        height: 90vh; /* Ensure it takes the full viewport height to avoid background scroll */
-    }
+	.ant-menu-inline-collapsed-noicon {
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
+	}
+	.no-scroll {
+		overflow: hidden; /* This will disable scrolling */
+		height: 90vh; /* Ensure it takes the full viewport height to avoid background scroll */
+	}
 
-    @media (max-width: 468px) and (min-width: 380px) {
-        .menu-container {
-            top: 62px !important;
-        }
+	@media (max-width: 468px) and (min-width: 380px) {
+		.menu-container {
+			top: 62px !important;
+		}
 
-        .logo-display-block {
-            display: none !important;
-        }
+		.logo-display-block {
+			display: none !important;
+		}
 
-        .user-container {
-            display: flex !important;
-            width: 200px !important;
-            border: none !important;
-            background-color: #fff !important;
-        }
+		.user-container {
+			display: flex !important;
+			width: 200px !important;
+			border: none !important;
+			background-color: #fff !important;
+		}
 
-        .logo-container {
-            display: flex !important;
-        }
+		.logo-container {
+			display: flex !important;
+		}
 
-        .user-image {
-            font-size: 14px !important;
-        }
+		.user-image {
+			font-size: 14px !important;
+		}
 
-        .user-info {
-            font-size: 14px !important;
-        }
+		.user-info {
+			font-size: 14px !important;
+		}
 
-        .user-info-dropdown {
-            transform: scale(0.7);
-        }
-    }
-    .ant-drawer .ant-drawer-footer {
-        border: none !important;
-    }
-    .ant-menu-inline .ant-menu-item {
-        height: 36px !important;
-    }
-    .ant-menu-vertical > .ant-menu-item {
-        height: 36px !important;
-    }
-    .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
-        height: 36px !important;
-    }
-    .ant-menu-submenu-title {
-        height: 36px !important;
-    }
-    .ant-menu-vertical > .ant-menu-item > li:first-child {
-        height: 40px !important;
-    }
-    .ant-menu-item {
-        overflow: visible !important;
-    }
-    .sidebar-toggle-button {
-        cursor: pointer;
-        border-radius: 0.375rem;
-        background-color: #ffffff;
-        padding: 5px 6px;
-        font-size: 16px;
-        color: #485f7d;
-    }
-    .sidebar-toggle-button-header {
-        border: 1px solid #d2d8e0;
-        cursor: pointer;
-        border-radius: 0.375rem;
-        background-color: #ffffff;
-        font-size: 16px;
-        color: #485f7d;
-    }
+		.user-info-dropdown {
+			transform: scale(0.7);
+		}
+	}
+	.ant-drawer .ant-drawer-footer {
+		border: none !important;
+	}
+	.ant-menu-inline .ant-menu-item {
+		height: 36px !important;
+	}
+	.ant-menu-vertical > .ant-menu-item {
+		height: 36px !important;
+	}
+	.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+		height: 36px !important;
+	}
+	.ant-menu-submenu-title {
+		height: 36px !important;
+	}
+	.ant-menu-vertical > .ant-menu-item > li:first-child {
+		height: 40px !important;
+	}
+	.ant-menu-item {
+		overflow: visible !important;
+	}
+	.sidebar-toggle-button {
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		padding: 5px 6px;
+		font-size: 16px;
+		color: #485f7d;
+	}
+	.sidebar-toggle-button-header {
+		border: 1px solid #d2d8e0;
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		font-size: 16px;
+		color: #485f7d;
+	}
 
-    .activeborder {
-        border: 2px solid #e5007a;
-        border-radius: 10px;
-    }
-    .activeborderhover {
-        border: 1px solid transparent;
-        border-radius: 10px;
-    }
-    .activeborderhover:hover {
-        border: 1px solid #e5007a;
-    }
-    .hide-scrollbar::-webkit-scrollbar {
-        width: 0px;
-        height: 0px;
-    }
+	.activeborder {
+		border: 2px solid #e5007a;
+		border-radius: 10px;
+	}
+	.activeborderhover {
+		border: 1px solid transparent;
+		border-radius: 10px;
+	}
+	.activeborderhover:hover {
+		border: 1px solid #e5007a;
+	}
+	.hide-scrollbar::-webkit-scrollbar {
+		width: 0px;
+		height: 0px;
+	}
 
-    .hide-scrollbar {
-        -ms-overflow-style: none; /* For Internet Explorer and Edge */
-        scrollbar-width: none; /* For Firefox */
-        overflow: hidden; /* Ensures no scrollbars for other browsers */
-    }
+	.hide-scrollbar {
+		-ms-overflow-style: none; /* For Internet Explorer and Edge */
+		scrollbar-width: none; /* For Firefox */
+		overflow: hidden; /* Ensures no scrollbars for other browsers */
+	}
 
-    .width-content{
-    @media (max-width: 1532px and min-width: 1700px) {
-        margin-left: 0px;
-    }
+	.width-content {
+		@media (max-width: 1532px) and (min-width: 1700px) {
+			margin-left: 0px;
+		}
+	}
 `;

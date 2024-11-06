@@ -116,14 +116,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--grey_app_background);
   scroll-behavior: smooth;
-  cursor: url("https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2Flight-mode-cursor.svg?alt=media&token=4a361133-6d34-4d4a-a468-2d0d22287782"), pointer !important;
   font-family: var(--font_default), "Poppins", -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif, "Space Grotesk", "Pixeboy", "Pixelify Sans";
-}
-
-.dark body {
-  cursor: url("https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2Fcursor.svg?alt=media&token=c2350867-019a-4f1c-b3ee-e75542122e2b"), pointer !important;
 }
 
 a {
@@ -998,4 +993,12 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 }
 .dark .ant-steps .ant-steps-item-wait .ant-steps-item-icon {
   background-color: #dde4ed !important;
+}
+
+.image-dark {
+  filter: brightness(0) saturate(100%) invert(69%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(86%) contrast(87%);
+}
+
+.image-light {
+  filter: brightness(0) saturate(100%) invert(33%) sepia(14%) saturate(1156%) hue-rotate(174deg) brightness(102%) contrast(92%);
 }

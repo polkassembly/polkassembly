@@ -21,6 +21,7 @@ export async function _processBountyClaimed({
 	proposalType: TSubsquidProposalType;
 }) {
 	// process reputation scores for proposal 'Claim Bounty'
+	console.log('Processing bounty claimed', network, payeeAddress, proposalIndex, proposalType);
 
 	const activityPayload = {
 		by: getSubstrateAddress(payeeAddress),

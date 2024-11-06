@@ -8,7 +8,6 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import StatusTag from 'src/ui-components/StatusTag';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -22,30 +21,31 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
+import { usePostDataContext } from '~src/context';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
-	curator?: string;
-	bountyStatus: string;
 }
 
 const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
-	const { bountyId, curator, bountyStatus } = props;
+	const { bountyId } = props;
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [bountiesRes, setBountiesRes] = useState<IChildBountiesResponse>();
 	const [loading, setLoading] = useState(true);
+	const {
+		postData: { curator, status }
+	} = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const canCreateChildBounty = () => {
-		if (!network || !isBountiesDashboardSupportedNetwork(network)) return false;
+		if (!network || !isBountiesDashboardSupportedNetwork(network) || !loginAddress || !curator) return false;
 
 		return (
-			!!(
-				[getEncodedAddress(loginAddress || '', network), loginAddress].includes(getEncodedAddress(curator, network) || curator || '') &&
-				getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(bountyStatus)
-			) || false
+			(!![getEncodedAddress(loginAddress, network), loginAddress].includes(getEncodedAddress(curator, network) || curator) &&
+				!!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status)) ||
+			false
 		);
 	};
 
@@ -55,7 +55,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 
 	useEffect(() => {
 		setLoading(true);
-		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`)
+		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${5}&postId=${bountyId}`)
 			.then((res) => {
 				const data = res.data;
 				setBountiesRes(data);
@@ -99,7 +99,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 														{`#${childBounty.index}`} {childBounty.title}
 													</h5>
 												</div>
-												{childBounty.status && (
+												{childBounty?.status && (
 													<StatusTag
 														theme={theme}
 														className='statusTag m-auto'
@@ -121,7 +121,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 						className='pagination-container'
 						current={currentPage}
 						total={bountiesRes?.child_bounties_count}
-						pageSize={VOTES_LISTING_LIMIT}
+						pageSize={5}
 						showSizeChanger={false}
 						responsive={true}
 						hideOnSinglePage={true}

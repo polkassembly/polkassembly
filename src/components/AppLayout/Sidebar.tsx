@@ -1381,7 +1381,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
 					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+						Bounties
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
@@ -1398,7 +1398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							)}
 						</span>
 					</div>,
-					'/bounties',
+					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 					null
 				),
 				getSiderMenuItem(
@@ -1944,17 +1944,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<div className='-mb-2 ml-24 flex h-full items-center justify-center'>
+											<div className='ml-16 flex h-full items-center justify-center'>
 												<Image
 													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
-													width={110}
-													height={40}
-												/>
-												<Image
-													src='/assets/Gifs/candy-GIF.gif'
-													alt='polkassembly logo'
-													width={75}
+													width={150}
 													height={50}
 												/>
 											</div>

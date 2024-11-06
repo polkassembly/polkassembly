@@ -28,6 +28,7 @@ import Address from '~src/ui-components/Address';
 import Balance from '../Balance';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { CreatePostResponseType } from '~src/auth/types';
+import Link from 'next/link';
 
 const ZERO_BN = new BN(0);
 
@@ -37,9 +38,11 @@ interface Props {
 	setOpenSuccessModal: (pre: boolean) => void;
 	setCloseModal: () => void;
 	multisigData: { signatories: string[]; threshold: number };
+	handleSuccess?: () => void;
+	defaultCurator?: string;
 }
 
-const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData }: Props) => {
+const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multisigData, handleSuccess, defaultCurator }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress, multisigAssociatedAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -158,10 +161,11 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		if (data?.post_id) {
 			queueNotification({
 				header: 'Thanks for sharing!',
-				message: 'Bounty created successfully.',
+				message: 'Child Bounty created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
+			handleSuccess?.();
 		}
 	};
 
@@ -185,7 +189,20 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
-				message: `Child Bounty #${txDetails?.childbountyIndex} created successfully.`,
+				message:
+					multisigData?.threshold > 0 ? (
+						<div className='text-xs'>
+							An approval request has been sent to signatories to confirm transaction.{' '}
+							<Link
+								href={'https://app.polkasafe.xyz'}
+								className='text-xs text-pink_primary'
+							>
+								View Details
+							</Link>
+						</div>
+					) : (
+						`Child Bounty #${txDetails?.childbountyIndex} created successfully.`
+					),
 				status: NotificationStatus.SUCCESS
 			});
 			dispatch(childBountyCreationActions.setChildBountyIndex(Number(txDetails.childbountyIndex)));
@@ -240,7 +257,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 						message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
-				{!isValidBounty && isValidBounty !== null && (
+				{!isValidBounty && isValidBounty !== null && !!parentBountyIndex && isNaN(parentBountyIndex) && (
 					<Alert
 						type='info'
 						message={'Parent Bounty is not active.'}
@@ -323,15 +340,16 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 						/>{' '}
 					</section>
 					<section className='mt-0'>
-						<label className='mb-0.5'>Child Bounty Curator (optional)</label>
+						<label className='mb-0.5'>Child Bounty Curator {getEncodedAddress(defaultCurator, network) ? '' : '(optional)'}</label>
 						<AddressInput
 							skipFormatCheck
 							className='-mt-6 w-full'
-							defaultAddress={curator}
+							defaultAddress={curator || defaultCurator}
 							name='childbountyCurator'
 							placeholder='Enter Curator Address'
 							iconClassName={'ml-[10px]'}
 							identiconSize={26}
+							disabled={!!getEncodedAddress(defaultCurator, network)}
 							onChange={(address: string) => {
 								dispatch(childBountyCreationActions.setChildBountyCurator(address));
 								debounceGetGasFee();

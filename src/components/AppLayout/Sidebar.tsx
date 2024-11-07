@@ -650,9 +650,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
-		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
-	}
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(
 			getSiderMenuItem(
@@ -1406,6 +1403,155 @@ const Sidebar: React.FC<SidebarProps> = ({
 			</div>,
 			[...bountiesSubItems]
 		);
+
+		const gov1treasuryDropdownContent = (
+			<div className='text-left'>
+				{(isOpenGovSupported(network)
+					? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA].includes(network)
+						? [...gov1Items.treasuryItems]
+						: network === AllNetworks.MOONBEAM
+						? [bountiesMenuItem]
+						: [...gov1Items.treasuryItems, bountiesMenuItem]
+					: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
+					? [...gov1Items.treasuryItems.slice(0, 1)]
+					: [...gov1Items.treasuryItems, bountiesMenuItem]
+				).map((item, index) => {
+					const uniqueKey = item && 'label' in item ? `${item.label}-${index}` : `null-${index}`;
+
+					let formattedLabel;
+					if (item && 'label' in item) {
+						if (typeof item.label === 'string') {
+							formattedLabel = toPascalCase(item.label);
+						} else if (React.isValidElement(item.label)) {
+							formattedLabel = item.label;
+						}
+					}
+
+					if (item && item.key === 'gov2_bounties_group') {
+						const bountiesPopoverContent = (
+							<div className='w-[150px] pt-2'>
+								{bountiesSubItems.map((subItem, subIndex) => {
+									if (!subItem) return null;
+									const uniqueSubKey = `${subItem?.key}-${subIndex}`;
+
+									let formattedSubLabel;
+									if (subItem && 'label' in subItem) {
+										if (typeof subItem.label === 'string') {
+											formattedSubLabel = subItem.label
+												?.toString()
+												.replace(/^\//, '')
+												.split('_')
+												.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+												.join(' ');
+										} else if (React.isValidElement(subItem.label)) {
+											formattedSubLabel = subItem.label;
+										}
+									}
+
+									if (formattedSubLabel === 'Bounty') {
+										formattedSubLabel = 'Dashboard';
+									}
+
+									return (
+										<p
+											key={uniqueSubKey}
+											className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+												isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+											}`}
+										>
+											<Link href={subItem?.key as string}>
+												<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+													{formattedSubLabel || ''}
+												</span>
+											</Link>
+										</p>
+									);
+								})}
+							</div>
+						);
+
+						return (
+							<div
+								key={uniqueKey}
+								className='relative'
+							>
+								<Popover
+									content={bountiesPopoverContent}
+									placement='right'
+									trigger='hover'
+									overlayClassName='z-[1200]'
+								>
+									<p
+										className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+											isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
+										}`}
+									>
+										<span className='flex items-center gap-2 font-medium'>
+											<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' />
+											<span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
+										</span>
+										<RightOutlined />
+									</p>
+								</Popover>
+							</div>
+						);
+					}
+
+					return (
+						<p
+							key={uniqueKey}
+							className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
+								isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+							}`}
+						>
+							<Link href={item?.key as string}>
+								<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+									{formattedLabel || ''}
+								</span>
+							</Link>
+						</p>
+					);
+				})}
+			</div>
+		);
+
+		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
+			collapsedItems = collapsedItems.concat([...gov1Items.democracyItems]);
+			collapsedItems.push(
+				getSiderMenuItem(
+					<Popover
+						content={gov1treasuryDropdownContent}
+						placement='right'
+						arrow={false}
+						trigger='click'
+						overlayClassName='z-[1100] w-[190px] left-16'
+					>
+						<Tooltip
+							title='Treasury'
+							placement='left'
+							className='text-xs'
+						>
+							<div
+								className='relative cursor-pointer px-1'
+								style={{ marginRight: '-13px', padding: '10%' }}
+							>
+								{activeTreasury ? (
+									<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
+								) : (
+									<TreasuryIconNew
+										className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
+									/>
+								)}
+							</div>
+						</Tooltip>
+					</Popover>,
+					'gov2_treasury_group',
+					null,
+					[...gov1Items.treasuryItems]
+				)
+			);
+			collapsedItems = collapsedItems.concat([...gov1Items.councilItems, ...gov1Items.techCommItems]);
+		}
 
 		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
 

@@ -169,7 +169,7 @@ function ExpertBodyCard() {
 			</div>
 			<div className='flex flex-col text-[#243A57] dark:text-white'>
 				<span className='text-base font-semibold'>{title}</span>
-				<span className='w-48 text-sm'>{contentText}</span>
+				<span className='w-52 text-sm'>{contentText}</span>
 				<span className='text-sm'>
 					An expert?{' '}
 					<span

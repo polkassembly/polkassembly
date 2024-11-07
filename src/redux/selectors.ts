@@ -26,6 +26,7 @@ import { IAssetsCurrentPriceStore } from './assetsCurrentPrices/@types';
 import { IProgressReportStore } from './progressReport/@types';
 import { IGlobalStore } from './global/@types';
 import { IChildBountyCreationStore } from './childBountyCreation/@types';
+import { IFollowState } from './follow/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -114,6 +115,9 @@ const useAssetsCurrentPriceSelector = () => {
 const useChildBountyCreationSelector = () => {
 	return useSelector<TAppState, IChildBountyCreationStore>((state) => state.childBountyCreation);
 };
+const useFollowSelector = () => {
+	return useSelector<TAppState, IFollowState>((state) => state.follow);
+};
 
 export {
 	useNetworkSelector,
@@ -138,5 +142,6 @@ export {
 	useAssetsCurrentPriceSelector,
 	useProgressReportSelector,
 	useGlobalSelector,
-	useChildBountyCreationSelector
+	useChildBountyCreationSelector,
+	useFollowSelector
 };

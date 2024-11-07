@@ -8,13 +8,20 @@ import { FollowersResponse, FollowUserData } from 'pages/api/v1/fetch-follows/fo
 import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import FollowTooltip from './FollowTooltip';
+import { IFollowState } from 'pages/api/v1/fetch-follows/following-list';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setFollowingIds } from '~src/redux/follow';
 
 const FollowersAndFollowing = ({ userId }: { userId: number }) => {
+	const { id } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
 		loading: false,
 		error: null
 	});
 	const [data, setData] = useState<FollowersResponse>();
+	// const [followingIds, setFollowingId] = useState<number[]>([]);
 
 	const fetchFollowers = async () => {
 		setIsLoading({ loading: true, error: null });
@@ -29,6 +36,23 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 			}
 		} catch (err) {
 			setIsLoading({ loading: false, error: 'An error occurred while fetching followers.' });
+		}
+	};
+
+	const fetchfollowing = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IFollowState>('/api/v1/fetch-follows/following-list');
+			if (error) {
+				console.log('Error while fetchinf following data', error);
+			}
+			if (data?.followingIds) {
+				const ids = data.followingIds;
+				console.log('ids', ids);
+
+				dispatch(setFollowingIds(ids));
+			}
+		} catch (err) {
+			setIsLoading({ loading: false, error: 'An error occurred while fetching following.' });
 		}
 	};
 
@@ -59,8 +83,9 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 
 	useEffect(() => {
 		fetchFollowers();
+		if (id) fetchfollowing();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userId]);
+	}, [userId, id]);
 
 	return (
 		<>

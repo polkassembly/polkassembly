@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useFollowStatus } from '~src/hooks/useFollowStatus';
 import { FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFollowingId, isFollowing, removeFollowingId } from '~src/redux/follow';
 
 const FollowButton = ({
 	userId,
@@ -24,14 +26,18 @@ const FollowButton = ({
 	user?: FollowUserData;
 }) => {
 	const { id } = useUserDetailsSelector();
-	const { isFollowing, loading, followUser, unfollowUser, setIsFollowing } = useFollowStatus(userId);
+	const { loading, followUser, unfollowUser, setIsFollowing } = useFollowStatus(userId);
+	const dispatch = useDispatch();
+	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, userId));
 
 	const handleFollowClick = () => {
-		if (isFollowing) {
+		if (isUserFollowing) {
+			dispatch(removeFollowingId(userId));
 			unfollowUser(userId);
 			removeFromFollowing?.(userId);
 		} else {
 			followUser(userId);
+			dispatch(addFollowingId(userId));
 			user && addToFollowing?.(user);
 		}
 		setIsFollowing(!isFollowing);
@@ -39,7 +45,7 @@ const FollowButton = ({
 
 	const buttonClass = isUsedInProfileTab ? 'rounded-md border-none px-3 py-0 text-xs text-white' : 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
 	const buttonHeight = isUsedInProfileTab ? 28 : undefined;
-	const buttonText = isFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
+	const buttonText = isUserFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
 
 	return (
 		<>
@@ -57,7 +63,7 @@ const FollowButton = ({
 						className='mr-1 rounded-full'
 						height={20}
 						width={20}
-						alt={isFollowing ? 'unfollow logo' : 'follow logo'}
+						alt={isUserFollowing ? 'unfollow logo' : 'follow logo'}
 					/>
 					<span className='max-md:hidden'>{loading ? 'loading...' : buttonText}</span>
 				</CustomButton>

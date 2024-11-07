@@ -76,7 +76,7 @@ const RateModal: FC<IRateModal> = (props) => {
 		<>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay w-[600px] max-w-full shrink-0 max-sm:w-[100%]`}
+				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay max-w-full shrink-0 max-sm:w-[100%] md:w-[600px]`}
 				open={open}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>

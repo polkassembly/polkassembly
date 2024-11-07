@@ -42,7 +42,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 			Object.values(postData.progress_report).some((report: any) => {
 				if (report.id === reportId) {
 					setReportData(report as IProgressReport);
-					return true; // Stop iteration once the report is found
+					return true;
 				}
 				return false;
 			});

@@ -61,7 +61,6 @@ const ProgressReportTab = ({ className }: Props) => {
 
 		if (data) {
 			setLoading(false);
-			console.log(data);
 			const { progress_report_views } = data;
 			setPostData((prev) => ({
 				...prev,

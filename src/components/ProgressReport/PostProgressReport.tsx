@@ -19,13 +19,13 @@ const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
 
-	const getRelativeTime = (timestamp: { _seconds: number; _nanoseconds: number }): string => {
-		const postDate = new Date(timestamp?._seconds * 1000);
+	const getRelativeTime = (timestamp: string): string => {
+		const postDate = new Date(timestamp);
 		const currentDate = new Date();
 
-		if (!(postDate instanceof Date) || !(currentDate instanceof Date)) return '';
+		if (isNaN(postDate.getTime()) || isNaN(currentDate.getTime())) return '';
 
-		const diffMs = currentDate.getTime() - postDate.getTime(); // Use getTime() for precise milliseconds
+		const diffMs = currentDate.getTime() - postDate.getTime();
 		const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 		const diffWeeks = Math.floor(diffDays / 7);
 		const diffMonths = Math.floor(diffDays / 30);

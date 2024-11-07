@@ -20,7 +20,6 @@ interface IReportDetails {
 const ReportDetails: FC<IReportDetails> = (props) => {
 	const { report, index } = props;
 	const { postData } = usePostDataContext();
-	console.log(postData);
 	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -157,7 +156,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 							className='m-0 cursor-pointer p-0 text-xs font-medium capitalize text-bodyBlue dark:text-white '
 							rel='noreferrer'
 						>
-							{`Progress Report - ${postData?.postType.replaceAll('_', ' ')} - ${postData?.postIndex}`} - {Object.keys(postData?.progress_report).length - index}
+							{`Progress Report - ${postData?.postType?.replaceAll('_', ' ')} - ${postData?.postIndex}`} - {Object?.keys(postData?.progress_report)?.length - index}
 						</a>
 						<p className='m-0 p-0 text-[10px] font-normal capitalize text-sidebarBlue dark:text-blue-dark-medium '>PDF Document</p>
 					</div>

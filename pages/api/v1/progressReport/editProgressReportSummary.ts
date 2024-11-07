@@ -12,6 +12,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post, IProgressReport } from '~src/types';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { redisDel } from '~src/auth/redis';
+import { Timestamp } from 'firebase-admin/firestore';
 
 const handler: NextApiHandler<{ message: string; progress_report?: IProgressReport[] }> = async (req, res) => {
 	try {
@@ -63,6 +64,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			if (report.id === reportId) {
 				return {
 					...report,
+					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
 					isEdited: true,
 					progress_summary: summary
 				};

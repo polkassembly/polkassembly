@@ -17,17 +17,31 @@ const RatingSuccessModal: FC<IRatingSuccessModal> = (props) => {
 	const { report_rating } = useProgressReportSelector();
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
-	const reportData = postData?.progress_report?.find((report: IProgressReport) => report.id === reportId);
+	const [reportData, setReportData] = useState<IProgressReport>();
+
+	useEffect(() => {
+		if (postData?.progress_report) {
+			Object.values(postData.progress_report).some((report: any) => {
+				if (report.id === reportId) {
+					setReportData(report as IProgressReport);
+					return true;
+				}
+				return false;
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [reportId]);
 
 	const getRatingInfo = () => {
-		setAverageRating(reportData?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / reportData?.ratings?.length);
+		if (reportData?.ratings) {
+			setAverageRating(reportData?.ratings?.reduce((sum: number, current: IRating) => sum + current.rating, 0) / reportData?.ratings?.length);
+		}
 	};
 
 	useEffect(() => {
 		getRatingInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postData?.progress_report]);
-
 	return (
 		<section className='h-[200px] p-6'>
 			<ImageIcon

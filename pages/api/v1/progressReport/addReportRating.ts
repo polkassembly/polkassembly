@@ -12,6 +12,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post, IProgressReport } from '~src/types';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { redisDel } from '~src/auth/redis';
+import { Timestamp } from 'firebase-admin/firestore';
 
 const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
@@ -59,12 +60,17 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 				let ratings = report.ratings || [];
 				ratings = ratings.filter((r: { user_id: string }) => r.user_id !== user_id);
 				ratings.push({ rating, user_id });
+
 				return {
+					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
 					...report,
 					ratings
 				};
 			}
-			return report;
+			return {
+				...report,
+				created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at
+			};
 		});
 
 		await postDocRef.update({

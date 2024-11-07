@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import FollowTooltip from './FollowTooltip';
 import { IFollowState } from 'pages/api/v1/fetch-follows/following-list';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useFollowSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setFollowingIds } from '~src/redux/follow';
 
@@ -21,7 +21,7 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 		error: null
 	});
 	const [data, setData] = useState<FollowersResponse>();
-	// const [followingIds, setFollowingId] = useState<number[]>([]);
+	const { followingIds } = useFollowSelector();
 
 	const fetchFollowers = async () => {
 		setIsLoading({ loading: true, error: null });
@@ -85,7 +85,7 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 		fetchFollowers();
 		if (id) fetchfollowing();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userId, id]);
+	}, [userId, id, followingIds.length]);
 
 	return (
 		<>

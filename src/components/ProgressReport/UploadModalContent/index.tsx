@@ -100,8 +100,22 @@ const UploadModalContent = () => {
 		}
 	};
 
+	const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 	const props: UploadProps = {
+		accept: '.pdf',
 		action: window.location.href,
+		beforeUpload: (file) => {
+			if (file.type !== 'application/pdf') {
+				message.error('You can only upload PDF files!');
+				return Upload.LIST_IGNORE;
+			}
+			if (file.size > MAX_FILE_SIZE) {
+				message.error('File size exceeds the 5 MB limit.');
+				return Upload.LIST_IGNORE;
+			}
+			return true;
+		},
 		customRequest: async ({ file, onSuccess, onError }) => {
 			if (!canUpload) {
 				message.error('Cannot upload a new file until the previous one is removed.');

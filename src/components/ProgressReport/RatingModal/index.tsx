@@ -48,7 +48,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [reportId]);
+	}, [reportId, postData?.progress_report]);
 
 	return (
 		<>

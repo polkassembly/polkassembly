@@ -600,7 +600,7 @@ export interface IRating {
 export interface IProgressReport {
 	id?: string;
 	created_at?: Date;
-	is_edited?: boolean;
+	isEdited?: boolean;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;

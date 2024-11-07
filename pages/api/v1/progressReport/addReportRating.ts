@@ -62,8 +62,8 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 				ratings.push({ rating, user_id });
 
 				return {
-					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
 					...report,
+					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
 					ratings
 				};
 			}
@@ -89,7 +89,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: error || 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: error.message || 'An error occurred while processing the request.' });
 	}
 };
 

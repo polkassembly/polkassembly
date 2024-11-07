@@ -9,6 +9,7 @@ import { IProgressReport } from '~src/types';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
+import { Timestamp } from 'firebase-admin/firestore';
 
 const handler: NextApiHandler<{ message: string; progress_report?: IProgressReport[] }> = async (req, res) => {
 	try {
@@ -37,11 +38,16 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
-		const progressReport = postDoc.data()?.progress_report;
+		let progressReport = postDoc.data()?.progress_report;
 
 		if (!progressReport) {
 			return res.status(400).json({ message: 'Progress report not found for the specified post.' });
 		}
+
+		progressReport = progressReport.map((report: IProgressReport) => ({
+			...report,
+			created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at
+		}));
 
 		return res.status(200).json({
 			message: 'Progress report found.',

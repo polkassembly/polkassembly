@@ -33,7 +33,6 @@ const RateModal: FC<IRateModal> = (props) => {
 	const { open_rating_success_modal, report_rating } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const { setPostData } = usePostDataContext();
-
 	const addUserRating = async () => {
 		setLoading(true);
 		const type = getFirestoreProposalType(proposalType as ProposalType);

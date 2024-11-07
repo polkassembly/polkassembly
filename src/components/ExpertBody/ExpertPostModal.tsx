@@ -23,7 +23,7 @@ const ExpertPostModal = ({
 		<div>
 			<Modal
 				title={
-					<div className='flex items-center gap-2'>
+					<div className='flex items-center gap-2 dark:text-lightWhite'>
 						<Image
 							src='/assets/icons/mentoring.svg'
 							alt={'Expert Image'}

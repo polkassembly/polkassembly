@@ -151,8 +151,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						height={100}
 						className='-my-8 mx-auto block h-64 w-64'
 					/>
-					<div className='my-3 flex flex-col gap-1 text-center text-[#243A57]'>
-						<span className='text-xl font-semibold'>Oops! Looks like you are not an expert!</span>
+					<div className='my-3 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
+						<span className='text-xl  font-semibold'>Oops! Looks like you are not an expert!</span>
 						<span className='px-10 text-sm'>Become an expert to add your views to various proposals and discussions!</span>
 					</div>
 					<div className='pb-3 text-center'>
@@ -177,15 +177,15 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						width={293}
 						height={327}
 					/>
-					<div className='-mt-5 flex flex-col gap-2'>
-						<span className='text-center text-2xl font-semibold text-[#243A57]'>Congratulations!</span>
+					<div className='-mt-5 flex flex-col gap-2 text-[#243A57] dark:text-lightWhite'>
+						<span className='text-center text-2xl font-semibold '>Congratulations!</span>
 						<span className='px-8 text-center'>Your application has been submitted. It may take 3-5 days to review your application!</span>
 					</div>
 					<Divider
 						type='horizontal'
 						className='m-0 my-3 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
 					/>
-					<div className='flex justify-center gap-5'>
+					<div className='flex justify-center gap-5 text-[#243A57] dark:text-lightWhite'>
 						<Button
 							className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
 							onClick={shareOnTwitter}
@@ -218,7 +218,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							height={100}
 							className='-my-8 mx-auto block h-64 w-64'
 						/>
-						<div className='my-3 flex flex-col gap-1 text-center text-[#243A57]'>
+						<div className='my-3 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
 							<span className='text-xl font-semibold'>Oops! Your identity is not verified!</span>
 							<span className='px-10 text-sm'>
 								You need to{' '}
@@ -268,7 +268,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			} else {
 				return (
 					<>
-						<p className='mt-5 text-sm font-medium text-[#243A57]'>Why do you want to become an expert?</p>
+						<p className='mt-5 text-sm font-medium text-[#243A57] dark:text-lightWhite'>Why do you want to become an expert?</p>
 						<Form.Item
 							name='reason'
 							rules={[{ message: 'Please provide a reason', required: true }]}
@@ -336,7 +336,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={24}
 								className='h-6 w-6'
 							/>
-							<span className='text-xl font-semibold'>Add Expert Review</span>
+							<span className='text-xl font-semibold dark:text-lightWhite'>Add Expert Review</span>
 						</div>
 					)
 				}
@@ -380,7 +380,11 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={'w-[600px] max-sm:w-full'}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
+				title={
+					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:text-lightWhite'>
+						On-chain identity
+					</span>
+				}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>

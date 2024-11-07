@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
@@ -24,54 +24,60 @@ function ExpertBodyCard() {
 	const [review, setReview] = useState('');
 	const [reviewsCount, setReviewsCount] = useState(0);
 	const [isExpert, setIsExpert] = useState(false);
-	const currentUser = useUserDetailsSelector();
-	const address = currentUser?.loginAddress;
+
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 
-	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
+	const address = loginAddress;
+
+	const checkExpertStatus = useCallback(async () => {
+		if (address) {
+			const substrateAddress = getSubstrateAddress(address);
+			try {
+				const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertAddressCheck', {
+					userAddress: substrateAddress
+				});
+				if (data?.isExpert !== undefined) {
+					setIsExpert(data.isExpert);
+				} else {
+					console.error('Failed to fetch expert status:', data);
+					setIsExpert(false);
+				}
+			} catch (error) {
+				console.error('Error checking expert status:', error);
+				setIsExpert(false);
+			}
+		}
+	}, [address]);
+
+	useEffect(() => {
+		checkExpertStatus();
+	}, [checkExpertStatus]);
+
+	const handleCommentAndTimelineUpdate = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;
-		const commentsPayload = {
+		const updatedComments = {
 			...comments,
 			[key]: [...(comments[key] || []), comment]
 		};
-		setComments(getSortedComments(commentsPayload));
+		setComments(getSortedComments(updatedComments));
 
-		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
-		setTimelines(timelinePayload);
+		const updatedTimelines = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
+		setTimelines(updatedTimelines);
 	};
 
 	useEffect(() => {
 		if (comments) {
 			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>;
-			const subsquidpropsaltype = getSubsquidProposalType(validProposalType);
-			const key = postIndex && postType ? `${postIndex.toString()}_${subsquidpropsaltype}` : null;
+			const subsquidProposalType = getSubsquidProposalType(validProposalType);
+			const key = postIndex && postType ? `${postIndex.toString()}_${subsquidProposalType}` : null;
 			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment.expertComment) : [];
-			const expertCommentsCount = expertComments?.length;
-			setReviewsCount(expertCommentsCount);
+			setReviewsCount(expertComments.length);
 		}
 	}, [comments, postIndex, postType]);
-
-	const checkExpert = async () => {
-		if (address) {
-			const substrateAddress = getSubstrateAddress(address);
-			const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertAddressCheck', {
-				userAddress: substrateAddress
-			});
-			setIsExpert(data.isExpert);
-		}
-	};
-	useEffect(() => {
-		checkExpert();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
-
-	const showModal = () => {
-		setIsModalVisible(true);
-	};
 
 	const handleCancel = () => {
 		setIsModalVisible(false);
@@ -80,24 +86,13 @@ function ExpertBodyCard() {
 
 	const handleDone = async () => {
 		const commentId = v4();
-		const comment = {
-			comment_reactions: {
-				'👍': {
-					count: 0,
-					userIds: [],
-					usernames: []
-				},
-				'👎': {
-					count: 0,
-					userIds: [],
-					usernames: []
-				}
-			},
+		const newComment: IComment = {
+			comment_reactions: { '👍': { count: 0, userIds: [], usernames: [] }, '👎': { count: 0, userIds: [], usernames: [] } },
 			content: review,
 			created_at: new Date(),
 			expertComment: true,
 			history: [],
-			id: commentId || '',
+			id: commentId,
 			isError: false,
 			profile: picture || '',
 			proposer: loginAddress,
@@ -108,84 +103,61 @@ function ExpertBodyCard() {
 			username: username || ''
 		};
 
-		const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
-			content: review,
-			isExpertComment: true,
-			postId: postIndex,
-			postType: postType,
-			sentiment: 0,
-			trackNumber: track_number,
-			userId: id
-		});
-		if (error || !data) {
-			console.error('API call failed:', error);
+		try {
+			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
+				content: review,
+				isExpertComment: true,
+				postId: postIndex,
+				postType: postType,
+				sentiment: 0,
+				trackNumber: track_number,
+				userId: id
+			});
+
+			if (error || !data) {
+				throw new Error(error || 'Unknown error');
+			}
+
 			setComments((prev) => {
-				const comments: any = Object.assign({}, prev);
-				for (const key of Object.keys(comments)) {
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev?.[key]?.map((comment: IComment) => {
-							const newComment = comment;
-							if (comment.id === commentId) {
-								newComment.isError = true;
-								flag = true;
-							}
-							return {
-								...newComment
-							};
-						});
-					}
-					if (flag) {
-						break;
-					}
-				}
-				return comments;
+				const updatedComments = { ...prev };
+				Object.keys(updatedComments).forEach((key) => {
+					updatedComments[key] = updatedComments[key].map((comment: IComment) => (comment.id === commentId ? { ...comment, id: data.id } : comment));
+				});
+				return updatedComments;
 			});
-			queueNotification({
-				header: 'Failed!',
-				message: error,
-				status: NotificationStatus.ERROR
-			});
-		} else if (data) {
-			setComments((prev) => {
-				const comments: any = Object.assign({}, prev);
-				for (const key of Object.keys(comments)) {
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev?.[key]?.map((comment: IComment) => {
-							const newComment = comment;
-							if (comment.id === commentId) {
-								newComment.id = data.id;
-								flag = true;
-							}
-							return {
-								...newComment
-							};
-						});
-					}
-					if (flag) {
-						break;
-					}
-				}
-				return comments;
-			});
-			handleCurrentCommentAndTimeline(postIndex.toString(), postType, comment);
-			comment.id = data.id || '';
+
+			handleCommentAndTimelineUpdate(postIndex.toString(), postType, newComment);
+
 			queueNotification({
 				header: 'Success!',
 				message: 'Comment created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
+		} catch (error) {
+			setComments((prev) => {
+				const updatedComments = { ...prev };
+				Object.keys(updatedComments).forEach((key) => {
+					updatedComments[key] = updatedComments[key].map((comment: IComment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
+				});
+				return updatedComments;
+			});
+
+			queueNotification({
+				header: 'Failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
+			});
 		}
+
 		setIsModalVisible(false);
 		setReview('');
 	};
 
 	const title = reviewsCount > 0 ? `Expert Review Available! (${reviewsCount})` : 'No Expert Review Available!';
-
 	const contentText = reviewsCount > 0 ? 'Read what experts have to say about this proposal!' : 'An Expert adds their valuable review for this post!';
+
 	return (
-		<StyledCard className='mb-5 flex gap-5 p-2 dark:bg-black'>
+		<StyledCard className='mb-5 flex gap-2 p-2 dark:bg-black'>
 			<div className='relative'>
 				<Image
 					src='/assets/badges/expert-badge.svg'
@@ -197,12 +169,12 @@ function ExpertBodyCard() {
 			</div>
 			<div className='flex flex-col text-[#243A57] dark:text-white'>
 				<span className='text-base font-semibold'>{title}</span>
-				<span className='w-56 text-sm'>{contentText}</span>
+				<span className='w-48 text-sm'>{contentText}</span>
 				<span className='text-sm'>
 					An expert?{' '}
 					<span
 						className='cursor-pointer text-pink_primary underline'
-						onClick={showModal}
+						onClick={() => setIsModalVisible(true)}
 					>
 						Add your Review!
 					</span>
@@ -210,8 +182,8 @@ function ExpertBodyCard() {
 			</div>
 			<div className='absolute right-2 top-8 z-50'>
 				<ArrowRightOutlined
-					onClick={showModal}
-					className=' rounded-full bg-black p-2 text-lg text-white'
+					onClick={() => setIsModalVisible(true)}
+					className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'
 				/>
 			</div>
 

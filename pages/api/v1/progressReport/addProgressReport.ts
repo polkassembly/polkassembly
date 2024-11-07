@@ -52,7 +52,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 		const newProgressReport: IProgressReport = {
 			created_at: new Date(),
 			id: generateUniqueId(),
-			is_edited: false,
+			isEdited: false,
 			progress_file: progress_report.progress_file,
 			progress_summary: progress_report.progress_summary,
 			ratings: progress_report.ratings || []

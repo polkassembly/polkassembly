@@ -23,6 +23,7 @@ import { BN } from 'bn.js';
 import { useCommunityTabSelector, useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ECommunityTabs } from '~src/redux/communityTab/@types';
+import MembersTab from './Tabs/Members/MembersTab';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
@@ -375,6 +376,18 @@ const Community = () => {
 					/>
 				</Spin>
 			)}
+			{selectedTab === ECommunityTabs.DELEGATES && (
+				<Spin spinning={loading}>
+					<DelegatesTab
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+						filteredDelegates={filteredDelegates}
+						loading={loading}
+						delegatesData={delegatesData}
+					/>
+				</Spin>
+			)}
+			{selectedTab === ECommunityTabs.MEMBERS && <MembersTab />}
 		</section>
 	);
 };

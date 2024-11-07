@@ -1094,16 +1094,20 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 				}
 
-				posts = postsResults.reduce((prev, post) => {
-					if (post && post.status === 'fulfilled') {
-						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
-							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });
-						} else {
-							prev.push(post.value);
+				if (postsResults && Array.isArray(postsResults)) {
+					posts = postsResults.reduce((prev, post) => {
+						if (post && post.status === 'fulfilled') {
+							if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
+								prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });
+							} else {
+								prev.push(post.value);
+							}
 						}
-					}
-					return prev;
-				}, [] as any[]);
+						return prev;
+					}, [] as any[]);
+				} else {
+					posts = [];
+				}
 
 				posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 			}

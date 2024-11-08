@@ -101,7 +101,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;

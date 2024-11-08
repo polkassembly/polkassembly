@@ -25,6 +25,7 @@ import Image from 'next/image';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ScoreTag from '~src/ui-components/ScoreTag';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -36,6 +37,7 @@ interface Props {
 const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) => {
 	// const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
@@ -50,6 +52,8 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 			type: 'success'
 		});
 	};
+
+	console.log(delegate);
 
 	const getCurrentuserData = async () => {
 		const username = delegate?.username;
@@ -142,7 +146,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					</Button>
 				</div>
 				<div className='flex items-center justify-between'>
-					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={delegate.address}
 							disableHeader={network !== 'kilt'}
@@ -183,6 +187,19 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								/>
 							))}
 						</div>
+						{delegate?.identityInfo?.isVerified && (
+							<div className='ml-auto flex items-center gap-x-1'>
+								<Image
+									src='/assets/icons/judgement-grey-icon.svg'
+									alt='follow-icon'
+									width={20}
+									height={20}
+									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+							</div>
+						)}
 					</div>
 				</div>
 				<div className={`${poppins.variable} ${poppins.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
@@ -263,7 +280,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					</Button>
 				</div>
 				<div className='flex items-center justify-between'>
-					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={delegate.address}
 							disableHeader={network !== 'kilt'}
@@ -304,6 +321,19 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								/>
 							))}
 						</div>
+						{delegate?.identityInfo?.isVerified && (
+							<div className='ml-auto flex items-center gap-x-1'>
+								<Image
+									src='/assets/icons/judgement-grey-icon.svg'
+									alt='follow-icon'
+									width={20}
+									height={20}
+									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+							</div>
+						)}
 					</div>
 				</div>
 				<div className={'mb-2 flex h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>

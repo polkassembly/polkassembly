@@ -1,0 +1,342 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import { Button, Divider, message, Modal } from 'antd';
+import classNames from 'classnames';
+import dayjs from 'dayjs';
+import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import { poppins } from 'pages/_app';
+import React, { useState } from 'react';
+import { BadgeName, User } from '~src/auth/types';
+import ImageComponent from '~src/components/ImageComponent';
+import Tipping from '~src/components/Tipping';
+import { useNetworkSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
+import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
+import Markdown from '~src/ui-components/Markdown';
+import ScoreTag from '~src/ui-components/ScoreTag';
+import SocialsHandle from '~src/ui-components/SocialsHandle';
+import copyToClipboard from '~src/util/copyToClipboard';
+
+interface Props {
+	user: User;
+	className?: string;
+	trackNum?: number;
+	disabled?: boolean;
+}
+const MemberInfoCard = ({ user, className }: Props) => {
+	console.log(user);
+	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
+	const [openTipping, setOpenTipping] = useState<boolean>(false);
+
+	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const handleDelegationContent = (content: string) => {
+		return content.split('\n').find((item: string) => item.length > 0) || '';
+	};
+
+	const success = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
+
+	console.log(user);
+	return (
+		<div
+			className={`rounded-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] 
+            dark:border-separatorDark
+    ${className}`}
+		>
+			<div
+				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
+        dark:bg-black ${className} w-full sm:w-auto`}
+			>
+				<div className='flex items-center justify-between'>
+					<div className='flex items-center gap-2 max-lg:justify-start'>
+						{!!user?.profile?.image?.length && (
+							<ImageComponent
+								src={user?.profile?.image || ''}
+								alt=''
+								className='h-8 w-8'
+							/>
+						)}
+						<Address
+							address={user?.addresses?.[0] || ''}
+							displayInline
+							destroyTooltipOnHide
+							disableIdenticon={Boolean(user?.profile?.image?.length)}
+							iconSize={26}
+							usernameClassName='font-semibold text-xl'
+							isTruncateUsername={true}
+							className='flex items-center'
+						/>
+						<div className='mr-2 flex items-center gap-2'>
+							<SocialsHandle
+								address={user?.addresses?.[0] || ''}
+								onchainIdentity={user?.identityInfo || null}
+								socials={[]}
+								iconSize={18}
+								boxSize={32}
+							/>
+						</div>
+					</div>
+					<div className='flex items-center gap-x-4'>
+						<Button
+							// disabled={disabled}
+							// onClick={handleClick}
+							className={'flex items-center space-x-[6px] rounded-[26px] border border-solid border-pink_primary bg-pink_primary px-4 shadow-none '}
+						>
+							<Image
+								src='/assets/icons/follow-icon.svg'
+								alt='follow-icon'
+								width={20}
+								height={20}
+							/>
+							<span className='text-sm font-medium text-white max-sm:hidden'>Follow</span>
+						</Button>
+					</div>
+				</div>
+				<div className='flex items-center justify-between'>
+					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+						<Address
+							address={user?.addresses?.[0] || ''}
+							disableHeader={network !== 'kilt'}
+							iconSize={network === 'kilt' ? 26 : 20}
+							disableIdenticon={true}
+							addressMaxLength={5}
+							addressClassName='text-base font-normal dark:text-blue-dark-medium'
+							disableTooltip
+							showKiltAddress={network === 'kilt'}
+						/>
+						<span
+							className='flex cursor-pointer items-center'
+							onClick={(e) => {
+								e.preventDefault();
+								copyToClipboard(user.addresses?.[0] || '');
+								success();
+							}}
+						>
+							{contextHolder}
+							<CopyIcon className='-ml-[6px] scale-[80%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
+						</span>
+
+						<ScoreTag
+							className='h-6 w-min px-[6px] py-1'
+							score={user?.profile_score || 0}
+							iconWrapperClassName='mt-[5.5px]'
+						/>
+						{user?.identityInfo?.isVerified && (
+							<div className='ml-auto flex items-center gap-x-1'>
+								<Image
+									src='/assets/icons/judgement-grey-icon.svg'
+									alt='follow-icon'
+									width={20}
+									height={20}
+									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{user?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+							</div>
+						)}
+					</div>
+				</div>
+				<div className='flex items-center justify-between'>
+					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+						<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
+						<span className='flex items-center gap-x-1 text-xs font-medium text-bodyBlue dark:text-white'>
+							<Image
+								src='/assets/icons/orange-calender-icon.svg'
+								alt='calender-icon'
+								width={20}
+								height={20}
+								className='-mt-0.5'
+							/>
+							{dayjs(user?.created_at).format('DD MMM YYYY')}
+						</span>
+						<div className='flex items-center gap-x-1'>
+							<Divider
+								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+								type='vertical'
+							/>
+							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>02</span>
+						</div>
+						<div className='flex items-center gap-x-1'>
+							<Divider
+								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+								type='vertical'
+							/>
+							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>02</span>
+						</div>
+						<Button
+							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
+							onClick={() => {
+								setOpenTipping(true);
+							}}
+						>
+							<Image
+								src='/assets/icons/tipping-pink_icon.svg'
+								alt='tipping-icon'
+								width={20}
+								height={20}
+							/>{' '}
+							Tip
+						</Button>
+					</div>
+				</div>
+				<div className={'mb-2 flex max-h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+					<p className='bio m-0 w-full p-0 '>
+						{user?.profile?.bio ? (
+							<Markdown
+								className='post-content m-0 p-0'
+								md={`${handleDelegationContent(user?.profile?.bio || '').slice(0, 100)}...`}
+								isPreview={true}
+								imgHidden
+							/>
+						) : (
+							'No Bio'
+						)}
+					</p>
+					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (
+						<span
+							onClick={() => setOpenReadMore(true)}
+							className='m-0 -mt-1 flex cursor-pointer items-center justify-start p-0 text-xs font-medium text-[#3C74E1]'
+						>
+							Read more
+						</span>
+					)}
+				</div>
+				<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
+					<Image
+						src={
+							user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.DECENTRALISED_VOICE)
+								? '/assets/badges/decentralised_voice.svg'
+								: '/assets/badges/decentralised_voice_locked.svg'
+						}
+						alt='achievement-badge'
+						height={41}
+						width={67}
+					/>
+					<Image
+						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.FELLOW) ? '/assets/badges/fellow.svg' : '/assets/badges/fellow_locked.svg'}
+						alt='achievement-badge'
+						height={41}
+						width={67}
+					/>
+					<Image
+						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.COUNCIL) ? '/assets/badges/Council.svg' : '/assets/badges/council_locked.svg'}
+						alt='achievement-badge'
+						height={41}
+						width={67}
+					/>
+					<Image
+						src={
+							user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.ACTIVE_VOTER)
+								? '/assets/badges/active_voter.svg'
+								: '/assets/badges/active_voter_locked.svg'
+						}
+						alt='achievement-badge'
+						height={41}
+						width={67}
+					/>
+					<Image
+						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.WHALE) ? '/assets/badges/whale.svg' : '/assets/badges/whale_locked.svg'}
+						alt='achievement-badge'
+						height={41}
+						width={67}
+					/>
+				</div>
+			</div>
+			<Modal
+				open={openReadMore}
+				onCancel={() => setOpenReadMore(false)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
+				footer={false}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			>
+				<div className={' sm:pt-[20px]'}>
+					<div className='hidden items-center justify-between pt-2 sm:flex sm:pl-8'>
+						<div className='flex items-center gap-2 max-lg:justify-start'>
+							<Address
+								address={user?.addresses?.[0] || ''}
+								displayInline
+								iconSize={26}
+								isTruncateUsername={false}
+								usernameClassName='text-[20px] font-medium'
+							/>
+
+							<div className='mr-2 flex items-center gap-2'>
+								<SocialsHandle
+									address={user?.addresses?.[0] || ''}
+									onchainIdentity={user?.identityInfo || null}
+									socials={[]}
+									iconSize={18}
+									boxSize={32}
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div className='p-4 sm:hidden'>
+						<div className='flex items-center gap-2 max-lg:justify-start'>
+							<Address
+								address={user?.addresses?.[0] || ''}
+								displayInline
+								iconSize={26}
+								isTruncateUsername={false}
+								usernameClassName='text-[20px] font-medium'
+							/>
+						</div>
+					</div>
+
+					<div
+						className={`${poppins.variable} ${poppins.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+					>
+						<p className='w-full sm:w-[90%]'>
+							{user?.profile?.bio ? (
+								<Markdown
+									className='post-content'
+									md={user?.profile?.bio}
+									isPreview={true}
+									imgHidden
+								/>
+							) : (
+								'No Bio'
+							)}
+						</p>
+					</div>
+					<div className='-mt-3 mb-4 flex items-center px-[46px] sm:hidden'>
+						<SocialsHandle
+							address={user?.addresses?.[0] || ''}
+							onchainIdentity={user?.identityInfo || null}
+							socials={[]}
+							iconSize={16}
+							boxSize={30}
+						/>
+					</div>
+				</div>
+			</Modal>
+			<Tipping
+				username={user?.username || ''}
+				open={openTipping}
+				setOpen={setOpenTipping}
+				key={user?.addresses?.[0] || ''}
+				paUsername={user?.username as any}
+				setOpenAddressChangeModal={setOpenAddressChangeModal}
+				openAddressChangeModal={openAddressChangeModal}
+			/>
+		</div>
+	);
+};
+
+export default MemberInfoCard;

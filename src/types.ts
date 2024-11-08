@@ -990,7 +990,7 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
-	identityInfo?: { display: string; leagal: string } | null;
+	identityInfo?: { display: string; leagal: string; isVerified?: boolean; judgements?: any } | null;
 }
 
 export enum EDelegationAddressFilters {

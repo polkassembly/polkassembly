@@ -24,9 +24,12 @@ import { useCommunityTabSelector, useNetworkSelector } from '~src/redux/selector
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ECommunityTabs } from '~src/redux/communityTab/@types';
 import MembersTab from './Tabs/Members/MembersTab';
+import { useDispatch } from 'react-redux';
+import { communityTabActions } from '~src/redux/communityTab';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
+	const { selectedTab } = useCommunityTabSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -37,8 +40,10 @@ const Community = () => {
 	const [searchInput, setSearchInput] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
-	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
-	const { selectedTab } = useCommunityTabSelector();
+	const [selectedSources, setSelectedSources] = useState<string[]>(
+		selectedTab === ECommunityTabs.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object.values(EDelegationSourceFilters)
+	);
+	const dispatch = useDispatch();
 
 	const handleIdentity = async (delegates: IDelegateAddressDetails[]) => {
 		if (!api || !apiReady) return;
@@ -56,7 +61,8 @@ const Community = () => {
 			}
 		});
 
-		await Promise.allSettled(identityInfoPromises);
+		const data = await Promise.allSettled(identityInfoPromises);
+		console.log(data);
 
 		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
 			return {
@@ -65,6 +71,7 @@ const Community = () => {
 				username: identityInfo?.[delegate?.address]?.display || identityInfo?.[delegate?.address]?.legal || ''
 			};
 		});
+
 		delegatesData.current = updatedData;
 		setFilteredDelegates(updatedData || delegatesData.current);
 	};
@@ -137,17 +144,21 @@ const Community = () => {
 	};
 
 	const handleSearchSubmit = () => {
-		if (!searchInput.length) {
-			setFilteredDelegates(delegatesData.current);
-			return;
+		if (selectedTab === ECommunityTabs.DELEGATES) {
+			if (!searchInput.length) {
+				setFilteredDelegates(delegatesData.current);
+				return;
+			}
+			setCurrentPage(1);
+			setLoading(true);
+			const searchOutput = delegatesData.current.filter(
+				(delegate: any) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase())
+			);
+			setFilteredDelegates(searchOutput || []);
+			setLoading(false);
+		} else if (selectedTab === ECommunityTabs.MEMBERS) {
+			dispatch(communityTabActions.setSearchedUsername(searchInput));
 		}
-		setCurrentPage(1);
-		setLoading(true);
-		const searchOutput = delegatesData.current.filter(
-			(delegate: any) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase())
-		);
-		setFilteredDelegates(searchOutput || []);
-		setLoading(false);
 	};
 
 	const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSources: string[]): IDelegateAddressDetails[] => {
@@ -250,6 +261,48 @@ const Community = () => {
 					</Radio.Group>
 				</div>
 			)}
+			{selectedTab === ECommunityTabs.MEMBERS && (
+				<div className='flex flex-col'>
+					<div className='flex items-center justify-between'>
+						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Filter By</p>
+						<span
+							className={classNames(
+								'm-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pb-0.5 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+								poppins.className,
+								poppins.variable
+							)}
+							onClick={() => {
+								setSelectedSources([]);
+								handleCheckboxChange([]);
+							}}
+						>
+							Clear All
+						</span>
+					</div>
+					<Radio.Group
+						onChange={(e) => handleCheckboxChange([e.target.value])}
+						value={selectedSources[0] || null}
+						className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
+						disabled={loading}
+					>
+						<div className='flex flex-col gap-1'>
+							{['All', 'Verified', 'Non-Verified'].map((filterOption, index) => (
+								<div
+									key={index}
+									className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+								>
+									<Radio
+										checked={selectedSources.includes(filterOption)}
+										className='cursor-pointer text-pink_primary'
+										value={filterOption}
+									/>
+									<span className='text-sm tracking-wide'>{filterOption}</span>
+								</div>
+							))}
+						</div>
+					</Radio.Group>
+				</div>
+			)}
 		</>
 	);
 
@@ -313,8 +366,10 @@ const Community = () => {
 							allowClear={{ clearIcon: <InputClearIcon /> }}
 							placeholder='Enter username or address to Delegate vote'
 							onChange={(e) => {
-								if (!e.target.value?.length) {
-									setFilteredDelegates(delegatesData?.current || []);
+								if (selectedTab === ECommunityTabs.DELEGATES) {
+									if (!e.target.value?.length) {
+										setFilteredDelegates(delegatesData?.current || []);
+									}
 								}
 								setSearchInput(e.target.value.trim());
 							}}

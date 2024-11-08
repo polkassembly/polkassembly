@@ -4,6 +4,7 @@
 
 export interface ICommunityTabStore {
 	selectedTab: ECommunityTabs;
+	searchedUserName: string;
 }
 
 export enum ECommunityTabs {

@@ -7,6 +7,7 @@ import { ICommunityTabStore } from './@types';
 import { ECommunityTabs } from './@types';
 
 const initialState: ICommunityTabStore = {
+	searchedUserName: '',
 	selectedTab: ECommunityTabs.MEMBERS
 };
 
@@ -25,8 +26,12 @@ export const communityTabStore = createSlice({
 		reset: (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
+				searchedUserName: '',
 				selectedTab: ECommunityTabs.MEMBERS
 			};
+		},
+		setSearchedUsername: (state, action: PayloadAction<string>) => {
+			state.searchedUserName = action.payload;
 		},
 		setSelectedTab: (state, action: PayloadAction<ECommunityTabs>) => {
 			state.selectedTab = action.payload;

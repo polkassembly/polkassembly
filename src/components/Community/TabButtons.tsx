@@ -18,7 +18,7 @@ const TabButtons = () => {
 	return (
 		<article className='flex items-center justify-start gap-x-3'>
 			<Button
-				className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+				className={`border-grey_primary_transparent flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid px-6 text-base font-semibold ${
 					selectedTab === ECommunityTabs.MEMBERS ? 'text-green_tertiary' : 'text-bodyBlue dark:text-blue-dark-medium'
 				}`}
 				style={{
@@ -56,7 +56,7 @@ const TabButtons = () => {
 				Users
 			</Button>
 			<Button
-				className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+				className={`border-grey_primary_transparent flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid px-6 text-base font-semibold ${
 					selectedTab === ECommunityTabs.DELEGATES ? 'text-[#6214FF]' : 'text-bodyBlue dark:text-blue-dark-medium'
 				}`}
 				style={{
@@ -92,7 +92,7 @@ const TabButtons = () => {
 				Delegates
 			</Button>
 			<Button
-				className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+				className={`border-grey_primary_transparent flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid px-6 text-base font-semibold ${
 					selectedTab === ECommunityTabs.CURATORS ? 'text-[#044CE0]' : 'text-bodyBlue dark:text-blue-dark-medium'
 				}`}
 				style={{
@@ -128,7 +128,7 @@ const TabButtons = () => {
 				Curators
 			</Button>
 			<Button
-				className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+				className={`border-grey_primary_transparent flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid px-6 text-base font-semibold ${
 					selectedTab === ECommunityTabs.EXPERTS ? 'text-[#EA0815]' : 'text-bodyBlue dark:text-blue-dark-medium'
 				}`}
 				style={{

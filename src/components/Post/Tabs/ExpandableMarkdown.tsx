@@ -16,23 +16,9 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const checkOverflow = () => {
-			if (contentRef.current) {
-				setIsContentOverflowing(contentRef.current.scrollHeight > 301);
-			}
-		};
-
-		const timeout = setTimeout(checkOverflow, 100);
-
-		const observer = new MutationObserver(checkOverflow);
 		if (contentRef.current) {
-			observer.observe(contentRef.current, { childList: true, subtree: true });
+			setIsContentOverflowing(contentRef.current.scrollHeight > 301);
 		}
-
-		return () => {
-			clearTimeout(timeout);
-			observer.disconnect();
-		};
 	}, [md]);
 
 	const handleShowMore = () => {

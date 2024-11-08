@@ -18,3 +18,23 @@ export interface CuratorData {
 		unclaimedAmount: string;
 	};
 }
+
+export interface RequestCount {
+	curator: number;
+	submissions: number;
+}
+
+export interface CuratorData {
+	allBounties: { count: number; amount: string };
+	childBounties: { count: number; totalAmount: string; unclaimedAmount: string };
+}
+
+export interface CuratorRequestData {
+	curator: number;
+	submissions: number;
+}
+
+export enum EChildBountyPendingReqSection {
+	CURATOR_REQUESTS = 'curator_req',
+	SUBMISSION_REQUESTS = 'sumbission_req'
+}

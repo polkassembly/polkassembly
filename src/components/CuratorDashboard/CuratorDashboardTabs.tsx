@@ -8,19 +8,23 @@ import CuratorProfile from './CuratorProfile';
 import BountiesCuratorInfo from './BountiesCuratorInfo';
 import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
-
+import CuratorPendingRequestManager from './PendingRequestManager';
+import { useTheme } from 'next-themes';
+import classNames from 'classnames';
 interface Props {
 	handleClick: () => void;
 }
 
 enum ECuratorDashboardTabs {
 	GENERAL = 'general',
-	CURATED = 'curated'
+	CURATED = 'curated',
+	PENDING_REQUESTS = 'pending-requests'
 }
 
 const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<ECuratorDashboardTabs>((router?.query?.tab as ECuratorDashboardTabs) || ECuratorDashboardTabs.CURATED);
+	const { resolvedTheme: theme } = useTheme();
+	const [activeTab, setActiveTab] = useState<ECuratorDashboardTabs>((router?.query?.tab as ECuratorDashboardTabs) || ECuratorDashboardTabs.GENERAL);
 
 	const tabs = [
 		{
@@ -36,6 +40,13 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: ECuratorDashboardTabs.CURATED,
 			title: 'Bounties Curated'
+		},
+		{
+			children: <CuratorPendingRequestManager />,
+			description: 'Review curator and child bounty requests',
+			icon: '/assets/icons/curator-dashboard/pending-request.svg',
+			key: ECuratorDashboardTabs.PENDING_REQUESTS,
+			title: 'Pending Requests'
 		}
 	];
 
@@ -60,12 +71,13 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 							onClick={() => handleTabClick(tab.key)}
 						>
 							<div className='flex items-start gap-3'>
-								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? ' bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5]'} p-2`}>
+								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? ' bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5] dark:bg-[#303030]'} p-2`}>
 									<Image
 										src={tab.icon}
 										alt={`Curator Dashboard Icon ${tab.key}`}
 										width={24}
 										height={24}
+										className={activeTab !== tab.key && theme == 'dark' ? 'dark-icons' : ''}
 										style={{
 											filter:
 												activeTab === tab.key ? 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)' : 'none'
@@ -90,7 +102,7 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 								</div>
 							</div>
 
-							<RightOutlined className='ml-5' />
+							<RightOutlined className={classNames('ml-5', theme == 'dark' ? 'dark-icons' : '')} />
 						</div>
 					))}
 				</div>

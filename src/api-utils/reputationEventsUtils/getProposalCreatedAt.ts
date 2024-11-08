@@ -7,6 +7,7 @@ import { GET_PROPOSAL_CREATED_AT } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export async function getProposalCreatedAt(network: string, proposalIndex: string, proposalType: TSubsquidProposalType) {
+	console.log('Fetching proposal created at', network, proposalIndex, proposalType);
 	const subsquidRes = await fetchSubsquid({
 		network,
 		query: GET_PROPOSAL_CREATED_AT,
@@ -15,6 +16,8 @@ export async function getProposalCreatedAt(network: string, proposalIndex: strin
 			type_eq: proposalType
 		}
 	});
+
+	console.log('subsquidRes', subsquidRes);
 
 	return (subsquidRes?.data?.proposals?.[0]?.createdAt as string) || null;
 }

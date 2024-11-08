@@ -9,6 +9,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import REPUTATION_SCORES from '~src/util/reputationScores';
 
 export async function _processIdentityCleared({ network, address }: { network: string; address: string }) {
+	console.log('Processing identity cleared', network, address);
 	const activityPayload = {
 		by: getSubstrateAddress(address),
 		created_at: new Date(),

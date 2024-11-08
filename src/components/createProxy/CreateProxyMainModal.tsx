@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
@@ -63,7 +63,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(true);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
-	const [baseDepositValue, setBaseDepositValue] = useState<BN>(ZERO_BN); 
+	const [baseDepositValue, setBaseDepositValue] = useState<BN>(ZERO_BN);
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -120,7 +120,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	const calculateGasFee = async () => {
 		if (!api || !apiReady) return;
-		
+
 		const values = form.getFieldsValue();
 		if (!values.proxyType) return;
 
@@ -130,7 +130,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
 			: null;
 
-			if (proxyTx) {
+		if (proxyTx) {
 			const accountData = await api?.query?.system?.account(address);
 			const availableBalance = new BN(accountData?.data?.free.toString() || '0');
 			setAvailableBalance(availableBalance);
@@ -139,12 +139,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
 			setGasFee(new BN(gasFee));
 		}
-	}
+	};
 
-	useEffect(()=>{
+	useEffect(() => {
 		if (!api || !apiReady) return;
-		calculateGasFee()
-	},[api,apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')])
+		calculateGasFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -335,7 +336,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								{
 									validator: async (_, value) => {
 										if (form.getFieldValue('createPureProxy')) return Promise.resolve();
-					
+
 										if (!value) {
 											return Promise.reject(new Error('Please enter a valid proxy address'));
 										}
@@ -372,7 +373,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							valuePropName='checked'
 							rules={[
 								{
-									validator: async (_, value) => {
+									validator: async () => {
 										try {
 											await calculateGasFee();
 											return Promise.resolve();

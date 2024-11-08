@@ -47,7 +47,7 @@ const BackToListingView = ({ postCategory, trackName }: Props) => {
 				path = 'tech-comm-proposals';
 				break;
 			case PostCategory.BOUNTY:
-				path = 'bounties';
+				path = 'bounties-listing';
 				break;
 			case PostCategory.CHILD_BOUNTY:
 				path = 'child_bounties';

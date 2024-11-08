@@ -362,7 +362,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && (
+							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && progressReport?.length > 0 && (
 								<Tooltip
 									color='#363636'
 									title={

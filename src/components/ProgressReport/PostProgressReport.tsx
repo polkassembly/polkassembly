@@ -9,15 +9,19 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { usePostDataContext } from '~src/context';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import Markdown from '~src/ui-components/Markdown';
+import { useTheme } from 'next-themes';
 const { Panel } = Collapse;
 
 interface Props {
 	className?: string;
+	theme?: string;
 }
 
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 
 	const getRelativeTime = (timestamp: string): string => {
 		const postDate = new Date(timestamp);
@@ -48,7 +52,7 @@ const PostProgressReport = ({ className }: Props) => {
 		<div className={`${className} mt-2 rounded-lg border border-solid border-[#796EEC]`}>
 			<Collapse
 				size='large'
-				className={'h-full bg-[#F0EEFE]'}
+				className={'h-full bg-[#F0EEFE] dark:bg-transparent'}
 				expandIconPosition='end'
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
@@ -62,20 +66,25 @@ const PostProgressReport = ({ className }: Props) => {
 								alt='progress-file-icon'
 								className='mr-1 mt-[2px] scale-125 '
 							/>
-							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high md:text-[14px]'>
+							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high dark:text-white md:text-[14px]'>
 								A new Progress Report was added {getRelativeTime(postData?.progress_report?.[0]?.created_at)} for this referenda.
 							</p>
 						</div>
 					}
 					key='1'
-					className='m-0 p-0'
-					style={{ backgroundColor: '#F0EEFE' }}
+					className='m-0 bg-[#F0EEFE] p-0 dark:bg-transparent'
 				>
-					<section className='w-full bg-[#F0EEFE]'>
+					<section className='w-full bg-[#F0EEFE] dark:bg-transparent'>
 						{postData?.progress_report?.[0]?.progress_summary && (
 							<div className='-mt-2 flex flex-col gap-y-2'>
-								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue'>Progress Report Summary</h1>
-								<p className='m-0 p-0 text-sm text-bodyBlue'>{postData?.progress_report?.[0]?.progress_summary}</p>
+								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Progress Report Summary</h1>
+								<p className='m-0 p-0 text-sm text-bodyBlue'>
+									<Markdown
+										className='post-content m-0 p-0'
+										md={postData?.progress_report?.[0]?.progress_summary}
+										theme={theme}
+									/>
+								</p>
 							</div>
 						)}
 
@@ -124,7 +133,7 @@ const PostProgressReport = ({ className }: Props) => {
 
 export default styled(PostProgressReport)`
 	.ant-collapse-content-box {
-		background: #f0eefe !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'transparent' : '#f0eefe')} !important;
 	}
 
 	.ant-collapse .ant-collapse-content {

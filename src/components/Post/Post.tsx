@@ -491,7 +491,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{post?.progress_report && <PostProgressReport />}
+					{post?.progress_report && <PostProgressReport theme={theme} />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

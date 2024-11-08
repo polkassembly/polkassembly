@@ -1207,7 +1207,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			}
 		}
 
-		// Comments
+		// Comment
 		if (noComments) {
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {

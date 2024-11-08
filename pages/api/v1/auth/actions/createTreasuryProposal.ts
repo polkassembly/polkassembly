@@ -50,17 +50,21 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	if (Number(discussionId) >= 0 && !isNaN(Number(discussionId))) {
 		const discussionDoc = postsByTypeRef(network, ProposalType.DISCUSSIONS).doc(String(discussionId));
-
-		await discussionDoc.set(
-			{
-				last_edited_at: current_datetime,
-				post_link: {
-					id: Number(postId),
-					type: proposalType ?? ProposalType.REFERENDUM_V2
-				}
-			},
-			{ merge: true }
-		);
+		const discussionRef = await discussionDoc.get();
+		if (discussionRef.exists) {
+			await discussionDoc.set(
+				{
+					last_edited_at: current_datetime,
+					post_link: {
+						id: Number(postId),
+						type: proposalType ?? ProposalType.REFERENDUM_V2
+					}
+				},
+				{ merge: true }
+			);
+		} else {
+			return res.status(400).json({ message: `Discussion with id ${discussionId} does not exists.` });
+		}
 	}
 
 	const newPost: Post = {

@@ -26,6 +26,7 @@ import { ECommunityTabs } from '~src/redux/communityTab/@types';
 import MembersTab from './Tabs/Members/MembersTab';
 import { useDispatch } from 'react-redux';
 import { communityTabActions } from '~src/redux/communityTab';
+import ExpertsTab from './Tabs/Experts/ExpertsTab';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
@@ -443,6 +444,7 @@ const Community = () => {
 				</Spin>
 			)}
 			{selectedTab === ECommunityTabs?.MEMBERS && <MembersTab />}
+			{selectedTab === ECommunityTabs?.EXPERTS && <ExpertsTab />}
 		</section>
 	);
 };

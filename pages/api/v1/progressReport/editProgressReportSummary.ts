@@ -54,17 +54,17 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 			return res.status(404).json({ message: 'Post not found.' });
 		}
 
-		const existingPost = postDoc.data() as Post;
+		const existingPost = postDoc?.data() as Post;
 
-		if (!existingPost.progress_report || !Array.isArray(existingPost.progress_report)) {
+		if (!existingPost?.progress_report || !Array?.isArray(existingPost.progress_report)) {
 			return res.status(400).json({ message: 'No progress reports found for the specified post.' });
 		}
 
-		const updatedProgressReports = existingPost.progress_report.map((report) => ({
+		const updatedProgressReports = existingPost?.progress_report?.map((report) => ({
 			...report,
-			created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
-			isEdited: report.id === reportId ? true : report.isEdited,
-			progress_summary: report.id === reportId ? summary : report.progress_summary
+			created_at: report?.created_at instanceof Timestamp ? report?.created_at?.toDate() : report?.created_at,
+			isEdited: report?.id === reportId ? true : report?.isEdited,
+			progress_summary: report?.id === reportId ? summary : report?.progress_summary
 		}));
 
 		await postDocRef.update({ progress_report: updatedProgressReports }).catch((error) => {

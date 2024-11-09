@@ -164,23 +164,30 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 			}
 
 			(async () => {
-				const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(onchainId);
-				const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
-				if (parsedReferendumInfo?.ongoing?.tally) {
-					setTallyData({
-						ayes:
-							typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-								? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
-								: new BN(parsedReferendumInfo.ongoing.tally.ayes),
-						nays:
-							typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-								? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
-								: new BN(parsedReferendumInfo.ongoing.tally.nays)
-					});
+				if (api?.query?.referenda && api?.query?.referenda?.referendumInfoFor) {
+					const referendumInfoOf = await api.query.referenda.referendumInfoFor(onchainId);
+					const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
+					if (parsedReferendumInfo?.ongoing?.tally) {
+						setTallyData({
+							ayes:
+								typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+									? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+									: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+							nays:
+								typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+									? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+									: new BN(parsedReferendumInfo.ongoing.tally.nays)
+						});
+					} else {
+						setTallyData({
+							ayes: new BN(tally?.ayes || 0, 'hex'),
+							nays: new BN(tally?.nays || 0, 'hex')
+						});
+					}
 				} else {
 					setTallyData({
-						ayes: new BN(tally?.ayes || 0, 'hex'),
-						nays: new BN(tally?.nays || 0, 'hex')
+						ayes: ZERO,
+						nays: ZERO
 					});
 				}
 				setLoading(false);

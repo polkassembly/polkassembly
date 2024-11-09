@@ -47,7 +47,7 @@ const TabButtons = () => {
 				}}
 			>
 				<Image
-					src={selectedTab === ECommunityTabs?.MEMBERS ? '/assets/icons/community-tab/members-tab-green?.svg' : '/assets/icons/community-tab/members-tab-grey?.svg'}
+					src={selectedTab === ECommunityTabs?.MEMBERS ? '/assets/icons/community-tab/members-tab-green.svg' : '/assets/icons/community-tab/members-tab-grey.svg'}
 					alt='members-tab'
 					width={24}
 					height={24}
@@ -83,7 +83,7 @@ const TabButtons = () => {
 				}}
 			>
 				<Image
-					src={selectedTab === ECommunityTabs?.DELEGATES ? '/assets/icons/community-tab/delegates-tab-green?.svg' : '/assets/icons/community-tab/delegates-tab-grey?.svg'}
+					src={selectedTab === ECommunityTabs?.DELEGATES ? '/assets/icons/community-tab/delegates-tab-green.svg' : '/assets/icons/community-tab/delegates-tab-grey.svg'}
 					alt='members-tab'
 					width={24}
 					height={24}
@@ -119,7 +119,7 @@ const TabButtons = () => {
 				}}
 			>
 				<Image
-					src={selectedTab === ECommunityTabs?.CURATORS ? '/assets/icons/community-tab/curators-tab-green?.svg' : '/assets/icons/community-tab/curators-tab-grey?.svg'}
+					src={selectedTab === ECommunityTabs?.CURATORS ? '/assets/icons/community-tab/curators-tab-green.svg' : '/assets/icons/community-tab/curators-tab-grey.svg'}
 					alt='members-tab'
 					width={24}
 					height={24}
@@ -155,7 +155,7 @@ const TabButtons = () => {
 				}}
 			>
 				<Image
-					src={selectedTab === ECommunityTabs?.EXPERTS ? '/assets/icons/community-tab/experts-tab-green?.svg' : '/assets/icons/community-tab/experts-tab-grey?.svg'}
+					src={selectedTab === ECommunityTabs?.EXPERTS ? '/assets/icons/community-tab/experts-tab-green.svg' : '/assets/icons/community-tab/experts-tab-grey.svg'}
 					alt='members-tab'
 					width={24}
 					height={24}

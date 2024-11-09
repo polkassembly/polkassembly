@@ -147,7 +147,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						{user?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon?.svg'
+									src='/assets/icons/judgement-grey-icon.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}
@@ -164,7 +164,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
 						<span className='flex items-center gap-x-1 text-xs font-medium text-bodyBlue dark:text-white'>
 							<Image
-								src='/assets/icons/orange-calender-icon?.svg'
+								src='/assets/icons/orange-calender-icon.svg'
 								alt='calender-icon'
 								width={20}
 								height={20}
@@ -195,7 +195,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 							}}
 						>
 							<Image
-								src='/assets/icons/tipping-pink_icon?.svg'
+								src='/assets/icons/tipping-pink_icon.svg'
 								alt='tipping-icon'
 								width={20}
 								height={20}
@@ -230,21 +230,21 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					<Image
 						src={
 							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.DECENTRALISED_VOICE)
-								? '/assets/badges/decentralised_voice?.svg'
-								: '/assets/badges/decentralised_voice_locked?.svg'
+								? '/assets/badges/decentralised_voice.svg'
+								: '/assets/badges/decentralised_voice_locked.svg'
 						}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.FELLOW) ? '/assets/badges/fellow?.svg' : '/assets/badges/fellow_locked?.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.FELLOW) ? '/assets/badges/fellow.svg' : '/assets/badges/fellow_locked.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.COUNCIL) ? '/assets/badges/Council?.svg' : '/assets/badges/council_locked?.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.COUNCIL) ? '/assets/badges/Council.svg' : '/assets/badges/council_locked.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}
@@ -252,15 +252,15 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					<Image
 						src={
 							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.ACTIVE_VOTER)
-								? '/assets/badges/active_voter?.svg'
-								: '/assets/badges/active_voter_locked?.svg'
+								? '/assets/badges/active_voter.svg'
+								: '/assets/badges/active_voter_locked.svg'
 						}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.WHALE) ? '/assets/badges/whale?.svg' : '/assets/badges/whale_locked?.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.WHALE) ? '/assets/badges/whale.svg' : '/assets/badges/whale_locked.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}

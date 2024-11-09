@@ -50,7 +50,7 @@ const DelegatesTab: FC<IDelegatesTab> = (props) => {
 									}}
 								>
 									<Image
-										src={'assets/icons/delegate-profile?.svg'}
+										src={'assets/icons/delegate-profile.svg'}
 										width={16}
 										height={16}
 										alt=''

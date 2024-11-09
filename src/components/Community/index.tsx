@@ -192,15 +192,15 @@ const Community = () => {
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return '/assets/icons/polkadot-logo?.svg';
+				return '/assets/icons/polkadot-logo.svg';
 			case 'polkassembly':
-				return '/assets/delegation-tracks/pa-logo-small-delegate?.svg';
+				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
 			case 'w3f':
-				return '/assets/profile/w3f?.svg';
+				return '/assets/profile/w3f.svg';
 			case 'nova':
-				return '/assets/delegation-tracks/nova-wallet?.svg';
+				return '/assets/delegation-tracks/nova-wallet.svg';
 			default:
-				return '/assets/icons/individual-filled?.svg';
+				return '/assets/icons/individual-filled.svg';
 		}
 	};
 
@@ -399,7 +399,7 @@ const Community = () => {
 					>
 						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
-								src='/assets/icons/filter-icon-delegates?.svg'
+								src='/assets/icons/filter-icon-delegates.svg'
 								alt='filter icon'
 							/>
 						</Button>
@@ -413,7 +413,7 @@ const Community = () => {
 					>
 						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
-								src='/assets/icons/sort-icon-delegates?.svg'
+								src='/assets/icons/sort-icon-delegates.svg'
 								alt='sort icon'
 							/>
 						</Button>

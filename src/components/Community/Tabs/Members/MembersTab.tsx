@@ -12,24 +12,7 @@ import MemberInfoCard from './MemberInfoCard';
 import { Pagination } from '~src/ui-components/Pagination';
 import Image from 'next/image';
 import { Spin } from 'antd';
-
-const defaultIdentityInfo = {
-	discord: '',
-	display: '',
-	displayParent: '',
-	email: '',
-	github: '',
-	isGood: false,
-	isIdentitySet: false,
-	isVerified: false,
-	judgements: [],
-	legal: '',
-	matrix: '',
-	nickname: '',
-	twitter: '',
-	verifiedByPolkassembly: false,
-	web: ''
-};
+import { defaultIdentityInfo } from '../../utils';
 
 const MembersTab = () => {
 	const { network } = useNetworkSelector();

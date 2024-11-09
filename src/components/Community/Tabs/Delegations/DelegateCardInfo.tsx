@@ -77,15 +77,15 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return '/assets/icons/polkadot-logo?.svg';
+				return '/assets/icons/polkadot-logo.svg';
 			case 'polkassembly':
-				return '/assets/delegation-tracks/pa-logo-small-delegate?.svg';
+				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
 			case 'w3f':
-				return '/assets/profile/w3f?.svg';
+				return '/assets/profile/w3f.svg';
 			case 'nova':
-				return '/assets/delegation-tracks/nova-wallet?.svg';
+				return '/assets/delegation-tracks/nova-wallet.svg';
 			default:
-				return '/assets/icons/individual-filled?.svg';
+				return '/assets/icons/individual-filled.svg';
 		}
 	};
 
@@ -190,7 +190,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon?.svg'
+									src='/assets/icons/judgement-grey-icon.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}
@@ -324,7 +324,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon?.svg'
+									src='/assets/icons/judgement-grey-icon.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}

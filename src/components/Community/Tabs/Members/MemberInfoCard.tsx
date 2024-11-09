@@ -7,10 +7,12 @@ import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { poppins } from 'pages/_app';
-import React, { useState } from 'react';
+import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
+import React, { useEffect, useState } from 'react';
 import { BadgeName, User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
 import Tipping from '~src/components/Tipping';
+import FollowButton from '~src/components/UserProfile/Follow/FollowButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
@@ -18,6 +20,7 @@ import Markdown from '~src/ui-components/Markdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
 import copyToClipboard from '~src/util/copyToClipboard';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
 	user: User;
@@ -32,9 +35,25 @@ const MemberInfoCard = ({ user, className }: Props) => {
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const [userData, setUserData] = useState<FollowersResponse>();
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	const [messageApi, contextHolder] = message.useMessage();
+	const getFollowersData = async () => {
+		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId: user?.id });
+		if (!data && error) {
+			console.log(error);
+		}
+		if (data) {
+			setUserData(data);
+			console.log('checking follower data: ', data);
+		}
+	};
+
+	useEffect(() => {
+		getFollowersData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.id]);
 
 	const handleDelegationContent = (content: string) => {
 		return content.split('\n').find((item: string) => item.length > 0) || '';
@@ -89,19 +108,11 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						</div>
 					</div>
 					<div className='flex items-center gap-x-4'>
-						<Button
-							// disabled={disabled}
-							// onClick={handleClick}
-							className={'flex items-center space-x-[6px] rounded-[26px] border border-solid border-pink_primary bg-pink_primary px-4 shadow-none '}
-						>
-							<Image
-								src='/assets/icons/follow-icon.svg'
-								alt='follow-icon'
-								width={20}
-								height={20}
-							/>
-							<span className='text-sm font-medium text-white max-sm:hidden'>Follow</span>
-						</Button>
+						<FollowButton
+							userId={user?.id}
+							isUsedInProfileHeaders={false}
+							isUsedInCommunityTab
+						/>
 					</div>
 				</div>
 				<div className='flex items-center justify-between'>
@@ -167,7 +178,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 								type='vertical'
 							/>
 							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>02</span>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{userData?.followers?.length}</span>
 						</div>
 						<div className='flex items-center gap-x-1'>
 							<Divider
@@ -175,7 +186,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 								type='vertical'
 							/>
 							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>02</span>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{userData?.following?.length}</span>
 						</div>
 						<Button
 							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'

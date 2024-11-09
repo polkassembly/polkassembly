@@ -90,7 +90,6 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											truncateUsername={false}
 											type={post?.type}
 											showSimilarPost={showSimilarPost}
-											progress_report={post?.progress_report}
 										/>
 									</Link>
 								}

@@ -53,9 +53,9 @@ const RenderChats = ({ className, handleOpenChat, chats, handleNewChat, setFilte
 				alt='empty chat icon'
 				className='border border-pink_primary'
 			/>
-			<div className='text-center text-bodyBlue dark:text-blue-dark-high'>
-				<h2 className='text-xl font-bold'>No Message Found</h2>
-				<p className='flex items-center justify-center gap-1'>
+			<div className='relative -mt-4 text-center text-bodyBlue dark:text-blue-dark-high'>
+				<h2 className='my-0 p-0 text-xl font-bold'>No Message Found</h2>
+				<p className='flex items-center justify-center gap-1 p-0'>
 					<Button
 						type='text'
 						className='cursor-pointer border-none p-0 font-semibold text-pink_primary'

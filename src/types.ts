@@ -1087,3 +1087,9 @@ export interface IFollowEntry {
 	updated_at: Date;
 	isFollow: boolean;
 }
+
+export enum EExpertReqStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}

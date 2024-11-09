@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
-import DelegatesProfileIcon from '~assets/icons/delegate-profile?.svg';
-import DelegatesProfileWhiteIcon from '~assets/icons/delegate-profile-white?.svg';
+import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
+import DelegatesProfileWhiteIcon from '~assets/icons/delegate-profile-white.svg';
 import { Button, message, Modal } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import styled from 'styled-components';

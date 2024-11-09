@@ -5,7 +5,7 @@ import { Button, Radio, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
-import InputClearIcon from '~assets/icons/close-tags?.svg';
+import InputClearIcon from '~assets/icons/close-tags.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';

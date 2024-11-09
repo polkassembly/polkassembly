@@ -41,7 +41,7 @@ const DelegatesTab: FC<IDelegatesTab> = (props) => {
 					<DelegateDelegationIcon className='text-[200px]' />
 					<div className='flex items-center gap-1'>
 						<span className='text-lightBlue dark:text-blue-dark-high '>No results found</span>
-						{searchInput.length > 10 && !!getEncodedAddress(searchInput, network) && !!delegationDashboardAddress?.length && (
+						{searchInput?.length > 10 && !!getEncodedAddress(searchInput, network) && !!delegationDashboardAddress?.length && (
 							<span className='flex gap-1 text-lightBlue dark:text-blue-dark-high'>
 								<div
 									className={`flex cursor-pointer items-center gap-1 border-none text-pink_primary ${!api || (!apiReady && 'opacity-50')}`}
@@ -50,7 +50,7 @@ const DelegatesTab: FC<IDelegatesTab> = (props) => {
 									}}
 								>
 									<Image
-										src={'assets/icons/delegate-profile.svg'}
+										src={'assets/icons/delegate-profile?.svg'}
 										width={16}
 										height={16}
 										alt=''
@@ -84,7 +84,7 @@ const DelegatesTab: FC<IDelegatesTab> = (props) => {
 								onChange={(page: number) => {
 									setCurrentPage(page);
 								}}
-								total={filteredDelegates.length}
+								total={filteredDelegates?.length}
 								showSizeChanger={false}
 								pageSize={DELEGATION_LISTING}
 								responsive={true}

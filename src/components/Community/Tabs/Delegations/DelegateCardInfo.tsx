@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
-import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import DelegatesProfileWhiteIcon from '~assets/icons/delegate-profile-white.svg';
+import DelegatesProfileIcon from '~assets/icons/delegate-profile?.svg';
+import DelegatesProfileWhiteIcon from '~assets/icons/delegate-profile-white?.svg';
 import { Button, message, Modal } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import styled from 'styled-components';
@@ -46,14 +46,14 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 	const [currentUserData, setCurrentUserData] = useState<any>();
 	const [messageApi, contextHolder] = message.useMessage();
 	const success = () => {
-		messageApi.open({
+		messageApi?.open({
 			content: 'Address copied to clipboard',
 			duration: 10,
 			type: 'success'
 		});
 	};
 
-	console.log(delegate);
+	console?.log(delegate);
 
 	const getCurrentuserData = async () => {
 		const username = delegate?.username;
@@ -64,7 +64,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					setCurrentUserData(response?.data?.data[0]?.profile_score);
 				}
 			} catch (error) {
-				console.error('Failed to fetch current user data:', error);
+				console?.error('Failed to fetch current user data:', error);
 			}
 		}
 	};
@@ -77,15 +77,15 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return '/assets/icons/polkadot-logo.svg';
+				return '/assets/icons/polkadot-logo?.svg';
 			case 'polkassembly':
-				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
+				return '/assets/delegation-tracks/pa-logo-small-delegate?.svg';
 			case 'w3f':
-				return '/assets/profile/w3f.svg';
+				return '/assets/profile/w3f?.svg';
 			case 'nova':
-				return '/assets/delegation-tracks/nova-wallet.svg';
+				return '/assets/delegation-tracks/nova-wallet?.svg';
 			default:
-				return '/assets/icons/individual-filled.svg';
+				return '/assets/icons/individual-filled?.svg';
 		}
 	};
 
@@ -100,12 +100,12 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 	};
 
 	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 0) || '';
+		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
 	};
 
 	const getTrimmedBio = (bio: string) => {
 		if (!bio) return 'No Bio';
-		return bio.length > 100 ? `${bio.slice(0, 100)}...` : bio;
+		return bio?.length > 100 ? `${bio?.slice(0, 100)}?.?.?.` : bio;
 	};
 
 	return (
@@ -148,7 +148,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 				<div className='flex items-center justify-between'>
 					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
-							address={delegate.address}
+							address={delegate?.address}
 							disableHeader={network !== 'kilt'}
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
@@ -160,8 +160,8 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						<span
 							className='flex cursor-pointer items-center'
 							onClick={(e) => {
-								e.preventDefault();
-								copyToClipboard(delegate.address || '');
+								e?.preventDefault();
+								copyToClipboard(delegate?.address || '');
 								success();
 							}}
 						>
@@ -172,7 +172,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							<ScoreTag
 								className='h-6 w-min px-[6px] py-1'
 								score={currentUserData}
-								iconWrapperClassName='mt-[5.5px]'
+								iconWrapperClassName='mt-[5?.5px]'
 							/>
 						)}
 						<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
@@ -190,19 +190,19 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon.svg'
+									src='/assets/icons/judgement-grey-icon?.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}
 									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
-								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1])?.join(', ')}</span>
 							</div>
 						)}
 					</div>
 				</div>
-				<div className={`${poppins.variable} ${poppins.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
+				<div className={`${poppins?.variable} ${poppins?.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0?.015em] text-bodyBlue dark:text-blue-dark-high`}>
 					<p className='inline text-[12px]'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
 					{delegate?.bio?.length > 100 && (
 						<span
@@ -223,17 +223,17 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					/>
 				</div>
 				<div className='mb-2 flex justify-between'>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${poppins?.variable} ${poppins?.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
-						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
+						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance?.toString(), 1, false, network)}</span>
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${poppins?.variable} ${poppins?.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv&apos;d Delegation</div>
 
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${poppins?.variable} ${poppins?.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
@@ -282,7 +282,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 				<div className='flex items-center justify-between'>
 					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
-							address={delegate.address}
+							address={delegate?.address}
 							disableHeader={network !== 'kilt'}
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
@@ -294,8 +294,8 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						<span
 							className='flex cursor-pointer items-center'
 							onClick={(e) => {
-								e.preventDefault();
-								copyToClipboard(delegate.address || '');
+								e?.preventDefault();
+								copyToClipboard(delegate?.address || '');
 								success();
 							}}
 						>
@@ -306,7 +306,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							<ScoreTag
 								className='h-6 w-min px-[6px] py-1'
 								score={currentUserData}
-								iconWrapperClassName='mt-[5.5px]'
+								iconWrapperClassName='mt-[5?.5px]'
 							/>
 						)}
 						<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
@@ -324,14 +324,14 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon.svg'
+									src='/assets/icons/judgement-grey-icon?.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}
 									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
-								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{delegate?.identityInfo?.judgements?.map((item: any) => item[1])?.join(', ')}</span>
 							</div>
 						)}
 					</div>
@@ -341,7 +341,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.bio ? (
 							<Markdown
 								className='post-content m-0 p-0'
-								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 100)}...`}
+								md={`${handleDelegationContent(delegate?.bio || '')?.slice(0, 100)}?.?.?.`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -361,7 +361,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 				<div className=' flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
 					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 2, false, network)}</span>
+							<span className='px-1 text-2xl font-semibold'>{parseBalance(delegate?.delegatedBalance?.toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
@@ -388,7 +388,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', poppins?.className, poppins?.variable)}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -429,7 +429,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					</div>
 
 					<div
-						className={`${poppins.variable} ${poppins.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${poppins?.variable} ${poppins?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
 						<p className='w-full sm:w-[90%]'>
 							{delegate?.bio ? (
@@ -454,19 +454,19 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						/>
 					</div>
 					<div className='flex min-h-[82px] justify-between border-0 border-t-[1px] border-solid border-section-light-container  dark:border-[#3B444F] dark:border-separatorDark  sm:min-h-[92px] '>
-						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-							<div className={`${poppins.variable} ${poppins.className} flex items-center justify-center gap-1`}>
-								{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}
+						<div className='pt-1?.5 flex w-[33%] flex-col items-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+							<div className={`${poppins?.variable} ${poppins?.className} flex items-center justify-center gap-1`}>
+								{parseBalance(delegate?.delegatedBalance?.toString(), 1, false, network)}
 								<span className='mt-1 text-xs font-normal text-bodyBlue dark:text-blue-dark-high sm:text-sm'>{unit}</span>
 							</div>
 							<div className='w-[50%] text-center text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:w-full sm:text-xs'>Voting power</div>
 						</div>
-						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container pt-1.5  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+						<div className='pt-1?.5 flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.votedProposalsCount}
 							<span className='text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:text-xs'>Voted proposals </span>
 							<span className='text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:text-xs'>(Past 30 days)</span>
 						</div>
-						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+						<div className='pt-1?.5 flex w-[33%] flex-col items-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{delegate?.receivedDelegationsCount}
 							<span className='mb-[2px] w-[55%] text-center text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:w-full sm:text-xs'>Received Delegation</span>
 						</div>
@@ -478,16 +478,16 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 };
 
 export default styled(DelegateCardInfo)`
-	.bio {
+	?.bio {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		width: 250px;
 		overflow: hidden;
 	}
-	.modal .ant-modal-content {
+	?.modal ?.ant-modal-content {
 		padding: 0px 0px !important;
 		border-radius: 14px !important;
-		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.08) !important;
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0?.08) !important;
 	}
 `;

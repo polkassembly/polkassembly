@@ -22,30 +22,30 @@ export const getAllUsers = async ({ page, username }: { page: number; username?:
 
 		// Check if a username is provided, then fetch only that user
 		if (username) {
-			userDocs = await firestore_db.collection('users').where('username', '==', username).get();
+			userDocs = await firestore_db?.collection('users')?.where('username', '==', username)?.get();
 		} else {
 			// Otherwise, fetch all users with pagination
 			userDocs = await firestore_db
-				.collection('users')
-				.orderBy('created_at', 'desc')
-				.offset((Number(page) - 1) * LEADERBOARD_LISTING_LIMIT)
-				.limit(LEADERBOARD_LISTING_LIMIT)
-				.get();
+				?.collection('users')
+				?.orderBy('created_at', 'desc')
+				?.offset((Number(page) - 1) * LEADERBOARD_LISTING_LIMIT)
+				?.limit(LEADERBOARD_LISTING_LIMIT)
+				?.get();
 		}
 
-		const totalUsers = username ? userDocs.size : (await firestore_db.collection('users').count().get()).data().count || 0;
+		const totalUsers = username ? userDocs?.size : (await firestore_db?.collection('users')?.count()?.get())?.data()?.count || 0;
 
-		const users = await Promise.all(
-			userDocs.docs.map(async (doc) => {
-				const user = doc.data() as User;
+		const users = await Promise?.all(
+			userDocs?.docs?.map(async (doc) => {
+				const user = doc?.data() as User;
 
 				// Check if created_at is a Firestore Timestamp, then convert
-				const createdAt = user.created_at instanceof Timestamp ? user.created_at.toDate() : user.created_at;
+				const createdAt = user?.created_at instanceof Timestamp ? user?.created_at?.toDate() : user?.created_at;
 
-				const addresses = await getAddressesFromUserId(user.id);
+				const addresses = await getAddressesFromUserId(user?.id);
 				return {
 					...user,
-					addresses: addresses.map((a) => a?.address) || [],
+					addresses: addresses?.map((a) => a?.address) || [],
 					created_at: createdAt
 				};
 			})
@@ -59,8 +59,8 @@ export const getAllUsers = async ({ page, username }: { page: number; username?:
 	} catch (error) {
 		return {
 			data: null,
-			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500
+			error: error?.message || messages?.API_FETCH_ERROR,
+			status: Number(error?.name) || 500
 		};
 	}
 };
@@ -71,16 +71,16 @@ const handler: NextApiHandler<UsersResponse | MessageType> = async (req, res) =>
 	const { page = 1, username } = req.body;
 
 	if (isNaN(page)) {
-		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
+		return res?.status(400)?.json({ message: messages?.INVALID_REQUEST_BODY });
 	}
 
 	const { data, error, status } = await getAllUsers({ page, username });
 
 	if (error || !data) {
-		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res?.status(status)?.json({ message: error || messages?.API_FETCH_ERROR });
 	}
 	if (data) {
-		return res.status(status).json(data);
+		return res?.status(status)?.json(data);
 	}
 };
 

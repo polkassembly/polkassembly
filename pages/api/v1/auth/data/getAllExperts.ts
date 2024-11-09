@@ -10,28 +10,31 @@ import { EExpertReqStatus } from '~src/types';
 
 export interface ExpertRequestResponse {
 	count: number;
-	data: any[]; // Replace `any` with the type of data expected in expert request documents
+	data: any[];
 }
 
 export const getAllApprovedExpertRequests = async () => {
 	try {
-		const expertReqDocs = await firestore_db.collection('expertRequests').where('status', '==', EExpertReqStatus.APPROVED).get();
+		const expertReqDocs = await firestore_db
+			?.collection('expertRequests')
+			?.where('status', '==', EExpertReqStatus?.APPROVED)
+			?.get();
 
-		const expertRequests = expertReqDocs.docs.map((doc) => ({
-			id: doc.id,
-			...doc.data()
+		const expertRequests = expertReqDocs?.docs?.map((doc) => ({
+			id: doc?.id,
+			...doc?.data()
 		}));
 
 		return {
-			data: { count: expertReqDocs.size, data: expertRequests } as ExpertRequestResponse,
+			data: { count: expertReqDocs?.size, data: expertRequests } as ExpertRequestResponse,
 			error: null,
 			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
-			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500
+			error: error?.message || messages?.API_FETCH_ERROR,
+			status: Number(error?.name) || 500
 		};
 	}
 };
@@ -42,10 +45,10 @@ const handler: NextApiHandler<ExpertRequestResponse | { message: string }> = asy
 	const { data, error, status } = await getAllApprovedExpertRequests();
 
 	if (error || !data) {
-		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res?.status(status)?.json({ message: error || messages?.API_FETCH_ERROR });
 	}
 	if (data) {
-		return res.status(status).json(data);
+		return res?.status(status)?.json(data);
 	}
 };
 

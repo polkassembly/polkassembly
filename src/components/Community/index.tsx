@@ -5,7 +5,7 @@ import { Button, Radio, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
-import InputClearIcon from '~assets/icons/close-tags.svg';
+import InputClearIcon from '~assets/icons/close-tags?.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
@@ -41,7 +41,7 @@ const Community = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 	const [selectedSources, setSelectedSources] = useState<string[]>(
-		selectedTab === ECommunityTabs.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object.values(EDelegationSourceFilters)
+		selectedTab === ECommunityTabs?.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object?.values(EDelegationSourceFilters)
 	);
 	const dispatch = useDispatch();
 
@@ -61,8 +61,8 @@ const Community = () => {
 			}
 		});
 
-		const data = await Promise.allSettled(identityInfoPromises);
-		console.log(data);
+		const data = await Promise?.allSettled(identityInfoPromises);
+		console?.log(data);
 
 		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
 			return {
@@ -73,7 +73,7 @@ const Community = () => {
 		});
 
 		delegatesData.current = updatedData;
-		setFilteredDelegates(updatedData || delegatesData.current);
+		setFilteredDelegates(updatedData || delegatesData?.current);
 	};
 
 	const getData = async () => {
@@ -85,10 +85,10 @@ const Community = () => {
 			//putting polkassembly Delegate first;
 			const updatedDelegates = data || [];
 
-			updatedDelegates.sort((a: any, b: any) => {
+			updatedDelegates?.sort((a: any, b: any) => {
 				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
-				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
-				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+				const aIndex = addressess?.indexOf(getSubstrateAddress(a?.address));
+				const bIndex = addressess?.indexOf(getSubstrateAddress(b?.address));
 
 				if (aIndex !== -1 && bIndex !== -1) {
 					return aIndex - bIndex;
@@ -104,7 +104,7 @@ const Community = () => {
 			setLoading(false);
 			handleIdentity(updatedDelegates);
 		} else {
-			console.log(error);
+			console?.log(error);
 			setLoading(false);
 		}
 	};
@@ -116,12 +116,12 @@ const Community = () => {
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {
-			case EDelegationAddressFilters.DELEGATED_VOTES:
-				return data.sort((a, b) => new BN(b.delegatedBalance).cmp(new BN(a.delegatedBalance)));
-			case EDelegationAddressFilters.RECEIVED_DELEGATIONS:
-				return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
-			case EDelegationAddressFilters.VOTED_PROPOSALS:
-				return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
+			case EDelegationAddressFilters?.DELEGATED_VOTES:
+				return data?.sort((a, b) => new BN(b?.delegatedBalance)?.cmp(new BN(a?.delegatedBalance)));
+			case EDelegationAddressFilters?.RECEIVED_DELEGATIONS:
+				return data?.sort((a, b) => b?.receivedDelegationsCount - a?.receivedDelegationsCount);
+			case EDelegationAddressFilters?.VOTED_PROPOSALS:
+				return data?.sort((a, b) => b?.votedProposalsCount - a?.votedProposalsCount);
 			default:
 				return data;
 		}
@@ -130,11 +130,11 @@ const Community = () => {
 	const handleRadioChange = (e: any) => {
 		setLoading(true);
 		setCurrentPage(1);
-		const selectedOption = e.target.value;
+		const selectedOption = e?.target?.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
 		const searchOutput = searchInput?.length
-			? delegatesData.current.filter((delegate: any) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			? delegatesData?.current?.filter((delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase()))
 			: null;
 
 		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
@@ -144,34 +144,34 @@ const Community = () => {
 	};
 
 	const handleSearchSubmit = () => {
-		if (selectedTab === ECommunityTabs.DELEGATES) {
-			if (!searchInput.length) {
-				setFilteredDelegates(delegatesData.current);
+		if (selectedTab === ECommunityTabs?.DELEGATES) {
+			if (!searchInput?.length) {
+				setFilteredDelegates(delegatesData?.current);
 				return;
 			}
 			setCurrentPage(1);
 			setLoading(true);
-			const searchOutput = delegatesData.current.filter(
-				(delegate: any) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase())
+			const searchOutput = delegatesData?.current?.filter(
+				(delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase())
 			);
 			setFilteredDelegates(searchOutput || []);
 			setLoading(false);
-		} else if (selectedTab === ECommunityTabs.MEMBERS) {
-			dispatch(communityTabActions.setSearchedUsername(searchInput));
+		} else if (selectedTab === ECommunityTabs?.MEMBERS) {
+			dispatch(communityTabActions?.setSearchedUsername(searchInput));
 		}
 	};
 
 	const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSources: string[]): IDelegateAddressDetails[] => {
-		return data.filter((delegate) => {
-			if (selectedSources.length === 1 && selectedSources[0] === EDelegationSourceFilters.NA) {
-				return !delegate.dataSource || delegate.dataSource.length === 0;
+		return data?.filter((delegate) => {
+			if (selectedSources?.length === 1 && selectedSources[0] === EDelegationSourceFilters?.NA) {
+				return !delegate?.dataSource || delegate?.dataSource?.length === 0;
 			}
 
-			if (selectedSources.includes(EDelegationSourceFilters.NA)) {
-				return !delegate.dataSource || delegate.dataSource.length === 0 || selectedSources.some((source) => delegate.dataSource?.includes(source));
+			if (selectedSources?.includes(EDelegationSourceFilters?.NA)) {
+				return !delegate?.dataSource || delegate?.dataSource?.length === 0 || selectedSources?.some((source) => delegate?.dataSource?.includes(source));
 			}
 
-			return selectedSources.some((source) => delegate.dataSource?.includes(source));
+			return selectedSources?.some((source) => delegate?.dataSource?.includes(source));
 		});
 	};
 
@@ -180,7 +180,7 @@ const Community = () => {
 		setCurrentPage(1);
 		setSelectedSources(sources);
 		const searchOutput = searchInput?.length
-			? delegatesData.current.filter((delegate: any) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			? delegatesData?.current?.filter((delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase()))
 			: null;
 
 		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
@@ -192,29 +192,29 @@ const Community = () => {
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return '/assets/icons/polkadot-logo.svg';
+				return '/assets/icons/polkadot-logo?.svg';
 			case 'polkassembly':
-				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
+				return '/assets/delegation-tracks/pa-logo-small-delegate?.svg';
 			case 'w3f':
-				return '/assets/profile/w3f.svg';
+				return '/assets/profile/w3f?.svg';
 			case 'nova':
-				return '/assets/delegation-tracks/nova-wallet.svg';
+				return '/assets/delegation-tracks/nova-wallet?.svg';
 			default:
-				return '/assets/icons/individual-filled.svg';
+				return '/assets/icons/individual-filled?.svg';
 		}
 	};
 
 	const filterContent = (
 		<>
-			{selectedTab === ECommunityTabs.DELEGATES && (
+			{selectedTab === ECommunityTabs?.DELEGATES && (
 				<div className='flex flex-col'>
 					<div className='flex items-center justify-between'>
 						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Filter By</p>
 						<span
 							className={classNames(
-								'm-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pb-0.5 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins.className,
-								poppins.variable
+								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+								poppins?.className,
+								poppins?.variable
 							)}
 							onClick={() => {
 								setSelectedSources([]);
@@ -225,20 +225,20 @@ const Community = () => {
 						</span>
 					</div>
 					<Radio.Group
-						onChange={(e) => handleCheckboxChange([e.target.value])}
+						onChange={(e) => handleCheckboxChange([e?.target?.value])}
 						value={selectedSources[0] || null}
-						className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
+						className={classNames('mt-1 flex flex-col', poppins?.className, poppins?.variable)}
 						disabled={loading}
 					>
 						<div className='flex flex-col gap-1'>
-							{Object.values(EDelegationSourceFilters).map((source, index) => {
+							{Object?.values(EDelegationSourceFilters)?.map((source, index) => {
 								return (
 									<div
 										key={index}
-										className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+										className={`${poppins?.variable} ${poppins?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
 									>
 										<Radio
-											checked={selectedSources.includes(source)}
+											checked={selectedSources?.includes(source)}
 											className='cursor-pointer text-pink_primary'
 											value={source}
 										/>
@@ -249,10 +249,10 @@ const Community = () => {
 													height={20}
 													width={20}
 													alt=''
-													className={source === EDelegationSourceFilters.NA ? (theme === 'dark' ? 'dark-icons' : '') : ''}
+													className={source === EDelegationSourceFilters?.NA ? (theme === 'dark' ? 'dark-icons' : '') : ''}
 												/>
 											</span>
-											<span className='text-sm tracking-wide'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+											<span className='text-sm tracking-wide'>{source?.charAt(0)?.toUpperCase() + source?.slice(1)}</span>
 										</div>
 									</div>
 								);
@@ -261,15 +261,15 @@ const Community = () => {
 					</Radio.Group>
 				</div>
 			)}
-			{selectedTab === ECommunityTabs.MEMBERS && (
+			{selectedTab === ECommunityTabs?.MEMBERS && (
 				<div className='flex flex-col'>
 					<div className='flex items-center justify-between'>
 						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Filter By</p>
 						<span
 							className={classNames(
-								'm-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pb-0.5 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins.className,
-								poppins.variable
+								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+								poppins?.className,
+								poppins?.variable
 							)}
 							onClick={() => {
 								setSelectedSources([]);
@@ -280,19 +280,19 @@ const Community = () => {
 						</span>
 					</div>
 					<Radio.Group
-						onChange={(e) => handleCheckboxChange([e.target.value])}
+						onChange={(e) => handleCheckboxChange([e?.target?.value])}
 						value={selectedSources[0] || null}
-						className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
+						className={classNames('mt-1 flex flex-col', poppins?.className, poppins?.variable)}
 						disabled={loading}
 					>
 						<div className='flex flex-col gap-1'>
-							{['All', 'Verified', 'Non-Verified'].map((filterOption, index) => (
+							{['All', 'Verified', 'Non-Verified']?.map((filterOption, index) => (
 								<div
 									key={index}
-									className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+									className={`${poppins?.variable} ${poppins?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
 								>
 									<Radio
-										checked={selectedSources.includes(filterOption)}
+										checked={selectedSources?.includes(filterOption)}
 										className='cursor-pointer text-pink_primary'
 										value={filterOption}
 									/>
@@ -308,15 +308,15 @@ const Community = () => {
 
 	const sortContent = (
 		<>
-			{selectedTab === ECommunityTabs.DELEGATES && (
+			{selectedTab === ECommunityTabs?.DELEGATES && (
 				<div className='flex flex-col'>
 					<div className='flex items-center justify-between'>
 						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
 						<span
 							className={classNames(
-								'm-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pb-0.5 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins.className,
-								poppins.variable
+								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+								poppins?.className,
+								poppins?.variable
 							)}
 							onClick={() => {
 								setSortOption(null);
@@ -332,20 +332,20 @@ const Community = () => {
 						disabled={loading}
 					>
 						<Radio
-							value={EDelegationAddressFilters.DELEGATED_VOTES}
-							className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							value={EDelegationAddressFilters?.DELEGATED_VOTES}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Voting Power
 						</Radio>
 						<Radio
-							value={EDelegationAddressFilters.VOTED_PROPOSALS}
-							className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							value={EDelegationAddressFilters?.VOTED_PROPOSALS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Voted proposals (past 30 days)
 						</Radio>
 						<Radio
-							value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-							className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							value={EDelegationAddressFilters?.RECEIVED_DELEGATIONS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Received Delegation(s)
 						</Radio>
@@ -366,12 +366,12 @@ const Community = () => {
 							allowClear={{ clearIcon: <InputClearIcon /> }}
 							placeholder='Enter username or address to Delegate vote'
 							onChange={(e) => {
-								if (selectedTab === ECommunityTabs.DELEGATES) {
-									if (!e.target.value?.length) {
+								if (selectedTab === ECommunityTabs?.DELEGATES) {
+									if (!e?.target?.value?.length) {
 										setFilteredDelegates(delegatesData?.current || []);
 									}
 								}
-								setSearchInput(e.target.value.trim());
+								setSearchInput(e?.target?.value?.trim());
 							}}
 							onPressEnter={handleSearchSubmit}
 							value={searchInput}
@@ -380,12 +380,12 @@ const Community = () => {
 
 						<CustomButton
 							variant='primary'
-							className={classNames('mr-1 h-11 justify-around gap-2 rounded-none rounded-e-md px-4 py-1', loading || !searchInput.length ? 'opacity-50' : '')}
+							className={classNames('mr-1 h-11 justify-around gap-2 rounded-none rounded-e-md px-4 py-1', loading || !searchInput?.length ? 'opacity-50' : '')}
 							height={40}
 							onClick={() => {
 								handleSearchSubmit();
 							}}
-							disabled={loading || !searchInput.length}
+							disabled={loading || !searchInput?.length}
 						>
 							<SearchOutlined />
 						</CustomButton>
@@ -399,7 +399,7 @@ const Community = () => {
 					>
 						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
-								src='/assets/icons/filter-icon-delegates.svg'
+								src='/assets/icons/filter-icon-delegates?.svg'
 								alt='filter icon'
 							/>
 						</Button>
@@ -413,14 +413,14 @@ const Community = () => {
 					>
 						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon
-								src='/assets/icons/sort-icon-delegates.svg'
+								src='/assets/icons/sort-icon-delegates?.svg'
 								alt='sort icon'
 							/>
 						</Button>
 					</Popover>
 				</div>
 			</header>
-			{selectedTab === ECommunityTabs.DELEGATES && (
+			{selectedTab === ECommunityTabs?.DELEGATES && (
 				<Spin spinning={loading}>
 					<DelegatesTab
 						currentPage={currentPage}
@@ -431,7 +431,7 @@ const Community = () => {
 					/>
 				</Spin>
 			)}
-			{selectedTab === ECommunityTabs.DELEGATES && (
+			{selectedTab === ECommunityTabs?.DELEGATES && (
 				<Spin spinning={loading}>
 					<DelegatesTab
 						currentPage={currentPage}
@@ -442,7 +442,7 @@ const Community = () => {
 					/>
 				</Spin>
 			)}
-			{selectedTab === ECommunityTabs.MEMBERS && <MembersTab />}
+			{selectedTab === ECommunityTabs?.MEMBERS && <MembersTab />}
 		</section>
 	);
 };

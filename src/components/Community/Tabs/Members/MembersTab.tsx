@@ -44,13 +44,13 @@ const MembersTab = () => {
 	const handleBeneficiaryIdentityInfo = async (user: User) => {
 		if (!api || !apiReady || !user?.addresses?.length) return;
 
-		const promiseArr = user.addresses.map((address) => getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
+		const promiseArr = user?.addresses?.map((address) => getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
 
 		try {
-			const resolved = await Promise.all(promiseArr);
+			const resolved = await Promise?.all(promiseArr);
 			user.identityInfo = resolved[0] || defaultIdentityInfo;
 		} catch (err) {
-			console.error('Error fetching identity info:', err);
+			console?.error('Error fetching identity info:', err);
 			user.identityInfo = defaultIdentityInfo;
 		}
 	};
@@ -71,17 +71,17 @@ const MembersTab = () => {
 
 		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/auth/data/getAllUsers', body);
 		if (data) {
-			console.log(data);
+			console?.log(data);
 			const updatedUserData = [...data.data];
 			for (const user of updatedUserData) {
 				await handleBeneficiaryIdentityInfo(user);
 			}
-			console.log(updatedUserData);
+			console?.log(updatedUserData);
 			setUserData(updatedUserData);
-			setTotalUsers(data.count);
+			setTotalUsers(data?.count);
 			setLoading(false);
 		} else {
-			console.log(error);
+			console?.log(error);
 			setLoading(false);
 		}
 	};
@@ -95,7 +95,7 @@ const MembersTab = () => {
 				{!userData?.length && !loading ? (
 					<div className='mt-4 flex flex-col items-center justify-center gap-4'>
 						<Image
-							src='/assets/Gifs/search.gif'
+							src='/assets/Gifs/search?.gif'
 							alt='empty-state'
 							width={150}
 							height={150}

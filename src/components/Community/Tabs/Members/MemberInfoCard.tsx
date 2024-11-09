@@ -29,7 +29,7 @@ interface Props {
 	disabled?: boolean;
 }
 const MemberInfoCard = ({ user, className }: Props) => {
-	console.log(user);
+	console?.log(user);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
@@ -42,11 +42,11 @@ const MemberInfoCard = ({ user, className }: Props) => {
 	const getFollowersData = async () => {
 		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId: user?.id });
 		if (!data && error) {
-			console.log(error);
+			console?.log(error);
 		}
 		if (data) {
 			setUserData(data);
-			console.log('checking follower data: ', data);
+			console?.log('checking follower data: ', data);
 		}
 	};
 
@@ -56,18 +56,18 @@ const MemberInfoCard = ({ user, className }: Props) => {
 	}, [user?.id]);
 
 	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 0) || '';
+		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
 	};
 
 	const success = () => {
-		messageApi.open({
+		messageApi?.open({
 			content: 'Address copied to clipboard',
 			duration: 10,
 			type: 'success'
 		});
 	};
 
-	console.log(user);
+	console?.log(user);
 	return (
 		<div
 			className={`rounded-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] 
@@ -130,8 +130,8 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						<span
 							className='flex cursor-pointer items-center'
 							onClick={(e) => {
-								e.preventDefault();
-								copyToClipboard(user.addresses?.[0] || '');
+								e?.preventDefault();
+								copyToClipboard(user?.addresses?.[0] || '');
 								success();
 							}}
 						>
@@ -142,19 +142,19 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						<ScoreTag
 							className='h-6 w-min px-[6px] py-1'
 							score={user?.profile_score || 0}
-							iconWrapperClassName='mt-[5.5px]'
+							iconWrapperClassName='mt-[5?.5px]'
 						/>
 						{user?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
-									src='/assets/icons/judgement-grey-icon.svg'
+									src='/assets/icons/judgement-grey-icon?.svg'
 									alt='follow-icon'
 									width={20}
 									height={20}
 									className={theme === 'dark' ? 'dark-icons scale-90' : 'scale-90'}
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Judgement:</p>
-								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{user?.identityInfo?.judgements?.map((item: any) => item[1]).join(', ')}</span>
+								<span className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>{user?.identityInfo?.judgements?.map((item: any) => item[1])?.join(', ')}</span>
 							</div>
 						)}
 					</div>
@@ -164,13 +164,13 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
 						<span className='flex items-center gap-x-1 text-xs font-medium text-bodyBlue dark:text-white'>
 							<Image
-								src='/assets/icons/orange-calender-icon.svg'
+								src='/assets/icons/orange-calender-icon?.svg'
 								alt='calender-icon'
 								width={20}
 								height={20}
-								className='-mt-0.5'
+								className='-mt-0?.5'
 							/>
-							{dayjs(user?.created_at).format('DD MMM YYYY')}
+							{dayjs(user?.created_at)?.format('DD MMM YYYY')}
 						</span>
 						<div className='flex items-center gap-x-1'>
 							<Divider
@@ -195,7 +195,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 							}}
 						>
 							<Image
-								src='/assets/icons/tipping-pink_icon.svg'
+								src='/assets/icons/tipping-pink_icon?.svg'
 								alt='tipping-icon'
 								width={20}
 								height={20}
@@ -209,7 +209,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						{user?.profile?.bio ? (
 							<Markdown
 								className='post-content m-0 p-0'
-								md={`${handleDelegationContent(user?.profile?.bio || '').slice(0, 100)}...`}
+								md={`${handleDelegationContent(user?.profile?.bio || '')?.slice(0, 100)}?.?.?.`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -229,38 +229,38 @@ const MemberInfoCard = ({ user, className }: Props) => {
 				<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
 					<Image
 						src={
-							user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.DECENTRALISED_VOICE)
-								? '/assets/badges/decentralised_voice.svg'
-								: '/assets/badges/decentralised_voice_locked.svg'
+							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.DECENTRALISED_VOICE)
+								? '/assets/badges/decentralised_voice?.svg'
+								: '/assets/badges/decentralised_voice_locked?.svg'
 						}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.FELLOW) ? '/assets/badges/fellow.svg' : '/assets/badges/fellow_locked.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.FELLOW) ? '/assets/badges/fellow?.svg' : '/assets/badges/fellow_locked?.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.COUNCIL) ? '/assets/badges/Council.svg' : '/assets/badges/council_locked.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.COUNCIL) ? '/assets/badges/Council?.svg' : '/assets/badges/council_locked?.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
 						src={
-							user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.ACTIVE_VOTER)
-								? '/assets/badges/active_voter.svg'
-								: '/assets/badges/active_voter_locked.svg'
+							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.ACTIVE_VOTER)
+								? '/assets/badges/active_voter?.svg'
+								: '/assets/badges/active_voter_locked?.svg'
 						}
 						alt='achievement-badge'
 						height={41}
 						width={67}
 					/>
 					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge.name === BadgeName.WHALE) ? '/assets/badges/whale.svg' : '/assets/badges/whale_locked.svg'}
+						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.WHALE) ? '/assets/badges/whale?.svg' : '/assets/badges/whale_locked?.svg'}
 						alt='achievement-badge'
 						height={41}
 						width={67}
@@ -270,7 +270,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', poppins?.className, poppins?.variable)}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -311,7 +311,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					</div>
 
 					<div
-						className={`${poppins.variable} ${poppins.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${poppins?.variable} ${poppins?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
 						<p className='w-full sm:w-[90%]'>
 							{user?.profile?.bio ? (

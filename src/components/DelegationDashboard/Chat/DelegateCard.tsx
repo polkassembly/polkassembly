@@ -40,7 +40,7 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 			<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.username ? delegate?.username : shortenAddress(delegate?.address, 5)}</span>
 
 			{delegate?.dataSource?.includes('nova') ? (
-				<div className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'>
+				<div className='ml-5 flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'>
 					<Image
 						src='/assets/wallet/nova-wallet-star.svg'
 						height={24}

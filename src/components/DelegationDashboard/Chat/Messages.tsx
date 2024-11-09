@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Spin, Card, Button } from 'antd';
+import { Spin, Card, Button, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { EChatRequestStatus, IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -11,18 +11,18 @@ import Identicon from '@polkadot/react-identicon';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import AuthForm from '~src/ui-components/AuthForm';
-import ContentForm from '~src/components/ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Markdown from '~src/ui-components/Markdown';
 import RequestStatus from './feedbacks/RequestStatus';
 
+const { TextArea } = Input;
+
 interface Props {
-	className?: string;
 	chat: IChat;
 	chatId: string;
 }
 
-const Messages = ({ className, chat, chatId }: Props) => {
+const Messages = ({ chat, chatId }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
 
@@ -75,6 +75,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				message: 'Message sent successfully',
 				status: NotificationStatus.SUCCESS
 			});
+			setNewMessage('');
 		} else if (error) {
 			console.log(error);
 			queueNotification({
@@ -117,7 +118,7 @@ const Messages = ({ className, chat, chatId }: Props) => {
 				spinning={loading}
 				className='h-[250px]'
 			>
-				<div className={`${className} h-56 overflow-y-scroll px-5 py-3`}>
+				<div className={messages.length > 0 ? 'h-72 overflow-y-scroll px-5 py-3' : 'hidden'}>
 					{messages.map((message) => {
 						const isSent = message?.senderAddress === address;
 						return (
@@ -137,25 +138,29 @@ const Messages = ({ className, chat, chatId }: Props) => {
 					})}
 				</div>
 			</Spin>
-			{chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
+			{messages.length > 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
 			<AuthForm
 				onSubmit={handleSubmit}
-				className='mt-auto justify-self-end pb-1 pt-2'
+				className={messages.length > 0 ? 'mt-auto justify-self-end pb-1 pt-2' : 'flex h-[440px] flex-col justify-between'}
 			>
 				{isRequestSent ? (
 					<div className='bg-[#D2D8E0] px-5 py-2'>
 						<span className='text-sm text-[#576D8BCC]'>You can chat once message request is accepted</span>
 					</div>
 				) : (
-					<ContentForm
+					<TextArea
+						rows={messages.length > 0 ? 2 : 3}
+						placeholder='Type your message here'
+						maxLength={6}
+						autoFocus
 						value={newMessage}
-						height={120}
-						className='[&_.ant-form-item]:m-0 [&_.tox-statusbar]:hidden [&_.tox]:rounded-none [&_.tox_.tox-toolbar\_\_primary]:bg-[#D2D8E0]'
-						onChange={(content: string) => {
-							setNewMessage(content);
+						className={messages.length > 0 ? 'rounded-none shadow-md' : 'mx-auto mt-5 w-[90%]'}
+						onChange={(e) => {
+							setNewMessage(e.target.value);
 						}}
 					/>
 				)}
+				{messages.length < 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
 				<Button
 					className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
 						!newMessage || loading || isRequestSent ? 'opacity-60' : ''

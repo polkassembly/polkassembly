@@ -90,14 +90,14 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 	return (
 		<>
 			<div className='flex gap-1'>
-				{data?.followers && (
-					<>
-						<Divider
-							type='vertical'
-							className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
-						/>
-						<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
-							Followers:
+				<>
+					<Divider
+						type='vertical'
+						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
+					/>
+					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
+						Followers:
+						{data?.followers && data.followers.length > 0 ? (
 							<Popover
 								placement='bottomLeft'
 								content={
@@ -112,23 +112,25 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 							>
 								<span className='cursor-pointer font-medium text-pink_primary hover:underline'>{data?.followers?.length ?? 0}</span>
 							</Popover>
-						</div>
-					</>
-				)}
+						) : (
+							<span className='font-medium text-pink_primary'>0</span>
+						)}
+					</div>
+				</>
 
-				{data?.following && (
-					<>
-						<Divider
-							type='vertical'
-							className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
-						/>
-						<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
-							Following:{' '}
+				<>
+					<Divider
+						type='vertical'
+						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
+					/>
+					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
+						Following:
+						{data?.following && data.following.length > 0 ? (
 							<Popover
 								placement='bottomLeft'
 								content={
 									<FollowTooltip
-										users={data?.following}
+										users={data.following}
 										isLoading={isLoading.loading}
 										addToFollowing={addToFollowing}
 										removeFromFollowing={removeFromFollowing}
@@ -137,9 +139,11 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 							>
 								<span className='cursor-pointer font-medium text-pink_primary hover:underline'>{data?.following?.length ?? 0}</span>
 							</Popover>
-						</div>
-					</>
-				)}
+						) : (
+							<span className='font-medium text-pink_primary'>0</span>
+						)}
+					</div>
+				</>
 			</div>
 		</>
 	);

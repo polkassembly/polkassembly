@@ -7,10 +7,9 @@ import { poppins } from 'pages/_app';
 import { FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 import React from 'react';
 import ImageComponent from '~src/components/ImageComponent';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Loader from '~src/ui-components/Loader';
 import FollowButton from './FollowButton';
-
 const FollowTooltip = ({
 	users,
 	isLoading,
@@ -25,6 +24,8 @@ const FollowTooltip = ({
 	removeFromFollowing: (userId: number) => void;
 }) => {
 	const { network } = useNetworkSelector();
+	const { id } = useUserDetailsSelector();
+
 	return (
 		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>
 			{isLoading ? (
@@ -32,6 +33,7 @@ const FollowTooltip = ({
 			) : (
 				<div>
 					{users.map((user) => {
+						const userId = isUsedInFollowers ? user.follower_user_id : user.followed_user_id;
 						return (
 							<div
 								key={user.username}
@@ -50,13 +52,15 @@ const FollowTooltip = ({
 									/>
 									<span className='mr-2 text-xs font-medium text-blue-light-high hover:text-pink_primary dark:text-blue-dark-high'>{user.username || 'unknown'}</span>
 								</Link>
-								<FollowButton
-									userId={isUsedInFollowers ? user.follower_user_id : user.followed_user_id}
-									isUsedInProfileHeaders={true}
-									addToFollowing={addToFollowing}
-									user={user}
-									removeFromFollowing={removeFromFollowing}
-								/>
+								{userId !== id && (
+									<FollowButton
+										userId={userId}
+										isUsedInProfileHeaders={true}
+										addToFollowing={addToFollowing}
+										user={user}
+										removeFromFollowing={removeFromFollowing}
+									/>
+								)}
 							</div>
 						);
 					})}

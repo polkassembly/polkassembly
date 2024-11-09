@@ -47,13 +47,13 @@ const RenderChats = ({ className, handleOpenChat, chats, handleNewChat, setFilte
 	) : (
 		<div className='flex h-full w-full flex-col items-center justify-center text-bodyBlue dark:text-blue-dark-high'>
 			<Image
-				src='/assets/icons/delegation-chat/empty.svg'
-				height={160}
-				width={160}
+				src='/assets/Gifs/login-like.gif'
+				height={222}
+				width={222}
 				alt='empty chat icon'
 				className='border border-pink_primary'
 			/>
-			<div className='relative -mt-4 text-center text-bodyBlue dark:text-blue-dark-high'>
+			<div className='relative -mt-5 text-center text-bodyBlue dark:text-blue-dark-high'>
 				<h2 className='my-0 p-0 text-xl font-bold'>No Message Found</h2>
 				<p className='flex items-center justify-center gap-1 p-0'>
 					<Button

@@ -79,7 +79,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 		setLoading({ ...loading, isLoading: true });
 		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
-		const paymentInfo = await tx.paymentInfo(addr);
+		const paymentInfo = await tx?.paymentInfo(addr);
 		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
 		setGasFee(bnGasFee);
 		setLoading({ ...loading, isLoading: false });

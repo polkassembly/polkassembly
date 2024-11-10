@@ -321,7 +321,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
 						getSiderMenuItem(
-							<div className=' flex items-center justify-between'>
+							<div className='flex items-center justify-between '>
 								Advisory Motions
 								<span
 									className={`text-[10px] ${
@@ -334,16 +334,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 								</span>
 							</div>,
 							'/advisory-committee/motions',
-							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						),
-						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />)
 				  ]
 				: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
 						getSiderMenuItem(
-							<div className='flex  items-center justify-between'>
+							<div className='flex items-center justify-between'>
 								<span className='mr-10'>Technical Comm..</span>
 								<span
 									className={`text-[10px] ${
@@ -358,7 +358,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/root') || router.pathname.includes('/technical') ? (
 									<SelectedRoot className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<RootIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						),
@@ -394,7 +394,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />),
 					getSiderMenuItem(
 						<div className='flex items-center justify-between'>
 							Motions
@@ -407,10 +407,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/alliance/motions',
-						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					),
-					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />),
+					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
@@ -427,9 +427,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/motions',
-						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
 
@@ -447,7 +447,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/proposals',
-						<DemocracyProposalsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<DemocracyProposalsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
 						<div className='flex items-center justify-between'>
@@ -461,7 +461,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/referenda',
-						<ReferendaIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<ReferendaIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)
 			  ]
 			: [],
@@ -474,9 +474,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<>
 					{' '}
 					{router.pathname === '/' || router.pathname === '/opengov' ? (
-						<SelectedOverview className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<OverviewIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<OverviewIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</>
 			),
@@ -487,7 +487,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{router.pathname === '/discussions' ? (
 						<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<DiscussionsIcon className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</>
 			)
@@ -507,7 +507,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/tech-comm-proposals',
-						<TechComProposalIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<TechComProposalIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)
 			  ]
 			: [],
@@ -526,7 +526,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/treasury-proposals',
-						<TreasuryProposalsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<TreasuryProposalsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
 						<div className='flex items-center justify-between'>
@@ -536,7 +536,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</span>
 						</div>,
 						'/tips',
-						<TipsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<TipsIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)
 			  ]
 			: []
@@ -545,7 +545,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov1Items['overviewItems'].splice(
 			3,
 			0,
-			getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />)
 		);
 	}
 
@@ -570,7 +570,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					<div className='flex items-center justify-between text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Bounties
 						<span
 							className={`text-[10px] ${
@@ -592,7 +592,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					null
 				),
 				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					<div className='flex items-center justify-between text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Child Bounties
 						<span
 							className={`text-[10px] ${
@@ -653,7 +653,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(
 			getSiderMenuItem(
-				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
+				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
 				'pipsHeading',
 				null
 			),
@@ -717,8 +717,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
-			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipIconNew className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />),
+			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipIconNew className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />)
 		];
 		items = [
 			...gov1Items.overviewItems,
@@ -842,7 +842,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							<div className='flex  justify-between'>
+							<div className='flex justify-between'>
 								<span className='pt-1 text-[12px] text-lightBlue dark:text-icon-dark-inactive'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
@@ -899,7 +899,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						trackName === 'all' ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className='scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
 									<RootIcon className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
@@ -1030,7 +1030,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
-					<SelectedOverview className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
 					<OverviewIcon className='-ml-[7px]  mt-0.5   scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive ' />
 				)}
@@ -1127,7 +1127,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	if (isGrantsSupported(network)) {
-		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
+		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />));
 	}
 
 	let gov2Items: MenuProps['items'] = [
@@ -1138,7 +1138,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
-					<SelectedGovernance className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedGovernance className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
 					<GovernanceIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -1152,7 +1152,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{activeWhitelist ? (
 					<SelectedWhitelist className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
@@ -1313,7 +1313,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A] dark:bg-[#520f32]' : 'text-lightBlue dark:text-icon-dark-inactive'
 							}`}
 						>
-							<ParachainsIcon className=' mt-2 scale-90 text-xl font-medium ' />
+							<ParachainsIcon className='mt-2 scale-90 text-xl font-medium ' />
 						</div>
 					</Link>
 				</div>
@@ -1330,7 +1330,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				'Fellowship',
 				'gov2_fellowship_group',
-				<FellowshipIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+				<FellowshipIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 				[...gov2TrackItems.fellowshipItems]
 			)
 		);
@@ -1349,7 +1349,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					<div className='flex items-center justify-between text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Bounties
 						<span
 							className={`text-[10px] ${
@@ -1371,7 +1371,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					null
 				),
 				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					<div className='flex items-center justify-between text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 						Child Bounties
 						<span
 							className={`text-[10px] ${
@@ -1423,13 +1423,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 						if (typeof item.label === 'string') {
 							formattedLabel = toPascalCase(item.label);
 						} else if (React.isValidElement(item.label)) {
-							formattedLabel = item.label;
+							const firstChild = React.Children.toArray(item.label.props.children)[0];
+
+							if (typeof firstChild === 'string') {
+								formattedLabel = toPascalCase(firstChild);
+							} else {
+								formattedLabel = firstChild;
+							}
 						}
 					}
 
+					console.log(item);
 					if (item && item.key === 'gov2_bounties_group') {
 						const bountiesPopoverContent = (
-							<div className='w-[150px] pt-2'>
+							<div className='w-[150px] '>
 								{bountiesSubItems.map((subItem, subIndex) => {
 									if (!subItem) return null;
 									const uniqueSubKey = `${subItem?.key}-${subIndex}`;
@@ -1455,12 +1462,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={uniqueSubKey}
-											className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+											className={`m-0 rounded-lg px-2 py-0 text-[#243A57] hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
 												isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 											}`}
 										>
 											<Link href={subItem?.key as string}>
-												<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+												<span className={`block px-2  text-left  ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
 													{formattedSubLabel || ''}
 												</span>
 											</Link>
@@ -1482,7 +1489,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									overlayClassName='z-[1200]'
 								>
 									<p
-										className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										className={`m-0 flex cursor-pointer justify-between rounded-lg px-2 py-0 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
 											isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
 										}`}
 									>
@@ -1505,7 +1512,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							}`}
 						>
 							<Link href={item?.key as string}>
-								<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+								<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57]'} !important`}>
 									{formattedLabel || ''}
 								</span>
 							</Link>
@@ -1565,9 +1572,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_treasury_group',
 				<div>
 					{activeTreasury ? (
-						<SelectedTreasury className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<SelectedTreasury className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]
@@ -1584,7 +1591,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_fellowship_group',
 				<div>
 					{' '}
-					<FellowshipIconNew className=' -ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>,
 				[...gov2TrackItems.fellowshipItems]
 			)
@@ -1759,7 +1766,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='-ml-2 scale-90' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='scale-90' />),
-		getSiderMenuItem('Treasury', '/treasury', <TreasuryIconNew className=' scale-90' />)
+		getSiderMenuItem('Treasury', '/treasury', <TreasuryIconNew className='scale-90 ' />)
 	];
 
 	if (network === 'polkadot') {
@@ -1836,11 +1843,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'/parachains',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				getSiderMenuItem('Archived', '', <ArchivedIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
 					getSiderMenuItem(
 						'Treasury',
 						'treasury_group',
-						<TreasuryIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						<TreasuryIconNew className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 						gov1Items.treasuryItems.slice(2, 0)
 					)
 				])
@@ -1870,7 +1877,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', 'group', <ArchivedIcon className=' -ml-2 scale-90  font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', 'group', <ArchivedIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
 
@@ -2108,7 +2115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													alt='Head 1'
 													width={40}
 													height={40}
-													className=' cursor-pointer'
+													className='cursor-pointer '
 												/>
 												<div className='absolute bottom-10 left-10 mb-2 hidden w-[117px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[12px] text-xs font-semibold text-white group-hover:block'>
 													On-chain identity
@@ -2126,7 +2133,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													alt='Head 2'
 													width={40}
 													height={40}
-													className=' cursor-pointer'
+													className='cursor-pointer '
 												/>
 												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Leaderboard
@@ -2144,7 +2151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													alt='Head 3'
 													width={40}
 													height={40}
-													className=' cursor-pointer'
+													className='cursor-pointer '
 												/>
 												<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Delegation
@@ -2172,7 +2179,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												alt='Head 4'
 												width={40}
 												height={40}
-												className=' cursor-pointer'
+												className='cursor-pointer '
 											/>
 											<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile
@@ -2224,7 +2231,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													alt='Head 2'
 													width={40}
 													height={40}
-													className=' cursor-pointer'
+													className='cursor-pointer '
 												/>
 												<div className='absolute bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Leaderboard
@@ -2242,7 +2249,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													alt='Head 3'
 													width={40}
 													height={40}
-													className=' cursor-pointer'
+													className='cursor-pointer '
 												/>
 												<div className='absolute bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 													Delegation
@@ -2268,7 +2275,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												alt='Head 4'
 												width={40}
 												height={40}
-												className=' cursor-pointer'
+												className='cursor-pointer '
 											/>
 											<div className='absolute bottom-0 left-[74px] mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 												Profile

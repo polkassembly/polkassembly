@@ -15,16 +15,17 @@ import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { IComment } from '../Post/Comment/Comment';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { EExpertReqStatus, NotificationStatus } from '~src/types';
 import { getSortedComments } from '../Post/Comment/CommentsContainer';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import RejectedExpertModal from './RejectedExpertModal';
+import PendingExpertModal from './PendingExpertModal';
 
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [review, setReview] = useState('');
 	const [reviewsCount, setReviewsCount] = useState(0);
-	const [isExpert, setIsExpert] = useState(false);
-
+	const [expertStatus, setIsExpert] = useState('');
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const {
 		postData: { postIndex, postType, track_number }
@@ -37,18 +38,18 @@ function ExpertBodyCard() {
 		if (address) {
 			const substrateAddress = getSubstrateAddress(address);
 			try {
-				const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertAddressCheck', {
+				const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertStatus', {
 					userAddress: substrateAddress
 				});
-				if (data?.isExpert !== undefined) {
-					setIsExpert(data.isExpert);
+				if (data?.status !== undefined) {
+					setIsExpert(data.status);
 				} else {
 					console.error('Failed to fetch expert status:', data);
-					setIsExpert(false);
+					setIsExpert('');
 				}
 			} catch (error) {
 				console.error('Error checking expert status:', error);
-				setIsExpert(false);
+				setIsExpert('');
 			}
 		}
 	}, [address]);
@@ -188,13 +189,23 @@ function ExpertBodyCard() {
 			</div>
 
 			{isModalVisible &&
-				(isExpert ? (
+				(expertStatus === EExpertReqStatus.APPROVED ? (
 					<ExpertPostModal
 						isModalVisible={isModalVisible}
 						handleCancel={handleCancel}
 						handleDone={handleDone}
 						review={review}
 						setReview={setReview}
+					/>
+				) : expertStatus === EExpertReqStatus.REJECTED ? (
+					<RejectedExpertModal
+						isModalVisible={isModalVisible}
+						handleCancel={handleCancel}
+					/>
+				) : expertStatus === EExpertReqStatus.PENDING ? (
+					<PendingExpertModal
+						isModalVisible={isModalVisible}
+						handleCancel={handleCancel}
 					/>
 				) : (
 					<NotAExpertModal

@@ -1512,7 +1512,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							}`}
 						>
 							<Link href={item?.key as string}>
-								<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57]'} !important`}>
+								<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'} !important`}>
 									{formattedLabel || ''}
 								</span>
 							</Link>

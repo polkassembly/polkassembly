@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Popover, Button } from 'antd';
 import Image from 'next/image';
 import { EChatFilter } from '~src/types';
@@ -13,7 +13,11 @@ interface ChatFilterProps {
 	selectedChatTab: 'messages' | 'requests';
 }
 
+const filterOptions = Object.values(EChatFilter).filter((option) => option !== EChatFilter.ALL);
+
 const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selectedChatTab }) => {
+	const memoizedFilterOptions = useMemo(() => filterOptions, []);
+
 	const [searchText, setSearchText] = useState('');
 	const [isFilterTabOpen, setIsFilterTabOpen] = useState<boolean>(false);
 	const [filter, setFilter] = useState<EChatFilter>(EChatFilter.ALL);
@@ -40,6 +44,7 @@ const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selec
 		<div className='w-full p-5 pb-0'>
 			<Input
 				placeholder='Search'
+				aria-label='Search chats'
 				value={searchText}
 				onChange={handleSearch}
 				size='large'
@@ -50,29 +55,30 @@ const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selec
 				addonAfter={
 					<Popover
 						placement='bottomRight'
-						content={Object.values(EChatFilter).map((option) => {
-							return option === EChatFilter.ALL ? null : (
-								<Button
-									key={option}
-									className={`flex w-44 items-center justify-between border-none px-2 capitalize shadow-none ${
-										filter === option ? 'bg-[#FCE5F2] text-pink_primary' : 'bg-transparent'
-									}`}
-									onClick={() => {
-										setFilter(filter === option ? EChatFilter.ALL : option);
-										handleChatFilterChange(filter === option ? EChatFilter.ALL : option);
-										setIsFilterTabOpen(false);
-									}}
-								>
-									{option}
-								</Button>
-							);
-						})}
+						content={memoizedFilterOptions.map((option) => (
+							<Button
+								key={option}
+								className={`flex w-44 items-center justify-between border-none px-2 capitalize shadow-none ${
+									filter === option ? 'bg-[#FCE5F2] text-pink_primary' : 'bg-transparent'
+								}`}
+								aria-label={`Filter by ${option}`}
+								role='menuitem'
+								onClick={() => {
+									setFilter(filter === option ? EChatFilter.ALL : option);
+									handleChatFilterChange(filter === option ? EChatFilter.ALL : option);
+									setIsFilterTabOpen(false);
+								}}
+							>
+								{option}
+							</Button>
+						))}
 						trigger='click'
 						arrow={false}
 						open={isFilterTabOpen}
 						onOpenChange={setIsFilterTabOpen}
 					>
 						<Button
+							aria-label={`Filter options - currently ${filter}`}
 							className={`flex h-7 w-7 items-center justify-center rounded-full border-none p-2 hover:bg-black/5 hover:dark:bg-white/10 ${
 								filter !== EChatFilter.ALL ? 'bg-[#FCE5F2]' : 'bg-transparent'
 							}`}

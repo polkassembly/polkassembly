@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 
 	const { address, requestStatus, chatId } = req.body;
 
-	if (!address || !requestStatus || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!address || !requestStatus || !chatId || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
 	const chatSnapshot = chatDocRef(chatId);

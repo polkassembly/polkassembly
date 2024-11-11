@@ -68,12 +68,13 @@ const NewChat = ({ handleOpenChat }: Props) => {
 			return;
 		}
 
-		const filteredDelegates = allDelegates.filter(
-			(delegate) =>
-				delegate.address.toLowerCase().includes(searchAddress.toLowerCase()) ||
-				getSubstrateAddress(delegate.address)?.includes(searchAddress) ||
-				(delegate.username && delegate.username.toLowerCase().includes(searchAddress.toLowerCase()))
-		);
+		const filteredDelegates = allDelegates.filter((delegate) => {
+			const searchTerm = searchAddress.toLowerCase();
+			const encodedAddress = delegate.address.toLowerCase();
+			const substrateAddress = getSubstrateAddress(delegate.address);
+
+			return encodedAddress.includes(searchTerm) || substrateAddress?.includes(searchAddress) || delegate.username?.toLowerCase().includes(searchTerm);
+		});
 		setSearchedDelegates(filteredDelegates);
 	};
 

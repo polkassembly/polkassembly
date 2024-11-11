@@ -175,18 +175,20 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								iconWrapperClassName='mt-[5?.5px]'
 							/>
 						)}
-						<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
-							{delegate?.dataSource?.map((source, index) => (
-								<Image
-									key={index}
-									src={renderSourceIcon(source)}
-									alt={source}
-									className={`${source === 'parity' ? 'scale-90' : ''}`}
-									width={20}
-									height={20}
-								/>
-							))}
-						</div>
+						{delegate?.dataSource && delegate?.dataSource?.length && (
+							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
+								{delegate?.dataSource?.map((source, index) => (
+									<Image
+										key={index}
+										src={renderSourceIcon(source)}
+										alt={source}
+										className={`${source === 'parity' ? 'scale-90' : ''}`}
+										width={20}
+										height={20}
+									/>
+								))}
+							</div>
+						)}
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
@@ -336,7 +338,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-2 flex h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-2 flex min-h-[56px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{delegate?.bio ? (
 							<Markdown

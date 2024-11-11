@@ -117,6 +117,7 @@ import profileSVG from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
 import proxyIcon from '~assets/icons/userDropdown/proxy-icon.svg';
 import logoutSVG from '~assets/icons/userDropdown/logout.svg';
+import AccountsSVG from '~assets/icons/userDropdown/accounts.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 // import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
@@ -248,6 +249,12 @@ export const IconSignup = (props: Partial<CustomIconComponentProps>) => (
 export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={logoutSVG}
+		{...props}
+	/>
+);
+export const AccountsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AccountsSVG}
 		{...props}
 	/>
 );

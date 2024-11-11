@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
+import { AccountsIcon, ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -232,6 +232,34 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
+		{
+			key: 'accounts',
+			label: (
+				<Link
+					className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					href={'/accounts'}
+				>
+					<AccountsIcon className='userdropdown-icon text-2xl' />
+					<span>Accounts</span>
+				</Link>
+			)
+		},
+		...(isOpenGovSupported(network)
+			? [
+					{
+						key: 'create proxy',
+						label: (
+							<span
+								className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+								// onClick={() => setOpenProxyModal(true)}
+							>
+								{/* <ProxyIcon className='userdropdown-icon text-2xl' /> */}
+								<span>Create Proxy</span>
+							</span>
+						)
+					}
+			  ]
+			: []),
 		{
 			key: 'settings',
 			label: (

@@ -157,7 +157,7 @@ const Community = () => {
 			);
 			setFilteredDelegates(searchOutput || []);
 			setLoading(false);
-		} else if (selectedTab === ECommunityTabs?.MEMBERS) {
+		} else if (selectedTab === ECommunityTabs?.MEMBERS || selectedTab === ECommunityTabs.EXPERTS) {
 			dispatch(communityTabActions?.setSearchedUsername(searchInput));
 		}
 	};
@@ -353,6 +353,50 @@ const Community = () => {
 					</Radio.Group>
 				</div>
 			)}
+			{selectedTab === ECommunityTabs?.EXPERTS && (
+				<div className='flex flex-col'>
+					<div className='flex items-center justify-between'>
+						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
+						<span
+							className={classNames(
+								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+								poppins?.className,
+								poppins?.variable
+							)}
+							onClick={() => {
+								setSortOption(null);
+							}}
+						>
+							Clear
+						</span>
+					</div>
+					<Radio.Group
+						className='flex flex-col overflow-y-auto'
+						onChange={handleRadioChange}
+						value={sortOption || null}
+						disabled={loading}
+					>
+						<Radio
+							value='REVIEWS_COUNT'
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Reviews count
+						</Radio>
+						<Radio
+							value='FOLLOWERS'
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Followers
+						</Radio>
+						<Radio
+							value='FOLLOWING'
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Following
+						</Radio>
+					</Radio.Group>
+				</div>
+			)}
 		</>
 	);
 
@@ -392,19 +436,21 @@ const Community = () => {
 						</CustomButton>
 					</div>
 
-					<Popover
-						content={filterContent}
-						placement='bottomRight'
-						zIndex={1056}
-						className='hidden sm:flex'
-					>
-						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
-							<ImageIcon
-								src='/assets/icons/filter-icon-delegates.svg'
-								alt='filter icon'
-							/>
-						</Button>
-					</Popover>
+					{selectedTab !== ECommunityTabs?.EXPERTS && (
+						<Popover
+							content={filterContent}
+							placement='bottomRight'
+							zIndex={1056}
+							className='hidden sm:flex'
+						>
+							<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+								<ImageIcon
+									src='/assets/icons/filter-icon-delegates.svg'
+									alt='filter icon'
+								/>
+							</Button>
+						</Popover>
+					)}
 
 					<Popover
 						content={sortContent}

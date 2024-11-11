@@ -24,8 +24,14 @@ const ExpertsTab = () => {
 	const getData = async () => {
 		if (!(api && peopleChainApiReady) || !network) return;
 		setLoading(true);
+		let body = {};
+		if (searchedUserName) {
+			body = {
+				username: searchedUserName
+			};
+		}
 
-		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/auth/data/getAllExperts');
+		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/auth/data/getAllExperts', body);
 		if (data) {
 			console?.log('checking experts data', data);
 			setUserData(data?.data);
@@ -46,12 +52,12 @@ const ExpertsTab = () => {
 				{!userData?.length && !loading ? (
 					<div className='mt-4 flex flex-col items-center justify-center gap-4'>
 						<Image
-							src='/assets/Gifs/search?.gif'
+							src='/assets/Gifs/search.gif'
 							alt='empty-state'
-							width={150}
-							height={150}
+							width={350}
+							height={350}
 						/>
-						<p>No User Found</p>
+						<p className='m-0 -mt-[48px] p-0 text-bodyBlue dark:text-white'>No User Found</p>
 					</div>
 				) : (
 					<>

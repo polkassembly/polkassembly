@@ -14,25 +14,38 @@ export interface ExpertRequestResponse {
 	data: any[];
 }
 
-export const getAllApprovedExpertRequests = async () => {
+export const getAllApprovedExpertRequests = async ({ username }: { username?: string }) => {
 	try {
-		const expertReqDocs = await firestore_db
-			?.collection('expert_requests')
-			?.where('status', '==', EExpertReqStatus?.APPROVED)
-			?.get();
+		let expertReqDocs;
+
+		if (username) {
+			const userDoc = await firestore_db?.collection('users')?.where('username', '==', username)?.get();
+			if (!userDoc?.empty) {
+				const userId = userDoc.docs[0].id;
+				expertReqDocs = await firestore_db?.collection('expert_requests')?.where('status', '==', EExpertReqStatus.APPROVED)?.where('userId', '==', userId)?.get();
+			} else {
+				return {
+					data: { count: 0, data: [] } as ExpertRequestResponse,
+					error: null,
+					status: 200
+				};
+			}
+		} else {
+			expertReqDocs = await firestore_db?.collection('expert_requests')?.where('status', '==', EExpertReqStatus.APPROVED)?.get();
+		}
 
 		const expertRequests = await Promise.all(
 			expertReqDocs?.docs.map(async (doc) => {
 				const requestData = doc.data();
 				const user = await getUserFromUserId(requestData.userId);
-				const { profile_score, username, custom_username, profile } = user || {};
+				const { profile_score, username: fetchedUsername, custom_username, profile } = user || {};
 
 				return {
 					...requestData,
 					custom_username,
 					profile,
 					profile_score,
-					username
+					username: fetchedUsername
 				};
 			})
 		);
@@ -54,7 +67,9 @@ export const getAllApprovedExpertRequests = async () => {
 const handler: NextApiHandler<ExpertRequestResponse | { message: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { data, error, status } = await getAllApprovedExpertRequests();
+	const { username } = req.body;
+
+	const { data, error, status } = await getAllApprovedExpertRequests({ username });
 
 	if (error || !data) {
 		return res?.status(status)?.json({ message: error || messages?.API_FETCH_ERROR });

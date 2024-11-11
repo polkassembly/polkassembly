@@ -4,13 +4,18 @@
 import { Button } from 'antd';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import React from 'react';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { communityTabActions } from '~src/redux/communityTab';
 import { ECommunityTabs } from '~src/redux/communityTab/@types';
 import { useCommunityTabSelector } from '~src/redux/selectors';
 
-const TabButtons = () => {
+interface ITabButtons {
+	totalMembers?: number;
+}
+
+const TabButtons: FC<ITabButtons> = (props) => {
+	const { totalMembers } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { selectedTab } = useCommunityTabSelector();
@@ -53,7 +58,7 @@ const TabButtons = () => {
 					height={24}
 					className={selectedTab !== ECommunityTabs?.MEMBERS && theme == 'dark' ? 'dark-icons' : ''}
 				/>
-				Users
+				Users {totalMembers}
 			</Button>
 			<Button
 				className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${

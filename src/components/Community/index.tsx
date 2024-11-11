@@ -26,10 +26,14 @@ import { ECommunityTabs } from '~src/redux/communityTab/@types';
 import MembersTab from './Tabs/Members/MembersTab';
 import { useDispatch } from 'react-redux';
 import { communityTabActions } from '~src/redux/communityTab';
+import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
+import { defaultIdentityInfo } from './utils';
+import { User } from '~src/auth/types';
+import { UsersResponse } from 'pages/api/v1/auth/data/getAllUsers';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
-	const { selectedTab } = useCommunityTabSelector();
+	const { selectedTab, searchedUserName } = useCommunityTabSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -39,6 +43,8 @@ const Community = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [searchInput, setSearchInput] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
+	const [membersData, setMembersData] = useState<any>();
+	const [totalMembers, setTotalMembers] = useState<number>();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 	const [selectedSources, setSelectedSources] = useState<string[]>(
 		selectedTab === ECommunityTabs?.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object?.values(EDelegationSourceFilters)
@@ -109,10 +115,66 @@ const Community = () => {
 		}
 	};
 
+	const handleBeneficiaryIdentityInfo = async (user: User) => {
+		if (!api || !apiReady || !user?.addresses?.length) return;
+
+		const promiseArr = user?.addresses?.map((address) => getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
+
+		try {
+			const resolved = await Promise.all(promiseArr);
+			user.identityInfo = resolved[0] || defaultIdentityInfo;
+		} catch (err) {
+			console?.error('Error fetching identity info:', err);
+			user.identityInfo = defaultIdentityInfo;
+		}
+	};
+
+	const getFollowersData = async (userId: number) => {
+		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId });
+		if (!data && error) {
+			console?.log(error);
+			return { followers: 0, followings: 0 };
+		}
+		return { followers: data?.followers?.length || 0, followings: data?.following?.length || 0 };
+	};
+
+	const getMembersData = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
+		setLoading(true);
+		let body = {};
+		if (searchedUserName) {
+			body = {
+				username: searchedUserName
+			};
+		} else {
+			body = {
+				page: currentPage || 1
+			};
+		}
+
+		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/auth/data/getAllUsers', body);
+		if (data) {
+			const updatedUserData = await Promise.all(
+				data.data.map(async (user) => {
+					await handleBeneficiaryIdentityInfo(user);
+					const followersData = await getFollowersData(user.id);
+					return { ...user, followers: followersData.followers, followings: followersData.followings };
+				})
+			);
+
+			setMembersData(updatedUserData);
+			setTotalMembers(data?.count);
+		} else {
+			console?.log(error);
+		}
+		setLoading(false);
+	};
+
 	useEffect(() => {
 		getData();
+		getMembersData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {
@@ -358,7 +420,7 @@ const Community = () => {
 	return (
 		<section className='mt-3'>
 			<header className='flex items-center justify-between gap-x-4'>
-				<TabButtons />
+				<TabButtons totalMembers={totalMembers} />
 				<div className='flex w-full items-center gap-3'>
 					<div className='dark:placeholder:white hidden h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex'>
 						<Input
@@ -431,18 +493,15 @@ const Community = () => {
 					/>
 				</Spin>
 			)}
-			{selectedTab === ECommunityTabs?.DELEGATES && (
-				<Spin spinning={loading}>
-					<DelegatesTab
-						currentPage={currentPage}
-						setCurrentPage={setCurrentPage}
-						filteredDelegates={filteredDelegates}
-						loading={loading}
-						delegatesData={delegatesData}
-					/>
-				</Spin>
+			{selectedTab === ECommunityTabs?.MEMBERS && (
+				<MembersTab
+					totalUsers={totalMembers}
+					userData={membersData}
+					loading={loading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
 			)}
-			{selectedTab === ECommunityTabs?.MEMBERS && <MembersTab />}
 		</section>
 	);
 };

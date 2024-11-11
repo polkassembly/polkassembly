@@ -1011,14 +1011,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.progress_file && id !== postData?.userId && (
-							<Alert
-								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-								showIcon
-								type='info'
-								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
-							/>
-						)}
+						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
+							!postData?.progress_report?.[0]?.progress_file &&
+							id !== postData?.userId && (
+								<Alert
+									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									showIcon
+									type='info'
+									message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
+								/>
+							)}
 						<ExpertBodyCard />
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}

@@ -25,6 +25,7 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ILoading, NotificationStatus } from '~src/types';
+import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 
 interface IPeopleChainTeleport {
 	className?: string;
@@ -38,12 +39,13 @@ const ZERO_BN = new BN(0);
 const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddress, onConfirm }: IPeopleChainTeleport) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const currentUser = useUserDetailsSelector();
+	const { loginAddress, multisigAssociatedAddress } = currentUser;
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAddressSelectModal, setOpenAddressSelectModal] = useState<boolean>(false);
-	const [address, setAddress] = useState(loginAddress || '');
+	const [address, setAddress] = useState(isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress : loginAddress || '');
 	const [beneficiaryAddress, setBeneficiaryAddress] = useState(defaultBeneficiaryAddress || '');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -117,7 +119,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 		);
 
 		await executeTx({
-			address,
+			address: address || '',
 			api,
 			apiReady,
 			errorMessageFallback: 'Failed!',
@@ -212,7 +214,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							</label>
 							{!!address && (
 								<Balance
-									address={address || loginAddress}
+									address={address || (isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress || '' : loginAddress)}
 									onChange={handleOnAvailableBalanceChange}
 									usedInIdentityFlow={false}
 								/>
@@ -221,7 +223,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 						<div className='flex w-full items-end gap-2 text-sm '>
 							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
-									address={address || loginAddress}
+									address={address || (isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress || '' : loginAddress)}
 									isTruncateUsername={false}
 									displayInline
 								/>

@@ -8,7 +8,6 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EExpertReqStatus } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const handler: NextApiHandler<{ status: string } | MessageType> = async (req, res) => {
@@ -42,23 +41,8 @@ const handler: NextApiHandler<{ status: string } | MessageType> = async (req, re
 			return res.status(404).json({ message: 'Expert request not found' });
 		}
 		const expertRequest = expertReqDocs.docs[0].data();
-		let status = 'not_found';
 
-		switch (expertRequest.status) {
-			case EExpertReqStatus.PENDING:
-				status = EExpertReqStatus.PENDING;
-				break;
-			case EExpertReqStatus.REJECTED:
-				status = EExpertReqStatus.REJECTED;
-				break;
-			case EExpertReqStatus.APPROVED:
-				status = EExpertReqStatus.APPROVED;
-				break;
-			default:
-				status = 'unknown';
-		}
-
-		return res.status(200).json({ status });
+		return res.status(200).json({ status: expertRequest.status });
 	} catch (err) {
 		console.error('Error in getExpertStatus:', err);
 		if (err instanceof Error) {

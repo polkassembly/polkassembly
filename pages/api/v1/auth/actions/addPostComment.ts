@@ -140,6 +140,9 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
+			res.status(200).json({
+				id: newComment.id
+			});
 			if (isExpertComment && expertDocId) {
 				const expertReqDoc = expertReqSnapshot.doc(expertDocId);
 				const expertSnapShot = await expertReqDoc?.get();
@@ -147,10 +150,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 					await expertReqDoc.update({ totalReviews: expertSnapShot?.data()?.totalReviews || 0 + 1 });
 				}
 			}
-
-			res.status(200).json({
-				id: newComment.id
-			});
 		})
 		.catch((error) => {
 			console.error('Error saving comment: ', error);

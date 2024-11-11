@@ -58,7 +58,9 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		const expertReqDocs = await expertReqSnapshot
 			.where('userId', '==', user?.id)
 			.where('address', '==', encodedUserAddress)
+			.limit(1)
 			.get();
+
 		if (expertReqDocs.empty) {
 			return res.status(400).json({ message: 'The Address is not a Expert Address.' });
 		}
@@ -85,10 +87,10 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const newComment: PostComment = {
 		content: content,
 		created_at: new Date(),
-		expertComment: Boolean(isExpertComment) || false,
 		history: [],
 		id: newCommentRef.id,
 		isDeleted: false,
+		isExpertComment: Boolean(isExpertComment) || false,
 		sentiment: sentiment || 0,
 		updated_at: last_comment_at,
 		user_id: user.id,

@@ -314,7 +314,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
-	expertComment?: boolean;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {

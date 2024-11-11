@@ -40,7 +40,7 @@ export interface IComment {
 	votes?: any[];
 	isRow?: boolean;
 	isDeleted?: boolean;
-	expertComment?: boolean;
+	isExpertComment?: boolean;
 }
 
 interface ICommentProps {

@@ -21,6 +21,10 @@ import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType'
 import RejectedExpertModal from './RejectedExpertModal';
 import PendingExpertModal from './PendingExpertModal';
 
+interface ExpertStatusResponse {
+	status: EExpertReqStatus;
+}
+
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [review, setReview] = useState('');
@@ -38,9 +42,7 @@ function ExpertBodyCard() {
 		if (address) {
 			const substrateAddress = getSubstrateAddress(address);
 			try {
-				const { data } = await nextApiClientFetch<any>('api/v1/expertBody/getExpertStatus', {
-					userAddress: substrateAddress
-				});
+				const { data } = await nextApiClientFetch<ExpertStatusResponse>('api/v1/expertBody/getExpertStatus', { userAddress: substrateAddress });
 				if (data?.status !== undefined) {
 					setIsExpert(data.status);
 				} else {

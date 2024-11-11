@@ -11,7 +11,7 @@ const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: 
 		<div>
 			<Modal
 				title={null}
-				visible={isModalVisible}
+				open={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
 			>

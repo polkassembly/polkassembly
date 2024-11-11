@@ -340,7 +340,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						</div>
 					)
 				}
-				visible={isModalVisible}
+				open={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
 			>

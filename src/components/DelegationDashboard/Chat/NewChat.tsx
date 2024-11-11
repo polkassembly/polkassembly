@@ -70,7 +70,9 @@ const NewChat = ({ handleOpenChat }: Props) => {
 
 		const filteredDelegates = allDelegates.filter(
 			(delegate) =>
-				delegate.address.toLowerCase().includes(searchAddress.toLowerCase()) || (delegate.username && delegate.username.toLowerCase().includes(searchAddress.toLowerCase()))
+				delegate.address.toLowerCase().includes(searchAddress.toLowerCase()) ||
+				getSubstrateAddress(delegate.address)?.includes(searchAddress) ||
+				(delegate.username && delegate.username.toLowerCase().includes(searchAddress.toLowerCase()))
 		);
 		setSearchedDelegates(filteredDelegates);
 	};

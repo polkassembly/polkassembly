@@ -66,9 +66,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			address: encodedUserAddress,
 			contribution: contribution || '',
 			createdAt: new Date(),
+			id: expertReqDoc?.id,
 			network: network,
 			reason: reason || '',
 			status: EExpertReqStatus.PENDING,
+			totalReviews: 0,
 			userId: user?.id
 		};
 

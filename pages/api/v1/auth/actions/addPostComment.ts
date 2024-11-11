@@ -50,11 +50,12 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) {
 		return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
 	}
+
 	const encodedUserAddress = getEncodedAddress(userAddress, network);
+	const expertReqSnapshot = firestore_db.collection('expert_requests');
+	let expertDocId: null | string;
 
 	if (isExpertComment && !!encodedUserAddress) {
-		const expertReqSnapshot = firestore_db.collection('expert_requests');
-
 		const expertReqDocs = await expertReqSnapshot
 			.where('userId', '==', user?.id)
 			.where('address', '==', encodedUserAddress)
@@ -63,6 +64,9 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 		if (expertReqDocs.empty) {
 			return res.status(400).json({ message: 'The Address is not a Expert Address.' });
+		}
+		if (expertReqDocs?.docs?.[0]?.exists) {
+			expertDocId = expertReqDocs?.docs?.[0].data()?.id;
 		}
 	}
 
@@ -136,6 +140,14 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
+			if (isExpertComment && expertDocId) {
+				const expertReqDoc = expertReqSnapshot.doc(expertDocId);
+				const expertSnapShot = await expertReqDoc?.get();
+				if (expertSnapShot?.exists) {
+					await expertReqDoc.update({ totalReviews: expertSnapShot?.data()?.totalReviews || 0 + 1 });
+				}
+			}
+
 			res.status(200).json({
 				id: newComment.id
 			});

@@ -11,8 +11,10 @@ import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollow
 import React, { useEffect, useState } from 'react';
 import { BadgeName, User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Tipping from '~src/components/Tipping';
 import FollowButton from '~src/components/UserProfile/Follow/FollowButton';
+import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
@@ -23,14 +25,16 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-	user: User;
+	user: User | any;
 	className?: string;
 	trackNum?: number;
 	disabled?: boolean;
+	isUsedInExpertTab?: boolean;
 }
-const MemberInfoCard = ({ user, className }: Props) => {
-	console?.log(user);
+const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
+	console.log('checking user data2: ', user);
 	const { network } = useNetworkSelector();
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 
@@ -40,13 +44,12 @@ const MemberInfoCard = ({ user, className }: Props) => {
 
 	const [messageApi, contextHolder] = message.useMessage();
 	const getFollowersData = async () => {
-		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId: user?.id });
+		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId: user?.id || user?.userId });
 		if (!data && error) {
 			console?.log(error);
 		}
 		if (data) {
 			setUserData(data);
-			console?.log('checking follower data: ', data);
 		}
 	};
 
@@ -67,13 +70,23 @@ const MemberInfoCard = ({ user, className }: Props) => {
 		});
 	};
 
-	console?.log(user);
+	const renderSourceIcon = (source: any) => {
+		switch (source) {
+			case 'parity':
+				return '/assets/icons/polkadot-logo.svg';
+			case 'polkassembly':
+				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
+			case 'w3f':
+				return '/assets/profile/w3f.svg';
+			case 'nova':
+				return '/assets/delegation-tracks/nova-wallet.svg';
+			default:
+				return '/assets/icons/individual-filled.svg';
+		}
+	};
+
 	return (
-		<div
-			className={`rounded-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] 
-            dark:border-separatorDark
-    ${className}`}
-		>
+		<div className={`${className}`}>
 			<div
 				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
@@ -88,7 +101,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 							/>
 						)}
 						<Address
-							address={user?.addresses?.[0] || ''}
+							address={user?.addresses?.[0] || user?.address || ''}
 							displayInline
 							destroyTooltipOnHide
 							disableIdenticon={Boolean(user?.profile?.image?.length)}
@@ -99,7 +112,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						/>
 						<div className='mr-2 flex items-center gap-2'>
 							<SocialsHandle
-								address={user?.addresses?.[0] || ''}
+								address={user?.addresses?.[0] || user?.address || ''}
 								onchainIdentity={user?.identityInfo || null}
 								socials={[]}
 								iconSize={18}
@@ -118,7 +131,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 				<div className='flex items-center justify-between'>
 					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
-							address={user?.addresses?.[0] || ''}
+							address={user?.addresses?.[0] || user?.address || ''}
 							disableHeader={network !== 'kilt'}
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
@@ -131,7 +144,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 							className='flex cursor-pointer items-center'
 							onClick={(e) => {
 								e?.preventDefault();
-								copyToClipboard(user?.addresses?.[0] || '');
+								copyToClipboard(user?.addresses?.[0] || user?.address || '');
 								success();
 							}}
 						>
@@ -144,6 +157,20 @@ const MemberInfoCard = ({ user, className }: Props) => {
 							score={user?.profile_score || 0}
 							iconWrapperClassName='mt-[5?.5px]'
 						/>
+						{isUsedInExpertTab && user?.dataSource && user?.dataSource?.length && (
+							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
+								{user?.dataSource?.map((source: string, index: number) => (
+									<Image
+										key={index}
+										src={renderSourceIcon(source)}
+										alt={source}
+										className={`${source === 'parity' ? 'scale-90' : ''}`}
+										width={20}
+										height={20}
+									/>
+								))}
+							</div>
+						)}
 						{user?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
@@ -226,46 +253,69 @@ const MemberInfoCard = ({ user, className }: Props) => {
 						</span>
 					)}
 				</div>
-				<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
-					<Image
-						src={
-							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.DECENTRALISED_VOICE)
-								? '/assets/badges/decentralised_voice.svg'
-								: '/assets/badges/decentralised_voice_locked.svg'
-						}
-						alt='achievement-badge'
-						height={41}
-						width={67}
-					/>
-					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.FELLOW) ? '/assets/badges/fellow.svg' : '/assets/badges/fellow_locked.svg'}
-						alt='achievement-badge'
-						height={41}
-						width={67}
-					/>
-					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.COUNCIL) ? '/assets/badges/Council.svg' : '/assets/badges/council_locked.svg'}
-						alt='achievement-badge'
-						height={41}
-						width={67}
-					/>
-					<Image
-						src={
-							user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.ACTIVE_VOTER)
-								? '/assets/badges/active_voter.svg'
-								: '/assets/badges/active_voter_locked.svg'
-						}
-						alt='achievement-badge'
-						height={41}
-						width={67}
-					/>
-					<Image
-						src={user?.profile?.achievement_badges?.some((badge) => badge?.name === BadgeName?.WHALE) ? '/assets/badges/whale.svg' : '/assets/badges/whale_locked.svg'}
-						alt='achievement-badge'
-						height={41}
-						width={67}
-					/>
-				</div>
+				{!isUsedInExpertTab ? (
+					<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
+						<Image
+							src={
+								user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.DECENTRALISED_VOICE)
+									? '/assets/badges/decentralised_voice.svg'
+									: '/assets/badges/decentralised_voice_locked.svg'
+							}
+							alt='achievement-badge'
+							height={41}
+							width={67}
+						/>
+						<Image
+							src={user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.FELLOW) ? '/assets/badges/fellow.svg' : '/assets/badges/fellow_locked.svg'}
+							alt='achievement-badge'
+							height={41}
+							width={67}
+						/>
+						<Image
+							src={user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.COUNCIL) ? '/assets/badges/Council.svg' : '/assets/badges/council_locked.svg'}
+							alt='achievement-badge'
+							height={41}
+							width={67}
+						/>
+						<Image
+							src={
+								user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.ACTIVE_VOTER)
+									? '/assets/badges/active_voter.svg'
+									: '/assets/badges/active_voter_locked.svg'
+							}
+							alt='achievement-badge'
+							height={41}
+							width={67}
+						/>
+						<Image
+							src={user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.WHALE) ? '/assets/badges/whale.svg' : '/assets/badges/whale_locked.svg'}
+							alt='achievement-badge'
+							height={41}
+							width={67}
+						/>
+					</div>
+				) : (
+					<div className=' flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
+						<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+							<div className='flex flex-wrap items-end justify-center'>
+								<span className='px-1 text-2xl font-semibold'>{parseBalance(user?.delegatedBalance?.toString(), 2, false, network)}</span>
+								<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
+							</div>
+							<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
+						</div>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container py-3  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+							<span className='text-2xl font-semibold'>{user?.votedProposalsCount}</span>
+							<div className='mt-[2px] flex flex-col items-center'>
+								<span className='mb-[2px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voted proposals </span>
+								<span className='text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>(Past 30 days)</span>
+							</div>
+						</div>
+						<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+							<span className='text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{user?.receivedDelegationsCount}</span>
+							<span className='mb-[2px] mt-1 text-center text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Received Delegation</span>
+						</div>
+					</div>
+				)}
 			</div>
 			<Modal
 				open={openReadMore}
@@ -279,7 +329,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					<div className='hidden items-center justify-between pt-2 sm:flex sm:pl-8'>
 						<div className='flex items-center gap-2 max-lg:justify-start'>
 							<Address
-								address={user?.addresses?.[0] || ''}
+								address={user?.addresses?.[0] || user?.address || ''}
 								displayInline
 								iconSize={26}
 								isTruncateUsername={false}
@@ -288,7 +338,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 
 							<div className='mr-2 flex items-center gap-2'>
 								<SocialsHandle
-									address={user?.addresses?.[0] || ''}
+									address={user?.addresses?.[0] || user?.address || ''}
 									onchainIdentity={user?.identityInfo || null}
 									socials={[]}
 									iconSize={18}
@@ -301,7 +351,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					<div className='p-4 sm:hidden'>
 						<div className='flex items-center gap-2 max-lg:justify-start'>
 							<Address
-								address={user?.addresses?.[0] || ''}
+								address={user?.addresses?.[0] || user?.address || ''}
 								displayInline
 								iconSize={26}
 								isTruncateUsername={false}
@@ -328,7 +378,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 					</div>
 					<div className='-mt-3 mb-4 flex items-center px-[46px] sm:hidden'>
 						<SocialsHandle
-							address={user?.addresses?.[0] || ''}
+							address={user?.addresses?.[0] || user?.address || ''}
 							onchainIdentity={user?.identityInfo || null}
 							socials={[]}
 							iconSize={16}
@@ -341,7 +391,7 @@ const MemberInfoCard = ({ user, className }: Props) => {
 				username={user?.username || ''}
 				open={openTipping}
 				setOpen={setOpenTipping}
-				key={user?.addresses?.[0] || ''}
+				key={user?.addresses?.[0] || user?.address || ''}
 				paUsername={user?.username as any}
 				setOpenAddressChangeModal={setOpenAddressChangeModal}
 				openAddressChangeModal={openAddressChangeModal}

@@ -20,8 +20,7 @@ const ExpertsInfoTab = ({ user }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi } = usePeopleChainApiContext();
 
-	// Add state to store identity information
-	const [identityInfo, setIdentityInfo] = useState(defaultIdentityInfo);
+	const [userWithIdentityInfo, setUserWithIdentityInfo] = useState(user);
 
 	const handleBeneficiaryIdentityInfo = async () => {
 		if (!api || !apiReady || !user?.addresses?.length) return;
@@ -29,12 +28,13 @@ const ExpertsInfoTab = ({ user }: Props) => {
 		const promiseArr = user?.addresses?.map((address: string) => getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
 
 		try {
-			const resolved = await Promise?.all(promiseArr);
-			setIdentityInfo(resolved[0] || defaultIdentityInfo); // Update state instead of modifying `user`
-			console.log('inside experts1: ', resolved[0] || defaultIdentityInfo);
+			const resolved = await Promise.all(promiseArr);
+			const updatedUser = { ...user, identityInfo: resolved[0] || defaultIdentityInfo };
+			setUserWithIdentityInfo(updatedUser);
 		} catch (err) {
 			console.error('Error fetching identity info:', err);
-			setIdentityInfo(defaultIdentityInfo);
+			const updatedUser = { ...user, identityInfo: defaultIdentityInfo };
+			setUserWithIdentityInfo(updatedUser);
 		}
 	};
 
@@ -43,15 +43,14 @@ const ExpertsInfoTab = ({ user }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, user?.userId]);
 
-	// Now `identityInfo` will reflect the fetched data
-	console.log('inside experts: ', { ...user, identityInfo });
+	console.log('checking user data1: ', userWithIdentityInfo);
 
 	return (
 		<div>
 			<MemberInfoCard
-				user={user}
+				user={userWithIdentityInfo}
 				disabled={false}
-				// handleUsername={(objWithUsername) => handleUsernameUpdateInDelegate(objWithUsername)}
+				isUsedInExpertTab
 			/>
 		</div>
 	);

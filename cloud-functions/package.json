@@ -19,12 +19,15 @@
     "algoliasearch": "^4.17.1",
     "axios": "^1.6.8",
     "bn.js": "^5.2.1",
+    "chrono-node": "^2.7.7",
     "cors": "^2.8.5",
     "dayjs": "^1.11.8",
     "firebase-admin": "^12.0.0",
     "firebase-functions": "^4.3.1",
     "html-to-text": "^9.0.5",
-    "marked": "^5.1.0"
+    "marked": "^5.1.0",
+    "openai": "^4.70.2",
+    "twitter-api-v2": "^1.18.1"
   },
   "devDependencies": {
     "@types/html-to-text": "^9.0.1",

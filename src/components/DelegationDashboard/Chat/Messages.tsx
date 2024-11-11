@@ -12,7 +12,6 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import AuthForm from '~src/ui-components/AuthForm';
 import queueNotification from '~src/ui-components/QueueNotification';
-import Markdown from '~src/ui-components/Markdown';
 import RequestStatus from './feedbacks/RequestStatus';
 
 const { TextArea } = Input;
@@ -126,13 +125,7 @@ const Messages = ({ chat, chatId }: Props) => {
 								key={message?.id}
 								className={`flex items-center ${isSent ? 'justify-end' : 'justify-start'} mb-2`}
 							>
-								<div className={`max-w-[80%] rounded-lg px-3 py-2 ${isSent ? 'bg-[#3B47DF] text-white' : 'bg-[#D2D8E04D] text-black'}`}>
-									<Markdown
-										md={message?.content || ''}
-										className={`${isSent ? 'text-white' : 'text-black'} text-xs`}
-										isPreview={true}
-									/>
-								</div>
+								<div className={`max-w-[80%] rounded-lg px-3 py-2 text-xs ${isSent ? 'bg-[#3B47DF] text-white' : 'bg-[#D2D8E04D] text-black'}`}>{message?.content || ''}</div>
 							</div>
 						);
 					})}

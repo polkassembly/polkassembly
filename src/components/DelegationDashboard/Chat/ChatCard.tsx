@@ -10,7 +10,6 @@ import Identicon from '@polkadot/react-identicon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
-import Markdown from '~src/ui-components/Markdown';
 import dayjs from 'dayjs';
 import { Card } from 'antd';
 import PendingRequestTab from './PendingRequestTab';
@@ -97,11 +96,9 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 						</div>
 					) : null}
 				</div>
-				<Markdown
-					md={latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
-					className={'line-clamp-2 w-full break-words text-xs'}
-					isPreview={true}
-				/>
+
+				<div className='line-clamp-2 w-full break-words text-xs'>{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}</div>
+
 				{isPendingRequest ? (
 					<PendingRequestTab
 						chat={chat}

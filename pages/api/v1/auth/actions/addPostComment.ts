@@ -19,6 +19,8 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
+import { firestore_db } from '~src/services/firebaseInit';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -32,20 +34,35 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, content, postId, postType, sentiment, trackNumber = null, isExpertComment } = req.body;
+	const { userId, content, postId, postType, sentiment, trackNumber = null, isExpertComment, userAddress } = req.body;
 	if (!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 
 	const strProposalType = String(postType);
-	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
-		return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) {
+		return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
+	}
+	const encodedUserAddress = getEncodedAddress(userAddress, network);
+
+	if (isExpertComment && !!encodedUserAddress) {
+		const expertReqSnapshot = firestore_db.collection('expert_requests');
+
+		const expertReqDocs = await expertReqSnapshot
+			.where('userId', '==', user?.id)
+			.where('address', '==', encodedUserAddress)
+			.get();
+		if (expertReqDocs.empty) {
+			return res.status(400).json({ message: 'The Address is not a Expert Address.' });
+		}
+	}
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 	const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;

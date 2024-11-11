@@ -16,6 +16,7 @@ interface Props {
 }
 
 const ExpertsInfoTab = ({ user }: Props) => {
+	console.log('userdata in experts', user);
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi } = usePeopleChainApiContext();

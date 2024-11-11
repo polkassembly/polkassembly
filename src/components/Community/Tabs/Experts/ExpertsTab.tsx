@@ -10,6 +10,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import Image from 'next/image';
 import { Spin } from 'antd';
 import { ExpertRequestResponse } from 'pages/api/v1/auth/data/getAllExperts';
+import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 
 const ExpertsTab = () => {
 	const { network } = useNetworkSelector();
@@ -30,18 +31,33 @@ const ExpertsTab = () => {
 				username: searchedUserName
 			};
 		}
-
+	
 		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/auth/data/getAllExperts', body);
 		if (data) {
-			console?.log('checking experts data', data);
-			setUserData(data?.data);
-			setTotalUsers(data?.count);
-			setLoading(false);
+			const usersWithFollowers = await Promise.all(
+				data.data.map(async (user) => {
+					const followersData = await getFollowersData(user.userId);
+					console.log('userdata in experts1', followersData);
+					return { ...user, followers: followersData?.followers || 0, followings: followersData?.followings || 0 };
+				})
+			);
+			setUserData(usersWithFollowers);
+			setTotalUsers(data.count);
 		} else {
 			console?.log(error);
-			setLoading(false);
 		}
+		setLoading(false);
 	};
+	
+	const getFollowersData = async (userId: number) => {
+		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId });
+		if (!data && error) {
+			console?.log(error);
+			return null;
+		}
+		return {followers: data?.followers?.length, followings: data?.following?.length};
+	};
+	
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -39,6 +39,16 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
+		const userAddressesRefs = await firestore_db
+			.collection('addresses')
+			.where('address', '==', encodedUserAddress)
+			.where('user_id', '==', user?.id)
+			.get();
+
+		if (userAddressesRefs?.empty) {
+			return res.status(400).json({ message: messages.UNAUTHORISED });
+		}
+
 		const expertReqSnapshot = firestore_db.collection('expert_requests');
 
 		const expertReqDocs = await expertReqSnapshot
@@ -56,9 +66,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			address: encodedUserAddress,
 			contribution: contribution || '',
 			createdAt: new Date(),
+			id: expertReqDoc?.id,
 			network: network,
 			reason: reason || '',
 			status: EExpertReqStatus.PENDING,
+			totalReviews: 0,
 			userId: user?.id
 		};
 

@@ -77,7 +77,7 @@ function ExpertBodyCard() {
 			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>;
 			const subsquidProposalType = getSubsquidProposalType(validProposalType);
 			const key = postIndex && postType ? `${postIndex.toString()}_${subsquidProposalType}` : null;
-			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment.expertComment) : [];
+			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment.isExpertComment) : [];
 			setReviewsCount(expertComments.length);
 		}
 	}, [comments, postIndex, postType]);
@@ -93,10 +93,10 @@ function ExpertBodyCard() {
 			comment_reactions: { '👍': { count: 0, userIds: [], usernames: [] }, '👎': { count: 0, userIds: [], usernames: [] } },
 			content: review,
 			created_at: new Date(),
-			expertComment: true,
 			history: [],
 			id: commentId,
 			isError: false,
+			isExpertComment: true,
 			profile: picture || '',
 			proposer: loginAddress,
 			replies: [],

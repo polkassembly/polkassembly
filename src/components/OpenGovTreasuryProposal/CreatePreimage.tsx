@@ -458,7 +458,11 @@ const CreatePreimage = ({
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 				if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					if (network === 'cere') {
+						txArr.push((api?.tx?.treasury?.spend as any)(balance.toString(), beneficiary.address));
+					} else {
+						txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					}
 				}
 			});
 		}

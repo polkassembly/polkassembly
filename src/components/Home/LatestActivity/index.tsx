@@ -94,7 +94,7 @@ const Container = styled.div`
 	}
 	.ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
 	.ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
-		font-weight: 800;
+		font-weight: 800 !important;
 	}
 `;
 

@@ -1006,3 +1006,8 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 .image-light {
   filter: brightness(0) saturate(100%) invert(33%) sepia(14%) saturate(1156%) hue-rotate(174deg) brightness(102%) contrast(92%);
 }
+
+.ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
+.ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+		font-weight: 600 !important;
+}

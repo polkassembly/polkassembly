@@ -92,7 +92,7 @@ const Messages = ({ chat, chatId }: Props) => {
 	}, [chatId]);
 
 	return (
-		<div className='flex h-full w-full flex-col'>
+		<div className='flex h-[440px] w-full flex-col'>
 			<Card
 				className='w-full rounded-none border-x-0 border-t-0 text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
@@ -117,7 +117,7 @@ const Messages = ({ chat, chatId }: Props) => {
 				spinning={loading}
 				className='h-[250px]'
 			>
-				<div className={messages.length > 0 ? 'h-72 overflow-y-scroll px-5 py-3' : 'hidden'}>
+				<div className={messages.length > 0 ? 'max-h-72 overflow-y-auto px-5 py-3' : 'hidden'}>
 					{messages.map((message) => {
 						const isSent = message?.senderAddress === address;
 						return (
@@ -131,40 +131,44 @@ const Messages = ({ chat, chatId }: Props) => {
 					})}
 				</div>
 			</Spin>
-			{messages.length > 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
-			<AuthForm
-				onSubmit={handleSubmit}
-				className={messages.length > 0 ? 'mt-auto justify-self-end pb-1 pt-2' : 'flex h-[440px] flex-col justify-between'}
-			>
-				{isRequestSent ? (
-					<div className='bg-[#D2D8E0] px-5 py-2'>
-						<span className='text-sm text-[#576D8BCC]'>You can chat once message request is accepted</span>
-					</div>
-				) : (
-					<TextArea
-						rows={messages.length > 0 ? 2 : 3}
-						placeholder='Type your message here'
-						maxLength={6}
-						autoFocus
-						value={newMessage}
-						className={messages.length > 0 ? 'rounded-none shadow-md' : 'mx-auto mt-5 w-[90%]'}
-						onChange={(e) => {
-							setNewMessage(e.target.value);
-						}}
-					/>
-				)}
-				{messages.length < 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
-				<Button
-					className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
-						!newMessage || loading || isRequestSent ? 'opacity-60' : ''
-					}`}
-					type='primary'
-					disabled={!newMessage || loading || isRequestSent}
-					onClick={handleSubmit}
-				>
-					<span className='text-white'>Post</span>
-				</Button>
-			</AuthForm>
+			{!loading ? (
+				<>
+					{messages.length > 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
+					<AuthForm
+						onSubmit={handleSubmit}
+						className={messages.length > 0 ? `${chat.requestStatus === EChatRequestStatus.ACCEPTED && 'mt-auto'} justify-self-end` : 'flex h-[440px] flex-col justify-between'}
+					>
+						{isRequestSent ? (
+							<div className='bg-[#F6F7F9] px-5 py-2 shadow-sm'>
+								<span className='text-sm text-[#576D8BCC]'>You can chat once message request is accepted</span>
+							</div>
+						) : (
+							<TextArea
+								rows={messages.length > 0 ? 2 : 3}
+								placeholder='Type your message here'
+								maxLength={1500}
+								autoFocus
+								value={newMessage}
+								className={messages.length > 0 ? 'rounded-none shadow-md' : 'mx-auto mt-5 w-[90%]'}
+								onChange={(e) => {
+									setNewMessage(e.target.value);
+								}}
+							/>
+						)}
+						{messages.length === 0 ? <RequestStatus isRequestSent={false} /> : null}
+						<Button
+							className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
+								!newMessage || loading || isRequestSent ? 'opacity-60' : ''
+							}`}
+							type='primary'
+							disabled={!newMessage || loading || isRequestSent}
+							onClick={handleSubmit}
+						>
+							<span className='text-white'>Send</span>
+						</Button>
+					</AuthForm>
+				</>
+			) : null}
 		</div>
 	);
 };

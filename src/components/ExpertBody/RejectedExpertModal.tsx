@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
 
@@ -27,10 +27,6 @@ const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible:
 					<span className='px-8 text-center'>
 						We regret to inform you that your application to become an Expert was rejected by our Team! Don’t worry, you can apply again in 30 days!
 					</span>
-				</div>
-				<div className='mt-2 text-center'>
-					<Button className='mb-3 h-10 w-96 bg-[#E5007A] text-white'>Set Reminder</Button>
-					<Button className='h-10 w-96 border border-solid border-[#E5007A] text-[#E5007A]'>See Why I was Rejected</Button>
 				</div>
 			</Modal>
 		</div>

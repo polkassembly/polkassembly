@@ -101,7 +101,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -1153,7 +1153,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
-				post.progress_report = { ...data.progress_report, created_at: data?.progress_report?.created_at?.toDate?.() };
+				post.progress_report = {
+					...data?.progress_report?.map((report: any) => {
+						return { ...report, created_at: report?.created_at?.toDate ? report?.created_at?.toDate() : report?.created_at };
+					}),
+					created_at: data?.progress_report?.created_at?.toDate?.()
+				};
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1213,7 +1218,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip' ? timeline.hash : timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
-					return { ...timeline, commentsCount, index: postId };
+					return { ...timeline, commentsCount };
 				});
 				const timelines: Array<any> = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map((timeline) => timeline.value);

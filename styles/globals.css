@@ -995,6 +995,10 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
   background-color: #dde4ed !important;
 }
 
+.ant-timeline .ant-timeline-item-head {
+  background-color: transparent !important;
+}
+
 .image-dark {
   filter: brightness(0) saturate(100%) invert(69%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(86%) contrast(87%);
 }

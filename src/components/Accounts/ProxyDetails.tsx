@@ -14,11 +14,11 @@ const ProxyDetails: React.FC<Props> = ({ accountData }) => {
 	if (!accountData?.proxy) return null;
 
 	return (
-		<div
-			className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-[10px] dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
-		>
+		<>
 			{accountData?.proxy?.real_account?.length > 0 && (
-				<>
+				<div
+					className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-[10px] dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
+				>
 					<h3 className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Proxy</h3>
 					<div className='flex w-full flex-col '>
 						<div>
@@ -46,9 +46,9 @@ const ProxyDetails: React.FC<Props> = ({ accountData }) => {
 							</div>
 						)}
 					</div>
-				</>
+				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

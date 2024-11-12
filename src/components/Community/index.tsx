@@ -14,7 +14,7 @@ import TabButtons from './TabButtons';
 import DelegatesTab from './Tabs/Delegations/DelegatesTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
+import { EDelegationAddressFilters, EDelegationSourceFilters, EExpertsSortFilters, EMembersSortFilters, IDelegateAddressDetails } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
@@ -23,14 +23,19 @@ import { BN } from 'bn.js';
 import { useCommunityTabSelector, useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ECommunityTabs } from '~src/redux/communityTab/@types';
-import MembersTab from './Tabs/Members/MembersTab';
 import { useDispatch } from 'react-redux';
 import { communityTabActions } from '~src/redux/communityTab';
 import ExpertsTab from './Tabs/Experts/ExpertsTab';
+import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
+import { defaultIdentityInfo } from './utils';
+import { User } from '~src/auth/types';
+import { UsersResponse } from 'pages/api/v1/auth/data/getAllUsers';
+import MembersTab from './Tabs/Members/MembersTab';
+import { ExpertRequestResponse } from 'pages/api/v1/auth/data/getAllExperts';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
-	const { selectedTab } = useCommunityTabSelector();
+	const { selectedTab, searchedUserName } = useCommunityTabSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +45,14 @@ const Community = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [searchInput, setSearchInput] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
+	const [membersData, setMembersData] = useState<any>();
+	const [totalMembers, setTotalMembers] = useState<number>();
+	const [expertsData, setExpertsData] = useState<any>();
+	const [totalExperts, setTotalExperts] = useState<number>();
+	const [totalDelegates, setTotalDelegates] = useState<number>();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
+	const [membersSortOption, setMembersSortOption] = useState<EMembersSortFilters | null>(null);
+	const [expertsSortOption, setExpertsSortOption] = useState<EExpertsSortFilters | null>(null);
 	const [selectedSources, setSelectedSources] = useState<string[]>(
 		selectedTab === ECommunityTabs?.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object?.values(EDelegationSourceFilters)
 	);
@@ -62,9 +74,7 @@ const Community = () => {
 			}
 		});
 
-		const data = await Promise?.allSettled(identityInfoPromises);
-		console?.log(data);
-
+		await Promise?.allSettled(identityInfoPromises);
 		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
 			return {
 				...delegate,
@@ -85,6 +95,7 @@ const Community = () => {
 		if (data) {
 			//putting polkassembly Delegate first;
 			const updatedDelegates = data || [];
+			setTotalDelegates(data?.length);
 
 			updatedDelegates?.sort((a: any, b: any) => {
 				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
@@ -110,10 +121,119 @@ const Community = () => {
 		}
 	};
 
+	const handleBeneficiaryIdentityInfo = async (user: User) => {
+		if (!api || !apiReady || !user?.addresses?.length) return;
+
+		const promiseArr = user?.addresses?.map((address) => getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
+
+		try {
+			const resolved = await Promise.all(promiseArr);
+			user.identityInfo = resolved[0] || defaultIdentityInfo;
+		} catch (err) {
+			console?.error('Error fetching identity info:', err);
+			user.identityInfo = defaultIdentityInfo;
+		}
+	};
+
+	const getFollowersData = async (userId: number) => {
+		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId });
+		if (!data && error) {
+			return { followers: 0, followings: 0 };
+		}
+		return { followers: data?.followers?.length || 0, followings: data?.following?.length || 0 };
+	};
+
+	const getMembersData = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
+		setLoading(true);
+		let body = {};
+		if (searchedUserName) {
+			body = {
+				username: searchedUserName
+			};
+		} else {
+			body = {
+				page: currentPage || 1
+			};
+		}
+
+		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/auth/data/getAllUsers', body);
+		if (data) {
+			let updatedUserData = await Promise.all(
+				data.data.map(async (user) => {
+					await handleBeneficiaryIdentityInfo(user);
+					const followersData = await getFollowersData(user.id);
+					return { ...user, followers: followersData.followers, followings: followersData.followings };
+				})
+			);
+
+			if (membersSortOption === EMembersSortFilters.ALPHABETICAL) {
+				updatedUserData = updatedUserData.sort((a, b) => a?.username?.toLowerCase().localeCompare(b.username.toLocaleLowerCase()));
+				console.log(updatedUserData);
+			}
+
+			if (membersSortOption === EMembersSortFilters.FOLLOWERS) {
+				updatedUserData = updatedUserData.sort((a, b) => b.followers - a.followers);
+			}
+
+			if (membersSortOption === EMembersSortFilters.FOLLOWINGS) {
+				updatedUserData = updatedUserData.sort((a, b) => b.followings - a.followings);
+			}
+
+			setMembersData(updatedUserData);
+			setTotalMembers(data?.count);
+		} else {
+			console?.log(error);
+		}
+		setLoading(false);
+	};
+
+	const getExpertsData = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
+		setLoading(true);
+		let body = {};
+		if (searchedUserName) {
+			body = {
+				username: searchedUserName
+			};
+		}
+		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/auth/data/getAllExperts', body);
+		if (data) {
+			let usersWithFollowers = await Promise.all(
+				data.data.map(async (user) => {
+					const followersData = await getFollowersData(user.userId);
+					return { ...user, followers: followersData?.followers || 0, followings: followersData?.followings || 0 };
+				})
+			);
+
+			if (expertsSortOption === EExpertsSortFilters.FOLLOWERS) {
+				usersWithFollowers = usersWithFollowers.sort((a, b) => b.followers - a.followers);
+			}
+			if (expertsSortOption === EExpertsSortFilters.FOLLOWINGS) {
+				usersWithFollowers = usersWithFollowers.sort((a, b) => b.followings - a.followings);
+			}
+			if (expertsSortOption === EExpertsSortFilters.REVIEWS_COUNT) {
+				usersWithFollowers = usersWithFollowers.sort((a, b) => b?.review_count - a?.review_count);
+			}
+
+			setExpertsData(usersWithFollowers);
+			setTotalExperts(data.count);
+		} else {
+			console?.log(error);
+		}
+		setLoading(false);
+	};
+
 	useEffect(() => {
 		getData();
+		getExpertsData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, membersSortOption]);
+
+	useEffect(() => {
+		getMembersData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {
@@ -134,6 +254,8 @@ const Community = () => {
 		const selectedOption = e?.target?.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
+		setMembersSortOption(updatedSortOption);
+		setExpertsSortOption(updatedSortOption);
 		const searchOutput = searchInput?.length
 			? delegatesData?.current?.filter((delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase()))
 			: null;
@@ -309,23 +431,23 @@ const Community = () => {
 
 	const sortContent = (
 		<>
-			{selectedTab === ECommunityTabs?.DELEGATES && (
-				<div className='flex flex-col'>
-					<div className='flex items-center justify-between'>
-						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
-						<span
-							className={classNames(
-								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins?.className,
-								poppins?.variable
-							)}
-							onClick={() => {
-								setSortOption(null);
-							}}
-						>
-							Clear
-						</span>
-					</div>
+			<div className='flex flex-col'>
+				<div className='flex items-center justify-between'>
+					<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
+					<span
+						className={classNames(
+							'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+							poppins?.className,
+							poppins?.variable
+						)}
+						onClick={() => {
+							setSortOption(null);
+						}}
+					>
+						Clear
+					</span>
+				</div>
+				{selectedTab === ECommunityTabs?.DELEGATES && (
 					<Radio.Group
 						className='flex flex-col overflow-y-auto'
 						onChange={handleRadioChange}
@@ -351,59 +473,85 @@ const Community = () => {
 							Received Delegation(s)
 						</Radio>
 					</Radio.Group>
-				</div>
-			)}
-			{selectedTab === ECommunityTabs?.EXPERTS && (
-				<div className='flex flex-col'>
-					<div className='flex items-center justify-between'>
-						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
-						<span
-							className={classNames(
-								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins?.className,
-								poppins?.variable
-							)}
-							onClick={() => {
-								setSortOption(null);
-							}}
-						>
-							Clear
-						</span>
-					</div>
+				)}
+				{selectedTab === ECommunityTabs?.MEMBERS && (
 					<Radio.Group
 						className='flex flex-col overflow-y-auto'
 						onChange={handleRadioChange}
-						value={sortOption || null}
+						value={membersSortOption || null}
 						disabled={loading}
 					>
 						<Radio
-							value='REVIEWS_COUNT'
+							value={EMembersSortFilters?.ALPHABETICAL}
 							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
-							Reviews count
+							Alphabetical (Username)
 						</Radio>
 						<Radio
-							value='FOLLOWERS'
+							value={EMembersSortFilters?.FOLLOWERS}
 							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Followers
 						</Radio>
 						<Radio
-							value='FOLLOWING'
+							value={EMembersSortFilters?.FOLLOWINGS}
 							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
-							Following
+							Followings
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.MULTI_SIGNATORY}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Multi Signatory
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.SINGLE_SIGNATORY}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Single Signatory
 						</Radio>
 					</Radio.Group>
-				</div>
-			)}
+				)}
+				{selectedTab === ECommunityTabs?.EXPERTS && (
+					<Radio.Group
+						className='flex flex-col overflow-y-auto'
+						onChange={handleRadioChange}
+						value={expertsSortOption || null}
+						disabled={loading}
+					>
+						<Radio
+							value={EExpertsSortFilters?.FOLLOWERS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Followers
+						</Radio>
+						<Radio
+							value={EExpertsSortFilters?.FOLLOWINGS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Followings
+						</Radio>
+						<Radio
+							value={EExpertsSortFilters?.REVIEWS_COUNT}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Review Count
+						</Radio>
+					</Radio.Group>
+				)}
+			</div>
 		</>
 	);
 
 	return (
 		<section className='mt-3'>
 			<header className='flex items-center justify-between gap-x-4'>
-				<TabButtons />
+				<TabButtons
+					totalMembers={totalMembers}
+					totalExperts={totalExperts}
+					totalDelegates={totalDelegates}
+				/>
 				<div className='flex w-full items-center gap-3'>
 					<div className='dark:placeholder:white hidden h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex'>
 						<Input
@@ -478,19 +626,24 @@ const Community = () => {
 					/>
 				</Spin>
 			)}
-			{selectedTab === ECommunityTabs?.DELEGATES && (
-				<Spin spinning={loading}>
-					<DelegatesTab
-						currentPage={currentPage}
-						setCurrentPage={setCurrentPage}
-						filteredDelegates={filteredDelegates}
-						loading={loading}
-						delegatesData={delegatesData}
-					/>
-				</Spin>
+			{selectedTab === ECommunityTabs?.MEMBERS && (
+				<MembersTab
+					totalUsers={totalMembers}
+					userData={membersData}
+					loading={loading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
 			)}
-			{selectedTab === ECommunityTabs?.MEMBERS && <MembersTab />}
-			{selectedTab === ECommunityTabs?.EXPERTS && <ExpertsTab />}
+			{selectedTab === ECommunityTabs?.EXPERTS && (
+				<ExpertsTab
+					totalUsers={totalExperts}
+					userData={expertsData}
+					loading={loading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
+			)}
 		</section>
 	);
 };

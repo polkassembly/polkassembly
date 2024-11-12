@@ -1001,6 +1001,20 @@ export enum EDelegationAddressFilters {
 	VOTED_PROPOSALS = 'votedProposalsCount'
 }
 
+export enum EMembersSortFilters {
+	ALPHABETICAL = 'Alphabetic',
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	SINGLE_SIGNATORY = 'SingleSignatory',
+	MULTI_SIGNATORY = 'MultiSignatory'
+}
+
+export enum EExpertsSortFilters {
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	REVIEWS_COUNT = 'ReviewsCount'
+}
+
 export enum EDelegationSourceFilters {
 	POLKASSEMBLY = 'polkassembly',
 	PARITY = 'parity',

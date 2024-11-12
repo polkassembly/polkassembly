@@ -7,8 +7,7 @@ import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { poppins } from 'pages/_app';
-import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BadgeName, User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
@@ -22,7 +21,6 @@ import Markdown from '~src/ui-components/Markdown';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
 import copyToClipboard from '~src/util/copyToClipboard';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
 	user: User | any;
@@ -32,31 +30,15 @@ interface Props {
 	isUsedInExpertTab?: boolean;
 }
 const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
-	console.log('checking user data2: ', user);
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
-	const [userData, setUserData] = useState<FollowersResponse>();
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	const [messageApi, contextHolder] = message.useMessage();
-	const getFollowersData = async () => {
-		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId: user?.id || user?.userId });
-		if (!data && error) {
-			console?.log(error);
-		}
-		if (data) {
-			setUserData(data);
-		}
-	};
-
-	useEffect(() => {
-		getFollowersData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user?.id]);
 
 	const handleDelegationContent = (content: string) => {
 		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
@@ -122,7 +104,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 					</div>
 					<div className='flex items-center gap-x-4'>
 						<FollowButton
-							userId={user?.id}
+							userId={user?.id || user?.userId}
 							isUsedInProfileHeaders={false}
 							isUsedInCommunityTab
 						/>
@@ -205,7 +187,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 								type='vertical'
 							/>
 							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{userData?.followers?.length}</span>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers}</span>
 						</div>
 						<div className='flex items-center gap-x-1'>
 							<Divider
@@ -213,7 +195,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 								type='vertical'
 							/>
 							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{userData?.following?.length}</span>
+							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
 						</div>
 						<Button
 							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'

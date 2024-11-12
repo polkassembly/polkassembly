@@ -53,8 +53,6 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 		});
 	};
 
-	console?.log(delegate);
-
 	const getCurrentuserData = async () => {
 		const username = delegate?.username;
 		if (username) {

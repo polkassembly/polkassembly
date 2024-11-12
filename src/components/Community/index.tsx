@@ -67,9 +67,7 @@ const Community = () => {
 			}
 		});
 
-		const data = await Promise?.allSettled(identityInfoPromises);
-		console?.log(data);
-
+		await Promise?.allSettled(identityInfoPromises);
 		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
 			return {
 				...delegate,
@@ -132,7 +130,6 @@ const Community = () => {
 	const getFollowersData = async (userId: number) => {
 		const { data, error } = await nextApiClientFetch<FollowersResponse>('api/v1/fetch-follows/followersAndFollowingInfo', { userId });
 		if (!data && error) {
-			console?.log(error);
 			return { followers: 0, followings: 0 };
 		}
 		return { followers: data?.followers?.length || 0, followings: data?.following?.length || 0 };

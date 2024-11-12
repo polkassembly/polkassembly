@@ -30,7 +30,6 @@ interface Props {
 	isUsedInExpertTab?: boolean;
 }
 const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
-	console.log('checking user data2: ', user);
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();

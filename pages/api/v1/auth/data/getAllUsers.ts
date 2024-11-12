@@ -20,11 +20,9 @@ export const getAllUsers = async ({ page, username }: { page: number; username?:
 	try {
 		let userDocs;
 
-		// Check if a username is provided, then fetch only that user
 		if (username) {
 			userDocs = await firestore_db?.collection('users')?.where('username', '==', username)?.get();
 		} else {
-			// Otherwise, fetch all users with pagination
 			userDocs = await firestore_db
 				?.collection('users')
 				?.orderBy('created_at', 'desc')
@@ -39,7 +37,6 @@ export const getAllUsers = async ({ page, username }: { page: number; username?:
 			userDocs?.docs?.map(async (doc) => {
 				const user = doc?.data() as User;
 
-				// Check if created_at is a Firestore Timestamp, then convert
 				const createdAt = user?.created_at instanceof Timestamp ? user?.created_at?.toDate() : user?.created_at;
 
 				const addresses = await getAddressesFromUserId(user?.id);

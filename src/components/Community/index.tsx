@@ -14,7 +14,7 @@ import TabButtons from './TabButtons';
 import DelegatesTab from './Tabs/Delegations/DelegatesTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
+import { EDelegationAddressFilters, EDelegationSourceFilters, EMembersSortFilters, IDelegateAddressDetails } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
@@ -46,6 +46,7 @@ const Community = () => {
 	const [membersData, setMembersData] = useState<any>();
 	const [totalMembers, setTotalMembers] = useState<number>();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
+	const [membersSortOption, setMembersSortOption] = useState<EMembersSortFilters | null>(null);
 	const [selectedSources, setSelectedSources] = useState<string[]>(
 		selectedTab === ECommunityTabs?.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object?.values(EDelegationSourceFilters)
 	);
@@ -151,13 +152,28 @@ const Community = () => {
 
 		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/auth/data/getAllUsers', body);
 		if (data) {
-			const updatedUserData = await Promise.all(
+			let updatedUserData = await Promise.all(
 				data.data.map(async (user) => {
 					await handleBeneficiaryIdentityInfo(user);
 					const followersData = await getFollowersData(user.id);
 					return { ...user, followers: followersData.followers, followings: followersData.followings };
 				})
 			);
+
+			console.log('updated username: ', updatedUserData);
+
+			if (membersSortOption === EMembersSortFilters.ALPHABETICAL) {
+				updatedUserData = updatedUserData.sort((a, b) => a?.username?.toLowerCase().localeCompare(b.username.toLocaleLowerCase()));
+				console.log(updatedUserData);
+			}
+
+			if (membersSortOption === EMembersSortFilters.FOLLOWERS) {
+				updatedUserData = updatedUserData.sort((a, b) => b.followers - a.followers);
+			}
+
+			if (membersSortOption === EMembersSortFilters.FOLLOWINGS) {
+				updatedUserData = updatedUserData.sort((a, b) => b.followings - a.followings);
+			}
 
 			setMembersData(updatedUserData);
 			setTotalMembers(data?.count);
@@ -171,7 +187,7 @@ const Community = () => {
 		getData();
 		getMembersData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, membersSortOption]);
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {
@@ -192,6 +208,7 @@ const Community = () => {
 		const selectedOption = e?.target?.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
+		setMembersSortOption(updatedSortOption);
 		const searchOutput = searchInput?.length
 			? delegatesData?.current?.filter((delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase()))
 			: null;
@@ -367,23 +384,23 @@ const Community = () => {
 
 	const sortContent = (
 		<>
-			{selectedTab === ECommunityTabs?.DELEGATES && (
-				<div className='flex flex-col'>
-					<div className='flex items-center justify-between'>
-						<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
-						<span
-							className={classNames(
-								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins?.className,
-								poppins?.variable
-							)}
-							onClick={() => {
-								setSortOption(null);
-							}}
-						>
-							Clear
-						</span>
-					</div>
+			<div className='flex flex-col'>
+				<div className='flex items-center justify-between'>
+					<p className='m-0 mb-1 p-0 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Sort By</p>
+					<span
+						className={classNames(
+							'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
+							poppins?.className,
+							poppins?.variable
+						)}
+						onClick={() => {
+							setSortOption(null);
+						}}
+					>
+						Clear
+					</span>
+				</div>
+				{selectedTab === ECommunityTabs?.DELEGATES && (
 					<Radio.Group
 						className='flex flex-col overflow-y-auto'
 						onChange={handleRadioChange}
@@ -409,8 +426,47 @@ const Community = () => {
 							Received Delegation(s)
 						</Radio>
 					</Radio.Group>
-				</div>
-			)}
+				)}
+				{selectedTab === ECommunityTabs?.MEMBERS && (
+					<Radio.Group
+						className='flex flex-col overflow-y-auto'
+						onChange={handleRadioChange}
+						value={membersSortOption || null}
+						disabled={loading}
+					>
+						<Radio
+							value={EMembersSortFilters?.ALPHABETICAL}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Alphabetical (Username)
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.FOLLOWERS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Followers
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.FOLLOWINGS}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Followings
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.MULTI_SIGNATORY}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Multi Signatory
+						</Radio>
+						<Radio
+							value={EMembersSortFilters?.SINGLE_SIGNATORY}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Single Signatory
+						</Radio>
+					</Radio.Group>
+				)}
+			</div>
 		</>
 	);
 

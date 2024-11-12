@@ -207,7 +207,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 		const getData = async () => {
 			const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
-			if (tracks && Array?.isArray(tracks)) {
+			if (tracks && Array.isArray(tracks)) {
 				const track = tracks?.find((track) => track && Array?.isArray(track) && track?.length >= 2 && track[0] === trackNum);
 				if (track && Array?.isArray(track) && track?.length > 1) {
 					const trackInfo = track[1] as any;

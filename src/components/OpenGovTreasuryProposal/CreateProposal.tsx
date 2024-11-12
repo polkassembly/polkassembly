@@ -62,8 +62,11 @@ interface Props {
 	allowedCommentors?: EAllowedCommentor;
 }
 export const getDiscussionIdFromLink = (discussion: string) => {
-	const splitedArr = discussion?.split('/');
-	return splitedArr[splitedArr.length - 1];
+	const splitedArr = discussion?.trim()?.split('/');
+	if (discussion.includes('post')) {
+		return splitedArr[splitedArr.length - 1];
+	}
+	return null;
 };
 
 const CreateProposal = ({
@@ -167,7 +170,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
-			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,

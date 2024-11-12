@@ -208,7 +208,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						<p className='m-0 p-0'>{username}</p>
 					) : (
 						<NameLabel
-							className={`min-w-[120px] max-w-[12vw] text-sm text-bodyBlue 2xl:max-w-[16vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
+							className={`min-w-[120px] max-w-[12vw] text-sm font-semibold text-bodyBlue 2xl:max-w-[16vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
 							username={user}
 							usernameMaxLength={15}
 							truncateUsername={false}

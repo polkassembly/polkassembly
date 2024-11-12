@@ -70,7 +70,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sor
 			trigger={['hover']}
 			className={`${className} ${poppins.className} ${poppins.variable}`}
 		>
-			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
+			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 				<span className='sm:mr-1 sm:mt-0.5'>Sort By</span>
 				<SwapOutlined
 					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}

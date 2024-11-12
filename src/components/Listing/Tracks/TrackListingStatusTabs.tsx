@@ -151,25 +151,25 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 				>
 					<Radio
 						value='All'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						All({initialCountForAll || 0}){' '}
 					</Radio>
 					<Radio
 						value='Submitted'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Submitted({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Voting({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Closed({initialCountForClosed || 0})
 					</Radio>

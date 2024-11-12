@@ -32,7 +32,7 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 					src='/assets/icons/success-verification.svg'
 					alt='success verification icon'
 				/>
-				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
+				<label className='-mt-2 text-xl font-semibold tracking-tight text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<CustomButton
 					onClick={() => {

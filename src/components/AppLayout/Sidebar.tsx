@@ -18,6 +18,7 @@ import {
 	OverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
+	CalendarIcon,
 	ReferendaIcon,
 	StakingAdminIcon,
 	TipsIcon,
@@ -40,7 +41,8 @@ import {
 	SelectedPreimages,
 	AnalyticsSVGIcon,
 	AllPostIcon,
-	BatchVotingIcon
+	BatchVotingIcon,
+	SelectedCalendar
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -68,6 +70,7 @@ import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
+import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 
 const { Sider } = Layout;
 
@@ -84,6 +87,7 @@ interface SidebarProps {
 	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
 	setLoginOpen: (open: boolean) => void;
+	setIdentityOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -98,7 +102,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	sidedrawer,
 	isIdentityUnverified,
 	setOpenAddressLinkedModal,
-	setLoginOpen
+	setLoginOpen,
+	setIdentityOpen
 }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -220,11 +225,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}};
 		}
 
-	.ant-menu-submenu-title {
-  ${(props: any) =>
-		!props.sidebarCollapsed && props.sidedrawer
-			? isMobile
-				? `
+		.ant-menu-submenu-title {
+			${(props: any) =>
+				!props.sidebarCollapsed && props.sidedrawer
+					? isMobile
+						? `
         padding-left: 18px !important;  /* Adjust mobile-specific values here */
         border-right-width: 15px;
         margin-right: 15px;
@@ -234,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 15px;
 
       `
-				: `
+						: `
         padding-left: 16px !important; /* Adjust non-mobile values here */
         border-right-width: 20px;
         margin-right: 10px;
@@ -244,11 +249,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         margin-left: 20px;
         width: 199px;
       `
-			: ''}
-}
+					: ''}
+		}
 
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
-		  ${() => {
+			${() => {
 				if (isMobile) {
 					return `padding-left: 16px !important;
 			margin-left: 25px !important;`;
@@ -257,6 +262,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			margin-left: 20px !important;`;
 				}
 			}}
+		}
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
@@ -309,6 +315,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		if (isMobile) {
 			setIdentityMobileModal(true);
 		} else {
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+				localStorage.setItem('identityAddress', currentUser?.loginAddress);
+				setIdentityOpen(true);
+				return;
+			}
 			if (address?.length) {
 				setOpen(!open);
 			} else {
@@ -566,7 +577,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'treasury_group',
 					null,
 					isOpenGovSupported(network)
-						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
+						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
 							? [
@@ -632,7 +643,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
@@ -1072,7 +1083,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/discussions' ? (
 					<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<DiscussionsIcon className='-ml-[7px]  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</>
+		),
+
+		getSiderMenuItem(
+			'Calendar',
+			'/calendar',
+			<>
+				{router.pathname === '/calendar' ? (
+					<SelectedCalendar className='-ml-[10px] -mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<CalendarIcon className='-ml-[7px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -1365,19 +1388,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	let bountiesSubItems: ItemType[] = [];
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 
 		if (['polkadot'].includes(network)) {
 			bountiesSubItems.push(
-				getSiderMenuItem(<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty', null)
+				getSiderMenuItem(
+					<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>,
+					'/bounty-dashboard',
+					null
+				)
 			);
 		}
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
 					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+						Bounties
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
@@ -1394,7 +1421,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							)}
 						</span>
 					</div>,
-					'/bounties',
+					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
 					null
 				),
 				getSiderMenuItem(
@@ -1570,7 +1597,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		</div>
 	);
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		gov2CollapsedItems.splice(
 			8,
 			0,
@@ -1938,19 +1965,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<Link
-										href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}
-										className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}
-									>
+									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<Image
-												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-												alt='polkassembly logo'
-												width={150}
-												height={50}
-											/>
+											<div className='ml-16 flex h-full items-center justify-center'>
+												<Image
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+													alt='polkassembly logo'
+													width={150}
+													height={50}
+												/>
+											</div>
 										) : (
-											<PaLogo sidedrawer={sidedrawer} />
+											<div className='ml-5 h-full'>
+												<PaLogo sidedrawer={sidedrawer} />
+											</div>
 										)}
 									</Link>
 									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>

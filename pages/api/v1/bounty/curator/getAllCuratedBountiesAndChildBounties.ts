@@ -14,21 +14,11 @@ import { bountyStatus } from '~src/global/statuses';
 import { GET_ALL_BOUNTIES, GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, ISubsquidChildBontyAndBountyRes } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/types';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-
-interface ISubsquidBounty {
-	proposer: string;
-	index: number;
-	status: string;
-	reward: string;
-	payee: string;
-	curator: string;
-	createdAt: string;
-}
 
 const ZERO_BN = new BN(0);
 
@@ -67,7 +57,7 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 
 		const bountiesDocs = await postsByTypeRef(network, ProposalType.BOUNTIES).where('id', 'in', subsquidbountiesIndexes).get();
 
-		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidBounty) => {
+		const bountiesPromises = subsquidBountiesData.map(async (subsquidBounty: ISubsquidChildBontyAndBountyRes) => {
 			const subsquidChildBountiesRes = await fetchSubsquid({
 				network,
 				query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,

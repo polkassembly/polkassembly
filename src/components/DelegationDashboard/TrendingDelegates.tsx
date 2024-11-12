@@ -285,7 +285,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					alt='trending icon'
 					imgClassName='h-5 w-6 sm:h-6 sm:w-6 mt-[2.5px]'
 				/>
-				<span className={`${poppins.variable} ${poppins.className} text-sm font-semibold sm:text-xl`}>Trending Delegates</span>
+				<span className={`${poppins.variable} ${poppins.className} text-sm font-semibold text-bodyBlue dark:text-white sm:text-xl`}>Trending Delegates</span>
 			</div>
 
 			<h4

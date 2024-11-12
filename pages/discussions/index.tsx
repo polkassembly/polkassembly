@@ -117,7 +117,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
-					Latest Discussions({count})
+					Discussions({count})
 				</div>
 				<button
 					onClick={handleClick}
@@ -129,7 +129,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 w-full rounded-xxl bg-white px-4 py-2 shadow-md dark:bg-section-dark-overlay md:px-8 md:py-4'>
-				<p className='m-0 mt-2 p-0 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+				<p className='m-0 mt-2 p-0 text-sm font-normal tracking-normal text-bodyBlue dark:text-blue-dark-high'>
 					Discussions is a space for the community to engage in meaningful conversations around on-chain proposals. It’s a space to share insights, provide feedback, and
 					collaborate on ideas that impact the network. On-chain posts are automatically generated as soon as a proposal is created, and only the proposer can edit the original
 					details. Join the conversation and help shape the future of the ecosystem.

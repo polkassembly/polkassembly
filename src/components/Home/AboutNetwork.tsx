@@ -168,7 +168,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
+				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high'>About</h2>
 				{router.pathname !== '/activity-feed' && <div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>}
 			</div>
 			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>

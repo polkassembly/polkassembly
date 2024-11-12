@@ -41,7 +41,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 				<>
 					<div className='mb-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<div className='flex items-center justify-between'>
-							<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
+							<span className='text-xl font-semibold text-bodyBlue dark:text-white'>How to Delegate on Polkassembly</span>
 							<div className='flex items-center space-x-5'>
 								<Button
 									onClick={showModal}
@@ -66,7 +66,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 								/>
 								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>STEP 1</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold '>Select Track for Delegation</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>Select Track for Delegation</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
 								</div>
 							</div>
@@ -84,7 +84,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 								/>
 								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>STEP 2</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold'>Select Delegate</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>Select Delegate</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>Choose a delegate based on the stats to complete your delegation process.</span>
 								</div>
 							</div>

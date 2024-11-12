@@ -69,7 +69,6 @@ const Leaderboard = ({ network, className }: Props) => {
 						<p className='m-0 mt-2 flex items-center justify-center p-0 text-sm text-white md:text-base'>
 							Find your rank in {network?.charAt(0)?.toUpperCase() + network?.slice(1)} ecosystem
 						</p>
-						<div className='absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
 					</div>
 				</div>
 			</div>

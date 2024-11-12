@@ -346,20 +346,20 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className=' flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
 					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 2, false, network)}</span>
+							<span className='px-1 text-2xl font-semibold text-bodyBlue dark:text-white'>{parseBalance(delegate?.delegatedBalance.toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
 					</div>
 					<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container py-3  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
-						<span className='text-2xl font-semibold'>{delegate?.votedProposalsCount}</span>
+						<span className='text-2xl font-semibold text-bodyBlue dark:text-white'>{delegate?.votedProposalsCount}</span>
 						<div className='mt-[2px] flex flex-col items-center'>
 							<span className='mb-[2px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voted proposals </span>
 							<span className='text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>(Past 30 days)</span>
 						</div>
 					</div>
 					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						<span className='text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>
+						<span className='text-2xl font-semibold text-bodyBlue text-bodyBlue dark:text-blue-dark-high dark:text-white'>{delegate?.receivedDelegationsCount}</span>
 						<span className='mb-[2px] mt-1 text-center text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Received Delegation</span>
 					</div>
 				</div>

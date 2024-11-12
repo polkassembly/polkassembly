@@ -216,7 +216,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		>
 			{!isSearch ? (
 				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
-					<span className='text-xs opacity-70 dark:text-[#96A4B6] dark:opacity-100'>Tags</span>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Tags</span>
 					<DropdownGreyIcon className='ml-1' />
 				</div>
 			) : (

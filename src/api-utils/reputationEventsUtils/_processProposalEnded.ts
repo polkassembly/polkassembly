@@ -73,6 +73,8 @@ export async function _processProposalEnded({ network, proposalIndex, proposalTy
 	// fetch proposal status
 	const proposalStatus = await getProposalEndedInfo(network, proposalIndex, proposalType);
 
+	console.log('proposalStatus:', proposalStatus);
+
 	if (!proposalStatus) {
 		return;
 	}

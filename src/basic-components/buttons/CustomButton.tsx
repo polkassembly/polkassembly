@@ -33,7 +33,7 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 			{...props}
 			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 border-[1px] shadow-none ${shape === 'circle' ? 'rounded-full' : 'rounded-md'} ${
 				fontSize ? `text-${fontSize}` : 'text-sm'
-			} font-semibold ${
+			} font-medium ${
 				!customColor
 					? `${
 							variant === 'primary'

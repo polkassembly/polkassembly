@@ -127,7 +127,13 @@ const messages = {
 	ERROR_IN_UPDATING_BADGES: 'Error in updating badges.',
 	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.',
 	PROGRESS_REPORT_UPDATED_SUCCESSFULLY: 'Progress report updated successfully.',
-	CURATOR_BIO_EDITED_SUCCESSFULLY: 'Curator bio edited successfully.'
+	CURATOR_BIO_EDITED_SUCCESSFULLY: 'Curator bio edited successfully.',
+	PARENT_BOUNTY_IS_NOT_ACTIVE: 'Parent Bounty is not active.',
+	CHILD_BOUNTY_SUBMISSION_DONE: 'Child bounty submission successfully added',
+	CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS: 'Child bounty submission already exists',
+	CHILD_BOUNTY_SUBMISSION_NOT_EXISTS: 'Child bounty submission does not exists.',
+	CHILD_BOUNTY_SUBMISSION_EDITED_SUCCESSFULLY: 'Child bounty submission edited successfully',
+	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully'
 };
 
 export default messages;

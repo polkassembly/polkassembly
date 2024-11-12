@@ -56,7 +56,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 
 		const existingPost = postDoc?.data() as Post;
 
-		if (!existingPost?.progress_report || !Array?.isArray(existingPost.progress_report)) {
+		if (!existingPost?.progress_report || !Array.isArray(existingPost.progress_report)) {
 			return res.status(400).json({ message: 'No progress reports found for the specified post.' });
 		}
 

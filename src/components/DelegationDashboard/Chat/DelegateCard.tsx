@@ -21,7 +21,7 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 		className='cursor-pointer border-section-light-container p-0'
 	>
 		<Card
-			className='w-full rounded-none border-x-0 border-b-0 text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
+			className='w-full rounded-none border-x-0 border-b-0 text-bodyBlue hover:bg-black/5 dark:bg-section-dark-overlay dark:text-blue-dark-high dark:hover:bg-white/10'
 			bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 			size='small'
 		>

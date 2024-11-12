@@ -206,16 +206,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		setCurvesLoading(true);
 
 		const getData = async () => {
-			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
-			if (tracks && Array.isArray(tracks)) {
-				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === trackNum);
-				if (track && Array.isArray(track) && track.length > 1) {
+			const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
+			if (tracks && Array?.isArray(tracks)) {
+				const track = tracks?.find((track) => track && Array?.isArray(track) && track?.length >= 2 && track[0] === trackNum);
+				if (track && Array?.isArray(track) && track?.length > 1) {
 					const trackInfo = track[1] as any;
 					const { decisionPeriod } = trackInfo;
 					const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 					let decisionPeriodHrs = 0;
 					if (strArr && Array.isArray(strArr)) {
-						strArr.forEach((str) => {
+						strArr?.forEach((str) => {
 							if (str.includes('h')) {
 								decisionPeriodHrs += parseInt(str.replace('h', ''));
 							} else if (str.includes('d')) {

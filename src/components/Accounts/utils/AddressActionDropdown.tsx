@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import ProxyMain from '~src/components/createProxy';
 import { Dropdown } from '~src/ui-components/Dropdown';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
@@ -23,7 +24,8 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 		isDropdownActive: false,
 		openAddressLinkModal: false,
 		openAddressLinkedModal: false,
-		openSetIdentityModal: false
+		openSetIdentityModal: false,
+		openProxyModal: false
 	});
 
 	const items: MenuProps['items'] = [
@@ -41,7 +43,10 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 		{
 			key: '2',
 			label: (
-				<div className='mt-1 flex items-center space-x-2'>
+				<div
+					onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
+					className='mt-1 flex items-center space-x-2'
+				>
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Add Proxy</span>
 				</div>
 			)
@@ -92,8 +97,13 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 				openAddressModal={state.openAddressLinkedModal}
 				setOpenAddressModal={(open) => setState((prevState) => ({ ...prevState, openAddressLinkedModal: open }))}
 			/>
+			<ProxyMain
+				openProxyModal={state.openProxyModal}
+				setOpenProxyModal={(open) => setState((prevState) => ({ ...prevState, openProxyModal: open }))}
+			/>
 		</div>
 	);
 };
 
 export default AddressActionDropdown;
+

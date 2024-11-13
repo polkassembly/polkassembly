@@ -261,6 +261,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						width={145}
 						text='Create Proxy'
 						variant='primary'
+						className={
+							form.getFieldsError().some((field) => field.errors.length > 0) ||
+							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+							availableBalance.lt(gasFee.add(baseDepositValue))
+								? 'opacity-50'
+								: ''
+						}
 					/>
 				</div>
 			}
@@ -392,7 +399,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									}
 								}}
 							>
-								Create Pure Proxy
+								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Pure Proxy</span>
 							</Checkbox>
 						</Form.Item>
 
@@ -421,7 +428,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								}
 							]}
 						>
-							<span className='text-sm text-blue-light-medium dark:text-blue-dark-helper'>Proxy Type</span>
+							<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 							<Select
 								className='w-full rounded-[4px] py-1'
 								style={{ width: '100%' }}

@@ -244,22 +244,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		...(isOpenGovSupported(network)
-			? [
-					{
-						key: 'create proxy',
-						label: (
-							<span
-								className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-								// onClick={() => setOpenProxyModal(true)}
-							>
-								{/* <ProxyIcon className='userdropdown-icon text-2xl' /> */}
-								<span>Create Proxy</span>
-							</span>
-						)
-					}
-			  ]
-			: []),
 		{
 			key: 'settings',
 			label: (

@@ -19,6 +19,7 @@ const AddressesComponent = () => {
 	const { loginAddress } = userDetails;
 	const [accountData, setAccountData] = useState<IAccountData | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isError, setIsError] = useState<boolean>(false);
 	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 
 	const fetchData = async () => {
@@ -30,16 +31,20 @@ const AddressesComponent = () => {
 
 			if (error || !data) {
 				console.error('Error while fetching accounts', error);
+				setIsError(true);
 				return;
 			}
 
 			if (data?.data?.account) {
 				setAccountData(data?.data?.account);
+				setIsError(false);
 			}
 		} catch (err) {
 			console.error('An error occurred while fetching data:', err);
+			setIsError(true);
 		} finally {
 			setIsLoading(false);
+			setIsError(false);
 		}
 	};
 
@@ -70,14 +75,14 @@ const AddressesComponent = () => {
 			</div>
 		);
 	}
-	if (!accountData) {
+	if (isError) {
 		return (
 			<div className='mx-auto max-w-[600px]'>
 				<Alert
 					type='info'
 					showIcon
 					className={'my-5 dark:text-white'}
-					message='Please wait while fetching Accounts data.'
+					message='Something wrong , while fetching data '
 				/>
 				<div className='flex items-center justify-center'>
 					<Image
@@ -94,25 +99,29 @@ const AddressesComponent = () => {
 	}
 
 	return (
-		<section>
-			<h3 className='mt-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high md:mt-5 md:text-2xl'>
-				{accountData?.multisig?.multi_account_member?.length > 0 ? 'Multisig Address' : 'Addresses'}
-			</h3>
-			<Spin
-				spinning={isLoading}
-				className='min-h-screen'
-			>
-				<div className='w-full rounded-[14px] bg-white p-[10px] drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
-					<AccountInfo
-						accountData={accountData}
-						loginAddress={loginAddress}
-					/>
-					<Signatories accountData={accountData} />
-					<ProxyDetails accountData={accountData} />
-					<MultisigDetails accountData={accountData} />
-				</div>
-			</Spin>
-		</section>
+		<Spin spinning={!accountData}>
+			<section className='min-h-[80vh]'>
+				<h3 className='mt-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high md:mt-5 md:text-2xl'>
+					{accountData && accountData?.multisig?.multi_account_member?.length > 0 ? 'Multisig Address' : 'Addresses'}
+				</h3>
+				<Spin
+					spinning={isLoading}
+					className='min-h-screen'
+				>
+					{accountData && (
+						<div className='w-full rounded-[14px] bg-white p-[10px] drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
+							<AccountInfo
+								accountData={accountData}
+								loginAddress={loginAddress}
+							/>
+							<Signatories accountData={accountData} />
+							<ProxyDetails accountData={accountData} />
+							<MultisigDetails accountData={accountData} />
+						</div>
+					)}
+				</Spin>
+			</section>
+		</Spin>
 	);
 };
 

@@ -157,8 +157,8 @@ const Messages = ({ chat, chatId }: Props) => {
 						)}
 						{messages.length === 0 ? <RequestStatus isRequestSent={false} /> : null}
 						<Button
-							className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none bg-[#485F7D99] px-5 text-sm font-medium tracking-wide text-white ${
-								!newMessage || loading || isRequestSent ? 'opacity-60' : ''
+							className={`custom-post-button ml-auto mr-3 flex h-9 w-full items-center justify-center space-x-2 self-center rounded-none border-none px-5 text-sm font-medium tracking-wide text-white ${
+								!newMessage || loading || isRequestSent ? 'bg-[#485F7D99]' : 'bg-pink_primary'
 							}`}
 							type='primary'
 							disabled={!newMessage || loading || isRequestSent}

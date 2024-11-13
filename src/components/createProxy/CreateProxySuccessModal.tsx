@@ -123,7 +123,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 							<span className='text-sm dark:text-blue-dark-high'>
 								Visit{' '}
 								<Link
-									href='/accounts'
+									href={'/accounts'}
 									className=' font-medium text-pink_primary'
 								>
 									Profile

@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
@@ -106,4 +107,3 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 };
 
 export default AddressActionDropdown;
-

@@ -19,6 +19,8 @@ interface Props {
 
 const RenderChats = ({ className, handleOpenChat, chats, handleNewChat, setFilteredMessages, setFilteredRequests }: Props) => {
 	const handleAcceptRequestSuccess = (chat: IChat) => {
+		handleOpenChat(chat);
+
 		setFilteredMessages((prevChatData: IChat[]) => [...prevChatData, chat]);
 
 		setFilteredRequests((prevRequests: IChat[]) => {

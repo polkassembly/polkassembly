@@ -35,34 +35,45 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	const encodedAddress = getEncodedAddress(address, network);
 
 	try {
-		const receiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '==', 'accepted').get();
+		const queryMessages = chatCollRef
+			.where('requestStatus', '==', EChatRequestStatus.ACCEPTED)
+			.where('receiverAddress', 'in', [encodedAddress, null])
+			.where('senderAddress', 'in', [encodedAddress, null])
+			.get();
 
-		const senderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).get();
+		const queryRequests = chatCollRef
+			.where('requestStatus', '!=', EChatRequestStatus.ACCEPTED)
+			.where('receiverAddress', 'in', [encodedAddress, null])
+			.where('senderAddress', 'in', [encodedAddress, null])
+			.get();
 
-		const [receiverSnapshot, senderSnapshot] = await Promise.all([receiverQuery, senderQuery]);
-
-		const messagesSnapshot = [...receiverSnapshot.docs, ...senderSnapshot.docs].sort((a, b) => b.data().createdAt - a.data().createdAt);
-
-		const requestsSnapshot = await chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
+		const [messagesSnapshot, requestsSnapshot] = await Promise.all([queryMessages, queryRequests]);
 
 		const mapChatData = (docs: FirebaseFirestore.QueryDocumentSnapshot[]): IChat[] =>
 			docs
 				.map((doc) => {
 					const data = doc.data();
 					return {
-						chatId: data?.chatId,
-						created_at: data?.created_at?.toDate(),
-						latestMessage: { ...data?.latestMessage, created_at: data?.latestMessage?.created_at?.toDate(), updated_at: data?.latestMessage?.updated_at?.toDate() },
-						receiverAddress: data?.receiverAddress,
-						requestStatus: data?.requestStatus,
-						senderAddress: data?.senderAddress,
-						updated_at: data?.updated_at?.toDate()
+						chatId: data.chatId,
+						created_at: data.created_at?.toDate(),
+						latestMessage: {
+							...data.latestMessage,
+							created_at: data.latestMessage?.created_at?.toDate(),
+							updated_at: data.latestMessage?.updated_at?.toDate()
+						},
+						receiverAddress: data.receiverAddress,
+						requestStatus: data.requestStatus,
+						senderAddress: data.senderAddress,
+						updated_at: data.updated_at?.toDate()
 					};
 				})
-				.filter((chat) => chat.latestMessage.senderAddress);
+				.filter((chat) => chat.latestMessage?.senderAddress);
 
-		const messages: IChat[] = mapChatData(messagesSnapshot);
-		const requests: IChat[] = mapChatData(requestsSnapshot.docs);
+		// Safe sorting to ensure both dates are defined
+		const safeSort = (a: IChat, b: IChat) => (b.created_at?.getTime() || 0) - (a.created_at?.getTime() || 0);
+
+		const messages = mapChatData(messagesSnapshot.docs).sort(safeSort);
+		const requests = mapChatData(requestsSnapshot.docs).sort(safeSort);
 
 		return res.status(200).json({ messages, requests });
 	} catch (error) {

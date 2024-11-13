@@ -99,7 +99,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 
 				<div className='line-clamp-2 w-full break-words text-xs'>{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}</div>
 
-				{isPendingRequest ? (
+				{isPendingRequest && latestMessage.senderAddress !== address ? (
 					<PendingRequestTab
 						chat={chat}
 						setIsRejectedRequest={setIsRejectedRequest}

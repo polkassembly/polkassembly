@@ -138,6 +138,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 				isNewChat={isNewChat}
 				isDrawerOpen={isNewChat || isChatOpen}
 				handleChatToggle={handleChatToggle}
+				setFilteredRequests={setFilteredRequests}
 			/>
 		</>
 	);

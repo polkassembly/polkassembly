@@ -19,9 +19,10 @@ const { TextArea } = Input;
 interface Props {
 	chat: IChat;
 	chatId: string;
+	setFilteredRequests: React.Dispatch<React.SetStateAction<IChat[]>>;
 }
 
-const Messages = ({ chat, chatId }: Props) => {
+const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
 
@@ -68,6 +69,9 @@ const Messages = ({ chat, chatId }: Props) => {
 		const { data, error } = await nextApiClientFetch<IMessage>('api/v1/delegate-chat/send-message', requestData);
 		if (data) {
 			setLoading(false);
+			if (!isRequestSent) {
+				setFilteredRequests((prevChatData: IChat[]) => [...prevChatData, chat]);
+			}
 			setMessages([...messages, data]);
 			queueNotification({
 				header: 'Success!',

@@ -15,9 +15,10 @@ interface Props {
 	isDrawerOpen: boolean;
 	isNewChat: boolean;
 	handleChatToggle: (chat?: IChat | null) => void;
+	setFilteredRequests: React.Dispatch<React.SetStateAction<IChat[]>>;
 }
 
-const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, isNewChat }: Props) => {
+const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, isNewChat, setFilteredRequests }: Props) => {
 	return (
 		<Drawer
 			title={<MessageDrawerHeader handleCloseChat={() => handleChatToggle(null)} />}
@@ -38,6 +39,7 @@ const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, 
 					<Messages
 						chatId={openedChat?.chatId}
 						chat={openedChat}
+						setFilteredRequests={setFilteredRequests}
 					/>
 				)
 			)}

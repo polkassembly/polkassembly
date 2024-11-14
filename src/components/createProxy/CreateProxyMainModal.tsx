@@ -203,7 +203,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Proposal created successfully.',
+				message: 'Proxy created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });

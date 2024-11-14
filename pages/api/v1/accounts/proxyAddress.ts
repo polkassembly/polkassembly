@@ -70,7 +70,6 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 
 	try {
 		const proxyAddress = await onChainProxy(address, network);
-		console.log('PROXY', proxyAddress);
 
 		if (!proxyAddress) {
 			return res.status(404).json({ error: 'Proxy address not found' });

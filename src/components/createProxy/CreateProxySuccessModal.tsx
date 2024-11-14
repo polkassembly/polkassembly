@@ -14,7 +14,7 @@ import useImagePreloader from '~src/hooks/useImagePreloader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
-import { ProxyAddressResponse } from 'pages/api/v1/accounts/proxyAddress';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	openModal: boolean;
@@ -35,10 +35,8 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 		if (openModal) {
 			setLoading(true);
 			setError(null);
-			console.log('address', address);
-
 			try {
-				const { data, error } = await nextApiClientFetch<ProxyAddressResponse>('/api/v1/accounts/proxyAddress', {
+				const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/proxyAddress', {
 					address,
 					network
 				});
@@ -46,8 +44,12 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				if (error) {
 					setError(error);
 				}
-				if (data?.data?.proxyAddress) {
-					setPureProxyAddress(data?.data?.proxyAddress);
+				console.log('data', data);
+				if (data?.proxyAddress) {
+					const substrateAddress = getSubstrateAddress(data?.proxyAddress);
+					console.log('substrateAddress', substrateAddress);
+
+					setPureProxyAddress(substrateAddress || data?.proxyAddress);
 				}
 			} catch (err) {
 				console.error('Error fetching proxy address:', err);
@@ -102,24 +104,22 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									destroyTooltipOnHide
 								/>
 							</div>
-							{pureProxyAddress && (
-								<div className='flex items-center gap-2'>
-									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
-									{loading ? (
-										<SkeletonInput active />
-									) : (
-										pureProxyAddress && (
-											<Address
-												displayInline
-												iconSize={18}
-												isTruncateUsername={false}
-												address={pureProxyAddress}
-												destroyTooltipOnHide
-											/>
-										)
-									)}
-								</div>
-							)}
+							<div className='flex items-center gap-2'>
+								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
+								{loading ? (
+									<SkeletonInput active />
+								) : (
+									pureProxyAddress && (
+										<Address
+											displayInline
+											iconSize={18}
+											isTruncateUsername={false}
+											address={pureProxyAddress}
+											destroyTooltipOnHide
+										/>
+									)
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -133,6 +133,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 							<Link
 								href='/accounts'
 								className='cursor-pointer font-medium text-pink_primary'
+								onClick={() => setOpenModal(false)}
 							>
 								Profile
 							</Link>{' '}

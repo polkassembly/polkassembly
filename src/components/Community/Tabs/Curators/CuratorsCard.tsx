@@ -8,7 +8,6 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
-import Tipping from '~src/components/Tipping';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
@@ -37,14 +36,12 @@ const CuratorsCard = ({ user, className }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { multisigAssociatedAddress } = useUserDetailsSelector();
 
-	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [multisigData, setMultisigData] = useState<{ threshold: number; signatories: string[] }>({
 		signatories: [],
 		threshold: 0
 	});
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
-	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [signatoriesImg, setSignatoriesImg] = useState<string[]>([]);
 
@@ -104,7 +101,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user?.curator, user]);
 
-	console.log('checking multisig info: ', multisigData);
+	console.log('checking multisig infoma: ', multisigData?.signatories, signatoriesImg);
 
 	return (
 		<div className={`${className}`}>
@@ -112,7 +109,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
-				<div className='flex items-center justify-between px-5'>
+				<div className='flex w-full items-center justify-between px-5'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!user?.profile?.image?.length && (
 							<ImageComponent
@@ -140,23 +137,26 @@ const CuratorsCard = ({ user, className }: Props) => {
 								boxSize={32}
 							/>
 						</div>
-						{multisigData?.signatories?.length > 0 && (
-							<div className='ml-auto flex items-center gap-x-2'>
-								<p className='m-0 p-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Signatories:</p>
+					</div>
+					{multisigData?.signatories?.length > 0 && (
+						<div className='ml-auto flex items-center gap-x-2'>
+							<p className='m-0 p-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Signatories:</p>
+							<div className='flex -space-x-2'>
 								{signatoriesImg &&
-									signatoriesImg.map((img, idx) => (
+									multisigData?.signatories.map((_, idx) => (
 										<Image
 											key={idx}
-											src={img}
+											src={signatoriesImg[idx] || '/assets/icons/user-profile.png'}
 											alt='user-img'
-											className='rounded-full'
+											className='rounded-full border-2 border-solid border-white dark:border-gray-800'
 											height={32}
 											width={32}
+											style={{ zIndex: idx }}
 										/>
 									))}
 							</div>
-						)}
-					</div>
+						</div>
+					)}
 				</div>
 				<div className='mt-1 flex items-center justify-between px-5'>
 					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
@@ -325,15 +325,6 @@ const CuratorsCard = ({ user, className }: Props) => {
 					</div>
 				</div>
 			</Modal>
-			<Tipping
-				username={user?.username || ''}
-				open={openTipping}
-				setOpen={setOpenTipping}
-				key={user?.curator}
-				paUsername={user?.username as any}
-				setOpenAddressChangeModal={setOpenAddressChangeModal}
-				openAddressChangeModal={openAddressChangeModal}
-			/>
 		</div>
 	);
 };

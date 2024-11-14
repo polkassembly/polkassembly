@@ -73,7 +73,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
-				<div className='flex items-center justify-between'>
+				<div className='mt-1 flex items-center justify-between'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!user?.profile?.image?.length && (
 							<ImageComponent
@@ -110,7 +110,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						/>
 					</div>
 				</div>
-				<div className='flex items-center justify-between'>
+				<div className='mt-1 flex items-center justify-between'>
 					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={user?.addresses?.[0] || user?.address || ''}

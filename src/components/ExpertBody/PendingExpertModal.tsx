@@ -26,7 +26,7 @@ const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: 
 				/>
 				<div className='-mt-16 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
 					<span className='text-center text-2xl font-semibold '>Application under Review</span>
-					<span className='px-8 text-center'>Your application is being thoroughly checked by our team! Please wait while we get back to you! </span>
+					<span className='px-8 pt-1 text-center'>Your application is being thoroughly checked by our team! Please wait while we get back to you! </span>
 				</div>
 			</Modal>
 		</div>

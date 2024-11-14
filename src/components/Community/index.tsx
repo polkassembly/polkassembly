@@ -29,9 +29,9 @@ import ExpertsTab from './Tabs/Experts/ExpertsTab';
 import { FollowersResponse } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 import { defaultIdentityInfo } from './utils';
 import { User } from '~src/auth/types';
-import { UsersResponse } from 'pages/api/v1/auth/data/getAllUsers';
 import MembersTab from './Tabs/Members/MembersTab';
-import { ExpertRequestResponse } from 'pages/api/v1/auth/data/getAllExperts';
+import { ExpertRequestResponse } from 'pages/api/v1/communityTab/getAllExperts';
+import { UsersResponse } from 'pages/api/v1/communityTab/getAllUsers';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
@@ -157,7 +157,7 @@ const Community = () => {
 			};
 		}
 
-		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/auth/data/getAllUsers', body);
+		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/communityTab/getAllUsers', body);
 		if (data) {
 			let updatedUserData = await Promise.all(
 				data.data.map(async (user) => {
@@ -197,7 +197,7 @@ const Community = () => {
 				username: searchedUserName
 			};
 		}
-		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/auth/data/getAllExperts', body);
+		const { data, error } = await nextApiClientFetch<ExpertRequestResponse>('api/v1/communityTab/getAllExperts', body);
 		if (data) {
 			let usersWithFollowers = await Promise.all(
 				data.data.map(async (user) => {

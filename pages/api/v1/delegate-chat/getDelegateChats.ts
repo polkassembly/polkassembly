@@ -35,19 +35,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	const encodedAddress = getEncodedAddress(address, network);
 
 	try {
-		const queryMessages = chatCollRef
-			.where('requestStatus', '==', EChatRequestStatus.ACCEPTED)
-			.where('receiverAddress', 'in', [encodedAddress, null])
-			.where('senderAddress', 'in', [encodedAddress, null])
-			.get();
+		const messageReceiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get();
 
-		const queryRequests = chatCollRef
-			.where('requestStatus', '!=', EChatRequestStatus.ACCEPTED)
-			.where('receiverAddress', 'in', [encodedAddress, null])
-			.where('senderAddress', 'in', [encodedAddress, null])
-			.get();
+		const messageSenderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get();
 
-		const [messagesSnapshot, requestsSnapshot] = await Promise.all([queryMessages, queryRequests]);
+		const requestsReceiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
+
+		const requestsSenderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
+
+		const [messageReceiverSnapshot, messageSenderSnapshot, requestsReceiverSnapshot, requestsSenderSnapshot] = await Promise.all([
+			messageReceiverQuery,
+			messageSenderQuery,
+			requestsReceiverQuery,
+			requestsSenderQuery
+		]);
+
+		const combinedMessagesSnapshot = [...messageReceiverSnapshot.docs, ...messageSenderSnapshot.docs];
+
+		const combinedRequestsSnapshot = [...requestsReceiverSnapshot.docs, ...requestsSenderSnapshot.docs];
 
 		const mapChatData = (docs: FirebaseFirestore.QueryDocumentSnapshot[]): IChat[] =>
 			docs
@@ -69,11 +74,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 				})
 				.filter((chat) => chat.latestMessage?.senderAddress);
 
-		// Safe sorting to ensure both dates are defined
 		const safeSort = (a: IChat, b: IChat) => (b.created_at?.getTime() || 0) - (a.created_at?.getTime() || 0);
 
-		const messages = mapChatData(messagesSnapshot.docs).sort(safeSort);
-		const requests = mapChatData(requestsSnapshot.docs).sort(safeSort);
+		const messages = mapChatData(combinedMessagesSnapshot).sort(safeSort);
+		const requests = mapChatData(combinedRequestsSnapshot).sort(safeSort);
 
 		return res.status(200).json({ messages, requests });
 	} catch (error) {

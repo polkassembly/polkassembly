@@ -3,9 +3,18 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
+import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { SUBSCAN_API_HEADERS } from '../subscanApi';
+import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+export interface ProxyAddressResponse {
+	data: {
+		proxyAddress: string;
+	};
+	error?: string | undefined;
+}
 
-export const onChainProxy = async (address: string, network: string) => {
+const onChainProxy = async (address: string, network: string) => {
 	try {
 		const eventResponse = await fetch(`https://${network}.api.subscan.io/api/v2/scan/events`, {
 			method: 'POST',
@@ -43,7 +52,34 @@ export const onChainProxy = async (address: string, network: string) => {
 		const params = proxyData.data?.params;
 		return params?.find((param: any) => param.name === 'pure')?.value || null;
 	} catch (err) {
-		console.log('Error in getAccountOnChainMultisigs:', err);
+		console.log('Error in onChainProxy:', err);
 		return null;
 	}
 };
+
+const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== 'POST') {
+		return res.status(405).json({ error: 'Method not allowed' });
+	}
+	storeApiKeyUsage(req);
+	const { address, network } = req.body;
+
+	if (!address || !network) {
+		return res.status(400).json({ error: 'Address and network are required' });
+	}
+
+	try {
+		const proxyAddress = await onChainProxy(address, network);
+		console.log('PROXY', proxyAddress);
+
+		if (!proxyAddress) {
+			return res.status(404).json({ error: 'Proxy address not found' });
+		}
+
+		return res.status(200).json({ proxyAddress });
+	} catch (err) {
+		console.error('Error in API handler:', err);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
+};
+export default withErrorHandling(handler);

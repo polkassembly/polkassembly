@@ -128,20 +128,22 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 															/>
 														)}
 													</div>
-													<Button
-														className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-normal text-pink_primary'
-														onClick={() => {
-															if (loginAddress) {
-																dispatch(progressReportActions.setOpenRatingModal(true));
-																setSelectedReportId(report?.id);
-															} else {
-																setLoginOpen(true);
-															}
-														}}
-													>
-														<StarFilled />
-														<p className='m-0 p-0'>Rate Progress</p>
-													</Button>
+													{!report?.isFromOgtracker && (
+														<Button
+															className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-normal text-pink_primary'
+															onClick={() => {
+																if (loginAddress) {
+																	dispatch(progressReportActions.setOpenRatingModal(true));
+																	setSelectedReportId(report?.id);
+																} else {
+																	setLoginOpen(true);
+																}
+															}}
+														>
+															<StarFilled />
+															<p className='m-0 p-0'>Rate Progress</p>
+														</Button>
+													)}
 												</div>
 											}
 											key='1'

@@ -14,6 +14,7 @@ import useImagePreloader from '~src/hooks/useImagePreloader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
+import { ProxyAddressResponse } from 'pages/api/v1/accounts/proxyAddress';
 
 interface Props {
 	openModal: boolean;
@@ -34,13 +35,19 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 		if (openModal) {
 			setLoading(true);
 			setError(null);
+			console.log('address', address);
+
 			try {
-				const { data, error } = await nextApiClientFetch('/api/v1/accounts/proxyAddress');
+				const { data, error } = await nextApiClientFetch<ProxyAddressResponse>('/api/v1/accounts/proxyAddress', {
+					address,
+					network
+				});
+
 				if (error) {
 					setError(error);
 				}
-				if (data) {
-					setPureProxyAddress(data as any);
+				if (data?.data?.proxyAddress) {
+					setPureProxyAddress(data?.data?.proxyAddress);
 				}
 			} catch (err) {
 				console.error('Error fetching proxy address:', err);
@@ -114,25 +121,23 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 						</div>
 					</div>
 				</div>
-				{!pureProxyAddress && (
-					<Alert
-						type='info'
-						className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
-						showIcon
-						message={
-							<span className='text-sm dark:text-blue-dark-high'>
-								Visit{' '}
-								<Link
-									href={'/accounts'}
-									className=' font-medium text-pink_primary'
-								>
-									Profile
-								</Link>{' '}
-								to view proxy address
-							</span>
-						}
-					/>
-				)}
+				<Alert
+					type='info'
+					className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+					showIcon
+					message={
+						<span className='text-sm dark:text-blue-dark-high'>
+							Visit{' '}
+							<Link
+								href='/accounts'
+								className='cursor-pointer font-medium text-pink_primary'
+							>
+								Profile
+							</Link>{' '}
+							to view proxy address
+						</span>
+					}
+				/>
 				{error && (
 					<Alert
 						type='error'

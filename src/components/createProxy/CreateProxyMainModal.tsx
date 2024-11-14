@@ -401,8 +401,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							>
 								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Pure Proxy</span>
 								<HelperTooltip
-									text='Delegate actions securely without transferring asset control. Ideal for managing activities while keeping your primary assets safe.'
-									className='font-normal'
+									className='ml-[6px]'
+									text='Spawn a fresh new account that is guaranteed to be otherwise inaccessible'
 								/>
 							</Checkbox>
 						</Form.Item>

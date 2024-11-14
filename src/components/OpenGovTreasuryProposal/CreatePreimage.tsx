@@ -37,7 +37,7 @@ import { Bytes } from '@polkadot/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -1018,7 +1018,7 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 									showIcon
 									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>

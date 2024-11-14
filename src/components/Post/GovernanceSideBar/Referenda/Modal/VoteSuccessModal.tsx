@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, message, Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 
 import { useCommentDataContext, usePostDataContext } from '~src/context';
@@ -117,7 +117,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate mt-[100px] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} delegate mt-[100px] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {

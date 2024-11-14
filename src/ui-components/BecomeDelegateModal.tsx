@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Alert, Button, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -93,7 +93,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			footer={false}
 			zIndex={1008}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.variable} ${poppins.className} w-[605px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} w-[605px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {
 				setIsModalOpen && setIsModalOpen(false);
 			}}

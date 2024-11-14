@@ -4,7 +4,7 @@
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -40,7 +40,7 @@ const BatchVotingBadge = () => {
 			</section>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={show_default_options_modal}
 				footer={
 					id ? (

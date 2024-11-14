@@ -26,7 +26,7 @@ import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
 import { Checkbox, Divider } from 'antd';
 import styled from 'styled-components';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import Popover from '~src/basic-components/Popover';
 
@@ -154,7 +154,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	};
 
 	const content = (
-		<div className={`${poppins.className} ${poppins.variable} px-2`}>
+		<div className={`${dmSans.className} ${dmSans.variable} px-2`}>
 			<div
 				className='-mr-2 flex cursor-pointer justify-end p-1 text-[10px] text-pink_primary'
 				onClick={() => handleSortByClick('clear_filter')}
@@ -169,7 +169,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			<Checkbox.Group
 				value={checkedItems}
 				onChange={onChange}
-				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll px-2 py-2 tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
+				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll px-2 py-2 tracking-[0.01em]  ${dmSans.className} ${dmSans.variable}`}
 			>
 				{sortByOptions.map((item, index) => (
 					<div key={index}>

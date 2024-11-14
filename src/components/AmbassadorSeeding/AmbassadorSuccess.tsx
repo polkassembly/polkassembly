@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Button, Modal, message } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useDispatch } from 'react-redux';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
@@ -78,7 +78,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 		<Modal
 			zIndex={1000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {

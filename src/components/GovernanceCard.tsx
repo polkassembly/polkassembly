@@ -6,7 +6,7 @@ import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined }
 import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -540,7 +540,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}

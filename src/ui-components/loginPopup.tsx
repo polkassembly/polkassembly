@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Login from 'pages/login';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -31,7 +31,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 			maskClosable={closable}
 			zIndex={1008}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.variable} ${poppins.className} ${
+			className={`${dmSans.variable} ${dmSans.className} ${
 				isClosable ? '' : 'hide-close-button'
 			} padding-0 padding-0 w-[605px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {

@@ -13,7 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -236,7 +236,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[600px]')}
 				open={openSuccessModal}
 				maskClosable={false}
 				footer={

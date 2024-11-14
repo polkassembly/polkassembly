@@ -5,7 +5,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useApiContext } from '~src/context';
@@ -342,8 +342,8 @@ const CreateBounty = ({
 					{!isBounty && (
 						<>
 							<div>
-								<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
-								<span className={`${poppins.variable} ${poppins.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+								<span className={`${dmSans.variable} ${dmSans.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
+								<span className={`${dmSans.variable} ${dmSans.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 									{formatedBalance(String(bountyBond.toString()), unit, 2)}
 								</span>
 							</div>

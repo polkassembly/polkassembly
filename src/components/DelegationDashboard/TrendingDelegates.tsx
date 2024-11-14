@@ -12,7 +12,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Popover from '~src/basic-components/Popover';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Image from 'next/image';
 import classNames from 'classnames';
@@ -200,8 +200,8 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			<span
 				className={classNames(
 					'-mx-3 flex cursor-pointer justify-end border-0 border-b-[1px] border-solid border-x-section-light-container px-3 pb-0.5 pt-1 text-xs text-pink_primary dark:border-separatorDark',
-					poppins.className,
-					poppins.variable
+					dmSans.className,
+					dmSans.variable
 				)}
 				onClick={() => {
 					setSelectedSources([]);
@@ -213,7 +213,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			<Checkbox.Group
 				onChange={(checked) => handleCheckboxChange(checked as any)}
 				value={selectedSources}
-				className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
+				className={classNames('mt-1 flex flex-col', dmSans.className, dmSans.variable)}
 				disabled={loading}
 			>
 				<div className='flex flex-col gap-1'>
@@ -221,7 +221,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						return (
 							<div
 								key={index}
-								className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+								className={`${dmSans.variable} ${dmSans.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 							>
 								<Checkbox
 									checked={selectedSources.includes(source)}
@@ -257,19 +257,19 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
@@ -285,11 +285,11 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					alt='trending icon'
 					imgClassName='h-5 w-6 sm:h-6 sm:w-6 mt-[2.5px]'
 				/>
-				<span className={`${poppins.variable} ${poppins.className} text-sm font-semibold text-bodyBlue dark:text-white sm:text-xl`}>Trending Delegates</span>
+				<span className={`${dmSans.variable} ${dmSans.className} text-sm font-semibold text-bodyBlue dark:text-white sm:text-xl`}>Trending Delegates</span>
 			</div>
 
 			<h4
-				className={`${poppins.variable} ${poppins.className} my-[4px] text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:my-4 sm:text-sm sm:text-bodyBlue dark:sm:text-white `}
+				className={`${dmSans.variable} ${dmSans.className} my-[4px] text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:my-4 sm:text-sm sm:text-bodyBlue dark:sm:text-white `}
 			>
 				Enter an address or Select from the list below to delegate your voting power
 			</h4>

@@ -310,7 +310,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</Tooltip>
 					</div>
 				) : null}
-				<div>{expertComment && <p className='mx-3 rounded-lg bg-[#F57B60] px-1 py-0.5 text-[10px] text-white'>EXPERT</p>}</div>
+				<div>{expertComment && <p className='mx-3 rounded-md bg-[#F57B60] px-1.5 py-0.5 text-[10px] text-white'>EXPERT</p>}</div>
 
 				{votesArr.length > 0 ? (
 					<div

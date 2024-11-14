@@ -183,7 +183,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 					</div>
 					<Divider
 						type='horizontal'
-						className='m-0 my-3 rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
+						className='m-0 my-3 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
 					/>
 					<div className='flex justify-center gap-5 text-[#243A57] dark:text-lightWhite'>
 						<Button
@@ -293,8 +293,11 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={150}
 							/>
 						</Form.Item>
-
-						<div className='pt-4 text-right'>
+						<Divider
+							type='horizontal'
+							className='m-0 my-3 rounded-sm border-t-2 border-l-[#E1E6EB] p-0 dark:border-[#4B4B4B]'
+						/>
+						<div className='pt-2 text-right'>
 							<Button
 								className='mr-[8px] h-9 w-28 border-pink_primary text-pink_primary'
 								onClick={handleCancel}
@@ -349,7 +352,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				{!successSubmission && (
 					<Divider
 						type='horizontal'
-						className='m-0 rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
+						className='m-0 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
 					/>
 				)}
 				{renderContent()}

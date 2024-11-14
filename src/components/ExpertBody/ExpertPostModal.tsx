@@ -32,7 +32,7 @@ const ExpertPostModal = ({
 							height={24}
 							className='h-6 w-6'
 						/>
-						<span className='text-xl font-semibold'>Add Expert Review</span>
+						<span className='text-xl font-semibold text-[#243A57]'>Add Expert Review</span>
 					</div>
 				}
 				visible={isModalVisible}
@@ -42,7 +42,7 @@ const ExpertPostModal = ({
 			>
 				<Divider
 					type='horizontal'
-					className='m-0  rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
+					className='m-0  rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
 				/>
 				<div className='my-3'>
 					<p className='text-sm font-medium text-[#243A57] dark:text-lightWhite'>Please write your views about the proposal below</p>

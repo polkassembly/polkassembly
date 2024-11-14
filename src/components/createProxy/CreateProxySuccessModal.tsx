@@ -102,22 +102,24 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									destroyTooltipOnHide
 								/>
 							</div>
-							<div className='flex items-center gap-2'>
-								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
-								{loading ? (
-									<SkeletonInput active />
-								) : (
-									pureProxyAddress && (
-										<Address
-											displayInline
-											iconSize={18}
-											isTruncateUsername={false}
-											address={pureProxyAddress}
-											destroyTooltipOnHide
-										/>
-									)
-								)}
-							</div>
+							{pureProxyAddress && (
+								<div className='flex items-center gap-2'>
+									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
+									{loading ? (
+										<SkeletonInput active />
+									) : (
+										pureProxyAddress && (
+											<Address
+												displayInline
+												iconSize={18}
+												isTruncateUsername={false}
+												address={pureProxyAddress}
+												destroyTooltipOnHide
+											/>
+										)
+									)}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

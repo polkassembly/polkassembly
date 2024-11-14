@@ -75,7 +75,9 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 			onClick={handleReadChat}
 			size='small'
 			bodyStyle={{ display: 'flex', gap: '0.5rem', width: '100%' }}
-			className={`flex w-full gap-2 overflow-hidden rounded-none border-none shadow-sm ${isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'}`}
+			className={`flex w-full gap-2 overflow-hidden rounded-none border-none shadow-sm ${
+				isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'
+			} hover:bg-black/5 dark:hover:bg-white/10`}
 		>
 			{renderUserImage}
 			<div className='flex w-full flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>

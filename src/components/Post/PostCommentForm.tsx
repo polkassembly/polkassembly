@@ -34,8 +34,6 @@ import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import { useQuoteCommentContext } from '~src/context';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
-import { setUserDetailsState } from '~src/redux/userDetails';
-import { useDispatch } from 'react-redux';
 import Address from '~src/ui-components/Address';
 
 interface IPostCommentFormProps {
@@ -83,7 +81,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isPosted, setIsPosted] = useState(false);
 	const [formContent, setFormContent] = useState('');
 	const [linkedAddress, setLinkedAddress] = useState(loginAddress);
-	const dispatch = useDispatch();
 
 	const { setQuotedText } = useQuoteCommentContext();
 
@@ -219,7 +216,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			id: commentId || '',
 			isError: false,
 			profile: picture || '',
-			proposer: loginAddress,
+			proposer: linkedAddress,
 			replies: [],
 			sentiment: isSentimentPost ? sentiment : 0,
 			updated_at: new Date(),
@@ -316,7 +313,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	}, [isComment]);
 
 	const handleAddressChange = (newLinkedAddress: string) => {
-		dispatch(setUserDetailsState({ ...currentUser, loginAddress: newLinkedAddress }));
 		setLinkedAddress(newLinkedAddress);
 	};
 
@@ -347,12 +343,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 									>
 										<div className='flex items-center'>
 											<Address
-												iconSize={22}
 												address={address}
-												displayInline
-												isTruncateUsername={false}
-												disableTooltip
-												isProfileView={true}
+												addressWithVerifiedTick
+												disableHeader
+												addressMaxLength={5}
+												iconSize={18}
+												addressClassName='text-sm tracking-wide font-semibold dark:text-blue-dark-high'
 											/>
 										</div>
 

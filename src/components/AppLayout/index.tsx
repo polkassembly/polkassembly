@@ -198,6 +198,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								isIdentitySet={isIdentitySet}
 								isIdentityUnverified={isIdentityUnverified}
 								setLoginOpen={setLoginOpen}
+								setIdentityOpen={setOpen}
 							/>
 						)}
 						{!isMobile && (
@@ -215,6 +216,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									isIdentitySet={isIdentitySet}
 									isIdentityUnverified={isIdentityUnverified}
 									setLoginOpen={setLoginOpen}
+									setIdentityOpen={setOpen}
 								/>
 								<div className={`fixed  ${is_sidebar_collapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{is_sidebar_collapsed ? (

@@ -74,7 +74,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 			const identityHash = await (peopleChainApi ?? api)?.query?.identity
 				?.identityOf(encoded_addr)
-				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
+				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res?.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
 				console.log('Error in unwrapping identity hash');
 			}

@@ -81,7 +81,7 @@ export const useFollowStatus = (userIdToCheck: number | null) => {
 			checkFollowStatus();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userIdToCheck]);
+	}, [userIdToCheck, isFollowing]);
 
-	return { error, followUser, isFollowing, loading, unfollowUser };
+	return { error, followUser, isFollowing, loading, setIsFollowing, unfollowUser, userIdToCheck };
 };

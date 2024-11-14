@@ -186,6 +186,7 @@ import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
 import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
 import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
+import SelectedCalendarIcon from '~assets/selected-icons/Calendar.svg';
 import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
 import SelectedRootIcon from '~assets/selected-icons/Root.svg';
 import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
@@ -1373,6 +1374,13 @@ export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => 
 export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={SelectedDiscussionsIcon}
+		{...props}
+	/>
+);
+
+export const SelectedCalendar = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedCalendarIcon}
 		{...props}
 	/>
 );

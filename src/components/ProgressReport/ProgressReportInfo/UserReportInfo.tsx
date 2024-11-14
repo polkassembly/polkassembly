@@ -24,6 +24,7 @@ import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/se
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Image from 'next/image';
 
 const { Panel } = Collapse;
 
@@ -85,71 +86,81 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 		<section className={`${className} mt-8`}>
 			<Timeline className={`${className}`}>
 				{postData?.progress_report && Object.keys(postData.progress_report).length > 0 ? (
-					Object.entries(postData.progress_report).map(([key, report]: any, index) => (
-						<Timeline.Item
-							key={key}
-							className='-mt-6'
-							dot={
-								<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
-									{Object.keys(postData?.progress_report).length - index}
-								</div>
-							}
-						>
-							<>
-								<Collapse
-									size='large'
-									theme={theme as any}
-									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
-									expandIconPosition='end'
-									expandIcon={({ isActive }) =>
-										isActive ? <ArrowDownIcon className=' rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className=' dark:text-blue-dark-medium' />
-									}
-									defaultActiveKey={index === 0 ? ['1'] : []}
-								>
-									<Panel
-										header={
-											<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
-												<div className='flex items-center gap-x-2'>
-													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
-														Object.keys(postData?.progress_report).length - index
-													}`}</h1>
-													<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
-													<p className='m-0 p-0 text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(report?.created_at).format('DD MMM YYYY')}</p>
-													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
-												</div>
-												<Button
-													className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-normal text-pink_primary'
-													onClick={() => {
-														if (loginAddress) {
-															dispatch(progressReportActions.setOpenRatingModal(true));
-															setSelectedReportId(report?.id);
-														} else {
-															setLoginOpen(true);
-														}
-													}}
-												>
-													<StarFilled />
-													<p className='m-0 p-0'>Rate Progress</p>
-												</Button>
-											</div>
+					Object.entries(postData?.progress_report)
+						.sort(([, a], [, b]) => new Date((a as any)?.created_at)?.getTime() - new Date((b as any)?.created_at)?.getTime())
+						.map(([key, report]: any, index) => (
+							<Timeline.Item
+								key={key}
+								className='-mt-6'
+								dot={
+									<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
+										{Object.keys(postData?.progress_report).length - index}
+									</div>
+								}
+							>
+								<>
+									<Collapse
+										size='large'
+										theme={theme as any}
+										className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
+										expandIconPosition='end'
+										expandIcon={({ isActive }) =>
+											isActive ? <ArrowDownIcon className=' rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className=' dark:text-blue-dark-medium' />
 										}
-										key='1'
+										defaultActiveKey={index === 0 ? ['1'] : []}
 									>
-										<ReportDetails
-											report={report}
-											index={index}
+										<Panel
+											header={
+												<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
+													<div className='flex items-center gap-x-2'>
+														<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
+															Object.keys(postData?.progress_report).length - index
+														}`}</h1>
+														<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
+														<p className='m-0 p-0 text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(report?.created_at).format('DD MMM YYYY')}</p>
+														{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+														{report?.isFromOgtracker && (
+															<Image
+																src='/assets/icons/ogTracker.svg'
+																alt='ogtracker'
+																height={20}
+																width={20}
+															/>
+														)}
+													</div>
+													<Button
+														className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-normal text-pink_primary'
+														onClick={() => {
+															if (loginAddress) {
+																dispatch(progressReportActions.setOpenRatingModal(true));
+																setSelectedReportId(report?.id);
+															} else {
+																setLoginOpen(true);
+															}
+														}}
+													>
+														<StarFilled />
+														<p className='m-0 p-0'>Rate Progress</p>
+													</Button>
+												</div>
+											}
+											key='1'
+										>
+											<ReportDetails
+												report={report}
+												index={index}
+											/>
+										</Panel>
+									</Collapse>
+									{index + 1 !== Object.keys(postData.progress_report).length && (
+										<Divider
+											style={{ background: '#D2D8E0', flexGrow: 1 }}
+											className='mt-5 dark:bg-separatorDark'
 										/>
-									</Panel>
-								</Collapse>
-								{index + 1 !== Object.keys(postData.progress_report).length && (
-									<Divider
-										style={{ background: '#D2D8E0', flexGrow: 1 }}
-										className='mt-5 dark:bg-separatorDark'
-									/>
-								)}
-							</>
-						</Timeline.Item>
-					))
+									)}
+								</>
+							</Timeline.Item>
+						))
 				) : (
 					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>No progress reports available</p>
 				)}

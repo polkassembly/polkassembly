@@ -240,8 +240,8 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 				</div>
 			</div>
 			{/* For Large screen */}
-			<div className='hidden gap-y-2 rounded-[16px] bg-white px-5 pt-4 dark:bg-black sm:flex sm:flex-col'>
-				<div className='flex items-center justify-between'>
+			<div className='hidden gap-y-2 rounded-[16px] bg-white pt-4 dark:bg-black sm:flex sm:flex-col'>
+				<div className='flex items-center justify-between px-5'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!delegate?.image?.length && (
 							<ImageComponent
@@ -279,7 +279,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						<span className='text-sm font-medium text-white max-sm:hidden'>Delegate</span>
 					</Button>
 				</div>
-				<div className='flex items-center justify-between'>
+				<div className='flex items-center justify-between px-5'>
 					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={delegate?.address}
@@ -336,7 +336,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-2 flex min-h-[56px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-2 flex min-h-[56px] flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{delegate?.bio ? (
 							<Markdown

@@ -32,6 +32,8 @@ import { User } from '~src/auth/types';
 import MembersTab from './Tabs/Members/MembersTab';
 import { ExpertRequestResponse } from 'pages/api/v1/communityTab/getAllExperts';
 import { UsersResponse } from 'pages/api/v1/communityTab/getAllUsers';
+import CuratorsTab from './Tabs/Curators/CuratorsTab';
+import { curatorsResponse } from 'pages/api/v1/communityTab/getAllCurators';
 
 const Community = () => {
 	const { network } = useNetworkSelector();
@@ -49,6 +51,8 @@ const Community = () => {
 	const [totalMembers, setTotalMembers] = useState<number>();
 	const [expertsData, setExpertsData] = useState<any>();
 	const [totalExperts, setTotalExperts] = useState<number>();
+	const [curatorsData, setCuratorsData] = useState<any>();
+	const [totalCurators, setTotalCurators] = useState<number>();
 	const [totalDelegates, setTotalDelegates] = useState<number>();
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 	const [membersSortOption, setMembersSortOption] = useState<EMembersSortFilters | null>(null);
@@ -224,6 +228,21 @@ const Community = () => {
 		setLoading(false);
 	};
 
+	const getCuratorsData = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<curatorsResponse>('api/v1/communityTab/getAllCurators');
+		if (data?.curators) {
+			console.log(data);
+			setCuratorsData(data?.curators);
+			setTotalCurators(data?.count);
+			setLoading(false);
+		} else {
+			console?.log(error);
+		}
+		setLoading(false);
+	};
+
 	useEffect(() => {
 		getData();
 		getExpertsData();
@@ -232,6 +251,11 @@ const Community = () => {
 
 	useEffect(() => {
 		getMembersData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
+
+	useEffect(() => {
+		getCuratorsData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
 
@@ -639,6 +663,15 @@ const Community = () => {
 				<ExpertsTab
 					totalUsers={totalExperts}
 					userData={expertsData}
+					loading={loading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
+			)}
+			{selectedTab === ECommunityTabs?.CURATORS && (
+				<CuratorsTab
+					totalUsers={totalCurators}
+					userData={curatorsData}
 					loading={loading}
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}

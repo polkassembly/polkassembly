@@ -9,13 +9,23 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/auth/utils/messages';
 import console_pretty from '~src/api-utils/console_pretty';
 import { isValidNetwork } from '~src/api-utils';
+import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 
 interface CuratorData {
 	curator: string;
+	address?: string;
 	childBounties: number;
 	bounties: number;
 	total_rewards: number;
 	active: number;
+	created_at?: Date | undefined;
+	custom_username?: boolean;
+	profile?: any;
+	user_id?: number | null;
+	username?: string;
+	web3Signup?: boolean;
+	disbursedChildBounty: number;
+	unclaimedAmount: number;
 }
 
 interface Proposal {
@@ -25,16 +35,27 @@ interface Proposal {
 	status: string;
 }
 
-interface curatorsResponse {
+export interface curatorsResponse {
 	curators?: CuratorData[];
+	count?: number;
 	message?: string;
 }
+
+const extractContent = async (address: string) => {
+	const { data, error } = await getProfileWithAddress({ address: address });
+	if (data && !error) {
+		console.log(data);
+	}
+	return data;
+};
 
 const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 	storeApiKeyUsage(req);
 	try {
 		const network = String(req.headers['x-network']);
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+		if (!network || !isValidNetwork(network)) {
+			return res.status(400).json({ message: 'Invalid network in request header' });
+		}
 
 		console_pretty(network);
 
@@ -44,32 +65,62 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 		});
 
 		const curatorsData: Proposal[] = subsquidRes?.data?.proposals || [];
+
+		// Group by curator and calculate aggregated data
 		const formattedData = Object.values(
-			curatorsData.reduce(
-				(acc: Record<string, CuratorData>, { curator, type, reward, status }: Proposal) => {
-					if (!curator) return acc;
+			curatorsData.reduce((acc: Record<string, CuratorData>, { curator, type, reward, status }: Proposal) => {
+				if (!curator) return acc;
 
-					if (!acc[curator]) {
-						acc[curator] = {
-							active: 0,
-							bounties: 0,
-							childBounties: 0,
-							curator,
-							total_rewards: 0
-						};
-					}
-					if (type === 'ChildBounty') acc[curator].childBounties += 1;
-					if (type === 'Bounty') acc[curator].bounties += 1;
-					acc[curator].total_rewards += parseInt(reward, 10);
-					if (status === 'Extended' || status === 'Active') acc[curator].active += 1;
+				if (!acc[curator]) {
+					acc[curator] = {
+						active: 0,
+						bounties: 0,
+						childBounties: 0,
+						curator,
+						disbursedChildBounty: 0,
+						total_rewards: 0,
+						unclaimedAmount: 0
+					};
+				}
 
-					return acc;
-				},
-				{} as Record<string, CuratorData>
-			)
+				// Increment counts based on the type of proposal
+				if (type === 'ChildBounty') acc[curator].childBounties += 1;
+				if (type === 'Bounty') acc[curator].bounties += 1;
+
+				// Add to total rewards
+				acc[curator].total_rewards += parseInt(reward, 10);
+
+				// Increment active status if applicable
+				if (status === 'Extended' || status === 'Active') acc[curator].active += 1;
+
+				// Calculate disbursedChildBounty and unclaimedAmount for ChildBounty type
+				if (type === 'ChildBounty' && status === 'Claimed') {
+					acc[curator].disbursedChildBounty += 1;
+				} else if (type === 'ChildBounty' && status !== 'Claimed') {
+					acc[curator].unclaimedAmount += parseInt(reward, 10);
+				}
+
+				return acc;
+			}, {})
 		);
 
-		return res.status(200).json({ curators: formattedData });
+		// Fetch and attach user profile data for each curator
+		await Promise.all(
+			formattedData.map(async (curatorData) => {
+				const userData = await extractContent(curatorData.curator);
+				if (userData) {
+					curatorData.created_at = userData.created_at;
+					curatorData.custom_username = userData.custom_username;
+					curatorData.profile = userData.profile;
+					curatorData.user_id = userData.user_id;
+					curatorData.username = userData.username;
+					curatorData.web3Signup = userData.web3Signup;
+					curatorData.address = curatorData.curator;
+				}
+			})
+		);
+
+		return res.status(200).json({ count: formattedData.length, curators: formattedData });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

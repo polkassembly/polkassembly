@@ -650,7 +650,7 @@ const Community = () => {
 						</CustomButton>
 					</div>
 
-					{selectedTab !== ECommunityTabs?.EXPERTS && (
+					{selectedTab === ECommunityTabs?.DELEGATES && (
 						<Popover
 							content={filterContent}
 							placement='bottomRight'

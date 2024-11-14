@@ -5,11 +5,11 @@ import { message, Modal } from 'antd';
 import classNames from 'classnames';
 // import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
 import Tipping from '~src/components/Tipping';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 import Markdown from '~src/ui-components/Markdown';
@@ -19,6 +19,10 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import Image from 'next/image';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { chainProperties } from '~src/global/networkConstants';
+import { getMultisigAddressDetails } from '~src/components/DelegationDashboard/utils/getMultisigAddressDetails';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
 	user: User | any;
@@ -31,13 +35,18 @@ const CuratorsCard = ({ user, className }: Props) => {
 	console.log('curator user: ', user);
 	// const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const { multisigAssociatedAddress } = useUserDetailsSelector();
 
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [multisigData, setMultisigData] = useState<{ threshold: number; signatories: string[] }>({
+		signatories: [],
+		threshold: 0
+	});
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
-
 	const [messageApi, contextHolder] = message.useMessage();
+	const [signatoriesImg, setSignatoriesImg] = useState<string[]>([]);
 
 	const handleDelegationContent = (content: string) => {
 		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
@@ -50,6 +59,52 @@ const CuratorsCard = ({ user, className }: Props) => {
 			type: 'success'
 		});
 	};
+
+	const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
+		try {
+			const { data } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`/api/v1/auth/data/profileWithAddress?address=${address}`);
+			if (data) {
+				const { profile } = data;
+				const userImg = profile?.image;
+				if (userImg) {
+					setSignatoriesImg((prevImgs) => [...prevImgs, userImg]);
+				}
+			}
+			return { error: 'User profile not found' };
+		} catch (error) {
+			console.error(`Error fetching user profile for address ${address}:`, error);
+			return { error: 'Failed to fetch user profile' };
+		}
+	};
+
+	const handleMultisigAddress = async () => {
+		const data = await getMultisigAddressDetails(user?.curator);
+		if (data?.threshold) {
+			const filteredSignaories: string[] = [];
+
+			data?.multi_account_member?.map((addr: { address: string }) => {
+				if (getEncodedAddress(addr?.address || '', network) !== getEncodedAddress(multisigAssociatedAddress || '', network)) {
+					filteredSignaories?.push(addr?.address);
+				}
+			});
+
+			setMultisigData({
+				signatories: filteredSignaories,
+				threshold: data?.threshold || 0
+			});
+			if (filteredSignaories?.length > 0) {
+				filteredSignaories.map((signatory) => {
+					fetchUserProfile(signatory);
+				});
+			}
+		}
+	};
+	useEffect(() => {
+		handleMultisigAddress();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.curator, user]);
+
+	console.log('checking multisig info: ', multisigData);
 
 	return (
 		<div className={`${className}`}>
@@ -85,9 +140,25 @@ const CuratorsCard = ({ user, className }: Props) => {
 								boxSize={32}
 							/>
 						</div>
+						{multisigData?.signatories?.length > 0 && (
+							<div className='ml-auto flex items-center gap-x-2'>
+								<p className='m-0 p-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Signatories:</p>
+								{signatoriesImg &&
+									signatoriesImg.map((img, idx) => (
+										<Image
+											key={idx}
+											src={img}
+											alt='user-img'
+											className='rounded-full'
+											height={32}
+											width={32}
+										/>
+									))}
+							</div>
+						)}
 					</div>
 				</div>
-				<div className='flex items-center justify-between px-5'>
+				<div className='mt-1 flex items-center justify-between px-5'>
 					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={user?.curator}

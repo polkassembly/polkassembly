@@ -1015,6 +1015,11 @@ export enum EExpertsSortFilters {
 	REVIEWS_COUNT = 'ReviewsCount'
 }
 
+export enum ECuratorsSortFilters {
+	ACTIVE_BOUNTIES = 'ActiveBounties',
+	CHILD_BOUNTIES_DISBURSED = 'ChildBountiesDisbursed'
+}
+
 export enum EDelegationSourceFilters {
 	POLKASSEMBLY = 'polkassembly',
 	PARITY = 'parity',

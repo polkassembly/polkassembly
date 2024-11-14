@@ -7,7 +7,6 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { GET_CURATORS_DATA } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/auth/utils/messages';
-import console_pretty from '~src/api-utils/console_pretty';
 import { isValidNetwork } from '~src/api-utils';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 
@@ -41,6 +40,8 @@ export interface curatorsResponse {
 	message?: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const extractContent = async (address: string) => {
 	const { data, error } = await getProfileWithAddress({ address: address });
 	if (data && !error) {
@@ -57,7 +58,8 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 			return res.status(400).json({ message: 'Invalid network in request header' });
 		}
 
-		console_pretty(network);
+		const { page = 1, username } = req.body;
+		const pageNumber = parseInt(page, 10);
 
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -67,7 +69,7 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 		const curatorsData: Proposal[] = subsquidRes?.data?.proposals || [];
 
 		// Group by curator and calculate aggregated data
-		const formattedData = Object.values(
+		let formattedData = Object.values(
 			curatorsData.reduce((acc: Record<string, CuratorData>, { curator, type, reward, status }: Proposal) => {
 				if (!curator) return acc;
 
@@ -120,7 +122,19 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 			})
 		);
 
-		return res.status(200).json({ count: formattedData.length, curators: formattedData });
+		// Filter by username if provided
+		if (username) {
+			formattedData = formattedData.filter((curatorData) => curatorData.username === username);
+		}
+
+		// Paginate the results
+		const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+		const paginatedData = formattedData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+		return res.status(200).json({
+			count: formattedData.length,
+			curators: paginatedData
+		});
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

@@ -14,7 +14,7 @@ import TabButtons from './TabButtons';
 import DelegatesTab from './Tabs/Delegations/DelegatesTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { EDelegationAddressFilters, EDelegationSourceFilters, EExpertsSortFilters, EMembersSortFilters, IDelegateAddressDetails } from '~src/types';
+import { ECuratorsSortFilters, EDelegationAddressFilters, EDelegationSourceFilters, EExpertsSortFilters, EMembersSortFilters, IDelegateAddressDetails } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
@@ -57,6 +57,7 @@ const Community = () => {
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 	const [membersSortOption, setMembersSortOption] = useState<EMembersSortFilters | null>(null);
 	const [expertsSortOption, setExpertsSortOption] = useState<EExpertsSortFilters | null>(null);
+	const [curatorsSortOption, setCuratorsSortOption] = useState<ECuratorsSortFilters | null>(null);
 	const [selectedSources, setSelectedSources] = useState<string[]>(
 		selectedTab === ECommunityTabs?.MEMBERS ? ['All', 'Verified', 'Non-Verified'] : Object?.values(EDelegationSourceFilters)
 	);
@@ -230,11 +231,29 @@ const Community = () => {
 
 	const getCuratorsData = async () => {
 		if (!(api && peopleChainApiReady) || !network) return;
+
+		let body = {};
+		if (searchedUserName) {
+			body = {
+				username: searchedUserName
+			};
+		} else {
+			body = {
+				page: currentPage || 1
+			};
+		}
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<curatorsResponse>('api/v1/communityTab/getAllCurators');
+		const { data, error } = await nextApiClientFetch<curatorsResponse>('api/v1/communityTab/getAllCurators', body);
 		if (data?.curators) {
+			let sortedData = data?.curators;
 			console.log(data);
-			setCuratorsData(data?.curators);
+			if (curatorsSortOption === ECuratorsSortFilters.ACTIVE_BOUNTIES) {
+				sortedData = sortedData.sort((a, b) => b.active - a.active);
+			}
+			if (curatorsSortOption === ECuratorsSortFilters.CHILD_BOUNTIES_DISBURSED) {
+				sortedData = sortedData.sort((a, b) => b.disbursedChildBounty - a.disbursedChildBounty);
+			}
+			setCuratorsData(sortedData);
 			setTotalCurators(data?.count);
 			setLoading(false);
 		} else {
@@ -252,12 +271,12 @@ const Community = () => {
 	useEffect(() => {
 		getMembersData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName]);
 
 	useEffect(() => {
 		getCuratorsData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName]);
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {
@@ -280,6 +299,7 @@ const Community = () => {
 		setSortOption(updatedSortOption);
 		setMembersSortOption(updatedSortOption);
 		setExpertsSortOption(updatedSortOption);
+		setCuratorsSortOption(updatedSortOption);
 		const searchOutput = searchInput?.length
 			? delegatesData?.current?.filter((delegate: any) => delegate?.address?.match(searchInput) || delegate?.username?.toLowerCase()?.match(searchInput?.toLowerCase()))
 			: null;
@@ -303,7 +323,7 @@ const Community = () => {
 			);
 			setFilteredDelegates(searchOutput || []);
 			setLoading(false);
-		} else if (selectedTab === ECommunityTabs?.MEMBERS || selectedTab === ECommunityTabs.EXPERTS) {
+		} else {
 			dispatch(communityTabActions?.setSearchedUsername(searchInput));
 		}
 	};
@@ -564,6 +584,27 @@ const Community = () => {
 						</Radio>
 					</Radio.Group>
 				)}
+				{selectedTab === ECommunityTabs?.CURATORS && (
+					<Radio.Group
+						className='flex flex-col overflow-y-auto'
+						onChange={handleRadioChange}
+						value={curatorsSortOption || null}
+						disabled={loading}
+					>
+						<Radio
+							value={ECuratorsSortFilters?.ACTIVE_BOUNTIES}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Active bounties
+						</Radio>
+						<Radio
+							value={ECuratorsSortFilters?.CHILD_BOUNTIES_DISBURSED}
+							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+						>
+							Child Bounties Disbursed
+						</Radio>
+					</Radio.Group>
+				)}
 			</div>
 		</>
 	);
@@ -575,6 +616,7 @@ const Community = () => {
 					totalMembers={totalMembers}
 					totalExperts={totalExperts}
 					totalDelegates={totalDelegates}
+					totalCurators={totalCurators}
 				/>
 				<div className='flex w-full items-center gap-3'>
 					<div className='dark:placeholder:white hidden h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex'>

@@ -5,6 +5,7 @@
 import { Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
 	return (
@@ -14,6 +15,7 @@ const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible:
 				open={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
+				closeIcon={<CloseIcon className='font-medium text-[#485F7D] dark:text-icon-dark-inactive' />}
 			>
 				<Image
 					src={'/assets/Gifs/reminder.gif'}
@@ -22,7 +24,7 @@ const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible:
 					width={293}
 					height={327}
 				/>
-				<div className='-mt-10 flex flex-col gap-2 text-[#243A57] dark:text-lightWhite'>
+				<div className='-mt-8 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
 					<span className='text-center text-2xl font-semibold '>Application Rejected!</span>
 					<span className='px-8 text-center'>
 						We regret to inform you that your application to become an Expert was rejected by our Team! Don’t worry, you can apply again in 30 days!

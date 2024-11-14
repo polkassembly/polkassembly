@@ -149,20 +149,20 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						alt={'Expert Image'}
 						width={100}
 						height={100}
-						className='-my-8 mx-auto block h-64 w-64'
+						className='-my-7 mx-auto block h-64 w-64'
 					/>
-					<div className='my-3 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
+					<div className='my-4 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
 						<span className='text-xl  font-semibold'>Oops! Looks like you are not an expert!</span>
-						<span className='px-10 text-sm'>Become an expert to add your views to various proposals and discussions!</span>
+						<span className='px-10 pt-2 text-sm'>Become an expert to add your views to various proposals and discussions!</span>
 					</div>
-					<div className='pb-3 text-center'>
+					<div className='mt-6 pb-3 text-center'>
 						<Button
-							className='h-10 w-96 bg-[#E5007A] text-white'
+							className='h-10 w-96  border-none bg-[#E5007A] stroke-none text-white'
 							onClick={() => {
 								setIsInitial(false);
 							}}
 						>
-							Become an expert!
+							<span className='text-sm font-medium'>Become an Expert!</span>
 						</Button>
 					</div>
 				</>
@@ -183,7 +183,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 					</div>
 					<Divider
 						type='horizontal'
-						className='m-0 my-3 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
+						className='m-0 my-3 rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
 					/>
 					<div className='flex justify-center gap-5 text-[#243A57] dark:text-lightWhite'>
 						<Button
@@ -216,11 +216,11 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							alt={'Expert Image'}
 							width={100}
 							height={100}
-							className='-my-8 mx-auto block h-64 w-64'
+							className='-my-6 mx-auto block h-64 w-64'
 						/>
 						<div className='my-3 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
 							<span className='text-xl font-semibold'>Oops! Your identity is not verified!</span>
-							<span className='px-10 text-sm'>
+							<span className='px-10 pt-2 text-sm'>
 								You need to{' '}
 								<span
 									onClick={(e) => {
@@ -243,9 +243,10 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								before applying to become an expert.
 							</span>
 						</div>
-						<div className='pb-3 text-center'>
+
+						<div className='mt-6 pb-3  text-center'>
 							<Button
-								className='h-10 w-96 bg-pink_primary text-white'
+								className='h-10 w-96 border-none bg-pink_primary stroke-none text-white'
 								onClick={(e) => {
 									e.stopPropagation();
 									e.preventDefault();
@@ -260,7 +261,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 									}
 								}}
 							>
-								Verify Identity
+								<span className='text-sm font-medium'>Verify Identity</span>
 							</Button>
 						</div>
 					</>
@@ -336,18 +337,19 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={24}
 								className='h-6 w-6'
 							/>
-							<span className='text-xl font-semibold dark:text-lightWhite'>Add Expert Review</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>Add Expert Review</span>
 						</div>
 					)
 				}
 				open={isModalVisible}
 				onCancel={handleCancel}
+				closeIcon={<CloseIcon className='font-medium text-[#485F7D] dark:text-icon-dark-inactive' />}
 				footer={null}
 			>
 				{!successSubmission && (
 					<Divider
 						type='horizontal'
-						className='m-0 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
+						className='m-0 rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
 					/>
 				)}
 				{renderContent()}
@@ -377,7 +379,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='font-medium text-[#485F7D]  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={'w-[600px] max-sm:w-full'}
 				title={

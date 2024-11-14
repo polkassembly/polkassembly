@@ -5,6 +5,7 @@ import { Button, Divider, Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
 import ContentForm from '../ContentForm';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ExpertPostModal = ({
 	isModalVisible,
@@ -36,6 +37,7 @@ const ExpertPostModal = ({
 				}
 				visible={isModalVisible}
 				onCancel={handleCancel}
+				closeIcon={<CloseIcon className='font-medium text-[#485F7D] dark:text-icon-dark-inactive' />}
 				footer={null}
 			>
 				<Divider
@@ -52,7 +54,7 @@ const ExpertPostModal = ({
 				</div>
 				<Divider
 					type='horizontal'
-					className='m-0 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
+					className='m-0 rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
 				/>
 				<div className='pt-4 text-right'>
 					<Button

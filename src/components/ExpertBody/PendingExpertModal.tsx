@@ -5,6 +5,7 @@
 import { Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
 	return (
@@ -14,6 +15,7 @@ const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: 
 				open={isModalVisible}
 				onCancel={handleCancel}
 				footer={null}
+				closeIcon={<CloseIcon className='font-medium text-[#485F7D] dark:text-icon-dark-inactive' />}
 			>
 				<Image
 					src={'/assets/Gifs/pendingstate.gif'}
@@ -22,7 +24,7 @@ const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: 
 					width={293}
 					height={327}
 				/>
-				<div className='-mt-20 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
+				<div className='-mt-16 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
 					<span className='text-center text-2xl font-semibold '>Application under Review</span>
 					<span className='px-8 text-center'>Your application is being thoroughly checked by our team! Please wait while we get back to you! </span>
 				</div>

@@ -167,12 +167,12 @@ function ExpertBodyCard() {
 					alt={'Expert Image'}
 					width={24}
 					height={24}
-					className='h-20 w-20'
+					className='mt-2 h-20 w-20'
 				/>
 			</div>
-			<div className='flex flex-col text-[#243A57] dark:text-white'>
-				<span className='text-base font-semibold'>{title}</span>
-				<span className='w-52 text-sm'>{contentText}</span>
+			<div className='flex flex-col py-1 text-[#243A57] dark:text-white'>
+				<span className=' text-base font-semibold'>{title}</span>
+				<span className='my-1 w-52 text-sm'>{contentText}</span>
 				<span className='text-sm'>
 					An expert?{' '}
 					<span
@@ -183,7 +183,7 @@ function ExpertBodyCard() {
 					</span>
 				</span>
 			</div>
-			<div className='absolute right-2 top-8 z-50'>
+			<div className='absolute right-2 top-11 z-50'>
 				<ArrowRightOutlined
 					onClick={() => setIsModalVisible(true)}
 					className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'

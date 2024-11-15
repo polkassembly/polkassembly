@@ -610,8 +610,8 @@ const Community = () => {
 	);
 
 	return (
-		<section className='mt-3'>
-			<header className='flex items-center justify-between gap-x-4'>
+		<section>
+			<header className='flex flex-col md:flex-row md:items-center md:justify-between md:gap-x-4'>
 				<TabButtons
 					totalMembers={totalMembers}
 					totalExperts={totalExperts}

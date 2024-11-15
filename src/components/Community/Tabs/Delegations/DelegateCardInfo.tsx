@@ -202,7 +202,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={`${poppins?.variable} ${poppins?.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0?.015em] text-bodyBlue dark:text-blue-dark-high`}>
+				<div className={`${poppins.variable} ${poppins.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
 					<p className='inline text-[12px]'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
 					{delegate?.bio?.length > 100 && (
 						<span
@@ -336,12 +336,12 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-2 flex min-h-[56px] flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
-					<p className='bio m-0 w-full p-0 '>
+				<div className={'mb-4 mt-2  flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+					<p className='bio w-4/5'>
 						{delegate?.bio ? (
 							<Markdown
-								className='post-content m-0 p-0'
-								md={`${handleDelegationContent(delegate?.bio || '')?.slice(0, 100)}?.?.?.`}
+								className='post-content'
+								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 54)}...`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -352,7 +352,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
-							className='m-0 -mt-1 flex cursor-pointer items-center justify-start p-0 text-xs font-medium text-[#3C74E1]'
+							className='mt-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'
 						>
 							Read more
 						</span>

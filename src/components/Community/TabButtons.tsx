@@ -18,16 +18,17 @@ interface ITabButtons {
 }
 
 const TabButtons: FC<ITabButtons> = (props) => {
-	const { totalMembers, totalExperts, totalDelegates, totalCurators } = props;
+	const { totalMembers, totalDelegates, totalCurators } = props;
+	// const { totalMembers, totalExperts, totalDelegates, totalCurators } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { selectedTab } = useCommunityTabSelector();
 
 	return (
-		<article className='flex items-center justify-start gap-x-3'>
+		<article className='mt-5 flex flex-col items-center gap-y-1 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0'>
 			<div>
 				<Button
-					className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.MEMBERS ? 'text-green_tertiary' : 'text-bodyBlue dark:text-blue-dark-medium'
 					}`}
 					style={{
@@ -70,14 +71,14 @@ const TabButtons: FC<ITabButtons> = (props) => {
 				<Image
 					src={selectedTab === ECommunityTabs.MEMBERS ? '/assets/shadow.svg' : '/assets/shadow-grey.svg'}
 					alt=''
-					width={150}
+					width={186}
 					height={20}
-					className='relative -top-[22px] left-3'
+					className='relative -top-[22px] left-1'
 				/>
 			</div>
 			<div>
 				<Button
-					className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.DELEGATES ? 'text-[#6214FF]' : 'text-bodyBlue dark:text-blue-dark-medium'
 					}`}
 					style={{
@@ -120,14 +121,14 @@ const TabButtons: FC<ITabButtons> = (props) => {
 				<Image
 					src={selectedTab === ECommunityTabs.DELEGATES ? '/assets/shadow-purple.svg' : '/assets/shadow-grey.svg'}
 					alt=''
-					width={170}
+					width={186}
 					height={20}
-					className='relative -top-[22px] left-4'
+					className='relative -left-[2px] -top-[22px]'
 				/>
 			</div>
 			<div>
 				<Button
-					className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.CURATORS ? 'text-[#044CE0]' : 'text-bodyBlue dark:text-blue-dark-medium'
 					}`}
 					style={{
@@ -168,14 +169,14 @@ const TabButtons: FC<ITabButtons> = (props) => {
 				<Image
 					src={selectedTab === ECommunityTabs.CURATORS ? '/assets/shadow-blue.svg' : '/assets/shadow-grey.svg'}
 					alt=''
-					width={170}
+					width={186}
 					height={20}
-					className='relative -top-[22px] left-3'
+					className='relative -left-1 -top-[22px]'
 				/>
 			</div>
-			<div>
+			{/* <div>
 				<Button
-					className={`flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
+					className={`w-[186px] flex h-[48px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.EXPERTS ? 'text-[#EA0815]' : 'text-bodyBlue dark:text-blue-dark-medium'
 					}`}
 					style={{
@@ -220,7 +221,7 @@ const TabButtons: FC<ITabButtons> = (props) => {
 					height={20}
 					className='relative -top-[22px] left-3'
 				/>
-			</div>
+			</div> */}
 		</article>
 	);
 };

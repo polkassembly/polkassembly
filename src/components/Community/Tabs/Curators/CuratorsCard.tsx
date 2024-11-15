@@ -109,7 +109,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
-				<div className='flex w-full items-center justify-between px-5'>
+				<div className='flex w-full flex-col items-start justify-start gap-y-2 px-5 md:flex-row md:items-center md:justify-between md:gap-y-0'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!user?.profile?.image?.length && (
 							<ImageComponent
@@ -139,7 +139,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 						</div>
 					</div>
 					{multisigData?.signatories?.length > 0 && (
-						<div className='ml-auto flex items-center gap-x-2'>
+						<div className='flex items-center gap-x-2'>
 							<p className='m-0 p-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Signatories:</p>
 							<div className='flex -space-x-2'>
 								{signatoriesImg &&
@@ -158,8 +158,8 @@ const CuratorsCard = ({ user, className }: Props) => {
 						</div>
 					)}
 				</div>
-				<div className='mt-1 flex items-center justify-between px-5'>
-					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+				<div className='mt-1 flex flex-col items-start gap-y-2 px-5 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0'>
+					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={user?.curator}
 							disableHeader={network !== 'kilt'}
@@ -187,6 +187,8 @@ const CuratorsCard = ({ user, className }: Props) => {
 							score={user?.profile_score || 0}
 							iconWrapperClassName='mt-[4.5px]'
 						/>
+					</div>
+					<div className='flex items-center gap-x-1'>
 						<div className='flex items-center justify-between gap-x-1 rounded-[16px] bg-[#EEF2FF] px-2 py-1 text-xs font-bold text-[#4F46E5]'>
 							<Image
 								src='/assets/icons/bounty-money-icon.svg'
@@ -230,24 +232,24 @@ const CuratorsCard = ({ user, className }: Props) => {
 					)}
 				</div>
 
-				<div className=' flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
+				<div className=' flex min-h-[92px] items-center justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
 					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{parseBalance(user?.total_rewards?.toString(), 1, false, network)}</span>
+							<span className='px-1 text-xl font-semibold md:text-2xl'>{parseBalance(user?.total_rewards?.toString(), 1, false, network)}</span>
 							<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Total Rewarded</div>
 					</div>
 					<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container py-3  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
-						<span className='text-2xl font-semibold'>{user?.active}</span>
+						<span className='text-xl font-semibold md:text-2xl'>{user?.active}</span>
 						<div className='mt-[2px] flex flex-col items-center'>
 							<span className='mb-[2px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Active Bounties</span>
 						</div>
 					</div>
 					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						<span className='flex items-center justify-center gap-x-1 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
+						<span className='text-xlmd:text-2xl flex items-center justify-center gap-x-1 font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{user?.disbursedChildBounty}{' '}
-							<div className='rounded-[4px] bg-[#FF3C5F] px-1.5 py-1 text-xs font-medium text-white'>
+							<div className='rounded-[4px] bg-[#FF3C5F] px-1.5 py-1 text-[8px] font-medium text-white md:text-xs'>
 								Unclaimed: {parseBalance(user?.unclaimedAmount?.toString(), 1, false, network)}
 							</div>
 						</span>

@@ -8,12 +8,14 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { BadgeName, User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Tipping from '~src/components/Tipping';
 import FollowButton from '~src/components/UserProfile/Follow/FollowButton';
 import { chainProperties } from '~src/global/networkConstants';
+import { isFollowing } from '~src/redux/follow';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
@@ -34,14 +36,24 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [totalFollowers, setTotalFollower] = useState<number>(user?.followers);
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, user?.id));
 
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleDelegationContent = (content: string) => {
 		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
+	};
+
+	const updateFollowerCount = () => {
+		if (isUserFollowing) {
+			setTotalFollower(totalFollowers - 1);
+		} else {
+			setTotalFollower(totalFollowers + 1);
+		}
 	};
 
 	const success = () => {
@@ -102,9 +114,13 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							/>
 						</div>
 					</div>
-					<div className='flex items-center gap-x-4'>
+					<div
+						className='flex items-center gap-x-4'
+						onClick={updateFollowerCount}
+					>
 						<FollowButton
 							userId={user?.id || user?.userId}
+							user={user}
 							isUsedInProfileHeaders={false}
 							isUsedInCommunityTab
 						/>
@@ -168,10 +184,10 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex items-center justify-between'>
-					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-						<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
-						<span className='flex items-center gap-x-1 text-xs font-medium text-bodyBlue dark:text-white'>
+				<div className='flex w-full flex-col items-start gap-y-1 md:flex-row md:items-center md:gap-x-2 md:gap-y-0'>
+					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+						<p className='m-0 whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
+						<span className='flex items-center gap-x-1 whitespace-nowrap text-xs font-medium text-bodyBlue dark:text-white'>
 							<Image
 								src='/assets/icons/orange-calender-icon.svg'
 								alt='calender-icon'
@@ -181,21 +197,25 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							/>
 							{dayjs(user?.created_at)?.format('DD MMM YYYY')}
 						</span>
-						<div className='flex items-center gap-x-1'>
-							<Divider
-								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
-								type='vertical'
-							/>
-							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers}</span>
-						</div>
-						<div className='flex items-center gap-x-1'>
-							<Divider
-								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
-								type='vertical'
-							/>
-							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
+					</div>
+					<div className='flex w-full items-center justify-between gap-x-2'>
+						<div className='flex items-center gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<Divider
+									className='hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+									type='vertical'
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{totalFollowers}</span>
+							</div>
+							<div className='flex items-center gap-x-1'>
+								<Divider
+									className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+									type='vertical'
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
+							</div>
 						</div>
 						<Button
 							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'

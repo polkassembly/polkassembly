@@ -7,13 +7,13 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { EChatRequestStatus, IChat, IChatsResponse } from '~src/types';
+import { EChatRequestStatus, IChat, IChatsResponse, IMessage } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { chatCollRef } from '~src/api-utils/firestore_refs';
+import { chatCollRef, chatMessagesRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -35,48 +35,40 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	const encodedAddress = getEncodedAddress(address, network);
 
 	try {
-		const messageReceiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get();
-
-		const messageSenderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get();
-
-		const requestsReceiverQuery = chatCollRef.where('receiverAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
-
-		const requestsSenderQuery = chatCollRef.where('senderAddress', '==', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get();
-
-		const [messageReceiverSnapshot, messageSenderSnapshot, requestsReceiverSnapshot, requestsSenderSnapshot] = await Promise.all([
-			messageReceiverQuery,
-			messageSenderQuery,
-			requestsReceiverQuery,
-			requestsSenderQuery
+		const [acceptedChatsSnapshot, pendingRequestsSnapshot] = await Promise.all([
+			chatCollRef.where('participants', 'array-contains', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
+			chatCollRef.where('participants', 'array-contains', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
 		]);
 
-		const combinedMessagesSnapshot = [...messageReceiverSnapshot.docs, ...messageSenderSnapshot.docs];
-
-		const combinedRequestsSnapshot = [...requestsReceiverSnapshot.docs, ...requestsSenderSnapshot.docs];
-
-		const mapChatData = (docs: FirebaseFirestore.QueryDocumentSnapshot[]): IChat[] =>
-			docs
-				.map((doc) => {
+		const mapChatData = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]): Promise<IChat[]> => {
+			return Promise.all(
+				docs.map(async (doc) => {
 					const data = doc.data();
+
+					// Fetch the latest message for each chat
+					const chatMessagesSnapshot = await chatMessagesRef(data.chatId).orderBy('created_at', 'desc').limit(1).get();
+
+					const latestMessage = chatMessagesSnapshot.empty ? null : chatMessagesSnapshot.docs[0].data();
+
 					return {
 						chatId: data.chatId,
 						created_at: data.created_at?.toDate(),
 						latestMessage: {
-							...data.latestMessage,
-							created_at: data.latestMessage?.created_at?.toDate(),
-							updated_at: data.latestMessage?.updated_at?.toDate()
-						},
+							...latestMessage,
+							created_at: latestMessage?.created_at?.toDate(),
+							updated_at: latestMessage?.updated_at?.toDate()
+						} as IMessage,
 						participants: data.participants,
 						requestStatus: data.requestStatus,
 						updated_at: data.updated_at?.toDate()
 					};
 				})
-				.filter((chat) => chat.latestMessage?.senderAddress);
+			);
+		};
 
-		const safeSort = (a: IChat, b: IChat) => (b.created_at?.getTime() || 0) - (a.created_at?.getTime() || 0);
+		const messages = (await mapChatData(acceptedChatsSnapshot.docs)).sort((a, b) => (b.created_at?.getTime() || 0) - (a.created_at?.getTime() || 0));
 
-		const messages = mapChatData(combinedMessagesSnapshot).sort(safeSort);
-		const requests = mapChatData(combinedRequestsSnapshot).sort(safeSort);
+		const requests = (await mapChatData(pendingRequestsSnapshot.docs)).sort((a, b) => (b.created_at?.getTime() || 0) - (a.created_at?.getTime() || 0));
 
 		return res.status(200).json({ messages, requests });
 	} catch (error) {

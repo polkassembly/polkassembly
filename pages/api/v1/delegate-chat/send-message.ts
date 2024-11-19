@@ -13,7 +13,7 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { chatDocRef } from '~src/api-utils/firestore_refs';
+import { chatMessagesRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | MessageType>) {
 	storeApiKeyUsage(req);
@@ -37,8 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 
-	const chatSnapshot = chatDocRef(chatId);
-	const messageSnapshot = chatSnapshot.collection('messages');
+	const messageSnapshot = chatMessagesRef(chatId);
 
 	const newMessage = {
 		content,
@@ -53,8 +52,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 
 	try {
 		const newMessageRef = await messageSnapshot.add(newMessage);
-
-		await chatSnapshot.update({ latestMessage: newMessage, updated_at: new Date() });
 
 		const message = {
 			...newMessage,

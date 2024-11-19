@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
-import { Button, Divider, Modal, Timeline } from 'antd';
+import { Button, Divider, Modal, Timeline, Tooltip } from 'antd';
 import styled from 'styled-components';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -44,6 +44,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 	const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 	const dispatch = useDispatch();
 	const { open_rating_modal, open_rating_success_modal, report_rating } = useProgressReportSelector();
+	console.log('console postdata --> ', postData);
 
 	const addUserRating = async () => {
 		setLoading(true);
@@ -120,12 +121,33 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 														<p className='m-0 p-0 text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(report?.created_at).format('DD MMM YYYY')}</p>
 														{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 														{report?.isFromOgtracker && (
-															<Image
-																src='/assets/icons/ogTracker.svg'
-																alt='ogtracker'
-																height={20}
-																width={20}
-															/>
+															<Tooltip
+																color='#363636'
+																title={
+																	<p className='m-0 flex items-center justify-center gap-x-1 p-0 text-sm font-normal text-white'>
+																		Imported from
+																		<a
+																			href={
+																				postData?.track_name
+																					? `https://app.ogtracker.io/${postData?.track_name[0].toLowerCase() + postData?.track_name.slice(1)}/${postData?.postIndex}`
+																					: 'https://app.ogtracker.io/'
+																			}
+																			target='_blank'
+																			className='m-0 p-0 text-pink_primary underline'
+																			rel='noreferrer'
+																		>
+																			OG Tracker
+																		</a>
+																	</p>
+																}
+															>
+																<Image
+																	src='/assets/icons/ogTracker.svg'
+																	alt='ogtracker'
+																	height={20}
+																	width={20}
+																/>
+															</Tooltip>
 														)}
 													</div>
 													{!report?.isFromOgtracker && (

@@ -48,7 +48,7 @@ export const getCommentsAISummaryByPost = async ({
 	const postRef = postsByTypeRef(network, postType).doc(String(postId));
 
 	try {
-		const commentsRef = postRef.collection('comments');
+		const commentsRef = postRef.collection('comments').where('isDeleted', '!=', true);
 		const commentsSnapshot = await commentsRef.get();
 
 		if (commentsSnapshot.empty) {

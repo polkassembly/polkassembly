@@ -36,8 +36,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 
 	try {
 		const [acceptedChatsSnapshot, pendingRequestsSnapshot] = await Promise.all([
-			chatCollRef.where('participants', 'array-contains', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
-			chatCollRef.where('participants', 'array-contains', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
+			chatCollRef().where('participants', 'array-contains', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
+			chatCollRef().where('participants', 'array-contains', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
 		]);
 
 		const mapChatData = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]): Promise<IChat[]> => {

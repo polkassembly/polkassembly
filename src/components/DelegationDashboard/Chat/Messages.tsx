@@ -125,7 +125,7 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 			>
 				<div className={messages.length > 0 ? 'max-h-72 overflow-y-auto px-5 py-3' : 'hidden'}>
 					{messages.map((message) => {
-						const isSent = message?.senderAddress === address;
+						const isSent = message?.senderAddress === substrateAddress;
 						return (
 							<div
 								key={message?.id}

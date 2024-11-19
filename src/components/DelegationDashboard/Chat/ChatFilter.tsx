@@ -58,8 +58,8 @@ const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selec
 						content={memoizedFilterOptions.map((option) => (
 							<Button
 								key={option}
-								className={`flex w-44 items-center justify-between border-none px-2 capitalize shadow-none ${
-									filter === option ? 'bg-[#FCE5F2] text-pink_primary' : 'bg-transparent'
+								className={`flex w-44 items-center justify-between border-none px-2 capitalize shadow-none dark:text-blue-dark-high ${
+									filter === option ? 'bg-[#FCE5F2] text-pink_primary dark:bg-[#33071E]' : 'bg-transparent'
 								}`}
 								aria-label={`Filter by ${option}`}
 								role='menuitem'
@@ -80,7 +80,7 @@ const ChatFilter: React.FC<ChatFilterProps> = ({ onSearch, onFilterChange, selec
 						<Button
 							aria-label={`Filter options - currently ${filter}`}
 							className={`flex h-7 w-7 items-center justify-center rounded-full border-none p-2 hover:bg-black/5 hover:dark:bg-white/10 ${
-								filter !== EChatFilter.ALL ? 'bg-[#FCE5F2]' : 'bg-transparent'
+								filter !== EChatFilter.ALL ? 'bg-[#FCE5F2] dark:bg-[#33071E]' : 'bg-transparent'
 							}`}
 						>
 							<Image

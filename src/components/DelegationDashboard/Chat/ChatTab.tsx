@@ -35,7 +35,7 @@ const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsC
 			]}
 			value={selectedChatTab}
 			onChange={(value) => setSelectedChatTab(String(value) as 'messages' | 'requests')}
-			className='[&_.ant-segmented-item-selected]:font-semibold [&_.ant-segmented-item-selected_.ant-segmented-item-label]:text-bodyBlue [&_.ant-segmented-item-selected_.ant-segmented-item-label]:dark:text-blue-dark-high'
+			className='[&_.ant-segmented-item-label]:dark:text-[#9e9e9e] [&_.ant-segmented-item-selected]:font-semibold [&_.ant-segmented-item-selected_.ant-segmented-item-label]:text-bodyBlue [&_.ant-segmented-item-selected_.ant-segmented-item-label]:dark:text-blue-dark-high'
 			block
 		/>
 	);

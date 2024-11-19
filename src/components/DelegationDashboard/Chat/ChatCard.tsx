@@ -78,7 +78,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 			size='small'
 			bodyStyle={{ display: 'flex', gap: '0.5rem', width: '100%' }}
 			className={`flex w-full gap-2 overflow-hidden rounded-none border-none shadow-sm ${
-				isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#3b46df33]'
+				isReadMessage ? 'bg-transparent' : 'bg-[#3B47DF0A] dark:bg-[#1A1B34]'
 			} hover:bg-black/5 dark:hover:bg-white/10`}
 		>
 			{renderUserImage}
@@ -92,7 +92,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 						className='dark:grayscale dark:invert dark:filter'
 						alt='timer icon'
 					/>
-					<span className='text-xs'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
+					<span className='text-xs text-blue-light-medium dark:text-[#9e9e9e]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
 					{isRejectedRequest ? (
 						<div className='ml-auto flex items-center gap-1.5'>
 							<span className='h-2 w-2 rounded-full bg-[#FB123C]'></span>
@@ -101,7 +101,9 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 					) : null}
 				</div>
 
-				<div className='line-clamp-2 w-full break-words text-xs'>{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}</div>
+				<div className='line-clamp-2 w-full break-words text-xs text-blue-light-medium dark:text-[#9e9e9e]'>
+					{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
+				</div>
 
 				{isPendingRequest && latestMessage.senderAddress !== substrateAddress ? (
 					<PendingRequestTab

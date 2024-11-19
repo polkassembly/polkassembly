@@ -44,8 +44,8 @@ const ITEMS_PER_PAGE = 10;
 
 const extractContent = async (address: string) => {
 	const { data, error } = await getProfileWithAddress({ address: address });
-	if (data && !error) {
-		console.log(data);
+	if (error) {
+		console.log(error);
 	}
 	return data;
 };
@@ -68,7 +68,6 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 
 		const curatorsData: Proposal[] = subsquidRes?.data?.proposals || [];
 
-		// Group by curator and calculate aggregated data
 		let formattedData = Object.values(
 			curatorsData.reduce((acc: Record<string, CuratorData>, { curator, type, reward, status }: Proposal) => {
 				if (!curator) return acc;
@@ -84,18 +83,10 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 						unclaimedAmount: 0
 					};
 				}
-
-				// Increment counts based on the type of proposal
 				if (type === 'ChildBounty') acc[curator].childBounties += 1;
 				if (type === 'Bounty') acc[curator].bounties += 1;
-
-				// Add to total rewards
 				acc[curator].total_rewards += parseInt(reward, 10);
-
-				// Increment active status if applicable
 				if (status === 'Extended' || status === 'Active') acc[curator].active += 1;
-
-				// Calculate disbursedChildBounty and unclaimedAmount for ChildBounty type
 				if (type === 'ChildBounty' && status === 'Claimed') {
 					acc[curator].disbursedChildBounty += 1;
 				} else if (type === 'ChildBounty' && status !== 'Claimed') {
@@ -106,33 +97,30 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 			}, {})
 		);
 
-		// Fetch and attach user profile data for each curator
 		await Promise.all(
 			formattedData.map(async (curatorData) => {
 				const userData = await extractContent(curatorData.curator);
 				if (userData) {
-					curatorData.created_at = userData.created_at;
-					curatorData.custom_username = userData.custom_username;
-					curatorData.profile = userData.profile;
-					curatorData.user_id = userData.user_id;
-					curatorData.username = userData.username;
-					curatorData.web3Signup = userData.web3Signup;
+					curatorData.created_at = userData?.created_at;
+					curatorData.custom_username = userData?.custom_username;
+					curatorData.profile = userData?.profile;
+					curatorData.user_id = userData?.user_id;
+					curatorData.username = userData?.username;
+					curatorData.web3Signup = userData?.web3Signup;
 					curatorData.address = curatorData.curator;
 				}
 			})
 		);
 
-		// Filter by username if provided
 		if (username) {
-			formattedData = formattedData.filter((curatorData) => curatorData.username === username);
+			formattedData = formattedData?.filter((curatorData) => curatorData?.username === username);
 		}
 
-		// Paginate the results
 		const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
-		const paginatedData = formattedData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+		const paginatedData = formattedData?.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
 		return res.status(200).json({
-			count: formattedData.length,
+			count: formattedData?.length,
 			curators: paginatedData
 		});
 	} catch (err) {

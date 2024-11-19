@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { message, Modal } from 'antd';
 import classNames from 'classnames';
-// import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { User } from '~src/auth/types';
@@ -31,8 +30,6 @@ interface Props {
 }
 const CuratorsCard = ({ user, className }: Props) => {
 	const { network } = useNetworkSelector();
-	console.log('curator user: ', user);
-	// const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { multisigAssociatedAddress } = useUserDetailsSelector();
 
@@ -100,8 +97,6 @@ const CuratorsCard = ({ user, className }: Props) => {
 		handleMultisigAddress();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user?.curator, user]);
-
-	console.log('checking multisig infoma: ', multisigData?.signatories, signatoriesImg);
 
 	return (
 		<div className={`${className}`}>

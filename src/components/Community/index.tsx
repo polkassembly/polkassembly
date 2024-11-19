@@ -174,7 +174,6 @@ const Community = () => {
 
 			if (membersSortOption === EMembersSortFilters.ALPHABETICAL) {
 				updatedUserData = updatedUserData.sort((a, b) => a?.username?.toLowerCase().localeCompare(b.username.toLocaleLowerCase()));
-				console.log(updatedUserData);
 			}
 
 			if (membersSortOption === EMembersSortFilters.FOLLOWERS) {
@@ -246,7 +245,6 @@ const Community = () => {
 		const { data, error } = await nextApiClientFetch<curatorsResponse>('api/v1/communityTab/getAllCurators', body);
 		if (data?.curators) {
 			let sortedData = data?.curators;
-			console.log(data);
 			if (curatorsSortOption === ECuratorsSortFilters.ACTIVE_BOUNTIES) {
 				sortedData = sortedData.sort((a, b) => b.active - a.active);
 			}

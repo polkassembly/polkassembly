@@ -27,17 +27,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { address, senderAddress, receiverAddress, chatId } = req.body;
+	const { address, participants, chatId } = req.body;
 
-	if (!address || !senderAddress.length || !receiverAddress.length || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!address || !participants.length || participants.length !== 2 || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
-	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
-		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
-	}
-
 	const chatSnapshot = chatDocRef(chatId);
-	const viewed_by = [senderAddress, receiverAddress];
+	const viewed_by = participants;
 
 	try {
 		await chatSnapshot.update({

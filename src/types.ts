@@ -1114,8 +1114,7 @@ export enum EChatFilter {
 
 export interface IChat {
 	chatId: string;
-	senderAddress: string;
-	receiverAddress: string;
+	participants: string[];
 	created_at: Date;
 	updated_at: Date;
 	requestStatus: EChatRequestStatus;

@@ -66,9 +66,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 							created_at: data.latestMessage?.created_at?.toDate(),
 							updated_at: data.latestMessage?.updated_at?.toDate()
 						},
-						receiverAddress: data.receiverAddress,
+						participants: data.participants,
 						requestStatus: data.requestStatus,
-						senderAddress: data.senderAddress,
 						updated_at: data.updated_at?.toDate()
 					};
 				})

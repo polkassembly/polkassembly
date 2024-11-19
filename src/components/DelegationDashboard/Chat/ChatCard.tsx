@@ -40,8 +40,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 		const requestData = {
 			address,
 			chatId: chat?.chatId,
-			receiverAddress: chat?.receiverAddress,
-			senderAddress: chat?.senderAddress
+			participants: chat.participants
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/mark-chat-as-read', requestData);
 		if (data) {

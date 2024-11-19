@@ -33,7 +33,7 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 
 	const [newMessage, setNewMessage] = useState<string>('');
 
-	const recipientAddress = chat?.senderAddress === address ? chat?.receiverAddress : chat?.senderAddress;
+	const recipientAddress = chat?.participants[0] === address ? chat?.participants[1] : chat?.participants[0];
 
 	const isRequestSent = chat.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 

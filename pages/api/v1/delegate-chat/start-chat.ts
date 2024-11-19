@@ -42,9 +42,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	const newChat: any = {
 		chatId: String(chatId),
 		created_at: new Date(),
-		receiverAddress,
+		participants: [receiverAddress, senderAddress],
 		requestStatus: EChatRequestStatus.PENDING,
-		senderAddress,
 		updated_at: new Date()
 	};
 
@@ -59,9 +58,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 			chatId: data?.chatId,
 			created_at: data?.created_at?.toDate(),
 			latestMessage: data?.latestMessage,
-			receiverAddress: data?.receiverAddress,
+			participants: data?.participants,
 			requestStatus: data?.requestStatus,
-			senderAddress: data?.senderAddress,
 			updated_at: data?.updated_at?.toDate()
 		};
 

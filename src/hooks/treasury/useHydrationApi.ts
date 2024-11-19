@@ -103,7 +103,6 @@ const useHydrationApi = (network: string) => {
 						addressValues.usdcValue = freeUSDCBalance;
 						combinedValues.usdcValue = combinedValues.usdcValue.add(freeUSDCBalance);
 					}
-
 				}
 
 				console.log('Combined values:', combinedValues);

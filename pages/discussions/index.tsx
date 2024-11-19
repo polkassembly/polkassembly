@@ -88,6 +88,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { id } = useUserDetailsSelector();
 	const router = useRouter();
+	console.log({ userId: id });
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

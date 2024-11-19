@@ -11,6 +11,7 @@ import RenderChats from './RenderChats';
 import ChatTab from './ChatTab';
 import MessageDrawer from './MessageDrawer';
 import ChatFilter from './ChatFilter';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	className?: string;
@@ -22,7 +23,9 @@ interface Props {
 const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
+
 	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [messages, setMessages] = useState<IChat[]>([]);
@@ -69,14 +72,14 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 
 		if (selectedChatTab === 'messages') {
 			const filteredMessages = messages.filter((chat) =>
-				chat.latestMessage?.receiverAddress === address
+				chat.latestMessage?.receiverAddress === substrateAddress
 					? chat.latestMessage?.senderAddress.toLowerCase().includes(lowercasedText)
 					: chat?.latestMessage?.receiverAddress.toLowerCase().includes(lowercasedText)
 			);
 			setFilteredMessages(filteredMessages);
 		} else {
 			const filteredRequests = requests.filter((chat) =>
-				chat.latestMessage?.receiverAddress === address
+				chat.latestMessage?.receiverAddress === substrateAddress
 					? chat.latestMessage?.senderAddress.toLowerCase().includes(lowercasedText)
 					: chat?.latestMessage?.receiverAddress.toLowerCase().includes(lowercasedText)
 			);
@@ -87,8 +90,8 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 	const handleFilterChange = (filterType: EChatFilter) => {
 		const filterFunction = (chat: IChat) => {
 			if (filterType === 'all') return true;
-			if (filterType === 'read') return chat.latestMessage?.viewed_by?.includes(address);
-			return !chat.latestMessage?.viewed_by?.includes(address);
+			if (filterType === 'read') return chat.latestMessage?.viewed_by?.includes(String(substrateAddress));
+			return !chat.latestMessage?.viewed_by?.includes(String(substrateAddress));
 		};
 
 		if (selectedChatTab === 'messages') {

@@ -13,6 +13,7 @@ import shortenAddress from '~src/util/shortenAddress';
 import dayjs from 'dayjs';
 import { Card } from 'antd';
 import PendingRequestTab from './PendingRequestTab';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	chat: IChat;
@@ -24,12 +25,14 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
 	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
+
 	const { latestMessage } = chat;
-	const [isReadMessage, setIsReadMessage] = useState<boolean>(latestMessage?.viewed_by?.includes(address));
+	const [isReadMessage, setIsReadMessage] = useState<boolean>(latestMessage?.viewed_by?.includes(String(substrateAddress)));
 	const [isRejectedRequest, setIsRejectedRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.REJECTED);
 	const [isPendingRequest, setIsPendingRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.PENDING);
 
-	const recipientAddress = latestMessage?.receiverAddress === address ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
+	const recipientAddress = latestMessage?.receiverAddress === substrateAddress ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
 
 	const renderUsername = shortenAddress(recipientAddress || '');
 
@@ -38,7 +41,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 			return;
 		}
 		const requestData = {
-			address,
+			address: substrateAddress,
 			chatId: chat?.chatId,
 			participants: chat.participants
 		};
@@ -100,7 +103,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 
 				<div className='line-clamp-2 w-full break-words text-xs'>{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}</div>
 
-				{isPendingRequest && latestMessage.senderAddress !== address ? (
+				{isPendingRequest && latestMessage.senderAddress !== substrateAddress ? (
 					<PendingRequestTab
 						chat={chat}
 						setIsRejectedRequest={setIsRejectedRequest}

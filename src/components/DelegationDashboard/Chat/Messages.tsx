@@ -13,6 +13,7 @@ import shortenAddress from '~src/util/shortenAddress';
 import AuthForm from '~src/ui-components/AuthForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import RequestStatus from './feedbacks/RequestStatus';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const { TextArea } = Input;
 
@@ -27,13 +28,14 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
 
 	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [messages, setMessages] = useState<IMessage[]>([]);
 
 	const [newMessage, setNewMessage] = useState<string>('');
 
-	const recipientAddress = chat?.participants[0] === address ? chat?.participants[1] : chat?.participants[0];
+	const recipientAddress = chat?.participants[0] === substrateAddress ? chat?.participants[1] : chat?.participants[0];
 
 	const isRequestSent = chat.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
@@ -58,7 +60,7 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 			return;
 		}
 		const requestData = {
-			address,
+			address: substrateAddress,
 			chatId,
 			content: trimmedMsg,
 			receiverAddress: recipientAddress,

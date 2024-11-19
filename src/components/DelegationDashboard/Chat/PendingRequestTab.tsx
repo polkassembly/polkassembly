@@ -7,6 +7,7 @@ import { EChatRequestStatus, IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Button, message } from 'antd';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	chat: IChat;
@@ -20,6 +21,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
 	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState(false);
 
@@ -44,7 +46,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 		setLoading(true);
 
 		const requestData = {
-			address,
+			address: substrateAddress,
 			chatId: chat?.chatId,
 			requestStatus: EChatRequestStatus.REJECTED
 		};
@@ -66,7 +68,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 		setLoading(true);
 
 		const requestData = {
-			address,
+			address: substrateAddress,
 			chatId: chat?.chatId,
 			requestStatus: EChatRequestStatus.ACCEPTED
 		};

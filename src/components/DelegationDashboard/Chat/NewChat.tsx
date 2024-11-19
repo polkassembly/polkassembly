@@ -25,6 +25,7 @@ const NewChat = ({ handleOpenChat }: Props) => {
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 
 	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [allDelegates, setAllDelegates] = useState<IDelegateAddressDetails[]>([]);
@@ -87,9 +88,9 @@ const NewChat = ({ handleOpenChat }: Props) => {
 			return;
 		}
 		const requestData = {
-			address,
+			address: substrateAddress,
 			receiverAddress: recipientAddress,
-			senderAddress: address
+			senderAddress: substrateAddress
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
 		if (data) {

@@ -268,6 +268,7 @@ export const chainProperties: types.ChainPropType = {
 		],
 		hydrationEndpoints: ['wss://hydradx-rpc.dwellir.com', 'wss://rpc.hydradx.cloud', 'wss://rpc.helikon.io/hydradx', 'wss://hydradx.paras.ibp.network'],
 		hydrationTreasuryAddress: '7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV',
+		hydrationTreasuryAddress2: '7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY',
 		hydrationAssets: [
 			{
 				label: 'DOT',

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
@@ -15,6 +15,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import copyToClipboard from '~src/util/copyToClipboard';
+import CopyContentIcon from '~assets/icons/content_copy_small.svg';
+import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	openModal: boolean;
@@ -25,6 +29,7 @@ interface Props {
 
 const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [pureProxyAddress, setPureProxyAddress] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -44,11 +49,8 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				if (error) {
 					setError(error);
 				}
-				console.log('data', data);
 				if (data?.proxyAddress) {
 					const substrateAddress = getSubstrateAddress(data?.proxyAddress);
-					console.log('substrateAddress', substrateAddress);
-
 					setPureProxyAddress(substrateAddress || data?.proxyAddress);
 				}
 			} catch (err) {
@@ -58,6 +60,11 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				setLoading(false);
 			}
 		}
+	};
+
+	const handleCopylink = (addr: string) => {
+		copyToClipboard(addr);
+		message.success('Address copied to clipboard');
 	};
 
 	useEffect(() => {
@@ -93,7 +100,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 						<h2 className={`${poppins.variable} ${poppins.className} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 							Proxy created successfully
 						</h2>
-						<div className='ml-5 mt-4 flex flex-col gap-1'>
+						<div className='ml-16 mt-4 flex flex-col items-start gap-1'>
 							<div className='flex items-center gap-2'>
 								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>With Address:</span>
 								<Address
@@ -102,6 +109,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									isTruncateUsername={false}
 									address={address}
 									destroyTooltipOnHide
+									disableTooltip
 								/>
 							</div>
 							<div className='flex items-center gap-2'>
@@ -110,13 +118,22 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									<SkeletonInput active />
 								) : (
 									pureProxyAddress && (
-										<Address
-											displayInline
-											iconSize={18}
-											isTruncateUsername={false}
-											address={pureProxyAddress}
-											destroyTooltipOnHide
-										/>
+										<span
+											onClick={() => {
+												handleCopylink(pureProxyAddress);
+											}}
+											className='flex items-center gap-1'
+										>
+											<Address
+												displayInline
+												iconSize={18}
+												isTruncateUsername={false}
+												address={pureProxyAddress}
+												destroyTooltipOnHide
+												disableTooltip
+											/>
+											<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+										</span>
 									)
 								)}
 							</div>
@@ -135,7 +152,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 								className='cursor-pointer font-medium text-pink_primary'
 								onClick={() => setOpenModal(false)}
 							>
-								Profile
+								Accounts
 							</Link>{' '}
 							to view proxy address
 						</span>

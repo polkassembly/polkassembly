@@ -264,7 +264,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
-	if (isOpenGovSupported(network)) {
+	if (['polkadot', 'westend'].includes(network)) {
 		dropdownMenuItems.splice(1, 0, {
 			key: 'create proxy',
 			label: (

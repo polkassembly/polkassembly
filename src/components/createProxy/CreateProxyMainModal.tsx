@@ -32,13 +32,12 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export enum ProxyTypeEnum {
 	Any = 'Any',
-	Auction = 'Auction',
-	CancelProxy = 'CancelProxy',
-	Governance = 'Governance',
-	IdentityJudgement = 'IdentityJudgement',
 	NonTransfer = 'NonTransfer',
-	OnDemandOrdering = 'OnDemandOrdering',
-	Society = 'Society'
+	Governance = 'Governance',
+	Staking = 'Staking',
+	CancelProxy = 'CancelProxy',
+	Auction = 'Auction',
+	NominationPools = 'NominationPools'
 }
 
 interface Props {
@@ -253,6 +252,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					<CustomButton
 						onClick={handleSubmit}
 						disabled={
+							loadingStatus.isLoading ||
 							form.getFieldsError().some((field) => field.errors.length > 0) ||
 							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
 							availableBalance.lt(gasFee.add(baseDepositValue))
@@ -264,7 +264,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						className={
 							form.getFieldsError().some((field) => field.errors.length > 0) ||
 							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))
+							availableBalance.lt(gasFee.add(baseDepositValue)) ||
+							loadingStatus.isLoading
 								? 'opacity-50'
 								: ''
 						}
@@ -358,7 +359,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							]}
 						>
 							<AccountSelectionForm
-								title='Proxy Address'
+								title='Select an address for proxy '
 								isTruncateUsername={false}
 								accounts={accounts}
 								address={form.getFieldValue('proxyAddress') || loginAddress}

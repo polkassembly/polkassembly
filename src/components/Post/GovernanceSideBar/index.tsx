@@ -83,6 +83,8 @@ import { showProgressReportUploadFlow } from '~src/components/ProgressReport/uti
 import BountyChildBounties from './Bounty/BountyChildBounties';
 import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
+import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
+import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -1008,14 +1010,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.progress_file && id !== postData?.userId && (
-							<Alert
-								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-								showIcon
-								type='info'
-								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
-							/>
-						)}
+						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
+							!postData?.progress_report?.[0]?.progress_file &&
+							id !== postData?.userId && (
+								<Alert
+									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									showIcon
+									type='info'
+									message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
+								/>
+							)}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}
@@ -1371,6 +1375,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
+								<AwardChildBountyButton bountyIndex={bountyIndex || null} />
+
+								<ClaimChildBountyButton bountyIndex={bountyIndex || null} />
 								<ChildBounties
 									bountyIndex={bountyIndex}
 									status={status as string}

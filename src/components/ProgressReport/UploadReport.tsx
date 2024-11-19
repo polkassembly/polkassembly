@@ -16,7 +16,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { usePostDataContext } from '~src/context';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
@@ -28,9 +27,7 @@ const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-	const router = useRouter();
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -76,49 +73,10 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			dispatch(progressReportActions.setReportUploaded(false));
 			localStorage.removeItem('progress_report');
-			router.reload();
 		} else {
 			console.error('failed to save report');
-		}
-	};
-
-	const editProgressReport = async () => {
-		setLoading(true);
-
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
-			postId: postIndex,
-			proposalType,
-			summary: summary_content
-		});
-
-		if (editError || !data) {
-			setLoading(false);
-			console.error('Error saving post', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if (data) {
-			setLoading(false);
-			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
-				status: NotificationStatus.SUCCESS
-			});
-			dispatch(progressReportActions.setIsSummaryEdited(true));
-			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.log('failed to save report');
 		}
 	};
 
@@ -139,13 +97,13 @@ const UploadReport = () => {
 					/>
 					<CustomButton
 						variant='primary'
-						text={postData?.progress_report?.progress_file ? 'Edit' : 'Done'}
+						text='Done'
 						buttonsize='sm'
 						loading={loading}
 						className={`${loading ? 'opacity-60' : ''}`}
-						disabled={!report_uploaded && !postData?.progress_report?.progress_file}
+						disabled={!report_uploaded}
 						onClick={() => {
-							postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
+							addProgressReport();
 						}}
 					/>
 				</div>

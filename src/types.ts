@@ -395,7 +395,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	link?: string;
 	updated_at?: Date;
 }
@@ -599,7 +599,9 @@ export interface IRating {
 	user_id: string;
 }
 export interface IProgressReport {
+	id?: string;
 	created_at?: Date;
+	isEdited?: boolean;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;

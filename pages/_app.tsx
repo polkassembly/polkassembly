@@ -100,13 +100,6 @@ function App({ Component, pageProps }: AppProps) {
 				className='flex flex-col items-center justify-center gap-2'
 			>
 				<Image
-					src='/assets/Gifs/layout-loading.gif'
-					alt='empty state'
-					width={265}
-					height={520}
-					className='bg-transparent'
-				/>
-				<Image
 					width={172}
 					className='bg-transparent'
 					height={57}

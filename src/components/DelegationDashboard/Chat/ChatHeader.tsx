@@ -28,7 +28,7 @@ const ChatHeader = ({ actions }: Props) => {
 			/>
 			Messages
 			<div className='ml-auto flex items-center gap-3'>
-				{actions.map((action) => (
+				{(actions || []).map((action) => (
 					<Tooltip
 						key={action.label}
 						title={action.label}

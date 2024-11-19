@@ -50,7 +50,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, addresses } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
@@ -147,20 +147,40 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	const handleVerifiedUserProposal = async () => {
+		let promiseArr: any[] = [];
+
+		addresses?.map((address) => {
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: peopleChainApi ?? api, network })];
+		});
+
+		try {
+			const resolve = await Promise.all(promiseArr);
+			const isGood = !!resolve.find((info: any) => {
+				return !info?.isGood;
+			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isGood));
+			setMainDisplay(
+				resolve.find((info: any) => {
+					return info?.displayParent || info?.display || info?.nickname;
+				}) || ''
+			);
+			setIsGood(isGood);
+			setIsIdentitySet(
+				!!resolve.find((info: any) => {
+					return info?.displayParent || info?.display || info?.nickname || '';
+				})
+			);
+			setIsIdentityUnverified(!isGood);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		(async () => {
-			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
-				address: loginAddress,
-				api: peopleChainApi ?? api,
-				network: network
-			});
-			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
-			setMainDisplay(displayParent || display || nickname);
-			setIsGood(isGood);
-			setIsIdentitySet(isIdentitySet);
-			setIsIdentityUnverified(!isVerified);
-		})();
+
+		handleVerifiedUserProposal();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 

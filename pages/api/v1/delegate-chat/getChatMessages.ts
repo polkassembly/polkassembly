@@ -6,12 +6,15 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { IMessage } from '~src/types';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { isAddress } from 'ethers';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { chatMessagesRef } from '~src/api-utils/firestore_refs';
+import { chatDocRef, chatMessagesRef } from '~src/api-utils/firestore_refs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMessage[] } | MessageType>) {
 	storeApiKeyUsage(req);
@@ -25,10 +28,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { chatId } = req.body;
-	if (!chatId || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
+	const { chatId, address } = req.body;
+	if (!chatId || !address || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
+	const substrateAddress = getSubstrateAddress(address);
 	try {
+		const chatDoc = await chatDocRef(chatId).get();
+		const chatData = chatDoc.data();
+
+		if (!chatData) {
+			return res.status(404).json({ message: 'Chat not found' });
+		}
+
+		if (!chatData?.participants?.includes(substrateAddress)) {
+			return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
+		}
+
 		const chatMessagesSnapshot = await chatMessagesRef(chatId).orderBy('created_at', 'asc').get();
 
 		const messages: IMessage[] = chatMessagesSnapshot.docs.map((doc) => {

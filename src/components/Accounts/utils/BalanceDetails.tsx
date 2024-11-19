@@ -42,7 +42,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 
 	return (
 		<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center justify-between md:mt-0 md:justify-start md:gap-2`}>
-			<div className='flex flex-col items-center '>
+			<div className='flex flex-col items-start '>
 				<div className='flex items-center gap-1 md:gap-[6px]'>
 					<Image
 						className='h-4 w-4 rounded-full object-contain'
@@ -53,7 +53,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Balance</span>
 				</div>
-				<span className='whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='whitespace-nowrap text-sm mx-auto font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.freeBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>
@@ -61,7 +61,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 				type='vertical'
 				className='border-l-1 h-10 border-[#D2D8E0] dark:border-separatorDark max-lg:hidden xs:mt-0.5 xs:inline-block'
 			/>
-			<div className='flex flex-col items-center '>
+			<div className='flex flex-col items-start '>
 				<div className='flex items-center gap-1 md:gap-[6px]'>
 					<Image
 						className='h-4 w-4 rounded-full object-contain'
@@ -72,7 +72,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Transferrable</span>
 				</div>
-				<span className='whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='whitespace-nowrap text-sm mx-auto font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.transferableBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>
@@ -80,7 +80,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 				type='vertical'
 				className='border-l-1 h-10 border-[#D2D8E0] dark:border-separatorDark max-lg:hidden xs:mt-0.5 xs:inline-block'
 			/>
-			<div className='flex flex-col items-center '>
+			<div className='flex flex-col items-start '>
 				<div className='flex items-center gap-1 md:gap-[6px]'>
 					<Image
 						className='h-4 w-4 rounded-full object-contain'
@@ -91,7 +91,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Locked</span>
 				</div>
-				<span className='whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='whitespace-nowrap mx-auto text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.lockedBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>

@@ -157,7 +157,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		try {
 			const resolve = await Promise.all(promiseArr);
 			const isGood = !!resolve.find((info: any) => {
-				return !info?.isGood;
+				return info?.isGood;
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isGood));
 			setMainDisplay(

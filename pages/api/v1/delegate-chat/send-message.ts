@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatMessagesRef } from '~src/api-utils/firestore_refs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | MessageType>) {
 	storeApiKeyUsage(req);
@@ -33,7 +34,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress))))
 		return res.status(400).json({ message: 'Invalid address' });
 
-	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
+	const senderSubstrateAddress = getSubstrateAddress(senderAddress);
+	const receiverSubstrateAddress = getSubstrateAddress(receiverAddress);
+
+	if (!senderSubstrateAddress || !receiverSubstrateAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 
@@ -42,12 +46,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 	const newMessage = {
 		content,
 		created_at: new Date(),
-		receiverAddress,
-		senderAddress,
+		receiverAddress: receiverSubstrateAddress,
+		senderAddress: senderSubstrateAddress,
 		senderImage,
 		senderUsername,
 		updated_at: new Date(),
-		viewed_by: [senderAddress]
+		viewed_by: [senderSubstrateAddress]
 	};
 
 	try {

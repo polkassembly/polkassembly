@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);
@@ -32,8 +33,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	if (!address || !participants.length || participants.length !== 2 || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
+	const participantsSubstrateAddr = participants.map((addr: string) => getSubstrateAddress(addr));
+
 	const chatSnapshot = chatDocRef(chatId);
-	const viewed_by = participants;
+	const viewed_by = participantsSubstrateAddr || [];
 
 	try {
 		await chatSnapshot.update({

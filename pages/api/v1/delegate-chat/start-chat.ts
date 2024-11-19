@@ -13,6 +13,7 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChat | MessageType>) {
@@ -33,16 +34,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress))))
 		return res.status(400).json({ message: 'Invalid address' });
 
-	if (!senderAddress || !receiverAddress || senderAddress === receiverAddress) {
+	const senderSubstrateAddress = getSubstrateAddress(senderAddress);
+	const receiverSubstrateAddress = getSubstrateAddress(receiverAddress);
+
+	if (!senderSubstrateAddress || !receiverSubstrateAddress || senderSubstrateAddress === receiverSubstrateAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
-	const chatId = senderAddress.slice(0, 7) + receiverAddress.slice(-7);
+	const chatId = senderSubstrateAddress.slice(0, 7) + receiverSubstrateAddress.slice(-7);
 
 	const chatSnapshot = chatDocRef(chatId);
 	const newChat: any = {
 		chatId: String(chatId),
 		created_at: new Date(),
-		participants: [receiverAddress, senderAddress],
+		participants: [receiverSubstrateAddress, senderSubstrateAddress],
 		requestStatus: EChatRequestStatus.PENDING,
 		updated_at: new Date()
 	};

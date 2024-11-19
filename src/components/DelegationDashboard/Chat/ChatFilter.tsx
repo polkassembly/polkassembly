@@ -5,12 +5,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Popover, Button } from 'antd';
 import Image from 'next/image';
-import { EChatFilter } from '~src/types';
+import { EChatFilter, EChatTab } from '~src/types';
 
 interface ChatFilterProps {
 	onSearch: (searchText: string) => void;
 	onFilterChange: (filterType: EChatFilter) => void;
-	selectedChatTab: 'messages' | 'requests';
+	selectedChatTab: EChatTab;
 }
 
 const filterOptions = Object.values(EChatFilter).filter((option) => option !== EChatFilter.ALL);

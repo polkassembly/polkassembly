@@ -4,10 +4,11 @@
 
 import { Segmented } from 'antd';
 import React from 'react';
+import { EChatTab } from '~src/types';
 
 interface Props {
-	setSelectedChatTab: (selectedChatTab: 'messages' | 'requests') => void;
-	selectedChatTab: 'messages' | 'requests';
+	setSelectedChatTab: (selectedChatTab: EChatTab) => void;
+	selectedChatTab: EChatTab;
 	requestsCount: number;
 	messagesCount: number;
 }
@@ -22,7 +23,7 @@ const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsC
 							<div>Messages ({messagesCount})</div>
 						</div>
 					),
-					value: 'messages'
+					value: EChatTab.MESSAGES
 				},
 				{
 					label: (
@@ -30,11 +31,11 @@ const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsC
 							<div>Requests ({requestsCount})</div>
 						</div>
 					),
-					value: 'requests'
+					value: EChatTab.REQUESTS
 				}
 			]}
 			value={selectedChatTab}
-			onChange={(value) => setSelectedChatTab(String(value) as 'messages' | 'requests')}
+			onChange={(value) => setSelectedChatTab(String(value) as EChatTab)}
 			className='[&_.ant-segmented-item-label]:dark:text-[#9e9e9e] [&_.ant-segmented-item-selected]:font-semibold [&_.ant-segmented-item-selected_.ant-segmented-item-label]:text-bodyBlue [&_.ant-segmented-item-selected_.ant-segmented-item-label]:dark:text-blue-dark-high'
 			block
 		/>

@@ -1112,6 +1112,11 @@ export enum EChatFilter {
 	READ = 'read'
 }
 
+export enum EChatTab {
+	MESSAGES = 'messages',
+	REQUESTS = 'requests'
+}
+
 export interface IChat {
 	chatId: string;
 	participants: string[];

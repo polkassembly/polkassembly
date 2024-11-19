@@ -4,7 +4,7 @@
 
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { EChatFilter, IChat, IChatsResponse } from '~src/types';
+import { EChatFilter, EChatTab, IChat, IChatsResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import RenderChats from './RenderChats';
@@ -32,7 +32,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 	const [requests, setRequests] = useState<IChat[]>([]);
 	const [filteredMessages, setFilteredMessages] = useState<IChat[]>([]);
 	const [filteredRequests, setFilteredRequests] = useState<IChat[]>([]);
-	const [selectedChatTab, setSelectedChatTab] = useState<'messages' | 'requests'>('messages');
+	const [selectedChatTab, setSelectedChatTab] = useState<EChatTab>(EChatTab.MESSAGES);
 	const [openedChat, setOpenedChat] = useState<IChat | null>(null);
 	const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
@@ -94,7 +94,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 			return !chat.latestMessage?.viewed_by?.includes(String(substrateAddress));
 		};
 
-		if (selectedChatTab === 'messages') {
+		if (selectedChatTab === EChatTab.MESSAGES) {
 			setFilteredMessages(messages.filter(filterFunction));
 		} else {
 			setFilteredRequests(requests.filter(filterFunction));

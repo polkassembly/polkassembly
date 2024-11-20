@@ -16,7 +16,7 @@ import EvalutionSummary from '../Post/PostSummary/EvalutionSummary';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
 import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
@@ -31,12 +31,10 @@ interface Props {
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { id } = useUserDetailsSelector();
 	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore = 0, addresses } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
-	console.log('userInfo: ', id, userProfile);
 
 	const getData = async () => {
 		if (!api || !apiReady) return;

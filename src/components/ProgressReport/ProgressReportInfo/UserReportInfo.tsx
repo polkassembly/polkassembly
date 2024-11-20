@@ -141,7 +141,11 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 									expandIconPosition='end'
 									expandIcon={({ isActive }) =>
-										isActive ? <ArrowDownIcon className=' rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className=' dark:text-blue-dark-medium' />
+										isActive ? (
+											<ArrowDownIcon className='rotate-180 text-bodyBlue dark:text-blue-dark-medium' />
+										) : (
+											<ArrowDownIcon className='text-bodyBlue dark:text-blue-dark-medium' />
+										)
 									}
 									defaultActiveKey={index === 0 ? ['1'] : []}
 								>
@@ -187,7 +191,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 												</div>
 
 												<Button
-													className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-normal text-pink_primary shadow-none'
+													className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
 													onClick={() => {
 														if (loginAddress) {
 															dispatch(progressReportActions.setOpenRatingModal(true));

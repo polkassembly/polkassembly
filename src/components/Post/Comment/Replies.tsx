@@ -2,11 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
-
 import Reply from './Reply';
 import { IComment } from './Comment';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string;
@@ -22,23 +21,16 @@ const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReaction
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>
-			{repliesArr.length > 0 ? (
-				!showReplies ? (
-					<div
-						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
-						onClick={toggleShowReplies}
-					>
-						{repliesArr.length} replies <DownOutlined className='ml-1' />
-					</div>
-				) : (
-					<div
-						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
-						onClick={toggleShowReplies}
-					>
-						Hide replies <UpOutlined className='ml-1' />
-					</div>
-				)
-			) : null}
+			{repliesArr.length > 0 && (
+				<div
+					className={`${poppins.variable} ${poppins.className} flex cursor-pointer items-center border-none text-xs font-medium text-[#6D7F97] dark:text-[#9E9E9ECC]`}
+					onClick={toggleShowReplies}
+				>
+					<div className='mr-2 h-[0.7px] w-[18px] bg-[#6D7F97] dark:bg-[#9E9E9ECC]'></div>
+					{showReplies ? 'Hide replies' : `View Replies(${repliesArr.length})`}
+				</div>
+			)}
+
 			{showReplies &&
 				repliesArr.map((reply: any) => {
 					return (

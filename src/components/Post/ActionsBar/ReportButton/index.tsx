@@ -37,12 +37,13 @@ interface IReportButtonProps {
 	onSuccess?: () => void;
 	isButtonOnComment?: boolean;
 	isUsedInDescription?: boolean;
+	isUsedInComments?: boolean;
 }
 
 const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription, isUsedInComments } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
@@ -187,7 +188,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						onClick={() => setShowModal(true)}
 					>
 						{isDeleteModal ? theme == 'dark' ? <DeleteIconDark /> : <DeleteIcon /> : theme == 'dark' ? <ReportIconDark /> : <ReportIcon />}
-						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>{isDeleteModal ? 'Delete' : 'Report'}</span>
+						<span className={`${isUsedInComments ? 'text-xs' : 'text-base'} font-medium text-lightBlue dark:text-icon-dark-inactive`}>{isDeleteModal ? 'Delete' : 'Report'}</span>
 					</button>
 				) : (
 					<button

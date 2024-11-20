@@ -58,6 +58,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 
 			setLoading(false);
 		} else if (error) {
+			message.error(error);
 			console.log(error);
 			setLoading(false);
 		}
@@ -80,7 +81,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 
 			setLoading(false);
 		} else if (error) {
-			message.error('Failed to accept request');
+			message.error(error);
 			console.log(error);
 
 			setLoading(false);

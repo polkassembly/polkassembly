@@ -78,9 +78,9 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
 				networkPreferences = {
-					...currentUser.networkPreferences,
-					...networkPreferences,
-					triggerPreferences: data?.notification_preferences?.triggerPreferences
+					...(currentUser?.networkPreferences || {}),
+					...(networkPreferences || {}),
+					triggerPreferences: data?.notification_preferences?.triggerPreferences || null
 				};
 				dispatch(
 					setUserDetailsState({

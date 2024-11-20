@@ -32,6 +32,9 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const { postData } = usePostDataContext();
+
+	console.log(postData?.progress_report);
+
 	const { loginAddress } = useUserDetailsSelector();
 
 	const dispatch = useDispatch();

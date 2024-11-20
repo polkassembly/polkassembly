@@ -36,6 +36,7 @@ interface Props {
 const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
+
 	const { resolvedTheme: theme } = useTheme();
 
 	const [loading, setLoading] = useState<boolean>(false);
@@ -163,7 +164,7 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{postData.userId === currentUser?.id ? (
+					{postData.userId !== currentUser?.id ? (
 						<>
 							{!postData?.progress_report?.[0]?.progress_file ? (
 								<>

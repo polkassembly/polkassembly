@@ -606,6 +606,7 @@ export interface IProgressReport {
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	isFromOgtracker?: boolean;
 }
 
 export interface IVotesCount {

@@ -56,6 +56,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	const chatSnapshot = chatDocRef(chatId);
 	const newChat: any = {
 		chatId: String(chatId),
+		chatInitiatedBy: senderSubstrateAddress,
 		created_at: new Date(),
 		participants: [receiverSubstrateAddress, senderSubstrateAddress],
 		requestStatus: EChatRequestStatus.PENDING,
@@ -71,6 +72,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 
 		const chat: IChat = {
 			chatId: data?.chatId,
+			chatInitiatedBy: data?.chatInitiatedBy,
 			created_at: data?.created_at?.toDate(),
 			latestMessage: data?.latestMessage,
 			participants: data?.participants,

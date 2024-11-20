@@ -1120,6 +1120,7 @@ export enum EChatTab {
 export interface IChat {
 	chatId: string;
 	participants: string[];
+	chatInitiatedBy: string;
 	created_at: Date;
 	updated_at: Date;
 	requestStatus: EChatRequestStatus;

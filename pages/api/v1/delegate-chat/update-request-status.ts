@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);
@@ -32,7 +33,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	if (!address || !requestStatus || !chatId || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
+	const substrateAddress = getSubstrateAddress(address);
+
 	const chatSnapshot = chatDocRef(chatId);
+
+	const chatData = await chatSnapshot.get().then((doc) => doc?.data());
+
+	if (!chatData) {
+		return res.status(404).json({ message: 'Chat not found' });
+	}
+
+	if (!chatData?.participants?.includes(substrateAddress)) {
+		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
+	}
+
+	if (chatData?.chatInitiatedBy === substrateAddress) {
+		return res.status(403).json({ message: "You don't have permission to update this request's status." });
+	}
 
 	try {
 		await chatSnapshot.update({

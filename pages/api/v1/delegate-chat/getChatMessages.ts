@@ -35,7 +35,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	const substrateAddress = getSubstrateAddress(address);
 	try {
 		const chatDoc = await chatDocRef(chatId).get();
-		const chatData = chatDoc.data();
+		if (!chatDoc.exists) {
+			return res.status(404).json({ message: 'Chat not found' });
+		}
+
+		const chatData = chatDoc?.data();
 
 		if (!chatData) {
 			return res.status(404).json({ message: 'Chat not found' });

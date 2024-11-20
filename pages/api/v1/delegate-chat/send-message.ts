@@ -13,7 +13,7 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { chatMessagesRef } from '~src/api-utils/firestore_refs';
+import { chatMessagesRef, chatDocRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | MessageType>) {
@@ -39,6 +39,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 
 	if (!senderSubstrateAddress || !receiverSubstrateAddress || senderAddress === receiverAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
+	}
+	const chatData = await chatDocRef(chatId)
+		.get()
+		.then((doc) => doc?.data());
+
+	if (!chatData) {
+		return res.status(404).json({ message: 'Chat not found' });
+	}
+
+	if (!chatData?.participants?.includes(senderSubstrateAddress)) {
+		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 	}
 
 	const messageSnapshot = chatMessagesRef(chatId);

@@ -105,7 +105,7 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 					{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
 				</div>
 
-				{isPendingRequest && latestMessage.senderAddress !== substrateAddress ? (
+				{isPendingRequest && chat.chatInitiatedBy !== substrateAddress ? (
 					<PendingRequestTab
 						chat={chat}
 						setIsRejectedRequest={setIsRejectedRequest}

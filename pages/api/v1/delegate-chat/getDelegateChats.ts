@@ -44,15 +44,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 		const mapChatData = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]): Promise<IChat[]> => {
 			return Promise.all(
 				docs.map(async (doc) => {
-					const data = doc.data();
+					const data = doc?.data();
 
 					// Fetch the latest message for each chat
 					const chatMessagesSnapshot = await chatMessagesRef(data.chatId).orderBy('created_at', 'desc').limit(1).get();
 
-					const latestMessage = chatMessagesSnapshot.empty ? null : chatMessagesSnapshot.docs[0].data();
+					const latestMessage = chatMessagesSnapshot.empty ? null : chatMessagesSnapshot.docs[0]?.data();
 
 					return {
 						chatId: data.chatId,
+						chatInitiatedBy: data.chatInitiatedBy,
 						created_at: data.created_at?.toDate(),
 						latestMessage: {
 							...latestMessage,

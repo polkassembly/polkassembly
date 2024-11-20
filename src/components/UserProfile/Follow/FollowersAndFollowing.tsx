@@ -91,10 +91,12 @@ const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profi
 		<>
 			<div className='flex gap-1'>
 				<>
-					{!!profileSince && <Divider
-						type='vertical'
-						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
-					/>}
+					{!!profileSince && (
+						<Divider
+							type='vertical'
+							className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
+						/>
+					)}
 					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
 						Followers:
 						{data?.followers && data.followers.length > 0 ? (

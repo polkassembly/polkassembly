@@ -155,7 +155,10 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								<span className='ml-1 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileSince).format('MMM DD, YYYY')}</span>
 							</div>
 						)}
-						<FollowersAndFollowing profileSince={profileSince} userId={userProfile?.user_id} />
+						<FollowersAndFollowing
+							profileSince={profileSince}
+							userId={userProfile?.user_id}
+						/>
 					</div>
 				</div>
 				<SocialsHandle

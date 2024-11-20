@@ -10,7 +10,7 @@ interface Props {
 }
 
 const RequestStatus = ({ isRequestSent }: Props) => (
-	<div className={`mt-auto flex items-center gap-4 shadow-lg ${isRequestSent ? 'bg-[#31C4400F]' : 'bg-[#FFDF1A]'} px-5 py-2`}>
+	<div className={`mt-auto flex items-center gap-4 shadow-lg ${isRequestSent ? 'bg-[#31C4400F]' : 'bg-[#FFDF1A] text-blue-light-high'} px-5 py-2`}>
 		<Image
 			src={`/assets/icons/delegation-chat/${isRequestSent ? 'request-sent' : 'request-info'}.svg`}
 			height={20}

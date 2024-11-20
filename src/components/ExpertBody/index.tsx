@@ -43,7 +43,7 @@ function ExpertBodyCard() {
 			try {
 				const { data } = await nextApiClientFetch<ExpertStatusResponse>('api/v1/expertBody/getExpertStatus', { userAddress: substrateAddress });
 				if (data?.status !== undefined) {
-					setIsExpert(data.status);
+					setIsExpert(data?.status);
 				} else {
 					console.error('Failed to fetch expert status:', data);
 					setIsExpert('');
@@ -75,9 +75,9 @@ function ExpertBodyCard() {
 		if (comments) {
 			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>;
 			const subsquidProposalType = getSubsquidProposalType(validProposalType);
-			const key = postIndex && postType ? `${postIndex.toString()}_${subsquidProposalType}` : null;
-			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment.isExpertComment) : [];
-			setReviewsCount(expertComments.length);
+			const key = postIndex && postType ? `${postIndex?.toString()}_${subsquidProposalType}` : null;
+			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment?.isExpertComment) : [];
+			setReviewsCount(expertComments?.length);
 		}
 	}, [comments, postIndex, postType]);
 
@@ -121,12 +121,12 @@ function ExpertBodyCard() {
 			setComments((prev) => {
 				const updatedComments = { ...prev };
 				Object.keys(updatedComments).forEach((key) => {
-					updatedComments[key] = updatedComments[key].map((comment: IComment) => (comment.id === commentId ? { ...comment, id: data.id } : comment));
+					updatedComments[key] = updatedComments[key]?.map((comment: IComment) => (comment?.id === commentId ? { ...comment, id: data.id } : comment));
 				});
 				return updatedComments;
 			});
 
-			handleCommentAndTimelineUpdate(postIndex.toString(), postType, newComment);
+			handleCommentAndTimelineUpdate(postIndex?.toString(), postType, newComment);
 
 			queueNotification({
 				header: 'Success!',

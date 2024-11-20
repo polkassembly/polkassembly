@@ -38,7 +38,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
-	const isVerified = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isVerified = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable']?.includes(judgement));
 	const [successSubmission, setSuccessSubmission] = useState(false);
 	const [contribution, setContribution] = useState('');
 	const [reason, setReason] = useState('');
@@ -77,7 +77,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	};
 
 	const handleContributionSubmit = async () => {
-		if (contribution.trim() === '') {
+		if (contribution?.trim() === '') {
 			message.error('Please provide some contributions.');
 			return;
 		}
@@ -107,11 +107,11 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			userName: currentUser?.username || ''
 		});
 
-		const twitterHandle = socialsData?.twitter ? new URL(socialsData.twitter).pathname.replace('/', '') || 'polk_gov' : 'polk_gov';
+		const twitterHandle = socialsData?.twitter ? new URL(socialsData?.twitter)?.pathname.replace('/', '') || 'polk_gov' : 'polk_gov';
 		const tweetMessage = '🎉 Just submitted my expert application to Polkassembly! Excited for the journey ahead! 🚀';
 		const twitterParameters = [`text=${encodeURI(tweetMessage)}`, 'via=' + encodeURI(twitterHandle)];
 		const url = `https://twitter.com/intent/tweet?${twitterParameters.join('&')}`;
-		window.open(url);
+		window?.open(url);
 	};
 
 	const copyLinkToClipboard = () => {
@@ -250,10 +250,10 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								onClick={(e) => {
 									e.stopPropagation();
 									e.preventDefault();
-									if (typeof currentUser?.id === 'number' && !Number.isNaN(currentUser.id) && currentUser?.username) {
+									if (typeof currentUser?.id === 'number' && !Number.isNaN(currentUser?.id) && currentUser?.username) {
 										trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-											userId: currentUser.id.toString(),
-											userName: currentUser.username
+											userId: currentUser?.id?.toString(),
+											userName: currentUser?.username
 										});
 										handleIdentityButtonClick();
 									} else {

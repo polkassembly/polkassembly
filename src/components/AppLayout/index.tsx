@@ -150,7 +150,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const handleVerifiedUserProposal = async () => {
 		const promiseArr: any[] = [];
 		if (!addresses?.length) return;
-		console.log({ addresses });
 
 		addresses?.map((address) => {
 			promiseArr?.push(getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
@@ -158,27 +157,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 		try {
 			const resolve = await Promise.all(promiseArr);
-			const isGood = !!resolve.find((info: any) => {
-				return info?.isGood;
+			const isVerified = !!resolve.find((info: any) => {
+				return info?.isVerified;
 			});
-			console.log(
-				!!resolve.find((info: any) => {
-					return info?.displayParent || info?.display || info?.nickname || '';
-				})
-			);
-			dispatch(userDetailsActions.setIsUserOnchainVerified(isGood));
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified));
 			setMainDisplay(
 				resolve?.find((info: any) => {
-					return info?.displayParent || info?.display || info?.nickname || '';
+					return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
 				}) || ''
 			);
-			setIsGood(isGood);
+			setIsGood(isVerified);
 			setIsIdentitySet(
-				!!resolve?.find((info: any) => {
-					return info?.displayParent || info?.display || info?.nickname || '';
+				!!resolve.find((info: any) => {
+					return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
 				})
 			);
-			setIsIdentityUnverified(!isGood);
+			setIsIdentityUnverified(!isVerified);
 		} catch (err) {
 			console.log(err);
 		}

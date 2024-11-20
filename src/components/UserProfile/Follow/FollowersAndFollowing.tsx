@@ -91,7 +91,7 @@ const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profi
 		<>
 			<div className='flex gap-1'>
 				<>
-					{profileSince && <Divider
+					{!!profileSince && <Divider
 						type='vertical'
 						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
 					/>}

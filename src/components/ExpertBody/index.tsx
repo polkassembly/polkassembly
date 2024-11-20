@@ -10,7 +10,6 @@ import NotAExpertModal from './NotAExpertModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { v4 } from 'uuid';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import { IComment } from '../Post/Comment/Comment';
@@ -88,24 +87,6 @@ function ExpertBodyCard() {
 	};
 
 	const handleDone = async () => {
-		const commentId = v4();
-		const newComment: IComment = {
-			comment_reactions: { '👍': { count: 0, userIds: [], usernames: [] }, '👎': { count: 0, userIds: [], usernames: [] } },
-			content: review,
-			created_at: new Date(),
-			history: [],
-			id: commentId,
-			isError: false,
-			isExpertComment: true,
-			profile: picture || '',
-			proposer: loginAddress,
-			replies: [],
-			sentiment: 0,
-			updated_at: new Date(),
-			user_id: id as any,
-			username: username || ''
-		};
-
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content: review,
@@ -116,7 +97,23 @@ function ExpertBodyCard() {
 				trackNumber: track_number,
 				userId: id
 			});
-
+			const commentId = data?.id;
+			const newComment: IComment = {
+				comment_reactions: { '👍': { count: 0, userIds: [], usernames: [] }, '👎': { count: 0, userIds: [], usernames: [] } },
+				content: review,
+				created_at: new Date(),
+				history: [],
+				id: commentId || '',
+				isError: false,
+				isExpertComment: true,
+				profile: picture || '',
+				proposer: loginAddress,
+				replies: [],
+				sentiment: 0,
+				updated_at: new Date(),
+				user_id: id as any,
+				username: username || ''
+			};
 			if (error || !data) {
 				throw new Error(error || 'Unknown error');
 			}
@@ -137,14 +134,6 @@ function ExpertBodyCard() {
 				status: NotificationStatus.SUCCESS
 			});
 		} catch (error) {
-			setComments((prev) => {
-				const updatedComments = { ...prev };
-				Object.keys(updatedComments).forEach((key) => {
-					updatedComments[key] = updatedComments[key].map((comment: IComment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
-				});
-				return updatedComments;
-			});
-
 			queueNotification({
 				header: 'Failed!',
 				message: error.message,

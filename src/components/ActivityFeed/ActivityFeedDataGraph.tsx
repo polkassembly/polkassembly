@@ -12,7 +12,34 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
-const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthOrder = {
+	january: 1,
+	february: 2,
+	march: 3,
+	april: 4,
+	may: 5,
+	june: 6,
+	july: 7,
+	august: 8,
+	september: 9,
+	october: 10,
+	november: 11,
+	december: 12
+};
+
+const getLastSixMonths = () => {
+	const months = Object.keys(monthOrder);
+	const currentDate = new Date();
+	const currentMonth = currentDate.getMonth();
+
+	const lastSixMonths = [];
+	for (let i = 0; i < 10; i++) {
+		const monthIndex = (currentMonth - i + 12) % 12;
+		lastSixMonths.push(months[monthIndex]);
+	}
+
+	return lastSixMonths.reverse();
+};
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -35,8 +62,9 @@ const ActivityFeedDataGraph = ({
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const filteredData = graphData
-		?.filter((item) => parseFloat(item.balance) !== 0)
-		?.sort((a, b) => monthOrder?.indexOf(a?.month?.slice(0, 3)) - monthOrder?.indexOf(b?.month?.slice(0, 3)));
+		.filter((item) => getLastSixMonths().includes(item.month.toLowerCase()) && parseFloat(item.balance) !== 0)
+		.sort((a, b) => monthOrder[a.month.toLowerCase() as keyof typeof monthOrder] - monthOrder[b.month.toLowerCase() as keyof typeof monthOrder]);
+
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData?.length - 1]?.month;
 	const formattedData = [

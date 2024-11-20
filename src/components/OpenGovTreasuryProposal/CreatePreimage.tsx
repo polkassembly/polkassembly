@@ -274,7 +274,7 @@ const CreatePreimage = ({
 		}
 	};
 
-	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean, generalInd: string | null) => {
+	const handleSelectTrack = (amount: BN, isPreimage: boolean, generalInd: string | null, inputAm?: string) => {
 		let selectedTrack = '';
 
 		if (generalInd) {
@@ -283,16 +283,15 @@ const CreatePreimage = ({
 					currentTokenPrice: currentTokenPrice || '0',
 					dedTokenUsdPrice: dedTokenUsdPrice || '0',
 					generalIndex: generalInd,
-					inputAmountValue: inputAmountValue || '0',
+					inputAmountValue: inputAm || '0',
 					network
 				}) || 0;
-
-			fundingAmount = new BN(dotAmount || '0').mul(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)));
+			amount = new BN(dotAmount || '0').mul(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)));
 		}
 
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-			if (maxSpend.gte(fundingAmount)) {
+			if (maxSpend.gte(amount)) {
 				selectedTrack = maxSpendArr[i].track;
 				setSelectedTrack(maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
@@ -458,7 +457,11 @@ const CreatePreimage = ({
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 				if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					if (network === 'cere') {
+						txArr.push((api?.tx?.treasury?.spend as any)(balance.toString(), beneficiary.address));
+					} else {
+						txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					}
 				}
 			});
 		}
@@ -871,10 +874,11 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
 
-		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage), generalIndex);
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage), generalIndex, totalAmt.toString());
 		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
+	//
 	const addBeneficiary = () => {
 		dispatchBeneficiaryAddresses({
 			payload: {

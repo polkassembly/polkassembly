@@ -376,6 +376,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 				/>
 			)}
 
+			{/* Added Halloween Login Prompt */}
 			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={modalOpen}

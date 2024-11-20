@@ -156,6 +156,7 @@ import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
 import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
 import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
+import ProfileFollowSVG from '~assets/profile/profile-follows.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
 import MailFilled from '~assets/icons/email-notification.svg';
 import SlackIconSVG from '~assets/icons/slack.svg';
@@ -184,6 +185,7 @@ import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
 import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
 import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
+import SelectedCalendarIcon from '~assets/selected-icons/Calendar.svg';
 import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
 import SelectedRootIcon from '~assets/selected-icons/Root.svg';
 import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
@@ -1205,6 +1207,12 @@ export const ProfileReactionsIcon = (props: Partial<CustomIconComponentProps>) =
 		{...props}
 	/>
 );
+export const ProfileFollowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileFollowSVG}
+		{...props}
+	/>
+);
 
 export const OnChainIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1359,6 +1367,13 @@ export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => 
 export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={SelectedDiscussionsIcon}
+		{...props}
+	/>
+);
+
+export const SelectedCalendar = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedCalendarIcon}
 		{...props}
 	/>
 );

@@ -26,6 +26,7 @@ export async function _processDecisionDepositPlaced({
 	// process reputation scores for proposal 'User can place decision deposit on behalf of another proposal'
 
 	// find proposer address from subsquid
+	console.log('Processing decision deposit placed', network, proposalIndex, proposalType, depositorAddress);
 	const subsquidRes = await fetchSubsquid({
 		network,
 		query: GET_PROPOSER_BY_ID_AND_TYPE,
@@ -34,6 +35,8 @@ export async function _processDecisionDepositPlaced({
 			type_eq: proposalType
 		}
 	});
+
+	console.log('subsquidRes', subsquidRes);
 
 	if (!subsquidRes?.data?.proposals?.length) {
 		throw new Error('Failed to fetch proposal proposer');

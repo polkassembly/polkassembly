@@ -7,6 +7,7 @@ import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposal
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
+import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 
 declare global {
 	interface Window {
@@ -394,7 +395,9 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
+	link?: string;
+	updated_at?: Date;
 }
 
 export interface IPostTag {
@@ -596,7 +599,9 @@ export interface IRating {
 	user_id: string;
 }
 export interface IProgressReport {
+	id?: string;
 	created_at?: Date;
+	isEdited?: boolean;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;
@@ -1014,4 +1019,73 @@ export interface INetworkWalletErr {
 	message: string;
 	description: string;
 	error: number;
+}
+
+export interface IChildBountySubmission {
+	content: string;
+	createdAt: Date;
+	link: string;
+	parentBountyIndex: number;
+	proposer: string;
+	reqAmount: string;
+	status: EChildbountySubmissionStatus;
+	tags: string[];
+	title: string;
+	updatedAt: Date;
+	userId: number;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
+	id: string;
+	rejectionMessage?: string;
+	expand?: boolean;
+	loading?: boolean;
+}
+
+export enum EChildbountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
+}
+
+export enum EPendingCuratorReqType {
+	SENT = 'sent',
+	RECEIVED = 'received'
+}
+
+export interface IPendingCuratorReq extends IBountyListing {
+	reqType: EPendingCuratorReqType;
+	proposalType: ProposalType;
+	content: string;
+	parentBountyIndex?: number;
+	accepted?: boolean;
+	expand?: boolean;
+	loading?: boolean;
+}
+
+export interface ISubsquidChildBontyAndBountyRes {
+	proposer: string;
+	index: number;
+	status: string;
+	reward: string;
+	payee: string;
+	curator: string;
+	createdAt: string;
+	parentBountyIndex: number;
+}
+export interface IFollowEntry {
+	id: string;
+	network: string;
+	created_at: Date;
+	follower_user_id: number;
+	followed_user_id: number;
+	updated_at: Date;
+	isFollow: boolean;
 }

@@ -142,7 +142,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 				userId
 			});
 		}
-		getCommentsAISummaryByPost({ network, postId, postType });
+		await getCommentsAISummaryByPost({ network, postId, postType });
 		return;
 	} catch (err) {
 		console.log(err);

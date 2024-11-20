@@ -81,7 +81,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		await postRef.update({
 			last_comment_at
 		});
-		getCommentsAISummaryByPost({ network, postId, postType });
+		await getCommentsAISummaryByPost({ network, postId, postType });
 		res.status(200).json({ message: 'Comment saved.' });
 	} catch (error) {
 		// The document probably doesn't exist.

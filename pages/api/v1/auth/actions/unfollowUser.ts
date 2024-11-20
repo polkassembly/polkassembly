@@ -12,6 +12,17 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
+import { UpdateType } from '~src/types';
+
+async function updateField(docRef: FirebaseFirestore.DocumentReference, fieldName: string, updateType: UpdateType) {
+	const doc = await docRef.get();
+	const data = doc.data();
+	const currentValue = data?.[fieldName] || 0;
+	const newValue = updateType === UpdateType.INCREMENT ? currentValue + 1 : Math.max(0, currentValue - 1);
+	await docRef.update({
+		[fieldName]: newValue
+	});
+}
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -21,7 +32,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
 
-	// userId to follow
+	// userId to unfollow
 	const { userId } = req.body;
 	if (isNaN(Number(userId)) || userId === null || userId === undefined) return res.status(400).json({ message: 'Missing or invalid user id in request body' });
 
@@ -55,6 +66,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		isFollow: false,
 		updated_at: new Date()
 	});
+
+	await updateField(userRef, 'followers', UpdateType.DECREMENT);
+	await updateField(firestore_db.collection('users').doc(String(user.id)), 'following', UpdateType.DECREMENT);
 
 	//TODO: delete activity for the user unfollowed
 	//TODO: send notification to the user unfollowed

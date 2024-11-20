@@ -1089,3 +1089,8 @@ export interface IFollowEntry {
 	updated_at: Date;
 	isFollow: boolean;
 }
+
+export enum UpdateType {
+	INCREMENT = 'increment',
+	DECREMENT = 'decrement'
+}

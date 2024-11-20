@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatCollRef, chatMessagesRef } from '~src/api-utils/firestore_refs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -32,12 +33,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	if (!address) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
-	const encodedAddress = getEncodedAddress(address, network);
+	const substrateAddress = getSubstrateAddress(address);
 
 	try {
 		const [acceptedChatsSnapshot, pendingRequestsSnapshot] = await Promise.all([
-			chatCollRef().where('participants', 'array-contains', encodedAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
-			chatCollRef().where('participants', 'array-contains', encodedAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
+			chatCollRef().where('participants', 'array-contains', substrateAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
+			chatCollRef().where('participants', 'array-contains', substrateAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
 		]);
 
 		const mapChatData = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]): Promise<IChat[]> => {

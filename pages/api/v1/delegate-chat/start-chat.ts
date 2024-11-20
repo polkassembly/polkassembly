@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { EChatRequestStatus, IChat } from '~src/types';
+import { EChatRequestStatus, IChat, IDelegateAddressDetails } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -15,6 +15,7 @@ import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
+import { getDelegatesData } from '../delegations/getAllDelegates';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChat | MessageType>) {
 	storeApiKeyUsage(req);
@@ -41,6 +42,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
 	}
 	const chatId = senderSubstrateAddress.slice(0, 7) + receiverSubstrateAddress.slice(-7);
+
+	const { data: delegatesList, error } = await getDelegatesData(network, receiverAddress);
+
+	if (delegatesList) {
+		const isValidReceiverAddress = delegatesList.some((delegate: IDelegateAddressDetails) => getSubstrateAddress(delegate.address) === receiverSubstrateAddress);
+
+		if (!isValidReceiverAddress) return res.status(400).json({ message: `Address ${receiverAddress} is not a valid delegate` });
+	} else if (error) {
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+	}
 
 	const chatSnapshot = chatDocRef(chatId);
 	const newChat: any = {

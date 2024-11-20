@@ -13,7 +13,7 @@ import { useFollowSelector, useUserDetailsSelector } from '~src/redux/selectors'
 import { useDispatch } from 'react-redux';
 import { setFollowingIds } from '~src/redux/follow';
 
-const FollowersAndFollowing = ({ userId }: { userId: number }) => {
+const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profileSince: Date | null | undefined }) => {
 	const { id } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
@@ -91,10 +91,10 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 		<>
 			<div className='flex gap-1'>
 				<>
-					<Divider
+					{profileSince && <Divider
 						type='vertical'
 						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
-					/>
+					/>}
 					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
 						Followers:
 						{data?.followers && data.followers.length > 0 ? (

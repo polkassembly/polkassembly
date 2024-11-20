@@ -141,7 +141,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 						)}
 					</div>
 
-					<div className='flex gap-1'>
+					<div className={`flex gap-1 ${!profileSince ? 'md:ml-[90px]' : ''} `}>
 						{profileSince && (
 							<div className='flex items-center text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium  md:ml-[90px]'>
 								User Since:
@@ -155,7 +155,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								<span className='ml-1 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileSince).format('MMM DD, YYYY')}</span>
 							</div>
 						)}
-						<FollowersAndFollowing userId={userProfile?.user_id} />
+						<FollowersAndFollowing profileSince={profileSince} userId={userProfile?.user_id} />
 					</div>
 				</div>
 				<SocialsHandle

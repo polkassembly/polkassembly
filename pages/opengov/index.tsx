@@ -136,7 +136,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mt-3 flex items-start justify-between'>
-				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 tracking-tight text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
 				<div className='flex flex-col items-end gap-2 lg:flex-row xl:mr-[6px] xl:justify-end'>
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>

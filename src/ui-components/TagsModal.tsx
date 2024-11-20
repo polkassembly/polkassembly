@@ -4,7 +4,7 @@
 import { Divider, Modal } from 'antd';
 import React, { FC } from 'react';
 import { CloseIcon } from './CustomIcons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import TagsWhiteIcon from '~assets/icons/tags-white-icon.svg';
@@ -44,7 +44,7 @@ const TagsModal: FC<ITagsModalProps> = (props) => {
 				}}
 				footer={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px] max-w-full shrink-0 max-sm:w-[100%]`}
+				className={`${dmSans.variable} ${dmSans.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px] max-w-full shrink-0 max-sm:w-[100%]`}
 				title={
 					<>
 						<label className='text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>

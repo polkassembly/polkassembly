@@ -7,7 +7,7 @@ import { Divider, MenuProps, Modal } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
@@ -117,7 +117,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const getSentimentLabel = (sentiment: ESentiment) => {
-		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+		return <div className={`${dmSans.variable} ${dmSans.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 
 	const items: MenuProps['items'] = [
@@ -277,7 +277,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${dmSans.variable} ${dmSans.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName='dark:bg-modalOverlayDark'
 								title={

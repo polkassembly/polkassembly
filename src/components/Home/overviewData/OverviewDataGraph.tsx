@@ -12,7 +12,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const monthOrder = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -81,13 +81,13 @@ const OverviewDataGraph = ({
 				axisRight={null}
 				axisBottom={{
 					tickSize: 3,
-					tickPadding: 25,
+					tickPadding: 20,
 					tickRotation: 0,
 					format: (value) => {
 						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
 							return '';
 						}
-						return value;
+						return value.slice(0, 3);
 					}
 				}}
 				axisLeft={null}
@@ -120,7 +120,7 @@ const OverviewDataGraph = ({
 							},
 							text: {
 								fill: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 10,
+								fontSize: 12,
 								outlineColor: 'transparent',
 								outlineWidth: 0
 							}
@@ -135,7 +135,7 @@ const OverviewDataGraph = ({
 					},
 					legends: {
 						text: {
-							fontSize: 10,
+							fontSize: 12,
 							textTransform: 'capitalize'
 						}
 					}

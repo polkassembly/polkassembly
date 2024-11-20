@@ -9,7 +9,7 @@ import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -269,7 +269,7 @@ const UploadModalContent = () => {
 			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[600px]')}
 				open={open_success_modal}
 				maskClosable={false}
 				footer={null}

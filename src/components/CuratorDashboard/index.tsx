@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { poppins, spaceGrotesk } from 'pages/_app';
+import { dmSans, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CuratorDashboardTabItems from './CuratorDashboardTabs';
 import { useTheme } from 'next-themes';
@@ -63,7 +63,7 @@ const CuratorDashboard = ({ className }: Props) => {
 					{!isNaN(id || 0) && !!loginAddress?.length ? (
 						<CuratorDashboardTabItems handleClick={handleClick} />
 					) : (
-						<div className={`flex h-[900px] ${poppins.variable} ${poppins.className} flex-col items-center rounded-xl  px-5 pt-5  md:pt-10`}>
+						<div className={`flex h-[900px] ${dmSans.variable} ${dmSans.className} flex-col items-center rounded-xl  px-5 pt-5  md:pt-10`}>
 							<Image
 								src='/assets/Gifs/login-dislike.gif'
 								alt='empty state'

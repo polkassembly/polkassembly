@@ -17,7 +17,7 @@ import { progressReportActions } from '~src/redux/progressReport';
 import { ArrowDownIcon, CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import RatingModal from '../RatingModal';
 import { useDispatch } from 'react-redux';
 import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -170,7 +170,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={open_rating_modal}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
@@ -213,7 +213,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 			</Modal>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[600px]')}
 				open={open_rating_success_modal}
 				maskClosable={false}
 				footer={null}

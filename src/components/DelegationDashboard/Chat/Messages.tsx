@@ -41,7 +41,7 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 
 	const handleDataFetch = async () => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<{ messages: IMessage[] }>('api/v1/delegate-chat/getChatMessages', { chatId });
+		const { data, error } = await nextApiClientFetch<{ messages: IMessage[] }>('api/v1/delegate-chat/getChatMessages', { address, chatId });
 		if (data) {
 			setMessages(data.messages);
 			setLoading(false);

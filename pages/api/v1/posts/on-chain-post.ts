@@ -395,6 +395,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
+						isExpertComment: data?.isisExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -415,6 +416,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: history,
 						id: data.id,
+						isExpertComment: data?.isExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -521,7 +523,7 @@ export async function getComments(
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments = comments.concat(subsquareComments);
+	comments = comments.concat(subsquareComments as any[]);
 
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {

@@ -161,11 +161,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				return info?.isVerified;
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified));
-			setMainDisplay(
-				resolve?.find((info: any) => {
-					return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
-				}) || ''
-			);
+			const displayNameInfo = resolve?.find((info: any) => {
+				return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
+			});
+			setMainDisplay(displayNameInfo?.displayParent || displayNameInfo?.display || displayNameInfo?.nickname || '');
 			setIsGood(isVerified);
 			setIsIdentitySet(
 				!!resolve.find((info: any) => {

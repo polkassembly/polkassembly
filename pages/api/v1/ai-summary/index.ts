@@ -80,7 +80,7 @@ export const getCommentsAISummaryByPost = async ({
 				return '';
 			}
 
-			const repliesRef = commentDoc.ref.collection('replies');
+			const repliesRef = commentDoc.ref.collection('replies').where('isDeleted', '!=', true);
 			const repliesSnapshot = await repliesRef.get();
 
 			const repliesPromises = repliesSnapshot.docs.map(async (replyDoc) => {

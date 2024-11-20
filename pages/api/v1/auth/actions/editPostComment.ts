@@ -75,6 +75,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		await commentRef.update({
 			content,
 			history,
+			isDeleted: false,
 			sentiment,
 			updated_at: last_comment_at
 		});

@@ -359,7 +359,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{trackMetaData?.description}
 						{showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(false)}
 							>
 								Hide Track details
@@ -367,7 +367,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						)}
 						{!showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(true)}
 							>
 								Show Track details

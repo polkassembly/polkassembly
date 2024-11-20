@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import classNames from 'classnames';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 import React from 'react';
 import ImageComponent from '~src/components/ImageComponent';
@@ -27,7 +27,7 @@ const FollowTooltip = ({
 	const { id } = useUserDetailsSelector();
 
 	return (
-		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>
+		<div className={classNames('max-h-24 w-min overflow-y-auto', dmSans.className, dmSans.variable)}>
 			{isLoading ? (
 				<Loader className='h-7 w-7' />
 			) : (

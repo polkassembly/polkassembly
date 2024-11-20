@@ -4,7 +4,7 @@
 import { Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
@@ -175,7 +175,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				open={openRemoveIdentityModal}
 				onCancel={() => dispatch(setOpenRemoveIdentityModal(false))}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>

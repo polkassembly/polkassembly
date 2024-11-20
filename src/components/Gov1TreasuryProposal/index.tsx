@@ -7,7 +7,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import { ESteps } from '~src/types';
 import styled from 'styled-components';
@@ -93,7 +93,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					setOpen(false);
 					setStep(0);
 				}}
-				className={classNames(poppins.className, poppins.variable, theme, 'antSteps', 'w-[650px] px-6')}
+				className={classNames(dmSans.className, dmSans.variable, theme, 'antSteps', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} antSteps`}
 				footer={false}

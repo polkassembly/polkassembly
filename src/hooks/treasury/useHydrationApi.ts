@@ -32,6 +32,8 @@ const useHydrationApi = (network: string) => {
 					await apiPromise.disconnect();
 				}, 60000);
 
+				if (!apiPromise) return 
+
 				apiPromise.isReady
 					.then(() => {
 						clearTimeout(timer);

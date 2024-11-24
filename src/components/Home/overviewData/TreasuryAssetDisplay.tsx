@@ -26,7 +26,7 @@ const TreasuryAssetDisplay: React.FC<TreasuryAssetDisplayProps> = ({ title, icon
 	}
 
 	return (
-		<div className={`flex flex-col xl:items-end`}>
+		<div className={'flex flex-col xl:items-end'}>
 			<div className='flex items-center'>
 				<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 					{icon}

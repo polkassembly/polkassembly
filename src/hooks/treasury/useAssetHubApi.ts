@@ -26,7 +26,6 @@ const useAssetHubApi = (network: string) => {
 			try {
 				const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
 				const apiPromise = await ApiPromise.create({ provider: wsProvider });
-				await apiPromise.isReady;
 				setAssethubApi(apiPromise);
 
 				const timer = setTimeout(async () => {

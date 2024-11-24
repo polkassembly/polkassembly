@@ -26,7 +26,6 @@ const useHydrationApi = (network: string) => {
 			try {
 				const wsProvider = new WsProvider(chainProperties?.[network]?.hydrationEndpoints?.[0]);
 				const apiPromise = await ApiPromise.create({ provider: wsProvider });
-				await apiPromise.isReady;
 				setHydrationApi(apiPromise);
 
 				const timer = setTimeout(async () => {

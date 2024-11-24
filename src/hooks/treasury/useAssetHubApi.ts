@@ -32,7 +32,7 @@ const useAssetHubApi = (network: string) => {
 					await apiPromise.disconnect();
 				}, 60000);
 
-				if (!apiPromise) return 
+				if (!apiPromise) return;
 
 				apiPromise.isReady
 					.then(() => {

@@ -12,7 +12,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
-const monthOrder = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (

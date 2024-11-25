@@ -9,7 +9,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { LoadingOutlined } from '@ant-design/icons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	spendPeriod: {
@@ -101,7 +101,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 														size='small'
 														showInfo={false}
 													/>
-													<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+													<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 														{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 													</span>
 												</span>

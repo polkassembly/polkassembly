@@ -314,6 +314,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {
@@ -395,7 +396,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	link?: string;
 	updated_at?: Date;
 }
@@ -599,7 +600,9 @@ export interface IRating {
 	user_id: string;
 }
 export interface IProgressReport {
+	id?: string;
 	created_at?: Date;
+	isEdited?: boolean;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;
@@ -1086,6 +1089,12 @@ export interface IFollowEntry {
 	followed_user_id: number;
 	updated_at: Date;
 	isFollow: boolean;
+}
+
+export enum EExpertReqStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
 }
 
 export interface IMessage {

@@ -13,7 +13,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
-		const { network, postId, postType, password } = req.query;
+		const { network, postId, govType: govTypeQuery, postType, password } = req.query;
 
 		if (!network || !String(postId) || !postType || !password) {
 			return res.status(400).json({ message: 'Invalid parameters' });
@@ -23,13 +23,19 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: 'Invalid network' });
 		}
 
+		const govType = govTypeQuery || String(govTypeQuery);
+
+		if (!['OpenGov', 'Gov1'].includes(String(govType))) {
+			return res.status(400).json({ message: 'Invalid gov type' });
+		}
+
 		if (!password || !process.env.REDIS_DELETE_PASSPHRASE || password !== process.env.REDIS_DELETE_PASSPHRASE) {
 			return res.status(401).json({ message: 'Unauthorized' });
 		}
 
-		const postDetail = `${network}_${postType}_postId_${postId}`;
+		const postDetail = `${network}_${govType}_${postType}_postId_${postId}`;
 		const listingKeys = `${network}_${postType}_page_*`;
-		const latestActivityKey = `${network}_latestActivity_OpenGov`;
+		const latestActivityKey = `${network}_latestActivity_${govType}`;
 
 		await redisDel(postDetail);
 		await redisDel(latestActivityKey);

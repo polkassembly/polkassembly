@@ -25,7 +25,7 @@ export default function useCurrentBlock() {
 			return;
 		}
 
-		api.derive.chain
+		api?.derive?.chain
 			.bestNumber((number) => {
 				setCurrentBlock(number);
 			})

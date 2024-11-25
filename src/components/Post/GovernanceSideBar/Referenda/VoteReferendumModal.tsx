@@ -16,7 +16,7 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
@@ -84,12 +84,12 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
 			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
-			const num = res.toJSON();
+			const num = res?.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !Number.isNaN(Number(days))) {
 				return [
 					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
+						className={`text-bodyBlue  ${dmSans.variable}`}
 						key={0}
 						value={0}
 					>
@@ -97,7 +97,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue ${dmSans.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
@@ -108,7 +108,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue ${dmSans.variable}`}
 			key={0}
 			value={0}
 		>
@@ -116,7 +116,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue ${dmSans.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
@@ -656,7 +656,7 @@ const VoteReferendumModal = ({
 						handleModalReset();
 					}}
 					footer={false}
-					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+					className={`w-[550px] ${dmSans.variable} ${dmSans.className} alignment-close vote-referendum max-h-[675px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
@@ -856,7 +856,7 @@ const VoteReferendumModal = ({
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-5'
@@ -874,7 +874,7 @@ const VoteReferendumModal = ({
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
@@ -929,7 +929,7 @@ const VoteReferendumModal = ({
 										theme={theme}
 										address={address}
 										withBalance
-										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										className={`${dmSans.variable} ${dmSans.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}
 										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}

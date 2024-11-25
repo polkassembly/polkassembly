@@ -96,7 +96,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		<div className='mx-auto max-w-[200px]'>
 			<Dropdown
 				theme={theme}
-				trigger={[!sidebarCollapsed && 'click']}
+				trigger={['click']}
 				overlayStyle={{ marginTop: '40px', marginLeft: '10px', marginRight: '10px' }}
 				className={'mt-2 flex cursor-pointer items-center justify-center bg-[#ffffff] dark:bg-section-dark-overlay'}
 				overlayClassName='z-[1056]'

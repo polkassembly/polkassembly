@@ -100,33 +100,40 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							destroyTooltipOnHide
 							disableIdenticon={Boolean(user?.profile?.image?.length)}
 							iconSize={26}
+							isTruncateUsername={false}
 							usernameClassName='font-semibold text-xl'
-							isTruncateUsername={true}
 							className='flex items-center'
 						/>
-						<div className='mr-2 flex items-center gap-2'>
-							<SocialsHandle
-								address={user?.addresses?.[0] || user?.address || ''}
-								onchainIdentity={user?.identityInfo || null}
-								socials={[]}
-								iconSize={18}
-								boxSize={32}
+					</div>
+					<div className='flex items-center gap-x-4'>
+						<Button
+							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
+							onClick={() => {
+								setOpenTipping(true);
+							}}
+						>
+							<Image
+								src='/assets/icons/tipping-pink_icon.svg'
+								alt='tipping-icon'
+								width={20}
+								height={20}
+							/>{' '}
+							Tip
+						</Button>
+						<div
+							className='flex items-center gap-x-4'
+							onClick={updateFollowerCount}
+						>
+							<FollowButton
+								userId={user?.id || user?.userId}
+								user={user}
+								isUsedInProfileHeaders={false}
+								isUsedInCommunityTab
 							/>
 						</div>
 					</div>
-					<div
-						className='flex items-center gap-x-4'
-						onClick={updateFollowerCount}
-					>
-						<FollowButton
-							userId={user?.id || user?.userId}
-							user={user}
-							isUsedInProfileHeaders={false}
-							isUsedInCommunityTab
-						/>
-					</div>
 				</div>
-				<div className='mt-1 flex items-center justify-between'>
+				<div className='flex items-center justify-between'>
 					<div className='flex  w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<Address
 							address={user?.addresses?.[0] || user?.address || ''}
@@ -217,20 +224,6 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
 							</div>
 						</div>
-						<Button
-							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
-							onClick={() => {
-								setOpenTipping(true);
-							}}
-						>
-							<Image
-								src='/assets/icons/tipping-pink_icon.svg'
-								alt='tipping-icon'
-								width={20}
-								height={20}
-							/>{' '}
-							Tip
-						</Button>
 					</div>
 				</div>
 				<div className={'mb-2 flex max-h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
@@ -243,7 +236,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 								imgHidden
 							/>
 						) : (
-							'No Bio'
+							<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
 						)}
 					</p>
 					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (
@@ -255,8 +248,17 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						</span>
 					)}
 				</div>
+				<div className='mr-2 flex items-center gap-2'>
+					<SocialsHandle
+						address={user?.addresses?.[0] || user?.address || ''}
+						onchainIdentity={user?.identityInfo || null}
+						socials={[]}
+						iconSize={18}
+						boxSize={32}
+					/>
+				</div>
 				{!isUsedInExpertTab ? (
-					<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
+					<div className='-mt-3 flex min-h-[92px] items-center justify-start gap-x-2'>
 						<Image
 							src={
 								user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.DECENTRALISED_VOICE)

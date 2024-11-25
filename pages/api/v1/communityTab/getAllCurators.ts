@@ -9,6 +9,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
+import { ECuratorsSortFilters } from '~src/types';
 
 interface CuratorData {
 	curator: string;
@@ -42,7 +43,7 @@ export interface curatorsResponse {
 
 const ITEMS_PER_PAGE = 10;
 
-const extractContent = async (address: string) => {
+const getUserDetails = async (address: string) => {
 	const { data, error } = await getProfileWithAddress({ address: address });
 	if (error) {
 		console.log(error);
@@ -58,7 +59,7 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 			return res.status(400).json({ message: 'Invalid network in request header' });
 		}
 
-		const { page = 1, username } = req.body;
+		const { page = 1, username, sortOption } = req.body;
 		const pageNumber = parseInt(page, 10);
 
 		const subsquidRes = await fetchSubsquid({
@@ -99,7 +100,7 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 
 		await Promise.all(
 			formattedData.map(async (curatorData) => {
-				const userData = await extractContent(curatorData.curator);
+				const userData = await getUserDetails(curatorData.curator);
 				if (userData) {
 					curatorData.created_at = userData?.created_at;
 					curatorData.custom_username = userData?.custom_username;
@@ -114,6 +115,12 @@ const handler: NextApiHandler<curatorsResponse> = async (req, res) => {
 
 		if (username) {
 			formattedData = formattedData?.filter((curatorData) => curatorData?.username === username);
+		}
+
+		if (sortOption === ECuratorsSortFilters.ACTIVE_BOUNTIES) {
+			formattedData = formattedData.sort((a, b) => b.active - a.active);
+		} else if (sortOption === ECuratorsSortFilters.CHILD_BOUNTIES_DISBURSED) {
+			formattedData = formattedData.sort((a, b) => b.disbursedChildBounty - a.disbursedChildBounty);
 		}
 
 		const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;

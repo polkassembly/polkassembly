@@ -53,6 +53,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 		});
 	};
 
+	console.log('delegates data: ', delegate);
 	const getCurrentuserData = async () => {
 		const username = delegate?.username;
 		if (username) {
@@ -260,15 +261,6 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							isTruncateUsername={true}
 							className='flex items-center'
 						/>
-						<div className='mr-2 flex items-center gap-2'>
-							<SocialsHandle
-								address={delegate?.address}
-								onchainIdentity={delegate?.identityInfo || null}
-								socials={[]}
-								iconSize={18}
-								boxSize={32}
-							/>
-						</div>
 					</div>
 					<Button
 						disabled={disabled}
@@ -336,7 +328,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-4 mt-2  flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-4 mt-2  flex h-4 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio w-4/5'>
 						{delegate?.bio ? (
 							<Markdown
@@ -357,6 +349,15 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							Read more
 						</span>
 					)}
+				</div>
+				<div className='flex items-center gap-2 px-5 py-3'>
+					<SocialsHandle
+						address={delegate?.address}
+						onchainIdentity={delegate?.identityInfo || null}
+						socials={[]}
+						iconSize={18}
+						boxSize={32}
+					/>
 				</div>
 				<div className=' flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
 					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>

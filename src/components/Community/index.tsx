@@ -151,38 +151,20 @@ const Community = () => {
 	const getMembersData = async () => {
 		if (!(api && peopleChainApiReady) || !network) return;
 		setLoading(true);
-		let body = {};
-		if (searchedUserName) {
-			body = {
-				username: searchedUserName
-			};
-		} else {
-			body = {
-				page: currentPage || 1
-			};
-		}
-
+		const body = {
+			page: currentPage || 1,
+			sortOption: membersSortOption || null,
+			username: searchedUserName || null
+		};
 		const { data, error } = await nextApiClientFetch<UsersResponse>('api/v1/communityTab/getAllUsers', body);
 		if (data) {
-			let updatedUserData = await Promise.all(
+			const updatedUserData = await Promise.all(
 				data.data.map(async (user) => {
 					await handleBeneficiaryIdentityInfo(user);
 					const followersData = await getFollowersData(user.id);
 					return { ...user, followers: followersData.followers, followings: followersData.followings };
 				})
 			);
-
-			if (membersSortOption === EMembersSortFilters.ALPHABETICAL) {
-				updatedUserData = updatedUserData.sort((a, b) => a?.username?.toLowerCase().localeCompare(b.username.toLocaleLowerCase()));
-			}
-
-			if (membersSortOption === EMembersSortFilters.FOLLOWERS) {
-				updatedUserData = updatedUserData.sort((a, b) => b.followers - a.followers);
-			}
-
-			if (membersSortOption === EMembersSortFilters.FOLLOWINGS) {
-				updatedUserData = updatedUserData.sort((a, b) => b.followings - a.followings);
-			}
 
 			setMembersData(updatedUserData);
 			setTotalMembers(data?.count);
@@ -231,31 +213,20 @@ const Community = () => {
 	const getCuratorsData = async () => {
 		if (!(api && peopleChainApiReady) || !network) return;
 
-		let body = {};
-		if (searchedUserName) {
-			body = {
-				username: searchedUserName
-			};
-		} else {
-			body = {
-				page: currentPage || 1
-			};
-		}
+		const body = {
+			page: currentPage || 1,
+			sortOption: curatorsSortOption || null,
+			username: searchedUserName || null
+		};
+
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<curatorsResponse>('api/v1/communityTab/getAllCurators', body);
+
 		if (data?.curators) {
-			let sortedData = data?.curators;
-			if (curatorsSortOption === ECuratorsSortFilters.ACTIVE_BOUNTIES) {
-				sortedData = sortedData.sort((a, b) => b.active - a.active);
-			}
-			if (curatorsSortOption === ECuratorsSortFilters.CHILD_BOUNTIES_DISBURSED) {
-				sortedData = sortedData.sort((a, b) => b.disbursedChildBounty - a.disbursedChildBounty);
-			}
-			setCuratorsData(sortedData);
-			setTotalCurators(data?.count);
-			setLoading(false);
+			setCuratorsData(data.curators);
+			setTotalCurators(data.count);
 		} else {
-			console?.log(error);
+			console.error(error);
 		}
 		setLoading(false);
 	};
@@ -274,7 +245,7 @@ const Community = () => {
 	useEffect(() => {
 		getCuratorsData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName, curatorsSortOption]);
 
 	const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 		switch (filterBy) {

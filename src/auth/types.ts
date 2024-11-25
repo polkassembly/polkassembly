@@ -169,6 +169,8 @@ export interface User {
 	profile_score: number;
 	addresses?: string[];
 	identityInfo?: any;
+	followers?: number;
+	followings?: number;
 }
 
 export interface Roles {

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Collapse, Popover, Radio, Spin } from 'antd';
 import Image from 'next/image';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType, ProfileDetailsResponse } from '~src/auth/types';
@@ -132,7 +132,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 			>
 				{addresses?.map((address) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={address}
 					>
 						<Radio

@@ -5,7 +5,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
@@ -52,7 +52,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 								{
 									<Link href={`/member-referenda/${post.post_id}`}>
 										<GovernanceCard
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${dmSans.variable} ${dmSans.className}`}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}

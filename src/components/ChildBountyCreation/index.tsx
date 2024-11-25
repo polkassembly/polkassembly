@@ -6,7 +6,7 @@ import { Modal, Steps } from 'antd';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useEffect, useState } from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { EChildBountySteps } from './types';
@@ -82,7 +82,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 				open={open}
 				maskClosable={false}
 				onCancel={() => setOpen(false)}
-				className={`${poppins.className} ${poppins.variable} antSteps w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} antSteps w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark antSteps`}
 				footer={false}
 				closeIcon={<CloseIcon />}

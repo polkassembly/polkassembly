@@ -21,7 +21,7 @@ import Input from '~src/basic-components/Input';
 import Popover from '~src/basic-components/Popover';
 import { ArrowDownIcon } from './CustomIcons';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { getGeneralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
@@ -180,7 +180,7 @@ const BalanceInput = ({
 									open={open}
 									onOpenChange={setOpen}
 									trigger='click'
-									overlayClassName={classNames(poppins.className, poppins.variable, 'mt-2 px-0 py-1 w-[100px]')}
+									overlayClassName={classNames(dmSans.className, dmSans.variable, 'mt-2 px-0 py-1 w-[100px]')}
 									placement='bottom'
 									content={
 										<div className='flex flex-col'>

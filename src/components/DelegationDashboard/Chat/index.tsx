@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Drawer, Button, Tooltip } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useState } from 'react';
 import Image from 'next/image';
 import UserChats from './UserChats';
@@ -77,7 +77,7 @@ const ChatWithDelegates = ({ className }: Props) => {
 				closable={false}
 				contentWrapperStyle={{ boxShadow: 'none', transform: 'none' }}
 				style={{ position: 'fixed', right: '50px', top: 'auto', zIndex: '999' }}
-				className={`${className} ${poppins.variable} ${poppins.className} w-[384px] rounded-md shadow-xl dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
+				className={`${className} ${dmSans.variable} ${dmSans.className} w-[384px] rounded-md shadow-xl dark:bg-section-dark-overlay dark:text-blue-dark-high [&_.ant-drawer-header]:border-section-light-container`}
 				bodyStyle={{ display: isMinimized ? 'none' : 'block', maxHeight: '440px', padding: '0px' }}
 			>
 				<UserChats

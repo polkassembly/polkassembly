@@ -53,7 +53,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Balance</span>
 				</div>
-				<span className='whitespace-nowrap text-sm mx-auto font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='mx-auto whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.freeBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>
@@ -72,7 +72,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Transferrable</span>
 				</div>
-				<span className='whitespace-nowrap text-sm mx-auto font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='mx-auto whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.transferableBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>
@@ -91,7 +91,7 @@ const BalanceDetails = ({ address }: { address: string }) => {
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Locked</span>
 				</div>
-				<span className='whitespace-nowrap mx-auto text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
+				<span className='mx-auto whitespace-nowrap text-sm font-semibold text-blue-light-high dark:text-blue-dark-high md:text-base'>
 					{formatedBalance(balances.lockedBalance.toString(), unit, 1)} {unit}
 				</span>
 			</div>

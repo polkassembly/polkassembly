@@ -55,7 +55,7 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
-export const fetchOGTracker = async (id: string | number | string[] | undefined) => {
+export const fetchOGTracker = async (id: string | number | string[]) => {
 	try {
 		const res = await fetch('https://api.ogtracker.io/proposals', {
 			body: JSON.stringify({
@@ -684,7 +684,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
-		const OGdata = await fetchOGTracker(postId);
+		let OGdata;
+		if (postId) {
+			OGdata = await fetchOGTracker(postId);
+		}
 		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
 			if (proposalType === ProposalType.TIPS) {
 				if (!strPostId) {

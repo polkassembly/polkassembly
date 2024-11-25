@@ -1,10 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
-
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
@@ -57,10 +53,26 @@ const addOrUpdateProgressReport: NextApiHandler<{ message: string; progress_repo
 		const postData = postDoc.data() as Post;
 		const progressReports = postData.progress_report || [];
 
-		const reportExists = progressReports.some((report: IProgressReport) => report.id === reportId);
+		const updatedProgressReports = progressReports.map((report: IProgressReport) => {
+			if (report.id === reportId) {
+				let ratings = report.ratings || [];
+				ratings = ratings.filter((r: { user_id: string }) => r.user_id !== user_id);
+				ratings.push({ rating, user_id });
 
-		if (!reportExists) {
-			progressReports.push({
+				return {
+					...report,
+					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
+					ratings
+				};
+			}
+			return {
+				...report,
+				created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at
+			};
+		});
+
+		if (!progressReports.some((report: IProgressReport) => report.id === reportId)) {
+			updatedProgressReports.push({
 				created_at: new Date(created_at),
 				id: reportId,
 				isFromOgtracker: true,
@@ -71,15 +83,12 @@ const addOrUpdateProgressReport: NextApiHandler<{ message: string; progress_repo
 		}
 
 		await postDocRef.update({
-			progress_report: progressReports
+			progress_report: updatedProgressReports
 		});
 
 		return res.status(200).json({
 			message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY,
-			progress_report: progressReports.map((report: IProgressReport) => ({
-				...report,
-				created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at
-			}))
+			progress_report: updatedProgressReports
 		});
 	} catch (error) {
 		console.error('Error in adding/updating progress report:', error);

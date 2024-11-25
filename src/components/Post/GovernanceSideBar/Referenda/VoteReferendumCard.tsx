@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
@@ -62,7 +62,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			if (days && !isNaN(Number(days))) {
 				return [
 					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
+						className={`text-bodyBlue  ${dmSans.variable}`}
 						key={0}
 						value={0}
 					>
@@ -70,7 +70,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue ${dmSans.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
@@ -81,7 +81,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue ${dmSans.variable}`}
 			key={0}
 			value={0}
 		>
@@ -89,7 +89,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue ${dmSans.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>

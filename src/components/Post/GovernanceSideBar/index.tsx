@@ -85,6 +85,7 @@ import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
+import ExpertBodyCard from '~src/components/ExpertBody';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -823,7 +824,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<Button
 									loading={loading}
 									onClick={handleRemoveVote}
-									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 								>
 									Remove Vote
 								</Button>
@@ -914,7 +915,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
-							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 						>
 							Remove Vote
 						</Button>
@@ -1020,6 +1021,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
 								/>
 							)}
+						<ExpertBodyCard />
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

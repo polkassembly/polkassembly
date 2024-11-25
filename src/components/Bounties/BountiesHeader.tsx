@@ -13,7 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { StatItem } from './utils/Statitem';
 import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
@@ -71,10 +71,10 @@ const BountiesHeader = () => {
 								{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}
 								{!isNaN(Number(currentTokenPrice.value)) && (
 									<>
-										<span className={`${poppins.className} ${poppins.variable} ml-2 text-[22px] font-medium `}>
+										<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
 											~{formatNumberWithSuffix(Number(formatBnBalance(statsData.availableBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)))}
 										</span>
-										<span className={`${poppins.className} ${poppins.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
+										<span className={`${dmSans.className} ${dmSans.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
 									</>
 								)}
 							</div>

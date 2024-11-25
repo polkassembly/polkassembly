@@ -47,7 +47,7 @@ import Alert from '~src/basic-components/Alert';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import getCommentDisabledMessage from './utils/getCommentDisabledMessage';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -398,10 +398,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					<Skeleton className='mt-4' />
 				) : aiContentSummary && hasEnoughContent && (aiContentSummary?.summary_positive || aiContentSummary?.summary_neutral || aiContentSummary?.summary_negative) ? (
 					<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
-						<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+						<div className={`${dmSans.variable} ${dmSans.className} items-center justify-between sm:flex`}>
 							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
 							<span
-								className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+								className={`${dmSans.variable} ${dmSans.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
 							>
 								<span className='mr-1 '>Based on all comments and replies</span>
 							</span>
@@ -411,7 +411,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mt-2'>
 									<GreenTickIcon />
 								</span>
-								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
 										<span
@@ -430,7 +430,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mt-2'>
 									<MinusSignIcon />
 								</span>
-								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
 										<span
@@ -449,7 +449,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mt-2'>
 									<CrossSignIcon />
 								</span>
-								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
 										<span
@@ -462,7 +462,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								</p>
 							</div>
 						)}
-						<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+						<h2 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
 							<AiStarIcon className='text-base' /> AI-generated from comments
 						</h2>
 					</div>

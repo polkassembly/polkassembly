@@ -314,6 +314,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {
@@ -1088,4 +1089,10 @@ export interface IFollowEntry {
 	followed_user_id: number;
 	updated_at: Date;
 	isFollow: boolean;
+}
+
+export enum EExpertReqStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
 }

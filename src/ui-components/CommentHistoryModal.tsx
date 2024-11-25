@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { AgainstIcon, CloseIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import UserAvatar from './UserAvatar';
 // import { diffChars } from 'diff';
 import Markdown from './Markdown';
@@ -69,7 +69,7 @@ export const getSentimentIcon = (sentiment: ESentiment, theme: string) => {
 const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
 	const getSentimentLabel = (sentiment: ESentiment) => {
-		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+		return <div className={`${dmSans.variable} ${dmSans.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 	const { resolvedTheme: theme } = useTheme();
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
@@ -82,8 +82,8 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		return {
 			children: (
 				<div
-					className={`ml-2 rounded-[4px] bg-[#FAFAFC] py-3 pl-3 pr-1 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'} ${poppins.variable} ${
-						poppins.className
+					className={`ml-2 rounded-[4px] bg-[#FAFAFC] py-3 pl-3 pr-1 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'} ${dmSans.variable} ${
+						dmSans.className
 					} dark:bg-section-dark-background`}
 				>
 					<div className='flex items-center justify-between'>
@@ -110,7 +110,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							<>{getSentimentIcon(item.sentiment as ESentiment, theme || '')}</>
 						</Tooltip>
 					</div>
-					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
+					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${dmSans.className} ${dmSans.variable} pr-2 leading-6`}>
 						{/* {historyData[index + 1] ? (
 							<div>
 								{historyData?.map((text, idx) => (
@@ -172,7 +172,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 			open={open}
 			onCancel={() => setOpen(false)}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]  max-sm:w-full dark:[&>.ant-modal-content>.ant-modal-header]:bg-section-dark-overlay`}
+			className={`closeIcon ${dmSans.variable} ${dmSans.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]  max-sm:w-full dark:[&>.ant-modal-content>.ant-modal-header]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-blue-dark-high'>Comment Edit History</label>}

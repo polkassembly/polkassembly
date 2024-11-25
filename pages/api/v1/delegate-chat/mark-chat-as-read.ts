@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { IMessage } from '~src/types';
+import { IMessage, IDelegateAddressDetails } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -15,6 +15,7 @@ import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getDelegatesData } from '../delegations/getAllDelegates';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);
@@ -34,6 +35,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
 	const participantsSubstrateAddr = participants.map((addr: string) => getSubstrateAddress(addr));
+
+	const { data: delegatesList, error } = await getDelegatesData(network);
+
+	if (delegatesList) {
+		const isAnyParticipantDelegate = participantsSubstrateAddr.some((participantAddr: string) =>
+			delegatesList.some((delegate: IDelegateAddressDetails) => getSubstrateAddress(delegate.address) === participantAddr)
+		);
+
+		if (!isAnyParticipantDelegate) {
+			return res.status(400).json({ message: 'At least one participant must be a delegate' });
+		}
+	} else if (error) {
+		return res.status(500).json({ message: error.message || messages.API_FETCH_ERROR });
+	}
 
 	const chatSnapshot = chatDocRef(chatId);
 	const viewed_by = participantsSubstrateAddr || [];

@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { IMessage } from '~src/types';
+import { IMessage, IDelegateAddressDetails } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -15,6 +15,7 @@ import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatDocRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getDelegatesData } from '../delegations/getAllDelegates';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | MessageType>) {
 	storeApiKeyUsage(req);
@@ -47,8 +48,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 	}
 
+	const { data: delegatesList, error } = await getDelegatesData(network, address);
+
 	if (chatData?.chatInitiatedBy === substrateAddress) {
 		return res.status(403).json({ message: "You don't have permission to update this request's status." });
+	}
+
+	if (delegatesList) {
+		const isValidReceiverAddress = delegatesList.some((delegate: IDelegateAddressDetails) => getSubstrateAddress(delegate.address) === substrateAddress);
+
+		if (!isValidReceiverAddress) return res.status(400).json({ message: `Address ${address} is not a valid delegate` });
+	} else if (error) {
+		return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 	}
 
 	try {

@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import BalanceDetails from './BalanceDetails';
-import SendFundsComponent from './SendFundsComponent';
 import AddressActionDropdown from './AddressActionDropdown';
 import ProxyTypeBadges from './ProxyTypeBadges';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
@@ -95,7 +94,6 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 					</div>
 				</div>
 				<div className='mt-2 flex items-center gap-2 md:mt-0'>
-					{loginAddress != address && <SendFundsComponent address={address} />}
 					<AddressActionDropdown address={address} />
 				</div>
 			</div>

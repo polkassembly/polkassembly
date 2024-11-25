@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import BalanceDetails from './utils/BalanceDetails';
-import SendFundsComponent from './utils/SendFundsComponent';
 import AddressActionDropdown from './utils/AddressActionDropdown';
 import Address from '~src/ui-components/Address';
 import { IAccountData } from '~src/types';
@@ -41,10 +40,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 							/>
 						</div>
 					)}
-					<div className='flex items-center gap-2'>
-						{accountData?.address && loginAddress !== accountData?.address && <SendFundsComponent address={accountData?.address} />}
-						{accountData?.address && <AddressActionDropdown address={loginAddress || accountData.address} />}
-					</div>
+					<div className='flex items-center gap-2'>{accountData?.address && <AddressActionDropdown address={loginAddress || accountData.address} />}</div>
 				</div>
 				<span className='md:absolute md:left-[104px] md:top-10'>
 					<BalanceDetails address={accountData?.address ? accountData.address : loginAddress} />

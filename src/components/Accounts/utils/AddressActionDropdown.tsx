@@ -15,10 +15,6 @@ const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConn
 	ssr: false
 });
 
-const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	ssr: false
-});
-
 const AddressActionDropdown = ({ address }: { address: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [state, setState] = useState({
@@ -51,19 +47,6 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Add Proxy</span>
 				</div>
 			)
-		},
-		{
-			key: '3',
-			label: (
-				<div
-					onClick={() =>
-						!address ? setState((prevState) => ({ ...prevState, openAddressLinkedModal: true })) : setState((prevState) => ({ ...prevState, openSetIdentityModal: true }))
-					}
-					className='mt-1 flex items-center space-x-2'
-				>
-					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Set Identity</span>
-				</div>
-			)
 		}
 	];
 
@@ -91,12 +74,6 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 				closable
 				onConfirm={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: false }))}
 				usedInIdentityFlow={false}
-			/>
-			<OnchainIdentity
-				open={state.openSetIdentityModal}
-				setOpen={(open) => setState((prevState) => ({ ...prevState, openSetIdentityModal: open }))}
-				openAddressModal={state.openAddressLinkedModal}
-				setOpenAddressModal={(open) => setState((prevState) => ({ ...prevState, openAddressLinkedModal: open }))}
 			/>
 			{/* <ProxyMain
 				openProxyModal={state.openProxyModal}

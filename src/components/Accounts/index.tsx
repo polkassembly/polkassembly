@@ -16,27 +16,29 @@ const AccountsMain = () => {
 		<div>
 			<div className='flex items-center justify-between'>
 				<h2 className={`${poppins.className} ${poppins.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
-				<CustomButton
-					variant='link'
-					className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
-					onClick={() => setOpenProxyModal(true)}
-					disabled={!id}
-					height={42}
-					width={178}
-					buttonsize={'14'}
-				>
-					<div className='flex items-center gap-[6px]'>
-						<Image
-							src={'/assets/icons/proxy-main.svg'}
-							alt='search-icon'
-							className=''
-							height={18}
-							width={18}
-							priority={true}
-						/>
-						<span className={`${poppins.className} ${poppins.variable} text-sm font-medium`}>Add Proxy</span>
-					</div>
-				</CustomButton>
+				{id && (
+					<CustomButton
+						variant='link'
+						className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
+						onClick={() => setOpenProxyModal(true)}
+						disabled={!id}
+						height={42}
+						width={178}
+						buttonsize={'14'}
+					>
+						<div className='flex items-center gap-[6px]'>
+							<Image
+								src={'/assets/icons/proxy-main.svg'}
+								alt='search-icon'
+								className=''
+								height={18}
+								width={18}
+								priority={true}
+							/>
+							<span className={`${poppins.className} ${poppins.variable} text-sm font-medium`}>Add Proxy</span>
+						</div>
+					</CustomButton>
+				)}
 			</div>
 			{/* <Alert
 				showIcon

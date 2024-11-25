@@ -48,7 +48,7 @@ export const StatTabs = ({ items, setActiveTab, activeTab, isUsedInAnalytics }: 
 									key={item.key}
 									className={`${
 										isUsedInAnalytics ? 'py-0 text-sm' : 'mb-5'
-									} w-fit text-left font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+									} w-fit  text-left font-medium font-semibold text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 								>
 									{item.label} <DownOutlined />
 								</Button>

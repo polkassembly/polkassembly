@@ -86,7 +86,7 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 			<div className='mr-2'>
 				<Button
 					disabled={!loginAddress}
-					className={`h-10 border-pink_primary bg-pink_primary text-white ${!loginAddress ? 'opacity-50' : ''} flex items-center`}
+					className={`h-10 border-pink_primary bg-pink_primary font-semibold text-white ${!loginAddress ? 'opacity-50' : ''} flex items-center`}
 					onClick={() => setOpenAmbassadorModal({ action: EAmbassadorActions.ADD_AMBASSADOR, open: true })}
 				>
 					<CreateIcon className='mr-2' />

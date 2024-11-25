@@ -19,7 +19,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Alert from '~src/basic-components/Alert';
 import AddressInput from '~src/ui-components/AddressInput';
 
@@ -185,7 +185,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 				</div>
 			}
 			open={open}
-			className={classNames(poppins.className, poppins.variable, 'mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
+			className={classNames(dmSans.className, dmSans.variable, 'mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

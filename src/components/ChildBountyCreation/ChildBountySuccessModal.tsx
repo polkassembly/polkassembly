@@ -6,7 +6,7 @@ import { Modal, Tag } from 'antd';
 import { BN } from 'bn.js';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useChildBountyCreationSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -42,7 +42,7 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep, multisigData }: Props
 				dispatch(childBountyCreationActions.resetChildBountyCreationStore());
 				setStep(EChildBountySteps.WRITE_CHILDBOUNTY);
 			}}
-			className={classNames(poppins.className, poppins.variable, 'w-[620px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
+			className={classNames(dmSans.className, dmSans.variable, 'w-[620px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			maskClosable={false}
 			closeIcon={<CloseIcon />}
 			wrapClassName={'dark:bg-modalOverlayDark antSteps'}

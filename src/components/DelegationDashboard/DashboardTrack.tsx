@@ -25,7 +25,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import dayjs from 'dayjs';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import classNames from 'classnames';
 import Tooltip from '~src/basic-components/Tooltip';
@@ -256,7 +256,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 													key={rowIndex}
 													className='dark:border-separatorDark dark:bg-section-dark-overlay'
 												>
-													<div className={`${poppins.className} ${poppins.variable} flex items-center justify-between`}>
+													<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between`}>
 														<div className='flex items-center gap-2'>
 															<div className='text-sm font-medium text-bodyBlue dark:text-white'>#{row.index}</div>
 															<span
@@ -308,13 +308,13 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 																		alt=''
 																		className={'dark:text-white'}
 																	/>
-																	<span className={`${poppins.className} ${poppins.variable} text-[10px] font-medium tracking-wide text-pink_primary`}>Undelegate</span>
+																	<span className={`${dmSans.className} ${dmSans.variable} text-[10px] font-medium tracking-wide text-pink_primary`}>Undelegate</span>
 																</CustomButton>
 															</div>
 														)}
 													</div>
 
-													<div className={`${poppins.className} ${poppins.variable} mt-2 grid grid-cols-2 gap-4 text-sm `}>
+													<div className={`${dmSans.className} ${dmSans.variable} mt-2 grid grid-cols-2 gap-4 text-sm `}>
 														<div className='flex flex-col'>
 															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Delegated to:</span>{' '}
 															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>
@@ -349,7 +349,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 																)?.timeLeftInUndelegation && (
 																	<Tooltip
 																		title={
-																			<div className={classNames(poppins.className, poppins.variable, 'text-[13px]')}>
+																			<div className={classNames(dmSans.className, dmSans.variable, 'text-[13px]')}>
 																				You can undelegate votes on{' '}
 																				{
 																					handleUndelegationDisable(
@@ -362,7 +362,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 																				}
 																			</div>
 																		}
-																		className={classNames(poppins.className, poppins.variable, 'text-xs')}
+																		className={classNames(dmSans.className, dmSans.variable, 'text-xs')}
 																		overlayClassName='px-1 max-w-[300px]'
 																	>
 																		<span className='-mt-1'>

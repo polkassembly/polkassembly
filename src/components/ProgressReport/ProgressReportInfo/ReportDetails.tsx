@@ -141,7 +141,8 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					(() => {
 						try {
 							const fileUrl = new URL(report.progress_file);
-							return !fileUrl.hostname.includes('.polkassembly.io') && !fileUrl.hostname.includes('.subsquare.io');
+							const allowedDomains = ['polkassembly.io', 'subsquare.io'];
+							return !allowedDomains.some((domain) => fileUrl.hostname.endsWith(domain));
 						} catch (error) {
 							return false;
 						}

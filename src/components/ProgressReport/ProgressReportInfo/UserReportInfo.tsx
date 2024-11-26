@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Button, Divider, Modal, Timeline, Tooltip } from 'antd';
 import styled from 'styled-components';
 import SignupPopup from '~src/ui-components/SignupPopup';
@@ -22,7 +22,7 @@ import RatingModal from '../RatingModal';
 import { useDispatch } from 'react-redux';
 import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { IProgressReport, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Image from 'next/image';
 
@@ -45,21 +45,19 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 	const dispatch = useDispatch();
 	const { open_rating_modal, open_rating_success_modal, report_rating } = useProgressReportSelector();
 
-	const uniqueReports = React.useMemo(() => {
+	const uniqueReports = useMemo(() => {
 		if (!postData?.progress_report) return [];
-		const seenIds = new Set();
-		return (
-			Object.entries(postData.progress_report)
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				.filter(([key, report]: any) => {
-					if (!seenIds.has(report.id)) {
-						seenIds.add(report.id);
-						return true;
+		return Object.entries(postData.progress_report as IProgressReport)
+			.reduce(
+				(acc, [key, report]) => {
+					if (!acc.some(([, r]) => r.id === report.id)) {
+						acc.push([key, report]);
 					}
-					return false;
-				})
-				.sort(([, a]: any, [, b]: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-		);
+					return acc;
+				},
+				[] as [string, any][]
+			)
+			.sort((a, b) => new Date(a[1].created_at).getTime() - new Date(b[1].created_at).getTime());
 	}, [postData?.progress_report]);
 
 	const addUserRating = async () => {
@@ -90,7 +88,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 		};
 		const apiUrl = isFromOGTracker ? 'api/v1/progressReport/addOGTrackersReportRating' : 'api/v1/progressReport/addReportRating';
 		const body = isFromOGTracker ? ogBody : ratingBody;
-		const { data, error: editError } = await nextApiClientFetch<any>(apiUrl, body);
+		const { data, error: editError } = await nextApiClientFetch<{ message: string; progress_report?: object }>(apiUrl, body);
 		if (editError || !data) {
 			setLoading(false);
 			console.error('Error saving rating', editError);
@@ -124,7 +122,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 		<section className={`${className} mt-8`}>
 			<Timeline className={`${className}`}>
 				{uniqueReports.length > 0 ? (
-					uniqueReports.map(([key, report]: any, index) => (
+					uniqueReports.map(([key, report], index) => (
 						<Timeline.Item
 							key={key}
 							className='-mt-6'

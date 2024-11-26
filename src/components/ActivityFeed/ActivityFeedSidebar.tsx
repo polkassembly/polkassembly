@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
 import AboutNetwork from '../Home/AboutNetwork';
+import ActivityFeedCalendar from './ActivityFeedCalendar';
 
 const ActivityFeedTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityFeedTreasury'), {
 	loading: () => <Skeleton active />,
@@ -42,6 +43,7 @@ const ActivityFeedSidebar: React.FC<IActivitySidebarProps> = ({ networkSocialsDa
 			{currentUser?.username && (currentUser?.id || '') && <ActivityFeedProposalCard currentUser={currentUser} />}
 			<ActivityFeedRankCard setLoginOpen={setLoginOpen} />
 			<div>
+				<ActivityFeedCalendar />
 				<ActivityFeedFeaturesSection />
 			</div>
 			{isAssetHubSupportedNetwork(network) && <ActivityFeedTreasury />}

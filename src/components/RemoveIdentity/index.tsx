@@ -78,11 +78,18 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		if (!api || !apiReady) return;
 
 		setLoading({ ...loading, isLoading: true });
-		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
-		const paymentInfo = await tx.paymentInfo(addr);
-		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
-		setGasFee(bnGasFee);
-		setLoading({ ...loading, isLoading: false });
+
+		try {
+			const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity;
+			if (!tx) throw new Error("Transaction method 'clearIdentity' is undefined");
+			const paymentInfo = await tx()?.paymentInfo(addr);
+			const bnGasFee = new BN(paymentInfo?.partialFee?.toString() || '0');
+			setGasFee(bnGasFee);
+		} catch (error) {
+			console.error('Error fetching gas fee:', error);
+		} finally {
+			setLoading({ ...loading, isLoading: false });
+		}
 	};
 
 	const getBondFee = () => {

@@ -243,7 +243,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 			{/* For Large screen */}
 			<div className='hidden gap-y-2 rounded-[16px] bg-white pt-4 dark:bg-black sm:flex sm:flex-col'>
 				<div className='flex items-center justify-between px-5'>
-					<div className='flex items-center gap-2 max-lg:justify-start'>
+					<div className='flex items-center gap-2'>
 						{!!delegate?.image?.length && (
 							<ImageComponent
 								src={delegate?.image || ''}
@@ -258,7 +258,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							disableIdenticon={Boolean(delegate?.image?.length)}
 							iconSize={26}
 							usernameClassName='font-semibold text-xl'
-							isTruncateUsername={true}
+							isTruncateUsername={false}
 							className='flex items-center'
 						/>
 					</div>

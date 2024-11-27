@@ -120,18 +120,9 @@ const CuratorsCard = ({ user, className }: Props) => {
 							disableIdenticon={Boolean(user?.profile?.image?.length)}
 							iconSize={26}
 							usernameClassName='font-semibold text-xl'
-							isTruncateUsername={true}
+							isTruncateUsername={false}
 							className='flex items-center'
 						/>
-						<div className='mr-2 flex items-center gap-2'>
-							<SocialsHandle
-								address={user?.curator}
-								onchainIdentity={user?.identityInfo || null}
-								socials={[]}
-								iconSize={18}
-								boxSize={32}
-							/>
-						</div>
 					</div>
 					{multisigData?.signatories?.length > 0 && (
 						<div className='flex items-center gap-x-2'>
@@ -225,6 +216,16 @@ const CuratorsCard = ({ user, className }: Props) => {
 							Read more
 						</span>
 					)}
+				</div>
+
+				<div className='mb-3 flex items-center gap-2 px-5'>
+					<SocialsHandle
+						address={user?.curator}
+						onchainIdentity={user?.identityInfo || null}
+						socials={[]}
+						iconSize={18}
+						boxSize={32}
+					/>
 				</div>
 
 				<div className=' flex min-h-[92px] items-center justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>

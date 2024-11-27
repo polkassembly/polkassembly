@@ -160,7 +160,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						<ScoreTag
 							className='h-6 w-min px-[6px] py-1'
 							score={user?.profile_score || 0}
-							iconWrapperClassName='mt-[5?.5px]'
+							iconWrapperClassName='mt-[5.5px]'
 						/>
 						{isUsedInExpertTab && user?.dataSource && user?.dataSource?.length && (
 							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>

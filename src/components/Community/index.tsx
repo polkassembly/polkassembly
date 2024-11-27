@@ -240,7 +240,7 @@ const Community = () => {
 	useEffect(() => {
 		getMembersData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network, currentPage, searchedUserName, membersSortOption]);
 
 	useEffect(() => {
 		getCuratorsData();

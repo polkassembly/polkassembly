@@ -21,6 +21,7 @@ interface IResponse {
 const ZERO_BN = new BN(0);
 
 const userProfileBalances = async ({ address, api, apiReady, network }: Props): Promise<IResponse> => {
+	await api?.isReady;
 	const getBalances = async () => {
 		let freeBalance = ZERO_BN;
 		let transferableBalance = ZERO_BN;

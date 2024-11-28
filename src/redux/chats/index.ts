@@ -49,6 +49,7 @@ export const chatsStore = createSlice({
 		addNewChat: (state, action: PayloadAction<IChat>) => {
 			state.requests.push(action.payload);
 			state.filteredRequests.push(action.payload);
+			state.selectedChatTab = EChatTab.REQUESTS;
 		},
 		updateChatStatus: (state, action: PayloadAction<{ chatId: string; status: string }>) => {
 			const { chatId, status } = action.payload;

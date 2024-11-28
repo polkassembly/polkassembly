@@ -60,6 +60,7 @@ export const chatsStore = createSlice({
 				if (status === EChatRequestStatus.ACCEPTED) {
 					state.messages.push({ ...chat, requestStatus: status });
 					state.filteredMessages.push({ ...chat, requestStatus: status });
+					state.selectedChatTab = EChatTab.MESSAGES;
 				}
 			}
 		},

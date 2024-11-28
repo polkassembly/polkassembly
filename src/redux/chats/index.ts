@@ -55,16 +55,20 @@ export const chatsStore = createSlice({
 			const requestIndex = state.requests.findIndex((chat) => chat.chatId === chatId);
 			if (requestIndex !== -1) {
 				const chat = state.requests[requestIndex];
-				state.requests = state.requests.filter((c) => c.chatId !== chatId);
-				state.filteredRequests = state.filteredRequests.filter((c) => c.chatId !== chatId);
+
 				if (status === EChatRequestStatus.ACCEPTED) {
 					state.messages.push({ ...chat, requestStatus: status });
 					state.filteredMessages.push({ ...chat, requestStatus: status });
+					state.requests = state.requests.filter((c) => c.chatId !== chatId);
+					state.filteredRequests = state.filteredRequests.filter((c) => c.chatId !== chatId);
 					state.selectedChatTab = EChatTab.MESSAGES;
 					if (chat) {
 						state.openedChat = { ...chat, requestStatus: status };
 						state.isChatOpen = true;
 					}
+				} else {
+					state.requests[requestIndex] = { ...chat, requestStatus: status as EChatRequestStatus };
+					state.filteredRequests[requestIndex] = { ...chat, requestStatus: status as EChatRequestStatus };
 				}
 			}
 		},

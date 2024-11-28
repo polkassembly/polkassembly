@@ -42,8 +42,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 			setError(null);
 			try {
 				const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/proxyAddress', {
-					address,
-					network
+					address
 				});
 
 				if (error) {

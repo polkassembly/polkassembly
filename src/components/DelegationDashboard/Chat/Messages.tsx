@@ -42,6 +42,8 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const isRequestSent = chat?.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
 	const handleDataFetch = async () => {
+		if (isNewChat) return;
+
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<{ messages: IMessage[] }>('api/v1/delegate-chat/getChatMessages', { address, chatId });
 		if (data) {
@@ -132,7 +134,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	useEffect(() => {
 		handleDataFetch();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [chatId]);
+	}, [chatId, isNewChat]);
 
 	return (
 		<div className='flex h-[440px] w-full flex-col'>

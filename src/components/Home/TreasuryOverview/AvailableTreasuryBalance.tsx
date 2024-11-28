@@ -4,6 +4,7 @@
 import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -21,6 +22,7 @@ interface Props {
 const AvailableTreasuryBalance = ({ available }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	return (
 		<>
@@ -30,13 +32,13 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 						{theme === 'dark' ? (
 							<ImageIcon
 								src='/assets/icons/AvailableDark.svg'
-								alt='available dark icon'
+								alt={t('available_dark_icon')}
 								imgClassName='lg:hidden'
 							/>
 						) : (
 							<ImageIcon
 								src='/assets/icons/available.svg'
-								alt='available icon'
+								alt={t('available_icon')}
 								imgClassName='lg:hidden'
 							/>
 						)}
@@ -45,9 +47,9 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 						<>
 							<div className='mb-4'>
 								<div className='my-1 flex items-center'>
-									<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
+									<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('available')}</span>
 									<HelperTooltip
-										text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+										text={t('funds_tooltip')}
 										className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 									/>
 								</div>
@@ -57,7 +59,7 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 											{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 										</span>
 									) : (
-										<span>N/A</span>
+										<span>{t('na')}</span>
 									)}
 								</div>
 							</div>
@@ -66,7 +68,7 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
-											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+											{available.valueUSD ? `~ $${available.valueUSD}` : t('na')}
 										</span>
 									</div>
 								</>
@@ -82,14 +84,13 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 					{theme === 'dark' ? (
 						<ImageIcon
 							src='/assets/icons/AvailableDark.svg'
-							alt='available dark icon'
+							alt={t('available_dark_icon')}
 							imgClassName='xs:hidden lg:block w-full'
 						/>
 					) : (
-						// <Available className='xs:hidden lg:block' />
 						<ImageIcon
 							src='/assets/icons/available.svg'
-							alt='available icon'
+							alt={t('available_icon')}
 							imgClassName='xs:hidden lg:block w-full'
 						/>
 					)}

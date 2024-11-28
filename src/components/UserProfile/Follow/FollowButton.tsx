@@ -47,7 +47,7 @@ const FollowButton = ({
 
 	const buttonClass = isUsedInProfileTab
 		? 'rounded-md border-none px-3 py-0 text-xs text-white'
-		: `rounded-full border-none py-2.5 text-white ${isUsedInCommunityTab ? 'px-2 max-md:p-2' : 'px-4 max-md:p-3'}`;
+		: `rounded-full border-none py-2.5 text-white ${isUsedInCommunityTab ? 'px-3 max-md:p-2' : 'px-4 max-md:p-3'}`;
 	const buttonHeight = isUsedInProfileTab ? 28 : isUsedInCommunityTab ? 30 : undefined;
 	const buttonText = isUserFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
 

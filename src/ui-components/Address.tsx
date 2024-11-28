@@ -454,7 +454,7 @@ const Address = (props: Props) => {
 									</div>
 								</div>
 							) : (
-								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex items-center gap-0.5 font-semibold`}>
+								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex items-center gap-0.5 font-normal`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 									{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}

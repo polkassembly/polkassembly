@@ -26,7 +26,11 @@ const TabButtons: FC<ITabButtons> = (props) => {
 
 	return (
 		<article className='mt-5 flex flex-col items-center gap-y-1 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0'>
-			<div>
+			<div
+				onClick={() => {
+					dispatch(communityTabActions.setSelectedTab(ECommunityTabs.MEMBERS));
+				}}
+			>
 				<Button
 					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.MEMBERS ? 'text-green_tertiary' : 'text-bodyBlue dark:text-blue-dark-medium'
@@ -52,9 +56,6 @@ const TabButtons: FC<ITabButtons> = (props) => {
 								: '0px 0px 8px 0px rgba(69, 74, 71, 0.32) inset'
 						}`
 					}}
-					onClick={() => {
-						dispatch(communityTabActions.setSelectedTab(ECommunityTabs.MEMBERS));
-					}}
 				>
 					<Image
 						src={selectedTab === ECommunityTabs.MEMBERS ? '/assets/icons/community-tab/members-tab-green.svg' : '/assets/icons/community-tab/members-tab-grey.svg'}
@@ -63,7 +64,7 @@ const TabButtons: FC<ITabButtons> = (props) => {
 						height={24}
 						className={selectedTab !== ECommunityTabs.MEMBERS && theme == 'dark' ? 'dark-icons' : ''}
 					/>
-					Users{' '}
+					Members{' '}
 					<span className={`m-0 p-0 text-xs font-normal ${selectedTab === ECommunityTabs.MEMBERS ? 'text-bodyBlue dark:text-white' : 'text-lightBlue dark:text-blue-dark-medium'}`}>
 						({totalMembers})
 					</span>

@@ -101,7 +101,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 	return (
 		<div className={`${className}`}>
 			<div
-				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
+				className={`flex flex-col gap-y-2 rounded-[16px] border-[1px] border-solid border-section-light-container bg-white pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
 				<div className='flex w-full flex-col items-start justify-start gap-y-2 px-5 md:flex-row md:items-center md:justify-between md:gap-y-0'>
@@ -174,7 +174,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 							iconWrapperClassName='mt-[4.5px]'
 						/>
 					</div>
-					<div className='flex items-center gap-x-1'>
+					<div className='flex items-center gap-x-2'>
 						<div className='flex items-center justify-between gap-x-1 rounded-[16px] bg-[#EEF2FF] px-2 py-1 text-xs font-bold text-[#4F46E5]'>
 							<Image
 								src='/assets/icons/bounty-money-icon.svg'
@@ -195,7 +195,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 						</div>
 					</div>
 				</div>
-				<div className={'mb-2 flex max-h-[40px] flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-2 flex h-10 flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{user?.profile?.bio ? (
 							<Markdown
@@ -205,7 +205,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 								imgHidden
 							/>
 						) : (
-							'No Bio'
+							<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
 						)}
 					</p>
 					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (
@@ -223,6 +223,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 						address={user?.curator}
 						onchainIdentity={user?.identityInfo || null}
 						socials={[]}
+						isUsedInCommunityTab
 						iconSize={18}
 						boxSize={32}
 					/>
@@ -308,7 +309,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 									imgHidden
 								/>
 							) : (
-								'No Bio'
+								<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
 							)}
 						</p>
 					</div>

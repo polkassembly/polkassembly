@@ -82,7 +82,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 	return (
 		<div className={`${className}`}>
 			<div
-				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
+				className={`flex flex-col gap-y-2 rounded-[16px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
 				<div className='mt-1 flex items-center justify-between'>
@@ -255,6 +255,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						socials={[]}
 						iconSize={18}
 						boxSize={32}
+						isUsedInCommunityTab
 					/>
 				</div>
 				{!isUsedInExpertTab ? (

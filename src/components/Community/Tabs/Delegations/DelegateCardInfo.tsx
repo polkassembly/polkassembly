@@ -109,7 +109,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 
 	return (
 		<div
-			className={`rounded-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary  dark:border-[#3B444F] 
+			className={`rounded-[16px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] 
 					dark:border-separatorDark
 			${className}`}
 		>
@@ -328,7 +328,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-4 mt-2  flex h-4 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-4 mt-2  flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio w-4/5'>
 						{delegate?.bio ? (
 							<Markdown
@@ -355,6 +355,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						address={delegate?.address}
 						onchainIdentity={delegate?.identityInfo || null}
 						socials={[]}
+						isUsedInCommunityTab
 						iconSize={18}
 						boxSize={32}
 					/>
@@ -430,9 +431,9 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					</div>
 
 					<div
-						className={`${poppins?.variable} ${poppins?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${poppins?.variable} ${poppins?.className} flex h-8 max-h-8 gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
-						<p className='w-full sm:w-[90%]'>
+						<p className='m-0 w-full p-0 sm:w-[90%] '>
 							{delegate?.bio ? (
 								<Markdown
 									className='post-content'
@@ -441,7 +442,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 									imgHidden
 								/>
 							) : (
-								'No Bio'
+								<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
 							)}
 						</p>
 					</div>

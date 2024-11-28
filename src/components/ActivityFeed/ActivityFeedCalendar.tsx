@@ -70,22 +70,22 @@ function ActivityFeedCalendar() {
 							key={`${index}-${dayIndex}`}
 							title={
 								day ? (
-									<div>
-										<p>
+									<div className='m-0 p-0 md:p-1'>
+										<p className='m-0'>
 											<strong>Date:</strong> {dayjs(day.date).format('DD MMM, YYYY')}
 										</p>
 										{day && day.proposals !== undefined && day.proposals > 0 && (
-											<p>
+											<p className='m-0'>
 												<strong>Proposals:</strong> {day.proposals}
 											</p>
 										)}
 										{day && day.votes !== undefined && day.votes > 0 && (
-											<p>
+											<p className='m-0'>
 												<strong>Votes:</strong> {day.votes}
 											</p>
 										)}
 										{day && day.comments !== undefined && day.comments > 0 && (
-											<p>
+											<p className='m-0'>
 												<strong>Comments:</strong> {day.comments}
 											</p>
 										)}

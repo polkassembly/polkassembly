@@ -14,6 +14,7 @@ import { NotificationStatus } from '~src/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -25,6 +26,7 @@ interface Props {
 
 const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open, setCuratorInitialBio }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [curatorBio, setCuratorBio] = useState<string>(curatorInitialBio);
 	const [loading, setLoading] = useState(false);
 
@@ -35,8 +37,8 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 		});
 		if (data) {
 			queueNotification({
-				header: 'Success!',
-				message: 'Proposal Created Successfully!',
+				header: t('success_header'),
+				message: t('proposal_created_success'),
 				status: NotificationStatus.SUCCESS
 			});
 			setCuratorInitialBio(curatorBio);
@@ -45,7 +47,7 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 		if (error) {
 			console.log(error, 'error');
 			queueNotification({
-				header: 'Error!',
+				header: t('error_header'),
 				message: error,
 				status: NotificationStatus.ERROR
 			});
@@ -65,7 +67,7 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 				onCancel={() => setOpen(false)}
 				title={
 					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{!curatorInitialBio?.length ? 'Add' : 'Edit'} Curator Bio
+						{!curatorInitialBio?.length ? t('add') : t('edit')} {t('curator_bio')}
 					</div>
 				}
 				className={`${dmSans.className} ${dmSans.variable}`}
@@ -80,7 +82,7 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 					<section className='mt-6'>
 						<InputTextarea
 							rows={4}
-							placeholder='Enter your curator bio'
+							placeholder={t('curator_bio_placeholder')}
 							value={curatorBio || ''}
 							onChange={(e) => setCuratorBio(e.target.value)}
 							className='dark:border-separatorDark'
@@ -90,12 +92,12 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleSubmit}
-							text='Submit'
+							text={t('submit')}
 							variant='primary'
 							height={36}
 							width={100}
-							className={classNames(curatorBio?.trim() == curatorInitialBio ? 'opacity-50' : '')}
-							disabled={curatorBio?.trim() == curatorInitialBio}
+							className={classNames(curatorBio?.trim() === curatorInitialBio ? 'opacity-50' : '')}
+							disabled={curatorBio?.trim() === curatorInitialBio}
 						/>
 					</div>
 				</Spin>

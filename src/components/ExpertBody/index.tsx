@@ -19,6 +19,7 @@ import { getSortedComments } from '../Post/Comment/CommentsContainer';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import RejectedExpertModal from './RejectedExpertModal';
 import PendingExpertModal from './PendingExpertModal';
+import { useTranslation } from 'next-i18next';
 
 interface ExpertStatusResponse {
 	status: EExpertReqStatus;
@@ -26,6 +27,7 @@ interface ExpertStatusResponse {
 
 function ExpertBodyCard() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { t } = useTranslation('common');
 	const [review, setReview] = useState('');
 	const [reviewsCount, setReviewsCount] = useState(0);
 	const [expertStatus, setIsExpert] = useState('');
@@ -168,7 +170,7 @@ function ExpertBodyCard() {
 						className='cursor-pointer text-pink_primary underline'
 						onClick={() => setIsModalVisible(true)}
 					>
-						Add your Review!
+						{t('add_your_review')}
 					</span>
 				</span>
 			</div>

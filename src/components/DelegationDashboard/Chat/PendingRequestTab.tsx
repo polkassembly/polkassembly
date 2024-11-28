@@ -107,7 +107,9 @@ const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
 					Accept
 				</Button>
 				<Button
-					className='rounded-lg border-pink_primary bg-transparent px-5 font-medium text-pink_primary'
+					className={`rounded-lg bg-transparent px-5 font-medium ${
+						rejectLoading ? 'cursor-not-allowed border-grey_primary text-grey_primary' : 'border-pink_primary text-pink_primary'
+					}`}
 					onClick={handleRejectRequest}
 					disabled={rejectLoading}
 					loading={rejectLoading}

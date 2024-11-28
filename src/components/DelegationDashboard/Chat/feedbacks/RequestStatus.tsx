@@ -17,7 +17,9 @@ const RequestStatus = ({ isRequestSent }: Props) => (
 			width={20}
 			alt='chat icon'
 		/>
-		<span className='font-medium text-blue-light-high'>{isRequestSent ? 'Message Request Sent!' : 'This message will be sent as a request.'}</span>
+		<span className={`font-medium text-blue-light-high ${isRequestSent ? 'dark:text-white' : ''}`}>
+			{isRequestSent ? 'Message Request Sent!' : 'This message will be sent as a request.'}
+		</span>
 	</div>
 );
 

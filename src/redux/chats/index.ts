@@ -50,7 +50,7 @@ export const chatsStore = createSlice({
 			state.requests.push(action.payload);
 			state.filteredRequests.push(action.payload);
 		},
-		updateChatStatus: (state, action: PayloadAction<{ chat?: IChat; chatId: string; status: string }>) => {
+		updateChatStatus: (state, action: PayloadAction<{ chatId: string; status: string }>) => {
 			const { chatId, status } = action.payload;
 			const requestIndex = state.requests.findIndex((chat) => chat.chatId === chatId);
 			if (requestIndex !== -1) {
@@ -74,6 +74,17 @@ export const chatsStore = createSlice({
 		},
 		setTempRecipient: (state, action: PayloadAction<string | null>) => {
 			state.tempRecipient = action.payload;
+		},
+		updateLatestMessageViewedBy: (state, action: PayloadAction<{ chat: IChat; address: string }>) => {
+			const { chat, address } = action.payload;
+			if (chat?.latestMessage) {
+				if (!chat.latestMessage.viewed_by) {
+					chat.latestMessage.viewed_by = [];
+				}
+				if (!chat.latestMessage.viewed_by.includes(address)) {
+					chat.latestMessage.viewed_by.push(address);
+				}
+			}
 		}
 	},
 	extraReducers: (builder) => {

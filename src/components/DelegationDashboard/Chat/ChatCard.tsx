@@ -50,9 +50,9 @@ const ChatCard = ({ chat }: Props) => {
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/mark-chat-as-read', requestData);
 		if (data) {
 			dispatch(
-				chatsActions.updateChatStatus({
-					chatId: chat.chatId,
-					status: 'read'
+				chatsActions.updateLatestMessageViewedBy({
+					address: substrateAddress || '',
+					chat: chat
 				})
 			);
 		} else if (error) {
@@ -63,7 +63,6 @@ const ChatCard = ({ chat }: Props) => {
 	const handleAcceptRequestSuccess = (chat: IChat) => {
 		dispatch(
 			chatsActions.updateChatStatus({
-				chat: chat,
 				chatId: chat.chatId,
 				status: EChatRequestStatus.ACCEPTED
 			})

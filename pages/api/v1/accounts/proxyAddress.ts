@@ -7,7 +7,6 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { SUBSCAN_API_HEADERS } from '../subscanApi';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { isValidNetwork } from '~src/api-utils';
 import messages from '~src/auth/utils/messages';
 export interface ProxyAddressResponse {
 	data: {

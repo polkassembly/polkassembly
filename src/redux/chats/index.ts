@@ -17,7 +17,8 @@ const initialState: IChatsStore = {
 	loading: false,
 	error: null,
 	openedChat: null,
-	isChatOpen: false
+	isChatOpen: false,
+	tempRecipient: null
 };
 
 export const chatsStore = createSlice({
@@ -65,6 +66,9 @@ export const chatsStore = createSlice({
 		setOpenChat: (state, action: PayloadAction<{ chat: IChat | null; isOpen: boolean }>) => {
 			state.openedChat = action.payload.chat;
 			state.isChatOpen = action.payload.isOpen;
+		},
+		setTempRecipient: (state, action: PayloadAction<string | null>) => {
+			state.tempRecipient = action.payload;
 		}
 	},
 	extraReducers: (builder) => {

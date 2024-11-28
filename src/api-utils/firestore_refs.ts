@@ -21,3 +21,5 @@ export const delegatesColRef = (networkName: string) => networkDocRef(networkNam
 export const chatCollRef = () => firestore_db.collection('chats');
 export const chatDocRef = (chatId: string) => chatCollRef().doc(chatId);
 export const chatMessagesRef = (chatId: string) => chatDocRef(chatId).collection('messages');
+
+export const messageDocRef = (chatId: string, messageId: string) => chatMessagesRef(chatId).doc(messageId);

@@ -20,11 +20,13 @@ import { chatsActions } from '~src/redux/chats';
 const { TextArea } = Input;
 
 interface Props {
-	chat: IChat;
-	chatId: string;
+	chat?: IChat;
+	chatId?: string;
+	recipientAddress?: string | null;
+	isNewChat?: boolean;
 }
 
-const Messages = ({ chat, chatId }: Props) => {
+const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
@@ -37,9 +39,7 @@ const Messages = ({ chat, chatId }: Props) => {
 
 	const [newMessage, setNewMessage] = useState<string>('');
 
-	const recipientAddress = chat?.participants[0] === substrateAddress ? chat?.participants[1] : chat?.participants[0];
-
-	const isRequestSent = chat.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
+	const isRequestSent = chat?.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
 	const handleDataFetch = async () => {
 		setLoading(true);
@@ -61,42 +61,72 @@ const Messages = ({ chat, chatId }: Props) => {
 			setLoading(false);
 			return;
 		}
-		const requestData = {
-			address: substrateAddress,
-			chatId,
-			content: trimmedMsg,
-			receiverAddress: recipientAddress,
-			senderAddress: address,
-			senderImage: picture,
-			senderUsername: username
-		};
-		const { data, error } = await nextApiClientFetch<IMessage>('api/v1/delegate-chat/send-message', requestData);
-		if (data) {
-			setLoading(false);
-			if (!isRequestSent) {
-				dispatch(
-					chatsActions.updateChatStatus({
-						chatId: chat.chatId,
-						status: EChatRequestStatus.PENDING
-					})
-				);
+
+		if (isNewChat && recipientAddress) {
+			const requestData = {
+				address: substrateAddress,
+				content: trimmedMsg,
+				receiverAddress: recipientAddress,
+				senderAddress: address,
+				senderImage: picture,
+				senderUsername: username
+			};
+
+			const { data: newChat, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
+
+			if (newChat) {
+				dispatch(chatsActions.addNewChat(newChat));
+				dispatch(chatsActions.setOpenChat({ chat: newChat, isOpen: true }));
+				setMessages([newChat.latestMessage]);
+				setNewMessage('');
+			} else if (error) {
+				queueNotification({
+					header: 'Error!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
 			}
-			setMessages([...messages, data]);
-			queueNotification({
-				header: 'Success!',
-				message: 'Message sent successfully',
-				status: NotificationStatus.SUCCESS
-			});
-			setNewMessage('');
-		} else if (error) {
-			console.log(error);
-			queueNotification({
-				header: 'Error!',
-				message: error,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
+		} else {
+			// Existing chat message logic
+			const requestData = {
+				address: substrateAddress,
+				chatId,
+				content: trimmedMsg,
+				receiverAddress: recipientAddress || chat?.participants[1],
+				senderAddress: address,
+				senderImage: picture,
+				senderUsername: username
+			};
+
+			const { data, error } = await nextApiClientFetch<IMessage>('api/v1/delegate-chat/send-message', requestData);
+			if (data) {
+				setLoading(false);
+				if (!isRequestSent) {
+					dispatch(
+						chatsActions.updateChatStatus({
+							chatId: chat?.chatId || '',
+							status: EChatRequestStatus.PENDING
+						})
+					);
+				}
+				setMessages([...messages, data]);
+				queueNotification({
+					header: 'Success!',
+					message: 'Message sent successfully',
+					status: NotificationStatus.SUCCESS
+				});
+				setNewMessage('');
+			} else if (error) {
+				console.log(error);
+				queueNotification({
+					header: 'Error!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
+				setLoading(false);
+			}
 		}
+		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -124,7 +154,7 @@ const Messages = ({ chat, chatId }: Props) => {
 					/>
 				)}
 
-				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{shortenAddress(recipientAddress, 5)}</span>
+				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{shortenAddress(recipientAddress || '', 5)}</span>
 			</Card>
 			<Spin
 				spinning={loading}
@@ -146,10 +176,10 @@ const Messages = ({ chat, chatId }: Props) => {
 			</Spin>
 			{!loading ? (
 				<>
-					{messages.length > 0 && chat.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
+					{messages.length > 0 && chat?.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
 					<AuthForm
 						onSubmit={handleSubmit}
-						className={messages.length > 0 ? `${chat.requestStatus === EChatRequestStatus.ACCEPTED && 'mt-auto'} justify-self-end` : 'flex h-[440px] flex-col justify-between'}
+						className={messages.length > 0 ? `${chat?.requestStatus === EChatRequestStatus.ACCEPTED && 'mt-auto'} justify-self-end` : 'flex h-[440px] flex-col justify-between'}
 					>
 						{isRequestSent ? (
 							<div className='bg-[#F6F7F9] px-5 py-2 shadow-sm'>

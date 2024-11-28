@@ -13,4 +13,5 @@ export interface IChatsStore {
 	error: string | null;
 	openedChat: IChat | null;
 	isChatOpen: boolean;
+	tempRecipient: string | null;
 }

@@ -4,11 +4,10 @@
 
 import { Spin, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { IChat, IDelegateAddressDetails, NotificationStatus } from '~src/types';
+import { IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { useUserDetailsSelector, useNetworkSelector } from '~src/redux/selectors';
-import queueNotification from '~src/ui-components/QueueNotification';
+import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateList from './DelegateList';
 import EmptyState from './feedbacks/EmptyState';
@@ -20,15 +19,10 @@ interface Props {
 }
 
 const NewChat = ({ setIsNewChat }: Props) => {
-	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const { delegationDashboardAddress, loginAddress } = userProfile;
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const dispatch = useDispatch();
-
-	const address = delegationDashboardAddress || loginAddress;
-	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [allDelegates, setAllDelegates] = useState<IDelegateAddressDetails[]>([]);
@@ -82,34 +76,13 @@ const NewChat = ({ setIsNewChat }: Props) => {
 		setSearchedDelegates(filteredDelegates);
 	};
 
-	const handleStartChat = async (recipientAddr?: string) => {
-		setLoading(true);
+	const handleStartChat = (recipientAddr?: string) => {
 		const recipientAddress = recipientAddr ?? searchAddress.trim();
+		if (!recipientAddress) return;
 
-		if (!recipientAddress) {
-			setLoading(false);
-			return;
-		}
-		const requestData = {
-			address: substrateAddress,
-			receiverAddress: recipientAddress,
-			senderAddress: substrateAddress
-		};
-		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
-		if (data) {
-			dispatch(chatsActions.addNewChat(data));
-			dispatch(chatsActions.setOpenChat({ chat: data, isOpen: true }));
-			setIsNewChat(false);
-			setLoading(false);
-		} else if (error) {
-			console.log(error);
-			queueNotification({
-				header: 'Error!',
-				message: error,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-		}
+		dispatch(chatsActions.setTempRecipient(recipientAddress));
+		dispatch(chatsActions.setOpenChat({ chat: null, isOpen: true }));
+		setIsNewChat(false);
 	};
 
 	useEffect(() => {

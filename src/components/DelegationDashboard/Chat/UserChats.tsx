@@ -6,15 +6,14 @@ import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { EChatFilter, EChatTab, IChat, IChatsResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsSelector } from '~src/redux/selectors';
-import RenderChats from './RenderChats';
-import ChatTab from './ChatTab';
-import MessageDrawer from './MessageDrawer';
-import ChatFilter from './ChatFilter';
+import { useUserDetailsSelector, useChatsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useDispatch } from 'react-redux';
 import { chatsActions } from '~src/redux/chats';
-import { useSelector } from 'react-redux';
+import RenderChats from './RenderChats';
+import ChatFilter from './ChatFilter';
+import MessageDrawer from './MessageDrawer';
+import ChatTab from './ChatTab';
 
 interface Props {
 	className?: string;
@@ -22,8 +21,6 @@ interface Props {
 	setIsNewChat: (isNewChat: boolean) => void;
 	handleNewChat: () => void;
 }
-
-const useChatsSelector = () => useSelector((state: any) => state.chats);
 
 const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();

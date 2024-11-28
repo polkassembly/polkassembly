@@ -5,6 +5,7 @@
 import { Drawer } from 'antd';
 import { dmSans } from 'pages/_app';
 import { IChat } from '~src/types';
+import { useChatsSelector } from '~src/redux/selectors';
 import Messages from './Messages';
 import NewChat from './NewChat';
 import MessageDrawerHeader from './MessageDrawerHeader';
@@ -19,6 +20,8 @@ interface Props {
 }
 
 const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, isNewChat, setIsNewChat }: Props) => {
+	const { tempRecipient } = useChatsSelector();
+
 	return (
 		<Drawer
 			title={<MessageDrawerHeader handleCloseChat={() => handleChatToggle(null)} />}
@@ -34,6 +37,11 @@ const MessageDrawer = ({ className, isDrawerOpen, handleChatToggle, openedChat, 
 		>
 			{isNewChat ? (
 				<NewChat setIsNewChat={setIsNewChat} />
+			) : tempRecipient ? (
+				<Messages
+					isNewChat={true}
+					recipientAddress={tempRecipient}
+				/>
 			) : (
 				openedChat?.chatId && (
 					<Messages

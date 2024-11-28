@@ -6,7 +6,7 @@ import BalanceDetails from './utils/BalanceDetails';
 import AddressActionDropdown from './utils/AddressActionDropdown';
 import Address from '~src/ui-components/Address';
 import { IAccountData } from '~src/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	accountData: IAccountData;
@@ -26,7 +26,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 	}, []);
 
 	return (
-		<div className={`${poppins.className} ${poppins.variable} `}>
+		<div className={`${dmSans.className} ${dmSans.variable} `}>
 			<div className='relative w-full '>
 				<div className='flex items-start justify-between'>
 					{accountData?.address && (
@@ -40,7 +40,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 							/>
 						</div>
 					)}
-					<div className='flex items-center gap-2'>{accountData?.address && <AddressActionDropdown address={loginAddress || accountData.address} />}</div>
+					<div className='flex items-center gap-2'>{accountData?.address && <AddressActionDropdown address={loginAddress || accountData?.address} />}</div>
 				</div>
 				<span className='md:absolute md:left-[104px] md:top-10'>
 					<BalanceDetails address={accountData?.address ? accountData.address : loginAddress} />

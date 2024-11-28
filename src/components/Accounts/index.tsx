@@ -7,6 +7,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Image from 'next/image';
 import ProxyMain from '~src/components/createProxy';
+import { dmSans } from 'pages/_app';
 
 const AccountsMain = () => {
 	const { id } = useUserDetailsSelector();
@@ -14,7 +15,7 @@ const AccountsMain = () => {
 	return (
 		<div>
 			<div className='flex items-center justify-between'>
-				<h2 className={`${poppins.className} ${poppins.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
+				<h2 className={`${dmSans.className} ${dmSans.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
 				{id && (
 					<CustomButton
 						variant='link'

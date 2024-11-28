@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { IAccountData } from '~src/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import AddressComponent from './utils/AddressComponent';
 
 interface Props {
@@ -17,7 +17,7 @@ const ProxyDetails: React.FC<Props> = ({ accountData }) => {
 		<>
 			{accountData?.proxy?.real_account?.length > 0 && (
 				<div
-					className={`${poppins.className} ${poppins.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-[10px] dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
+					className={`${dmSans.className} ${dmSans.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-[10px] dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
 				>
 					<h3 className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Proxy</h3>
 					<div className='flex w-full flex-col '>

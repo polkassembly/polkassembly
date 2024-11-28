@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
-import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
@@ -29,6 +28,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { dmSans } from 'pages/_app';
 
 export enum ProxyTypeEnum {
 	Any = 'Any',
@@ -228,7 +228,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			title={
 				<div>
 					<div
-						className={`${poppins.variable} ${poppins.className} flex items-center px-[18px] py-4 text-sm font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
+						className={`${dmSans.className} ${dmSans.variable} flex items-center px-[18px] py-4 text-sm font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
 					>
 						<span className='flex items-center gap-x-2 text-xl font-semibold text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
 							<ProxyIcon className='userdropdown-icon text-2xl' />
@@ -274,7 +274,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 			zIndex={1008}
 			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
-			className={`${className} ${poppins.variable} ${poppins.className} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${className} ${dmSans.className} ${dmSans.variable} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setOpenModal(false)}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
@@ -326,7 +326,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								address={loginAddress}
 								withBalance={false}
 								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
-								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
 								linkAddressTextDisabled
@@ -365,7 +365,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								address={form.getFieldValue('proxyAddress') || loginAddress}
 								withBalance={false}
 								onAccountChange={(address) => form.setFieldsValue({ proxyAddress: address })}
-								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
 								linkAddressTextDisabled

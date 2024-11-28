@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { message, Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -80,7 +80,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 			footer={false}
 			zIndex={1008}
 			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
-			className={`${className} ${poppins.variable} ${poppins.className} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${className} ${dmSans.className} ${dmSans.variable} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setOpenModal(false)}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
@@ -97,7 +97,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 								priority={true}
 							/>
 						</div>
-						<h2 className={`${poppins.variable} ${poppins.className} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+						<h2 className={`${dmSans.className} ${dmSans.variable} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 							Proxy created successfully
 						</h2>
 						<div className='ml-16 mt-4 flex flex-col items-start gap-1'>
@@ -142,7 +142,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				</div>
 				<Alert
 					type='info'
-					className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+					className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${dmSans.className} ${dmSans.variable}`}
 					showIcon
 					message={
 						<span className='text-sm dark:text-blue-dark-high'>
@@ -161,7 +161,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				{error && (
 					<Alert
 						type='error'
-						className={`mx-10 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						className={`mx-10 h-10 rounded-[4px] text-bodyBlue ${dmSans.className} ${dmSans.variable}`}
 						showIcon
 						message={<span className='dark:text-blue-dark-high'>{error}</span>}
 					/>

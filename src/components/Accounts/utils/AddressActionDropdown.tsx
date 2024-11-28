@@ -14,7 +14,7 @@ const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConn
 	ssr: false
 });
 
-const AddressActionDropdown = () => {
+const AddressActionDropdown = ({ address }: { address: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [state, setState] = useState({
 		isDropdownActive: false,
@@ -23,6 +23,7 @@ const AddressActionDropdown = () => {
 		openSetIdentityModal: false,
 		openProxyModal: false
 	});
+	console.log('address', address);
 
 	const items: MenuProps['items'] = [
 		{

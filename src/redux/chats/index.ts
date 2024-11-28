@@ -50,7 +50,7 @@ export const chatsStore = createSlice({
 			state.requests.push(action.payload);
 			state.filteredRequests.push(action.payload);
 		},
-		updateChatStatus: (state, action: PayloadAction<{ chatId: string; status: string }>) => {
+		updateChatStatus: (state, action: PayloadAction<{ chat?: IChat; chatId: string; status: string }>) => {
 			const { chatId, status } = action.payload;
 			const requestIndex = state.requests.findIndex((chat) => chat.chatId === chatId);
 			if (requestIndex !== -1) {
@@ -61,6 +61,10 @@ export const chatsStore = createSlice({
 					state.messages.push({ ...chat, requestStatus: status });
 					state.filteredMessages.push({ ...chat, requestStatus: status });
 					state.selectedChatTab = EChatTab.MESSAGES;
+					if (chat) {
+						state.openedChat = { ...chat, requestStatus: status };
+						state.isChatOpen = true;
+					}
 				}
 			}
 		},

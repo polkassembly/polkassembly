@@ -19,10 +19,9 @@ import { chatsActions } from '~src/redux/chats';
 
 interface Props {
 	chat: IChat;
-	handleAcceptRequestSuccess: (chat: IChat) => void;
 }
 
-const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
+const ChatCard = ({ chat }: Props) => {
 	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
@@ -61,6 +60,15 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 		}
 	};
 
+	const handleAcceptRequestSuccess = (chat: IChat) => {
+		dispatch(
+			chatsActions.updateChatStatus({
+				chat: chat,
+				chatId: chat.chatId,
+				status: EChatRequestStatus.ACCEPTED
+			})
+		);
+	};
 	const renderUserImage = useMemo(() => {
 		if (recipientAddress?.startsWith('0x')) {
 			return (

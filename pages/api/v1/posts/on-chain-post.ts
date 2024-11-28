@@ -55,7 +55,7 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
-export const fetchOGTracker = async (id: string | string[]) => {
+export const fetchOGTracker = async (id: string) => {
 	try {
 		const res = await fetch('https://api.ogtracker.io/proposals', {
 			body: JSON.stringify({

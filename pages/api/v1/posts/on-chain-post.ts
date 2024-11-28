@@ -1169,7 +1169,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					refNum: OGdata?.[0]?.refNum
 				};
 				data.progress_report = data?.progress_report || [];
-				data?.progress_report?.push(ogReport);
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				if (!isOgReportPresent) {
+					data?.progress_report?.push(ogReport);
+				}
 			}
 
 			// Populate firestore post data into the post object

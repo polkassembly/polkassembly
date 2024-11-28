@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { CalendarOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { Tooltip } from 'antd';
 
 function ActivityFeedCalendar() {
 	const [activityData] = useState([
@@ -63,27 +64,43 @@ function ActivityFeedCalendar() {
 						{day}
 					</div>
 				))}
-				{/* Calendar Days */}
 				{weeks.map((week, index) =>
 					week.map((day, dayIndex) => (
-						<div
+						<Tooltip
 							key={`${index}-${dayIndex}`}
-							className={`h-6 w-6 rounded-md ${
-								day ? (day.proposals ? 'bg-[#BBDDFF]' : day.votes ? 'bg-[#2352BB]' : day.comments ? 'bg-[#3473FF]' : 'bg-[#F5F5F9]') : 'bg-[#F5F5F9]'
-							}`}
-							title={day ? `Date: ${dayjs(day.date).format('DD MMM, YYYY')}` : ''}
-						>
-							{/* {day && (
-								<div className='relative'>
-									<p className='text-sm'>{dayjs(day.date).date()}</p>
-									<div className='absolute inset-0 flex flex-col items-center justify-center text-xs'>
-										{day.proposals ? <p>Proposals: {day.proposals}</p> : null}
-										{day.votes ? <p>Votes: {day.votes}</p> : null}
-										{day.comments ? <p>Comments: {day.comments}</p> : null}
+							title={
+								day ? (
+									<div>
+										<p>
+											<strong>Date:</strong> {dayjs(day.date).format('DD MMM, YYYY')}
+										</p>
+										{day && day.proposals !== undefined && day.proposals > 0 && (
+											<p>
+												<strong>Proposals:</strong> {day.proposals}
+											</p>
+										)}
+										{day && day.votes !== undefined && day.votes > 0 && (
+											<p>
+												<strong>Votes:</strong> {day.votes}
+											</p>
+										)}
+										{day && day.comments !== undefined && day.comments > 0 && (
+											<p>
+												<strong>Comments:</strong> {day.comments}
+											</p>
+										)}
 									</div>
-								</div>
-							)} */}
-						</div>
+								) : (
+									''
+								)
+							}
+						>
+							<div
+								className={`h-6 w-6 rounded-md ${
+									day ? (day.proposals ? 'bg-[#BBDDFF]' : day.votes ? 'bg-[#2352BB]' : day.comments ? 'bg-[#3473FF]' : 'bg-[#F5F5F9]') : '' // Empty string for null days
+								}`}
+							></div>
+						</Tooltip>
 					))
 				)}
 			</div>
@@ -99,9 +116,20 @@ function ActivityFeedCalendar() {
 				</span>
 				<span className='flex items-center text-[#3473FF]'>
 					<span className='mr-2 inline-block h-5 w-5 rounded-md bg-[#3473FF]'></span>{' '}
-					<span className='mr-1 text-[12px] font-medium text-[#243A57] text-opacity-[70%]'>Proposal Engagement: </span>
-					<span className='text-[12px] font-semibold text-[#243A57]'>{activityData.reduce((sum, data) => sum + (data.comments || 0), 0)}</span>{' '}
-					<span className='ml-1 text-[12px] text-[#243A57]'>Likes</span>
+					<span className='mr-1 w-20 text-[12px] font-medium leading-none text-[#243A57] text-opacity-[70%]'>
+						Proposal
+						<br />
+						<span className='block'>Engagement:</span>
+					</span>
+					<div className=' leading-none'>
+						<span className='text-[12px] font-semibold text-[#243A57]'>{activityData.reduce((sum, data) => sum + (data.comments || 0), 0)}</span>{' '}
+						<span className=' text-[12px] text-[#243A57]'>Likes</span>
+						<span className='ml-2 text-[12px] font-semibold text-[#243A57]'>{activityData.reduce((sum, data) => sum + (data.comments || 0), 0)}</span>{' '}
+						<span className=' text-[12px] text-[#243A57]'>Dislikes</span>
+						<br />
+						<span className='text-[12px] font-semibold text-[#243A57]'>{activityData.reduce((sum, data) => sum + (data.comments || 0), 0)}</span>{' '}
+						<span className='text-[12px] text-[#243A57]'>Comment</span>
+					</div>
 				</span>
 			</div>
 		</div>

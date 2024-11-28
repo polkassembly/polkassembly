@@ -51,7 +51,7 @@ export const chatsStore = createSlice({
 			state.filteredRequests.push(action.payload);
 			state.selectedChatTab = EChatTab.REQUESTS;
 		},
-		updateChatStatus: (state, action: PayloadAction<{ chatId: string; status: string }>) => {
+		updateChatStatus: (state, action: PayloadAction<{ chatId: string; status: EChatRequestStatus }>) => {
 			const { chatId, status } = action.payload;
 			const requestIndex = state.requests.findIndex((chat) => chat.chatId === chatId);
 			if (requestIndex !== -1) {
@@ -68,8 +68,8 @@ export const chatsStore = createSlice({
 						state.isChatOpen = true;
 					}
 				} else {
-					state.requests[requestIndex] = { ...chat, requestStatus: status as EChatRequestStatus };
-					state.filteredRequests[requestIndex] = { ...chat, requestStatus: status as EChatRequestStatus };
+					state.requests[requestIndex] = { ...chat, requestStatus: status };
+					state.filteredRequests[requestIndex] = { ...chat, requestStatus: status };
 				}
 			}
 		},
@@ -80,15 +80,19 @@ export const chatsStore = createSlice({
 		setTempRecipient: (state, action: PayloadAction<string | null>) => {
 			state.tempRecipient = action.payload;
 		},
-		updateLatestMessageViewedBy: (state, action: PayloadAction<{ chat: IChat; address: string }>) => {
-			const { chat, address } = action.payload;
-			if (chat?.latestMessage) {
-				if (!chat.latestMessage.viewed_by) {
-					chat.latestMessage.viewed_by = [];
+		updateLatestMessageViewedBy: (state, action: PayloadAction<{ chatId: string; address: string }>) => {
+			const { chatId, address } = action.payload;
+			const chatIndex = state.messages.findIndex((chat) => chat.chatId === chatId);
+			if (chatIndex !== -1) {
+				const chat = state.messages[chatIndex];
+				const latestMessage = { ...chat.latestMessage };
+				if (!latestMessage.viewed_by) {
+					latestMessage.viewed_by = [];
 				}
-				if (!chat.latestMessage.viewed_by.includes(address)) {
-					chat.latestMessage.viewed_by.push(address);
+				if (!latestMessage.viewed_by.includes(address)) {
+					latestMessage.viewed_by = [...latestMessage.viewed_by, address];
 				}
+				state.messages[chatIndex] = { ...chat, latestMessage };
 			}
 		}
 	},

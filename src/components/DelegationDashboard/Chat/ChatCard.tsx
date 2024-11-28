@@ -52,7 +52,7 @@ const ChatCard = ({ chat }: Props) => {
 			dispatch(
 				chatsActions.updateLatestMessageViewedBy({
 					address: substrateAddress || '',
-					chat: chat
+					chatId: chat.chatId
 				})
 			);
 		} else if (error) {

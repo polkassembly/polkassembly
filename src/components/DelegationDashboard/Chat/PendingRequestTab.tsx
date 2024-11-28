@@ -8,22 +8,24 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Button, message } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
 
 interface Props {
 	chat: IChat;
-	setIsRejectedRequest: (state: boolean) => void;
-	setIsPendingRequest: (state: boolean) => void;
 	handleAcceptRequestSuccess: (chat: IChat) => void;
 }
 
-const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, handleAcceptRequestSuccess }: Props) => {
+const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
+	const dispatch = useDispatch();
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState(false);
+	const [rejectLoading, setRejectLoading] = useState(false);
 
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -43,7 +45,7 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 
 	const handleRejectRequest = async (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
 		e.stopPropagation();
-		setLoading(true);
+		setRejectLoading(true);
 
 		const requestData = {
 			address: substrateAddress,
@@ -53,14 +55,17 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/update-request-status', requestData);
 		if (data) {
-			setIsRejectedRequest(true);
-			setIsPendingRequest(false);
-
-			setLoading(false);
+			dispatch(
+				chatsActions.updateChatStatus({
+					chatId: chat.chatId,
+					status: EChatRequestStatus.REJECTED
+				})
+			);
+			setRejectLoading(false);
 		} else if (error) {
 			message.error(error);
 			console.log(error);
-			setLoading(false);
+			setRejectLoading(false);
 		}
 	};
 
@@ -97,13 +102,15 @@ const PendingRequestTab = ({ chat, setIsRejectedRequest, setIsPendingRequest, ha
 					className='rounded-lg px-5'
 					onClick={handleAcceptRequest}
 					disabled={loading}
+					loading={loading}
 				>
 					Accept
 				</Button>
 				<Button
 					className='rounded-lg border-pink_primary bg-transparent px-5 font-medium text-pink_primary'
 					onClick={handleRejectRequest}
-					disabled={loading}
+					disabled={rejectLoading}
+					loading={rejectLoading}
 				>
 					Reject
 				</Button>

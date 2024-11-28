@@ -2,18 +2,25 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Segmented } from 'antd';
 import React from 'react';
 import { EChatTab } from '~src/types';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
+import { Segmented } from 'antd';
 
 interface Props {
-	setSelectedChatTab: (selectedChatTab: EChatTab) => void;
 	selectedChatTab: EChatTab;
-	requestsCount: number;
 	messagesCount: number;
+	requestsCount: number;
 }
 
-const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsCount }: Props) => {
+const ChatTab = ({ selectedChatTab, messagesCount, requestsCount }: Props) => {
+	const dispatch = useDispatch();
+
+	const handleTabChange = (tab: EChatTab) => {
+		dispatch(chatsActions.setSelectedChatTab(tab));
+	};
+
 	return (
 		<Segmented
 			options={[
@@ -35,7 +42,7 @@ const ChatTab = ({ selectedChatTab, setSelectedChatTab, messagesCount, requestsC
 				}
 			]}
 			value={selectedChatTab}
-			onChange={(value) => setSelectedChatTab(String(value) as EChatTab)}
+			onChange={(value) => handleTabChange(String(value) as EChatTab)}
 			className='[&_.ant-segmented-item-label]:dark:text-[#9e9e9e] [&_.ant-segmented-item-selected]:font-semibold [&_.ant-segmented-item-selected_.ant-segmented-item-label]:text-bodyBlue [&_.ant-segmented-item-selected_.ant-segmented-item-label]:dark:text-blue-dark-high'
 			block
 		/>

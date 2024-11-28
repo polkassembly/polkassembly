@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { EChatFilter, EChatTab, IChat, IChatsResponse } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -12,6 +12,9 @@ import ChatTab from './ChatTab';
 import MessageDrawer from './MessageDrawer';
 import ChatFilter from './ChatFilter';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
+import { useSelector } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -20,21 +23,17 @@ interface Props {
 	handleNewChat: () => void;
 }
 
+const useChatsSelector = () => useSelector((state: any) => state.chats);
+
 const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
+	const dispatch = useDispatch();
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
 
-	const [loading, setLoading] = useState<boolean>(false);
-	const [messages, setMessages] = useState<IChat[]>([]);
-	const [requests, setRequests] = useState<IChat[]>([]);
-	const [filteredMessages, setFilteredMessages] = useState<IChat[]>([]);
-	const [filteredRequests, setFilteredRequests] = useState<IChat[]>([]);
-	const [selectedChatTab, setSelectedChatTab] = useState<EChatTab>(EChatTab.MESSAGES);
-	const [openedChat, setOpenedChat] = useState<IChat | null>(null);
-	const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+	const { messages, requests, filteredMessages, filteredRequests, selectedChatTab, loading, isChatOpen, openedChat } = useChatsSelector();
 
 	const handleChatToggle = (chat?: IChat | null) => {
 		if (chat) {
@@ -43,47 +42,46 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 				return;
 			}
 			setIsNewChat(false);
-			setIsChatOpen(true);
-			setOpenedChat(chat);
+			dispatch(chatsActions.setOpenChat({ chat, isOpen: true }));
 		} else {
-			setIsChatOpen(false);
+			dispatch(chatsActions.setOpenChat({ chat: null, isOpen: false }));
 			setIsNewChat(false);
-			setOpenedChat(null);
 		}
 	};
 
 	const handleDataFetch = async () => {
-		setLoading(true);
+		dispatch(chatsActions.setLoading(true));
 		const { data, error } = await nextApiClientFetch<IChatsResponse>('api/v1/delegate-chat/getDelegateChats', { address });
 		if (data) {
-			setMessages(data?.messages);
-			setRequests(data?.requests);
-			setFilteredMessages(data?.messages);
-			setFilteredRequests(data?.requests);
-			setLoading(false);
+			dispatch(
+				chatsActions.setChats({
+					messages: data.messages,
+					requests: data.requests
+				})
+			);
 		} else if (error) {
 			console.log(error);
-			setLoading(false);
+			dispatch(chatsActions.setError(error));
 		}
+		dispatch(chatsActions.setLoading(false));
 	};
 
 	const handleSearch = (searchText: string) => {
 		const lowercasedText = searchText.toLowerCase();
-
 		if (selectedChatTab === 'messages') {
-			const filteredMessages = messages.filter((chat) =>
+			const filtered = messages.filter((chat: IChat) =>
 				chat.latestMessage?.receiverAddress === substrateAddress
 					? chat.latestMessage?.senderAddress.toLowerCase().includes(lowercasedText)
 					: chat?.latestMessage?.receiverAddress.toLowerCase().includes(lowercasedText)
 			);
-			setFilteredMessages(filteredMessages);
+			dispatch(chatsActions.setFilteredMessages(filtered));
 		} else {
-			const filteredRequests = requests.filter((chat) =>
+			const filtered = requests.filter((chat: IChat) =>
 				chat.latestMessage?.receiverAddress === substrateAddress
 					? chat.latestMessage?.senderAddress.toLowerCase().includes(lowercasedText)
 					: chat?.latestMessage?.receiverAddress.toLowerCase().includes(lowercasedText)
 			);
-			setFilteredRequests(filteredRequests);
+			dispatch(chatsActions.setFilteredRequests(filtered));
 		}
 	};
 
@@ -95,9 +93,9 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 		};
 
 		if (selectedChatTab === EChatTab.MESSAGES) {
-			setFilteredMessages(messages.filter(filterFunction));
+			dispatch(chatsActions.setFilteredMessages(messages.filter(filterFunction)));
 		} else {
-			setFilteredRequests(requests.filter(filterFunction));
+			dispatch(chatsActions.setFilteredRequests(requests.filter(filterFunction)));
 		}
 	};
 
@@ -116,7 +114,6 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 				/>
 				<div className='flex flex-col gap-2 p-5 pt-3'>
 					<ChatTab
-						setSelectedChatTab={setSelectedChatTab}
 						selectedChatTab={selectedChatTab}
 						messagesCount={filteredMessages?.length || 0}
 						requestsCount={filteredRequests?.length || 0}
@@ -129,8 +126,6 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 					<RenderChats
 						handleOpenChat={handleChatToggle}
 						handleNewChat={handleNewChat}
-						setFilteredMessages={setFilteredMessages}
-						setFilteredRequests={setFilteredRequests}
 						chats={selectedChatTab === 'messages' ? filteredMessages : filteredRequests}
 					/>
 				</Spin>
@@ -138,10 +133,10 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 
 			<MessageDrawer
 				openedChat={openedChat}
+				setIsNewChat={setIsNewChat}
 				isNewChat={isNewChat}
 				isDrawerOpen={isNewChat || isChatOpen}
 				handleChatToggle={handleChatToggle}
-				setFilteredRequests={setFilteredRequests}
 			/>
 		</>
 	);

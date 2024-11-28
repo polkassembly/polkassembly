@@ -7,26 +7,30 @@ import { IChat } from '~src/types';
 import ChatCard from './ChatCard';
 import { Button, List } from 'antd';
 import Image from 'next/image';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
+import { EChatRequestStatus } from '~src/types';
 
 interface Props {
 	className?: string;
 	chats: IChat[];
 	handleOpenChat: (chat: IChat) => void;
 	handleNewChat: () => void;
-	setFilteredMessages: React.Dispatch<React.SetStateAction<IChat[]>>;
-	setFilteredRequests: React.Dispatch<React.SetStateAction<IChat[]>>;
 }
 
-const RenderChats = ({ className, handleOpenChat, chats, handleNewChat, setFilteredMessages, setFilteredRequests }: Props) => {
+const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props) => {
+	const dispatch = useDispatch();
+
 	const handleAcceptRequestSuccess = (chat: IChat) => {
 		handleOpenChat(chat);
-
-		setFilteredMessages((prevChatData: IChat[]) => [...prevChatData, chat]);
-
-		setFilteredRequests((prevRequests: IChat[]) => {
-			return prevRequests.filter((chatData) => chatData.chatId !== chat.chatId);
-		});
+		dispatch(
+			chatsActions.updateChatStatus({
+				chatId: chat.chatId,
+				status: EChatRequestStatus.ACCEPTED
+			})
+		);
 	};
+
 	return chats?.length > 0 ? (
 		<div className={`${className} h-full w-full overflow-y-auto`}>
 			<List

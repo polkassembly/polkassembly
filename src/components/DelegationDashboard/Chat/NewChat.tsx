@@ -12,17 +12,20 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateList from './DelegateList';
 import EmptyState from './feedbacks/EmptyState';
+import { chatsActions } from '~src/redux/chats';
+import { useDispatch } from 'react-redux';
 
 interface Props {
-	handleOpenChat: (chat: IChat) => void;
+	setIsNewChat: (isNewChat: boolean) => void;
 }
 
-const NewChat = ({ handleOpenChat }: Props) => {
+const NewChat = ({ setIsNewChat }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const dispatch = useDispatch();
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
@@ -94,8 +97,10 @@ const NewChat = ({ handleOpenChat }: Props) => {
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
 		if (data) {
+			dispatch(chatsActions.addNewChat(data));
+			dispatch(chatsActions.setOpenChat({ chat: data, isOpen: true }));
+			setIsNewChat(false);
 			setLoading(false);
-			handleOpenChat(data);
 		} else if (error) {
 			console.log(error);
 			queueNotification({

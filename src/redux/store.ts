@@ -34,6 +34,7 @@ import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
 import { followStore } from './follow';
+import { chatsStore } from './chats';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -134,7 +135,8 @@ export const makeStore = () => {
 		[claimPayoutStore.name]: claimPayoutStore.reducer,
 		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer,
 		[childBountyCreationStore.name]: childBountyCreationStore.reducer,
-		[followStore.name]: followStore.reducer
+		[followStore.name]: followStore.reducer,
+		[chatsStore.name]: chatsStore.reducer
 	});
 
 	if (isServer) {

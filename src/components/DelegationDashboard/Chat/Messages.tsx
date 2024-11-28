@@ -14,16 +14,18 @@ import AuthForm from '~src/ui-components/AuthForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import RequestStatus from './feedbacks/RequestStatus';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
 
 const { TextArea } = Input;
 
 interface Props {
 	chat: IChat;
 	chatId: string;
-	setFilteredRequests: React.Dispatch<React.SetStateAction<IChat[]>>;
 }
 
-const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
+const Messages = ({ chat, chatId }: Props) => {
+	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
 
@@ -72,7 +74,12 @@ const Messages = ({ chat, chatId, setFilteredRequests }: Props) => {
 		if (data) {
 			setLoading(false);
 			if (!isRequestSent) {
-				setFilteredRequests((prevChatData: IChat[]) => [...prevChatData, chat]);
+				dispatch(
+					chatsActions.updateChatStatus({
+						chatId: chat.chatId,
+						status: EChatRequestStatus.PENDING
+					})
+				);
 			}
 			setMessages([...messages, data]);
 			queueNotification({

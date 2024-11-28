@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Image from 'next/image';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { EChatRequestStatus, IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
@@ -14,6 +14,8 @@ import dayjs from 'dayjs';
 import { Card } from 'antd';
 import PendingRequestTab from './PendingRequestTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useDispatch } from 'react-redux';
+import { chatsActions } from '~src/redux/chats';
 
 interface Props {
 	chat: IChat;
@@ -21,6 +23,7 @@ interface Props {
 }
 
 const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
+	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 
@@ -28,9 +31,9 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 	const substrateAddress = getSubstrateAddress(address);
 
 	const { latestMessage } = chat;
-	const [isReadMessage, setIsReadMessage] = useState<boolean>(latestMessage?.viewed_by?.includes(String(substrateAddress)));
-	const [isRejectedRequest, setIsRejectedRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.REJECTED);
-	const [isPendingRequest, setIsPendingRequest] = useState<boolean>(chat.requestStatus === EChatRequestStatus.PENDING);
+	const isReadMessage = latestMessage?.viewed_by?.includes(String(substrateAddress));
+	const isRejectedRequest = chat.requestStatus === EChatRequestStatus.REJECTED;
+	const isPendingRequest = chat.requestStatus === EChatRequestStatus.PENDING;
 
 	const recipientAddress = latestMessage?.receiverAddress === substrateAddress ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
 
@@ -47,7 +50,12 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 		};
 		const { data, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/mark-chat-as-read', requestData);
 		if (data) {
-			setIsReadMessage(true);
+			dispatch(
+				chatsActions.updateChatStatus({
+					chatId: chat.chatId,
+					status: 'read'
+				})
+			);
 		} else if (error) {
 			console.log(error);
 		}
@@ -108,8 +116,6 @@ const ChatCard = ({ chat, handleAcceptRequestSuccess }: Props) => {
 				{isPendingRequest && chat.chatInitiatedBy !== substrateAddress ? (
 					<PendingRequestTab
 						chat={chat}
-						setIsRejectedRequest={setIsRejectedRequest}
-						setIsPendingRequest={setIsPendingRequest}
 						handleAcceptRequestSuccess={handleAcceptRequestSuccess}
 					/>
 				) : null}

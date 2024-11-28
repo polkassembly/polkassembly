@@ -5,17 +5,16 @@
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-// import ProxyMain from '~src/components/createProxy';
+import ProxyMain from '~src/components/createProxy';
 import { Dropdown } from '~src/ui-components/Dropdown';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
 
-const AddressActionDropdown = ({ address }: { address: string }) => {
+const AddressActionDropdown = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [state, setState] = useState({
 		isDropdownActive: false,
@@ -33,7 +32,7 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 					onClick={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: true }))}
 					className='mt-1 flex items-center space-x-2'
 				>
-					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Link Address</span>
+					<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Link Address</span>
 				</div>
 			)
 		},
@@ -44,7 +43,7 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 					onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
 					className='mt-1 flex items-center space-x-2'
 				>
-					<span className={`${poppins.className} ${poppins.variable} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Add Proxy</span>
+					<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
 				</div>
 			)
 		}
@@ -75,10 +74,10 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 				onConfirm={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: false }))}
 				usedInIdentityFlow={false}
 			/>
-			{/* <ProxyMain
+			<ProxyMain
 				openProxyModal={state.openProxyModal}
 				setOpenProxyModal={(open) => setState((prevState) => ({ ...prevState, openProxyModal: open }))}
-			/> */}
+			/>
 		</div>
 	);
 };

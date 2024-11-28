@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import AddressesComponent from './AddressesComponent';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Image from 'next/image';
-// import ProxyMain from '~src/components/createProxy';
+import ProxyMain from '~src/components/createProxy';
 
 const AccountsMain = () => {
 	const { id } = useUserDetailsSelector();
@@ -35,7 +34,7 @@ const AccountsMain = () => {
 								width={18}
 								priority={true}
 							/>
-							<span className={`${poppins.className} ${poppins.variable} text-sm font-medium`}>Add Proxy</span>
+							<span className={' text-sm font-medium'}>Add Proxy</span>
 						</div>
 					</CustomButton>
 				)}
@@ -49,10 +48,10 @@ const AccountsMain = () => {
 				}
 			/> */}
 			<AddressesComponent />
-			{/* <ProxyMain
+			<ProxyMain
 				openProxyModal={openProxyModal}
 				setOpenProxyModal={setOpenProxyModal}
-			/> */}
+			/>
 		</div>
 	);
 };

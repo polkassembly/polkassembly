@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { Form, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
@@ -26,6 +26,7 @@ import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ILoading, NotificationStatus } from '~src/types';
 import { useTranslation } from 'react-i18next';
+import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 
 interface IPeopleChainTeleport {
 	className?: string;
@@ -40,12 +41,13 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const currentUser = useUserDetailsSelector();
+	const { loginAddress, multisigAssociatedAddress } = currentUser;
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAddressSelectModal, setOpenAddressSelectModal] = useState<boolean>(false);
-	const [address, setAddress] = useState(loginAddress || '');
+	const [address, setAddress] = useState(isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress : loginAddress || '');
 	const [beneficiaryAddress, setBeneficiaryAddress] = useState(defaultBeneficiaryAddress || '');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -117,7 +119,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 		);
 
 		await executeTx({
-			address,
+			address: address || '',
 			api,
 			apiReady,
 			errorMessageFallback: t('transaction_failed'),
@@ -158,7 +160,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 					form.setFieldValue('balance', formatedBalance(String(defaultAmount || ZERO_BN), unit));
 				}}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -208,7 +210,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							</label>
 							{!!address && (
 								<Balance
-									address={address || loginAddress}
+									address={address || (isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress || '' : loginAddress)}
 									onChange={handleOnAvailableBalanceChange}
 									usedInIdentityFlow={false}
 								/>
@@ -217,7 +219,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 						<div className='flex w-full items-end gap-2 text-sm '>
 							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
-									address={address || loginAddress}
+									address={address || (isCurrentlyLoggedInUsingMultisig(currentUser) ? multisigAssociatedAddress || '' : loginAddress)}
 									isTruncateUsername={false}
 									displayInline
 								/>

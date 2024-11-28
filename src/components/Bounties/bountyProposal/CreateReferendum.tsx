@@ -704,13 +704,13 @@ const CreateReferendum = ({
 							onClick={() => {
 								setSteps({ percent: 100, step: 1 });
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							{t('back')}
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-10 w-min ${
+							className={`h-10 w-min font-semibold ${
 								!eligibleToCreateRef ? 'opacity-50' : ''
 							} rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary `}
 							onClick={() => handleSubmitCreateReferendum()}

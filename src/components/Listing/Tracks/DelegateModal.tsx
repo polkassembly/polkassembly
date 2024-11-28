@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
 import { ETrackDelegationStatus, NotificationStatus } from 'src/types';
 import AddressInput from 'src/ui-components/AddressInput';
@@ -156,8 +156,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const getData = async () => {
 		if (!api || !apiReady || !delegationDashboardAddress) return;
-		const res = api.consts.convictionVoting.voteLockingPeriod;
-		const num = res.toJSON();
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+		const num = res?.toJSON();
 		const days = blockToDays(num, network);
 		setDays(days);
 		setLoading(true);
@@ -309,7 +309,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 					?.filter((item) => item?.trackId !== trackNum)
 					?.map((track, index) => (
 						<div
-							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans.variable} ${dmSans.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 							key={index}
 						>
 							<Checkbox
@@ -342,7 +342,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive ' />}
-				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.variable} ${dmSans.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>

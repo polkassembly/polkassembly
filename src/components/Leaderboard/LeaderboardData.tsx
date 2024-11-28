@@ -19,7 +19,7 @@ import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 // import { MenuProps } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { MenuProps, Spin } from 'antd';
 import Image from 'next/image';
 // import Link from 'next/link';
@@ -95,7 +95,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			key: '1',
 			label: (
 				<div className=' flex w-[260px] flex-col '>
-					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-1 flex items-center gap-1`}>
 						<ImageIcon
 							src='/assets/icons/astrals-icon.svg'
 							alt='astrals icon'
@@ -103,7 +103,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						/>
 						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('astrals')}</span>
 					</div>
-					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
 						<div className='mb-2'>
 							{t('score_system')}
 							<a
@@ -189,7 +189,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			dataIndex: 'rank',
 			key: 'rank',
 			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
-			title: <span className={`${poppins.className} ${poppins.variable}`}>{t('rank')}</span>,
+			title: <span className={`${dmSans.className} ${dmSans.variable}`}>{t('rank')}</span>,
 			width: 15
 		},
 		{
@@ -211,7 +211,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						<p className='m-0 p-0'>{username}</p>
 					) : (
 						<NameLabel
-							className={`min-w-[120px] max-w-[12vw] text-sm text-bodyBlue 2xl:max-w-[16vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
+							className={`min-w-[120px] max-w-[12vw] text-sm font-semibold text-bodyBlue 2xl:max-w-[16vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
 							username={user}
 							usernameMaxLength={15}
 							truncateUsername={false}
@@ -220,7 +220,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					)}
 				</div>
 			),
-			title: <span className={`${poppins.className} ${poppins.variable}`}>{t('user')}</span>,
+			title: <span className={`${dmSans.className} ${dmSans.variable}`}>{t('user')}</span>,
 			width: 250
 		},
 		{
@@ -274,7 +274,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();
 				return timestampA - timestampB;
 			},
-			title: <span className={`${poppins.className} ${poppins.variable}`}>{t('user_since')}</span>,
+			title: <span className={`${dmSans.className} ${dmSans.variable}`}>{t('user_since')}</span>,
 			width: 150
 		},
 		{
@@ -321,7 +321,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					)}
 				</article>
 			),
-			title: <span className={`${poppins.className} ${poppins.variable}`}>{t('actions')}</span>,
+			title: <span className={`${dmSans.className} ${dmSans.variable}`}>{t('actions')}</span>,
 			width: 150
 		}
 	];

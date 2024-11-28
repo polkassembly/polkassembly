@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Poppins, Roboto_Mono, Work_Sans, Space_Grotesk } from 'next/font/google';
+// import { dmSans, Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
+import { Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Image from 'next/image';
@@ -30,13 +31,13 @@ import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
 import { appWithTranslation } from 'next-i18next';
 
-export const poppins = Poppins({
+export const dmSans = DM_Sans({
 	adjustFontFallback: false,
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],
-	variable: '--font-poppins',
-	weight: ['200', '300', '400', '500', '600', '700']
+	variable: '--font-dmSans',
+	weight: ['400', '500', '700']
 });
 const robotoMono = Roboto_Mono({
 	display: 'swap',
@@ -98,13 +99,12 @@ function App({ Component, pageProps }: AppProps) {
 		return (
 			<div
 				style={{ background: '#000000', minHeight: '100vh', minWidth: '100vw' }}
-				className='transition-all'
+				className='flex flex-col items-center justify-center gap-2'
 			>
 				<Image
-					style={{ left: 'calc(50vw - 50px)', position: 'absolute', top: 'calc(50vh - 40px)' }}
-					width={120}
+					width={172}
 					className='bg-transparent'
-					height={45}
+					height={57}
 					src='/assets/PALogoDark.svg'
 					alt={'Loading'}
 				/>
@@ -133,7 +133,7 @@ function App({ Component, pageProps }: AppProps) {
 									<PeopleChainApiContextProvider network={network}>
 										<>
 											{showSplashScreen && <SplashLoader />}
-											<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+											<main className={`${dmSans.variable} ${dmSans.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
 												<NextNProgress color='#E5007A' />
 												{/* <CMDK /> */}
 												<AppLayout

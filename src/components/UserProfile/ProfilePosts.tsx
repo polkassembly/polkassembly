@@ -6,7 +6,7 @@ import { Checkbox, Popover } from 'antd';
 import classNames from 'classnames';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
@@ -116,7 +116,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			>
 				{addresses?.map((address, index) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
 					>
 						<Checkbox
@@ -148,7 +148,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			{Object.entries(selectedSubFilters).map(([key, value]) =>
 				key === 'total' || key === 'posts' ? null : (
 					<div
-						className={`${poppins.variable} ${poppins.className} mt-2 flex items-center gap-3 px-2 text-xs tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} mt-2 flex items-center gap-3 px-2 text-xs tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={key}
 					>
 						<Checkbox

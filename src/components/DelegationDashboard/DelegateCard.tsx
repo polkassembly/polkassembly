@@ -17,7 +17,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import { IDelegateAddressDetails } from '~src/types';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
 import ImageComponent from '../ImageComponent';
 import { removeSymbols } from '~src/util/htmlDiff';
@@ -98,7 +98,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 									width={isMobile ? 20 : 22}
 									alt=''
 								/>
-								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkassembly')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkassembly')}</span>
 							</div>
 							<Divider
 								type='vertical'
@@ -116,7 +116,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 									width={isMobile ? 20 : 22}
 									alt=''
 								/>
-								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('W3f')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('W3f')}</span>
 							</div>
 							<Divider
 								type='vertical'
@@ -133,7 +133,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 									width={isMobile ? 18 : 22}
 									alt=''
 								/>
-								<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkadot')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkadot')}</span>
 							</div>
 							{!(delegate?.dataSource.includes(EDelegateSource.W3F) && delegate?.dataSource.length === 2) && (
 								<Divider
@@ -151,7 +151,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								width={isMobile ? 20 : 22}
 								alt=''
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Nova Wallet')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Nova Wallet')}</span>
 						</div>
 					)}
 				</div>
@@ -165,7 +165,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								width={isMobile ? 20 : 22}
 								alt=''
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-blue-dark-high sm:text-xs`}>{t('W3F Delegate')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-blue-dark-high sm:text-xs`}>{t('W3F Delegate')}</span>
 						</div>
 					)}
 					{!!delegate?.dataSource?.includes(EDelegateSource.NOVA) && (
@@ -176,7 +176,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								width={isMobile ? 20 : 22}
 								alt=''
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
 								{t('Nova Wallet Delegate')}
 							</span>
 						</div>
@@ -189,7 +189,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								width={isMobile ? 18 : 22}
 								alt=''
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkadot Delegate')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>{t('Polkadot Delegate')}</span>
 						</div>
 					)}
 					{!!delegate?.dataSource?.includes(EDelegateSource.POLKASSEMBLY) && (
@@ -200,7 +200,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								width={isMobile ? 20 : 22}
 								alt=''
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
 								{t('Polkassembly Delegate')}
 							</span>
 						</div>
@@ -214,7 +214,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								alt=''
 								className={theme == 'dark' ? 'dark-icons' : ''}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} text-[10px] font-normal tracking-wide text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
+							<span className={`${dmSans.variable} ${dmSans.className} text-[10px] font-normal tracking-wide text-bodyBlue dark:text-blue-dark-high sm:text-xs`}>
 								{t('Individual')}
 							</span>
 						</div>
@@ -246,12 +246,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Button
 						disabled={disabled}
 						onClick={handleClick}
-						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
+						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 font-semibold shadow-none ${!!disabled && 'opacity-50'}`}
 					>
 						<DelegatesProfileIcon />
 					</Button>
 				</div>
-				<div className={`${poppins.variable} ${poppins.className} my-[4px] h-[50px] text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
+				<div className={`${dmSans.variable} ${dmSans.className} my-[4px] h-[50px] text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
 					<p className='inline text-[12px]'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || t('No Bio'))}</p>
 					{delegate?.bio?.length > 100 && (
 						<span
@@ -272,16 +272,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					/>
 				</div>
 				<div className='mb-2 flex justify-between'>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>{t('Voting power')}</div>
 						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>{t("Recv'd Delegation")}</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
-					<div className={`${poppins.variable} ${poppins.className}`}>
+					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>{t('Voted proposals')}</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
@@ -321,7 +321,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Button
 						disabled={disabled}
 						onClick={handleClick}
-						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
+						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 font-semibold shadow-none ${!!disabled && 'opacity-50'}`}
 					>
 						<DelegatesProfileIcon />
 						<span className='text-sm font-medium text-pink_primary max-sm:hidden'>{t('Delegate')}</span>
@@ -352,7 +352,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'>
 					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 2, false, network)}</span>
+							<span className='px-1 text-2xl font-semibold text-bodyBlue dark:text-white'>{parseBalance(delegate?.delegatedBalance.toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>{t('Voting power')}</div>
@@ -379,7 +379,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', dmSans.className, dmSans.variable)}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -420,7 +420,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 
 					<div
-						className={`${poppins.variable} ${poppins.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${dmSans.variable} ${dmSans.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
 						<p className='w-full sm:w-[90%]'>
 							{delegate?.bio ? (
@@ -446,7 +446,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 					<div className='flex min-h-[82px] justify-between border-0 border-t-[1px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark sm:min-h-[92px]'>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-							<div className={`${poppins.variable} ${poppins.className} flex items-center justify-center gap-1`}>
+							<div className={`${dmSans.variable} ${dmSans.className} flex items-center justify-center gap-1`}>
 								{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}
 								<span className='mt-1 text-xs font-normal text-bodyBlue dark:text-blue-dark-high sm:text-sm'>{unit}</span>
 							</div>

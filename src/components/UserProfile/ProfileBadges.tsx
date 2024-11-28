@@ -119,7 +119,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 									{`${t('unlocked_on')} ${item.unlockedAt.split('T')[0]}`}
 								</span>
 							) : (
-								<span className='flex items-center gap-1 break-all font-poppins text-xs'>
+								<span className='flex items-center gap-1 break-all font-dmSans text-xs'>
 									<ImageIcon
 										src='/assets/icons/lock.svg'
 										alt={t('locked')}

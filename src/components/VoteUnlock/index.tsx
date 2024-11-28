@@ -4,7 +4,7 @@
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import userProfileBalances from '~src/util/userProfileBalances';
@@ -315,7 +315,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
-					className={`text-sm ${
+					className={`text-sm font-semibold ${
 						totalUnlockableBalance.eq(ZERO_BN)
 							? 'border-[#407BFF] bg-[#F1F6FF] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: `${
@@ -338,7 +338,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			>

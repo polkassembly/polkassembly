@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { Divider, Popover } from 'antd';
 import Image from 'next/image';
-import { poppins, spaceGrotesk } from 'pages/_app';
+import { dmSans, spaceGrotesk } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';
 import { CuratorIcon } from '~src/ui-components/CustomIcons';
@@ -223,7 +223,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 													src={profileDetails.image}
 													className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
 												/>
-												<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
+												<span className={`${dmSans.variable} ${dmSans.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
 													{profileDetails?.username.length <= 12 ? profileDetails.username : `${profileDetails.username.slice(0, 12)}...`}
 												</span>
 											</Link>

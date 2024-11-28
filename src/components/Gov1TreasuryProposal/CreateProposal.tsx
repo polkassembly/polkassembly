@@ -19,7 +19,7 @@ import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
 import executeTx from '~src/util/executeTx';
@@ -268,7 +268,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{gasFee.gte(availableBalance) && !gasFee.eq(ZERO_BN) && (
 							<Alert
 								type='error'
-								className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+								className={`h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 							/>
@@ -415,7 +415,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								label={t('funding_amount')}
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
 								className='mb-0'
-								onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
+								onChange={(amount: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: amount.toString() })}
 							/>
 						</div>
 

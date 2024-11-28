@@ -15,7 +15,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import styled from 'styled-components';
 import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useTranslation } from 'next-i18next';
 
@@ -66,12 +66,11 @@ const Leaderboard = ({ network, className }: Props) => {
 			>
 				<div className='-ml-[236px] flex justify-center px-4'>
 					<TrophyIcon className='trophy-icon -mt-[92px] ml-[190px] md:ml-0' />
-					<div className={`${poppins.className} ${poppins.variable} relative ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center`}>
+					<div className={`${dmSans.className} ${dmSans.variable} relative ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center`}>
 						<h1 className=' m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>{t('leaderboard')}</h1>
 						<p className='m-0 mt-2 flex items-center justify-center p-0 text-sm text-white md:text-base'>
 							{t('find_your_rank_in')} {network?.charAt(0)?.toUpperCase() + network?.slice(1)} {t('ecosystem')}
 						</p>
-						<div className='absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'>{t('beta')}</div>
 					</div>
 				</div>
 			</div>

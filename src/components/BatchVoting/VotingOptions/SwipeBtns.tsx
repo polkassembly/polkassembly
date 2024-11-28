@@ -28,7 +28,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent font-semibold`}
 					onClick={() => {
 						handleAction('left');
 					}}
@@ -44,7 +44,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent font-semibold`}
 					onClick={() => handleAction('up')}
 					loading={decision === 'abstain' ? isLoading : false}
 					disabled={isLoading}
@@ -55,7 +55,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent font-semibold`}
 					onClick={() => handleAction('right')}
 					loading={decision === 'aye' ? isLoading : false}
 					disabled={isLoading}

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Divider, Rate } from 'antd';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
@@ -12,12 +12,21 @@ import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import { IProgressReport } from '~src/types';
 
-const ProgressReportRatingModal = () => {
+const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
+
+interface IProgressReportRatingModal {
+	reportId?: string | null;
+}
+
+const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
+	const { reportId } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const router = useRouter();
+	const [reportData, setReportData] = useState<IProgressReport>();
 	const { report_rating } = useProgressReportSelector();
 	const { t } = useTranslation('common');
 	const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
@@ -32,7 +41,18 @@ const ProgressReportRatingModal = () => {
 		])
 	) as Record<number, React.ReactNode>;
 
-	console.log('hi link:', postData);
+	useEffect(() => {
+		if (postData?.progress_report) {
+			Object.values(postData.progress_report).some((report: any) => {
+				if (report.id === reportId) {
+					setReportData(report as IProgressReport);
+					return true;
+				}
+				return false;
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [reportId, postData?.progress_report]);
 
 	return (
 		<>
@@ -41,7 +61,7 @@ const ProgressReportRatingModal = () => {
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
 						className='post-content m-0 p-0 dark:text-blue-dark-medium'
-						md={postData?.progress_report?.progress_summary}
+						md={reportData?.progress_summary || ''}
 						theme={theme}
 					/>
 				</p>
@@ -54,7 +74,7 @@ const ProgressReportRatingModal = () => {
 				>
 					{t('view_progress_report_detail')}
 				</p>
-				{postData?.progress_report?.progress_summary && (
+				{reportData?.progress_summary && (
 					<Divider
 						dashed={true}
 						className='my-3'

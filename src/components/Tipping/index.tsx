@@ -9,7 +9,7 @@ import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
 import BN from 'bn.js';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import styled from 'styled-components';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -294,7 +294,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				zIndex={1056}
 				onCancel={handleCancel}
 				closeIcon={<CloseIcon className='font-medium text-bodyBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
+				className={`${dmSans.className} ${dmSans.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 text-sm dark:border-[#3B444F]'>
 						<CustomButton
@@ -359,7 +359,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
-								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
+								className={`flex h-full w-full items-center justify-center rounded-[4px] ${dmSans.className} ${dmSans.variable} dark:bg-section-dark-overlay ${className}`}
 								value={
 									filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0
 										? getEncodedAddress(beneficiaryAddress, network) || getEncodedAddress(receiverAddress, network)
@@ -383,7 +383,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 										};
 									}) || []
 								}
-								popupClassName={`${poppins.className} ${poppins.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
+								popupClassName={`${dmSans.className} ${dmSans.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
 							/>
 						</div>
 					)}

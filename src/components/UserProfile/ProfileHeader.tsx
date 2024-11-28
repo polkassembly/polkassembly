@@ -19,6 +19,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import { useTranslation } from 'next-i18next';
+import FollowButton from './Follow/FollowButton';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -47,6 +48,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 		if (userProfile && userProfile) {
 			setProfileDetails(userProfile);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userProfile]);
 
 	return (
@@ -105,6 +107,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									<span className='max-md:hidden'>{t('delegate')}</span>
 								</CustomButton>
 							)}
+							<FollowButton userId={userProfile.user_id} />
 						</div>
 					)}
 				</div>
@@ -135,7 +138,7 @@ export default styled(ProfileHeader)`
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
-		background-image: url(${(props) =>
-			props?.isValidCoverImage && !!props?.profileDetails?.cover_image?.length ? props?.profileDetails?.cover_image : '/assets/profile/cover-image1.svg'}) !important;
+		background-image: ${(props) =>
+			`url(${props.isValidCoverImage && props.profileDetails?.cover_image?.length ? props.profileDetails.cover_image : '/assets/profile/cover-image1.svg'})`} !important;
 	}
 `;

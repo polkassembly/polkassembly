@@ -263,7 +263,7 @@ export default function CancelOrKillReferendaForm({
 						<div className='mt-6 flex items-center justify-end space-x-3'>
 							<Button
 								onClick={() => setSteps({ percent: 100, step: 0 })}
-								className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+								className=' h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 							>
 								{t('back')}
 							</Button>

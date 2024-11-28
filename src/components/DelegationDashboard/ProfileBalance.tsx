@@ -19,7 +19,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ProfileBalanceModal from './utils/ProfileBalanceModal';
 import { useTranslation } from 'next-i18next';
 
@@ -103,8 +103,8 @@ const ProfileBalances = ({ className }: Props) => {
 						>
 							<div className='flex flex-col justify-start gap-1'>
 								<div
-									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-										poppins.className
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${dmSans.variable} ${
+										dmSans.className
 									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
 								>
 									{formatedBalance(balance.value, unit, 2)}
@@ -143,8 +143,8 @@ const ProfileBalances = ({ className }: Props) => {
 						>
 							<div className='flex flex-col justify-start gap-1'>
 								<div
-									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-										poppins.className
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${dmSans.variable} ${
+										dmSans.className
 									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
 								>
 									{formatedBalance(balance.value, unit, 2)}

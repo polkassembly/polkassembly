@@ -91,7 +91,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 						onClick={() => {
 							setOpenLoginModal(true);
 						}}
-						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium text-white'
+						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium font-semibold text-white'
 					>
 						{t('connect_wallet')}
 					</Button>

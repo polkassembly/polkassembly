@@ -4,7 +4,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Divider, Form, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -405,7 +405,7 @@ const AddressConnectModal = ({
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable} radius w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.className} ${dmSans.variable} radius w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>

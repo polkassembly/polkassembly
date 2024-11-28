@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTranslation } from 'next-i18next';
@@ -18,7 +18,7 @@ const BecomeDelegateSmall = () => {
 
 	return (
 		<>
-			<div className={`${poppins.className} ${poppins.variable} mb-4 flex items-center justify-between sm:hidden`}>
+			<div className={`${dmSans.className} ${dmSans.variable} mb-4 flex items-center justify-between sm:hidden`}>
 				<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('delegation_on_polkassembly')}</span>
 				<span
 					onClick={() => setOpenModal(true)}

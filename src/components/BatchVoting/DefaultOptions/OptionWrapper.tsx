@@ -23,18 +23,16 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
-import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/PostInfoComponents/VotingFormCard';
 import AbstainOptions from './AbstainOptions';
 import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
 import { useTranslation } from 'next-i18next';
+import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
-	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
-	const { id } = userDetails;
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [splitForm] = Form.useForm();
@@ -42,6 +40,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
+	const { id } = currentUser;
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const { t } = useTranslation('common');
@@ -51,10 +50,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
 		return conviction ? conviction[1] : 0;
 	};
-
-	if (id === null) {
-		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
-	}
 
 	const marks: SliderSingleProps['marks'] = {
 		0: '0.1x',
@@ -138,6 +133,10 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			userName: currentUser?.username || ''
 		});
 	};
+
+	if (id === null || isNaN(Number(id))) {
+		return <LoginToVoteOrEndorse isUsedInDefaultValueModal={true} />;
+	}
 
 	const ayeNayVotesArr = [
 		{

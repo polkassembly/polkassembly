@@ -18,7 +18,7 @@ import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EActivityFilter, EUserActivityType, EUserActivityIn } from '~src/types';
 import Select from '~src/basic-components/Select';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTranslation } from 'next-i18next';
 
@@ -101,14 +101,14 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 					<div>
 						<Select
 							value={filter}
-							className={classNames('w-[140px] capitalize', poppins.className, poppins.variable)}
+							className={classNames('w-[140px] capitalize', dmSans.className, dmSans.variable)}
 							onChange={(e) => {
 								setFilter(e);
 								setPage(1);
 							}}
 							options={[EActivityFilter.ALL, EActivityFilter.COMMENTS, EActivityFilter.REPLIES, EActivityFilter.MENTIONS, EActivityFilter.REACTS].map((option) => {
 								return {
-									label: <span className={classNames(poppins.className, poppins.variable, 'text-sm capitalize tracking-[0.0015em]')}>{t(option.toLowerCase())}</span>,
+									label: <span className={classNames(dmSans.className, dmSans.variable, 'text-sm capitalize tracking-[0.0015em]')}>{t(option.toLowerCase())}</span>,
 									value: option
 								};
 							})}

@@ -21,6 +21,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
+import FollowersAndFollowing from './Follow/FollowersAndFollowing';
 
 interface Props {
 	className?: string;
@@ -144,9 +145,9 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 						)}
 					</div>
 
-					<div>
+					<div className={`flex gap-1 ${!profileSince ? 'md:ml-[90px]' : ''} `}>
 						{profileSince && (
-							<div className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959] md:ml-[90px]'>
+							<div className='flex items-center text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium  md:ml-[90px]'>
 								{t('user_since')}
 								<Image
 									src={'/assets/icons/Calendar.svg'}
@@ -158,6 +159,10 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								<span className='ml-1 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileSince).format('MMM DD, YYYY')}</span>
 							</div>
 						)}
+						<FollowersAndFollowing
+							profileSince={profileSince}
+							userId={userProfile?.user_id}
+						/>
 					</div>
 				</div>
 				<SocialsHandle

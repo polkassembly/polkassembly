@@ -12,7 +12,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 
@@ -86,8 +86,8 @@ const TotalDelegationDataSmall = ({
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegatees')}</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegatees')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
 							</div>
 							<Divider
 								type='vertical'
@@ -102,8 +102,8 @@ const TotalDelegationDataSmall = ({
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_supply')}</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_supply')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 									{parseBalance(totalSupply.toString(), 1, true, network)}
 								</span>
 							</div>
@@ -120,8 +120,8 @@ const TotalDelegationDataSmall = ({
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegates')}</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegates')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
 							</div>
 						</div>
 					</div>
@@ -139,8 +139,8 @@ const TotalDelegationDataSmall = ({
 								height={24}
 								width={24}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegated_votes')}</span>
-							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegated_votes')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
 						</div>
 						<Divider
 							type='vertical'
@@ -155,8 +155,8 @@ const TotalDelegationDataSmall = ({
 								height={24}
 								width={24}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('delegated_tokens')}</span>
-							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+							<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('delegated_tokens')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 								{parseBalance(totalStats.totalDelegatedBalance, 1, true, network)}
 							</span>
 						</div>
@@ -170,7 +170,8 @@ const TotalDelegationDataSmall = ({
 							setOpenBecomeDelegateModal?.(true);
 						}
 					}}
-					className={`mt-[14px] w-full border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${
+					// disabled={!currentUser.id || !currentUser.loginAddress}
+					className={` mt-[14px] w-full border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
 						(!currentUser.id || !currentUser.loginAddress) && 'opacity-60'
 					}`}
 				>

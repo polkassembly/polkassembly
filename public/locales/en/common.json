@@ -1113,7 +1113,25 @@
 	"invalid_discussion_link": "Please add a valid discussion link for {{network}} Network",
 	"discussion_info": "Discussion posts allow the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.",
 	"create_discussion": "Create Discussion Post",
-	"title_length_exceeded": "Title should not exceed 150 characters."
+	"title_length_exceeded": "Title should not exceed 150 characters.",
+      "view_child_bounty": "View Child Bounty",
+  "success_delegate_icon": "Success Delegate Icon",
+  "child_bounty_creation_initiated": "Child Bounty creation initiated for",
+  "multisig_address": "Multisig Address",
+  "child_bounty_curator": "Child Bounty Curator",
+  "child_bounty_amount": "Child Bounty Amount",
+  "link_to_parent_bounty": "Link to Parent Bounty",
+  "link": "Link",
+  "approval_request_sent": "An approval request has been sent to signatories to confirm the transaction.",
+  "view_details": "View Details",
+  	"create_child_bounty_icon": "Create Child Bounty Icon",
+	"create_child_bounty": "Create Child Bounty",
+	"write_child_bounty_step": "Write Child Bounty",
+	"create_child_bounty_step": "Create Child Bounty",
+    	"validate_required_field": "Please add the '${name}'",
+	"invalid_link": "Invalid Link Parameter.",
+	"title_exceeds_limit": "Title should not exceed 150 characters.",
+	"link_placeholder": "e.g., https://polkadot.polkassembly.io",
 }
     
 

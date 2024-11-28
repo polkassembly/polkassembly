@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
 import Tipping from '~src/components/Tipping';
 import { IRankCardProps } from './types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import dayjs from 'dayjs';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import { useTranslation } from 'next-i18next';
@@ -63,7 +63,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
 			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px] md:h-[180px] md:w-[350px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
 		>
-			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8 md:h-[180px] md:w-[350px]'}`}>
+			<div className={`${dmSans.className} ${dmSans.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8 md:h-[180px] md:w-[350px]'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>
 					{t('rank_0')}
 					{place}
@@ -130,7 +130,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 						className='dark:bg-separatorDark'
 					/>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable}mx-auto ${type === 'primary' ? '-mt-1' : '-mt-4'} flex  items-center`}>
+				<div className={`${dmSans.className} ${dmSans.variable}mx-auto ${type === 'primary' ? '-mt-1' : '-mt-4'} flex  items-center`}>
 					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-[#909090]'>{t('user_since')}: </p>
 					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue dark:text-white'>
 						<ImageIcon

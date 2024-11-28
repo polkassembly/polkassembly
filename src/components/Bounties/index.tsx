@@ -15,6 +15,7 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
+import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -58,7 +59,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt={t('hot_bounties_icon')}
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>{t('hot_bounties')}</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>{t('hot_bounties')}</h2>
 							{extendedData?.count && (
 								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
 									({extendedData?.count})
@@ -145,7 +146,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt={t('bounty_proposals_icon')}
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>{t('bounty_proposals')}</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>{t('bounty_proposals')}</h2>
 						</div>
 					</div>
 
@@ -178,7 +179,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 										key={index}
 										className={chunkClass}
 									>
-										{chunk.map((post, proposalIndex) => (
+										{chunk?.map((post, proposalIndex) => (
 											<BountiesProposalsCard
 												key={proposalIndex}
 												activeData={post}

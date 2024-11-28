@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import Skeleton from '~src/basic-components/Skeleton';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 
@@ -46,7 +46,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 				onClick={() => setExpandProposals(!expandProposals)}
 				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex cursor-pointer items-center justify-between'
 			>
-				<div className={`${poppins.className} ${poppins.variable} flex items-center justify-center gap-2`}>
+				<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-center gap-2`}>
 					<Image
 						src={'/assets/icons/active-proposals.svg'}
 						height={22}

@@ -72,7 +72,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		isDeleted: false,
 		last_comment_at: current_datetime,
 		last_edited_at: current_datetime,
-		post_link: discussionId
+		post_link: !isNaN(discussionId)
 			? {
 					id: Number(discussionId),
 					type: ProposalType.DISCUSSIONS

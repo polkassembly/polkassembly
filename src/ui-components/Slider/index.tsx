@@ -35,7 +35,7 @@ const StyledSlider = styled(AntdSlider)`
 		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-mark-text {
-		font-family: 'Poppins', sans-serif;
+		font-family: 'dmSans', sans-serif;
 		font-size: 12px;
 		font-weight: 400;
 		line-height: 17.89px;

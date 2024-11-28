@@ -43,12 +43,14 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 				<>
 					<div className='mb-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<div className='flex items-center justify-between'>
-							<span className='text-xl font-semibold'>{t('how_to_delegate')}</span>
+							<span className='text-xl font-semibold text-bodyBlue dark:text-white'>{t('how_to_delegate')}</span>
 							<div className='flex items-center space-x-5'>
 								<Button
 									onClick={showModal}
 									disabled={!currentUser.id || !currentUser.loginAddress}
-									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
+									className={`border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
+										(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'
+									}`}
 								>
 									{!currentUser.id ? <Tooltip title={t('login_to_continue')}>{t('become_delegate')}</Tooltip> : t('become_delegate')}
 								</Button>
@@ -64,9 +66,9 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 									alt={t('delegate_icon')}
 									className='-ml-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>{t('step_1')}</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>{t('step_1')}</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold'>{t('select_track')}</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>{t('select_track')}</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>{t('track_level_delegation')}</span>
 								</div>
 							</div>
@@ -82,9 +84,9 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 									alt={t('delegate_icon')}
 									imgClassName='mt-[22px] mr-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>{t('step_2')}</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>{t('step_2')}</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold'>{t('select_delegate')}</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>{t('select_delegate')}</span>
 									<span className='text-blue-light-high dark:text-blue-dark-high'>{t('choose_delegate')}</span>
 								</div>
 							</div>

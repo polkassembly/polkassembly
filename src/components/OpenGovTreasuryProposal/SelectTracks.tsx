@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Select } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React from 'react';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
@@ -19,7 +19,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 			<Select
 				placeholder='Select a track'
 				suffixIcon={<DownArrow />}
-				className={`flex h-[40px] w-full flex-col items-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlaydark dark:border-separatorDark`}
+				className={`flex h-[40px] w-full flex-col items-center rounded-[4px] ${dmSans.className} ${dmSans.variable} dark:bg-section-dark-overlaydark dark:border-separatorDark`}
 				value={selectedTrack.length > 0 ? selectedTrack : null}
 				onChange={onTrackChange}
 				options={
@@ -27,7 +27,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 						return { label: track.split(/(?=[A-Z])/).join(' '), value: track };
 					}) || []
 				}
-				popupClassName={`${poppins.className} ${poppins.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
+				popupClassName={`${dmSans.className} ${dmSans.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
 			/>
 		</div>
 	);

@@ -4,7 +4,7 @@
 
 import BN from 'bn.js';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 // import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -42,7 +42,7 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: P
 			open={open}
 			onCancel={() => setOpen(false)}
 			footer={false}
-			className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${className} ${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			centered

@@ -17,9 +17,8 @@ import BN from 'bn.js';
 import { Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { poppins } from 'pages/_app';
 import { useTranslation } from 'next-i18next';
-
+import { dmSans } from 'pages/_app';
 const ZERO_BN = new BN(0);
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
@@ -69,7 +68,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 							<Tooltip
 								color='#363636'
 								title={
-									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
+									<div className={`${dmSans.className} ${dmSans.variable} flex flex-col gap-y-2 p-2`}>
 										<p className='m-0 p-0 text-white'>{t('add_proposal_info_1')}</p>
 										<p className='m-0 p-0 text-white'>{t('add_proposal_info_2')}</p>
 									</div>

@@ -7,7 +7,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -163,7 +163,12 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 
 				setAddress(accounts[0]?.address);
 				if (defaultWalletAddress) {
-					setAddress(accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0]?.address);
+					const matchingAccount = accounts?.find((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress));
+					if (matchingAccount) {
+						setAddress(matchingAccount?.address);
+					} else {
+						console.warn('No matching account found');
+					}
 				}
 			}
 		}
@@ -234,7 +239,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.className} ${dmSans.variable}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={openModal}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpenModal(false)}

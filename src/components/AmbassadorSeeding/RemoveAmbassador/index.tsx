@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import CreateAmassadorPreimge from '../CreateAmassadorPreimge';
 import getModalTitleFromSteps from '../utils/getModalTitleFromSteps';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -74,7 +74,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 					dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
@@ -111,7 +111,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 			</Modal>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(className, poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(className, dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={open}
 				footer={false}
 				maskClosable={false}

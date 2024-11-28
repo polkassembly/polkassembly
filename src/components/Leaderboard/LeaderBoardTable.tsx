@@ -7,7 +7,7 @@ import { Input } from 'antd';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import _ from 'lodash';
 import { useTranslation } from 'next-i18next';
 
@@ -43,7 +43,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 		<section className={`${className}`}>
 			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
 				<div className='table-header items-center'>
-					<p className={`${poppins.className} ${poppins.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>{t('top_50_ranks')}</p>
+					<p className={`${dmSans.className} ${dmSans.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>{t('top_50_ranks')}</p>
 					<div className='search-box mr-8 flex'>
 						<Input.Search
 							placeholder='Enter username to search'

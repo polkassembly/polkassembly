@@ -171,7 +171,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 								<div className='flex items-center justify-center gap-2'>
 									<Button
 										onClick={() => setIsModalOpen(true)}
-										className={'h-10 border-pink_primary bg-white font-medium text-pink_primary dark:bg-black'}
+										className={'h-10 border-pink_primary bg-white font-medium font-semibold text-pink_primary dark:bg-black'}
 									>
 										{t('Become a Delegate')}
 									</Button>

@@ -5,7 +5,7 @@ import { Modal } from 'antd';
 import { BN } from 'bn.js';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -38,7 +38,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 				dispatch(resetGov1TreasuryProposal());
 				setStep(0);
 			}}
-			className={classNames(poppins.className, poppins.variable)}
+			className={classNames(dmSans.className, dmSans.variable)}
 			maskClosable={false}
 			footer={
 				<Link

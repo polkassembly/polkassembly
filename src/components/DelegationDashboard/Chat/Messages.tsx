@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Spin, Card, Button, Input } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { EChatRequestStatus, IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -40,6 +40,13 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const [newMessage, setNewMessage] = useState<string>('');
 
 	const isRequestSent = chat?.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
+
+	const chatRecipientAddress = useMemo(() => {
+		if (isNewChat) return recipientAddress;
+		if (!chat?.participants) return '';
+
+		return chat.participants.find((addr) => getSubstrateAddress(addr) !== substrateAddress) || '';
+	}, [chat?.participants, isNewChat, recipientAddress, substrateAddress]);
 
 	const handleDataFetch = async () => {
 		if (isNewChat) return;
@@ -89,12 +96,11 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 				});
 			}
 		} else {
-			// Existing chat message logic
 			const requestData = {
 				address: substrateAddress,
 				chatId,
 				content: trimmedMsg,
-				receiverAddress: recipientAddress || chat?.participants[1],
+				receiverAddress: chatRecipientAddress,
 				senderAddress: address,
 				senderImage: picture,
 				senderUsername: username
@@ -143,20 +149,19 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 				size='small'
 			>
-				{recipientAddress?.startsWith('0x') ? (
+				{chatRecipientAddress?.startsWith('0x') ? (
 					<EthIdenticon
 						size={32}
-						address={recipientAddress || ''}
+						address={chatRecipientAddress}
 					/>
 				) : (
 					<Identicon
-						value={recipientAddress || ''}
+						value={chatRecipientAddress}
 						size={32}
 						theme={'polkadot'}
 					/>
 				)}
-
-				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{shortenAddress(recipientAddress || '', 5)}</span>
+				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{shortenAddress(chatRecipientAddress || '', 5)}</span>
 			</Card>
 			<Spin
 				spinning={loading}

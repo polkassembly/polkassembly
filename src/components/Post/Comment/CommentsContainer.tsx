@@ -322,7 +322,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!addresses?.length && isUserOnchainVerified));
 		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!addresses?.length && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified, addresses]);
 
 	const toggleSummary = (type: 'positive' | 'negative' | 'neutral') => {
 		if (type === 'positive') {

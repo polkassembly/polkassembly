@@ -81,7 +81,7 @@
     "ioredis": "^5.3.0",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
-    "next": "^13.3.1",
+    "next": "^14.2.10",
     "next-redux-wrapper": "^8.1.0",
     "next-themes": "^0.2.1",
     "nextjs-progressbar": "^0.0.16",

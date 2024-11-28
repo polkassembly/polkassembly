@@ -115,6 +115,7 @@ import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import profileSVG from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
+import proxyIcon from '~assets/icons/userDropdown/proxy-icon.svg';
 import logoutSVG from '~assets/icons/userDropdown/logout.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 // import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
@@ -283,6 +284,12 @@ export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (
 export const IconSettings = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={settingsIcon}
+		{...props}
+	/>
+);
+export const ProxyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={proxyIcon}
 		{...props}
 	/>
 );

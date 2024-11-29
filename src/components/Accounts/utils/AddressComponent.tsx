@@ -93,7 +93,10 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 					</div>
 				</div>
 				<div className='mt-2 flex items-center gap-2 md:mt-0'>
-					<AddressActionDropdown address={address} />
+					<AddressActionDropdown
+						address={address}
+						isUsedInProxy={true}
+					/>
 				</div>
 			</div>
 		</div>

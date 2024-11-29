@@ -14,7 +14,7 @@ const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConn
 	ssr: false
 });
 
-const AddressActionDropdown = ({ address }: { address: string }) => {
+const AddressActionDropdown = ({ address, isUsedInProxy }: { address: string; isUsedInProxy?: boolean }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [state, setState] = useState({
 		isDropdownActive: false,
@@ -37,17 +37,21 @@ const AddressActionDropdown = ({ address }: { address: string }) => {
 				</div>
 			)
 		},
-		{
-			key: '2',
-			label: (
-				<div
-					onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
-					className='mt-1 flex items-center space-x-2'
-				>
-					<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
-				</div>
-			)
-		}
+		...(isUsedInProxy
+			? []
+			: [
+					{
+						key: '2',
+						label: (
+							<div
+								onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
+								className='mt-1 flex items-center space-x-2'
+							>
+								<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
+							</div>
+						)
+					}
+			  ])
 	];
 
 	return (

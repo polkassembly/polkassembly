@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
-import { Button, Divider, Timeline } from 'antd';
+import { Button, Divider, Timeline, Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
 import { progressReportActions } from '~src/redux/progressReport';
@@ -18,6 +18,7 @@ import { Collapse } from '~src/components/Settings/Notifications/common-ui/Colla
 import dayjs from 'dayjs';
 import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
 import { IRating } from '~src/types';
+import Image from 'next/image';
 
 const { Panel } = Collapse;
 
@@ -150,6 +151,35 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 													<ClockCircleOutlined className='dark:text-icon-dark-inactive' />
 													<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>{dayjs(report?.created_at).format('DD MMM YYYY')}</p>
 													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+													{report?.isFromOgtracker && (
+														<Tooltip
+															color='#363636'
+															title={
+																<p className='m-0 flex items-center justify-center gap-x-1 p-0 px-1 py-1 text-sm font-normal text-white'>
+																	Imported from
+																	<a
+																		href={
+																			postData?.track_name
+																				? `https://app.ogtracker.io/${postData?.track_name[0].toLowerCase() + postData?.track_name.slice(1)}/${postData?.postIndex}`
+																				: 'https://app.ogtracker.io/'
+																		}
+																		target='_blank'
+																		className='m-0 p-0 text-pink_primary underline'
+																		rel='noreferrer'
+																	>
+																		OG Tracker
+																	</a>
+																</p>
+															}
+														>
+															<Image
+																src='/assets/icons/ogTracker.svg'
+																alt='ogtracker'
+																height={20}
+																width={20}
+															/>
+														</Tooltip>
+													)}
 												</div>
 												{report?.ratings?.length > 0 && (
 													<p className='m-0 ml-auto flex items-center p-0 text-xs font-normal text-sidebarBlue dark:text-blue-dark-medium'>

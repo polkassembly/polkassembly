@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ProxyMain from '~src/components/createProxy';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -23,14 +23,14 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 		openAddressLinkedModal: false,
 		openSetIdentityModal: false,
 		openProxyModal: false,
-		loading: false
+		loading: false,
+		isLinked: false
 	});
 
-	const addProxy = async () => {
-		if (!loginAddress || !address) return;
+	const checkIfLinked = async () => {
 		setState((prevState) => ({ ...prevState, loading: true }));
 		try {
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/addProxy', {
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/checkIsLinkedProxy', {
 				address: loginAddress,
 				type: type,
 				linked_address: address
@@ -39,30 +39,62 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 			if (error) {
 				throw new Error(error);
 			}
-			console.log('data', data, error);
+			setState((prevState) => ({ ...prevState, isLinked: data?.linked, loading: false }));
 		} catch (error) {
-			console.error('Error in Linking address:', error);
-		} finally {
+			console.error('Error checking link status:', error);
+			setState((prevState) => ({ ...prevState, loading: false }));
+		}
+	};
+
+	useEffect(() => {
+		if (loginAddress && address) {
+			checkIfLinked();
+		}
+	}, [loginAddress, address]);
+
+	const toggleLinkProxy = async () => {
+		if (!loginAddress || !address) return;
+		setState((prevState) => ({ ...prevState, loading: true }));
+
+		const endpoint = state.isLinked ? '/api/v1/accounts/unlinkProxy' : '/api/v1/accounts/addProxy';
+		const action = state.isLinked ? 'Unlinking...' : 'Linking...';
+
+		try {
+			const { data, error } = await nextApiClientFetch<any>(endpoint, {
+				address: loginAddress,
+				type: type,
+				linked_address: address
+			});
+
+			if (error) {
+				throw new Error(error);
+			}
+			setState((prevState) => ({
+				...prevState,
+				isLinked: !state.isLinked,
+				loading: false
+			}));
+			console.log(action, data);
+		} catch (error) {
+			console.error(`Error in ${state.isLinked ? 'unlinking' : 'linking'} address:`, error);
 			setState((prevState) => ({ ...prevState, loading: false }));
 		}
 	};
 
 	const items: MenuProps['items'] = [
-		...(loginAddress !== address
-			? [
-					{
-						key: '1',
-						label: (
-							<div
-								onClick={!state.loading ? addProxy : undefined}
-								className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
-							>
-								<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>{state.loading ? 'Linking...' : 'Link Address'}</span>
-							</div>
-						)
-					}
-			  ]
-			: []),
+		{
+			key: '1',
+			label: (
+				<div
+					onClick={!state.loading ? toggleLinkProxy : undefined}
+					className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
+				>
+					<span className={'text-sm text-blue-light-medium dark:text-blue-dark-medium'}>
+						{state.loading ? (state.isLinked ? 'Unlinking...' : 'Linking...') : state.isLinked ? 'Unlink Address' : 'Link Address'}
+					</span>
+				</div>
+			)
+		},
 		...(isUsedInProxy
 			? []
 			: [
@@ -73,7 +105,7 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 								onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
 								className='mt-1 flex items-center space-x-2'
 							>
-								<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
+								<span className={'text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
 							</div>
 						)
 					}
@@ -95,7 +127,7 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 				menu={{ items }}
 				onOpenChange={() => setState((prevState) => ({ ...prevState, isDropdownActive: !prevState.isDropdownActive }))}
 			>
-				<span className=' dark:bg-section-dark-background'>{state.loading ? <Loader /> : <ThreeDotsIcon />}</span>
+				<span className='dark:bg-section-dark-background'>{state.loading ? <Loader /> : <ThreeDotsIcon />}</span>
 			</Dropdown>
 			<ProxyMain
 				openProxyModal={state.openProxyModal}

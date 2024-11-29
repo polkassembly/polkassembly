@@ -68,7 +68,6 @@ const LatestActivityExplore: React.FC = () => {
 	const [currentTab, setCurrentTab] = useState<string>('all');
 	const { network } = useNetworkSelector();
 	const { explorePosts, loadingExplore } = useSelector((state: any) => state.activityFeed);
-	console.log('explorePosts', explorePosts);
 	const fetchexploreposts = async () => {
 		dispatch(setLoadingExplore(true));
 		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/explore-posts', {
@@ -120,7 +119,7 @@ const LatestActivityExplore: React.FC = () => {
 
 	return (
 		<div className=''>
-			{!explorePosts && loadingExplore ? (
+			{(!explorePosts || explorePosts.length === 0) && loadingExplore ? (
 				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />{' '}
 				</div>
@@ -163,7 +162,6 @@ const LatestActivityFollowing: React.FC = () => {
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const { subscribedPosts, loadingSubscribed } = useSelector((state: any) => state.activityFeed);
-	console.log('subscribedPosts', subscribedPosts);
 	const { network } = useNetworkSelector();
 	const dispatch = useDispatch();
 	const fecthAllSubscribedPosts = async () => {
@@ -212,7 +210,7 @@ const LatestActivityFollowing: React.FC = () => {
 	}, [currentTab, network]);
 	return (
 		<div className=''>
-			{!subscribedPosts && loadingSubscribed ? (
+			{(!subscribedPosts || subscribedPosts.length === 0) && loadingSubscribed ? (
 				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />
 				</div>

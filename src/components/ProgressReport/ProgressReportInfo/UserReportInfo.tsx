@@ -47,7 +47,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 
 	const uniqueReports = useMemo(() => {
 		if (!postData?.progress_report) return [];
-		return Object.entries(postData.progress_report as IProgressReport).sort((a, b) => new Date(a[1].created_at).getTime() - new Date(b[1].created_at).getTime());
+		return Object.entries(postData?.progress_report as IProgressReport)?.sort((a, b) => new Date(a[1]?.created_at)?.getTime() - new Date(b[1]?.created_at).getTime());
 	}, [postData?.progress_report]);
 
 	const addUserRating = async () => {

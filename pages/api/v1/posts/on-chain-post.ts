@@ -1176,6 +1176,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					progress_summary: OGdata?.[0]?.summary,
 					refNum: OGdata?.[0]?.refNum
 				};
+
+				const fileUrl = new URL(OGdata?.[0]?.propLink);
+				const allowedDomains = ['polkassembly.io', 'subsquare.io'];
+				if (allowedDomains.some((domain) => fileUrl.hostname.endsWith(domain))) {
+					ogReport.progress_file = '';
+				}
+
 				data.progress_report = data?.progress_report || [];
 				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
 				if (!isOgReportPresent) {

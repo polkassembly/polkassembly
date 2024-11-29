@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { DeriveAccountFlags } from '@polkadot/api-derive/types';
 import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -31,7 +31,7 @@ import Image from 'next/image';
 import { isAddress } from 'ethers';
 import { dmSans } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import getIdentityInformation, { IIdentityInfo } from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import copyToClipboard from '~src/util/copyToClipboard';
@@ -125,7 +125,7 @@ const Address = (props: Props) => {
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 	const [flags, setFlags] = useState<DeriveAccountFlags>();
 	const [username, setUsername] = useState<string>(passedUsername || '');
 	const [kiltName, setKiltName] = useState<string>('');

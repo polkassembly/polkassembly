@@ -12,7 +12,7 @@ interface Args {
 	address: string;
 	network: string;
 }
-interface IIdentityInfo {
+export interface IIdentityInfo {
 	display: string;
 	legal: string;
 	email: string;

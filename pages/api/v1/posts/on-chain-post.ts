@@ -55,6 +55,23 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+export const fetchOGTracker = async (id: string) => {
+	try {
+		const res = await fetch('https://api.ogtracker.io/proposals', {
+			body: JSON.stringify({
+				refNum: id
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			},
+			method: 'POST'
+		});
+		return await res.json();
+	} catch (error) {
+		return [];
+	}
+};
+
 export interface IReactions {
 	'👍': {
 		count: number;
@@ -117,6 +134,14 @@ interface IGetOnChainPostParams {
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
 	includeSubsquareComments?: boolean;
+}
+
+interface IOGData {
+	fdate: string;
+	id: string;
+	propLink: string;
+	summary: string;
+	refNum: string;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -669,6 +694,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
+		let OGdata: IOGData[] = [];
+		if (postId) {
+			OGdata = await fetchOGTracker(postId.toString());
+		}
 		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
 			if (proposalType === ProposalType.TIPS) {
 				if (!strPostId) {
@@ -1138,6 +1167,29 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				});
 			} catch (e) {
 				data = undefined;
+			}
+
+			if (data && OGdata && OGdata?.length) {
+				const ogReport = {
+					created_at: OGdata?.[0]?.fdate,
+					id: OGdata?.[0]?.id,
+					isFromOgtracker: true,
+					progress_file: OGdata?.[0]?.propLink,
+					progress_summary: OGdata?.[0]?.summary,
+					refNum: OGdata?.[0]?.refNum
+				};
+
+				const fileUrl = new URL(OGdata?.[0]?.propLink);
+				const allowedDomains = ['polkassembly.io', 'subsquare.io'];
+				if (allowedDomains.some((domain) => fileUrl.hostname.endsWith(domain))) {
+					ogReport.progress_file = '';
+				}
+
+				data.progress_report = data?.progress_report || [];
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				if (!isOgReportPresent) {
+					data?.progress_report?.push(ogReport);
+				}
 			}
 
 			// Populate firestore post data into the post object

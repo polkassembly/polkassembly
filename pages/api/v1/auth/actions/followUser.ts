@@ -13,16 +13,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IFollowEntry, UpdateType } from '~src/types';
-
-async function updateField(docRef: FirebaseFirestore.DocumentReference, fieldName: string, updateType: UpdateType) {
-	const doc = await docRef.get();
-	const data = doc.data();
-	const newValue = updateType === UpdateType.INCREMENT ? (data?.[fieldName] || 0) + 1 : Math.max(0, (data?.[fieldName] || 0) - 1);
-	await docRef.update({
-		[fieldName]: newValue
-	});
-}
+import { IFollowEntry } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -64,8 +55,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		});
 
-		await updateField(userRef, 'followers', UpdateType.INCREMENT);
-		await updateField(firestore_db.collection('users').doc(String(user.id)), 'following', UpdateType.INCREMENT);
+		const doc = await userRef.get();
+		const data = doc.data();
+		await userRef.update({ followers: (data?.followers || 0) + 1 });
+
+		const currentUserRef = firestore_db.collection('users').doc(String(user.id));
+		const currentUserDoc = await currentUserRef.get();
+		const currentUserData = currentUserDoc.data();
+		await currentUserRef.update({ following: (currentUserData?.following || 0) + 1 });
 
 		return res.status(200).json({ message: 'User followed' });
 	}
@@ -84,11 +81,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	await newFollowDoc.set(newFollow);
 
-	await updateField(userRef, 'followers', UpdateType.INCREMENT);
-	await updateField(firestore_db.collection('users').doc(String(user.id)), 'following', UpdateType.INCREMENT);
+	const doc = await userRef.get();
+	const data = doc.data();
+	await userRef.update({ followers: (data?.followers || 0) + 1 });
 
-	//TODO: create activity for the user followed
-	//TODO: send notification to the user followed
+	const currentUserRef = firestore_db.collection('users').doc(String(user.id));
+	const currentUserDoc = await currentUserRef.get();
+	const currentUserData = currentUserDoc.data();
+	await currentUserRef.update({ following: (currentUserData?.following || 0) + 1 });
+
+	// TODO: create activity for the user followed
+	// TODO: send notification to the user followed
 
 	return res.status(200).json({ message: 'User followed' });
 }

@@ -12,17 +12,6 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { UpdateType } from '~src/types';
-
-async function updateField(docRef: FirebaseFirestore.DocumentReference, fieldName: string, updateType: UpdateType) {
-	const doc = await docRef.get();
-	const data = doc.data();
-	const currentValue = data?.[fieldName] || 0;
-	const newValue = updateType === UpdateType.INCREMENT ? currentValue + 1 : Math.max(0, currentValue - 1);
-	await docRef.update({
-		[fieldName]: newValue
-	});
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -67,11 +56,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		updated_at: new Date()
 	});
 
-	await updateField(userRef, 'followers', UpdateType.DECREMENT);
-	await updateField(firestore_db.collection('users').doc(String(user.id)), 'following', UpdateType.DECREMENT);
+	const userData = userDoc.data();
+	const currentFollowersValue = userData?.followers || 0;
+	await userRef.update({ followers: Math.max(0, currentFollowersValue - 1) });
 
-	//TODO: delete activity for the user unfollowed
-	//TODO: send notification to the user unfollowed
+	const currentUserRef = firestore_db.collection('users').doc(String(user.id));
+	const currentUserDoc = await currentUserRef.get();
+	const currentUserData = currentUserDoc.data();
+	const currentFollowingValue = currentUserData?.following || 0;
+	await currentUserRef.update({ following: Math.max(0, currentFollowingValue - 1) });
+
+	// TODO: delete activity for the user unfollowed
+	// TODO: send notification to the user unfollowed
 
 	return res.status(200).json({ message: 'User unfollowed' });
 }

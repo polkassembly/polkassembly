@@ -373,7 +373,7 @@ const Address = (props: Props) => {
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
-								<div className='inline-address flex items-center'>
+								<div className='inline-address flex flex-shrink-0 items-center'>
 									{!!kiltName ||
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
@@ -400,6 +400,7 @@ const Address = (props: Props) => {
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 										</div>
 									</div>
+									{!!identity?.parentProxyTitle && <div className='ml-1 text-[10px] font-normal text-bodyBlue  dark:text-blue-dark-high '> / {identity?.parentProxyTitle}</div>}
 								</div>
 							) : !!extensionName || !!mainDisplay ? (
 								<div className='ml-0.5 font-semibold text-bodyBlue'>
@@ -436,8 +437,13 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										{addressWithVerifiedTick && !!identity?.parentProxyTitle && (
+											<div className='text-sm font-normal text-lightBlue dark:text-icon-dark-inactive'> / {identity?.parentProxyTitle}</div>
+										)}
+
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+
 										{addressWithVerifiedTick && (
 											<div>
 												{!kiltName && !isGood && (
@@ -518,6 +524,7 @@ const Address = (props: Props) => {
 									</span>
 								)}
 							</div>
+							{!!identity?.parentProxyTitle && <div className='text-sm font-normal text-lightBlue dark:text-icon-dark-inactive'>/ {identity?.parentProxyTitle}</div>}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (

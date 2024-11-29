@@ -28,6 +28,7 @@ interface IIdentityInfo {
 	isGood: boolean;
 	judgements: RegistrationJudgement[];
 	verifiedByPolkassembly: boolean;
+	parentProxyTitle: string | null;
 }
 
 const result: IIdentityInfo = {
@@ -43,9 +44,22 @@ const result: IIdentityInfo = {
 	legal: '',
 	matrix: '',
 	nickname: '',
+	parentProxyTitle: null,
 	twitter: '',
 	verifiedByPolkassembly: false,
 	web: ''
+};
+
+const getParentProxyInfo = async ({ address, api, apiReady, network }: { address: string; api: ApiPromise; apiReady: boolean; network: string }) => {
+	if (!api || !apiReady) return { address: '', title: null };
+	const encodedAddress = getEncodedAddress(address, network) || address;
+
+	const proxyInfo = await api?.query?.identity?.superOf(encodedAddress);
+	const formatedProxyInfo: any = proxyInfo?.toHuman();
+	if (formatedProxyInfo && formatedProxyInfo?.[0] && getEncodedAddress(formatedProxyInfo?.[0] || '', network)) {
+		return { address: formatedProxyInfo?.[0], title: formatedProxyInfo?.[1]?.Raw || null };
+	}
+	return { address: '', title: null };
 };
 
 const getIdentityInformation = async ({ api, address, network }: Args): Promise<IIdentityInfo> => {
@@ -54,7 +68,11 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 	await api?.isReady;
 	if (!api?.isReady) return result;
 
-	const encodedAddress = getEncodedAddress(address, network) || address;
+	const encodedQueryAddress = getEncodedAddress(address, network) || address;
+
+	const parentProxyInfo = await getParentProxyInfo({ address: encodedQueryAddress, api: api, apiReady: !!api?.isReady, network });
+
+	const encodedAddress = parentProxyInfo ? getEncodedAddress(parentProxyInfo?.address, network) : encodedQueryAddress;
 
 	const identityInfo: any = await api?.query.identity?.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
 
@@ -88,6 +106,7 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 		legal: isHex(identity?.legal?.Raw || '') ? hexToString(identity?.legal?.Raw) || identity?.legal?.Raw || '' : identity?.legal?.Raw || '',
 		matrix: identity?.matrix?.Raw || identity?.riot?.Raw || '',
 		nickname: identity?.nickname?.Raw || '',
+		parentProxyTitle: parentProxyInfo?.title || null,
 		twitter: identity?.twitter?.Raw || '',
 		verifiedByPolkassembly: verifiedByPolkassembly || false,
 		web: identity?.web?.Raw || ''

@@ -4,39 +4,65 @@
 /* eslint-disable sort-keys */
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
-import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ProxyMain from '~src/components/createProxy';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { LinkProxyType } from '~src/types';
 import { Dropdown } from '~src/ui-components/Dropdown';
+import Loader from '~src/ui-components/Loader';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
-	ssr: false
-});
-
-const AddressActionDropdown = ({ address, isUsedInProxy }: { address: string; isUsedInProxy?: boolean }) => {
+const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: string; isUsedInProxy?: boolean; type: LinkProxyType | null }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const currentUser = useUserDetailsSelector();
+	const { loginAddress } = currentUser;
 	const [state, setState] = useState({
 		isDropdownActive: false,
 		openAddressLinkModal: false,
 		openAddressLinkedModal: false,
 		openSetIdentityModal: false,
-		openProxyModal: false
+		openProxyModal: false,
+		loading: false
 	});
-	console.log('address', address);
+
+	const addProxy = async () => {
+		if (!loginAddress || !address) return;
+		setState((prevState) => ({ ...prevState, loading: true }));
+		try {
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/addProxy', {
+				address: loginAddress,
+				type: type,
+				linked_address: address
+			});
+
+			if (error) {
+				throw new Error(error);
+			}
+			console.log('data', data, error);
+		} catch (error) {
+			console.error('Error in Linking address:', error);
+		} finally {
+			setState((prevState) => ({ ...prevState, loading: false }));
+		}
+	};
 
 	const items: MenuProps['items'] = [
-		{
-			key: '1',
-			label: (
-				<div
-					onClick={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: true }))}
-					className='mt-1 flex items-center space-x-2'
-				>
-					<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Link Address</span>
-				</div>
-			)
-		},
+		...(loginAddress !== address
+			? [
+					{
+						key: '1',
+						label: (
+							<div
+								onClick={!state.loading ? addProxy : undefined}
+								className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
+							>
+								<span className={' text-sm text-blue-light-medium dark:text-blue-dark-medium'}>{state.loading ? 'Linking...' : 'Link Address'}</span>
+							</div>
+						)
+					}
+			  ]
+			: []),
 		...(isUsedInProxy
 			? []
 			: [
@@ -59,7 +85,9 @@ const AddressActionDropdown = ({ address, isUsedInProxy }: { address: string; is
 			<Dropdown
 				theme={theme}
 				overlayStyle={{ marginTop: '20px' }}
-				className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-solid border-section-light-container dark:border-separatorDark ${
+				className={`flex h-8 w-8 ${
+					state.loading ? 'cursor-not-allowed' : 'cursor-pointer'
+				} items-center justify-center rounded-lg border border-solid border-section-light-container dark:border-separatorDark ${
 					theme === 'dark' ? 'border-none bg-section-dark-overlay' : state.isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 				}`}
 				overlayClassName='z-[1056]'
@@ -67,18 +95,8 @@ const AddressActionDropdown = ({ address, isUsedInProxy }: { address: string; is
 				menu={{ items }}
 				onOpenChange={() => setState((prevState) => ({ ...prevState, isDropdownActive: !prevState.isDropdownActive }))}
 			>
-				<span className=' dark:bg-section-dark-background'>
-					<ThreeDotsIcon />
-				</span>
+				<span className=' dark:bg-section-dark-background'>{state.loading ? <Loader /> : <ThreeDotsIcon />}</span>
 			</Dropdown>
-			<AddressConnectModal
-				linkAddressNeeded
-				open={state.openAddressLinkModal}
-				setOpen={(open) => setState((prevState) => ({ ...prevState, openAddressLinkModal: open }))}
-				closable
-				onConfirm={() => setState((prevState) => ({ ...prevState, openAddressLinkModal: false }))}
-				usedInIdentityFlow={false}
-			/>
 			<ProxyMain
 				openProxyModal={state.openProxyModal}
 				setOpenProxyModal={(open) => setState((prevState) => ({ ...prevState, openProxyModal: open }))}

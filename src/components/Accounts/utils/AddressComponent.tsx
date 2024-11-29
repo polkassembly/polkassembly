@@ -11,6 +11,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import { message } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
+import { LinkProxyType } from '~src/types';
 
 interface Props {
 	address: string;
@@ -42,6 +43,15 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
+
+	const getType = (): LinkProxyType | null => {
+		if (isMultisigAddress) return LinkProxyType.MULTISIG;
+		if (isPureProxy) return LinkProxyType.PUREPROXY;
+		if (proxyType) return LinkProxyType.PROXY;
+		return null;
+	};
+
+	const type = getType();
 
 	return (
 		<div className='mt-3 w-full rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-[10px] dark:border-separatorDark dark:bg-section-dark-overlay md:mb-5 md:mt-2 md:p-4'>
@@ -95,6 +105,7 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 				<div className='mt-2 flex items-center gap-2 md:mt-0'>
 					<AddressActionDropdown
 						address={address}
+						type={type}
 						isUsedInProxy={true}
 					/>
 				</div>

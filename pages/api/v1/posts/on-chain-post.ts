@@ -136,6 +136,14 @@ interface IGetOnChainPostParams {
 	includeSubsquareComments?: boolean;
 }
 
+interface IOGData {
+	fdate: string;
+	id: string;
+	propLink: string;
+	summary: string;
+	refNum: string;
+}
+
 export function getDefaultReactionObj(): IReactions {
 	return {
 		'👍': {
@@ -684,7 +692,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
-		let OGdata;
+		let OGdata: IOGData[] = [];
 		if (postId) {
 			OGdata = await fetchOGTracker(postId.toString());
 		}

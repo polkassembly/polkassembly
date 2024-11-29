@@ -40,7 +40,14 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 							/>
 						</div>
 					)}
-					<div className='flex items-center gap-2'>{accountData?.address && <AddressActionDropdown address={loginAddress || accountData?.address} />}</div>
+					<div className='flex items-center gap-2'>
+						{accountData?.address && (
+							<AddressActionDropdown
+								type={null}
+								address={loginAddress || accountData?.address}
+							/>
+						)}
+					</div>
 				</div>
 				<span className='md:absolute md:left-[104px] md:top-10'>
 					<BalanceDetails address={accountData?.address ? accountData.address : loginAddress} />

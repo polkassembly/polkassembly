@@ -1179,9 +1179,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					refNum: OGdata?.[0]?.refNum
 				};
 
-				const fileUrl = new URL(OGdata?.[0]?.propLink);
-				const allowedDomains = ['polkassembly.io', 'subsquare.io'];
-				if (allowedDomains.some((domain) => fileUrl.hostname.endsWith(domain))) {
+				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
 					ogReport.progress_file = '';
 				}
 

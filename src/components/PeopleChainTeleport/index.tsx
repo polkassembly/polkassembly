@@ -57,6 +57,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 	useEffect(() => {
 		form.setFieldValue('balance', formatedBalance(String(defaultAmount || ZERO_BN), unit));
 		setAmount(defaultAmount);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultAmount]);
 
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {

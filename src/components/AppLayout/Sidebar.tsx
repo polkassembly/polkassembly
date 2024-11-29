@@ -70,11 +70,8 @@ import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
-<<<<<<< HEAD
 import { useTranslation } from 'next-i18next';
-=======
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
->>>>>>> fe3a79f2e3cb557f01a46b9538a8d07c6726ede9
 
 const { Sider } = Layout;
 

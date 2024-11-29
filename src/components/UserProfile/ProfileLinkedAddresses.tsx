@@ -110,6 +110,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	const handleRemoveIdentity = () => {

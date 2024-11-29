@@ -69,6 +69,7 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 
 	useEffect(() => {
 		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userProfile]);
 
 	return (

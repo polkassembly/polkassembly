@@ -116,6 +116,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	useEffect(() => {
 		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -123,6 +124,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, votingData]);
 
 	return (

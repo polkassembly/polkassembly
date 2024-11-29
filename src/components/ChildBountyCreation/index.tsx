@@ -75,6 +75,7 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 
 	useEffect(() => {
 		handleMultisigAddress();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network, multisigAssociatedAddress, loginAddress]);
 
 	return (

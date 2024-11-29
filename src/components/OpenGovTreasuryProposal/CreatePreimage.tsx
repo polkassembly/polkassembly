@@ -53,6 +53,7 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 import { getFormatedBalanceFromAsset } from './utils/getFormatedBalanceFromAsset';
+import { useTranslation } from 'next-i18next';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -142,6 +143,7 @@ const CreatePreimage = ({
 	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
+	const { t } = useTranslation('common');
 
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
@@ -920,7 +922,7 @@ const CreatePreimage = ({
 		>
 			<div className={`${className} create-preimage`}>
 				<div className='my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Do you have an existing preimage? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('do_you_have_an_existing_preimage')}</label>
 					<Radio.Group
 						onChange={(e) => {
 							setIsPreimage(e.target.value);
@@ -935,13 +937,13 @@ const CreatePreimage = ({
 							value={true}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							Yes
+							{t('yes')}
 						</Radio>
 						<Radio
 							value={false}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							No
+							{t('no')}
 						</Radio>
 					</Radio.Group>
 				</div>
@@ -962,7 +964,7 @@ const CreatePreimage = ({
 						<>
 							<div className='preimage mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Preimage Hash{' '}
+									{t('preimage_hash')}
 									<span>
 										<HelperTooltip
 											text='A unique hash is generate for your preimage and it is used to populate proposal details.'
@@ -978,10 +980,10 @@ const CreatePreimage = ({
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
 								</Form.Item>
-								{invalidPreimageHash() && !loading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
+								{invalidPreimageHash() && !loading && <span className='text-sm text-[#ff4d4f]'>{t('invalid_preimage_hash')}</span>}
 							</div>
 							<div className='mt-6'>
-								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('preimage_length')}</label>
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
@@ -996,7 +998,7 @@ const CreatePreimage = ({
 							</div>
 							<div className='mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Select Track{' '}
+									{t('select_track')}
 									<span>
 										<HelperTooltip
 											text='Track selection is done based on the amount requested.'
@@ -1024,12 +1026,12 @@ const CreatePreimage = ({
 									type='error'
 									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 									showIcon
-									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('insufficient_available_balance')}</span>}
 								/>
 							)}
 							<div className='mt-6'>
 								<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium '>
-									Proposer Address
+									{t('proposer_address')}
 									<span>
 										<Balance
 											isBalanceUpdated={isUpdatedAvailableBalance}
@@ -1055,7 +1057,7 @@ const CreatePreimage = ({
 										type='info'
 										message={
 											<div className='text-[13px] dark:text-blue-dark-high'>
-												Your proposer address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+												{t('your_proposer_address_is_currently_unverified_please_set_your_onchain_identity_to_increase_the_likelihood_of_your_proposal_being_approved')}
 												<Link
 													target='_blank'
 													href={'?setidentity=true'}
@@ -1067,7 +1069,7 @@ const CreatePreimage = ({
 														}
 													}}
 												>
-													Set onchain identity
+													{t('set_onchain_identity')}
 												</Link>
 											</div>
 										}
@@ -1099,7 +1101,7 @@ const CreatePreimage = ({
 
 											{beneficiary.address
 												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
-														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
+														<span className='-mt-6 text-sm text-[#ff4d4f]'>{t('invalid_address')}</span>
 												  )
 												: null}
 										</div>
@@ -1131,7 +1133,7 @@ const CreatePreimage = ({
 										onClick={addBeneficiary}
 									>
 										<PlusCircleOutlined />
-										Add Beneficiary
+										{t('add_beneficiary')}
 									</Button>
 
 									<Button
@@ -1141,7 +1143,7 @@ const CreatePreimage = ({
 										onClick={removeAllBeneficiaries}
 									>
 										<MinusCircleOutlined />
-										Remove All
+										{t('remove_all')}
 									</Button>
 								</div>
 							)}
@@ -1150,7 +1152,11 @@ const CreatePreimage = ({
 								<Alert
 									className='mt-2 rounded-[4px]'
 									showIcon
-									message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
+									message={
+										<span className='dark:text-blue-dark-high'>
+											{t('the_substrate_address_has_been_changed_to')} {network} {t('address')}
+										</span>
+									}
 									type='info'
 								/>
 							)}
@@ -1159,7 +1165,7 @@ const CreatePreimage = ({
 								<Alert
 									className='mt-2 rounded-[4px] text-[13px]'
 									showIcon
-									message={<span className='text-[13px] dark:text-blue-dark-high'>Using a multisig proposal address provides a higher chance for the proposal to pass. </span>}
+									message={<span className='text-[13px] dark:text-blue-dark-high'>{t('using_a_multisig_proposal_address_provides_a_higher_chance_for_the_proposal_to_pass')}</span>}
 									description={
 										<Link
 											className='text-xs font-medium text-pink_primary'
@@ -1173,7 +1179,7 @@ const CreatePreimage = ({
 												alt='polkasafe'
 												className={`${theme === 'dark' && 'icon-color'} mr-0.5`}
 											/>
-											Create a Multisig Wallet on PolkaSafe now
+											{t('create_a_multisig_wallet_on_polkasafe_now')}
 										</Link>
 									}
 									type='info'
@@ -1186,7 +1192,7 @@ const CreatePreimage = ({
 									type='info'
 									message={
 										<div className='text-[13px] dark:text-blue-dark-high'>
-											Your beneficiary address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+											{t('your_beneficiary_address_is_currently_unverified_please_set_your_onchain_identity_to_increase_the_likelihood_of_your_proposal_being_approved')}
 											<Link
 												target='_blank'
 												href={'?setidentity=true'}
@@ -1198,7 +1204,7 @@ const CreatePreimage = ({
 													}
 												}}
 											>
-												Set onchain identity
+												{t('set_onchain_identity')}
 											</Link>
 										</div>
 									}
@@ -1207,7 +1213,7 @@ const CreatePreimage = ({
 							<div className='-mb-6 mt-6'>
 								<div className='mb-[2px] flex items-center justify-between text-sm text-lightBlue dark:text-blue-dark-medium'>
 									<label>
-										Funding Amount{' '}
+										{t('funding_amount')}
 										<span>
 											<HelperTooltip
 												text='Amount requested by the proposer.'
@@ -1216,7 +1222,7 @@ const CreatePreimage = ({
 										</span>
 									</label>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
-										Current Value:{' '}
+										{t('current_value')}:{' '}
 										{!generalIndex ? (
 											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0) || 0} USD</span>
 										) : (
@@ -1245,7 +1251,7 @@ const CreatePreimage = ({
 							</div>
 							<div className='mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Select Track{' '}
+									{t('select_track')}
 									<span>
 										<HelperTooltip
 											text='Track selection is done based on the amount requested.'
@@ -1271,14 +1277,14 @@ const CreatePreimage = ({
 							className='mt-6 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
-							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<span className='text-sm font-medium text-pink_primary'>{t('advanced_details')}</span>
 							<DownArrow className='down-icon' />
 						</div>
 					)}
 					{openAdvanced && (
 						<div className='preimage mt-3 flex flex-col'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Enactment{' '}
+								{t('enactment')}
 								<span>
 									<HelperTooltip
 										text='A custom delay can be set for enactment of approved proposals.'
@@ -1303,7 +1309,7 @@ const CreatePreimage = ({
 								>
 									<div className='flex h-10 items-center gap-4'>
 										<span>
-											At Block no.
+											{t('at_block_no')}
 											<HelperTooltip
 												className='ml-1'
 												text='Allows you to choose a custom block number for enactment.'
@@ -1345,7 +1351,7 @@ const CreatePreimage = ({
 								>
 									<div className='flex h-[30px] items-center gap-2'>
 										<span className='w-[150px]'>
-											After no. of Blocks
+											{t('after_no_of_blocks')}
 											<HelperTooltip
 												text='Allows you to choose a custom delay in terms of blocks for enactment.'
 												className='ml-1'
@@ -1357,7 +1363,7 @@ const CreatePreimage = ({
 													name='after_blocks'
 													rules={[
 														{
-															message: 'Invalid no. of Blocks',
+															message: t('invalid_no_of_blocks'),
 															validator(rule, value, callback) {
 																const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
 																if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
@@ -1389,12 +1395,12 @@ const CreatePreimage = ({
 							showIcon
 							description={
 								<span className='text-xs dark:text-blue-dark-high'>
-									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+									{t('gas_fees_of')} {formatedBalance(String(gasFee.toString()), unit)} {unit} {t('will_be_applied_to_create_preimage')}
 								</span>
 							}
 							message={
 								<span className='text-[13px] dark:text-blue-dark-high'>
-									{formatedBalance(String(baseDeposit.toString()), unit)} {unit} Base deposit is required to create a preimage.
+									{formatedBalance(String(baseDeposit.toString()), unit)} {unit} {t('base_deposit_is_required_to_create_a_preimage')}
 								</span>
 							}
 						/>
@@ -1407,7 +1413,7 @@ const CreatePreimage = ({
 							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
-							Back
+							{t('back')}
 						</Button>
 						<Button
 							htmlType='submit'
@@ -1438,7 +1444,7 @@ const CreatePreimage = ({
 									: preimageHash?.length === 0 || invalidPreimageHash()
 							}
 						>
-							{isPreimage ? (preimageLinked ? 'Next' : 'Link Preimage') : preimageCreated ? 'Next' : 'Create Preimage'}
+							{isPreimage ? (preimageLinked ? t('next') : t('link_preimage')) : preimageCreated ? t('next') : t('create_preimage')}
 						</Button>
 					</div>
 				</Form>

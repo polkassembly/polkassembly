@@ -5,13 +5,14 @@
 import { Divider, Space } from 'antd';
 import React from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
-
+import { useTranslation } from 'next-i18next';
 interface Props {
 	className?: string;
 	data: any[];
 }
 
 const AllianceAnnouncementsListing = ({ className, data }: Props) => {
+	const { t } = useTranslation('common');
 	if (!data.length)
 		return (
 			<div className={className}>
@@ -30,19 +31,25 @@ const AllianceAnnouncementsListing = ({ className, data }: Props) => {
 						<div className='content'>
 							<h1 className='text-sm font-medium text-sidebarBlue'>{member.hash.digest}</h1>
 							<Space className='mt-3 flex flex-col items-start text-xs font-medium text-navBlue md:flex-row md:items-center'>
-								<span>Version: {member.version}</span>
+								<span>
+									{t('version')}: {member.version}
+								</span>
 								<Divider
 									className='hidden md:inline-block'
 									type='vertical'
 									style={{ borderLeft: '1px solid #90A0B7' }}
 								/>
-								<span>Code: {member.hash.code} </span>
+								<span>
+									{t('code')}: {member.hash.code}{' '}
+								</span>
 								<Divider
 									className='hidden md:inline-block'
 									type='vertical'
 									style={{ borderLeft: '1px solid #90A0B7' }}
 								/>
-								<span>Codec: {member.codec}</span>
+								<span>
+									{t('codec')}: {member.codec}
+								</span>
 							</Space>
 						</div>
 					</div>

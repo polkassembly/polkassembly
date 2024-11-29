@@ -11,8 +11,8 @@ import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
 import { IProgressReport } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
@@ -22,15 +22,13 @@ interface IProgressReportRatingModal {
 
 const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 	const { reportId } = props;
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const router = useRouter();
 	const [reportData, setReportData] = useState<IProgressReport>();
 	const { report_rating } = useProgressReportSelector();
-	const { t } = useTranslation('common');
-	const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
-
 	const customIcons = Object.fromEntries(
 		[1, 2, 3, 4, 5].map((key, index) => [
 			key,
@@ -57,7 +55,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 	return (
 		<>
 			<section className='flex flex-col gap-y-1'>
-				{postData?.progress_report?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>{t('summary_of_progress_report')}</h1>}
+				{reportData?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>{t('summary_of_progress_report')}</h1>}
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
 						className='post-content m-0 p-0 dark:text-blue-dark-medium'
@@ -72,7 +70,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 						dispatch(progressReportActions.setOpenRatingModal(false));
 					}}
 				>
-					{t('view_progress_report_detail')}
+					{t('view_progress_report_in_detail')}
 				</p>
 				{reportData?.progress_summary && (
 					<Divider
@@ -103,9 +101,9 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 							/>
 						)}
 					</>
-					{postData?.progress_report?.ratings?.length > 0 && (
+					{reportData?.ratings && reportData?.ratings?.length > 0 && (
 						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
-							{t('users_already_rated', { count: postData?.progress_report?.ratings?.length })}
+							{reportData?.ratings?.length} {t('users_have_already_rated_the_progress_report')}
 						</p>
 					)}
 				</div>

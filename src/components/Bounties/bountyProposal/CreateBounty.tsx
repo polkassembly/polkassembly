@@ -90,6 +90,7 @@ const CreateBounty = ({
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedFetchBountyProposer = useCallback(_.debounce(fetchBountyProposer, 1000), []);
 
 	useEffect(() => {
@@ -99,6 +100,7 @@ const CreateBounty = ({
 		return () => {
 			debouncedFetchBountyProposer.cancel();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyId]);
 
 	function getBountyBond(title: string, baseBountyDeposit: BN, depositPerByte: BN): BN {
@@ -127,6 +129,7 @@ const CreateBounty = ({
 		if (!api || !apiReady) return;
 		getBountyBondValue();
 		fetchGasFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, isBounty, bountyAmount]);
 
 	const handleCreateBounty = async () => {

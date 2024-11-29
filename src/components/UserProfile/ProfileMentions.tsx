@@ -67,6 +67,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 	};
 	useEffect(() => {
 		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, page, user_id]);
 
 	return (

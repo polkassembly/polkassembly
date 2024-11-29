@@ -50,6 +50,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 	useEffect(() => {
 		if (trackId && isNaN(trackId)) return;
 		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 
 	return (

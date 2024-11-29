@@ -49,6 +49,7 @@ function CuratorDashboardButton() {
 
 	useEffect(() => {
 		fetchCuratorBountiesData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
 	return (

@@ -15,7 +15,6 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;

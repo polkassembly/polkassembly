@@ -36,6 +36,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import AmbassadorActionButtons from '~src/components/AmbassadorSeeding/AmbassadorActionButtons';
+import { useTranslation } from 'next-i18next';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -151,6 +152,7 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
@@ -284,7 +286,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 			<article className='flex justify-between xs:py-2 md:py-0'>
 				<div className='flex items-center gap-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
-					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
+					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>
+						{t('about')} {trackName.split(/(?=[A-Z])/).join(' ')}
+					</h2>
 					<Tooltip
 						color='#E5007A'
 						title='Track Number'
@@ -330,7 +334,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<Alert
 					message={
 						<span className='flex items-center text-[13px]'>
-							You have delegated vote to
+							{t('you_have_delegated_vote_to')}
 							<Address
 								address={delegatedTo}
 								className='ml-2 text-xs'
@@ -344,7 +348,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								target='_blank'
 								className='ml-2 mt-1 text-xs text-pink_primary'
 							>
-								View Details
+								{t('view_details')}
 							</Link>
 						</span>
 					}
@@ -362,7 +366,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(false)}
 							>
-								Hide Track details
+								{t('hide_track_details')}
 							</span>
 						)}
 						{!showDetails && (
@@ -370,7 +374,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(true)}
 							>
-								Show Track details
+								{t('show_track_details')}
 							</span>
 						)}
 					</p>
@@ -382,7 +386,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Max Deciding</span>
+										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>{t('max_deciding')}</span>
 										<HelperTooltip
 											text='Maximum number of referenda that can be in the decision period of a track all at once'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -395,7 +399,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
+										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>{t('confirm_period')}</span>
 										<HelperTooltip
 											text='Total time the referenda must meet both the min approval and support criteria during the decision period in order to pass'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -411,7 +415,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('min_enactment_period')}</span>
 										<HelperTooltip
 											text='Minimum time that an approved proposal must be in dispatch queue after approval. Proposer can set enactment period at any value greater than this.'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -427,7 +431,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('decision_period')}</span>
 										<HelperTooltip
 											text='Amount of time a proposal may take to be approved. If the proposal is not approved by the end of the decision period, it gets rejected.'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -443,7 +447,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</span>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('decision_deposit')}</span>
 										<HelperTooltip
 											text='Amount to be deposited for a referendum to progress from prepare to decision period.'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -467,7 +471,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
 									<div className='flex gap-1'>
-										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('prepare_period')}</span>
 										<HelperTooltip
 											text='Minimum waiting time for a referendum to proceed from submission into decision period.'
 											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'

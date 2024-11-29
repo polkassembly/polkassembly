@@ -69,6 +69,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 
 	useEffect(() => {
 		getVoteCartData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const onFailed = (error: string) => {
@@ -159,6 +160,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		if (vote_cart_data && vote_cart_data?.length > 0) {
 			getGASFees();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [vote_cart_data]);
 
 	return (

@@ -74,9 +74,11 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const [tokenValue, setTokenValue] = useState<number>(0);
 
 	useEffect(() => {
-		if (!api || !apiReady) {
+		if (!api) {
 			return;
 		}
+
+		if (!api?.isReady) return;
 
 		setSpendPeriod({
 			isLoading: true,
@@ -152,7 +154,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			EMPTY_U8A_32
 		);
 
-		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
+		api?.derive?.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
 			api.query.system
 				.account(treasuryAccount)
 				.then((res) => {

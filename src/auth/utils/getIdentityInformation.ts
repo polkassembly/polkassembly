@@ -51,7 +51,8 @@ const result: IIdentityInfo = {
 const getIdentityInformation = async ({ api, address, network }: Args): Promise<IIdentityInfo> => {
 	if (!api || !address) return result;
 
-	await api.isReady;
+	await api?.isReady;
+	if (!api?.isReady) return result;
 
 	const encodedAddress = getEncodedAddress(address, network) || address;
 

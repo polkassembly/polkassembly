@@ -60,7 +60,8 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!api) return;
+		if (!apiReady) return;
 
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {

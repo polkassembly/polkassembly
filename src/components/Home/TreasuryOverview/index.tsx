@@ -74,11 +74,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const [tokenValue, setTokenValue] = useState<number>(0);
 
 	useEffect(() => {
-		if (!api) {
+		if (!api || !apiReady) {
 			return;
 		}
-
-		if (!api?.isReady) return;
 
 		setSpendPeriod({
 			isLoading: true,

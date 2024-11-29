@@ -50,6 +50,7 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 		if (loginAddress && address) {
 			checkIfLinked();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, address]);
 
 	const toggleLinkProxy = async () => {

@@ -6,9 +6,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { IMessage } from '~src/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isAddress } from 'ethers';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
@@ -28,11 +27,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { chatId, address } = req.body;
-	if (!chatId || !address || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
-	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
+	const { chatId } = req.body;
+	if (!chatId || typeof chatId !== 'string' || chatId.trim() === '') return res.status(400).json({ message: messages.INVALID_PARAMS });
 
-	const substrateAddress = getSubstrateAddress(address);
+	const userAddresses = await getAddressesFromUserId(user.id);
+	if (!userAddresses || !userAddresses.length) return res.status(400).json({ message: 'No addresses found for user' });
+
+	const userSubstrateAddresses = userAddresses.map((addr) => getSubstrateAddress(addr.address)).filter(Boolean);
+	if (!userSubstrateAddresses.length) return res.status(400).json({ message: 'No valid substrate addresses found for user' });
+
 	try {
 		const chatDoc = await chatDocRef(chatId).get();
 		if (!chatDoc.exists) {
@@ -45,7 +48,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: IMe
 			return res.status(404).json({ message: 'Chat not found' });
 		}
 
-		if (!chatData?.participants?.includes(substrateAddress)) {
+		const isParticipant = userSubstrateAddresses.some((addr) => chatData?.participants?.includes(addr));
+		if (!isParticipant) {
 			return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 		}
 

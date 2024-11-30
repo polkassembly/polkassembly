@@ -5,8 +5,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isAddress } from 'ethers';
 import { EChatRequestStatus, IChat, IDelegateAddressDetails, IMessage } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
@@ -17,6 +15,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { chatDocRef, messageDocRef } from '~src/api-utils/firestore_refs';
 import { getDelegatesData } from '../delegations/getAllDelegates';
 import { firestore_db } from '~src/services/firebaseInit';
+import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChat | MessageType>) {
 	storeApiKeyUsage(req);
@@ -30,20 +29,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { address, senderAddress, receiverAddress, content, senderImage, senderUsername } = req.body;
+	const userAddresses = await getAddressesFromUserId(user.id);
+	if (!userAddresses || !userAddresses.length) return res.status(400).json({ message: 'No addresses found for user' });
 
-	if (!address || !senderAddress || !receiverAddress || !content) {
+	const userSubstrateAddresses = userAddresses.map((addr) => getSubstrateAddress(addr.address)).filter(Boolean);
+	if (!userSubstrateAddresses.length) return res.status(400).json({ message: 'No valid substrate addresses found for user' });
+
+	const { senderAddress, receiverAddress, content, senderImage, senderUsername } = req.body;
+
+	if (!senderAddress || !receiverAddress || !content) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
-
-	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress))))
-		return res.status(400).json({ message: 'Invalid address' });
 
 	const senderSubstrateAddress = getSubstrateAddress(senderAddress);
 	const receiverSubstrateAddress = getSubstrateAddress(receiverAddress);
 
 	if (!senderSubstrateAddress || !receiverSubstrateAddress || senderSubstrateAddress === receiverSubstrateAddress) {
 		return res.status(400).json({ message: 'Invalid senderAddress or receiverAddress' });
+	}
+
+	if (!userSubstrateAddresses.includes(senderSubstrateAddress)) {
+		return res.status(400).json({ message: 'You must be logged in to start a chat' });
 	}
 
 	const chatId = senderSubstrateAddress.slice(0, 7) + receiverSubstrateAddress.slice(-7);

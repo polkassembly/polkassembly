@@ -5,8 +5,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isAddress } from 'ethers';
 import { EChatRequestStatus, IChat, IChatsResponse, IMessage } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
@@ -15,6 +13,7 @@ import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatCollRef, chatMessagesRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -28,17 +27,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { address } = req.body;
+	const userAddresses = await getAddressesFromUserId(user.id);
+	if (!userAddresses || !userAddresses.length) return res.status(400).json({ message: 'No addresses found for user' });
 
-	if (!address) return res.status(400).json({ message: messages.INVALID_PARAMS });
-	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
-
-	const substrateAddress = getSubstrateAddress(address);
+	const userSubstrateAddresses = userAddresses.map((addr) => getSubstrateAddress(addr.address)).filter(Boolean);
+	if (!userSubstrateAddresses.length) return res.status(400).json({ message: 'No valid substrate addresses found for user' });
 
 	try {
 		const [acceptedChatsSnapshot, pendingRequestsSnapshot] = await Promise.all([
-			chatCollRef().where('participants', 'array-contains', substrateAddress).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
-			chatCollRef().where('participants', 'array-contains', substrateAddress).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
+			chatCollRef().where('participants', 'array-contains-any', userSubstrateAddresses).where('requestStatus', '==', EChatRequestStatus.ACCEPTED).get(),
+			chatCollRef().where('participants', 'array-contains-any', userSubstrateAddresses).where('requestStatus', '!=', EChatRequestStatus.ACCEPTED).get()
 		]);
 
 		const mapChatData = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]): Promise<IChat[]> => {

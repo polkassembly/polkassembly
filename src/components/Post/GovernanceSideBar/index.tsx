@@ -1012,7 +1012,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						)}
 
 						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
-							Object.keys(postData?.progress_report).length === 0 &&
+							Object.keys(postData?.progress_report || {}).length === 0 &&
 							id !== postData?.userId && (
 								<Alert
 									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

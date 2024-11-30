@@ -20,7 +20,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const network = getNetworkFromReqHeaders(context.req.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-	if (!isOpenGovSupported(network) || [AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
+	if (
+		!isOpenGovSupported(network) ||
+		[AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO, AllNetworks.MYTHOS].includes(network)
+	) {
 		return {
 			props: {},
 			redirect: {

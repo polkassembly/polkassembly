@@ -424,25 +424,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
-		councilItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Motions
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
-							</span>
-						</div>,
-						'/motions',
-						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
-			: [],
+		councilItems:
+			chainProperties[network]?.subsquidUrl || [AllNetworks.MYTHOS].includes(network)
+				? [
+						getSiderMenuItem(
+							<div className='flex items-center justify-between'>
+								Motions
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
+								</span>
+							</div>,
+							'/motions',
+							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+				  ]
+				: [],
 
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -689,6 +690,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
+	}
+	if ([AllNetworks.MYTHOS].includes(network)) {
+		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems])]);
+		collapsedItems = collapsedItems.concat([...gov1Items.councilItems]);
 	}
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(

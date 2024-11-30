@@ -21,7 +21,7 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 
 	return (
 		<div className={className}>
-			{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) ? (
+			{['moonbase', 'moonbeam', 'moonriver', 'laossigma', 'mythos'].includes(network) ? (
 				<>
 					{availableWallets[Wallet.SUBWALLET] && (
 						<WalletButton

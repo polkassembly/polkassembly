@@ -467,7 +467,7 @@ async function saveTwitterBounties() {
 		await bountyRef.set(bounty);
 
 		// respond to tweet, with the link of the bounty
-		const response = `🐥 Wohoo! Your bounty was just created.\nCheck it out here :https://polkadot.polkassembly.io/bounty/${bounty.id}\nMake your submission by replying to this post.`;
+		const response = `Wohoo! Your bounty was just created.\nCheck it out here :https://polkadot.polkassembly.io/bounty/${bounty.id}\nMake your submission by replying to this post.`;
 
 		logger.info('Responding to tweet :', response);
 		await twitterClient.v2.reply(response, tweet.id);

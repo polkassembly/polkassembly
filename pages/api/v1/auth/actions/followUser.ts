@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	const followsRef = followsCollRef();
-	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).get();
+	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
 
 	if (!followsDoc.empty) {
 		await followsDoc.docs[0].ref.update({
@@ -55,14 +55,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		});
 
-		const doc = await userRef.get();
-		const data = doc.data();
-		await userRef.update({ followers: (data?.followers || 0) + 1 });
+		const data = userDoc.data();
+		await userRef.update({
+			[`followers.${network}`]: (data?.followers?.[network] || 0) + 1
+		});
 
 		const currentUserRef = firestore_db.collection('users').doc(String(user.id));
 		const currentUserDoc = await currentUserRef.get();
 		const currentUserData = currentUserDoc.data();
-		await currentUserRef.update({ following: (currentUserData?.following || 0) + 1 });
+		await currentUserRef.update({
+			[`following.${network}`]: (currentUserData?.following?.[network] || 0) + 1
+		});
 
 		return res.status(200).json({ message: 'User followed' });
 	}
@@ -81,14 +84,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	await newFollowDoc.set(newFollow);
 
-	const doc = await userRef.get();
-	const data = doc.data();
-	await userRef.update({ followers: (data?.followers || 0) + 1 });
+	const data = userDoc.data();
+	await userRef.update({
+		[`followers.${network}`]: (data?.followers?.[network] || 0) + 1
+	});
 
 	const currentUserRef = firestore_db.collection('users').doc(String(user.id));
 	const currentUserDoc = await currentUserRef.get();
 	const currentUserData = currentUserDoc.data();
-	await currentUserRef.update({ following: (currentUserData?.following || 0) + 1 });
+	await currentUserRef.update({
+		[`following.${network}`]: (currentUserData?.following?.[network] || 0) + 1
+	});
 
 	// TODO: create activity for the user followed
 	// TODO: send notification to the user followed

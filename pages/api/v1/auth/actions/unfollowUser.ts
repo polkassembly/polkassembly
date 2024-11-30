@@ -57,14 +57,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	});
 
 	const userData = userDoc.data();
-	const currentFollowersValue = userData?.followers || 0;
-	await userRef.update({ followers: Math.max(0, currentFollowersValue - 1) });
+	const currentFollowersValue = userData?.followers?.[network] || 0;
+	await userRef.update({
+		[`followers.${network}`]: Math.max(0, currentFollowersValue - 1)
+	});
 
 	const currentUserRef = firestore_db.collection('users').doc(String(user.id));
 	const currentUserDoc = await currentUserRef.get();
 	const currentUserData = currentUserDoc.data();
-	const currentFollowingValue = currentUserData?.following || 0;
-	await currentUserRef.update({ following: Math.max(0, currentFollowingValue - 1) });
+	const currentFollowingValue = currentUserData?.following?.[network] || 0;
+	await currentUserRef.update({
+		[`following.${network}`]: Math.max(0, currentFollowingValue - 1)
+	});
 
 	// TODO: delete activity for the user unfollowed
 	// TODO: send notification to the user unfollowed

@@ -692,8 +692,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
 	}
 	if ([AllNetworks.MYTHOS].includes(network)) {
-		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems])]);
-		collapsedItems = collapsedItems.concat([...gov1Items.councilItems]);
+		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems].slice(1, 2))]);
+		collapsedItems = collapsedItems.concat([...gov1Items.councilItems].slice(1, 2));
 	}
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(

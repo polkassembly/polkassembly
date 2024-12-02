@@ -544,7 +544,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						)}
 
 						{/* Insufficient balance check */}
-						{availableBalance.lt(gasFee) && (
+						{availableBalance?.lt(gasFee) && (
 							<Alert
 								type='info'
 								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'

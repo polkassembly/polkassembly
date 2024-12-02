@@ -27,11 +27,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		}
 
 		const { address, linked_address, type } = req.body;
-		if (!address || !linked_address) {
+		if (!address || !linked_address || !type) {
 			return res.status(400).json({ error: 'Missing required fields' });
 		}
 
-		const documentId = type ? `${address}_${type}_${user.id}` : `${address}_${user.id}`;
+		const documentId = `${address}_${type}_${user.id}`;
 		const docRef = firestore_db.collection('proxies').doc(documentId);
 		const docSnapshot = await docRef.get();
 

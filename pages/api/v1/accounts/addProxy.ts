@@ -31,7 +31,7 @@ async function updateProxyDocument(
 ): Promise<{ id: string; message: string }> {
 	const { address, name = 'unknown', type, linked_address } = data;
 
-	if (!address || !network) {
+	if (!address || !network || !type) {
 		throw new Error('Missing required fields');
 	}
 
@@ -44,7 +44,7 @@ async function updateProxyDocument(
 		throw new Error(messages.USER_NOT_FOUND);
 	}
 
-	const documentId = type ? `${address}_${type}_${user.id}` : `${address}_${user.id}`;
+	const documentId = `${address}_${type}_${user.id}`;
 	const docRef = firestore_db.collection('proxies').doc(documentId);
 
 	const docSnapshot = await docRef.get();

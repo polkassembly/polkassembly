@@ -44,48 +44,39 @@ async function updateFollowCounts(userId: number, targetUserId: number, network:
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
 
-	if (req.method !== 'POST') {
-		return res.status(405).json({ message: 'Invalid request method, POST required.' });
-	}
+	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
-	}
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
 
+	// userId to follow
 	const { userId } = req.body;
-	if (!userId || isNaN(Number(userId))) {
-		return res.status(400).json({ message: 'Missing or invalid user id in request body' });
-	}
+	if (isNaN(Number(userId)) || userId === null || userId === undefined) return res.status(400).json({ message: 'Missing or invalid user id in request body' });
 
 	const userIdToFollow = Number(userId);
 
 	const token = getTokenFromReq(req);
-	if (!token) {
-		return res.status(401).json({ message: 'Missing user token' });
-	}
+	if (!token) return res.status(401).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user) {
-		return res.status(401).json({ message: messages.USER_NOT_FOUND });
-	}
+	if (!user) return res.status(401).json({ message: messages.USER_NOT_FOUND });
 
 	if (user.id === userIdToFollow) {
 		return res.status(400).json({ message: 'Cannot follow yourself' });
 	}
 
-	const targetUserRef = firestore_db.collection('users').doc(String(userIdToFollow));
-	const targetUserDoc = await targetUserRef.get();
+	const userRef = firestore_db.collection('users').doc(String(userIdToFollow));
+	const userDoc = await userRef.get();
 
-	if (!targetUserDoc.exists) {
+	if (!userDoc.exists) {
 		return res.status(404).json({ message: 'User to follow not found' });
 	}
 
 	const followsRef = followsCollRef();
-	const existingFollow = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
+	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
 
-	if (!existingFollow.empty) {
-		await existingFollow.docs[0].ref.update({
+	if (!followsDoc.empty) {
+		await followsDoc.docs[0].ref.update({
 			isFollow: true,
 			updated_at: new Date()
 		});
@@ -96,6 +87,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	const newFollowDoc = followsRef.doc();
+
 	const newFollow: IFollowEntry = {
 		created_at: new Date(),
 		followed_user_id: userIdToFollow,
@@ -109,8 +101,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await newFollowDoc.set(newFollow);
 	await updateFollowCounts(user.id, userIdToFollow, network);
 
-	// TODO: create activity for the user followed
-	// TODO: send notification to the user followed
+	//TODO: create activity for the user followed
+	//TODO: send notification to the user followed
 
 	return res.status(200).json({ message: 'User followed' });
 }

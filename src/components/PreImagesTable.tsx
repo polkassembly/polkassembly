@@ -220,7 +220,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				proposedCall.method && (
 					<div className='flex items-center'>
 						<code className='rounded-md px-2 dark:bg-separatorDark dark:text-white'>
-							{proposedCall.section}.{proposedCall.method}
+							{proposedCall.section}.{proposedCall.method?.length > 6 ? `${proposedCall.method?.slice(0, 6)}...` : proposedCall.method}
 						</code>
 						{proposedCall.args && (
 							<ProfileOutlined

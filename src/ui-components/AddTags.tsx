@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IPostTag } from '~src/types';
 import { PlusOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import { useTheme } from 'next-themes';
 import { NoTagFoundIcon } from './CustomIcons';
@@ -109,8 +109,8 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 							<span className='text-3xl'>
 								<NoTagFoundIcon />
 							</span>
-							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>No tag found.</span>
-							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>Press enter to add new tag.</span>
+							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${dmSans.className} ${dmSans.variable} `}>No tag found.</span>
+							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${dmSans.className} ${dmSans.variable} `}>Press enter to add new tag.</span>
 						</div>
 					)
 			  }
@@ -120,7 +120,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 				key: index + 2,
 				label: (
 					<div
-						className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide dark:text-blue-dark-high`}
+						className={`text-xs text-[#90A0B7]  ${dmSans.className} ${dmSans.className} tracking-wide dark:text-blue-dark-high`}
 						onClick={() => {
 							selectedTag.current = tag?.name;
 							handleInputConfirm();

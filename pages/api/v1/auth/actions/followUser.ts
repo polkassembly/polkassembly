@@ -73,17 +73,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	const followsRef = followsCollRef();
-	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
-
-	if (!followsDoc.empty) {
-		await followsDoc.docs[0].ref.update({
-			isFollow: true,
-			updated_at: new Date()
-		});
-
-		await updateFollowCounts(user.id, userIdToFollow, network);
-
-		return res.status(200).json({ message: 'User followed' });
+	try {
+		const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
+		if (!followsDoc.empty) {
+			await followsDoc.docs[0].ref.update({
+				isFollow: true,
+				updated_at: new Date()
+			});
+			await updateFollowCounts(user.id, userIdToFollow, network);
+			return res.status(200).json({ message: 'User followed' });
+		}
+	} catch (error) {
+		console.error('Error fetching follows document:', error);
+		return res.status(500).json({ message: 'Internal server error' });
 	}
 
 	const newFollowDoc = followsRef.doc();

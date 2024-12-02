@@ -82,7 +82,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		updated_at: new Date()
 	});
 
-	await updateUnfollowCounts(user.id, userIdToUnfollow, network);
+	try {
+		await updateUnfollowCounts(user.id, userIdToUnfollow, network);
+	} catch (error) {
+		console.error('Error updating unfollow counts:', error);
+		return res.status(500).json({ message: 'Failed to update unfollow counts' });
+	}
 
 	//TODO: delete activity for the user unfollowed
 	//TODO: send notification to the user unfollowed

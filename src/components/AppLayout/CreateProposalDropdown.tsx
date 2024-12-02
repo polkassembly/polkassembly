@@ -19,7 +19,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import CreateProposalDropdownButton from '~src/ui-components/CreateProposalDropdownButton';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -78,7 +78,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
-					<span className={`${poppins.className} ${poppins.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
+					<span className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
 				</div>
 			),
 			key: '2'

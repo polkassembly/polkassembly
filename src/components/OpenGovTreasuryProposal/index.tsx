@@ -339,7 +339,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					{isUsedInTreasuryTrack ? (
 						<p className='m-0 p-0'>Create Proposal</p>
 					) : isUsedInSidebar ? (
-						<span className={`${poppins.variable} ${poppins.className} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Treasury Proposal</span>
+						<span className={`${dmSans.variable} ${dmSans.className} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Treasury Proposal</span>
 					) : (
 						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 					)}

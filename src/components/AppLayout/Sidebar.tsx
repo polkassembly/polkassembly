@@ -1141,11 +1141,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
-<<<<<<< HEAD
 					<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Delegation</span>
-=======
 					<span>Delegation</span>
->>>>>>> 3e619aa3448669efc2b56ec5aafadd07099270b4
 				</div>,
 				'/delegation',
 				<div className='-ml-2 mt-1'>
@@ -1162,11 +1159,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				<div className='flex gap-2'>
 					<span>Batch Voting</span>
-<<<<<<< HEAD
 					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
-=======
-						<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
->>>>>>> 3e619aa3448669efc2b56ec5aafadd07099270b4
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>

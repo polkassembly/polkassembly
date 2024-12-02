@@ -4,8 +4,8 @@
 
 import styled from 'styled-components';
 import CreatePencilIcon from '~assets/icons/create-pencil-icon.svg';
-import { poppins } from 'pages/_app';
 import { ArrowDownIcon } from './CustomIcons';
+import { dmSans } from 'pages/_app';
 
 const StyledButtonContainer = styled.div`
 	.card {
@@ -54,7 +54,7 @@ const CreateProposalDropdownButton = ({ sidebarCollapsed }: { sidebarCollapsed: 
 				<CreatePencilIcon />
 				{!sidebarCollapsed && (
 					<>
-						<span className={`${poppins.variable} ${poppins.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+						<span className={`${dmSans.variable} ${dmSans.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
 						<ArrowDownIcon className='ml-1 text-sm text-[#0A3EAF] dark:text-[#49CFFC]' />
 					</>
 				)}

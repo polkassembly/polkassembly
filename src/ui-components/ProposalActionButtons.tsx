@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
 import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
 import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -251,7 +251,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					onClick={() => handleClick(1)}
 				>
 					{theme == 'dark' ? <CreateProposalsFabIconDark /> : <CreateProposalsFabIcon />}
-					<span className={`${poppins.variable} ${poppins.className} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposal</span>
+					<span className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposal</span>
 				</div>
 			)}
 

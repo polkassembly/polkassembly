@@ -14,7 +14,7 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Image from 'next/image';
 import CautionIcon from '~assets/icons/caution-icon.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 export type MenuItem = Required<MenuProps>['items'][number];
 
@@ -224,7 +224,7 @@ export const SidebarFoot1 = () => {
 			>
 				<div className='mx-3 mt-3 flex cursor-pointer items-center justify-center gap-[6px] rounded-xl border border-solid border-[#D2D8E0] bg-[#F8F9FC] px-[6px] py-2 dark:border-separatorDark dark:bg-section-dark-background'>
 					<CautionIcon />
-					<div className={`${poppins.className} ${poppins.variable} flex flex-col`}>
+					<div className={`${dmSans.className} ${dmSans.variable} flex flex-col`}>
 						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Report an issue</span>
 						<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>Need help with something?</span>
 					</div>

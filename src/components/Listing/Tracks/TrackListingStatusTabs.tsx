@@ -18,7 +18,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { sortValues } from '~src/global/sortOptions';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface ITrackListingCardAll {
 	className?: string;
@@ -146,30 +146,30 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
-					className={`my-auto flex gap-1 sm:gap-[2px] ${poppins.variable} ${poppins.className} flex-wrap`}
+					className={`my-auto flex gap-1 sm:gap-[2px] ${dmSans.variable} ${dmSans.className} flex-wrap`}
 					style={{ marginBottom: 16 }}
 				>
 					<Radio
 						value='All'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						All({initialCountForAll || 0}){' '}
 					</Radio>
 					<Radio
 						value='Submitted'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Submitted({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Voting({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
 						Closed({initialCountForClosed || 0})
 					</Radio>

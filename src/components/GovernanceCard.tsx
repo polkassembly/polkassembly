@@ -6,7 +6,7 @@ import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined }
 import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -485,7 +485,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-xs font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -540,7 +540,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}
@@ -581,7 +581,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackTag
 										theme={theme as any}
-										className='sm:mt-0'
+										className='font-semibold sm:mt-0'
 										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
 									/>
 								</>

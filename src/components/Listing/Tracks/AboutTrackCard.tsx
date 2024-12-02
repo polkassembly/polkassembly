@@ -206,16 +206,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		setCurvesLoading(true);
 
 		const getData = async () => {
-			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+			const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 			if (tracks && Array.isArray(tracks)) {
-				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === trackNum);
-				if (track && Array.isArray(track) && track.length > 1) {
+				const track = tracks?.find((track) => track && Array.isArray(track) && track?.length >= 2 && track[0] === trackNum);
+				if (track && Array.isArray(track) && track?.length > 1) {
 					const trackInfo = track[1] as any;
 					const { decisionPeriod } = trackInfo;
 					const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 					let decisionPeriodHrs = 0;
 					if (strArr && Array.isArray(strArr)) {
-						strArr.forEach((str) => {
+						strArr?.forEach((str) => {
 							if (str.includes('h')) {
 								decisionPeriodHrs += parseInt(str.replace('h', ''));
 							} else if (str.includes('d')) {
@@ -359,7 +359,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{trackMetaData?.description}
 						{showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(false)}
 							>
 								Hide Track details
@@ -367,7 +367,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						)}
 						{!showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(true)}
 							>
 								Show Track details

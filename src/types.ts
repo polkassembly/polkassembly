@@ -314,6 +314,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {
@@ -606,6 +607,7 @@ export interface IProgressReport {
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	isFromOgtracker?: boolean;
 }
 
 export interface IVotesCount {

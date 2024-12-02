@@ -149,7 +149,7 @@ const ProgressReportTab = ({ className }: Props) => {
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 								Progress Reports
 							</h3>
-							{!postData?.progress_report?.[0]?.progress_file && (
+							{Object.keys(postData?.progress_report || {}).length === 0 && (
 								<div className='ml-auto flex items-center justify-end gap-x-1'>
 									<ImageIcon
 										src='/assets/delegation-tracks/info-icon-blue.svg'
@@ -165,7 +165,7 @@ const ProgressReportTab = ({ className }: Props) => {
 				>
 					{postData.userId === currentUser?.id ? (
 						<>
-							{!postData?.progress_report?.[0]?.progress_file ? (
+							{Object.keys(postData?.progress_report || {}).length === 0 ? (
 								<>
 									<UploadModalContent />
 									<div className='mt-4 flex justify-end'>
@@ -185,7 +185,7 @@ const ProgressReportTab = ({ className }: Props) => {
 								<UploadMultipleReports theme={theme} />
 							)}
 						</>
-					) : postData?.progress_report?.[0]?.progress_file ? (
+					) : Object.keys(postData?.progress_report).length > 0 ? (
 						<UserReportInfo theme={theme} />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>

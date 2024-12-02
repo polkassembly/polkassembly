@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import { Divider, Spin } from 'antd';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -112,7 +112,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 						<>
 							{followers.map((follower, index) => (
 								<div key={follower.follower_user_id}>
-									<div className={`${poppins.variable} ${poppins.className} mb-4 mt-3 flex items-start gap-3`}>
+									<div className={`${dmSans.variable} ${dmSans.className} mb-4 mt-3 flex items-start gap-3`}>
 										<ImageComponent
 											src={follower.image || '/assets/icons/user-profile.png'}
 											alt={follower.username}

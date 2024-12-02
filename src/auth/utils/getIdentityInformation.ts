@@ -3,32 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { ApiPromise } from '@polkadot/api';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { hexToString, isHex } from '@polkadot/util';
+import { IIdentityInfo } from '~src/types';
 
 interface Args {
 	api?: ApiPromise;
 	address: string;
 	network: string;
-}
-export interface IIdentityInfo {
-	display: string;
-	legal: string;
-	email: string;
-	twitter: string;
-	web: string;
-	github: string;
-	discord: string;
-	matrix: string;
-	displayParent: string;
-	nickname: string;
-	isIdentitySet: boolean;
-	isVerified: boolean;
-	isGood: boolean;
-	judgements: RegistrationJudgement[];
-	verifiedByPolkassembly: boolean;
-	parentProxyTitle: string | null;
 }
 
 const result: IIdentityInfo = {

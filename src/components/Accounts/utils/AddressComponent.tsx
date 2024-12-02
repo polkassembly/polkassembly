@@ -18,9 +18,10 @@ interface Props {
 	proxyType?: string;
 	isPureProxy?: boolean;
 	isMultisigAddress?: boolean;
+	linkedAddresses: Array<{ linked_address: string; type: string }>;
 }
 
-const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false }: Props) => {
+const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses }: Props) => {
 	const { network } = useNetworkSelector();
 	const [messageApi] = message.useMessage();
 	const success = () => {
@@ -107,6 +108,7 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 						address={address}
 						type={type}
 						isUsedInProxy={true}
+						linkedAddresses={linkedAddresses}
 					/>
 				</div>
 			</div>

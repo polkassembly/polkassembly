@@ -1,101 +1,91 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-/* eslint-disable sort-keys */
+import React, { useEffect, useState } from 'react';
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
-import React, { useEffect, useState } from 'react';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ProxyMain from '~src/components/createProxy';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 import { LinkProxyType } from '~src/types';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import Loader from '~src/ui-components/Loader';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: string; isUsedInProxy?: boolean; type: LinkProxyType | null }) => {
+const AddressActionDropdown = ({
+	address,
+	type,
+	linkedAddresses = [],
+	isUsedInProxy
+}: {
+	address: string;
+	type: LinkProxyType | null;
+	linkedAddresses: Array<{ linked_address: string; type: string }>;
+	isUsedInProxy?: boolean;
+}) => {
 	const { resolvedTheme: theme } = useTheme();
-	const currentUser = useUserDetailsSelector();
-	const { loginAddress } = currentUser;
+	const userDetails = useUserDetailsSelector();
+	const { loginAddress } = userDetails;
 	const [state, setState] = useState({
 		isDropdownActive: false,
-		openAddressLinkModal: false,
-		openAddressLinkedModal: false,
-		openSetIdentityModal: false,
-		openProxyModal: false,
+		isLinked: false,
 		loading: false,
-		isLinked: false
+		openProxyModal: false
 	});
 
-	const checkIfLinked = async () => {
-		setState((prevState) => ({ ...prevState, loading: true }));
-		try {
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/checkIsLinkedProxy', {
-				address: loginAddress,
-				type: type,
-				linked_address: address
-			});
-
-			if (error) {
-				throw new Error(error);
-			}
-			setState((prevState) => ({ ...prevState, isLinked: data?.linked, loading: false }));
-		} catch (error) {
-			console.error('Error checking link status:', error);
-			setState((prevState) => ({ ...prevState, loading: false }));
-		}
-	};
-
 	useEffect(() => {
-		if (loginAddress && address) {
-			checkIfLinked();
+		if (linkedAddresses && Array.isArray(linkedAddresses)) {
+			const linkedStatus = linkedAddresses.some((linked) => linked.linked_address === address && linked.type === type);
+			setState((prevState) => ({ ...prevState, isLinked: linkedStatus }));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, address]);
+	}, [address, type, linkedAddresses]);
 
 	const toggleLinkProxy = async () => {
-		if (!loginAddress || !address) return;
 		setState((prevState) => ({ ...prevState, loading: true }));
 
-		const endpoint = state.isLinked ? '/api/v1/accounts/unlinkProxy' : '/api/v1/accounts/addProxy';
-		const action = state.isLinked ? 'Unlinking...' : 'Linking...';
-
 		try {
-			const { data, error } = await nextApiClientFetch<any>(endpoint, {
+			const endpoint = state.isLinked ? '/api/v1/accounts/unlinkProxy' : '/api/v1/accounts/addProxy';
+
+			const { data, error } = await nextApiClientFetch(endpoint, {
 				address: loginAddress,
-				type: type,
-				linked_address: address
+				linked_address: address,
+				type
 			});
 
 			if (error) {
 				throw new Error(error);
 			}
+			//todo remove
+			console.log('data', data);
+
 			setState((prevState) => ({
 				...prevState,
 				isLinked: !state.isLinked,
 				loading: false
 			}));
-			console.log(action, data);
 		} catch (error) {
-			console.error(`Error in ${state.isLinked ? 'unlinking' : 'linking'} address:`, error);
 			setState((prevState) => ({ ...prevState, loading: false }));
 		}
 	};
 
 	const items: MenuProps['items'] = [
-		{
-			key: '1',
-			label: (
-				<div
-					onClick={!state.loading ? toggleLinkProxy : undefined}
-					className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
-				>
-					<span className={'text-sm text-blue-light-medium dark:text-blue-dark-medium'}>
-						{state.loading ? (state.isLinked ? 'Unlinking...' : 'Linking...') : state.isLinked ? 'Unlink Address' : 'Link Address'}
-					</span>
-				</div>
-			)
-		},
+		...(address !== loginAddress
+			? [
+					{
+						key: '1',
+						label: (
+							<div
+								onClick={!state.loading ? toggleLinkProxy : undefined}
+								className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
+							>
+								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>
+									{state.loading ? (state.isLinked ? 'Unlinking...' : 'Linking...') : state.isLinked ? 'Unlink Address' : 'Link Address'}
+								</span>
+							</div>
+						)
+					}
+			  ]
+			: []),
 		...(isUsedInProxy
 			? []
 			: [
@@ -106,7 +96,7 @@ const AddressActionDropdown = ({ address, isUsedInProxy, type }: { address: stri
 								onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
 								className='mt-1 flex items-center space-x-2'
 							>
-								<span className={'text-sm text-blue-light-medium dark:text-blue-dark-medium'}>Add Proxy</span>
+								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Add Proxy</span>
 							</div>
 						)
 					}

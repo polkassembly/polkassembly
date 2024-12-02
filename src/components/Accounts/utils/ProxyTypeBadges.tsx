@@ -54,9 +54,15 @@ const getStyles = (text: string) => {
 				bgColor: '#2060EB14',
 				borderColor: '#2060EB'
 			};
-		default:
+		case 'Any':
 			return {
 				displayText: 'ANY',
+				textColor: '#B8216F',
+				bgColor: '#B8216F14',
+				borderColor: '#B8216F'
+			};
+		default:
+			return {
 				textColor: '#B8216F',
 				bgColor: '#B8216F14',
 				borderColor: '#B8216F'
@@ -76,7 +82,7 @@ const ProxyTypeBadges: React.FC<ProxyTypeBadgesProps> = ({ text }) => {
 				borderColor: borderColor
 			}}
 		>
-			{displayText}
+			{displayText ? displayText : text.toUpperCase()}
 		</div>
 	);
 };

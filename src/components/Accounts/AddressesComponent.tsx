@@ -20,7 +20,62 @@ const AddressesComponent = () => {
 	const [accountData, setAccountData] = useState<IAccountData | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isError, setIsError] = useState<boolean>(false);
+	const [linkedAddresses, setLinkedAddresses] = useState<Array<{ linked_address: string; type: string }>>([]);
 	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
+
+	const gatherAddresses = (data: IAccountData) => {
+		const addresses: Array<{ linked_address: string; type: string }> = [];
+
+		// Signatories
+		data?.multisig?.multi_account_member?.forEach((signatory) => {
+			if (signatory?.address) {
+				addresses.push({ linked_address: signatory.address, type: 'SIGNATORY' });
+			}
+		});
+
+		// Proxy Details - Real Accounts
+		data?.proxy?.real_account?.forEach((realAccount) => {
+			if (realAccount?.account_display?.address) {
+				addresses.push({ linked_address: realAccount.account_display.address, type: 'PROXY' });
+			}
+		});
+
+		// Proxy Details - Proxy Accounts
+		data?.proxy?.proxy_account?.forEach((proxyAccount) => {
+			if (proxyAccount?.account_display?.address) {
+				addresses.push({ linked_address: proxyAccount.account_display.address, type: 'PUREPROXY' });
+			}
+		});
+
+		// Multisig Details
+		data?.multisig?.multi_account?.forEach((multisigAddress) => {
+			if (multisigAddress?.address) {
+				addresses.push({ linked_address: multisigAddress.address, type: 'MULTISIG' });
+			}
+		});
+
+		return addresses;
+	};
+
+	const fetchLinkedStatus = async (addresses: Array<{ linked_address: string; type: string }>) => {
+		if (!loginAddress) return;
+		try {
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/checkIsLinkedProxy', {
+				address: loginAddress,
+				linked_addresses: addresses
+			});
+
+			if (error || !data) {
+				console.error('Error fetching linked address status:', error);
+				return;
+			}
+			console.log('data', data);
+
+			setLinkedAddresses(data);
+		} catch (error) {
+			console.error('An error occurred while fetching linked addresses:', error);
+		}
+	};
 
 	const fetchData = async () => {
 		setIsLoading(true);
@@ -38,6 +93,10 @@ const AddressesComponent = () => {
 			if (data?.data?.account) {
 				setAccountData(data?.data?.account);
 				setIsError(false);
+
+				const addresses = gatherAddresses(data.data.account);
+
+				await fetchLinkedStatus(addresses);
 			}
 		} catch (err) {
 			console.error('An error occurred while fetching data:', err);
@@ -49,6 +108,7 @@ const AddressesComponent = () => {
 	};
 
 	useEffect(() => {
+		if (!loginAddress) return;
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress]);
@@ -114,9 +174,18 @@ const AddressesComponent = () => {
 								accountData={accountData}
 								loginAddress={loginAddress}
 							/>
-							<Signatories accountData={accountData} />
-							<ProxyDetails accountData={accountData} />
-							<MultisigDetails accountData={accountData} />
+							<Signatories
+								accountData={accountData}
+								linkedAddresses={linkedAddresses}
+							/>
+							<ProxyDetails
+								accountData={accountData}
+								linkedAddresses={linkedAddresses}
+							/>
+							<MultisigDetails
+								accountData={accountData}
+								linkedAddresses={linkedAddresses}
+							/>
 						</div>
 					)}
 				</Spin>

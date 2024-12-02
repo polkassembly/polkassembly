@@ -11,6 +11,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
 	storeApiKeyUsage(req);
+
 	try {
 		if (req.method !== 'POST') {
 			return res.status(405).json({ error: 'Method not allowed' });
@@ -26,27 +27,39 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			return res.status(401).json({ error: 'User not found' });
 		}
 
-		const { address, linked_address, type } = req.body;
-		if (!address || !linked_address || !type) {
-			return res.status(400).json({ error: 'Missing required fields' });
+		const { address, linked_addresses } = req.body;
+
+		if (!address || !Array.isArray(linked_addresses) || linked_addresses.length === 0) {
+			return res.status(400).json({ error: 'Missing required fields or invalid data' });
 		}
 
-		const documentId = `${address}_${type}_${user.id}`;
-		const docRef = firestore_db.collection('proxies').doc(documentId);
-		const docSnapshot = await docRef.get();
+		const response = [];
+		for (const { linked_address, type } of linked_addresses) {
+			if (!linked_address || !type) {
+				response.push({ linked_address, is_linked: false });
+				continue;
+			}
 
-		if (!docSnapshot.exists) {
-			return res.status(200).json({ message: 'Address is not linked', linked: false });
+			const documentId = `${address}_${type}_${user.id}`;
+			const docRef = firestore_db.collection('proxies').doc(documentId);
+			const docSnapshot = await docRef.get();
+
+			if (!docSnapshot.exists) {
+				response.push({ linked_address, is_linked: false });
+				continue;
+			}
+
+			const data = docSnapshot.data();
+			const existingLinkedAddresses = data?.linked_address || [];
+
+			if (existingLinkedAddresses.includes(linked_address)) {
+				response.push({ linked_address, is_linked: true });
+			} else {
+				response.push({ linked_address, is_linked: false });
+			}
 		}
 
-		const data = docSnapshot.data();
-		const linkedAddresses = data?.linked_address || [];
-
-		if (linkedAddresses.includes(linked_address)) {
-			return res.status(200).json({ message: 'Address is linked', linked: true });
-		} else {
-			return res.status(200).json({ message: 'Address is not linked', linked: false });
-		}
+		return res.status(200).json({ data: response });
 	} catch (error) {
 		console.error('Error checking address linkage:', error);
 		return res.status(500).json({ error: 'Internal Server Error' });

@@ -8,9 +8,10 @@ import { dmSans } from 'pages/_app';
 
 interface Props {
 	accountData: IAccountData;
+	linkedAddresses?: Array<{ linked_address: string; type: string }>;
 }
 
-const Signatories: React.FC<Props> = ({ accountData }) => {
+const Signatories: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 	if (!accountData?.multisig?.multi_account_member?.length) return null;
 
 	return (
@@ -18,14 +19,16 @@ const Signatories: React.FC<Props> = ({ accountData }) => {
 			className={`${dmSans.className} ${dmSans.variable} mt-5 w-full rounded-[14px] border border-solid border-[#F6F8FA] bg-[#F6F8FA] p-2 dark:border-separatorDark dark:bg-section-dark-background lg:p-4`}
 		>
 			<h3 className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Signatories</h3>
-			{accountData?.multisig?.multi_account_member.map((signatories, index) => (
-				<div key={index}>
-					<AddressComponent
-						address={signatories?.address}
-						isMultisigAddress={true}
-					/>
-				</div>
-			))}
+			{linkedAddresses &&
+				accountData?.multisig?.multi_account_member.map((signatories, index) => (
+					<div key={index}>
+						<AddressComponent
+							address={signatories?.address}
+							isMultisigAddress={true}
+							linkedAddresses={linkedAddresses}
+						/>
+					</div>
+				))}
 		</div>
 	);
 };

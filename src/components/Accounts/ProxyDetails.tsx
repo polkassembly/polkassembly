@@ -8,9 +8,10 @@ import AddressComponent from './utils/AddressComponent';
 
 interface Props {
 	accountData: IAccountData;
+	linkedAddresses?: Array<{ linked_address: string; type: string }>;
 }
 
-const ProxyDetails: React.FC<Props> = ({ accountData }) => {
+const ProxyDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 	if (!accountData?.proxy) return null;
 
 	return (
@@ -22,24 +23,27 @@ const ProxyDetails: React.FC<Props> = ({ accountData }) => {
 					<h3 className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Proxy</h3>
 					<div className='flex w-full flex-col '>
 						<div>
-							{accountData?.proxy?.real_account.map((realAccount, index) => (
-								<div key={index}>
-									<AddressComponent
-										address={realAccount?.account_display?.address}
-										proxyType={realAccount?.proxy_type}
-										isPureProxy={true}
-									/>
-								</div>
-							))}
+							{linkedAddresses &&
+								accountData?.proxy?.real_account.map((realAccount, index) => (
+									<div key={index}>
+										<AddressComponent
+											address={realAccount?.account_display?.address}
+											proxyType={realAccount?.proxy_type}
+											isPureProxy={true}
+											linkedAddresses={linkedAddresses}
+										/>
+									</div>
+								))}
 						</div>
 
-						{accountData?.proxy?.proxy_account?.length > 0 && (
+						{linkedAddresses && accountData?.proxy?.proxy_account?.length > 0 && (
 							<div>
 								{accountData.proxy.proxy_account.map((proxyAccount, index) => (
 									<div key={index}>
 										<AddressComponent
 											address={proxyAccount?.account_display?.address}
 											proxyType={proxyAccount?.proxy_type}
+											linkedAddresses={linkedAddresses}
 										/>
 									</div>
 								))}

@@ -19,7 +19,7 @@ import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { message, Space } from 'antd';
+import { Divider, message, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -86,6 +86,19 @@ const shortenUsername = (username: string, usernameMaxLength?: number) => {
 		return shortenAddress(username, usernameMaxLength || 8);
 	}
 	return username;
+};
+
+const ParentProxyTitle = ({ className, title }: { className?: string; title: string | null }) => {
+	if (!title?.length) return null;
+	return (
+		<div className={classNames(className, 'flex items-center gap-1')}>
+			<Divider
+				type='vertical'
+				className='border-[1px] bg-lightBlue dark:bg-separatorDark'
+			/>
+			<span className='font-medium text-[#407BFF]'>{title}</span>
+		</div>
+	);
 };
 
 const Address = (props: Props) => {
@@ -400,7 +413,13 @@ const Address = (props: Props) => {
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 										</div>
 									</div>
-									{!!identity?.parentProxyTitle && <div className='ml-1 text-[10px] font-normal text-bodyBlue  dark:text-blue-dark-high '> / {identity?.parentProxyTitle}</div>}
+									{/* proxy parent title */}
+									{!!identity?.parentProxyTitle && (
+										<ParentProxyTitle
+											title={identity?.parentProxyTitle}
+											className='ml-1 text-xs font-normal'
+										/>
+									)}
 								</div>
 							) : !!extensionName || !!mainDisplay ? (
 								<div className='ml-0.5 font-semibold text-bodyBlue'>
@@ -437,8 +456,12 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										{/* proxy parent title */}
 										{addressWithVerifiedTick && !!identity?.parentProxyTitle && (
-											<div className='text-sm font-normal text-lightBlue dark:text-icon-dark-inactive'> / {identity?.parentProxyTitle}</div>
+											<ParentProxyTitle
+												title={identity?.parentProxyTitle}
+												className='ml-1 text-xs font-normal'
+											/>
 										)}
 
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
@@ -524,7 +547,13 @@ const Address = (props: Props) => {
 									</span>
 								)}
 							</div>
-							{!!identity?.parentProxyTitle && <div className='text-sm font-normal text-lightBlue dark:text-icon-dark-inactive'>/ {identity?.parentProxyTitle}</div>}
+							{/* proxy parent title */}
+							{!!identity?.parentProxyTitle && (
+								<ParentProxyTitle
+									title={identity?.parentProxyTitle}
+									className='ml-1 text-sm font-normal'
+								/>
+							)}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (

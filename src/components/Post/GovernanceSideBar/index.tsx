@@ -415,7 +415,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 		setCurvesLoading(true);
 
-		const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+		const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks?.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 		if (tracks && Array.isArray(tracks)) {
 			const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
 			if (track) {
@@ -1012,7 +1012,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						)}
 
 						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
-							!postData?.progress_report?.[0]?.progress_file &&
+							Object.keys(postData?.progress_report || {}).length === 0 &&
 							id !== postData?.userId && (
 								<Alert
 									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

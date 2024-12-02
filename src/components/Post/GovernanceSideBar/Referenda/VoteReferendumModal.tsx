@@ -84,7 +84,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
 			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
-			const num = res.toJSON();
+			const num = res?.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !Number.isNaN(Number(days))) {
 				return [
@@ -275,12 +275,12 @@ const VoteReferendumModal = ({
 			return;
 		}
 		//deposit balance
-		const depositBase = api.consts.multisig.depositBase.toString();
-		const depositFactor = api.consts.multisig.depositFactor.toString();
+		const depositBase = api?.consts?.multisig?.depositBase.toString();
+		const depositFactor = api?.consts?.multisig?.depositFactor.toString();
 		setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 		//initiator balance
-		const initiatorBalance = await api.query.system.account(address);
-		setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		const initiatorBalance = await api?.query?.system?.account(address);
+		setInitiatorBalance(new BN(initiatorBalance?.data?.free.toString()));
 	}, [address, api, apiReady]);
 
 	const handleBalanceErr = useCallback(() => {

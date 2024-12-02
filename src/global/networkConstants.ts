@@ -2003,7 +2003,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://mythos.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: [
 			{

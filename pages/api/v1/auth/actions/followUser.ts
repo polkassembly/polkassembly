@@ -18,18 +18,27 @@ import { IFollowEntry } from '~src/types';
 async function updateFollowCounts(userId: number, targetUserId: number, network: string) {
 	const userRef = firestore_db.collection('users').doc(String(userId));
 	const targetUserRef = firestore_db.collection('users').doc(String(targetUserId));
-
 	const userDoc = await userRef.get();
 	const targetUserDoc = await targetUserRef.get();
-	if (!userDoc.exists || !targetUserDoc.exists) throw new Error('User document not found');
-	await Promise.all([
-		userRef.update({
-			[`followings_count.${network}`]: Math.max((userDoc.data()?.followings_count?.[network] || 0) + 1, 0)
-		}),
-		targetUserRef.update({
-			[`followers_count.${network}`]: Math.max((targetUserDoc.data()?.followers_count?.[network] || 0) + 1, 0)
-		})
-	]);
+	if (!userDoc.exists || !targetUserDoc.exists) {
+		throw new Error('User document not found');
+	}
+
+	const batch = firestore_db.batch();
+
+	batch.update(userRef, {
+		[`followings_count.${network}`]: Math.max((userDoc.data()?.followings_count?.[network] || 0) + 1, 0)
+	});
+	batch.update(targetUserRef, {
+		[`followers_count.${network}`]: Math.max((targetUserDoc.data()?.followers_count?.[network] || 0) + 1, 0)
+	});
+
+	try {
+		await batch.commit();
+	} catch (error) {
+		console.error('Error committing batch:', error);
+		throw new Error('Failed to update follow counts');
+	}
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {

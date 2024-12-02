@@ -17,19 +17,28 @@ import { firestore_db } from '~src/services/firebaseInit';
 async function updateUnfollowCounts(userId: number, targetUserId: number, network: string) {
 	const userRef = firestore_db.collection('users').doc(String(userId));
 	const targetUserRef = firestore_db.collection('users').doc(String(targetUserId));
+	const userDoc = await userRef.get();
+	const targetUserDoc = await targetUserRef.get();
 
-	const [userDoc, targetUserDoc] = await Promise.all([userRef.get(), targetUserRef.get()]);
+	if (!userDoc.exists || !targetUserDoc.exists) {
+		throw new Error('User document not found');
+	}
 
-	if (!userDoc.exists || !targetUserDoc.exists) throw new Error('User document not found');
+	const batch = firestore_db.batch();
+	batch.update(userRef, {
+		[`followings_count.${network}`]: Math.max((userDoc.data()?.followings_count?.[network] || 1) - 1, 0)
+	});
+	batch.update(targetUserRef, {
+		[`followers_count.${network}`]: Math.max((targetUserDoc.data()?.followers_count?.[network] || 1) - 1, 0)
+	});
 
-	await Promise.all([
-		userRef.update({
-			[`followings_count.${network}`]: Math.max((userDoc.data()?.following?.[network] || 1) - 1, 0)
-		}),
-		targetUserRef.update({
-			[`followers_count.${network}`]: Math.max((targetUserDoc.data()?.followers?.[network] || 1) - 1, 0)
-		})
-	]);
+	try {
+		await batch.commit();
+		console.log('Batch update successful');
+	} catch (error) {
+		console.error('Error committing batch:', error);
+		throw new Error('Failed to update unfollow counts');
+	}
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {

@@ -1114,4 +1114,5 @@ export interface IIdentityInfo {
 	judgements: RegistrationJudgement[];
 	verifiedByPolkassembly: boolean;
 	parentProxyTitle: string | null;
+	parentProxyAddress: string;
 }

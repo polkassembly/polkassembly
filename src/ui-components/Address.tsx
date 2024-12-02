@@ -91,13 +91,23 @@ const shortenUsername = (username: string, usernameMaxLength?: number) => {
 const ParentProxyTitle = ({ className, title }: { className?: string; title: string | null }) => {
 	if (!title?.length) return null;
 	return (
-		<div className={classNames(className, 'flex items-center gap-1')}>
-			<Divider
-				type='vertical'
-				className='border-[1px] bg-lightBlue dark:bg-separatorDark'
-			/>
-			<span className='font-medium text-[#407BFF]'>{title}</span>
-		</div>
+		<Tooltip title={<div className='text-xs'>Sub Account: The on-chain identity is obtained from the parent account.</div>}>
+			<div className={classNames(className, 'flex items-center gap-0.5')}>
+				<Divider
+					type='vertical'
+					className='border-[1px] bg-lightBlue dark:bg-separatorDark'
+				/>
+				<span className='font-medium text-[#407BFF]'>{title}</span>
+				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
+					<Image
+						src={'/assets/icons/proxy-icon.svg'}
+						height={14}
+						width={14}
+						alt=''
+					/>
+				</span>
+			</div>
+		</Tooltip>
 	);
 };
 
@@ -340,7 +350,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<>
+		<div className='flex items-center'>
 			<Tooltip
 				arrow
 				color='#fff'
@@ -386,7 +396,7 @@ const Address = (props: Props) => {
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
-								<div className='inline-address flex flex-shrink-0 items-center'>
+								<div className='inline-address flex items-center'>
 									{!!kiltName ||
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
@@ -413,13 +423,13 @@ const Address = (props: Props) => {
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 										</div>
 									</div>
-									{/* proxy parent title */}
+									{/* proxy parent title
 									{!!identity?.parentProxyTitle && (
 										<ParentProxyTitle
 											title={identity?.parentProxyTitle}
-											className='ml-1 text-xs font-normal'
+											className='text-xs font-normal'
 										/>
-									)}
+									)} */}
 								</div>
 							) : !!extensionName || !!mainDisplay ? (
 								<div className='ml-0.5 font-semibold text-bodyBlue'>
@@ -456,13 +466,13 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-										{/* proxy parent title */}
+										{/* proxy parent title
 										{addressWithVerifiedTick && !!identity?.parentProxyTitle && (
 											<ParentProxyTitle
 												title={identity?.parentProxyTitle}
-												className='ml-1 text-xs font-normal'
+												className='text-xs font-normal'
 											/>
-										)}
+										)} */}
 
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
@@ -547,13 +557,13 @@ const Address = (props: Props) => {
 									</span>
 								)}
 							</div>
-							{/* proxy parent title */}
+							{/* proxy parent title
 							{!!identity?.parentProxyTitle && (
 								<ParentProxyTitle
 									title={identity?.parentProxyTitle}
-									className='ml-1 text-sm font-normal'
+									className='text-sm font-normal'
 								/>
-							)}
+							)} */}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
@@ -588,6 +598,13 @@ const Address = (props: Props) => {
 					) : null}
 				</div>
 			</Tooltip>
+			{/* proxy parent title */}
+			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && (
+				<ParentProxyTitle
+					title={identity?.parentProxyTitle}
+					className={`${isProfileView ? 'text-sm' : 'text-xs'} font-normal`}
+				/>
+			)}
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
 					username={addressPrefix}
@@ -599,7 +616,7 @@ const Address = (props: Props) => {
 					openAddressChangeModal={openAddressChangeModal}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 

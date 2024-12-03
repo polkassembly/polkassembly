@@ -60,7 +60,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 	}
 
-	if (chatData?.chatInitiatedBy === userSubstrateAddresses[0]) {
+	if (chatData?.chatInitiatedBy === userSubstrateAddresses?.[0]) {
 		return res.status(403).json({ message: "You don't have permission to update this request's status." });
 	}
 

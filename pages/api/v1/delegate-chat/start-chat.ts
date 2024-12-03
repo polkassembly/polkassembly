@@ -86,6 +86,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 				created_at: new Date(),
 				latestMessage: newMessage,
 				participants: [receiverSubstrateAddress, senderSubstrateAddress],
+				recipientProfile: {
+					address: receiverAddress
+				},
 				requestStatus: EChatRequestStatus.PENDING,
 				updated_at: new Date()
 			};

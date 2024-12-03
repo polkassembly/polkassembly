@@ -20,7 +20,7 @@ const AddressActionDropdown = ({
 }: {
 	address: string;
 	type: LinkProxyType | null;
-	linkedAddresses: Array<{ linked_address: string; type: string }>;
+	linkedAddresses?: Array<{ linked_address: string; type: string }>;
 	isUsedInProxy?: boolean;
 }) => {
 	const { resolvedTheme: theme } = useTheme();

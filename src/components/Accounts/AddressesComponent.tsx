@@ -69,8 +69,6 @@ const AddressesComponent = () => {
 				console.error('Error fetching linked address status:', error);
 				return;
 			}
-			console.log('data', data);
-
 			setLinkedAddresses(data);
 		} catch (error) {
 			console.error('An error occurred while fetching linked addresses:', error);

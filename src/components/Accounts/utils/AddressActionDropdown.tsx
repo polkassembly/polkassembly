@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
@@ -28,23 +28,19 @@ const AddressActionDropdown = ({
 	const { loginAddress } = userDetails;
 	const [state, setState] = useState({
 		isDropdownActive: false,
-		isLinked: false,
 		loading: false,
 		openProxyModal: false
 	});
 
-	useEffect(() => {
-		if (linkedAddresses && Array.isArray(linkedAddresses)) {
-			const linkedStatus = linkedAddresses.some((linked) => linked.linked_address === address && linked.type === type);
-			setState((prevState) => ({ ...prevState, isLinked: linkedStatus }));
-		}
+	const isLinked = useMemo(() => {
+		return Array.isArray(linkedAddresses) && linkedAddresses.some((linked) => linked.linked_address === address && linked.type === type);
 	}, [address, type, linkedAddresses]);
 
 	const toggleLinkProxy = async () => {
 		setState((prevState) => ({ ...prevState, loading: true }));
 
 		try {
-			const endpoint = state.isLinked ? '/api/v1/accounts/unlinkProxy' : '/api/v1/accounts/addProxy';
+			const endpoint = isLinked ? '/api/v1/accounts/unlinkProxy' : '/api/v1/accounts/addProxy';
 
 			const { data, error } = await nextApiClientFetch(endpoint, {
 				address: loginAddress,
@@ -59,11 +55,11 @@ const AddressActionDropdown = ({
 			if (data) {
 				setState((prevState) => ({
 					...prevState,
-					isLinked: !state.isLinked,
 					loading: false
 				}));
 			}
 		} catch (error) {
+			console.error('Error toggling link proxy:', error);
 			setState((prevState) => ({ ...prevState, loading: false }));
 		}
 	};
@@ -79,7 +75,7 @@ const AddressActionDropdown = ({
 								className={`mt-1 flex items-center space-x-2 ${state.loading ? 'cursor-not-allowed opacity-50' : ''}`}
 							>
 								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>
-									{state.loading ? (state.isLinked ? 'Unlinking...' : 'Linking...') : state.isLinked ? 'Unlink Address' : 'Link Address'}
+									{state.loading ? (isLinked ? 'Unlinking...' : 'Linking...') : isLinked ? 'Unlink Address' : 'Link Address'}
 								</span>
 							</div>
 						)

@@ -34,9 +34,7 @@ const ChatCard = ({ chat }: Props) => {
 	const isRejectedRequest = chat.requestStatus === EChatRequestStatus.REJECTED;
 	const isPendingRequest = chat.requestStatus === EChatRequestStatus.PENDING;
 
-	const recipientAddress = latestMessage?.receiverAddress === substrateAddress ? latestMessage?.senderAddress : latestMessage?.receiverAddress;
-
-	const renderUsername = shortenAddress(recipientAddress || '');
+	const renderUsername = chat.recipientProfile?.username || shortenAddress(chat.recipientProfile?.address || '');
 
 	const handleReadChat = async () => {
 		if (isReadMessage) {
@@ -69,23 +67,33 @@ const ChatCard = ({ chat }: Props) => {
 		);
 	};
 	const renderUserImage = useMemo(() => {
-		if (recipientAddress?.startsWith('0x')) {
+		if (chat?.recipientProfile?.image) {
+			return (
+				<Image
+					src={chat.recipientProfile.image}
+					alt='user image'
+					width={32}
+					height={32}
+					className='overflow-hidden rounded-full'
+				/>
+			);
+		} else if (chat?.recipientProfile?.address?.startsWith('0x')) {
 			return (
 				<EthIdenticon
 					size={32}
-					address={recipientAddress || ''}
+					address={chat.recipientProfile?.address || ''}
 				/>
 			);
 		} else {
 			return (
 				<Identicon
-					value={recipientAddress || ''}
+					value={chat?.recipientProfile?.address || ''}
 					size={32}
 					theme={'polkadot'}
 				/>
 			);
 		}
-	}, [recipientAddress]);
+	}, [chat.recipientProfile]);
 
 	return (
 		<Card

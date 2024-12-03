@@ -35,7 +35,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 	const userSubstrateAddresses = userAddresses.map((addr) => getSubstrateAddress(addr.address)).filter(Boolean);
 	if (!userSubstrateAddresses.length) return res.status(400).json({ message: 'No valid substrate addresses found for user' });
 
-	const { senderAddress, receiverAddress, content, senderImage, senderUsername } = req.body;
+	const { senderAddress, receiverAddress, content } = req.body;
 
 	if (!senderAddress || !receiverAddress || !content) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
@@ -76,8 +76,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChat | Message
 				id: messageId,
 				receiverAddress: receiverSubstrateAddress,
 				senderAddress: senderSubstrateAddress,
-				senderImage,
-				senderUsername,
 				updated_at: new Date(),
 				viewed_by: [senderSubstrateAddress]
 			};

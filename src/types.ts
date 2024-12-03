@@ -1134,6 +1134,11 @@ export interface IChat {
 	updated_at: Date;
 	requestStatus: EChatRequestStatus;
 	latestMessage: IMessage;
+	recipientProfile?: {
+		username: string;
+		address: string;
+		image: string;
+	} | null;
 }
 
 export interface IChatsResponse {

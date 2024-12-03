@@ -74,7 +74,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 	const validationResult = validateRequest(req);
 	if ('error' in validationResult) return res.status(400).json({ message: validationResult?.error ?? messages.INVALID_PARAMS });
 
-	const { senderAddress, receiverAddress, content, chatId, senderImage, senderUsername } = req.body;
+	const { senderAddress, receiverAddress, content, chatId } = req.body;
 
 	const participantValidation = await validateParticipants(network, senderAddress, receiverAddress, user?.id);
 	if ('error' in participantValidation) return res.status(400).json({ message: participantValidation.error });
@@ -100,8 +100,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 		created_at: new Date(),
 		receiverAddress: receiverSubstrateAddress,
 		senderAddress: senderSubstrateAddress,
-		senderImage,
-		senderUsername,
 		updated_at: new Date(),
 		viewed_by: [senderSubstrateAddress]
 	};

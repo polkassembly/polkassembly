@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Spin, Card, Button, Input } from 'antd';
+import { Spin, Card, Button, Input, Image } from 'antd';
 import React, { useEffect, useState, useMemo } from 'react';
 import { EChatRequestStatus, IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -29,7 +29,7 @@ interface Props {
 const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
-	const { delegationDashboardAddress, loginAddress, picture, username } = userProfile;
+	const { delegationDashboardAddress, loginAddress } = userProfile;
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
@@ -41,12 +41,36 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 
 	const isRequestSent = chat?.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
-	const chatRecipientAddress = useMemo(() => {
-		if (isNewChat) return recipientAddress;
-		if (!chat?.participants) return '';
+	const chatRecipientAddress = isNewChat ? recipientAddress : chat?.recipientProfile?.address;
 
-		return chat.participants.find((addr) => getSubstrateAddress(addr) !== substrateAddress) || '';
-	}, [chat?.participants, isNewChat, recipientAddress, substrateAddress]);
+	const renderUserImage = useMemo(() => {
+		if (chat?.recipientProfile?.image) {
+			return (
+				<Image
+					src={chat.recipientProfile.image}
+					alt='user image'
+					width={32}
+					height={32}
+					className='overflow-hidden rounded-full'
+				/>
+			);
+		} else if (chatRecipientAddress?.startsWith('0x')) {
+			return (
+				<EthIdenticon
+					size={32}
+					address={chatRecipientAddress || ''}
+				/>
+			);
+		} else {
+			return (
+				<Identicon
+					value={chatRecipientAddress || ''}
+					size={32}
+					theme={'polkadot'}
+				/>
+			);
+		}
+	}, [chatRecipientAddress, chat?.recipientProfile]);
 
 	const handleDataFetch = async () => {
 		if (isNewChat) return;
@@ -75,9 +99,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 			const requestData = {
 				content: trimmedMsg,
 				receiverAddress: recipientAddress,
-				senderAddress: substrateAddress,
-				senderImage: picture,
-				senderUsername: username
+				senderAddress: substrateAddress
 			};
 
 			const { data: newChat, error } = await nextApiClientFetch<IChat>('api/v1/delegate-chat/start-chat', requestData);
@@ -100,9 +122,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 				chatId,
 				content: trimmedMsg,
 				receiverAddress: chatRecipientAddress,
-				senderAddress: address,
-				senderImage: picture,
-				senderUsername: username
+				senderAddress: address
 			};
 
 			const { data, error } = await nextApiClientFetch<IMessage>('api/v1/delegate-chat/send-message', requestData);
@@ -148,19 +168,8 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 				bodyStyle={{ alignItems: 'center', display: 'flex', gap: '0.5rem', width: '100%' }}
 				size='small'
 			>
-				{chatRecipientAddress?.startsWith('0x') ? (
-					<EthIdenticon
-						size={32}
-						address={chatRecipientAddress}
-					/>
-				) : (
-					<Identicon
-						value={chatRecipientAddress}
-						size={32}
-						theme={'polkadot'}
-					/>
-				)}
-				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{shortenAddress(chatRecipientAddress || '', 5)}</span>
+				{renderUserImage}
+				<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{chat?.recipientProfile?.username || shortenAddress(chatRecipientAddress || '', 5)}</span>
 			</Card>
 			<Spin
 				spinning={loading}

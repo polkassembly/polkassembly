@@ -14,6 +14,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatCollRef, chatMessagesRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
+import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse | MessageType>) {
 	storeApiKeyUsage(req);
@@ -44,6 +45,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 				docs.map(async (doc) => {
 					const data = doc?.data();
 
+					const recipientAddress = data.participants.find((addr: string) => !userSubstrateAddresses.includes(addr));
+
+					// Fetch recipient profile using existing function
+					const { data: recipientProfile } = await getProfileWithAddress({ address: recipientAddress });
+
 					// Fetch the latest message for each chat
 					const chatMessagesSnapshot = await chatMessagesRef(data.chatId).orderBy('created_at', 'desc').limit(1).get();
 
@@ -59,6 +65,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChatsResponse 
 							updated_at: latestMessage?.updated_at?.toDate()
 						} as IMessage,
 						participants: data.participants,
+						recipientProfile: {
+							address: recipientAddress,
+							image: recipientProfile?.profile?.image || '',
+							username: recipientProfile?.username || ''
+						},
 						requestStatus: data.requestStatus,
 						updated_at: data.updated_at?.toDate()
 					};

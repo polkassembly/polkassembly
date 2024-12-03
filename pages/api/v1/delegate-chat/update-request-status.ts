@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { IMessage, IDelegateAddressDetails } from '~src/types';
+import { IMessage, IDelegateAddressDetails, EChatRequestStatus } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -33,6 +33,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	const { address, requestStatus, chatId } = req.body;
 
 	if (!requestStatus || !chatId || !chatId.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+
+	if (!Object.values(EChatRequestStatus).includes(requestStatus)) {
+		return res.status(400).json({ message: 'Invalid request status. Must be one of: PENDING, APPROVED, REJECTED' });
+	}
 	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
 	const substrateAddress = getSubstrateAddress(address);

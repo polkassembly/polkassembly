@@ -143,6 +143,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
 					status: NotificationStatus.ERROR
 				});
+				setApiReady(true);
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');

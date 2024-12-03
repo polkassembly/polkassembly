@@ -1141,8 +1141,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
-					<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Delegation</span>
-					<span>Delegation</span>
+					<span className={`${dmSans.className} ${dmSans.variable} text-sm font-medium text-lightBlue dark:text-icon-dark-inactive`}>Delegation</span>
 				</div>,
 				'/delegation',
 				<div className='-ml-2 mt-1'>

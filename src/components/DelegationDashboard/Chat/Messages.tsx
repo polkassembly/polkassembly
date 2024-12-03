@@ -6,7 +6,7 @@ import { Spin, Card, Button, Input, Image } from 'antd';
 import React, { useEffect, useState, useMemo } from 'react';
 import { EChatRequestStatus, IChat, IMessage, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useChatsSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Identicon from '@polkadot/react-identicon';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
@@ -30,6 +30,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
+	const { requests, messages: filteredMessages } = useChatsSelector();
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
@@ -96,6 +97,18 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 		}
 
 		if (isNewChat && recipientAddress) {
+			const existingChat = [...requests, ...filteredMessages].find((chat) => chat.participants.includes(recipientAddress) && chat.participants.includes(String(substrateAddress)));
+
+			if (existingChat) {
+				queueNotification({
+					header: 'Error!',
+					message: 'A chat with this delegate already exists',
+					status: NotificationStatus.ERROR
+				});
+				setLoading(false);
+				return;
+			}
+
 			const requestData = {
 				content: trimmedMsg,
 				receiverAddress: recipientAddress,

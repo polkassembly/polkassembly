@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { IMessage, IDelegateAddressDetails } from '~src/types';
+import { IMessage, IDelegateAddressDetails, EChatRequestStatus } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
@@ -91,6 +91,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 
 	if (!chatData?.participants?.includes(senderSubstrateAddress)) {
 		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
+	}
+
+	if (chatData?.requestStatus === EChatRequestStatus.PENDING) {
+		return res.status(400).json({ message: 'Cannot send message while request is pending' });
 	}
 
 	const messageSnapshot = chatMessagesRef(chatId);

@@ -40,9 +40,11 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 			}
 			setIsNewChat(false);
 			dispatch(chatsActions.setOpenChat({ chat, isOpen: true }));
+			dispatch(chatsActions.setTempRecipient(null));
 		} else {
 			dispatch(chatsActions.setOpenChat({ chat: null, isOpen: false }));
 			setIsNewChat(false);
+			dispatch(chatsActions.setTempRecipient(null));
 		}
 	};
 

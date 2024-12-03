@@ -55,14 +55,14 @@ const AddressActionDropdown = ({
 			if (error) {
 				throw new Error(error);
 			}
-			//todo remove
-			console.log('data', data);
 
-			setState((prevState) => ({
-				...prevState,
-				isLinked: !state.isLinked,
-				loading: false
-			}));
+			if (data) {
+				setState((prevState) => ({
+					...prevState,
+					isLinked: !state.isLinked,
+					loading: false
+				}));
+			}
 		} catch (error) {
 			setState((prevState) => ({ ...prevState, loading: false }));
 		}

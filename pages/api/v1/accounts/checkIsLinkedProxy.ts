@@ -33,31 +33,33 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 			return res.status(400).json({ error: 'Missing required fields or invalid data' });
 		}
 
-		const response = [];
-		for (const { linked_address, type } of linked_addresses) {
-			if (!linked_address || !type) {
-				response.push({ linked_address, is_linked: false });
-				continue;
-			}
+		const response: { linked_address: string; is_linked: boolean }[] = [];
+		await Promise.all(
+			linked_addresses.map(async ({ linked_address, type }) => {
+				if (!linked_address || !type) {
+					response.push({ linked_address, is_linked: false });
+					return;
+				}
 
-			const documentId = `${address}_${type}_${user.id}`;
-			const docRef = firestore_db.collection('proxies').doc(documentId);
-			const docSnapshot = await docRef.get();
+				const documentId = `${address}_${type}_${user.id}`;
+				const docRef = firestore_db.collection('proxies').doc(documentId);
+				const docSnapshot = await docRef.get();
 
-			if (!docSnapshot.exists) {
-				response.push({ linked_address, is_linked: false });
-				continue;
-			}
+				if (!docSnapshot.exists) {
+					response.push({ linked_address, is_linked: false });
+					return;
+				}
 
-			const data = docSnapshot.data();
-			const existingLinkedAddresses = data?.linked_address || [];
+				const data = docSnapshot.data();
+				const existingLinkedAddresses = data?.linked_address || [];
 
-			if (existingLinkedAddresses.includes(linked_address)) {
-				response.push({ linked_address, is_linked: true });
-			} else {
-				response.push({ linked_address, is_linked: false });
-			}
-		}
+				if (existingLinkedAddresses.includes(linked_address)) {
+					response.push({ linked_address, is_linked: true });
+				} else {
+					response.push({ linked_address, is_linked: false });
+				}
+			})
+		);
 
 		return res.status(200).json({ data: response });
 	} catch (error) {

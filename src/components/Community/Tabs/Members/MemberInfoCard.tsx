@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BadgeName, User } from '~src/auth/types';
@@ -40,9 +40,12 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+
 	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, user?.id));
 
 	const [messageApi, contextHolder] = message.useMessage();
+
+	console.log('user', user);
 
 	const handleDelegationContent = (content: string) => {
 		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
@@ -325,7 +328,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', poppins?.className, poppins?.variable)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', dmSans?.className, dmSans?.variable)}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -366,7 +369,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 					</div>
 
 					<div
-						className={`${poppins?.variable} ${poppins?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${dmSans?.variable} ${dmSans?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
 						<p className='w-full sm:w-[90%]'>
 							{user?.profile?.bio ? (

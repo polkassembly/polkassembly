@@ -793,7 +793,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							}  w-5 rounded-lg px-[5px] py-1 text-center font-dmSans text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
+							}  font-dmSans w-5 rounded-lg px-[5px] py-1 text-center text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount > 9 ? (
 								<>
@@ -1185,7 +1185,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Community</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
+					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/network-community',
 				<div className='relative -ml-2'>

@@ -16,7 +16,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ECuratorsSortFilters, EDelegationAddressFilters, EDelegationSourceFilters, EExpertsSortFilters, EMembersSortFilters, IDelegateAddressDetails } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { BN } from 'bn.js';
@@ -349,8 +349,8 @@ const Community = () => {
 						<span
 							className={classNames(
 								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins?.className,
-								poppins?.variable
+								dmSans?.className,
+								dmSans?.variable
 							)}
 							onClick={() => {
 								setSelectedSources([]);
@@ -363,7 +363,7 @@ const Community = () => {
 					<Radio.Group
 						onChange={(e) => handleCheckboxChange([e?.target?.value])}
 						value={selectedSources[0] || null}
-						className={classNames('mt-1 flex flex-col', poppins?.className, poppins?.variable)}
+						className={classNames('mt-1 flex flex-col', dmSans?.className, dmSans?.variable)}
 						disabled={loading}
 					>
 						<div className='flex flex-col gap-1'>
@@ -371,7 +371,7 @@ const Community = () => {
 								return (
 									<div
 										key={index}
-										className={`${poppins?.variable} ${poppins?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
+										className={`${dmSans?.variable} ${dmSans?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
 									>
 										<Radio
 											checked={selectedSources?.includes(source)}
@@ -404,8 +404,8 @@ const Community = () => {
 						<span
 							className={classNames(
 								'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-								poppins?.className,
-								poppins?.variable
+								dmSans?.className,
+								dmSans?.variable
 							)}
 							onClick={() => {
 								setSelectedSources([]);
@@ -418,14 +418,14 @@ const Community = () => {
 					<Radio.Group
 						onChange={(e) => handleCheckboxChange([e?.target?.value])}
 						value={selectedSources[0] || null}
-						className={classNames('mt-1 flex flex-col', poppins?.className, poppins?.variable)}
+						className={classNames('mt-1 flex flex-col', dmSans?.className, dmSans?.variable)}
 						disabled={loading}
 					>
 						<div className='flex flex-col gap-1'>
 							{['All', 'Verified', 'Non-Verified']?.map((filterOption, index) => (
 								<div
 									key={index}
-									className={`${poppins?.variable} ${poppins?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
+									className={`${dmSans?.variable} ${dmSans?.className} p-0?.5 flex gap-2 text-sm font-medium tracking-[0?.01em] text-bodyBlue dark:text-blue-dark-high`}
 								>
 									<Radio
 										checked={selectedSources?.includes(filterOption)}
@@ -450,8 +450,8 @@ const Community = () => {
 					<span
 						className={classNames(
 							'pb-0?.5 m-0 -mx-3 flex cursor-pointer justify-end p-0 px-3 pt-1 text-sm text-pink_primary dark:border-separatorDark',
-							poppins?.className,
-							poppins?.variable
+							dmSans?.className,
+							dmSans?.variable
 						)}
 						onClick={() => {
 							setSortOption(null);
@@ -469,19 +469,19 @@ const Community = () => {
 					>
 						<Radio
 							value={EDelegationAddressFilters?.DELEGATED_VOTES}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Voting Power
 						</Radio>
 						<Radio
 							value={EDelegationAddressFilters?.VOTED_PROPOSALS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Voted proposals (past 30 days)
 						</Radio>
 						<Radio
 							value={EDelegationAddressFilters?.RECEIVED_DELEGATIONS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Received Delegation(s)
 						</Radio>
@@ -496,31 +496,31 @@ const Community = () => {
 					>
 						<Radio
 							value={EMembersSortFilters?.ALPHABETICAL}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Alphabetical (Username)
 						</Radio>
 						<Radio
 							value={EMembersSortFilters?.FOLLOWERS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Followers
 						</Radio>
 						<Radio
 							value={EMembersSortFilters?.FOLLOWINGS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Followings
 						</Radio>
 						<Radio
 							value={EMembersSortFilters?.MULTI_SIGNATORY}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Multi Signatory
 						</Radio>
 						<Radio
 							value={EMembersSortFilters?.SINGLE_SIGNATORY}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Single Signatory
 						</Radio>
@@ -535,19 +535,19 @@ const Community = () => {
 					>
 						<Radio
 							value={EExpertsSortFilters?.FOLLOWERS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Followers
 						</Radio>
 						<Radio
 							value={EExpertsSortFilters?.FOLLOWINGS}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Followings
 						</Radio>
 						<Radio
 							value={EExpertsSortFilters?.REVIEWS_COUNT}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Review Count
 						</Radio>
@@ -562,13 +562,13 @@ const Community = () => {
 					>
 						<Radio
 							value={ECuratorsSortFilters?.ACTIVE_BOUNTIES}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Active bounties
 						</Radio>
 						<Radio
 							value={ECuratorsSortFilters?.CHILD_BOUNTIES_DISBURSED}
-							className={`${poppins?.variable} ${poppins?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
 						>
 							Child Bounties Disbursed
 						</Radio>

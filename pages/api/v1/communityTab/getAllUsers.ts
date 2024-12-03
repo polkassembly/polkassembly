@@ -10,13 +10,15 @@ import { LEADERBOARD_LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import { Timestamp } from 'firebase-admin/firestore';
+import { EMembersSortFilters } from '~src/types';
+import { isValidNetwork } from '~src/api-utils';
 
 export interface UsersResponse {
 	count: number;
 	data: User[];
 }
 
-export const getAllUsers = async ({ page, username, sortOption }: { page: number; username?: string; sortOption?: 'FOLLOWERS' | 'FOLLOWINGS' | 'USERNAME' }) => {
+export const getAllUsers = async ({ network, page, username, sortOption }: { network: string; page: number; username?: string; sortOption?: EMembersSortFilters }) => {
 	try {
 		let userDocs;
 
@@ -40,11 +42,19 @@ export const getAllUsers = async ({ page, username, sortOption }: { page: number
 			})
 		);
 		let sortedUsers = users || [];
-		if (sortOption === 'FOLLOWERS') {
-			sortedUsers = sortedUsers.sort((a, b) => (b.followers || 0) - (a.followers || 0));
-		} else if (sortOption === 'FOLLOWINGS') {
-			sortedUsers = sortedUsers.sort((a, b) => (b.followings || 0) - (a.followings || 0));
-		} else if (sortOption === 'USERNAME') {
+		if (sortOption === EMembersSortFilters.FOLLOWERS) {
+			sortedUsers = sortedUsers.sort((a, b) => {
+				const followersA = a.followers_count?.[network] || 0;
+				const followersB = b.followers_count?.[network] || 0;
+				return followersB - followersA;
+			});
+		} else if (sortOption === EMembersSortFilters.FOLLOWINGS) {
+			sortedUsers = sortedUsers.sort((a, b) => {
+				const followingsA = a.followings_count?.[network] || 0;
+				const followingsB = b.followings_count?.[network] || 0;
+				return followingsB - followingsA;
+			});
+		} else if (sortOption === EMembersSortFilters.ALPHABETICAL) {
 			sortedUsers = sortedUsers.sort((a, b) => (a.username || '').localeCompare(b.username || '', undefined, { sensitivity: 'base' }));
 		}
 		const startIndex = (Number(page) - 1) * LEADERBOARD_LISTING_LIMIT;
@@ -67,6 +77,8 @@ export const getAllUsers = async ({ page, username, sortOption }: { page: number
 
 const handler: NextApiHandler<UsersResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid Network' });
 
 	const { page = 1, username, sortOption } = req.body;
 
@@ -74,7 +86,7 @@ const handler: NextApiHandler<UsersResponse | MessageType> = async (req, res) =>
 		return res?.status(400)?.json({ message: messages?.INVALID_REQUEST_BODY });
 	}
 
-	const { data, error, status } = await getAllUsers({ page, sortOption, username });
+	const { data, error, status } = await getAllUsers({ network, page, sortOption, username });
 
 	if (error || !data) {
 		return res?.status(status)?.json({ message: error || messages?.API_FETCH_ERROR });

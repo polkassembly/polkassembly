@@ -216,7 +216,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 									type='vertical'
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{totalFollowers}</span>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers_count?.[network] || 0}</span>
 							</div>
 							<div className='flex items-center gap-x-1'>
 								<Divider
@@ -224,12 +224,12 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 									type='vertical'
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings_count?.[network] || 0}</span>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className={'mb-2 flex max-h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-2 flex h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{user?.profile?.bio ? (
 							<Markdown

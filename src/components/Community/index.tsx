@@ -525,18 +525,6 @@ const Community = () => {
 						>
 							Followings
 						</Radio>
-						<Radio
-							value={EMembersSortFilters?.MULTI_SIGNATORY}
-							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
-						>
-							Multi Signatory
-						</Radio>
-						<Radio
-							value={EMembersSortFilters?.SINGLE_SIGNATORY}
-							className={`${dmSans?.variable} ${dmSans?.className} my-[1px] flex gap-2 p-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high`}
-						>
-							Single Signatory
-						</Radio>
 					</Radio.Group>
 				)}
 				{selectedTab === ECommunityTabs?.EXPERTS && (

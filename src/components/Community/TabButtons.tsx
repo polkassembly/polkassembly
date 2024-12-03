@@ -27,6 +27,7 @@ const TabButtons: FC<ITabButtons> = (props) => {
 	return (
 		<article className='mt-5 flex flex-col items-center gap-y-1 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0'>
 			<div
+				className='cursor-pointer'
 				onClick={() => {
 					dispatch(communityTabActions.setSelectedTab(ECommunityTabs.MEMBERS));
 				}}
@@ -77,7 +78,12 @@ const TabButtons: FC<ITabButtons> = (props) => {
 					className='relative -top-[22px] left-1'
 				/>
 			</div>
-			<div>
+			<div
+				className='cursor-pointer'
+				onClick={() => {
+					dispatch(communityTabActions.setSelectedTab(ECommunityTabs.DELEGATES));
+				}}
+			>
 				<Button
 					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.DELEGATES ? 'text-[#6214FF]' : 'text-bodyBlue dark:text-blue-dark-medium'
@@ -127,7 +133,12 @@ const TabButtons: FC<ITabButtons> = (props) => {
 					className='relative -left-[2px] -top-[22px]'
 				/>
 			</div>
-			<div>
+			<div
+				className='cursor-pointer'
+				onClick={() => {
+					dispatch(communityTabActions.setSelectedTab(ECommunityTabs.CURATORS));
+				}}
+			>
 				<Button
 					className={`flex h-[48px] w-[186px] items-center justify-center gap-x-2 rounded-xl border border-solid border-grey_primary_transparent px-6 text-base font-semibold ${
 						selectedTab === ECommunityTabs.CURATORS ? 'text-[#044CE0]' : 'text-bodyBlue dark:text-blue-dark-medium'

@@ -49,7 +49,10 @@ const NetworkCommunity = (props: { network: string }) => {
 				<div className='flex items-center justify-start gap-x-2'>
 					<h1 className='m-0 p-0 text-2xl font-semibold text-bodyBlue dark:text-white'>Community</h1>
 				</div>
-				<div className='flex w-full items-center rounded-xl border-none bg-white px-4 py-4 dark:bg-black'>
+				<div
+					className='flex w-full items-center rounded-xl border-[0.7px] border-solid border-section-light-container bg-white px-4 py-4 dark:border-[#3B444F]  dark:border-separatorDark
+					dark:bg-black'
+				>
 					<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>Explore all members contributing to the {props.network} ecosystem.</p>
 				</div>
 				<Community />

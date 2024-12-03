@@ -167,6 +167,8 @@ export interface User {
 	two_factor_auth?: IUser2FADetails;
 	roles?: Role[];
 	profile_score: number;
+	addresses?: string[];
+	identityInfo?: any;
 }
 
 export interface Roles {

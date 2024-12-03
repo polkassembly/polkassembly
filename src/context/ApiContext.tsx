@@ -131,6 +131,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
+				setApiReady(false);
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
 				}
@@ -177,6 +178,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 						status: NotificationStatus.ERROR
 					});
 					setIsApiLoading(false);
+					setApiReady(false);
 					await api.disconnect();
 					console.error(error);
 					localStorage.removeItem('tracks');

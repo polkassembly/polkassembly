@@ -5,8 +5,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isAddress } from 'ethers';
 import { IMessage, IDelegateAddressDetails } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
@@ -15,28 +13,35 @@ import authServiceInstance from '~src/auth/auth';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { chatMessagesRef, chatDocRef } from '~src/api-utils/firestore_refs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import { getDelegatesData } from '../delegations/getAllDelegates';
 
-const validateRequest = (req: NextApiRequest, network: string) => {
-	const { address, senderAddress, receiverAddress, content, chatId } = req.body;
+const validateRequest = (req: NextApiRequest) => {
+	const { senderAddress, receiverAddress, content, chatId } = req.body;
 
-	if (!address || !senderAddress.length || !receiverAddress.length || !content.length || !chatId.length) {
+	if (!senderAddress.length || !receiverAddress.length || !content.length || !chatId.length) {
 		return { error: messages.INVALID_PARAMS };
 	}
 
-	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)) || getEncodedAddress(String(receiverAddress), network) || isAddress(String(receiverAddress)))) {
-		return { error: 'Invalid address' };
-	}
-
-	return { address, chatId, content, receiverAddress, senderAddress };
+	return { chatId, content, receiverAddress, senderAddress };
 };
 
-const validateParticipants = async (network: string, senderAddress: string, receiverAddress: string) => {
+const validateParticipants = async (network: string, senderAddress: string, receiverAddress: string, userId: number) => {
 	const senderSubstrateAddress = getSubstrateAddress(senderAddress);
 	const receiverSubstrateAddress = getSubstrateAddress(receiverAddress);
 
 	if (!senderSubstrateAddress || !receiverSubstrateAddress || senderAddress === receiverAddress) {
 		return { error: 'Invalid senderAddress or receiverAddress' };
+	}
+
+	const userAddresses = await getAddressesFromUserId(userId);
+	if (!userAddresses?.length) return { error: 'No addresses found for user' };
+
+	const userSubstrateAddresses = userAddresses.map((addr) => getSubstrateAddress(addr.address)).filter(Boolean);
+	if (!userSubstrateAddresses.length) return { error: 'No valid substrate addresses found for user' };
+
+	if (!userSubstrateAddresses.includes(senderSubstrateAddress)) {
+		return { error: 'User must be logged in to send messages' };
 	}
 
 	const { data: delegatesList, error } = await getDelegatesData(network, receiverAddress);
@@ -66,11 +71,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const validationResult = validateRequest(req, network);
+	const validationResult = validateRequest(req);
 	if ('error' in validationResult) return res.status(400).json({ message: validationResult?.error ?? messages.INVALID_PARAMS });
 
 	const { senderAddress, receiverAddress, content, chatId, senderImage, senderUsername } = req.body;
-	const participantValidation = await validateParticipants(network, senderAddress, receiverAddress);
+
+	const participantValidation = await validateParticipants(network, senderAddress, receiverAddress, user?.id);
 	if ('error' in participantValidation) return res.status(400).json({ message: participantValidation.error });
 
 	const { senderSubstrateAddress, receiverSubstrateAddress } = participantValidation;

@@ -73,10 +73,9 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 
 		if (isNewChat && recipientAddress) {
 			const requestData = {
-				address: substrateAddress,
 				content: trimmedMsg,
 				receiverAddress: recipientAddress,
-				senderAddress: address,
+				senderAddress: substrateAddress,
 				senderImage: picture,
 				senderUsername: username
 			};

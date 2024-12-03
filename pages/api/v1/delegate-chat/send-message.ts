@@ -93,8 +93,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage | Mess
 		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 	}
 
-	if (chatData?.requestStatus === EChatRequestStatus.PENDING) {
-		return res.status(400).json({ message: 'Cannot send message while request is pending' });
+	if (chatData?.requestStatus !== EChatRequestStatus.ACCEPTED) {
+		return res.status(400).json({ message: 'Cannot only send message on accepted chats' });
 	}
 
 	const messageSnapshot = chatMessagesRef(chatId);

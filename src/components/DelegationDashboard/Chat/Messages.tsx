@@ -30,7 +30,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const dispatch = useDispatch();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
-	const { requests, messages: filteredMessages } = useChatsSelector();
+	const { filteredRequests, filteredMessages } = useChatsSelector();
 
 	const address = delegationDashboardAddress || loginAddress;
 	const substrateAddress = getSubstrateAddress(address);
@@ -97,7 +97,9 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 		}
 
 		if (isNewChat && recipientAddress) {
-			const existingChat = [...requests, ...filteredMessages].find((chat) => chat.participants.includes(recipientAddress) && chat.participants.includes(String(substrateAddress)));
+			const existingChat = [...filteredRequests, ...filteredMessages].find(
+				(chat) => chat.participants.includes(getSubstrateAddress(recipientAddress) || '') && chat.participants.includes(String(substrateAddress))
+			);
 
 			if (existingChat) {
 				queueNotification({

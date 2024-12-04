@@ -80,8 +80,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 				isFollow: true,
 				updated_at: new Date()
 			});
+			res.status(200).json({ message: 'User followed' });
 			await updateFollowCounts(user.id, userIdToFollow, network);
-			return res.status(200).json({ message: 'User followed' });
+			return;
 		}
 	} catch (error) {
 		console.error('Error fetching follows document:', error);
@@ -101,12 +102,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	};
 
 	await newFollowDoc.set(newFollow);
-	await updateFollowCounts(user.id, userIdToFollow, network);
 
 	//TODO: create activity for the user followed
 	//TODO: send notification to the user followed
 
-	return res.status(200).json({ message: 'User followed' });
+	res.status(200).json({ message: 'User followed' });
+	await updateFollowCounts(user.id, userIdToFollow, network);
+	return;
 }
 
 export default withErrorHandling(handler);

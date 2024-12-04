@@ -76,14 +76,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (followsDoc.empty) {
 		return res.status(400).json({ message: 'User not followed' });
 	}
-
-	await followsDoc.docs[0].ref.update({
-		isFollow: false,
-		updated_at: new Date()
-	});
-
 	try {
+		await followsDoc.docs[0].ref.update({
+			isFollow: false,
+			updated_at: new Date()
+		});
+
+		res.status(200).json({ message: 'User unfollowed' });
+
 		await updateUnfollowCounts(user.id, userIdToUnfollow, network);
+		return;
 	} catch (error) {
 		console.error('Error updating unfollow counts:', error);
 		return res.status(500).json({ message: 'Failed to update unfollow counts' });
@@ -91,8 +93,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	//TODO: delete activity for the user unfollowed
 	//TODO: send notification to the user unfollowed
-
-	return res.status(200).json({ message: 'User unfollowed' });
 }
 
 export default withErrorHandling(handler);

@@ -7,38 +7,12 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { followsCollRef } from '~src/api-utils/firestore_refs';
+import updateFollowCounts from '~src/api-utils/updateUserFollowCounts';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-
-async function updateUnfollowCounts(userId: number, targetUserId: number, network: string) {
-	const userRef = firestore_db.collection('users').doc(String(userId));
-	const targetUserRef = firestore_db.collection('users').doc(String(targetUserId));
-	const userDoc = await userRef.get();
-	const targetUserDoc = await targetUserRef.get();
-
-	if (!userDoc.exists || !targetUserDoc.exists) {
-		throw new Error('User document not found');
-	}
-
-	const batch = firestore_db.batch();
-	batch.update(userRef, {
-		[`followings_count.${network}`]: Math.max((userDoc.data()?.followings_count?.[network] || 1) - 1, 0)
-	});
-	batch.update(targetUserRef, {
-		[`followers_count.${network}`]: Math.max((targetUserDoc.data()?.followers_count?.[network] || 1) - 1, 0)
-	});
-
-	try {
-		await batch.commit();
-		console.log('Batch update successful');
-	} catch (error) {
-		console.error('Error committing batch:', error);
-		throw new Error('Failed to update unfollow counts');
-	}
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -84,7 +58,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 		res.status(200).json({ message: 'User unfollowed' });
 
-		await updateUnfollowCounts(user.id, userIdToUnfollow, network);
+		await updateFollowCounts({ isFollowing: false, network, targetUserId: userIdToUnfollow, userId: user.id });
+
 		return;
 	} catch (error) {
 		console.error('Error updating unfollow counts:', error);

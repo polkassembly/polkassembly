@@ -4,6 +4,7 @@
 
 import { CheckOutlined, DeleteOutlined, LinkOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Form, Modal, Spin } from 'antd';
+import { useTranslation } from 'next-i18next';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostRemoveResponse } from 'pages/api/v1/auth/actions/linkPostRemove';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
@@ -82,6 +83,7 @@ interface ILinkPostModalProps {
 const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	const { className, currPostId, currPostType } = props;
 	const { postData, setPostData } = usePostDataContext();
+	const { t } = useTranslation('common');
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
@@ -145,8 +147,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					timeline: resData.timeline || []
 				}));
 				queueNotification({
-					header: 'Success',
-					message: 'Successfully post linked.',
+					header: t('success'),
+					message: t('successfully_post_linked'),
 					status: NotificationStatus.SUCCESS
 				});
 			}
@@ -180,8 +182,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				}));
 				setData(undefined);
 				queueNotification({
-					header: 'Success',
-					message: 'Successfully removed post linked.',
+					header: t('success'),
+					message: t('successfully_removed_post_linked'),
 					status: NotificationStatus.SUCCESS
 				});
 			}
@@ -210,7 +212,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					disabled={loading}
 					onClick={handleRemove}
 					className='mr-auto'
-					text='Remove'
+					text={t('remove')}
 					buttonsize='xs'
 				/>
 			);
@@ -224,7 +226,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					disabled={loading}
 					onClick={handleConfirm}
 					className='bg-green_primary'
-					text='Confirm'
+					text={t('confirm')}
 					buttonsize='xs'
 				/>
 			);
@@ -237,7 +239,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					key='submit'
 					disabled={loading}
 					onClick={handleSubmit}
-					text='Link'
+					text={t('link')}
 					buttonsize='xs'
 				/>
 			);
@@ -277,12 +279,12 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					}
 				}}
 			>
-				<LinkOutlined /> Link Post
+				<LinkOutlined /> {t('link_post')}
 			</CustomButton>
 
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				title={<h2 className='text-lg font-medium leading-7 text-sidebarBlue'>{data ? 'Confirm Details of Post ID to Link' : 'Post ID to Link'}</h2>}
+				title={<h2 className='text-lg font-medium leading-7 text-sidebarBlue'>{data ? t('confirm_details_of_post_id_to_link') : t('post_id_to_link')}</h2>}
 				open={showModal}
 				onOk={handleSubmit}
 				confirmLoading={loading}
@@ -311,7 +313,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								htmlFor='postId'
 								className='text-sm font-normal leading-5 text-sidebarBlue'
 							>
-								Enter post id
+								{t('enter_post_id')}
 							</label>
 							<Input
 								className='disabled: rounded-md bg-white px-2.5 py-2 text-sm font-medium leading-6 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -329,7 +331,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								htmlFor='postType'
 								className='text-sm font-normal leading-5 text-sidebarBlue'
 							>
-								Enter post type
+								{t('enter_post_type')}
 							</label>
 							<Select
 								id='postType'

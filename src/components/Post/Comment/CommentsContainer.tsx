@@ -50,6 +50,7 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -105,6 +106,7 @@ export const getSortedComments = (comments: { [index: string]: Array<IComment> }
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
+	const { t } = useTranslation('common');
 	const { loginAddress, isUserOnchainVerified } = useUserDetailsSelector();
 	const {
 		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
@@ -351,7 +353,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<>
 					{isGrantClosed ? (
 						<Alert
-							message={<span className='mb-6 dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
+							message={<span className='mb-6 dark:text-blue-dark-high'>{t('grant_closed')}</span>}
 							type='info'
 							showIcon
 						/>
@@ -380,16 +382,16 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						alt={''}
 					/>
 					<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Please{' '}
+						{t('please')}{' '}
 						<span
 							className='cursor-pointer text-pink_primary'
 							onClick={() => {
 								setOpenLoginModal(true);
 							}}
 						>
-							Log In
+							{t('log_in')}
 						</span>{' '}
-						to comment
+						{t('to_comment')}
 					</div>
 				</div>
 			)}
@@ -399,11 +401,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				) : aiContentSummary && hasEnoughContent && (aiContentSummary?.summary_positive || aiContentSummary?.summary_neutral || aiContentSummary?.summary_negative) ? (
 					<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
 						<div className={`${dmSans.variable} ${dmSans.className} items-center justify-between sm:flex`}>
-							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>{t('users_are_saying')}</div>
 							<span
 								className={`${dmSans.variable} ${dmSans.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
 							>
-								<span className='mr-1 '>Based on all comments and replies</span>
+								<span className='mr-1 '>{t('based_on_all_comments_and_replies')}</span>
 							</span>
 						</div>
 						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 20 && (
@@ -418,7 +420,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											onClick={() => toggleSummary('positive')}
 											className='ml-1 cursor-pointer text-sm text-pink_primary'
 										>
-											{showPositiveSummary ? 'See Less' : 'See More'}
+											{showPositiveSummary ? t('see_less') : t('see_more')}
 										</span>
 									)}
 								</p>
@@ -437,7 +439,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											onClick={() => toggleSummary('neutral')}
 											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
 										>
-											{showNeutralSummary ? 'See Less' : 'See More'}
+											{showNeutralSummary ? t('see_less') : t('see_more')}
 										</span>
 									)}
 								</p>
@@ -456,14 +458,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											onClick={() => toggleSummary('negative')}
 											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
 										>
-											{showNegativeSummary ? 'See Less' : 'See More'}
+											{showNegativeSummary ? t('see_less') : t('see_more')}
 										</span>
 									)}
 								</p>
 							</div>
 						)}
 						<h2 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-							<AiStarIcon className='text-base' /> AI-generated from comments
+							<AiStarIcon className='text-base' /> {t('ai_generated_from_comments')}
 						</h2>
 					</div>
 				) : null}
@@ -475,7 +477,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				>
 					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
 						{allComments.length || 0}
-						<span className='ml-1'>Comments</span>
+						<span className='ml-1'>{t('comments')}</span>
 					</span>
 					{showOverallSentiment && (
 						<div className='flex gap-2 max-sm:-ml-2 max-sm:gap-[2px] '>
@@ -486,7 +488,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									title={
 										<div className='flex flex-col px-1 text-xs'>
 											<span className='text-center font-medium'>{data.title}</span>
-											<span className='pt-1 text-center'>Select to filter</span>
+											<span className='pt-1 text-center'>{t('select_to_filter')}</span>
 										</div>
 									}
 								>
@@ -566,7 +568,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					{loading && <Loader />}
 					{allComments.length === 0 && allComments.length > 0 && (
 						<div className='mb-4 mt-4'>
-							<Empty description='No comments available' />
+							<Empty description={t('no_comments_available')} />
 						</div>
 					)}
 					{
@@ -575,8 +577,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
 							image='/assets/Gifs/login-discussion.gif'
-							title='Join Polkassembly to Comment on this proposal.'
-							subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+							title={t('join_polkassembly_to_comment_on_this_proposal')}
+							subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 						/>
 					}
 				</div>

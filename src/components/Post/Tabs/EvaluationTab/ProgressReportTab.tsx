@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useTheme } from 'next-themes';
 import UserReportInfo from '~src/components/ProgressReport/ProgressReportInfo/UserReportInfo';
+import { useTranslation } from 'next-i18next';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -37,7 +38,7 @@ const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState<boolean>(false);
 	const { summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
@@ -99,8 +100,8 @@ const ProgressReportTab = ({ className }: Props) => {
 			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
+				header: t('error'),
+				message: t('error_in_saving_your_post'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -108,8 +109,8 @@ const ProgressReportTab = ({ className }: Props) => {
 		if (data) {
 			setLoading(false);
 			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
+				header: t('success'),
+				message: t('your_post_is_now_edited'),
 				status: NotificationStatus.SUCCESS
 			});
 
@@ -124,7 +125,7 @@ const ProgressReportTab = ({ className }: Props) => {
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
 			dispatch(progressReportActions.setReportUploaded(false));
 		} else {
-			console.log('failed to save report');
+			console.log(t('failed_to_save_report'));
 		}
 	};
 
@@ -147,7 +148,7 @@ const ProgressReportTab = ({ className }: Props) => {
 								alt='progress-file-icon'
 							/>
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								Progress Reports
+								{t('progress_reports')}
 							</h3>
 							{!postData?.progress_report?.[0]?.progress_file && (
 								<div className='ml-auto flex items-center justify-end gap-x-1'>
@@ -156,7 +157,7 @@ const ProgressReportTab = ({ className }: Props) => {
 										alt='info-icon'
 										imgClassName='scale-90'
 									/>
-									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>Progress Report not added</p>
+									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>{t('progress_report_not_added')}</p>
 								</div>
 							)}
 						</div>
@@ -194,7 +195,7 @@ const ProgressReportTab = ({ className }: Props) => {
 								alt='Empty Icon'
 								imgClassName='w-[225px] h-[225px]'
 							/>
-							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Progress Report Added</h3>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_progress_report_added')}</h3>
 						</div>
 					)}
 				</Panel>

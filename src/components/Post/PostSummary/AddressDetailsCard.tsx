@@ -14,11 +14,13 @@ import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/util
 import Address from '~src/ui-components/Address';
 import { shortenString } from '~src/util/shortenString';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { useTranslation } from 'next-i18next';
 interface Props {
 	address: string;
 	showAddress?: boolean;
 }
 const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
@@ -76,13 +78,13 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 				{isMultisigProposer ? (
 					<>
 						<MultisigIcon />
-						Multisig Account
+						{t('multisig_account')}
 					</>
 				) : (
 					<div>
 						<div className='token-desktop-container flex items-center gap-x-1'>
 							<SingleSignatoryAlertIcon />
-							<p className='m-0 p-0'>Single signatory account</p>
+							{t('single_signatory_account')}
 						</div>
 						<div className='token-mobile-container block'>
 							{/* <SingleSignatoryAlertIcon /> */}
@@ -99,13 +101,13 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 				{isGood ? (
 					<>
 						<VerifiedIcon className='text-base' />
-						Verified
+						{t('verified')}
 					</>
 				) : (
 					<div>
 						<div className='token-desktop-container flex items-center gap-x-1'>
 							{isBad ? <MinusCircleFilled style={{ color }} /> : <NonVerifiedAlertIcon />}
-							<p className='m-0 p-0'>Non Verified</p>
+							{t('non_verified')}
 						</div>
 						<div className='token-mobile-container block'>{shortenString('Not Verified', 3)}</div>
 					</div>

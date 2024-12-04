@@ -6,6 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Spin } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { MessageType } from '~src/auth/types';
@@ -41,7 +42,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 	const { resolvedTheme: theme } = useTheme();
 	const [optionMap, setOptionMap] = useState<any>({});
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
-
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		const optionMap: any = {};
 		let totalVotes = 0;
@@ -141,7 +142,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 		<GovSidebarCard className={className}>
 			<div className='mb-6 flex items-center'>
 				<h3 className='dashboard-heading mb-0'>
-					<span className='mr-1 text-navBlue'>Poll:</span>
+					<span className='mr-1 text-navBlue'>{t('poll')}:</span>
 					<span className='dark:text-blue-dark-high'>{question}? </span>
 				</h3>
 				<HelperTooltip
@@ -186,7 +187,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 							type='vertical'
 							style={{ borderLeft: '1px solid #90A0B7' }}
 						/>
-						<span>Poll Ended</span>
+						<span>{t('poll_ended')}</span>
 					</>
 				)}
 			</div>

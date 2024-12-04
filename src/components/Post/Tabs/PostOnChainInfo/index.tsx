@@ -24,6 +24,7 @@ import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import Markdown from '~src/ui-components/Markdown';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { useTranslation } from 'next-i18next';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -114,6 +115,7 @@ export const getBlockNumber = (
 const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { className, onChainInfo, proposalType } = props;
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
@@ -175,11 +177,11 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		<>
 			<div className={`${className} mt-4`}>
 				<OnchainInfoWrapper theme={theme as any}>
-					<h5 className='mb-5 text-base font-bold'>Metadata</h5>
+					<h5 className='mb-5 text-base font-bold'>{t('metadata')}</h5>
 					<ul className='flex list-none flex-col gap-y-2'>
 						{submitted_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Submitted</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('submitted')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(submitted_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
@@ -187,13 +189,13 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{origin && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Origin</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('origin')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{origin.split(/(?=[A-Z])/).join(' ')}</div>
 							</li>
 						)}
 						{enactment_after_block && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Enactment After</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('enactment_after')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{String(enactment_after_block).length < 8 ? (
 										enactment_after_block
@@ -215,7 +217,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{enactment_at_block && (
 							<li className='grid grid-cols-6 gap-x-5 border-b py-1.5 md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Enactment At</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('enactment_at')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{String(enactment_at_block).length < 8 ? (
 										enactment_at_block
@@ -237,7 +239,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{deciding && deciding.since && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Deciding Since</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('deciding_since')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{`${deciding.since}`.length < 8 ? (
 										deciding.since
@@ -259,7 +261,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{deciding && deciding.confirming && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Confirm Started</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('confirm_started')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{`${deciding.confirming}`.length < 8 ? (
 										deciding.confirming
@@ -281,7 +283,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{decision_deposit_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Decision Deposit</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('decision_deposit')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(decision_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
@@ -289,7 +291,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{submission_deposit_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Submission Deposit</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('submission_deposit')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(submission_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
@@ -299,21 +301,21 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] pb-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
 								{status === tipStatus.CLOSING ? (
 									<>
-										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Closing</h6>
+										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('closing')}</h6>
 										<div className='col-span-4 overflow-hidden md:col-span-6'>
 											<BlockCountdown endBlock={ended_at_block} />
 										</div>
 									</>
 								) : status === tipStatus.CLOSED ? (
 									<>
-										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Closed</h6>
+										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('closed')}</h6>
 										<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 											{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}
 										</div>
 									</>
 								) : (
 									<>
-										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Status</h6>
+										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('status')}</h6>
 										<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{status}</div>
 									</>
 								)}
@@ -321,7 +323,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{deposit && network && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Deposit</h6>
+								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('deposit')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{(typeof deposit === 'string' ? parseInt(deposit) : deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) +
 										' ' +
@@ -331,7 +333,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{method && method !== motion_method && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Method</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('method')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{method}</div>
 							</li>
 						)}
@@ -339,7 +341,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
 								{status === 'Started' ? (
 									<>
-										<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>End</h6>
+										<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('end')}</h6>
 										<div className='col-span-4 md:col-span-6'>
 											<BlockCountdown
 												className='text-blue-light-high dark:text-blue-dark-high'
@@ -349,7 +351,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									</>
 								) : (
 									<>
-										<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Ended</h6>
+										<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('ended')}</h6>
 										<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 											{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}
 										</div>
@@ -359,7 +361,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{(delay || delay === 0) && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Delay</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('delay')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									<BlocksToTime blocks={delay} />
 								</div>
@@ -367,25 +369,25 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{vote_threshold && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Vote threshold</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('vote_threshold')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{vote_threshold}</div>
 							</li>
 						)}
 						{member_count && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Member count</h6>
+								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('member_count')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{member_count}</div>
 							</li>
 						)}
 						{hash && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Proposal Hash</h6>
+								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('proposal_hash')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{hash}</div>
 							</li>
 						)}
 						{curator && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Curator</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('curator')}</h6>
 								<div className='col-span-4 overflow-hidden text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									<Address
 										displayInline={true}
@@ -396,7 +398,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{reward && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Reward</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('reward')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{(typeof reward === 'string' ? parseInt(reward) : reward) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
@@ -404,7 +406,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{fee && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Fee</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('fee')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{(typeof fee === 'string' ? parseInt(fee) : fee) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
@@ -412,7 +414,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{curator_deposit && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Curator Deposit</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('curator_deposit')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{(typeof curator_deposit === 'string' ? parseInt(curator_deposit) : curator_deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) +
 										' ' +
@@ -422,7 +424,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{bond && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Bond</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('bond')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									{(typeof bond === 'string' ? parseInt(bond) : bond) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
@@ -430,7 +432,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{payee && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Payee</h6>
+								<h6 className='col-span-2 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('payee')}</h6>
 								<div className='col-span-4 overflow-hidden md:col-span-6'>
 									<Address
 										displayInline={true}
@@ -441,7 +443,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{motion_method && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Motion&apos;s method</h6>
+								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('motion_method')}</h6>
 								<div
 									className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-blue-light-high dark:font-normal dark:text-blue-dark-high'}`}
 								>
@@ -451,7 +453,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{cid && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>IPFS</h6>
+								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('ipfs')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>
 									<Link
 										href={`https://ipfs.io/ipfs/${cid}`}
@@ -462,47 +464,47 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						)}
 						{cid && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>CID</h6>
+								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('cid')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{cid}</div>
 							</li>
 						)}
 						{code && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Code</h6>
+								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('code')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{code}</div>
 							</li>
 						)}
 						{codec && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Codec</h6>
+								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('codec')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{codec}</div>
 							</li>
 						)}
 						{version && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 dark:border-[#5A5A5A] md:grid-cols-8'>
-								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>Version</h6>
+								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium'>{t('version')}</h6>
 								<div className='col-span-4 text-blue-light-high dark:font-normal dark:text-blue-dark-high md:col-span-6'>{version}</div>
 							</li>
 						)}
 					</ul>
 					{description && network === 'polymesh' ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
-							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('description')}</h6>
 							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{description}</p>
 						</div>
 					) : null}
 					{proposalType === ProposalType.ADVISORY_COMMITTEE && !!marketMetadata && (
 						<div className='mt-7'>
-							<h5 className='mb-3 text-base font-bold'>Market Metadata</h5>
+							<h5 className='mb-3 text-base font-bold'>{t('market_metadata')}</h5>
 							{marketMetadata?.question ? (
 								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Question</h6>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('question')}</h6>
 									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{marketMetadata?.question}</p>
 								</div>
 							) : null}
 							{marketMetadata?.description ? (
 								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('description')}</h6>
 									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>
 										<Markdown
 											className='post-content'
@@ -513,7 +515,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							) : null}
 							{marketMetadata?.tags ? (
 								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Tags</h6>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('tags')}</h6>
 									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{marketMetadata?.tags.join('/')}</p>
 								</div>
 							) : null}
@@ -530,10 +532,10 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					)}
 					{proposal_arguments && (
 						<div className='mt-7'>
-							<h5 className='mb-3 text-base font-bold'>Call Arguments</h5>
+							<h5 className='mb-3 text-base font-bold'>{t('call_arguments')}</h5>
 							{proposal_arguments?.description ? (
 								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('description')}</h6>
 									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposal_arguments?.description}</p>
 								</div>
 							) : null}
@@ -552,7 +554,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					{beneficiaries && beneficiaries.length > 0 && (
 						<>
 							<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
-								<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Beneficiaries</h6>
+								<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('beneficiaries')}</h6>
 								<div className='col-span-6 flex flex-col gap-2 font-medium leading-6 text-bodyBlue'>
 									{beneficiaries.map((beneficiary, index) => (
 										<Beneficiary
@@ -579,7 +581,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					) : null}
 					{description && network !== 'polymesh' ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
-							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('description')}</h6>
 							<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{description}</p>
 						</div>
 					) : null}
@@ -611,24 +613,25 @@ interface IProposalInfoProps {
 const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 	const { proposed_call, method } = props;
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	if (!proposed_call) return null;
 	return (
 		<>
 			{proposed_call?.method !== method && (
 				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Method</h6>
+					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('method')}</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.method}</p>
 				</div>
 			)}
 			{proposed_call?.section && (
 				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Section</h6>
+					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('section')}</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.section}</p>
 				</div>
 			)}
 			{proposed_call?.description && (
 				<div className='-mt-2 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
-					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>{t('description')}</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.description}</p>
 				</div>
 			)}

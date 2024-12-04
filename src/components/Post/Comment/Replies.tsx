@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 
 import Reply from './Reply';
 import { IComment } from './Comment';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -19,6 +20,7 @@ interface Props {
 
 const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReactionOnReply, comment }: Props) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
+	const { t } = useTranslation('common');
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>
@@ -28,14 +30,14 @@ const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReaction
 						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
 						onClick={toggleShowReplies}
 					>
-						{repliesArr.length} replies <DownOutlined className='ml-1' />
+						{repliesArr.length} {t('replies')} <DownOutlined className='ml-1' />
 					</div>
 				) : (
 					<div
 						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
 						onClick={toggleShowReplies}
 					>
-						Hide replies <UpOutlined className='ml-1' />
+						{t('hide_replies')} <UpOutlined className='ml-1' />
 					</div>
 				)
 			) : null}

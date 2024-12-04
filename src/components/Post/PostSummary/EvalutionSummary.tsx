@@ -4,6 +4,7 @@
 import React from 'react';
 import BeneficiaryCard from './AddressDetailsCard';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	isProfileView?: boolean;
@@ -12,6 +13,7 @@ interface Props {
 
 const EvalutionSummary = ({ isProfileView, address }: Props) => {
 	const { postData } = usePostDataContext();
+	const { t } = useTranslation('common');
 
 	return isProfileView && address ? (
 		<div>
@@ -22,10 +24,10 @@ const EvalutionSummary = ({ isProfileView, address }: Props) => {
 		</div>
 	) : (
 		<div className='mt-4 pb-4 text-bodyBlue dark:text-blue-dark-high'>
-			<label className='tracking[0.01em] text-lg font-medium'>Evaluation Summary</label>
+			<label className='tracking[0.01em] text-lg font-medium'>{t('evaluation_summary')}</label>
 			{postData?.beneficiaries?.length === 1 || !postData?.beneficiaries?.length ? (
 				<div className='mt-4 flex items-center gap-2.5'>
-					{<span className='text-sm tracking-[0.01em]'>{postData?.beneficiaries?.length === 1 ? 'Beneficiary is' : 'Proposer is'}</span>}
+					{<span className='text-sm tracking-[0.01em]'>{postData?.beneficiaries?.length === 1 ? t('beneficiary_is') : t('proposer_is')}</span>}
 					<BeneficiaryCard
 						key={postData?.beneficiaries?.length === 1 ? postData?.beneficiaries?.[0]?.address : postData?.proposer}
 						address={postData?.beneficiaries?.length === 1 ? postData?.beneficiaries?.[0]?.address : postData?.proposer}
@@ -33,7 +35,9 @@ const EvalutionSummary = ({ isProfileView, address }: Props) => {
 				</div>
 			) : (
 				<div className='mt-4 flex flex-col gap-3'>
-					<span className='text-sm tracking-[0.01em]'>The {postData?.beneficiaries.length} Beneficiaries of this proposal are as follows: </span>
+					<span className='text-sm tracking-[0.01em]'>
+						{t('the')} {postData?.beneficiaries.length} {t('beneficiaries_of_this_proposal_are_as_follows')}
+					</span>
 					{!!postData?.beneficiaries?.length &&
 						postData?.beneficiaries?.map((beneficiary) => (
 							<BeneficiaryCard

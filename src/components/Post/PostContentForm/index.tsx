@@ -25,13 +25,14 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import Input from '~src/basic-components/Input';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
-
+import { useTranslation } from 'next-i18next';
 interface Props {
 	className?: string;
 	toggleEdit: () => void;
 }
 
 const PostContentForm = ({ className, toggleEdit }: Props) => {
+	const { t } = useTranslation('common');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -66,20 +67,20 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		});
 
 		if (editError || !data) {
-			console.error('Error saving post', editError);
+			console.error(t('error_saving_post'), editError);
 			queueNotification({
 				header: 'Error!',
-				message: 'Error in saving your post.',
+				message: t('error_in_saving_your_post'),
 				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
-			setError(editError || 'Error in saving post');
+			setError(editError || t('error_saving_post'));
 		}
 
 		if (data) {
 			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
+				header: t('success'),
+				message: t('your_post_is_now_edited'),
 				status: NotificationStatus.SUCCESS
 			});
 
@@ -124,7 +125,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			>
 				<Form.Item
 					name='title'
-					label='Title'
+					label={t('title')}
 					rules={[{ required: true }]}
 				>
 					<Input
@@ -140,7 +141,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 						name='topic'
 						rules={[
 							{
-								message: "Please select a 'topic'",
+								message: t('please_select_a_topic'),
 								validator(rule, value = currentTopic.id, callback) {
 									if (callback && !value) {
 										callback(rule?.message?.toString());
@@ -153,7 +154,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					>
 						<>
 							<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
-								Select Topic <span className='ml-1 text-red-500'>*</span>
+								{t('select_topic')} <span className='ml-1 text-red-500'>*</span>
 							</label>
 							<TopicsRadio
 								govType={isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1}
@@ -166,7 +167,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					</Form.Item>
 				)}
 
-				<h5 className='text-color mt-8 text-sm font-normal dark:text-separatorDark'>Tags</h5>
+				<h5 className='text-color mt-8 text-sm font-normal dark:text-separatorDark'>{t('tags')}</h5>
 				<AddTags
 					tags={tags}
 					setTags={setTags}
@@ -189,7 +190,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								className='mr-2'
 								buttonsize='xs'
 							>
-								<CloseOutlined /> Cancel
+								<CloseOutlined /> {t('cancel')}
 							</CustomButton>
 							<CustomButton
 								variant='primary'
@@ -197,7 +198,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								loading={loading}
 								buttonsize='xs'
 							>
-								<CheckOutlined /> Submit
+								<CheckOutlined /> {t('submit')}
 							</CustomButton>
 						</div>
 					</div>

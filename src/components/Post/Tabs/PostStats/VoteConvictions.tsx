@@ -11,6 +11,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import { Card } from 'antd';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 
@@ -43,7 +44,7 @@ const StyledCard = styled(Card)`
 const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-
+	const { t } = useTranslation('common');
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
@@ -66,7 +67,7 @@ const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction, isUsedIn
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='text-xl font-semibold'>Conviction used by Accounts</h2>
+			<h2 className='text-xl font-semibold'>{t('conviction_used_by_accounts')}</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
 					colors={(bar) => colors[bar.id]}

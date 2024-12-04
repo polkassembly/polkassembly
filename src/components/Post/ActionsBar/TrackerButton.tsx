@@ -4,6 +4,7 @@
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -44,6 +45,7 @@ function getTrackType(proposalType: ProposalType): string {
 }
 
 const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType }) {
+	const { t } = useTranslation('common');
 	const [tracked, setTracked] = useState(false);
 	const postType = getTrackType(proposalType);
 
@@ -98,7 +100,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType 
 			className='shadow-0 border-none bg-transparent px-1 font-normal disabled:opacity-[0.5] dark:text-blue-dark-helper '
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-			{tracked ? 'Untrack' : 'Track'}
+			{tracked ? t('untrack') : t('track')}
 		</CustomButton>
 	);
 };

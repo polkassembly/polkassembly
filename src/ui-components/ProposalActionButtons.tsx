@@ -247,7 +247,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			)}
 			{isUsedInFAB && (
 				<div
-					className='-ml-[33px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					className=' flex items-center gap-2 '
 					onClick={() => handleClick(1)}
 				>
 					{theme == 'dark' ? <CreateProposalsFabIconDark /> : <CreateProposalsFabIcon />}

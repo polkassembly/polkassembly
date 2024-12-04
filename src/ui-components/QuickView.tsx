@@ -35,7 +35,8 @@ export const TippingUnavailableNetworks = [
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM,
 	AllNetworks.EQUILIBRIUM,
-	AllNetworks.LAOSSIGMA
+	AllNetworks.LAOSSIGMA,
+	AllNetworks.MYTHOS
 ];
 
 interface Props {

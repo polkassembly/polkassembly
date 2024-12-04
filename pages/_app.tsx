@@ -83,7 +83,7 @@ function App({ Component, pageProps }: AppProps) {
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
 
-		if (!global?.window || !chainProperties[networkStr].gTag) return;
+		if (!global?.window || !chainProperties[networkStr]?.gTag) return;
 
 		if (!window.GA_INITIALIZED) {
 			initGA(networkStr);

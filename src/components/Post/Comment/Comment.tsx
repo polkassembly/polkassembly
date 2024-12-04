@@ -129,6 +129,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					spam_users_count={spam_users_count}
 					expertComment={comment.isExpertComment}
 					vote={vote}
+					truncateUsername
 					votesArr={comment?.votes}
 					isRow={true}
 				>

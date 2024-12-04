@@ -24,77 +24,79 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 
 	return (
 		<>
-			<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-				<div className='w-full flex-col gap-x-0 lg:flex'>
-					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+			{!['mythos'].includes(network) && (
+				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
+					<div className='w-full flex-col gap-x-0 lg:flex'>
+						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+							{theme === 'dark' ? (
+								<ImageIcon
+									src='/assets/icons/AvailableDark.svg'
+									alt='available dark icon'
+									imgClassName='lg:hidden'
+								/>
+							) : (
+								<ImageIcon
+									src='/assets/icons/available.svg'
+									alt='available icon'
+									imgClassName='lg:hidden'
+								/>
+							)}
+						</div>
+						{!available.isLoading ? (
+							<>
+								<div className='mb-4'>
+									<div className='my-1 flex items-center'>
+										<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
+										<HelperTooltip
+											text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+									<div className='flex justify-between font-medium'>
+										{available.value ? (
+											<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+												{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+											</span>
+										) : (
+											<span>N/A</span>
+										)}
+									</div>
+								</div>
+								{!['polymesh', 'polymesh-test'].includes(network) && (
+									<>
+										<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
+											<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+											<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
+												{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+											</span>
+										</div>
+									</>
+								)}
+							</>
+						) : (
+							<div className='flex min-h-[89px] w-full items-center justify-center'>
+								<LoadingOutlined />
+							</div>
+						)}
+					</div>
+					<div>
 						{theme === 'dark' ? (
 							<ImageIcon
 								src='/assets/icons/AvailableDark.svg'
 								alt='available dark icon'
-								imgClassName='lg:hidden'
+								imgClassName='xs:hidden lg:block w-full'
 							/>
 						) : (
+							// <Available className='xs:hidden lg:block' />
 							<ImageIcon
 								src='/assets/icons/available.svg'
 								alt='available icon'
-								imgClassName='lg:hidden'
+								imgClassName='xs:hidden lg:block w-full'
 							/>
 						)}
 					</div>
-					{!available.isLoading ? (
-						<>
-							<div className='mb-4'>
-								<div className='my-1 flex items-center'>
-									<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
-									<HelperTooltip
-										text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-										className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-									/>
-								</div>
-								<div className='flex justify-between font-medium'>
-									{available.value ? (
-										<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-										</span>
-									) : (
-										<span>N/A</span>
-									)}
-								</div>
-							</div>
-							{!['polymesh', 'polymesh-test'].includes(network) && (
-								<>
-									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
-											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
-										</span>
-									</div>
-								</>
-							)}
-						</>
-					) : (
-						<div className='flex min-h-[89px] w-full items-center justify-center'>
-							<LoadingOutlined />
-						</div>
-					)}
 				</div>
-				<div>
-					{theme === 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/AvailableDark.svg'
-							alt='available dark icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					) : (
-						// <Available className='xs:hidden lg:block' />
-						<ImageIcon
-							src='/assets/icons/available.svg'
-							alt='available icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					)}
-				</div>
-			</div>
+			)}
 		</>
 	);
 };

@@ -29,6 +29,7 @@ import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
 
 const getFromatedData = (data: any) => {
 	const resObj: any = {
@@ -101,6 +102,7 @@ const formatNumber = (num: number | undefined) => {
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const {
 		postData: { statusHistory }
 	} = usePostDataContext();
@@ -137,7 +139,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[449px]:text-xs min-[450px]:mt-0'>
-					<LikeFilled /> <span>Ayes({formatNumber(ayeNayAbstainCounts?.ayes)})</span>
+					<LikeFilled />{' '}
+					<span>
+						{t('ayes')}({formatNumber(ayeNayAbstainCounts?.ayes)})
+					</span>
 				</div>
 			),
 			value: 'yes'
@@ -145,7 +150,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[449px]:text-xs min-[450px]:mt-0'>
-					<DislikeFilled /> <span>Nays({formatNumber(ayeNayAbstainCounts?.nays)})</span>
+					<DislikeFilled />{' '}
+					<span>
+						{t('nays')}({formatNumber(ayeNayAbstainCounts?.nays)})
+					</span>
 				</div>
 			),
 			value: 'no'
@@ -156,7 +164,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		decisionOptions.push({
 			label: (
 				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[449px]:text-xs min-[450px]:mt-0'>
-					<MinusCircleFilled /> <span>Abstain({formatNumber(ayeNayAbstainCounts?.abstain)})</span>
+					<MinusCircleFilled />{' '}
+					<span>
+						{t('abstain')}({formatNumber(ayeNayAbstainCounts?.abstain)})
+					</span>
 				</div>
 			),
 			value: 'abstain'
@@ -307,9 +318,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-full items-center px-2 text-xs font-semibold sm:w-min'>
 									{!isUsedInVotedModal ? (
-										<div className={`w-[160px] text-sm font-medium text-lightBlue dark:text-white sm:w-[190px]  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Voter</div>
+										<div className={`w-[160px] text-sm font-medium text-lightBlue dark:text-white sm:w-[190px]  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>{t('voter')}</div>
 									) : (
-										<div className={`min[640px]:w-[190px] w-[160px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Vote</div>
+										<div className={`min[640px]:w-[190px] w-[160px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>
+											{t('vote')}
+										</div>
 									)}
 									<div
 										className={`hidden w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white sm:flex ${decision === 'abstain' ? 'w-[160px]' : ''}`}
@@ -320,7 +333,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											setOrderBy((prev) => ({ ...sortedCheck, balanceIsAsc: !prev.balanceIsAsc }));
 										}}
 									>
-										Amount
+										{t('amount')}
 										{!isUsedInVotedModal && <ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />}
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
@@ -333,7 +346,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												setOrderBy((prev) => ({ ...sortedCheck, convictionIsAsc: !prev.convictionIsAsc }));
 											}}
 										>
-											Conviction
+											{t('conviction')}
 											{!isUsedInVotedModal && <ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />}
 										</div>
 									) : null}
@@ -348,7 +361,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
 											}}
 										>
-											Voting Power
+											{t('voting_power')}
 											{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}
 										</span>
 										<span className='mr-3'>
@@ -484,7 +497,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
 							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 								<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
+								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('delegation_data')}</span>
 							</h3>
 							<Divider className='my-2 mb-5 text-section-light-container dark:text-separatorDark' />
 						</div>

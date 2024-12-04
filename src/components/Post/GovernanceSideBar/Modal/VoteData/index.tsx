@@ -8,6 +8,7 @@ import { Divider, Modal as AntdModal } from 'antd';
 import styled from 'styled-components';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { IVotesCount } from '~src/types';
+import { useTranslation } from 'next-i18next';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -40,6 +41,7 @@ const Modal = styled(AntdModal)`
 `;
 
 const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally, ayeNayAbstainCounts }) => {
+	const { t } = useTranslation('common');
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -47,7 +49,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 				<div className='text-[18px] dark:bg-section-dark-overlay'>
 					<h3 className='align-center mb-0 flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
+						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('voting_data')}</span>
 					</h3>
 					<Divider className='my-2 mb-2 text-section-light-container dark:border-separatorDark min-[450px]:mb-5' />
 				</div>

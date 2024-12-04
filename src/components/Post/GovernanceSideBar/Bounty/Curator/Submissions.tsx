@@ -22,6 +22,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import SubmissionAction from './SubmissionAction';
 import Alert from '~src/basic-components/Alert';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -47,6 +48,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	const {
 		postData: { curator }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress } = useUserDetailsSelector();
@@ -116,14 +118,14 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 		const { data, error } = await nextApiClientFetch<IChildBountySubmission>('/api/v1/bounty/curator/submissions/updateSubmissionStatus', payload);
 
 		if (error) {
-			console.error('Error updating submission status:', error);
+			console.error(t('error_updating_submission_status'), error);
 			return;
 		}
 
 		if (data) {
 			setBountySubmission((prevSubmissions) => prevSubmissions.filter((sub) => sub.id !== submission.id));
 			setEditSubmission(null);
-			message.success('Submission status updated successfully');
+			message.success(t('submission_status_updated_successfully'));
 		}
 	};
 
@@ -173,12 +175,12 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					/>
 
 					<h4 className='text-xl font-semibold text-sidebarBlue  dark:text-white'>
-						Submissions <span className='text-base font-normal'>({bountySubmission?.length || 0})</span>{' '}
+						{t('submissions')} <span className='text-base font-normal'>({bountySubmission?.length || 0})</span>{' '}
 					</h4>
 				</div>
 				{canViewAll && (
 					<Link href='/bounty-dashboard/curator-dashboard'>
-						<p className='text-sm font-medium text-pink_primary'>View All</p>
+						<p className='text-sm font-medium text-pink_primary'>{t('view_all')}</p>
 					</Link>
 				)}
 			</div>
@@ -192,7 +194,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
-						All
+						{t('all')}
 					</Button>
 					<Button
 						onClick={() => {
@@ -204,7 +206,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
-						Pending
+						{t('pending')}
 					</Button>
 					<Button
 						onClick={() => setActiveTab(EChildbountySubmissionStatus.REJECTED)}
@@ -214,7 +216,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
 					>
-						Rejected
+						{t('rejected')}
 					</Button>
 				</div>
 			)}
@@ -284,7 +286,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 					className={classNames('flex w-full cursor-pointer items-center justify-center gap-x-1 rounded-md border-none', hasSubmitted || loading ? 'opacity-50' : '')}
 					onClick={() => {
 						if (hasSubmitted) {
-							message.error('You can only make one submission per bounty.');
+							message.error(t('you_can_only_make_one_submission_per_bounty'));
 						} else {
 							handleSubmissionClick();
 						}
@@ -301,7 +303,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 						width={18}
 						height={18}
 					/>
-					<h5 className='pt-2 text-sm text-white'>Make Submission</h5>
+					<h5 className='pt-2 text-sm text-white'>{t('make_submission')}</h5>
 				</CustomButton>
 			)}
 
@@ -311,7 +313,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 				setOpen={setIsModalVisible}
 				editing={isEditing}
 				submission={isEditing ? editSubmission : null}
-				ModalTitle={isEditing ? 'Edit Submission' : 'Add Submission'}
+				ModalTitle={isEditing ? t('edit_submission') : t('add_submission')}
 				onSubmissionCreated={handleNewSubmission}
 			/>
 		</GovSidebarCard>

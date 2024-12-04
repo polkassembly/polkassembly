@@ -63,7 +63,7 @@ const handler: NextApiHandler<{ message: string; progress_report?: IProgressRepo
 		const updatedProgressReports = existingPost.progress_report.map((report) => ({
 			...report,
 			created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
-			isEdited: report.id === reportId ? true : report.isEdited,
+			isEdited: report.id === reportId ? true : report.isEdited || false,
 			progress_summary: report.id === reportId ? summary : report.progress_summary
 		}));
 

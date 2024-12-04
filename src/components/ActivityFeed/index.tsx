@@ -13,6 +13,8 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useDispatch, useSelector } from 'react-redux';
+import { setExplorePosts, setLoadingExplore, setLoadingSubscribed } from '~src/redux/activityFeed';
 
 const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
 	try {
@@ -62,13 +64,12 @@ export const LatestActivity: React.FC<ILatestActivityProps> = ({ currentTab }) =
 
 const LatestActivityExplore: React.FC = () => {
 	const { addresses } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [currentTab, setCurrentTab] = useState<string>('all');
-	const [postData, setPostData] = useState<any[]>([]);
 	const { network } = useNetworkSelector();
-	const [loading, setLoading] = useState<boolean>(false);
-
+	const { explorePosts, loadingExplore } = useSelector((state: any) => state.activityFeed);
 	const fetchexploreposts = async () => {
-		setLoading(true);
+		dispatch(setLoadingExplore(true));
 		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/explore-posts', {
 			userAddresses: addresses || []
 		});
@@ -92,10 +93,8 @@ const LatestActivityExplore: React.FC = () => {
 			})
 		);
 
-		// Filter out any posts that encountered an error
-		setPostData(detailedPosts?.filter((post) => !post.error));
-
-		setLoading(false);
+		dispatch(setExplorePosts(detailedPosts?.filter((post) => !post.error)));
+		dispatch(setLoadingExplore(false));
 	};
 
 	useEffect(() => {
@@ -105,8 +104,8 @@ const LatestActivityExplore: React.FC = () => {
 
 	const filteredPosts =
 		currentTab === 'all'
-			? postData
-			: postData.filter((post) => {
+			? explorePosts
+			: explorePosts.filter((post: any) => {
 					const networkInfo = networkTrackInfo[network] || {};
 					const trackName = Object?.keys(networkInfo)?.find((key) => networkInfo[key]?.trackId === post?.track_no);
 
@@ -120,7 +119,7 @@ const LatestActivityExplore: React.FC = () => {
 
 	return (
 		<div className=''>
-			{loading ? (
+			{(!explorePosts || explorePosts.length === 0) && loadingExplore ? (
 				<div className='flex min-h-[200px] w-full  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />{' '}
 				</div>
@@ -129,7 +128,7 @@ const LatestActivityExplore: React.FC = () => {
 					<ActivityFeedTabNavigation
 						currentTab={currentTab}
 						setCurrentTab={setCurrentTab}
-						gov2LatestPosts={postData}
+						gov2LatestPosts={explorePosts}
 						network={network}
 					/>
 					<ActivityFeedPostList postData={filteredPosts} />
@@ -161,12 +160,12 @@ const LatestActivityFollowing: React.FC = () => {
 	const currentuser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const [subscribedPosts, setSubscribedPosts] = useState<IPostData[]>([]);
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
-	const [loading, setLoading] = useState<boolean>(false);
+	const { subscribedPosts, loadingSubscribed } = useSelector((state: any) => state.activityFeed);
 	const { network } = useNetworkSelector();
+	const dispatch = useDispatch();
 	const fecthAllSubscribedPosts = async () => {
-		setLoading(true);
+		dispatch(setLoadingSubscribed(true));
 		const { data: responseData } = await nextApiClientFetch<any>('/api/v1/activity-feed/subscribed-posts');
 		const posts = Array?.isArray(responseData?.data) ? responseData?.data : [];
 		const detailedPosts = await Promise?.all(
@@ -189,14 +188,14 @@ const LatestActivityFollowing: React.FC = () => {
 				}
 			})
 		);
-		setSubscribedPosts(detailedPosts?.filter((post) => !post?.error));
-		setLoading(false);
+		dispatch(setExplorePosts(detailedPosts?.filter((post) => !post?.error) || []));
+		dispatch(setLoadingSubscribed(false));
 	};
 
 	const filteredPosts =
 		currentTab === 'all'
 			? subscribedPosts
-			: subscribedPosts?.filter((post) => {
+			: subscribedPosts?.filter((post: any) => {
 					const formattedTrackName = post.trackName
 						?.replace(/([a-z])([A-Z])/g, '$1-$2')
 						?.replace(/_/g, '-')
@@ -207,10 +206,11 @@ const LatestActivityFollowing: React.FC = () => {
 
 	useEffect(() => {
 		fecthAllSubscribedPosts();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTab, network]);
 	return (
 		<div className=''>
-			{loading ? (
+			{(!subscribedPosts || subscribedPosts.length === 0) && loadingSubscribed ? (
 				<div className='flex min-h-[200px]  items-center justify-center rounded-lg bg-white px-5 dark:bg-[#141414]'>
 					<Skeleton active />
 				</div>

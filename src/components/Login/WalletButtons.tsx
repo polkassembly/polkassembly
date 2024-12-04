@@ -86,7 +86,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						text='SubWallet'
 						isLoginFlow={isLoginFlow}
 					/>
-					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 							// disabled={!availableWallets?.[Wallet.POLKADOT]}
@@ -122,7 +122,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					/>
 				</div>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${
 								selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''
@@ -184,9 +184,9 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						/>
 					)}
 				</div>
-				{['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network) ? (
+				{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network) ? (
 					<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
+						{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) ? (
 							<WalletButton
 								className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
 								// disabled={!isMetamaskWallet}

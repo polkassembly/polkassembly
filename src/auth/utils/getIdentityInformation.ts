@@ -3,31 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { ApiPromise } from '@polkadot/api';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { hexToString, isHex } from '@polkadot/util';
+import { IIdentityInfo } from '~src/types';
 
 interface Args {
 	api?: ApiPromise;
 	address: string;
 	network: string;
-}
-interface IIdentityInfo {
-	display: string;
-	legal: string;
-	email: string;
-	twitter: string;
-	web: string;
-	github: string;
-	discord: string;
-	matrix: string;
-	displayParent: string;
-	nickname: string;
-	isIdentitySet: boolean;
-	isVerified: boolean;
-	isGood: boolean;
-	judgements: RegistrationJudgement[];
-	verifiedByPolkassembly: boolean;
 }
 
 const result: IIdentityInfo = {
@@ -43,17 +26,36 @@ const result: IIdentityInfo = {
 	legal: '',
 	matrix: '',
 	nickname: '',
+	parentProxyAddress: '',
+	parentProxyTitle: null,
 	twitter: '',
 	verifiedByPolkassembly: false,
 	web: ''
 };
 
+const getParentProxyInfo = async ({ address, api, apiReady, network }: { address: string; api: ApiPromise; apiReady: boolean; network: string }) => {
+	if (!api || !apiReady) return { address: '', title: null };
+	const encodedAddress = getEncodedAddress(address, network) || address;
+
+	const proxyInfo = await api?.query?.identity?.superOf(encodedAddress);
+	const formatedProxyInfo: any = proxyInfo?.toHuman();
+	if (formatedProxyInfo && formatedProxyInfo?.[0] && getEncodedAddress(formatedProxyInfo?.[0] || '', network)) {
+		return { address: formatedProxyInfo?.[0], title: formatedProxyInfo?.[1]?.Raw || null };
+	}
+	return { address: '', title: null };
+};
+
 const getIdentityInformation = async ({ api, address, network }: Args): Promise<IIdentityInfo> => {
 	if (!api || !address) return result;
 
-	await api.isReady;
+	await api?.isReady;
+	if (!api?.isReady) return result;
 
-	const encodedAddress = getEncodedAddress(address, network) || address;
+	const encodedQueryAddress = getEncodedAddress(address, network) || address;
+
+	const parentProxyInfo = await getParentProxyInfo({ address: encodedQueryAddress, api: api, apiReady: !!api?.isReady, network });
+
+	const encodedAddress = parentProxyInfo ? getEncodedAddress(parentProxyInfo?.address, network) : encodedQueryAddress;
 
 	const identityInfo: any = await api?.query.identity?.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
 
@@ -87,6 +89,8 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 		legal: isHex(identity?.legal?.Raw || '') ? hexToString(identity?.legal?.Raw) || identity?.legal?.Raw || '' : identity?.legal?.Raw || '',
 		matrix: identity?.matrix?.Raw || identity?.riot?.Raw || '',
 		nickname: identity?.nickname?.Raw || '',
+		parentProxyAddress: parentProxyInfo?.address || '',
+		parentProxyTitle: parentProxyInfo?.title || null,
 		twitter: identity?.twitter?.Raw || '',
 		verifiedByPolkassembly: verifiedByPolkassembly || false,
 		web: identity?.web?.Raw || ''

@@ -31,7 +31,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 	return (
 		<>
-			{!['polymesh', 'polymesh-test'].includes(network) && (
+			{!['polymesh', 'polymesh-test', 'mythos'].includes(network) && (
 				<>
 					{!inTreasuryProposals && (
 						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>

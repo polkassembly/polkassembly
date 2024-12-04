@@ -24,6 +24,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { useRouter } from 'next/router';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -78,6 +79,9 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		if (!api || !apiReady) return;
 
 		setLoading({ ...loading, isLoading: true });
+
+		if (!peopleChainApiReady && isPeopleChainSupportedNetwork(network)) return;
+
 		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
 		const paymentInfo = await tx.paymentInfo(addr);
 		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
@@ -118,6 +122,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			dispatch(setOpenRemoveIdentityModal(false));
 			router.reload();
 		};
+		if (!peopleChainApiReady && isPeopleChainSupportedNetwork(network)) return;
 		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
 
 		executeTx({

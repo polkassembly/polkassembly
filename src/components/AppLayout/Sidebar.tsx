@@ -62,7 +62,7 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
-import getUserDropDown, { MenuItem, SidebarFoot1, SidebarFoot2 } from './menuUtils';
+import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -73,6 +73,7 @@ import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
 import CreateProposalDropdown from './CreateProposalDropdown';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
+import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
 
 const { Sider } = Layout;
 

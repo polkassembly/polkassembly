@@ -30,6 +30,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Alert from '~src/basic-components/Alert';
 import _ from 'lodash';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -46,6 +47,7 @@ interface Props {
 const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motionProposalHash, onAccountChange, proposalType, setAccounts }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
+	const { t } = useTranslation('common');
 	const [isCouncil, setIsCouncil] = useState(false);
 	const [forceVote, setForceVote] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
@@ -98,19 +100,19 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 						setCurrentCouncil(members.filter((member) => !!member) as string[]);
 					})
 					.catch((error) => {
-						console.error('Error fetching council members:', error);
+						console.error(t('error_fetching_council_members'), error);
 						setCurrentCouncil([]);
 						queueNotification({
 							header: 'Failed!',
-							message: 'Could not fetch council members. Some features may be limited.',
+							message: t('error_fetching_council_members'),
 							status: NotificationStatus.ERROR
 						});
 					});
 			} else {
-				console.error('Council pallet is not available on this network.');
+				console.error(t('council_pallet_not_available'));
 				queueNotification({
 					header: 'Notice',
-					message: 'Council features are not available on this network.',
+					message: t('council_pallet_not_available'),
 					status: NotificationStatus.WARNING
 				});
 			}
@@ -251,10 +253,10 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 
 	const VotingForm = () => (
 		<GovSidebarCard>
-			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast your Vote!</h3>
+			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>{t('cast_your_vote')}</h3>
 			<CustomButton
 				variant='primary'
-				text='Cast Vote'
+				text={t('cast_vote')}
 				onClick={openModal}
 				fontSize='lg'
 				className='mx-auto my-3 w-[95%] p-7'
@@ -271,10 +273,10 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 					spinning={loadingStatus.isLoading}
 					indicator={<LoadingOutlined />}
 				>
-					<h4 className='mb-7 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast Your Vote</h4>
+					<h4 className='mb-7 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>{t('cast_your_vote')}</h4>
 
 					<AccountSelectionForm
-						title='Vote with Account'
+						title={t('vote_with_account')}
 						accounts={accounts}
 						address={address}
 						withBalance
@@ -294,7 +296,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			</Modal>
 			{voteCount ? (
 				<div>
-					<p className='mb-[5px] text-[12px] font-medium leading-6 text-blue-light-high dark:text-blue-dark-high'>Last Vote:</p>
+					<p className='mb-[5px] text-[12px] font-medium leading-6 text-blue-light-high dark:text-blue-dark-high'>{t('last_vote')}</p>
 					<div className='mb-[-5px] flex text-[12px] font-normal leading-6 text-blue-light-high dark:text-blue-dark-high'>
 						<Tooltip
 							placement='bottom'
@@ -333,13 +335,13 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 
 	const NotCouncil = () => (
 		<GovSidebarCard>
-			<h3 className='dashboard-heading mb-6 dark:text-white'>Cast your Vote!</h3>
+			<h3 className='dashboard-heading mb-6 dark:text-white'>{t('cast_your_vote')}</h3>
 			<Alert
 				className='mb-6 '
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>
-						<span>No account found from the council</span>
+						<span>{t('no_account_found_from_the_council')}</span>
 						<Image
 							width={25}
 							height={25}
@@ -352,7 +354,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			<CustomButton
 				variant='default'
 				onClick={() => setForceVote(true)}
-				text='Let me try still.'
+				text={t('let_me_try_still')}
 				className='border-none'
 			/>
 		</GovSidebarCard>

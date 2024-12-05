@@ -11,6 +11,7 @@ import LoginToVote from '../LoginToVoteOrEndorse';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import VoteReferendumModal from './VoteReferendumModal';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -31,6 +32,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { api, apiReady } = useApiContext();
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id } = userDetails;
+	const { t } = useTranslation('common');
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
@@ -96,7 +98,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full xl:shadow-md'
 					onClick={() => setShowModal(true)}
 				>
-					{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
+					{!lastVote ? t('cast_your_vote') : t('cast_vote_again')}
 				</CustomButton>
 				<VoteReferendumModal
 					onAccountChange={onAccountChange}
@@ -118,9 +120,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!fetchingFellowship) {
 			if (isFellowshipMember) return VoteUI;
 
-			return <div className={className}>Only fellowship members may vote.</div>;
+			return <div className={className}>{t('only_fellowship_members_may_vote')}</div>;
 		} else {
-			return <div className={className}>Fetching fellowship members...</div>;
+			return <div className={className}>{t('fetching_fellowship_members')}</div>;
 		}
 	}
 	return VoteUI;

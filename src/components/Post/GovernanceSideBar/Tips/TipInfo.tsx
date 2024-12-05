@@ -12,6 +12,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 
 import Address from '../../../../ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTranslation } from 'next-i18next';
 
 interface ITippersInfo {
 	tipper: string;
@@ -48,6 +49,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const [members, setMembers] = useState<string[]>([]);
 	const [median, setMedian] = useState(new BN(0));
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -82,7 +84,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 			{tippers?.length > 0 ? (
 				<div className='flex flex-col gap-y-7'>
 					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>
-						Receiver of Final Tip
+						{t('receiver_of_final_tip')}
 						<HelperTooltip
 							className='text-sm'
 							text='The final value of the tip is decided based on the median of all tips issued by the tippers'
@@ -98,10 +100,10 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 						<Col>{formatBnBalance(median, { numberAfterComma: 2, withUnit: true }, network)}</Col>
 					</Row>
 					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>
-						Tippers{' '}
+						{t('tippers')}
 						<HelperTooltip
 							className='text-sm'
-							text='Amount tipped by an individual/organization'
+							text={t('amount_tipped_by_an_individual_organization')}
 						/>
 					</h3>
 					<div className='flex flex-col gap-y-5'>
@@ -138,7 +140,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 											address={tip}
 										/>
 									</Col>
-									<Col>Pending</Col>
+									<Col>{t('pending')}</Col>
 								</Row>
 							))}
 						</div>

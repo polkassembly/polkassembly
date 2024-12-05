@@ -359,9 +359,9 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							]}
 						>
 							<AccountSelectionForm
-								title='Select an address for proxy '
+								title='Select an address for proxy'
 								isTruncateUsername={false}
-								accounts={accounts}
+								accounts={accounts.filter((account) => getSubstrateAddress(account.address) !== getSubstrateAddress(form.getFieldValue('proxyAddress') || loginAddress))}
 								address={form.getFieldValue('proxyAddress') || loginAddress}
 								withBalance={false}
 								onAccountChange={(address) => form.setFieldsValue({ proxyAddress: address })}

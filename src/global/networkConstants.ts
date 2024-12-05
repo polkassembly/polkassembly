@@ -210,6 +210,8 @@ export const chainProperties: types.ChainPropType = {
 		preImageBaseDeposit: '400000000000',
 		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
 		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
+		assetHubTreasuryAddress2: '16VcQSRcMFy6ZHVjBvosKmo7FKqTb8ZATChDYo8ibutzLnos',
+		assetHubTreasuryAddress3: '13w7NdvSR1Af8xsQTArDtZmVvjE8XhWNdL4yed3iFHrUNCnS',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,

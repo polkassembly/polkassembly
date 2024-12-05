@@ -16,8 +16,10 @@ interface TreasuryDetailsModalProps {
 	onClose: () => void;
 	available: number;
 	assetValue: string;
+	assetValueFellowship: string;
 	assetValueUSDC: string;
 	assetValueUSDT: string;
+	assetValueUSDTFellowship: string;
 	hydrationValue: string;
 	hydrationValueUSDC: string;
 	hydrationValueUSDT: string;
@@ -34,8 +36,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	onClose,
 	available,
 	assetValue,
+	assetValueFellowship,
 	assetValueUSDC,
 	assetValueUSDT,
+	assetValueUSDTFellowship,
 	hydrationValue,
 	hydrationValueUSDC,
 	hydrationValueUSDT,
@@ -135,6 +139,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{formatUSDWithUnits(assetValue)}</span>
 										{unit}
 									</div>
+									<Divider
+										type='vertical'
+										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									/>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -146,6 +154,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{assetValueUSDC}</span>
 										USDC
 									</div>
+									<Divider
+										type='vertical'
+										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									/>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -182,7 +194,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								<span className='text-sm font-medium '>Hydration</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='ml-1 text-base font-semibold'>~ {hydrationValueTotal}</span>
+								<span className='ml-1 text-base font-semibold'>~ ${hydrationValueTotal}</span>
 								<div className='flex items-center gap-1'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
@@ -195,6 +207,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{formatUSDWithUnits(hydrationValue)}</span>
 										{unit}
 									</div>
+									<Divider
+										type='vertical'
+										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									/>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -206,6 +222,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{hydrationValueUSDC} </span>
 										USDC
 									</div>
+									<Divider
+										type='vertical'
+										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									/>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -217,6 +237,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{hydrationValueUSDT} </span>
 										USDt
 									</div>
+
 									<div className='flex gap-1 text-xs text-pink_primary'>
 										<Link
 											href={'https://hydration.subscan.io/account/7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY'}
@@ -270,19 +291,46 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 						<div className='flex flex-col'>
 							<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
-							<div className='ml-1 flex items-center gap-[6px] text-sm'>
-								<Image
-									alt='relay icon'
-									width={16}
-									height={16}
-									src={'/assets/treasury/dot-icon.svg'}
-									className='-mt-[2px]'
+							<div className='flex items-center gap-1'>
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://assethub-polkadot.subscan.io/account/16VcQSRcMFy6ZHVjBvosKmo7FKqTb8ZATChDYo8ibutzLnos'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Treasury <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/dot-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>{formatUSDWithUnits(String(assetValueFellowship))} </span>
+									{unit}
+								</div>
+								<Divider
+									type='vertical'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 								/>
-								<span className='font-medium'>~ $103.3M </span>
-								{unit}
-								<span className='-mb-[2px]'>
-									<RedirectingIcon />
-								</span>
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://assethub-polkadot.subscan.io/account/13w7NdvSR1Af8xsQTArDtZmVvjE8XhWNdL4yed3iFHrUNCnS'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Salary <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/usdt-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>{assetValueUSDTFellowship} USDt</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -292,7 +340,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							<span className='text-sm font-medium '>Loans</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ {loansValue}</span>
+							<span className='ml-1 text-base font-semibold'>~ ${loansValue}</span>
 							<div className='flex gap-1'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link

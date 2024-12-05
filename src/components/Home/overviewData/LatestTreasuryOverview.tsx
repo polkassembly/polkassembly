@@ -40,8 +40,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const BN_MILLION = new BN(10).pow(new BN(6));
 
 	const assetValue = formatBnBalance(new BN(assethubValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const assetValueFellowship = formatBnBalance(new BN(assethubValues.dotValueFellowship), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString());
 	const assetValueUSDT = formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString());
+	const assetValueUSDTFellowship = formatUSDWithUnits(new BN(assethubValues.usdtValueFellowship).div(BN_MILLION).toString());
 
 	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
@@ -184,8 +186,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						onClose={closeModal}
 						available={tokenValue}
 						assetValue={assetValue}
+						assetValueFellowship={assetValueFellowship}
 						assetValueUSDC={assetValueUSDC}
 						assetValueUSDT={assetValueUSDT}
+						assetValueUSDTFellowship={assetValueUSDTFellowship}
 						hydrationValue={hydrationValue}
 						hydrationValueUSDC={hydrationValueUSDC}
 						hydrationValueUSDT={hydrationValueUSDT}

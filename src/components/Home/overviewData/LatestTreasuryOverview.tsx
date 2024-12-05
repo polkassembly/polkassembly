@@ -182,7 +182,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					<TreasuryDetailsModal
 						visible={isModalVisible}
 						onClose={closeModal}
-						available={available}
+						available={tokenValue}
 						assetValue={assetValue}
 						assetValueUSDC={assetValueUSDC}
 						assetValueUSDT={assetValueUSDT}
@@ -194,6 +194,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						assethubApiReady={assethubApiReady}
 						hydrationApiReady={hydrationApiReady}
 						unit={unit}
+						currentTokenPrice={currentTokenPrice.value}
 					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
 						<div>

@@ -9,11 +9,12 @@ import { dmSans } from 'pages/_app';
 import RedirectingIcon from '~assets/treasury/redirecting-icon.svg';
 import { styled } from 'styled-components';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import Link from 'next/link';
 
 interface TreasuryDetailsModalProps {
 	visible: boolean;
 	onClose: () => void;
-	available: { value?: string };
+	available: number;
 	assetValue: string;
 	assetValueUSDC: string;
 	assetValueUSDT: string;
@@ -25,6 +26,7 @@ interface TreasuryDetailsModalProps {
 	assethubApiReady: boolean;
 	hydrationApiReady: boolean;
 	unit: string;
+	currentTokenPrice: string;
 }
 
 const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
@@ -41,8 +43,21 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	network,
 	assethubApiReady,
 	hydrationApiReady,
-	unit
+	unit,
+	currentTokenPrice
 }: TreasuryDetailsModalProps) => {
+	const availableValue = parseFloat(String(available));
+	const tokenPrice = parseFloat(currentTokenPrice || '0');
+	const assetValueNum = parseFloat(assetValue || '0');
+	const assetValueUSDCNum = parseFloat(assetValueUSDC || '0');
+	const assetValueUSDTNum = parseFloat(assetValueUSDT || '0');
+	const hydrationValueNum = parseFloat(hydrationValue || '0');
+	const hydrationValueUSDCNum = parseFloat(hydrationValueUSDC || '0');
+	const hydrationValueUSDTNum = parseFloat(hydrationValueUSDT || '0');
+
+	const relayChainValue = formatUSDWithUnits(String(availableValue * Number(tokenPrice)));
+	const assetHubValue = formatUSDWithUnits(String(assetValueNum * Number(tokenPrice) + assetValueUSDCNum * 1000000 + assetValueUSDTNum * 1000000));
+	const hydrationValueTotal = formatUSDWithUnits(String(hydrationValueNum * Number(tokenPrice) + hydrationValueUSDCNum + hydrationValueUSDTNum));
 	return (
 		<Modal
 			title={
@@ -71,7 +86,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							<span className={`${dmSans.className} ${dmSans.variable} text-sm font-medium `}>Relay Chain</span>
 						</div>
 						<div className={`${dmSans.className} ${dmSans.variable} -mt-[2px] flex flex-col`}>
-							<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
+							<span className='ml-1 text-base font-semibold'>~ ${relayChainValue}</span>
 							<div className='ml-1 flex items-center gap-[6px] text-sm'>
 								<Image
 									alt='relay icon'
@@ -80,11 +95,8 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 									src={'/assets/treasury/dot-icon.svg'}
 									className='-mt-[2px]'
 								/>
-								<span className='font-medium'>{available.value} </span>
+								<span className='font-medium'>{formatUSDWithUnits(String(available))} </span>
 								{unit}
-								<span className='-mb-[2px]'>
-									<RedirectingIcon />
-								</span>
 							</div>
 						</div>
 					</div>
@@ -102,7 +114,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								<span className='text-sm font-medium '>Asset Hub</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
+								<span className='ml-1 text-base font-semibold'>~ ${assetHubValue}</span>
 								<div className='flex items-center gap-1'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
@@ -137,9 +149,13 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{assetValueUSDT}</span>
 										USDt
 									</div>
-									<span className='-mb-[2px]'>
+									<Link
+										href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
+										className='-mb-1 cursor-pointer'
+										target='_blank'
+									>
 										<RedirectingIcon />
-									</span>
+									</Link>
 								</div>
 							</div>
 						</div>
@@ -158,7 +174,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								<span className='text-sm font-medium '>Hydration</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
+								<span className='ml-1 text-base font-semibold'>~ {hydrationValueTotal}</span>
 								<div className='flex items-center gap-1'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
@@ -194,12 +210,20 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										USDt
 									</div>
 									<div className='flex gap-1 text-xs font-medium text-pink_primary'>
-										<span className='flex items-center gap-1'>
+										<Link
+											href={'https://hydration.subscan.io/account/7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY'}
+											className='flex items-center gap-1'
+											target='_blank'
+										>
 											Address #1 <RedirectingIcon />
-										</span>
-										<span className='flex items-center gap-1'>
+										</Link>
+										<Link
+											href={'https://hydration.subscan.io/account/7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV'}
+											className='flex items-center gap-1'
+											target='_blank'
+										>
 											Address #2 <RedirectingIcon />
-										</span>
+										</Link>
 									</div>
 								</div>
 							</div>

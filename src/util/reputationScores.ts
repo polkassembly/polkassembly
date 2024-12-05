@@ -25,9 +25,6 @@ const REPUTATION_SCORES = {
 	create_discussion: {
 		value: 1
 	},
-	linked_discussion: {
-		value: 0.5
-	},
 	create_referendum: {
 		value: 5
 	},

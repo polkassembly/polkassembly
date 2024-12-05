@@ -119,8 +119,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 							//linked discussion
 							if (postData?.post_link?.id) {
-								userScores[Number(postData.user_id || postData.author_id)] =
-									(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.linked_discussion.value;
+								userScores[Number(postData.user_id || postData.author_id)] = userScores[Number(postData.user_id || postData.author_id)]
+									? userScores[Number(postData.user_id || postData.author_id)] + REPUTATION_SCORES.add_context.value
+									: REPUTATION_SCORES.add_context.value;
 							}
 
 							//spam discussion marked
@@ -299,126 +300,126 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		console.log('\n=============================================\n');
 
-		for (const networkDoc of networks.docs) {
-			console.log('Processing network: ', networkDoc.id);
-			console.log('\n\n=============================================\n\n');
+		// for (const networkDoc of networks.docs) {
+		//  console.log('Processing network: ', networkDoc.id);
+		// console.log('\n\n=============================================\n\n');
 
-			const postTypes = await networkDoc.ref.collection('post_types').get();
+		// const postTypes = await networkDoc.ref.collection('post_types').get();
 
-			for (const postTypeDoc of postTypes.docs) {
-				console.log('Processing post type: ', postTypeDoc.id, 'for network: ', networkDoc.id);
+		// for (const postTypeDoc of postTypes.docs) {
+		// console.log('Processing post type: ', postTypeDoc.id, 'for network: ', networkDoc.id);
 
-				console.log('\n=============================================\n');
+		// console.log('\n=============================================\n');
 
-				const posts = await postTypeDoc.ref.collection('posts').get();
+		// const posts = await postTypeDoc.ref.collection('posts').get();
 
-				console.log('Total posts: ', posts.docs.length);
+		// console.log('Total posts: ', posts.docs.length);
 
-				for (const postDoc of posts.docs) {
-					console.log('Processing post: ', postDoc.id, 'for network: ', networkDoc.id);
+		// for (const postDoc of posts.docs) {
+		// console.log('Processing post: ', postDoc.id, 'for network: ', networkDoc.id);
 
-					const postData = postDoc.data();
+		// const postData = postDoc.data();
 
-					console.log('Processing post: ', postDoc.id, ' by user_id: ', postData.user_id || postData.author_id);
+		// console.log('Processing post: ', postDoc.id, ' by user_id: ', postData.user_id || postData.author_id);
 
-					// check if post is a discussion
-					if (postTypeDoc.id === ProposalType.DISCUSSIONS) {
-						userScores[Number(postData.user_id || postData.author_id)] = userScores[Number(postData.user_id || postData.author_id)]
-							? userScores[Number(postData.user_id || postData.author_id)] + REPUTATION_SCORES.create_discussion.value
-							: REPUTATION_SCORES.create_discussion.value;
-					}
+		// // check if post is a discussion
+		// if (postTypeDoc.id === ProposalType.DISCUSSIONS) {
+		// userScores[Number(postData.user_id || postData.author_id)] = userScores[Number(postData.user_id || postData.author_id)]
+		// ? userScores[Number(postData.user_id || postData.author_id)] + REPUTATION_SCORES.create_discussion.value
+		// : REPUTATION_SCORES.create_discussion.value;
+		// }
 
-					// check if post is web3 and has been linked to a discussion
-					if (postTypeDoc.id != ProposalType.DISCUSSIONS && postData.post_link) {
-						userScores[Number(postData.user_id || postData.author_id)] = userScores[Number(postData.user_id || postData.author_id)]
-							? userScores[Number(postData.user_id || postData.author_id)] + REPUTATION_SCORES.add_context.value
-							: REPUTATION_SCORES.add_context.value;
-					}
+		// // check if post is web3 and has been linked to a discussion
+		// if (postTypeDoc.id != ProposalType.DISCUSSIONS && postData.post_link) {
+		// userScores[Number(postData.user_id || postData.author_id)] = userScores[Number(postData.user_id || postData.author_id)]
+		// ? userScores[Number(postData.user_id || postData.author_id)] + REPUTATION_SCORES.add_context.value
+		// : REPUTATION_SCORES.add_context.value;
+		// }
 
-					// loop through post reactions
-					const reactions = await postDoc.ref.collection('post_reactions').get();
-					for (const reactionDoc of reactions.docs) {
-						const reactionData = reactionDoc.data();
+		// // loop through post reactions
+		// const reactions = await postDoc.ref.collection('post_reactions').get();
+		// for (const reactionDoc of reactions.docs) {
+		// const reactionData = reactionDoc.data();
 
-						userScores[Number(reactionData.user_id || reactionData.author_id)] = userScores[Number(reactionData.user_id || reactionData.author_id)]
-							? userScores[Number(reactionData.user_id || reactionData.author_id)] + REPUTATION_SCORES.reaction.value
-							: REPUTATION_SCORES.reaction.value;
-					}
+		// userScores[Number(reactionData.user_id || reactionData.author_id)] = userScores[Number(reactionData.user_id || reactionData.author_id)]
+		// ? userScores[Number(reactionData.user_id || reactionData.author_id)] + REPUTATION_SCORES.reaction.value
+		// : REPUTATION_SCORES.reaction.value;
+		// }
 
-					// loop through comments
-					const comments = await postDoc.ref.collection('comments').get();
+		// // loop through comments
+		// const comments = await postDoc.ref.collection('comments').get();
 
-					console.log('Total comments: ', comments.docs.length);
+		// console.log('Total comments: ', comments.docs.length);
 
-					const commentUserIds: number[] = [];
+		// const commentUserIds: number[] = [];
 
-					for (const commentDoc of comments.docs) {
-						console.log('Processing comment: ', commentDoc.id, ' by user_id: ', commentDoc.data().user_id || commentDoc.data().author_id);
+		// for (const commentDoc of comments.docs) {
+		// console.log('Processing comment: ', commentDoc.id, ' by user_id: ', commentDoc.data().user_id || commentDoc.data().author_id);
 
-						const commentData = commentDoc.data();
+		// const commentData = commentDoc.data();
 
-						if (!commentUserIds.includes(Number(commentData.user_id || commentData.author_id))) {
-							commentUserIds.push(Number(commentData.user_id || commentData.author_id));
-							userScores[Number(commentData.user_id || commentData.author_id)] = userScores[Number(commentData.user_id || commentData.author_id)]
-								? userScores[Number(commentData.user_id || commentData.author_id)] + REPUTATION_SCORES.comment.value
-								: REPUTATION_SCORES.comment.value;
-						}
+		// if (!commentUserIds.includes(Number(commentData.user_id || commentData.author_id))) {
+		// commentUserIds.push(Number(commentData.user_id || commentData.author_id));
+		// userScores[Number(commentData.user_id || commentData.author_id)] = userScores[Number(commentData.user_id || commentData.author_id)]
+		// ? userScores[Number(commentData.user_id || commentData.author_id)] + REPUTATION_SCORES.comment.value
+		// : REPUTATION_SCORES.comment.value;
+		// }
 
-						// loop through comment reactions
-						const commentReactions = await commentDoc.ref.collection('comment_reactions').get();
+		// // loop through comment reactions
+		// const commentReactions = await commentDoc.ref.collection('comment_reactions').get();
 
-						for (const commentReactionDoc of commentReactions.docs) {
-							console.log('Processing comment reaction: ', commentReactionDoc.id, ' by user_id: ', commentReactionDoc.data().user_id || commentReactionDoc.data().author_id);
+		// for (const commentReactionDoc of commentReactions.docs) {
+		// console.log('Processing comment reaction: ', commentReactionDoc.id, ' by user_id: ', commentReactionDoc.data().user_id || commentReactionDoc.data().author_id);
 
-							const commentReactionData = commentReactionDoc.data();
+		//const commentReactionData = commentReactionDoc.data();
 
-							userScores[Number(commentReactionData.user_id || commentReactionData.author_id)] = userScores[Number(commentReactionData.user_id || commentReactionData.author_id)]
-								? userScores[Number(commentReactionData.user_id || commentReactionData.author_id)] + REPUTATION_SCORES.reaction.value
-								: REPUTATION_SCORES.reaction.value;
-						}
+		// userScores[Number(commentReactionData.user_id || commentReactionData.author_id)] = userScores[Number(commentReactionData.user_id || commentReactionData.author_id)]
+		// ? userScores[Number(commentReactionData.user_id || commentReactionData.author_id)] + REPUTATION_SCORES.reaction.value
+		// : REPUTATION_SCORES.reaction.value;
+		// }
 
-						console.log('Processing replies for comment: ', commentDoc.id);
+		// console.log('Processing replies for comment: ', commentDoc.id);
 
-						// loop through replies
-						const replies = await commentDoc.ref.collection('replies').get();
+		// // loop through replies
+		// const replies = await commentDoc.ref.collection('replies').get();
 
-						console.log('Total replies: ', replies.docs.length);
+		// console.log('Total replies: ', replies.docs.length);
 
-						const replyUserIds: number[] = [];
+		// const replyUserIds: number[] = [];
 
-						for (const replyDoc of replies.docs) {
-							console.log('Processing reply: ', replyDoc.id, ' by user_id: ', replyDoc.data().user_id || replyDoc.data().author_id);
+		// for (const replyDoc of replies.docs) {
+		// console.log('Processing reply: ', replyDoc.id, ' by user_id: ', replyDoc.data().user_id || replyDoc.data().author_id);
 
-							const replyData = replyDoc.data();
+		// const replyData = replyDoc.data();
 
-							if (!replyUserIds.includes(Number(replyData.user_id || replyData.author_id))) {
-								replyUserIds.push(Number(replyData.user_id || replyData.author_id));
-								userScores[Number(replyData.user_id || replyData.author_id)] = userScores[Number(replyData.user_id || replyData.author_id)]
-									? userScores[Number(replyData.user_id || replyData.author_id)] + REPUTATION_SCORES.reply.value
-									: REPUTATION_SCORES.reply.value;
-							}
+		// if (!replyUserIds.includes(Number(replyData.user_id || replyData.author_id))) {
+		// replyUserIds.push(Number(replyData.user_id || replyData.author_id));
+		// userScores[Number(replyData.user_id || replyData.author_id)] = userScores[Number(replyData.user_id || replyData.author_id)]
+		// ? userScores[Number(replyData.user_id || replyData.author_id)] + REPUTATION_SCORES.reply.value
+		// : REPUTATION_SCORES.reply.value;
+		// }
 
-							// loop through reply reactions
-							const replyReactions = await replyDoc.ref.collection('reply_reactions').get();
+		// // loop through reply reactions
+		// const replyReactions = await replyDoc.ref.collection('reply_reactions').get();
 
-							console.log('Total reply reactions: ', replyReactions.docs.length);
+		// console.log('Total reply reactions: ', replyReactions.docs.length);
 
-							for (const replyReactionDoc of replyReactions.docs) {
-								console.log('Processing reply reaction: ', replyReactionDoc.id, ' by user_id: ', replyReactionDoc.data().user_id || replyReactionDoc.data().author_id);
+		// for (const replyReactionDoc of replyReactions.docs) {
+		// console.log('Processing reply reaction: ', replyReactionDoc.id, ' by user_id: ', replyReactionDoc.data().user_id || replyReactionDoc.data().author_id);
 
-								const replyReactionData = replyReactionDoc.data();
+		// const replyReactionData = replyReactionDoc.data();
 
-								userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] = userScores[Number(replyReactionData.user_id || replyReactionData.author_id)]
-									? userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] + REPUTATION_SCORES.reaction.value
-									: REPUTATION_SCORES.reaction.value;
-							}
-						}
-					}
+		// userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] = userScores[Number(replyReactionData.user_id || replyReactionData.author_id)]
+		// ? userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] + REPUTATION_SCORES.reaction.value
+		// : REPUTATION_SCORES.reaction.value;
+		// }
+		// }
+		// }
 
-					console.log('\n=============================================\n');
-				}
-			}
-		}
+		// console.log('\n=============================================\n');
+		// }
+		// }
+		// }
 
 		// update user profile score
 		const chunkedUserScores = chunkObject(userScores, 480);

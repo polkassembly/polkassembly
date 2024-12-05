@@ -169,8 +169,8 @@ export interface User {
 	profile_score: number;
 	addresses?: string[];
 	identityInfo?: any;
-	followers_count: { [key: string]: number };
-	followings_count: { [key: string]: number };
+	followers_count?: { [key: string]: number };
+	followings_count?: { [key: string]: number };
 }
 
 export interface Roles {

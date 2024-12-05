@@ -8,6 +8,7 @@ import { SUBSCAN_API_HEADERS } from '../subscanApi';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
+import { isValidNetwork } from '~src/api-utils';
 export interface ProxyAddressResponse {
 	data: {
 		proxyAddress: string;
@@ -66,9 +67,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 	const { address } = req.body;
 	const network = String(req.headers['x-network']);
 
-	const ALLOWED_NETWORKS = ['polkadot', 'westend'];
-
-	if (!ALLOWED_NETWORKS.includes(network)) {
+	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}
 

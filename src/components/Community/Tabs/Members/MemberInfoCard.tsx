@@ -36,7 +36,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
-	const [totalFollowers, setTotalFollower] = useState<number>(user?.followers);
+	const [totalFollowers, setTotalFollower] = useState<number>(user?.followers_count?.[network] || 0);
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
@@ -239,7 +239,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 								imgHidden
 							/>
 						) : (
-							<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
+							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
 					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (

@@ -205,7 +205,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 								imgHidden
 							/>
 						) : (
-							<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
+							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
 					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (

@@ -174,7 +174,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								iconWrapperClassName='mt-[5?.5px]'
 							/>
 						)}
-						{delegate?.dataSource && delegate?.dataSource?.length && (
+						{delegate?.dataSource && delegate?.dataSource?.length > 0 && (
 							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
 								{delegate?.dataSource?.map((source, index) => (
 									<Image
@@ -338,7 +338,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								imgHidden
 							/>
 						) : (
-							'No Bio'
+							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
 					{delegate?.bio?.length > 100 && (

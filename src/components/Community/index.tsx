@@ -595,16 +595,30 @@ const Community = () => {
 							allowClear={{ clearIcon: <InputClearIcon /> }}
 							placeholder='Enter username or address to Delegate vote'
 							onChange={(e) => {
+								const value = e?.target?.value?.trim();
+								setSearchInput(value);
 								if (selectedTab === ECommunityTabs?.DELEGATES) {
 									if (!e?.target?.value?.length) {
 										setFilteredDelegates(delegatesData?.current || []);
 									}
 								}
-								setSearchInput(e?.target?.value?.trim());
+
+								if (!value) {
+									setCurrentPage(1);
+									if (selectedTab === ECommunityTabs?.DELEGATES) {
+										getData();
+									} else if (selectedTab === ECommunityTabs?.MEMBERS) {
+										getMembersData();
+									} else if (selectedTab === ECommunityTabs?.EXPERTS) {
+										getExpertsData();
+									} else if (selectedTab === ECommunityTabs?.CURATORS) {
+										getCuratorsData();
+									}
+								}
 							}}
 							onPressEnter={handleSearchSubmit}
 							value={searchInput}
-							className='placeholderColor h-10 rounded-none rounded-s-md border-0 border-b-[1px] border-l-[1px] border-t-[1px] border-section-light-container dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='placeholderColor h-10 rounded-none rounded-s-md border-0 border-b-[1px] border-l-[1px] border-t-[1px] border-section-light-container dark:border-separatorDark dark:bg-transparent dark:text-white dark:focus:border-[#91054F]'
 						/>
 
 						<CustomButton

@@ -7,8 +7,6 @@ import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design
 import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
-import HydrationIcon from '~assets/icons/hydration-icon.svg';
-import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -25,8 +23,6 @@ import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
-
-const ZERO_BN = new BN(0);
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();

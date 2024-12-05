@@ -69,6 +69,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	const centrifugeValue = 3_000_000;
 
 	const loansValue = formatUSDWithUnits(String(bifrostValue + pendulumValue + hydrationValueloan + centrifugeValue));
+	const fellowshipValues = formatUSDWithUnits(String(parseFloat(assetValueFellowship) * tokenPrice + parseFloat(assetValueUSDTFellowship)));
 
 	return (
 		<Modal
@@ -290,7 +291,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							<span className='text-sm font-medium '>Fellowships</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
+							<span className='ml-1 text-base font-semibold'>~ ${fellowshipValues}</span>
 							<div className='flex items-center gap-1'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link

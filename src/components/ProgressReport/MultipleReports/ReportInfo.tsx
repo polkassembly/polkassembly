@@ -88,36 +88,40 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 			) : (
 				<div className='mb-1 flex items-center gap-x-2 text-sm font-medium'>
 					<p className='m-0 p-0 text-bodyBlue dark:text-blue-dark-medium'>Please update your progress report for users to rate it.</p>
-					<span
-						className='flex items-center gap-x-1 text-pink_primary'
-						onClick={() => {
-							setShowContentForm(!showContentForm);
-						}}
-					>
-						<ImageIcon
-							src='/assets/icons/add-circle.svg'
-							alt='add'
-						/>
-						Add Summary
-					</span>
+					{!report?.isFromOgtracker && (
+						<span
+							className='flex cursor-pointer items-center gap-x-1 text-pink_primary'
+							onClick={() => {
+								setShowContentForm(!showContentForm);
+							}}
+						>
+							<ImageIcon
+								src='/assets/icons/add-circle.svg'
+								alt='add'
+							/>
+							Add Summary
+						</span>
+					)}
 				</div>
 			)}
-			<div className='flex items-center justify-between'>
-				{report?.progress_summary && (
-					<Button
-						className='m-0 mr-auto flex h-3 items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium text-pink_primary'
-						onClick={() => {
-							setShowContentForm(!showContentForm);
-						}}
-					>
-						<ImageIcon
-							src='/assets/icons/edit-pencil.svg'
-							alt='edit-icon'
-						/>{' '}
-						Edit Summary
-					</Button>
-				)}
-			</div>
+			{!report?.isFromOgtracker && (
+				<div className='flex items-center justify-between'>
+					{report?.progress_summary && (
+						<Button
+							className='m-0 mr-auto flex h-3 items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium text-pink_primary'
+							onClick={() => {
+								setShowContentForm(!showContentForm);
+							}}
+						>
+							<ImageIcon
+								src='/assets/icons/edit-pencil.svg'
+								alt='edit-icon'
+							/>{' '}
+							Edit Summary
+						</Button>
+					)}
+				</div>
+			)}
 			{showContentForm && (
 				<>
 					<SummaryContentForm
@@ -141,32 +145,34 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 					/>
 				</>
 			)}
-			<div
-				className='mt-4 flex flex-col rounded-md border border-solid border-[#D2D8E0] px-4 py-2 dark:border-separatorDark dark:bg-transparent'
-				style={{
-					background: 'rgba(210, 216, 224, 0.20)'
-				}}
-			>
-				<div className='flex items-center justify-start gap-x-2'>
-					<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
-						<ImageIcon
-							src='/assets/icons/pdf-icon.svg'
-							alt='pdf.icon'
-						/>
-					</div>
-					<div className='flex flex-col gap-y-0.5'>
-						<a
-							href={report?.progress_file}
-							target='_blank'
-							className='m-0 cursor-pointer p-0 text-xs font-medium capitalize text-bodyBlue dark:text-white '
-							rel='noreferrer'
-						>
-							{`Progress Report - ${postData?.postType.replaceAll('_', ' ')} - ${postData?.postIndex}`} - {Object.keys(postData?.progress_report).length - index}
-						</a>
-						<p className='m-0 p-0 text-[10px] font-normal capitalize text-sidebarBlue dark:text-blue-dark-medium '>PDF Document</p>
+			{report?.progress_file && (
+				<div
+					className='mt-4 flex flex-col rounded-md border border-solid border-[#D2D8E0] px-4 py-2 dark:border-separatorDark dark:bg-transparent'
+					style={{
+						background: 'rgba(210, 216, 224, 0.20)'
+					}}
+				>
+					<div className='flex items-center justify-start gap-x-2'>
+						<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
+							<ImageIcon
+								src='/assets/icons/pdf-icon.svg'
+								alt='pdf.icon'
+							/>
+						</div>
+						<div className='flex flex-col gap-y-0.5'>
+							<a
+								href={report?.progress_file}
+								target='_blank'
+								className='m-0 cursor-pointer p-0 text-xs font-medium capitalize text-bodyBlue dark:text-white '
+								rel='noreferrer'
+							>
+								{`Progress Report - ${postData?.postType.replaceAll('_', ' ')} - ${postData?.postIndex}`} - {Object.keys(postData?.progress_report).length - index}
+							</a>
+							<p className='m-0 p-0 text-[10px] font-normal capitalize text-sidebarBlue dark:text-blue-dark-medium '>PDF Document</p>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 		</article>
 	);
 };

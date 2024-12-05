@@ -4,7 +4,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
@@ -55,7 +55,7 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 							{
 								<Link href={`/member-referenda/${post.post_id}`}>
 									<GovernanceCard
-										className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+										className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${dmSans.variable} ${dmSans.className}`}
 										postReactionCount={post.post_reactions}
 										address={post.proposer}
 										commentsCount={post.comments_count || 0}

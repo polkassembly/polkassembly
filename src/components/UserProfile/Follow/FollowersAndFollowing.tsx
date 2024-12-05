@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import { Divider, Popover } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { FollowersResponse, FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowingInfo';
 import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -13,7 +13,7 @@ import { useFollowSelector, useUserDetailsSelector } from '~src/redux/selectors'
 import { useDispatch } from 'react-redux';
 import { setFollowingIds } from '~src/redux/follow';
 
-const FollowersAndFollowing = ({ userId }: { userId: number }) => {
+const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profileSince: Date | null | undefined }) => {
 	const { id } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
@@ -91,11 +91,13 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 		<>
 			<div className='flex gap-1'>
 				<>
-					<Divider
-						type='vertical'
-						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
-					/>
-					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
+					{!!profileSince && (
+						<Divider
+							type='vertical'
+							className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
+						/>
+					)}
+					<div className={`${dmSans.variable} ${dmSans.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
 						Followers:
 						{data?.followers && data.followers.length > 0 ? (
 							<Popover
@@ -123,7 +125,7 @@ const FollowersAndFollowing = ({ userId }: { userId: number }) => {
 						type='vertical'
 						className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
 					/>
-					<div className={`${poppins.variable} ${poppins.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
+					<div className={`${dmSans.variable} ${dmSans.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>
 						Following:
 						{data?.following && data.following.length > 0 ? (
 							<Popover

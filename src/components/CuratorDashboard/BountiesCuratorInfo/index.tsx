@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { poppins, spaceGrotesk } from 'pages/_app';
+import { dmSans, spaceGrotesk } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -264,7 +264,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 						</>
 					) : (
 						<>
-							<div className={`flex h-[650px] flex-col ${poppins.className} ${poppins.variable} items-center rounded-xl  px-5 pt-5  `}>
+							<div className={`flex h-[650px] flex-col ${dmSans.className} ${dmSans.variable} items-center rounded-xl  px-5 pt-5  `}>
 								<Image
 									src='/assets/Gifs/find.gif'
 									alt='empty state'

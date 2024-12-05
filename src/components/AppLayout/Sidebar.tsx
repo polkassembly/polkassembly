@@ -52,7 +52,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IActiveProposalCount, PostOrigin } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -192,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		};
 
 		const capitalizedLabel = capitalizeLabel(label);
-		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
+		label = <span className={`w-5 text-sm font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
 
 		return {
 			children,
@@ -424,25 +424,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
-		councilItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Motions
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
-							</span>
-						</div>,
-						'/motions',
-						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
-			: [],
+		councilItems:
+			chainProperties[network]?.subsquidUrl || [AllNetworks.MYTHOS].includes(network)
+				? [
+						getSiderMenuItem(
+							<div className='flex items-center justify-between'>
+								Motions
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
+								</span>
+							</div>,
+							'/motions',
+							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+				  ]
+				: [],
 
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -690,6 +691,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
 	}
+	if ([AllNetworks.MYTHOS].includes(network)) {
+		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems].slice(1, 2))]);
+		collapsedItems = collapsedItems.concat([...gov1Items.councilItems].slice(1, 2));
+	}
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(
 			getSiderMenuItem(
@@ -792,7 +797,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							}  w-5 rounded-lg px-[5px] py-1 text-center font-poppins text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
+							}  w-5 rounded-lg px-[5px] py-1 text-center font-dmSans text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount > 9 ? (
 								<>
@@ -1131,9 +1136,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			3,
 			0,
 			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
+				<div className='flex w-fit gap-2 text-sm font-medium'>
 					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
+					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/gov-analytics',
 				<div className='relative -ml-2'>
@@ -1158,8 +1163,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 			0,
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
-					<span>Batch Voting</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
+					<span className='text-sm font-normal'>Batch Voting</span>
+					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
@@ -1636,7 +1641,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	const userDropdown = getUserDropDown({
-		className: `${className} ${poppins.className} ${poppins.variable}`,
+		className: `${className} ${dmSans.className} ${dmSans.variable}`,
 		handleLogout: handleLogout,
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
@@ -1768,7 +1773,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								}`}
 							>
 								<ParachainsIcon className='-ml-1 mt-3 scale-90 text-xl font-medium ' />
-								<span className='ml-2 pl-1 text-xs font-medium lg:block'>Parachains</span>
+								<span className='ml-2 pl-1 text-sm font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,

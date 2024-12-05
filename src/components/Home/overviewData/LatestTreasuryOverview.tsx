@@ -4,7 +4,7 @@
 import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
@@ -109,7 +109,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	return (
 		<div
-			className={`${poppins.className} ${poppins.variable} ${
+			className={`${dmSans.className} ${dmSans.variable} ${
 				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
@@ -124,7 +124,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<div>
 										{!isUsedInGovAnalytics && (
 											<div className='my-1 flex items-center gap-x-[6px]'>
-												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
 												<HelperTooltip
 													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -133,13 +133,13 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										)}
 										{totalTreasuryValueUSD && (
 											<div className='flex items-baseline'>
-												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 													~${totalTreasuryValueUSD}
 												</span>
 											</div>
 										)}
 									</div>
-									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1 self-end`}>
+									<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
 										<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 										<div className='flex items-center gap-x-1 text-lg font-semibold'>
 											<div>
@@ -174,7 +174,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						)}
 					</div>
 					{/* // current Price */}
-					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
+					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
 						<div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '>
@@ -298,7 +298,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										<div className='sm:mb-2'>
 											<div className='flex items-center'>
 												<span
-													className={`${poppins.className} ${poppins.variable} mr-2 pt-[3px] text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
+													className={`${dmSans.className} ${dmSans.variable} mr-2 pt-[3px] text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
 												>
 													Spend Period Remaining
 												</span>
@@ -310,7 +310,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 
 											<div
-												className={`${poppins.className} ${poppins.variable} flex items-baseline whitespace-pre pt-[5px] font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
+												className={`${dmSans.className} ${dmSans.variable} flex items-baseline whitespace-pre pt-[5px] font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}
 											>
 												{spendPeriod.value?.total ? (
 													<>
@@ -346,7 +346,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												size='small'
 												showInfo={false}
 											/>
-											<span className={`${poppins.className} ${poppins.variable} -mb-3 text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+											<span className={`${dmSans.className} ${dmSans.variable} -mb-3 text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 												{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 											</span>
 										</span>
@@ -368,7 +368,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								{!nextBurn.isLoading ? (
 									<div className='items-start sm:flex sm:gap-2'>
 										<div className='h-12'>
-											<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
+											<div className={`${dmSans.className} ${dmSans.variable} flex flex-col text-xs`}>
 												<span className='text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
 												<div className='flex items-baseline gap-x-[6px]'>
 													{nextBurn.value ? (
@@ -382,7 +382,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 										<p
-											className={`${poppins.className} ${poppins.variable} mt-2 flex-1 rounded-lg bg-[#F4F5F6] px-3 py-2 text-xs font-normal text-[#333843] dark:bg-[#333843] dark:text-[#F4F5F6] sm:mt-0`}
+											className={`${dmSans.className} ${dmSans.variable} mt-2 flex-1 rounded-lg bg-[#F4F5F6] px-3 py-2 text-xs font-normal text-[#333843] dark:bg-[#333843] dark:text-[#F4F5F6] sm:mt-0`}
 										>
 											If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.
 										</p>

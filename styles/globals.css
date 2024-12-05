@@ -46,7 +46,7 @@
   --nay_red_Dark: #BD2020;
   --ligth_red: #fff1f4;
   --comment_bg: #F9FAFB;
-  --font_default: "Poppins";
+  --font_default: "DM_Sans";
   --font-space_grotesk: "Space Grotesk";
   --main-bg: #F5F6F8;
   --separatorDark: #4B4B4B;
@@ -116,7 +116,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--grey_app_background);
   scroll-behavior: smooth;
-  font-family: var(--font_default), "Poppins", -apple-system, BlinkMacSystemFont,
+  font-family: var(--font_default), "DM_Sans", -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif, "Space Grotesk", "Pixeboy", "Pixelify Sans";
 }
@@ -396,7 +396,7 @@ color: var(--lightBlue) !important;
 }
 
 .custom-link  {
-  font-family: '__Poppins_ed4ad5' !important;
+  font-family: 'DM_Sans' !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   line-height: 21px !important;
@@ -467,7 +467,7 @@ color: var(--lightBlue) !important;
 .vector p {
   color: #485f7d;
   font-size: 14px;
-  font-family: Poppins;
+  font-family: DM_Sans;
   letter-spacing: 0.035px;
   text-align: center;
   display: block;
@@ -490,7 +490,7 @@ color: var(--lightBlue) !important;
   background: #fff;
   outline: 0 !important;
   color: rgba(87, 109, 139, 0.8);
-  font-family: Poppins;
+  font-family: DM_Sans;
   font-size: 14px;
   padding: 10px 12px;
   flex: 1;
@@ -1005,4 +1005,9 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 
 .image-light {
   filter: brightness(0) saturate(100%) invert(33%) sepia(14%) saturate(1156%) hue-rotate(174deg) brightness(102%) contrast(92%);
+}
+
+.ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
+.ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+		font-weight: 600 !important;
 }

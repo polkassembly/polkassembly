@@ -5,6 +5,7 @@ import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { dmSans } from 'pages/_app';
+import Image from 'next/image';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HydrationIcon from '~assets/icons/hydration-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
@@ -23,6 +24,7 @@ import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
+import TreasuryDetailsModal from './TreasuryDetailsModal';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -30,6 +32,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
@@ -107,6 +110,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		}
 	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
 
+	const closeModal = () => setIsModalVisible(false);
+
 	return (
 		<div
 			className={`${dmSans.className} ${dmSans.variable} ${
@@ -174,8 +179,37 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						)}
 					</div>
 					{/* // current Price */}
+					<TreasuryDetailsModal
+						visible={isModalVisible}
+						onClose={closeModal}
+						available={available}
+						assetValue={assetValue}
+						assetValueUSDC={assetValueUSDC}
+						assetValueUSDT={assetValueUSDT}
+						hydrationValue={hydrationValue}
+						hydrationValueUSDC={hydrationValueUSDC}
+						hydrationValueUSDT={hydrationValueUSDT}
+						chainProperties={chainProperties}
+						network={network}
+						assethubApiReady={assethubApiReady}
+						hydrationApiReady={hydrationApiReady}
+						unit={unit}
+					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
 						<div>
+							<div
+								className='cursor-pointer text-xs font-medium text-pink_primary'
+								onClick={() => setIsModalVisible(true)}
+							>
+								Details
+								<Image
+									alt='arrow icon'
+									width={16}
+									height={16}
+									src={'/assets/treasury/arrow-icon.svg'}
+									className='-mt-[2px]'
+								/>
+							</div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '>
 									<div className='flex items-baseline justify-start font-medium xl:justify-between'>

@@ -16,6 +16,7 @@ import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -41,6 +42,7 @@ export interface IProfileReactions {
 }
 
 const ProfileReactions = ({ className, userProfile, count }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
@@ -64,6 +66,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 			setLoading(false);
 		}
 	};
+
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +86,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileReactionsIcon className='text-2xl text-lightBlue dark:text-[#9e9e9e]' />
-						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Reactions</div>
+						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>{t('reactions')}</div>
 						<span className='text-sm font-normal'>({count})</span>
 					</div>
 				</div>
@@ -93,36 +96,27 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 								return (
 									<div key={index}>
 										{activity.type === EUserActivityType.REACTED && (
-											<div className='flex  items-start gap-5'>
+											<div className='flex items-start gap-5'>
 												<span
-													className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}
+													className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction === '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}
 												>
-													{activity.reaction == '👍' ? (
-														<>
-															<LikeOutlined className='text-sm text-white' />
-														</>
-													) : (
-														<>
-															<DislikeFilled className='text-sm text-[#FF3C5F]' />
-														</>
-													)}
+													{activity.reaction === '👍' ? <LikeOutlined className='text-sm text-white' /> : <DislikeFilled className='text-sm text-[#FF3C5F]' />}
 												</span>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{activity.author}</span>
-														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
-														{activity.reaction == '👍' ? (
+														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{t('reacted')}</span>
+														{activity.reaction === '👍' ? (
 															<span className='flex items-center gap-2 text-pink_primary'>
-																<LikeOutlined className='text-base' /> Liked
+																<LikeOutlined className='text-base' /> {t('liked')}
 															</span>
 														) : (
 															<span className='flex items-center gap-2 text-[#FF3C5F]'>
-																<DislikeFilled className='mt-0.5 text-base' />
-																Disliked
+																<DislikeFilled className='mt-0.5 text-base' /> {t('disliked')}
 															</span>
 														)}
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-															on {userProfile.user_id === userId ? 'your' : `${userProfile.username}'s`} {activity.activityIn.toLowerCase()}
+															{t('on')} {userProfile.user_id === userId ? t('your') : `${userProfile.username}${t('s_possessive')}`} {activity.activityIn.toLowerCase()}
 														</span>
 													</div>
 													<ActivityBottomContent activity={activity} />
@@ -143,11 +137,11 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 						: !loading && (
 								<div className='my-[60px] flex flex-col items-center gap-6'>
 									<ImageIcon
-										src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
-										alt='Empty Icon'
+										src={theme === 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg'}
+										alt={t('empty_icon')}
 										imgClassName='w-[225px] h-[225px]'
 									/>
-									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No reactions found</h3>
+									<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_reactions_found')}</h3>
 								</div>
 						  )}
 				</div>

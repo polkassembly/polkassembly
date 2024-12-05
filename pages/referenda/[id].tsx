@@ -21,6 +21,7 @@ import { PostCategory } from '~src/global/post_categories';
 import ConfusedNudge from '~src/ui-components/ConfusedNudge';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
@@ -59,9 +60,11 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 
 	// Calculate trackName outside of the conditional blocks
 	let trackName = '';
-	for (const key of Object.keys(networkTrackInfo[network])) {
-		if (post && networkTrackInfo[network][key].trackId === post.track_number && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
-			trackName = key;
+	if (isOpenGovSupported(network)) {
+		for (const key of Object.keys(networkTrackInfo?.[network])) {
+			if (post && networkTrackInfo[network][key].trackId === post.track_number && !('fellowshipOrigin' in networkTrackInfo[network][key])) {
+				trackName = key;
+			}
 		}
 	}
 

@@ -8,8 +8,10 @@ import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 
 import MembersListing from './MembersListing';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTranslation } from 'next-i18next';
 
 const MembersContainer = ({ className }: { className?: string }) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useContext(ApiContext);
 	const [error, setErr] = useState<Error | null>(null);
 	const [members, setMembers] = useState<string[]>([]);
@@ -68,7 +70,7 @@ const MembersContainer = ({ className }: { className?: string }) => {
 			<>
 				<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 					<div className='flex items-center justify-between'>
-						<h1 className='dashboard-heading dark:text-white'>Members</h1>
+						<h1 className='dashboard-heading dark:text-white'>{t('members')}</h1>
 					</div>
 
 					<MembersListing
@@ -80,7 +82,7 @@ const MembersContainer = ({ className }: { className?: string }) => {
 
 				<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 					<div className='flex items-center justify-between'>
-						<h1 className='dashboard-heading dark:text-white'>Runners up</h1>
+						<h1 className='dashboard-heading dark:text-white'>{t('runners_up')}</h1>
 					</div>
 
 					<MembersListing

@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import ImageComponent from '../ImageComponent';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -20,6 +21,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
+import FollowersAndFollowing from './Follow/FollowersAndFollowing';
 
 interface Props {
 	className?: string;
@@ -27,7 +29,9 @@ interface Props {
 	addressWithIdentity: string;
 	onchainIdentity?: DeriveAccountRegistration | null;
 }
+
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore = 0, addresses } = userProfile;
@@ -59,11 +63,12 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 
 	const handleCopyAddress = () => {
 		messageApi.open({
-			content: 'Address copied to clipboard',
+			content: t('address_copied'),
 			duration: 10,
 			type: 'success'
 		});
 	};
+
 	return (
 		<div
 			className={classNames(
@@ -74,7 +79,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 			<div className='z-50 mt-[-1px] flex h-[130px] w-[130px] items-center justify-center rounded-full border-[1px] border-solid border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'>
 				<ImageComponent
 					src={image}
-					alt='User Picture'
+					alt={t('user_picture')}
 					className='flex h-[130px] w-[130px] items-center justify-center '
 					iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 				/>
@@ -135,18 +140,18 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									width={18}
 									height={18}
 								/>
-								Decentralized Voices
+								{t('decentralized_voices')}
 							</div>
 						)}
 					</div>
 
-					<div>
+					<div className={`flex gap-1 ${!profileSince ? 'md:ml-[90px]' : ''} `}>
 						{profileSince && (
-							<div className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959] md:ml-[90px]'>
-								User Since:
+							<div className='flex items-center text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium  md:ml-[90px]'>
+								{t('user_since')}
 								<Image
 									src={'/assets/icons/Calendar.svg'}
-									alt='calender'
+									alt={t('calendar')}
 									width={20}
 									height={20}
 									className='ml-2'
@@ -154,6 +159,10 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								<span className='ml-1 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileSince).format('MMM DD, YYYY')}</span>
 							</div>
 						)}
+						<FollowersAndFollowing
+							profileSince={profileSince}
+							userId={userProfile?.user_id}
+						/>
 					</div>
 				</div>
 				<SocialsHandle
@@ -168,4 +177,5 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 		</div>
 	);
 };
+
 export default ProfileCard;

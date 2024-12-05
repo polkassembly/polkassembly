@@ -10,12 +10,13 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import DelegateesModal from './DelegateesModal';
 import Address from '~src/ui-components/Address';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { useTranslation } from 'next-i18next';
 
 const DelegateesTab = () => {
 	const { delegateesData } = useTrackLevelAnalytics();
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = Object.entries(delegateesData).map(([key, value]) => {
 		const sumCapital = value.data.reduce((acc, curr) => acc + BigInt(curr.capital), BigInt(0));
 		const sumVotingPower = value.data.reduce((acc, curr) => acc + BigInt(curr.votingPower), BigInt(0));
@@ -37,10 +38,10 @@ const DelegateesTab = () => {
 		<>
 			<section className=''>
 				<div className='flex h-[56px] w-full items-center rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5'>
-					<div className='ml-1 w-[40%] min-[450px]:w-[45%] sm:ml-0'>Address</div>
-					<div className='mr-2 w-[15%] min-[450px]:mr-0 min-[450px]:w-[17%]'>Count</div>
-					<div className='mr-1 w-[17%] min-[450px]:mr-0'>Capital</div>
-					<div className='w-[19%]'>Votes</div>
+					<div className='ml-1 w-[40%] min-[450px]:w-[45%] sm:ml-0'>{t('address')}</div>
+					<div className='mr-2 w-[15%] min-[450px]:mr-0 min-[450px]:w-[17%]'>{t('count')}</div>
+					<div className='mr-1 w-[17%] min-[450px]:mr-0'>{t('capital')}</div>
+					<div className='w-[19%]'>{t('votes')}</div>
 				</div>
 				<div>
 					{delegateeData.slice(startIndex, endIndex).map((item, index) => {

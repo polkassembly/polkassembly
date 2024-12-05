@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { message } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import TextEditor from '~src/ui-components/TextEditor';
@@ -19,6 +20,10 @@ const SummaryContentForm = ({ className, height, onChange, autofocus = false, va
 	const { resolvedTheme: theme } = useTheme();
 
 	const onChangeWrapper = (content: string) => {
+		if (content.length > 400) {
+			message.error('Summary cannot exceed 400 characters.');
+			return;
+		}
 		setValue(content);
 		if (onChange) {
 			onChange(content);

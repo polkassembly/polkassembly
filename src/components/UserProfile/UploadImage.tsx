@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import ImageComponent from '../ImageComponent';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -35,6 +36,7 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const UploadImage = ({ className, updateProfile, imageInside, defaultImage, name, rules }: Props) => {
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleUploadCoverImage: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
@@ -143,7 +145,7 @@ const UploadImage = ({ className, updateProfile, imageInside, defaultImage, name
 							<CameraOutlined className='text-bodyBlue' />
 						</div>
 					) : (
-						<div className='ml-2 text-xs text-bodyBlue dark:text-blue-dark-high'>Upload cover</div>
+						<div className='ml-2 text-xs text-bodyBlue dark:text-blue-dark-high'>{t('upload_cover')}</div>
 					)}
 				</Upload>
 			</Form.Item>

@@ -19,7 +19,6 @@ import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } 
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
-import BountyChildBounties from './Bounty/BountyChildBounties';
 import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -72,15 +71,22 @@ import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
-// import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import Submissions from './Bounty/Curator/Submissions';
 import Alert from '~src/basic-components/Alert';
 import { showProgressReportUploadFlow } from '~src/components/ProgressReport/utils';
+import BountyChildBounties from './Bounty/BountyChildBounties';
+import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
+import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
+import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
+import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
+import ExpertBodyCard from '~src/components/ExpertBody';
+import { useTranslation } from 'next-i18next';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -96,6 +102,7 @@ interface IGovernanceSidebarProps {
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
 	bountyIndex?: any;
+	curator?: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -136,7 +143,8 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex, curator } = props;
+	const { t } = useTranslation('common');
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [updateTally, setUpdateTally] = useState<boolean>(false);
 
@@ -409,7 +417,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 		setCurvesLoading(true);
 
-		const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+		const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks?.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 		if (tracks && Array.isArray(tracks)) {
 			const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
 			if (track) {
@@ -487,7 +495,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 					}
 				} catch (error) {
-					// console.log(error);
+					console.log(error);
 				}
 				let progress = {
 					approval: 0,
@@ -734,7 +742,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Your Vote has been Cleared successfully.',
+			message: t('your_vote_has_been_cleared_successfully'),
 			status: NotificationStatus.SUCCESS
 		});
 		setLastVote(null);
@@ -791,7 +799,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				});
 		} else {
 			const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
-			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: t('transactions_failed'), network, onFailed, onSuccess, tx });
 		}
 	};
 	useEffect(() => {
@@ -813,14 +821,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<GovSidebarCard>
 					<div>
 						<div className='mb-1.5 flex items-center justify-between'>
-							<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+							<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>{t('last_vote')}:</span>
 							{!isDelegated && (
 								<Button
 									loading={loading}
 									onClick={handleRemoveVote}
-									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 								>
-									Remove Vote
+									{t('remove_vote')}
 								</Button>
 							)}
 						</div>
@@ -905,13 +913,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			<GovSidebarCard>
 				<div>
 					<div className='mb-1.5 flex items-center justify-between'>
-						<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+						<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{t('last_vote')}:</span>
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
-							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 						>
-							Remove Vote
+							{t('remove_vote')}
 						</Button>
 					</div>
 					<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
@@ -924,11 +932,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<span className='h-[25px]'>
 								{decision === EVoteDecisionType.AYE ? (
 									<p>
-										<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
+										<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{t('aye')}</span>
 									</p>
 								) : decision === EVoteDecisionType.NAY ? (
 									<div>
-										<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
+										<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{t('nay')}</span>
 									</div>
 								) : decision === EVoteDecisionType.SPLIT ? (
 									<p>
@@ -936,7 +944,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</p>
 								) : decision === EVoteDecisionType.ABSTAIN ? (
 									<p className='flex justify-center align-middle'>
-										<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
+										<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{t('abstain')}</span>
 									</p>
 								) : null}
 							</span>
@@ -1005,14 +1013,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && !postData?.progress_report?.progress_file && id !== postData?.userId && (
-							<Alert
-								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-								showIcon
-								type='info'
-								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
-							/>
-						)}
+						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
+							!postData?.progress_report?.[0]?.progress_file &&
+							id !== postData?.userId && (
+								<Alert
+									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									showIcon
+									type='info'
+									message={<span className='dark:text-blue-dark-high'>{t('progress_report_not_added_by_proposer')}</span>}
+								/>
+							)}
+						<ExpertBodyCard />
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}
@@ -1023,14 +1034,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<GovSidebarCard>
 								{accountsNotFound ? (
 									<div className='mb-4'>
-										<p className='mb-4'>You need at least one account in Polkadot-js extension to use this feature.</p>
-										<p className='text-muted m-0'>Please reload this page after adding accounts.</p>
+										<p className='mb-4'>{t('you_need_at_least_one_account_in_polkadot_js_extension_to_use_this_feature')}</p>
+										<p className='text-muted m-0'>{t('please_reload_this_page_after_adding_accounts')}</p>
 									</div>
 								) : null}
 								{extensionNotFound ? <ExtensionNotDetected /> : null}
 							</GovSidebarCard>
 						) : null}
-						{(proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) && (
+						{[ProposalType.COUNCIL_MOTIONS, ProposalType.ADVISORY_COMMITTEE, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType) && (
 							<>
 								{canVote && !extensionNotFound && (
 									<VoteMotion
@@ -1041,6 +1052,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 								{post.motion_votes && (post.motion_votes?.length || 0) > 0 && <MotionVoteInfo councilVotes={post.motion_votes} />}
@@ -1057,6 +1069,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										motionId={onchainId as number}
 										motionProposalHash={post.hash}
 										onAccountChange={onAccountChange}
+										proposalType={proposalType}
 									/>
 								)}
 
@@ -1098,7 +1111,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									className='mx-auto w-full rounded-xxl p-7 font-bold lg:w-[480px] xl:w-full'
 									onClick={() => setOpenClaimModal(true)}
 								>
-									Claim payout
+									{t('claim_payout')}
 								</CustomButton>
 							</ClaimAssetPayoutInfo>
 						)}
@@ -1297,7 +1310,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<div>
 									{lastVote != undefined ? (
 										lastVote == null ? (
-											<GovSidebarCard>You haven&apos;t voted yet, vote now and do your bit for the community</GovSidebarCard>
+											<GovSidebarCard>{t('you_havent_voted_yet_vote_now_and_do_your_bit_for_the_community')}</GovSidebarCard>
 										) : (
 											<></>
 										)
@@ -1350,8 +1363,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>
 										<span className='text-sm tracking-wide text-bodyBlue dark:text-blue-dark-high'>
-											This PIP is proposed via
-											{proposalType === ProposalType.TECHNICAL_PIPS ? ' Technical Committee ' : ' Upgrade Committee '}& is not open to community voting
+											{t('this_pip_is_proposed_via')}
+											{proposalType === ProposalType.TECHNICAL_PIPS ? t('technical_committee') : t('upgrade_committee')}
+											{t('is_not_open_to_community_voting')}
 										</span>
 									</div>
 								</GovSidebarCard>
@@ -1361,10 +1375,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
 								<BountyChildBounties bountyId={onchainId} />
+								{getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status || '') && !!getEncodedAddress(curator, network) && <Submissions bountyId={onchainId} />}
 							</>
 						)}
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
+								<AwardChildBountyButton bountyIndex={bountyIndex || null} />
+
+								<ClaimChildBountyButton bountyIndex={bountyIndex || null} />
 								<ChildBounties
 									bountyIndex={bountyIndex}
 									status={status as string}

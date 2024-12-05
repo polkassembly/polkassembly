@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-/* eslint-disable sort-keys */
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
+import { useTranslation } from 'next-i18next';
 import { noTitle } from 'src/global/noTitle';
 import { EmptyLatestActivity, Gov2PopulatedLatestActivityCard, LoadingLatestActivity, PopulatedLatestActivity } from 'src/ui-components/LatestActivityStates';
 import NameLabel from 'src/ui-components/NameLabel';
@@ -19,32 +19,39 @@ import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
-const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
+interface IAllGov2PostsTableProps {
+	posts?: any[];
+	error?: string;
+}
+
+const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
+	const router = useRouter();
+	const { t } = useTranslation('common');
+	const { resolvedTheme: theme } = useTheme();
 	const columns: ColumnsType<IPostsRowData> = [
 		{
-			title: '#',
 			dataIndex: 'post_id',
+			fixed: 'left',
 			key: 'id',
 			render: (post_id: any) => <div className='truncate'>{post_id}</div>,
-			width: 80,
-			fixed: 'left'
+			title: '#',
+			width: 80
 		},
 		{
-			title: 'Title',
 			dataIndex: 'title',
-			key: 'title',
-			width: 340,
 			fixed: 'left',
+			key: 'title',
 			render: (title) => {
 				return (
 					<>
 						<h4 className='m-0 truncate'>{title}</h4>
 					</>
 				);
-			}
+			},
+			title: t('title'),
+			width: 340
 		},
 		{
-			title: 'Posted By',
 			dataIndex: 'username',
 			key: 'postedBy',
 			onCell: () => {
@@ -66,20 +73,20 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 					/>
 				</div>
 			),
+			title: t('posted_by'),
 			width: 200
 		},
 		{
-			title: 'Created',
-			key: 'created',
 			dataIndex: 'created_at',
+			key: 'created',
 			render: (createdAt) => {
 				const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 				return <span>{relativeCreatedAt}</span>;
 			},
+			title: t('created'),
 			width: 140
 		},
 		{
-			title: 'Origin',
 			dataIndex: 'origin',
 			key: 'type',
 			render: (postOrigin) => {
@@ -89,10 +96,10 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 					</span>
 				);
 			},
+			title: t('origin'),
 			width: 160
 		},
 		{
-			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
 			render: (status: any, obj: any) => {
@@ -109,7 +116,7 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 								<div className='flex items-center justify-center'>
 									<Tooltip
 										color='#E5007A'
-										title='This post could be a spam.'
+										title={t('spam_warning')}
 									>
 										<WarningMessageIcon className='text-lg text-[#FFA012]' />
 									</Tooltip>
@@ -118,20 +125,10 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 						</div>
 					);
 			},
+			title: t('status'),
 			width: 160
 		}
 	];
-	return columns;
-};
-
-interface IAllGov2PostsTableProps {
-	posts?: any[];
-	error?: string;
-}
-
-const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
-	const router = useRouter();
-	const { resolvedTheme: theme } = useTheme();
 
 	function gotoPost(rowData: IPostsRowData): void {
 		const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(rowData.type) as any);
@@ -162,14 +159,17 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					key: post.post_id,
 					post_id: post.post_id,
 					title,
+					// eslint-disable-next-line sort-keys
 					proposer: post.proposer,
 					username: post?.username,
+					// eslint-disable-next-line sort-keys
 					created_at: post.created_at,
 					origin: post.origin || post.type || null,
 					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type,
+					// eslint-disable-next-line sort-keys
 					spam_users_count: post.spam_users_count || 0
 				};
 
@@ -181,7 +181,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 			<>
 				<div className='hidden p-0 md:block'>
 					<PopulatedLatestActivity
-						columns={getCols(theme)}
+						columns={columns}
 						tableData={tableData}
 						// modify the tableData to add the onClick event
 						onClick={(rowData) => gotoPost(rowData)}

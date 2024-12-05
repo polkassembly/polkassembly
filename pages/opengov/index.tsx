@@ -160,7 +160,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					/>
 				)}
 			</div>
-			{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+			{isOpenGovSupported(network) && isMobile && (window as any)?.walletExtension?.isNovaWallet && (
 				<div className='mx-1 mt-8'>
 					<BatchVotingBadge />
 				</div>

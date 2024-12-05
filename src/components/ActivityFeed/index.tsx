@@ -282,7 +282,7 @@ const LatestActivityFollowing: React.FC = () => {
 				)
 			) : (
 				<div
-					className={'flex h-[900px]  flex-col items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}
+					className={'flex h-[900px] flex-col  items-center rounded-xl border border-solid border-[#D2D8E0] bg-white px-5 pt-5 dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:pt-10'}
 				>
 					<Image
 						src='/assets/Gifs/login-dislike.gif'

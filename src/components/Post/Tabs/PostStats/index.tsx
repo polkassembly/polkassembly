@@ -21,6 +21,7 @@ import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTranslation } from 'next-i18next';
 
 interface IPostStatsProps {
 	postId: string;
@@ -36,7 +37,7 @@ const ZERO = new BN(0);
 const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally, proposalCreatedAt }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-
+	const { t } = useTranslation('common');
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const {
 		postData: { postIndex }
@@ -273,7 +274,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 				/>
 			),
 			key: 'conviction-votes',
-			label: 'Conviction Votes'
+			label: t('conviction_votes')
 		},
 		{
 			children: (
@@ -286,7 +287,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 				/>
 			),
 			key: 'vote-amount',
-			label: 'Vote Amount'
+			label: t('vote_amount')
 		},
 		{
 			children: (
@@ -300,7 +301,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 				/>
 			),
 			key: 'accounts',
-			label: 'Accounts'
+			label: t('accounts')
 		}
 	];
 
@@ -308,7 +309,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		noVotes ? (
 			<div className='flex flex-col items-center justify-center gap-5 p-10'>
 				<NoVotesIcon />
-				<p className='text-sm'>No votes have been casted yet</p>
+				<p className='text-sm'>{t('no_votes_have_been_casted_yet')}</p>
 			</div>
 		) : (
 			<>

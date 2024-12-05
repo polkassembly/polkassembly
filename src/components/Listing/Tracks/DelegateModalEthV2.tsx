@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
+import { useTranslation } from 'next-i18next';
 
 const abi = require('../../../moonbeamConvictionVoting.json');
 
@@ -39,7 +40,7 @@ const ZERO_BN = new BN(0);
 const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
-
+	const { t } = useTranslation('common');
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -317,7 +318,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			>
 				<PlusOutlined />
 
-				<span className='ml-1'> Delegate </span>
+				<span className='ml-1'>{t('delegate')}</span>
 			</button>
 
 			<Modal
@@ -325,8 +326,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				title={
 					<div className='flex items-center dark:bg-section-dark-overlay'>
-						Delegate
-						<span className='ml-2 rounded-md border border-pink_secondary px-2 py-0.5 text-xs text-pink_secondary'>Delegation dashboard coming soon 🚀</span>
+						{t('delegate')}
+						<span className='ml-2 rounded-md border border-pink_secondary px-2 py-0.5 text-xs text-pink_secondary'>{t('delegation_dashboard_coming_soon')}</span>
 					</div>
 				}
 				open={showModal}
@@ -340,14 +341,14 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 					>
 						<CustomButton
 							key='back'
-							text='Cancel'
+							text={t('cancel')}
 							buttonsize='sm'
 							variant='default'
 							onClick={() => setShowModal(false)}
 						/>
 						<CustomButton
 							key='confirm'
-							text='Confirm'
+							text={t('confirm')}
 							htmlType='submit'
 							disabled={loading}
 							buttonsize='sm'
@@ -407,7 +408,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 								/>
 
 								<div className='-mt-2'>
-									<label className='mb-2 ml-1 flex items-center text-sm text-sidebarBlue'>Conviction</label>
+									<label className='mb-2 ml-1 flex items-center text-sm text-sidebarBlue'>{t('conviction')}</label>
 
 									<Select
 										onChange={(value: any) => setConviction(Number(value))}

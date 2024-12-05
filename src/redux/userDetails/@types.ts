@@ -18,6 +18,7 @@ export interface IUserDetailsStore {
 	delegationDashboardAddress: string;
 	loginAddress: string;
 	multisigAssociatedAddress?: string;
+	multisigAddressInfo?: any;
 	networkPreferences: INetworkPreferences;
 	primaryNetwork: string;
 	is2FAEnabled?: boolean;

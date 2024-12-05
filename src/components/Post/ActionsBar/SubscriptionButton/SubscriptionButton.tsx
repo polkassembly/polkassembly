@@ -17,6 +17,7 @@ import SubscribeOutlined from '~assets/icons/reactions/SubscribedIcon.svg';
 import SubscribedIconDark from '~assets/icons/reactions/SubscribedIconDark.svg';
 import SubscribeFilled from '~assets/icons/reactions/SubscribedFilled.svg';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface ISubscriptionButtonProps {
 	postId: number | string;
@@ -32,6 +33,7 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 		postData: { subscribers },
 		setPostData
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 
 	const { id } = useUserDetailsSelector();
 	const [subscribed, setSubscribed] = useState<boolean>(Boolean(id && subscribers.includes(id)));
@@ -109,7 +111,7 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 			<span className='flex items-center gap-[6px] rounded-md bg-[#F4F6F8] px-2 py-[2px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 				<span className='mt-[3px]'>{subscribed && id ? <SubscribeFilled /> : theme == 'dark' ? <SubscribedIconDark /> : <SubscribeOutlined />}</span>
 				<span className={`font-medium ${subscribed && id ? 'text-pink_primary' : 'text-lightBlue dark:text-icon-dark-inactive'}`}>
-					{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
+					{subscribed && id ? t('unsubscribe') : t('subscribe')}
 				</span>
 			</span>
 		</CustomButton>

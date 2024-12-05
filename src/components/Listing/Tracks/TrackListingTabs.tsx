@@ -10,6 +10,7 @@ import TrackListingStatusTabs from './TrackListingStatusTabs';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import { useTranslation } from 'next-i18next';
 
 const TrackLevelAnalytics = dynamic(() => import('../../TrackLevelAnalytics'), {
 	loading: () => <SkeletonAvatar active />,
@@ -23,6 +24,7 @@ interface IProps {
 }
 
 const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const activeKey = router.query && !!router?.query['analytics'] ? '2' : '1';
@@ -38,7 +40,7 @@ const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 				</>
 			),
 			key: '1',
-			label: <span className='px-1.5'>Referenda</span>
+			label: <span className='px-1.5'>{t('referenda')}</span>
 		},
 		{
 			children: (
@@ -47,7 +49,7 @@ const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 				</>
 			),
 			key: '2',
-			label: <div className='flex items-center gap-2'>Analytics</div>
+			label: <div className='flex items-center gap-2'>{t('analytics')}</div>
 		}
 	];
 
@@ -67,7 +69,7 @@ const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 		}
 	};
 	return (
-		<div className={`${className} mt-[36px] rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+		<div className={`${className} mt-6 rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<Tabs
 				activeKey={activeKey}
 				onChange={handleOnchange}

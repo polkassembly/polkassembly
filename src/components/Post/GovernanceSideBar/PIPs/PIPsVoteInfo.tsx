@@ -14,6 +14,7 @@ import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import { Divider } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -29,7 +30,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const [voteInfo, setVoteInfo] = useState({
 		ayes: ZERO_BN,
 		ayesAmount: ZERO_BN,
@@ -61,7 +62,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 	return (
 		<div className={className}>
 			<div className='relative z-50 flex items-center justify-between'>
-				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
+				<h6 className='m-0 p-0 text-xl font-semibold leading-6 text-bodyBlue dark:text-blue-dark-high'>{t('voting')}</h6>
 				<div className='flex items-center gap-x-2'>
 					<StatusTag
 						theme={theme}
@@ -85,7 +86,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 			<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 				<article className='flex items-center justify-between gap-x-2'>
 					<div className='flex items-center gap-x-1'>
-						<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes:</span>
+						<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>{t('ayes')}:</span>
 					</div>
 					<div className='text-xs font-medium leading-[22px] text-navBlue'>
 						{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType)
@@ -95,7 +96,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				</article>
 				<article className='flex items-center justify-between gap-x-2'>
 					<div className='flex items-center gap-x-1'>
-						<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nays:</span>
+						<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>{t('nays')}:</span>
 					</div>
 					<div className='text-xs font-medium leading-[22px] text-navBlue'>
 						{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType)
@@ -106,7 +107,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) && (
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
-							<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Total Seats</span>
+							<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>{t('total_seats')}</span>
 						</div>
 						<div className='text-xs font-medium leading-[22px] text-navBlue'>{tally?.totalSeats || 0}</div>
 					</article>
@@ -122,7 +123,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				className='m-0 -mt-1 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
 			>
 				<VotingHistoryIcon />
-				<span>Voting History</span>
+				<span>{t('voting_history')}</span>
 			</button>
 		</div>
 	);

@@ -19,7 +19,7 @@ import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
 import executeTx from '~src/util/executeTx';
@@ -34,6 +34,7 @@ import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -44,6 +45,7 @@ interface Props {
 }
 const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -266,15 +268,15 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{gasFee.gte(availableBalance) && !gasFee.eq(ZERO_BN) && (
 							<Alert
 								type='error'
-								className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+								className={`h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 								showIcon
-								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 							/>
 						)}
 						{/* proposer address */}
 						<div className='w-full'>
 							<div className=' flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Proposer Address </label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('proposer_address')}</label>
 								{!!proposer && (
 									<Balance
 										address={proposer}
@@ -290,7 +292,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 										displayInline
 									/>
 									<CustomButton
-										text='Change Wallet'
+										text={t('change_wallet')}
 										onClick={() => {
 											setOpenAddressLinkedModal(true);
 											setOpen(false);
@@ -309,7 +311,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 									type='info'
 									message={
 										<div className='text-[13px] dark:text-blue-dark-high'>
-											Your proposer address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+											{t('unverified_proposer')}
 											<Link
 												target='_blank'
 												href={'?setidentity=true'}
@@ -321,7 +323,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 													}
 												}}
 											>
-												Set onchain identity
+												{t('set_onchain_identity')}
 											</Link>
 										</div>
 									}
@@ -333,10 +335,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						<div>
 							<div className=' flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Beneficary Address{' '}
+									{t('beneficiary_address')}{' '}
 									<HelperTooltip
 										className='ml-1'
-										text='The amount requested in the proposal will be received in this address.'
+										text={t('beneficiary_tooltip')}
 									/>
 								</label>
 							</div>
@@ -346,7 +348,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 									className='-mt-6 w-full'
 									defaultAddress={beneficiary}
 									name='beneficiary'
-									placeholder='Enter Beneficary Address'
+									placeholder={t('enter_beneficiary')}
 									iconClassName={'ml-[10px]'}
 									identiconSize={26}
 									onChange={(address: string) => handleBeneficiaryChange(address)}
@@ -356,7 +358,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								<Alert
 									className='mt-2 rounded-[4px] text-[13px]'
 									showIcon
-									message={<span className='text-[13px] dark:text-blue-dark-high'>Using a multisig proposal address provides a higher chance for the proposal to pass. </span>}
+									message={<span className='text-[13px] dark:text-blue-dark-high'>{t('multisig_info')}</span>}
 									description={
 										<Link
 											className='text-xs font-medium text-pink_primary'
@@ -370,7 +372,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 												alt='polkasafe'
 												className={`${theme === 'dark' && 'icon-color'} mr-0.5`}
 											/>
-											Create a Multisig Wallet on PolkaSafe now
+											{t('create_multisig')}
 										</Link>
 									}
 									type='info'
@@ -383,7 +385,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 									type='info'
 									message={
 										<div className='text-[13px] dark:text-blue-dark-high'>
-											Your beneficiary address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+											{t('unverified_beneficiary')}
 											<Link
 												target='_blank'
 												href={'?setidentity=true'}
@@ -395,7 +397,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 													}
 												}}
 											>
-												Set onchain identity
+												{t('set_onchain_identity')}
 											</Link>
 										</div>
 									}
@@ -409,11 +411,11 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								theme={theme}
 								balance={new BN(fundingAmount || '0')}
 								formItemName='balance'
-								placeholder='Enter Funding Amount'
-								label='Funding Amount'
+								placeholder={t('enter_funding_amount')}
+								label={t('funding_amount')}
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
 								className='mb-0'
-								onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
+								onChange={(amount: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: amount.toString() })}
 							/>
 						</div>
 
@@ -421,10 +423,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{proposalBond?.length ? (
 							<div>
 								<label className='mb-0.5 flex items-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
-									Proposal Bond
+									{t('proposal_bond')}
 									<HelperTooltip
 										className='ml-2'
-										text='Of the beneficiary amount, at least 5.00% would need to be put up as collateral. The maximum of this and the minimum bond will be used to secure the proposal, refundable if it passes.'
+										text={t('proposal_bond_tooltip')}
 									/>
 								</label>
 								<Input
@@ -439,10 +441,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{minBond?.length ? (
 							<div>
 								<label className=' mb-0.5 flex items-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
-									Minimum Bond
+									{t('minimum_bond')}
 									<HelperTooltip
 										className='ml-2'
-										text='The minimum amount that will be bonded.'
+										text={t('minimum_bond_tooltip')}
 									/>
 								</label>
 
@@ -460,16 +462,12 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						showIcon
 						type='info'
 						className='mt-6 rounded-[4px]'
-						message={
-							<span className='text-[13px] dark:text-blue-dark-high'>
-								An approximate fees of {formatedBalance(gasFee.toString(), unit as string, 2)} {unit} will be applied to the transaction
-							</span>
-						}
+						message={<span className='text-[13px] dark:text-blue-dark-high'>{t('approx_fees', { gasFee: formatedBalance(gasFee.toString(), unit as string, 2), unit })}</span>}
 					/>
 				)}
 				<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
-						text='Create Proposal'
+						text={t('create_proposal')}
 						onClick={handleCreateProposal}
 						variant='primary'
 						height={40}

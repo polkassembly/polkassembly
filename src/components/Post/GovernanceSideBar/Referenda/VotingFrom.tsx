@@ -10,6 +10,7 @@ import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
+import { useTranslation } from 'next-i18next';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -65,9 +66,10 @@ const VotingForm = ({
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isBalanceSet, setIsBalanceSet] = useState(false);
+	const { t } = useTranslation('common');
 	const ConvictionSelect = ({ className }: { className?: string }) => (
 		<Form.Item className={className}>
-			<label className='inner-headings dark:text-blue-dark-medium'>Vote lock</label>
+			<label className='inner-headings dark:text-blue-dark-medium'>{t('vote_lock')}</label>
 			<Select
 				onChange={(key) => setConviction(Number(key))}
 				size='large'
@@ -91,8 +93,8 @@ const VotingForm = ({
 			{[EFormType.ABSTAIN_FORM].includes(formName) && (
 				<>
 					<BalanceInput
-						label={'Abstain vote value'}
-						placeholder={'Add balance'}
+						label={t('abstain_vote_value')}
+						placeholder={t('add_balance')}
 						onChange={(balance: BN) => onAbstainValueChange?.(balance)}
 						className='text-sm font-medium'
 						formItemName={'abstainVote'}
@@ -104,8 +106,8 @@ const VotingForm = ({
 			{[EFormType.ABSTAIN_FORM, EFormType.SPLIT_FORM].includes(formName) && (
 				<>
 					<BalanceInput
-						label={'Aye vote value'}
-						placeholder={'Add balance'}
+						label={t('aye_vote_value')}
+						placeholder={t('add_balance')}
 						onChange={(balance: BN) => onAyeValueChange?.(balance)}
 						className='text-sm font-medium'
 						formItemName={'ayeVote'}
@@ -113,8 +115,8 @@ const VotingForm = ({
 					/>
 
 					<BalanceInput
-						label={'Nay vote value'}
-						placeholder={'Add balance'}
+						label={t('nay_vote_value')}
+						placeholder={t('add_balance')}
 						onChange={(balance: BN) => onNayValueChange?.(balance)}
 						className='text-sm font-medium'
 						formItemName={'nayVote'}
@@ -129,7 +131,7 @@ const VotingForm = ({
 								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
 									<div className='flex items-center gap-x-1'>
 										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
+										<p className='m-0 p-0 text-xs text-red_primary'>{t('insufficient_balance')}</p>
 									</div>
 								))}
 						</div>
@@ -155,7 +157,7 @@ const VotingForm = ({
 								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
 									<div className='flex items-center gap-x-1'>
 										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
+										<p className='m-0 p-0 text-xs text-red_primary'>{t('insufficient_balance')}</p>
 									</div>
 								))}
 						</div>
@@ -167,7 +169,7 @@ const VotingForm = ({
 				<CustomButton
 					htmlType='submit'
 					disabled={disabled || (showProxyDropdown && !isProxyExistsOnWallet)}
-					text='Confirm'
+					text={t('confirm')}
 					variant='primary'
 					buttonsize='xs'
 					className={`mr-6 ${(disabled || (showProxyDropdown && !isProxyExistsOnWallet)) && 'opacity-50'} font-semibold`}

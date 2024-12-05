@@ -17,6 +17,7 @@ import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -40,6 +41,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
 	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
+	const { t } = useTranslation('common');
 	const [votesDistribution, setVotesDistribution] = useState<{ ayes: any[]; nays: any[]; abstain: any[] }>({
 		abstain: [],
 		ayes: [],
@@ -159,7 +161,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 
 	return (
 		<>
-			<Nudge text='Vote amount is the number of tokens used for voting' />
+			<Nudge text={t('vote_amount_is_the_number_of_tokens_used_for_voting')} />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard

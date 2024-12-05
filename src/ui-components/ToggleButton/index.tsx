@@ -4,8 +4,11 @@
 
 import React from 'react';
 import { useTheme } from 'next-themes';
+// import LightModeSwitcher from '~assets/Gifs/light-mode-icon.svg';
+// import DarkModeSwitcher from '~assets/Gifs/dark-mode-icon.svg';
 import DarkModeSwitcher from '~assets/icons/darkmodeswitcher.svg';
 import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
+
 import classNames from 'classnames';
 
 const ToggleButton = () => {
@@ -23,7 +26,7 @@ const ToggleButton = () => {
 					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
 				})}
 			>
-				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}{' '}
+				{theme === 'dark' ? <DarkModeSwitcher /> : <LightModeSwitcher />}
 			</button>
 		</div>
 	);

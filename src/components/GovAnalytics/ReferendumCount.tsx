@@ -10,6 +10,7 @@ import { useGlobalSelector, useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { IReferendumCount } from './types';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -60,6 +61,7 @@ const LegendContainer = styled.div`
 const ReferendumCount = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [trackInfo, setTrackInfo] = useState<IReferendumCount>();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const [totalPosts, setTotalPosts] = useState(0);
@@ -132,7 +134,7 @@ const ReferendumCount = () => {
 				isMobile ? 'max-h-[1500px]' : 'max-h-[500px]'
 			} mx-auto w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
-			<h2 className='text-base font-semibold sm:text-xl'>Referendum Count</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>{t('referendum_count')}</h2>
 			<Spin spinning={loading}>
 				<div
 					className={`${is_sidebar_collapsed ? '-ml-[68px]' : '-ml-2'} flex justify-center`}
@@ -308,7 +310,7 @@ const ReferendumCount = () => {
 						{data.length > 6 && ( // Show "Show More" if there are more than 6 legends
 							<Button
 								type='link'
-								className='mt-2 flex h-[24px] w-[101px] items-center justify-center rounded-xl border border-solid border-[#D2D8E0] text-xs text-pink_primary dark:border-blue-dark-medium'
+								className='mt-2 flex h-[24px] w-[101px] items-center justify-center rounded-xl border border-solid border-[#D2D8E0] text-xs font-semibold text-pink_primary dark:border-blue-dark-medium'
 								onClick={() => setShowMore(!showMore)}
 							>
 								{showMore ? 'Show Less' : 'Show More'}

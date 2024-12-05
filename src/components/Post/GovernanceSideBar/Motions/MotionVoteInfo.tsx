@@ -12,6 +12,7 @@ import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface IMotionVoteInfoProps {
 	className?: string;
@@ -26,6 +27,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 	const {
 		postData: { postType }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const { resolvedTheme: theme } = useTheme();
 
@@ -38,7 +40,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9 xl:overflow-y-visible`}>
 			<h3 className='dashboard-heading flex items-center dark:text-white'>
-				{postType === ProposalType.ADVISORY_COMMITTEE && 'Advisory'} Council Votes
+				{postType === ProposalType.ADVISORY_COMMITTEE && 'Advisory'} {t('council_votes')}
 				<HelperTooltip
 					className='ml-2 w-3.5 font-normal'
 					text='This represents the onchain votes of council members'
@@ -59,11 +61,11 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 
 						{councilVote.decision === 'yes' ? (
 							<div className='text-md flex items-center text-aye_green'>
-								<LikeFilled className='mr-2' /> Aye
+								<LikeFilled className='mr-2' /> {t('ayes')}
 							</div>
 						) : (
 							<div className='text-md flex items-center text-nay_red'>
-								<DislikeFilled className='mr-2' /> Nay
+								<DislikeFilled className='mr-2' /> {t('nays')}
 							</div>
 						)}
 					</div>

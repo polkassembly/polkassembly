@@ -24,6 +24,7 @@ import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import BN from 'bn.js';
+import { useTranslation } from 'next-i18next';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -47,6 +48,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [modalOpen, setModalOpen] = useState(false);
+	const { t } = useTranslation('common');
 
 	let web3 = new BrowserProvider((window as any).ethereum);
 
@@ -64,7 +66,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	const connect = async () => {
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Connecting to WalletConnect'
+			message: t('connecting_to_walletconnect')
 		});
 
 		//  Create new WalletConnect Provider
@@ -114,7 +116,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			// setAccountsNotFound(true);
 			setLoadingStatus({
 				isLoading: false,
-				message: 'Connecting to WalletConnect'
+				message: t('connecting_to_walletconnect')
 			});
 			return;
 		}
@@ -284,14 +286,14 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 		<div className={className}>
 			<CustomButton
 				variant='primary'
-				text='Second'
+				text={t('second')}
 				onClick={openModal}
 				className='mx-auto mb-10 flex w-[90%]'
 			/>
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
-				title='Second Proposal'
+				title={t('second_proposal')}
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={[
@@ -324,8 +326,8 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 					modalOpen={modalOpen}
 					setModalOpen={setModalOpen}
 					image='/assets/Gifs/login-endorse.gif'
-					title='Join Polkassembly to Endorse this proposal.'
-					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+					title={t('join_polkassembly_to_endorse_this_proposal')}
+					subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 				/>
 			}
 		</div>

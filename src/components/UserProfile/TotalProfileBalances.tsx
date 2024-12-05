@@ -15,6 +15,7 @@ import userProfileBalances from '~src/util/userProfileBalances';
 import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -33,6 +34,7 @@ const ZERO_BN = new BN(0);
 const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const { id } = useUserDetailsSelector();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [totalLockedBalance, setTotalLockedBalance] = useState<BN>(ZERO_BN);
@@ -81,7 +83,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 					width={24}
 					height={24}
 				/>
-				Balance
+				{t('balance')}
 			</span>
 			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && (
 				<VoteUnlock
@@ -97,7 +99,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 							style={{ color: '#51D36E' }}
 							className='rounded-full border-none bg-transparent text-base'
 						/>
-						Transferrable
+						{t('transferrable')}
 					</span>
 					<span className='font-medium'>{parseBalance(transferableBalance.toString(), 2, true, network)}</span>
 				</span>
@@ -108,7 +110,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				<span className='flex justify-between'>
 					<span className='flex gap-2'>
 						<LockIcon />
-						Locked
+						{t('locked')}
 					</span>
 					<span className='font-medium'>{parseBalance(totalLockedBalance.toString(), 2, true, network)}</span>
 				</span>

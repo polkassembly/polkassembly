@@ -28,5 +28,5 @@ export interface IBountyListing {
 	date?: string;
 	categories: string[];
 	children?: IBountyListing;
-	childbounties?: IChildBounty[];
+	childBounties?: IChildBounty[];
 }

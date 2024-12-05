@@ -7,9 +7,11 @@ import classNames from 'classnames';
 import { ISwipeActionButtons } from '~src/components/TinderStyleVoting/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Button } from 'antd';
+import { useTranslation } from 'next-i18next';
 
 const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 	const { currentIndex, trackPosts, onSwipeAction, className, decision, isLoading } = props;
+	const { t } = useTranslation('common');
 	const canSwipe = currentIndex >= 0;
 
 	const handleAction = (direction: string) => {
@@ -26,7 +28,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent font-semibold`}
 					onClick={() => {
 						handleAction('left');
 					}}
@@ -37,23 +39,23 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 						src='/assets/icons/red-dislike-icon.svg'
 						alt='dislike-icon'
 					/>
-					<p className='m-0 p-0 text-[#F53C3C]'>Nay</p>
+					<p className='m-0 p-0 text-[#F53C3C]'>{t('nay')}</p>
 				</Button>
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent font-semibold`}
 					onClick={() => handleAction('up')}
 					loading={decision === 'abstain' ? isLoading : false}
 					disabled={isLoading}
 				>
 					<StopOutlined className={'text-base text-[#407BFF]'} />
-					<p className='m-0 p-0 text-[#407BFF]'>Abstain</p>
+					<p className='m-0 p-0 text-[#407BFF]'>{t('abstain')}</p>
 				</Button>
 				<Button
 					className={`${
 						isLoading ? 'opacity-60' : ''
-					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent`}
+					} flex h-8 w-[209px] cursor-pointer items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent font-semibold`}
 					onClick={() => handleAction('right')}
 					loading={decision === 'aye' ? isLoading : false}
 					disabled={isLoading}
@@ -62,7 +64,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 						src='/assets/icons/green-like-icon.svg'
 						alt='dislike-icon'
 					/>
-					<p className='m-0 p-0 text-[#2ED47A]'>Aye</p>
+					<p className='m-0 p-0 text-[#2ED47A]'>{t('aye')}</p>
 				</Button>
 			</div>
 		</section>

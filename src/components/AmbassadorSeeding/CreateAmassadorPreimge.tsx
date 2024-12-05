@@ -225,13 +225,13 @@ const CreateAmassadorPreimge = ({
 			)}
 			<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 				<Button
-					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
+					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium font-semibold text-pink_primary'
 					onClick={() => handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_APPLICANT)}
 				>
 					{t('back')}
 				</Button>
 				<Button
-					className='mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-sm font-medium text-white'
+					className='mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-sm font-medium font-semibold text-white'
 					onClick={() => handleCreatePreimage()}
 				>
 					{t('create_preimage')}

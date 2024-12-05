@@ -9,6 +9,7 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import { Tabs } from '~src/ui-components/Tabs';
 import OffChainPostsContainer from './OffChainPostsContainer';
 import { styled } from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 interface IOffChainTabs {
 	className?: string;
@@ -19,6 +20,7 @@ interface IOffChainTabs {
 
 const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const [activeTab, setActiveTab] = useState('PADiscussions');
 
@@ -35,12 +37,12 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 				</>
 			),
 			key: 'PADiscussions',
-			label: <span className='px-1.5'>Polkassembly</span>
+			label: <span className='px-1.5'>{t('polkassembly')}</span>
 		},
 		{
 			children: <></>,
 			key: 'Forum',
-			label: <div className='flex items-center gap-2'>Forum</div>
+			label: <div className='flex items-center gap-2'>{t('forum')}</div>
 		}
 	];
 	const onTabClick = (key: string) => {

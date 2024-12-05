@@ -9,9 +9,12 @@ import formatAvatarUrl from '../utils/FormatAvatarUrl';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import ForumLikeButton from '../utils/ForumLikeButton';
+import { useTranslation } from 'next-i18next';
 
 const ForumComments = ({ comments }: any) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
+
 	return (
 		<div className='mt-6 flex flex-col items-start gap-6 sm:ml-[140px] sm:pr-6'>
 			{comments.map((comment: any) => {
@@ -21,16 +24,16 @@ const ForumComments = ({ comments }: any) => {
 						<div className='flex gap-4'>
 							<ImageIcon
 								src={formatAvatarUrl(comment.avatar_template, '46')}
-								alt='user image'
+								alt={t('user_image')}
 								imgClassName='rounded-full'
 							/>
-							<div className=' mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'>
+							<div className='mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'>
 								<div className='flex items-center gap-[6px]'>
 									<span className='text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'>{comment.username}</span>
 									{comment.created_at && (
 										<>
 											<div className='my-auto h-[2px] w-[2px] rounded-full bg-blue-light-medium dark:to-blue-dark-medium'></div>
-											<div className='hidden text-[10px] text-blue-light-medium dark:text-blue-dark-medium sm:flex'>{getRelativeCreatedAt(date)}</div>
+											<div className='hidden text-[10px] text-blue-light-medium dark:text-blue-dark-medium sm:flex'>{t('relative_time', { time: getRelativeCreatedAt(date) })}</div>
 										</>
 									)}
 								</div>

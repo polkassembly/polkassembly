@@ -89,6 +89,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 	const { t } = useTranslation('common');
 
@@ -96,8 +97,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const { id } = useUserDetailsSelector();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

@@ -10,6 +10,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 import { GroupedTrackIds, IGetStatusWiseProposalCount, NetworkTrackInfo } from './types';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -60,6 +61,7 @@ const LegendContainer = styled.div`
 const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState<boolean>(false);
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1260;
 	const [categoryInfo, setCategoryInfo] = useState<Record<string, number>>({
@@ -120,7 +122,7 @@ const AnalyticsReferendumCount = () => {
 				isMobile ? 'max-h-[525px]' : 'max-h-[500px]'
 			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
-			<h2 className='text-base font-semibold sm:text-xl'>Referendum count by Category</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>{t('referendum_count_by_category')}</h2>
 			<Spin spinning={loading}>
 				<div
 					className='flex justify-start'

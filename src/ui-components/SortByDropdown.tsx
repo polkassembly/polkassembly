@@ -8,8 +8,8 @@ import { SwapOutlined } from '@ant-design/icons';
 import { sortOptions } from 'src/global/sortOptions';
 import { Divider } from 'antd';
 import styled from 'styled-components';
-import { poppins } from 'pages/_app';
 import { useTranslation } from 'next-i18next';
+import { dmSans } from 'pages/_app';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -24,7 +24,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sor
 	const { t } = useTranslation('common');
 
 	const dropdownMenu = (
-		<div className={`${poppins.className} ${poppins.variable} rounded-xl bg-white dark:bg-[#282A2D]`}>
+		<div className={`${dmSans.className} ${dmSans.variable} rounded-xl bg-white dark:bg-[#282A2D]`}>
 			<div
 				onClick={() => handleSortByClick('clear_filter')}
 				className='pt-3'
@@ -70,9 +70,9 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sor
 		<Dropdown
 			overlay={dropdownMenu}
 			trigger={['hover']}
-			className={`${className} ${poppins.className} ${poppins.variable}`}
+			className={`${className} ${dmSans.className} ${dmSans.variable}`}
 		>
-			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
+			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 				<span className='sm:mr-1 sm:mt-0.5'>{t('sort_by')}</span>
 				<SwapOutlined
 					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}

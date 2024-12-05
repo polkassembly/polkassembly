@@ -7,8 +7,10 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import { useNetworkSelector, useTrackLevelAnalytics } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { Pagination } from '~src/ui-components/Pagination';
+import { useTranslation } from 'next-i18next';
 
 const DelegatorsTab = () => {
+	const { t } = useTranslation('common');
 	const { delegatorsData } = useTrackLevelAnalytics();
 	const { network } = useNetworkSelector();
 	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
@@ -20,11 +22,11 @@ const DelegatorsTab = () => {
 
 	return (
 		<section className=''>
-			<div className='flex h-[56px] w-full  items-center rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222]  dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5 '>
-				<div className='w-[32%] min-[450px]:w-[35%]'>Address</div>
-				<div className='w-[32%] min-[450px]:w-[35%]'>Target</div>
-				<div className='w-[17%] min-[450px]:w-[15%]'>Capital</div>
-				<div className='w-[17%] min-[450px]:w-[15%]'>Votes</div>
+			<div className='flex h-[56px] w-full items-center rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5'>
+				<div className='w-[32%] min-[450px]:w-[35%]'>{t('address')}</div>
+				<div className='w-[32%] min-[450px]:w-[35%]'>{t('target')}</div>
+				<div className='w-[17%] min-[450px]:w-[15%]'>{t('capital')}</div>
+				<div className='w-[17%] min-[450px]:w-[15%]'>{t('votes')}</div>
 			</div>
 			<div>
 				{allDelegatorData.slice(startIndex, endIndex).map((item, index) => (

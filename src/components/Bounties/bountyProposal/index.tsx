@@ -7,6 +7,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import BountyActionModal from './BountyActionModal';
 import { spaceGrotesk } from 'pages/_app';
+import { useTranslation } from 'next-i18next';
 
 interface IBountyProposalActionButtonProps {
 	className?: string;
@@ -21,6 +22,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	const { t } = useTranslation();
 
 	const handleClick = (num: number) => {
 		if (id) {
@@ -40,14 +42,14 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 		<div className={className}>
 			<button
 				onClick={() => handleClick(1)}
-				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
+				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[14px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
 			>
 				<ImageIcon
 					src='/assets/bounty-icons/proposal-icon.svg'
 					alt='bounty icon'
 					imgClassName=''
 				/>
-				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty Proposal</span>
+				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>{t('create_bounty_proposal')}</span>
 			</button>
 			<BountyActionModal
 				theme={theme}

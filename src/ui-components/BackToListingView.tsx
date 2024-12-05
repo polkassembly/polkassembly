@@ -12,9 +12,10 @@ import { PageLink, PostCategory } from 'src/global/post_categories';
 interface Props {
 	postCategory?: PostCategory | EMembersType | PageLink;
 	trackName?: string;
+	network?: string;
 }
 
-const BackToListingView = ({ postCategory, trackName }: Props) => {
+const BackToListingView = ({ postCategory, trackName, network }: Props) => {
 	const { t } = useTranslation('common');
 
 	let path: string = '';
@@ -50,7 +51,7 @@ const BackToListingView = ({ postCategory, trackName }: Props) => {
 				path = 'tech-comm-proposals';
 				break;
 			case PostCategory.BOUNTY:
-				path = 'bounties';
+				path = network == 'polkadot' ? 'bounties-listing' : 'bounties';
 				break;
 			case PostCategory.CHILD_BOUNTY:
 				path = 'child_bounties';

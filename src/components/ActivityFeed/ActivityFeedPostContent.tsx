@@ -12,7 +12,7 @@ const ActivityFeedPostContent: React.FC<{
 	content: string;
 	isCommentPost?: boolean;
 }> = ({ post, content }: { post: any; content: string; isCommentPost?: boolean }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('common');
 	const trimmedContentForComment = content?.length > 250 ? content?.slice(0, 200) + '...' : content;
 	const startsWithBulletPoint = trimmedContentForComment.trim().startsWith('•') || trimmedContentForComment.trim().startsWith('-');
 	return (

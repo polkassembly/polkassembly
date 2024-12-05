@@ -539,6 +539,8 @@ class AuthService {
 
 		await firestore.collection('addresses').doc(address).delete();
 
+		// TODO: subtract address's on-chain profile score from user's profile score
+
 		return this.getSignedToken(user);
 	}
 

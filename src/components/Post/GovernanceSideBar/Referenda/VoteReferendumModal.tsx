@@ -16,7 +16,7 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
@@ -63,6 +63,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import useImagePreloader from '~src/hooks/useImagePreloader';
+import { useTranslation } from 'next-i18next';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -83,13 +84,13 @@ interface Props {
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
-			const num = res.toJSON();
+			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+			const num = res?.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !Number.isNaN(Number(days))) {
 				return [
 					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
+						className={`text-bodyBlue  ${dmSans.variable}`}
 						key={0}
 						value={0}
 					>
@@ -97,7 +98,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue ${dmSans.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
@@ -108,7 +109,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue ${dmSans.variable}`}
 			key={0}
 			value={0}
 		>
@@ -116,7 +117,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue ${dmSans.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
@@ -175,7 +176,7 @@ const VoteReferendumModal = ({
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
-
+	const { t } = useTranslation('common');
 	const isGifLoaded = useImagePreloader('/assets/Gifs/voted.gif');
 
 	const getDelegateData = async () => {
@@ -582,7 +583,7 @@ const VoteReferendumModal = ({
 					) : (
 						<LikeGray className='mb-[3px] mr-2 hidden msm:block ' />
 					)}
-					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>{t('aye')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -601,7 +602,7 @@ const VoteReferendumModal = ({
 					) : (
 						<DislikeGray className='-mb-[3px] mr-2 hidden msm:block ' />
 					)}
-					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>{t('nay')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -625,7 +626,7 @@ const VoteReferendumModal = ({
 							) : (
 								<SplitGray className='mr-2 hidden msm:block ' />
 							)}
-							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Split</span>
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>{t('split')}</span>
 						</div>
 					),
 					value: 'split'
@@ -638,7 +639,7 @@ const VoteReferendumModal = ({
 							}`}
 						>
 							<StopOutlined className={`mb-[3px] mr-2 hidden msm:block ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
-							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Abstain</span>
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>{t('abstain')}</span>
 						</div>
 					),
 					value: 'abstain'
@@ -656,7 +657,7 @@ const VoteReferendumModal = ({
 						handleModalReset();
 					}}
 					footer={false}
-					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+					className={`w-[550px] ${dmSans.variable} ${dmSans.className} alignment-close vote-referendum max-h-[675px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
@@ -679,13 +680,13 @@ const VoteReferendumModal = ({
 										<PolkasafeIcon className='ml-14' />
 									)}
 
-									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Vote with Polkasafe Multisig</span>
+									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('cast_vote_with_polkasafe_multisig')}</span>
 								</div>
 							</div>
 						) : (
 							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
-								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('cast_your_vote')}</span>
 							</div>
 						)
 					}
@@ -698,7 +699,7 @@ const VoteReferendumModal = ({
 						>
 							<>
 								<div className='my-6'>
-									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>{t('select_a_wallet')}</div>
 									<div className='mt-1 flex items-center justify-center gap-x-2'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
@@ -830,8 +831,8 @@ const VoteReferendumModal = ({
 									<Alert
 										description={
 											<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
-												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your wallet</h3>
-												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
+												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>{t('link_your_wallet')}</h3>
+												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>{t('add_an_address_to_the_selected_wallet_by_your_extension')}</div>
 											</div>
 										}
 										showIcon
@@ -841,7 +842,7 @@ const VoteReferendumModal = ({
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
-										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('no_addresses_found_in_the_address_selection_tab')}</span>}
 										showIcon
 										type='info'
 										className='mt-2'
@@ -856,7 +857,7 @@ const VoteReferendumModal = ({
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-5'
@@ -874,7 +875,7 @@ const VoteReferendumModal = ({
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
@@ -884,7 +885,7 @@ const VoteReferendumModal = ({
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
-										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('please_select_a_wallet')}</span>}
 										showIcon
 										type='info'
 									/>
@@ -894,7 +895,7 @@ const VoteReferendumModal = ({
 									<Alert
 										message={
 											<span className='flex items-center dark:text-blue-dark-high'>
-												This account has already delegated vote to
+												{t('this_account_has_already_delegated_vote_to')}
 												<Address
 													address={delegatedTo}
 													className='ml-2 text-sm'
@@ -919,7 +920,7 @@ const VoteReferendumModal = ({
 												setShowProxyDropdown(value?.target?.checked);
 											}}
 										>
-											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+											<p className='m-0 mt-1 p-0'>{t('vote_with_proxy')}</p>
 										</Checkbox>
 									</div>
 								)}
@@ -929,7 +930,7 @@ const VoteReferendumModal = ({
 										theme={theme}
 										address={address}
 										withBalance
-										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										className={`${dmSans.variable} ${dmSans.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}
 										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
@@ -941,7 +942,7 @@ const VoteReferendumModal = ({
 								{showProxyDropdown && !isProxyExistsOnWallet && (
 									<div className='mt-2 flex items-center gap-x-1'>
 										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>{t('proxy_address_does_not_exist_on_selected_wallet')}</p>
 									</div>
 								)}
 								{/* delegate voting power */}
@@ -949,7 +950,7 @@ const VoteReferendumModal = ({
 									<div className='mb-4 mt-6 flex flex-col gap-0.5 text-sm'>
 										<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
 											{' '}
-											Delegated power <HelperTooltip text='Total amount of voting power' />
+											{t('delegated_power')} <HelperTooltip text={t('total_amount_of_voting_power')} />
 										</span>
 										<Input
 											value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}
@@ -959,7 +960,7 @@ const VoteReferendumModal = ({
 									</div>
 								)}
 								{/* aye nye split abstain buttons */}
-								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
+								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>{t('choose_your_vote')}</h3>
 								<Segmented
 									block
 									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
@@ -1086,7 +1087,7 @@ const VoteReferendumModal = ({
 					</>
 				</Modal>
 				<VoteInitiatedModal
-					title={multisig ? 'Voting with Polkasafe Multisig initiated' : 'Voted Successfully'}
+					title={multisig ? t('voting_with_polkasafe_multisig_initiated') : t('voted_successfully')}
 					vote={vote}
 					balance={voteValues.totalVoteValue}
 					open={successModal}

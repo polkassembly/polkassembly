@@ -19,8 +19,10 @@ import Image from 'next/image';
 import { CHANNEL } from '~src/components/Settings/Notifications/NotificationChannels';
 import NotificationsContainer from '../NotificationContainer';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 const ProposalsNotificationsTab = ({ inPage, closePopover, isStopInterval, setStopInterval }: INotificationsTab) => {
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
@@ -178,7 +180,7 @@ const ProposalsNotificationsTab = ({ inPage, closePopover, isStopInterval, setSt
 						width={150}
 						alt='empty...'
 					/>
-					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>No Notifications</span>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('no_notifications')}</span>
 					{!networkPreferences.channelPreferences?.[CHANNEL.IN_APP]?.enabled && !loading && (
 						<div className='mt-1 flex items-center justify-center gap-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 							<div className={'flex items-center justify-between gap-1'}>
@@ -194,10 +196,10 @@ const ProposalsNotificationsTab = ({ inPage, closePopover, isStopInterval, setSt
 									href={'/settings?tab=notifications'}
 									className={'-ml-0.5 text-pink_primary dark:text-blue-dark-helper'}
 								>
-									set Notifications
+									{t('set_notifications')}
 								</Link>
 							</div>
-							to get alerts for the governance events
+							{t('to_get_alerts_for_the_governance_events')}
 						</div>
 					)}
 				</div>

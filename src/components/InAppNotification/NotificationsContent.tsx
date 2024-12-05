@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
@@ -26,6 +26,7 @@ import dynamic from 'next/dynamic';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { useTranslation } from 'next-i18next';
 
 const ClaimAssetPayoutInfo = dynamic(() => import('~src/ui-components/ClaimAssetPayoutInfo'), {
 	loading: () => (
@@ -93,6 +94,7 @@ const handleRenderTab = (
 };
 const NotificationsContent = ({ className, inPage = false, closePopover }: INotificationsContent) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { payouts } = useClaimPayoutSelector();
 	const router = useRouter();
@@ -200,8 +202,8 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		<div
 			className={classNames(
 				className,
-				poppins.className,
-				poppins.variable,
+				dmSans.className,
+				dmSans.variable,
 				'flex min-h-[540px] flex-col justify-between',
 				inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : ''
 			)}
@@ -218,7 +220,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 								className={theme === 'dark' ? 'dark-icons' : ''}
 							/>
 						)}
-						Notifications
+						{t('notifications')}
 						{!!unreadNotificationsCount && !viewAllClicked && (
 							<span className='flex min-h-[26px] min-w-[26px] items-center justify-center rounded-full bg-[#3B47DF] p-1 text-xs font-medium text-white dark:bg-[#5B67FF]'>
 								{unreadNotificationsCount}
@@ -286,9 +288,11 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 							showIcon
 							message={
 								<div className='m-0 flex items-center justify-between p-0 text-xs dark:text-blue-dark-high'>
-									<span>You have {payouts?.length || 0} payouts from your proposals </span>
+									<span>
+										{t('you_have')} {payouts?.length || 0} {t('payouts_from_your_proposals')}{' '}
+									</span>
 									<CustomButton
-										text='Claim'
+										text={t('claim')}
 										onClick={() => {
 											setOpenClaimModal(true);
 											closePopover?.(true);
@@ -328,7 +332,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 							className={theme == 'dark' ? 'dark-icons' : ''}
 							src='/assets/icons/notification-setting.svg'
 						/>
-						Manage Settings
+						{t('manage_settings')}
 					</Link>
 					{totalNotificationsCount > 0 && (
 						<Link
@@ -339,7 +343,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 								handleViewAll();
 							}}
 						>
-							View All
+							{t('view_all')}
 						</Link>
 					)}
 				</div>

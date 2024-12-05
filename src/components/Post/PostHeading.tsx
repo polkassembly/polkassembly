@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -121,6 +122,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			preimageHash
 		}
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
@@ -231,7 +233,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								key={index}
 								message={
 									<div className='flex items-center gap-1'>
-										<span className='text-xs font-normal text-[#EA0707] dark:text-blue-dark-medium'>This Referendum has been created to cancel </span>
+										<span className='text-xs font-normal text-[#EA0707] dark:text-blue-dark-medium'>{t('this_referendum_has_been_created_to_cancel')} </span>
 										<a
 											href={`https://${network}.polkassembly.io/referenda/${index}`}
 											target='_blank'
@@ -264,7 +266,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					)}
 					{requestedAmt && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
+							<span> {t('requested')}: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}
 								requestedAmt={requestedAmt.toString()}
@@ -279,7 +281,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				</div>
 			)}
 
-			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-xl font-semibold leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')

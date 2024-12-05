@@ -39,6 +39,7 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -87,6 +88,7 @@ const Web3Signup: FC<Props> = ({
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -149,7 +151,7 @@ const Web3Signup: FC<Props> = ({
 			try {
 				injected = await new Promise((resolve, reject) => {
 					const timeoutId = setTimeout(() => {
-						reject(new Error('Wallet Timeout'));
+						reject(new Error(t('wallet_timeout')));
 					}, 60000); // wait 60 sec
 
 					if (wallet && wallet.enable) {
@@ -167,14 +169,14 @@ const Web3Signup: FC<Props> = ({
 			} catch (err) {
 				setIsAccountLoading(false);
 				console.log(err?.message);
-				if (err?.message == 'Rejected') {
+				if (err?.message === 'Rejected') {
 					setWalletError('');
 					handleToggle();
-				} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
-					setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
+				} else if (err?.message === t('pending_authorisation')) {
+					setWalletError(t('pending_authorisation_message'));
 					handleToggle();
-				} else if (err?.message == 'Wallet Timeout') {
-					setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
+				} else if (err?.message === t('wallet_timeout')) {
+					setWalletError(t('wallet_authorisation_timed_out'));
 					handleToggle();
 				}
 			}
@@ -231,13 +233,13 @@ const Web3Signup: FC<Props> = ({
 			const signRaw = injected && injected.signer && injected.signer.signRaw;
 
 			if (!signRaw) {
-				return console.error('Signer not available');
+				return console.error(t('signer_not_available'));
 			}
 
 			let substrate_address;
 			if (!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
-				if (!substrate_address) return console.error('Invalid address');
+				if (!substrate_address) return console.error(t('invalid_address'));
 			} else {
 				substrate_address = address;
 			}
@@ -245,14 +247,14 @@ const Web3Signup: FC<Props> = ({
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address: substrate_address, multisig: multiWallet });
 			if (error || !data) {
-				setErr(error || 'Something went wrong');
+				setErr(error || t('something_went_wrong'));
 				setLoading(false);
 				return;
 			}
 
 			const signMessage = data?.signMessage;
 			if (!signMessage) {
-				setErr('Challenge message not found');
+				setErr(t('challenge_message_not_found'));
 				setLoading(false);
 				return;
 			}
@@ -271,7 +273,7 @@ const Web3Signup: FC<Props> = ({
 			});
 
 			if (confirmError || !confirmData) {
-				setErr(confirmError || 'Something went wrong');
+				setErr(confirmError || t('something_went_wrong'));
 				setLoading(false);
 				return;
 			}
@@ -302,7 +304,7 @@ const Web3Signup: FC<Props> = ({
 				}
 				router.back();
 			} else {
-				throw new Error('Web3 Login failed');
+				throw new Error(t('web3_login_failed'));
 			}
 		} catch (error) {
 			setErr(error.message);
@@ -339,7 +341,7 @@ const Web3Signup: FC<Props> = ({
 				<div>
 					<div className='mt-1 flex items-center'>
 						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-						<h3 className='mt-3 text-[20px] font-semibold text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
+						<h3 className='mt-3 text-[20px] font-semibold text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : t('sign_up')}</h3>
 					</div>
 					<Divider
 						style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -372,23 +374,19 @@ const Web3Signup: FC<Props> = ({
 						</h3>
 						{fetchAccounts ? (
 							<div className='flex flex-col items-center justify-center'>
-								<p className='text-base text-[#243A57] dark:text-blue-dark-high'>
-									{withPolkasafe
-										? 'To fetch your Multisig details, please select a wallet extension'
-										: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
-								</p>
+								<p className='text-base text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? t('fetch_multisig_details') : t('fetch_addresses_message')}</p>
 								<Divider
 									style={{ background: '#D2D8E0', flexGrow: 1 }}
 									className='m-0 mb-1 mt-1 p-0 dark:bg-separatorDark'
 								/>
 								<div className='flex w-full justify-start'>
 									<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
-										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>Already have an account?</label>
+										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>{t('already_have_account')}</label>
 										<div
 											onClick={() => handleClick()}
 											className='login-button cursor-pointer text-base text-pink_primary'
 										>
-											&nbsp; Log In{' '}
+											&nbsp; {t('log_in')}
 										</div>
 									</div>
 								</div>
@@ -398,7 +396,7 @@ const Web3Signup: FC<Props> = ({
 								/>
 								<div className='web3-button-container ml-auto flex justify-end'>
 									<CustomButton
-										text='Go Back'
+										text={t('go_back')}
 										variant='default'
 										buttonsize='sm'
 										onClick={() => handleBackToSignUp()}
@@ -407,7 +405,7 @@ const Web3Signup: FC<Props> = ({
 									{!withPolkasafe && (
 										<CustomButton
 											icon={<CheckOutlined />}
-											text='Got it!'
+											text={t('got_it')}
 											variant='primary'
 											buttonsize='sm'
 											onClick={() => {
@@ -438,8 +436,8 @@ const Web3Signup: FC<Props> = ({
 									{accountsNotFound && (
 										<div className='my-5 flex items-center justify-center'>
 											<Alert
-												message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
-												description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
+												message={<span className='dark:text-blue-dark-high'>{t('need_at_least_one_account')}</span>}
+												description={<span className='dark:text-blue-dark-high'>{t('reload_after_adding_accounts')}</span>}
 												type='info'
 												showIcon
 											/>
@@ -450,7 +448,7 @@ const Web3Signup: FC<Props> = ({
 											<Loader
 												size='large'
 												timeout={3000}
-												text='Requesting Web3 accounts'
+												text={t('requesting_web3_accounts')}
 											/>
 										</div>
 									) : (
@@ -461,7 +459,7 @@ const Web3Signup: FC<Props> = ({
 														<MultisigAccountSelectionForm
 															multisigBalance={multisigBalance}
 															setMultisigBalance={setMultisigBalance}
-															title='Choose linked account'
+															title={t('choose_linked_account')}
 															accounts={accounts}
 															address={address}
 															onAccountChange={onAccountChange}
@@ -471,7 +469,7 @@ const Web3Signup: FC<Props> = ({
 													) : (
 														<AccountSelectionForm
 															isTruncateUsername={false}
-															title='Choose linked account'
+															title={t('choose_linked_account')}
 															accounts={accounts}
 															address={address}
 															onAccountChange={onAccountChange}
@@ -481,14 +479,14 @@ const Web3Signup: FC<Props> = ({
 												</div>
 												<div className='flex items-center justify-center'>
 													<CustomButton
-														text='Go Back'
+														text={t('go_back')}
 														variant='default'
 														buttonsize='sm'
 														onClick={() => handleBackToSignUp()}
 														className='mr-3'
 													/>
 													<CustomButton
-														text='Sign-up'
+														text={t('sign_up')}
 														variant='primary'
 														buttonsize='sm'
 														disabled={loading}
@@ -503,7 +501,7 @@ const Web3Signup: FC<Props> = ({
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<CustomButton
-											text='Go Back'
+											text={t('go_back')}
 											variant='default'
 											buttonsize='sm'
 											onClick={() => handleBackToSignUp()}
@@ -521,7 +519,7 @@ const Web3Signup: FC<Props> = ({
 };
 const PolkasafeWithIcon = () => (
 	<>
-		Signup by Polkasafe{' '}
+		Signup by Polkasafe
 		<Image
 			width={25}
 			height={25}

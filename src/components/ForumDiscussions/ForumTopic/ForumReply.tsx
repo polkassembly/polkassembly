@@ -5,10 +5,13 @@ import { useTheme } from 'next-themes';
 import React from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import { useTranslation } from 'next-i18next';
 
 const ForumReply = ({ reply }: any) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const date = new Date(reply.updated_at);
+
 	return (
 		<div className='reply-user-container -mt-1 rounded-t-md px-1 py-1 pt-4 dark:bg-[#141416]'>
 			<div className='flex items-center gap-[6px] px-4'>
@@ -16,7 +19,7 @@ const ForumReply = ({ reply }: any) => {
 				{reply.created_at && (
 					<>
 						<div className='my-auto h-[2px] w-[2px] rounded-full bg-blue-light-medium dark:to-blue-dark-medium'></div>
-						<div className='hidden text-[10px] text-blue-light-medium dark:text-blue-dark-medium sm:flex'>{getRelativeCreatedAt(date)}</div>
+						<div className='hidden text-[10px] text-blue-light-medium dark:text-blue-dark-medium sm:flex'>{t('relative_time_string', { time: getRelativeCreatedAt(date) })}</div>
 					</>
 				)}
 			</div>

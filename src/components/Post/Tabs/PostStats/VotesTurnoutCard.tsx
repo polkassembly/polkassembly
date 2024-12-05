@@ -14,6 +14,7 @@ import TurnoutIcon from '~assets/icons/analytics/turnout.svg';
 import TurnoutDarkIcon from '~assets/icons/analytics/turnout-dark.svg';
 import styled from 'styled-components';
 import { chainProperties } from 'src/global/networkConstants';
+import { useTranslation } from 'next-i18next';
 
 interface IVotesTurnoutProps {
 	support: BN;
@@ -25,6 +26,7 @@ interface IVotesTurnoutProps {
 const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ turnout, support, activeIssuance, className }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -39,20 +41,20 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ turnout, support, activeIssu
 		{
 			color: turnoutColor,
 			id: turnout ? 'turnout' : 'support',
-			label: turnout ? 'Turnout' : 'Support',
+			label: turnout ? t('turnout') : t('support'),
 			value: bnToIntBalance(turnout ? turnout : support)
 		},
 		{
 			color: issuanceColor,
 			id: 'issuance',
-			label: 'Issuance',
+			label: t('issuance'),
 			value: bnToIntBalance(new BN(activeIssuance).sub(new BN(turnout ? turnout : support)))
 		}
 	];
 	return (
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='flex items-center gap-1 text-base font-semibold'>
-				{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} {turnout ? 'Turnout' : 'Support'} Percentage
+				{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} {turnout ? t('turnout') : t('support')} {t('percentage')}
 			</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie

@@ -7,6 +7,7 @@ import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Trac
 import { usePostDataContext } from '~src/context';
 import { useCurvesInformationSelector, useNetworkSelector } from '~src/redux/selectors';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
 
 const getDays = (hrs: number) => {
 	const days = Math.floor(hrs / 24);
@@ -41,6 +42,7 @@ const ConfirmMessage = () => {
 	const {
 		postData: { statusHistory, track_name, track_number }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { approval, approvalData, supportData, support, supportThreshold, approvalThreshold } = curvesInformation;
 	const [estimateHour, setEstimateHour] = useState(0);
@@ -102,10 +104,16 @@ const ConfirmMessage = () => {
 	}
 
 	return (
-		<Tooltip title={<div>Estimated Date: {dayjs().add(estimateHour, 'hour').format('YYYY-MM-DD HH:MM')}, based on current tally</div>}>
+		<Tooltip
+			title={
+				<div>
+					{t('estimated_date')}: {dayjs().add(estimateHour, 'hour').format('YYYY-MM-DD HH:MM')}, based on current tally
+				</div>
+			}
+		>
 			<div className='mt-4 flex h-[62px] items-center justify-center rounded-lg bg-[#F5F5FD] p-3 hover:h-[62px] dark:bg-[#2C2C3E]'>
 				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-lightBlue dark:text-[#A4A4A4]'>
-					Proposal estimated to pass in
+					{t('proposal_estimated_to_pass_in')}
 					<span className='ml-1 text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
 						{[
 							getDays(estimateHour) ? `${getDays(estimateHour)} days` : '',

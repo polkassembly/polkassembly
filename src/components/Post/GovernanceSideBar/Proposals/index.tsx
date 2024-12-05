@@ -12,6 +12,7 @@ import ProposalVoteInfo from './ProposalVoteInfo';
 import SecondProposal, { SecondProposalProps } from './SecondProposal';
 import SecondProposalEth from './SecondProposalEth';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTranslation } from 'next-i18next';
 
 type IProposalDisplayProps = SecondProposalProps & {
 	canVote: boolean;
@@ -22,6 +23,7 @@ type IProposalDisplayProps = SecondProposalProps & {
 const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 	const { proposalId, accounts, address, canVote, getAccounts, onAccountChange, seconds } = props;
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const [deposit, setDeposit] = useState('');
 	const { network } = useNetworkSelector();
 	const { walletConnectProvider } = useUserDetailsSelector();
@@ -43,7 +45,7 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 
 	return (
 		<GovSidebarCard>
-			<h6 className='dashboard-heading mb-6 dark:text-white'>Second this Proposal!</h6>
+			<h6 className='dashboard-heading mb-6 dark:text-white'>{t('second_this_proposal')}</h6>
 			{canVote && (
 				<>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (

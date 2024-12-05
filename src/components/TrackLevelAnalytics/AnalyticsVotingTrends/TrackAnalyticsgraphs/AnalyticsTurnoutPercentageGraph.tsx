@@ -14,6 +14,7 @@ import { CustomTooltip } from '../../utils/CustomTooltip';
 import Skeleton from '~src/basic-components/Skeleton';
 import { IAnalyticsTurnoutPercentageGraph } from '../../types';
 import { BarTooltipProps, ResponsiveBar } from '@nivo/bar';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -44,7 +45,7 @@ const StyledCard = styled(Card)`
 const CustomBarTooltip = ({ index, value }: BarTooltipProps<{ x: string | number; y: string }>) => {
 	return (
 		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
-			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{index}</div>
+			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>referenda #{index}</div>
 			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(value).toFixed(2)}%</div>
 		</div>
 	);
@@ -52,6 +53,7 @@ const CustomBarTooltip = ({ index, value }: BarTooltipProps<{ x: string | number
 
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPercentageGraph) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 
@@ -90,7 +92,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	if (supportData.length == 1) {
 		return (
 			<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-				<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
+				<h2 className='text-base font-semibold sm:text-xl'>{t('average_turnout_percentage')}</h2>
 				<div className='h-[250px]'>
 					<ResponsiveBar
 						data={supportData.map((item) => ({
@@ -178,7 +180,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>{t('average_turnout_percentage')}</h2>
 			{isLoading ? (
 				<Skeleton />
 			) : (

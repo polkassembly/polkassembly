@@ -21,8 +21,10 @@ import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -35,7 +37,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 
 	const handleRequestJudgement = async () => {
 		if (identityInfo?.verifiedByPolkassembly) return;
-		// GAEvent for request judgement button clicked
+
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
@@ -84,7 +86,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 					showIcon
 					type='info'
 					className='mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue '
-					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
+					message={<span className='dark:text-blue-dark-high'>{t('no_identity_request_found')}</span>}
 				/>
 			)}
 
@@ -93,7 +95,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 					showIcon
 					type='info'
 					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue '
-					description={<span className='dark:text-blue-dark-high'>To request judgement from Polkassembly please provide email for verification before requesting judgement.</span>}
+					description={<span className='dark:text-blue-dark-high'>{t('email_verification_required')}</span>}
 				/>
 			)}
 			<ImageIcon
@@ -103,23 +105,22 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 				imgWrapperClassName='py-10 flex items-center justify-center '
 			/>
 			<ul className='flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
-				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
+				<li>{t('polkadot_on_chain_identities_info')}</li>
 				<li>
-					Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds
-					from the treasury or participating in discussions and proposals.
+					{t('polkadot_verification_benefits')}
 					<u className='text-pink_primary'>
 						<a
 							className='ml-1 text-sm text-pink_primary'
 							href={getIdentityLearnMoreRedirection(network)}
 						>
-							Learn more
+							{t('learn_more')}
 						</a>
 					</u>
 				</li>
 			</ul>
 			<div className='min-h-[60px] rounded-lg bg-[#F6F7F9] px-3 py-[14px] dark:bg-[#1D1D1D]'>
 				<div className={`flex justify-between ${amountBreakup && 'border-0 border-b-[1px] border-solid border-[#E1E6EB] pb-3 dark:border-separatorDark'}`}>
-					<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Total Amount Required</span>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('total_amount_required')}</span>
 					<div className='flex cursor-pointer flex-col text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<span
 							className='flex justify-end'
@@ -128,17 +129,19 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 							{formatedBalance(registerarFee?.add(minDeposite).toString(), unit, 2)} {unit}
 							{amountBreakup ? <DownArrowIcon className='ml-2 text-2xl' /> : <UpArrowIcon className='ml-2 text-xl' />}
 						</span>
-						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
+						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+							{amountBreakup ? t('hide_amount_breakup') : t('view_amount_breakup')}
+						</span>
 					</div>
 				</div>
 				{amountBreakup && (
 					<div className='mt-3 flex flex-col gap-2'>
 						<span className='flex justify-between text-sm'>
 							<span className='text-lightBlue dark:text-blue-dark-medium'>
-								Min Deposit{' '}
+								{t('min_deposit')}{' '}
 								<HelperTooltip
 									className='ml-1'
-									text='Amount that needs held in an address for a verified account.'
+									text={t('min_deposit_tooltip')}
 								/>
 							</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -147,9 +150,9 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 						</span>
 						<span className='flex justify-between text-sm'>
 							<span className='text-lightBlue dark:text-blue-dark-medium'>
-								Registrar fees{' '}
+								{t('registrar_fees')}{' '}
 								<HelperTooltip
-									text='Fee charged for on chain verification by registrar.'
+									text={t('registrar_fees_tooltip')}
 									className='ml-1'
 								/>
 							</span>
@@ -162,10 +165,9 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 			</div>
 			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<CustomButton
-					text="Let's Begin"
+					text={t('lets_begin')}
 					loading={loading}
 					onClick={() => {
-						// GAEvent for let's begin button clicked
 						trackEvent('lets_begin_cta_clicked', 'initiated_verification_process', {
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
@@ -180,10 +182,10 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 					onClick={handleRequestJudgement}
 					className={classNames('mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay')}
 				>
-					Request Judgement
+					{t('request_judgement')}
 					<HelperTooltip
 						className='ml-2 w-5'
-						text={<span className='break-words'>If you have already set your identity, you can request a judgment directly from here </span>}
+						text={t('request_judgement_tooltip')}
 					/>
 				</button>
 			</div>

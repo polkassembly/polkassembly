@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
@@ -15,8 +16,11 @@ import Image from 'next/image';
 import { EUserActivityIn } from '~src/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 const ActivityBottomContent = ({ activity, className }: { activity: IUserActivityTypes | IProfileMentions | IProfileReactions; className?: string }) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className={classNames('flex flex-col gap-3 pr-6', className)}>
 			<div className='flex justify-between max-md:flex-col'>
@@ -30,7 +34,7 @@ const ActivityBottomContent = ({ activity, className }: { activity: IUserActivit
 					</span>
 					<Image
 						src='/assets/icons/redirect.svg'
-						alt=''
+						alt={t('redirect_icon')}
 						height={16}
 						width={16}
 						className='ml-1'
@@ -56,7 +60,7 @@ const ActivityBottomContent = ({ activity, className }: { activity: IUserActivit
 					variant='default'
 					className='text-xs font-semibold'
 					onClick={() => window.open(`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}#${activity?.commentId}`, '_blank')}
-					text={EUserActivityIn.COMMENT === activity.activityIn ? 'View Comment' : 'View Reply'}
+					text={EUserActivityIn.COMMENT === activity.activityIn ? t('view_comment') : t('view_reply')}
 					size='small'
 				/>
 			)}

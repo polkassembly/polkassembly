@@ -12,6 +12,7 @@ import VideoViewer from './VideoViewer';
 import NoAuditReport from './NoAuditReport';
 import ImageViewer from './ImageViewer';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 export interface IDataType {
 	download_url: string;
@@ -58,6 +59,7 @@ interface Props {
 }
 
 const PostAudit = ({ auditData, videoData }: Props) => {
+	const { t } = useTranslation('common');
 	const [selectedType, setSelectedType] = useState<string>('reports');
 	const handleChange = (e: any) => {
 		setSelectedType(e.target.value);
@@ -79,7 +81,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								<CautionSVG />
 							</span>
 							<p className='m-0 text-sm font-normal leading-[21px] text-blue-light-high dark:text-blue-dark-high '>
-								Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly
+								{t('reports_provided_here_represent_the_auditors_views_and_are_not_endorsed_by_polkassembly')}
 							</p>
 						</div>
 					) : (
@@ -104,7 +106,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 											imgClassName='bg-cover bg-center bg-no-repeat'
 										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
-											<span className='hidden md:inline-block'>Reports</span> ({pdfCount})
+											<span className='hidden md:inline-block'>{t('reports')}</span> ({pdfCount})
 										</span>
 									</div>
 								</Radio>
@@ -122,7 +124,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 											alt='video icon'
 										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
-											<span className='hidden md:inline-block'>Videos</span> ({videoData.length})
+											<span className='hidden md:inline-block'>{t('videos')}</span> ({videoData.length})
 										</span>
 									</div>
 								</Radio>

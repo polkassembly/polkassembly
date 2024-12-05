@@ -2,22 +2,20 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import { Tabs } from 'antd';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import CountBadgePill from 'src/ui-components/CountBadgePill';
 import styled from 'styled-components';
-
 import { getColumns } from '~src/components/Home/LatestActivity/columns';
 import PostsTable from '~src/components/Home/LatestActivity/PostsTable';
 import { ProposalType } from '~src/global/proposalType';
-
 import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { useTranslation } from 'next-i18next';
 
 const Container = styled.div`
 	th {
@@ -85,10 +83,13 @@ const Container = styled.div`
 		background-color: ${(props: any) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
 	}
 `;
+
 const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any; theme?: string }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
+
 	const tabItems = [
 		{
 			children: (
@@ -100,7 +101,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			key: 'all',
 			label: (
 				<CountBadgePill
-					label='All'
+					label={t('all')}
 					count={gov2LatestPosts.allGov2Posts?.data?.count}
 				/>
 			)
@@ -118,7 +119,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			key: 'discussions',
 			label: (
 				<CountBadgePill
-					label='Discussions'
+					label={t('discussions')}
 					count={gov2LatestPosts.discussionPosts?.data?.count}
 				/>
 			)
@@ -140,7 +141,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 					.toLowerCase(),
 				label: (
 					<CountBadgePill
-						label={trackName.split(/(?=[A-Z])/).join(' ')}
+						label={t(trackName.split(/(?=[A-Z])/).join(' '))}
 						count={gov2LatestPosts[trackName]?.data?.count}
 					/>
 				)
@@ -154,13 +155,13 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			theme={theme as any}
 		>
 			<div className='flex items-center justify-between pl-1 pr-4'>
-				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
+				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>{t('latest_activity')}</h2>
 				{currentTab !== 'all' && (
 					<Link
 						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 						href={`/${currentTab}`}
 					>
-						View all
+						{t('view_all')}
 					</Link>
 				)}
 			</div>

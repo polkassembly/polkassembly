@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { Divider } from 'antd';
 import Image from 'next/image';
-import { poppins, spaceGrotesk } from 'pages/_app';
+import { dmSans, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackTag from '~src/ui-components/TrackTag';
 import { chainProperties } from '~src/global/networkConstants';
@@ -29,6 +29,8 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { removeSymbols } from '~src/util/htmlDiff';
+import { useTranslation } from 'next-i18next';
+
 export interface BountiesProposalsCardProps {
 	activeData: any;
 }
@@ -71,6 +73,7 @@ const BtnLine = styled.div`
 `;
 
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeData }) => {
+	const { t } = useTranslation();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -204,7 +207,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 										src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 										width={45}
 										height={45}
-										alt='redirect link'
+										alt={t('bounties_proposals_card.redirect_link')}
 										className='-mr-[2px] h-[36px] w-[36px] cursor-pointer rounded-full bg-black dark:bg-white md:h-auto md:w-auto'
 									/>
 									<BtnLine
@@ -214,7 +217,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									<button
 										className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[36px] w-[75px] cursor-pointer rounded-3xl border-none bg-black text-base font-bold text-white dark:bg-white dark:text-black md:h-[44px] md:w-[100px] md:text-lg`}
 									>
-										Vote
+										{t('bounties_proposals_card.vote')}
 									</button>
 								</div>
 							</Link>
@@ -229,7 +232,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/bounty-image.svg'
-									alt='bounty icon'
+									alt={t('bounties_proposals_card.bounty_icon')}
 									imgClassName='mt-5 mb-3 w-full md:w-auto'
 									imgWrapperClassName=''
 								/>
@@ -270,11 +273,11 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									target='_blank'
 								>
 									<ImageComponent
-										alt='user img'
+										alt={t('bounties_proposals_card.user_img')}
 										src={profileDetails.image}
 										className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
 									/>
-									<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
+									<span className={`${dmSans.variable} ${dmSans.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
 								</Link>
 								<TrackTag
 									theme={theme as any}

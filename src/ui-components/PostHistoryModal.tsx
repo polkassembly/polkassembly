@@ -9,7 +9,7 @@ import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import UserAvatar from './UserAvatar';
 import { noTitle } from '~src/global/noTitle';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 // import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
 import Markdown from './Markdown';
 import { CloseIcon } from './CustomIcons';
@@ -181,7 +181,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			open={open}
 			onCancel={() => setOpen(false)}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`closeIcon shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`closeIcon shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>{t('proposal_edit_history')}</label>}

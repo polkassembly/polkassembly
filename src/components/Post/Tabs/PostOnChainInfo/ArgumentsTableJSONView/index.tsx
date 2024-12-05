@@ -8,6 +8,7 @@ import Address from 'src/ui-components/Address';
 import styled from 'styled-components';
 import ArgumentsTable from './ArgumentsTable';
 import { Tabs } from '~src/ui-components/Tabs';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments, theme }: Props) => {
+	const { t } = useTranslation('common');
 	if (postArguments) {
 		const tabItems = [
 			{
@@ -28,8 +30,8 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 						>
 							<thead>
 								<tr>
-									<th className='direct-data data-0 dark:bg-[#222] dark:text-white'>Name</th>
-									<th className='direct-data data-2 dark:bg-[#222] dark:text-white'>Value</th>
+									<th className='direct-data data-0 dark:bg-[#222] dark:text-white'>{t('name')}</th>
+									<th className='direct-data data-2 dark:bg-[#222] dark:text-white'>{t('value')}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -39,7 +41,7 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 					</div>
 				),
 				key: 'table',
-				label: 'Table'
+				label: t('table')
 			},
 			{
 				children: (
@@ -54,7 +56,7 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 					</div>
 				),
 				key: 'json',
-				label: 'JSON'
+				label: t('json')
 			}
 		];
 

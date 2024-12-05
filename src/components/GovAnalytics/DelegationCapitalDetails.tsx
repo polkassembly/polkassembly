@@ -12,6 +12,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Slider from '~src/ui-components/Slider';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 
@@ -47,6 +48,7 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	const { network } = useNetworkSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
 		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue && bnValue.toString());
@@ -129,16 +131,16 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 			} w-full flex-1 rounded-xxl border-section-light-container bg-white text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-base font-semibold sm:text-xl'>Track Delegation</h2>
+				<h2 className='text-base font-semibold sm:text-xl'>{t('track_delegation')}</h2>
 				{!isMobile && (
 					<div className='flex gap-x-4'>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Votes</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('votes')}</p>
 						</div>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Capital</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('capital')}</p>
 						</div>
 					</div>
 				)}
@@ -160,7 +162,9 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 					colors={({ id, data }) => (id === 'Votes' ? data.votesColor : data.capitalColor)}
 					tooltip={({ id, value, indexValue }) => (
 						<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
-							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda {indexValue}</div>
+							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
+								{t('referenda')} {indexValue}
+							</div>
 							<div className='flex items-end gap-x-1 text-xl font-medium dark:text-blue-dark-high'>
 								{formatUSDWithUnits(value.toString(), 1)} <p className='m-0 p-0 text-sm capitalize text-lightBlue dark:text-blue-dark-high'>{id}</p>
 							</div>
@@ -185,11 +189,11 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 					<div className='mt-4 flex justify-center gap-x-4'>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Votes</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('votes')}</p>
 						</div>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Capital</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('capital')}</p>
 						</div>
 					</div>
 					<div className='mx-auto mt-6 w-[96%]'>
@@ -204,7 +208,7 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 								formatter: (value) => {
 									if (value !== undefined && value >= 0 && value < Object.keys(delegationData).length) {
 										const dataIndex = Object.keys(delegationData)[value];
-										return `Referenda: ${dataIndex}`;
+										return `${t('referenda')}: ${dataIndex}`;
 									}
 									return '';
 								}

@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider } from 'antd';
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'next-i18next';
 import Markdown from 'src/ui-components/Markdown';
 
 interface ExpandableMarkdownProps {
@@ -14,11 +15,25 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isContentOverflowing, setIsContentOverflowing] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null);
-
+	const { t } = useTranslation('common');
 	useEffect(() => {
+		const checkOverflow = () => {
+			if (contentRef.current) {
+				setIsContentOverflowing(contentRef.current.scrollHeight > 301);
+			}
+		};
+
+		const timeout = setTimeout(checkOverflow, 100);
+
+		const observer = new MutationObserver(checkOverflow);
 		if (contentRef.current) {
-			setIsContentOverflowing(contentRef.current.scrollHeight > 301);
+			observer.observe(contentRef.current, { childList: true, subtree: true });
 		}
+
+		return () => {
+			clearTimeout(timeout);
+			observer.disconnect();
+		};
 	}, [md]);
 
 	const handleShowMore = () => {
@@ -48,7 +63,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 						className='m-0 my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-medium text-pink_primary'
 						style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
 					>
-						{isExpanded ? 'Show Less' : 'Show More'}
+						{isExpanded ? t('show_less') : t('show_more')}
 					</p>
 				</div>
 			)}

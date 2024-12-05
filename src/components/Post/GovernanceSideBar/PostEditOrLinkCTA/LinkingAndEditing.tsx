@@ -19,6 +19,7 @@ import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import { useTranslation } from 'next-i18next';
 
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,7 +40,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		content: '',
 		title: ''
 	});
-
+	const { t } = useTranslation('common');
 	const {
 		postData: { content, postIndex, postType, title, post_link, timeline, tags: oldTags },
 		setPostData
@@ -77,13 +78,13 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		try {
 			if (!url || !url.trim()) {
 				if (!updatedContent) {
-					setError('Please enter a valid content');
+					setError(t('please_enter_a_valid_content'));
 					setFormDisabled(false);
 					setLoading(false);
 					return;
 				}
 				if (!updatedTitle) {
-					setError('Please enter a valid title');
+					setError(t('please_enter_a_valid_title'));
 					setFormDisabled(false);
 					setLoading(false);
 					return;
@@ -97,7 +98,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					title: updatedTitle
 				});
 				if (editError || !data) {
-					setError(editError || 'Error in editing the post.');
+					setError(editError || t('error_in_editing_the_post'));
 					setFormDisabled(false);
 					setLoading(false);
 					return;
@@ -105,8 +106,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 
 				if (data) {
 					queueNotification({
-						header: 'Success!',
-						message: 'Your post is now edited',
+						header: t('success'),
+						message: t('your_post_is_now_edited'),
 						status: NotificationStatus.SUCCESS
 					});
 					const { content, proposer, title, topic, last_edited_at, summary } = data;
@@ -143,15 +144,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						postType: postTypeAndId.type
 					});
 					if (error || !data) {
-						setError(error || 'Something went wrong');
+						setError(error || t('something_went_wrong'));
 						setFormDisabled(false);
 						setLoading(false);
 						return;
 					}
 					if (data) {
 						queueNotification({
-							header: 'Success!',
-							message: 'Post data fetched successfully.',
+							header: t('success'),
+							message: t('post_data_fetched_successfully'),
 							status: NotificationStatus.SUCCESS
 						});
 						setPost(data);
@@ -159,7 +160,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				} else {
 					const postTypeAndId = getPostTypeAndId(network, url);
 					if (!postTypeAndId) {
-						setError('Invalid URL');
+						setError(t('invalid_url'));
 						setFormDisabled(false);
 						setLoading(false);
 						return;
@@ -171,15 +172,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						postType: postTypeAndId.type
 					});
 					if (error || !data) {
-						setError(error || 'Something went wrong');
+						setError(error || t('something_went_wrong'));
 						setFormDisabled(false);
 						setLoading(false);
 						return;
 					}
 					if (data) {
 						queueNotification({
-							header: 'Success!',
-							message: 'Post linked successfully.',
+							header: t('success'),
+							message: t('post_linked_successfully'),
 							status: NotificationStatus.SUCCESS
 						});
 						setPostData((prev) => ({
@@ -209,10 +210,10 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				} else if (typeof error === 'object' && typeof error.message === 'string') {
 					setError(error.message);
 				} else {
-					setError('Something went wrong');
+					setError(t('something_went_wrong'));
 				}
 			} else {
-				setError('Something went wrong');
+				setError(t('something_went_wrong'));
 			}
 			setFormDisabled(false);
 			setLoading(false);
@@ -248,14 +249,14 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						}}
 						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
 					>
-						{prevUrl === url || content !== editPostValue.content || title !== editPostValue.title ? 'Save' : 'Preview'}
+						{prevUrl === url || content !== editPostValue.content || title !== editPostValue.title ? t('save') : t('preview')}
 					</CustomButton>
 				</div>
 			]}
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 		>
 			<section className='flex flex-col'>
-				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue dark:text-white'>Edit Proposal Details</h2>
+				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue dark:text-white'>{t('edit_proposal_details')}</h2>
 				<Form
 					form={form}
 					name='edit-post-form'
@@ -270,7 +271,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('title')}</span>}
 						rules={[
 							{
 								required: true
@@ -292,7 +293,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('description')}</label>
 						<ContentForm
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
@@ -304,7 +305,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						/>
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('tags')}</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}
@@ -313,7 +314,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					</div>
 					{post_link ? (
 						<article>
-							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Linked Discussion</h3>
+							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('linked_discussion')}</h3>
 							<LinkPostPreview post={post} />
 							<div className='my-2 flex items-center justify-end'>
 								<CustomButton
@@ -334,7 +335,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								name='url'
 								label={
 									<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>
-										Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post
+										{t('link')} {!isOnchainPost ? t('onchain') : t('discussion')} {t('post')}
 									</span>
 								}
 								className='mb-0 mt-5'

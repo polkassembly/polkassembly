@@ -15,12 +15,13 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { useNetworkSelector } from '~src/redux/selectors';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTranslation } from 'next-i18next';
 
 export type WhitelistMember = { accountId: string; rank?: number };
 
 const WhitelistMembersContainer = ({ className, membersType }: { className?: string; membersType: EMembersType }) => {
 	const { network } = useNetworkSelector();
-
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useContext(ApiContext);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<any>();
@@ -149,7 +150,9 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 				<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<div>
-							<h1 className='dashboard-heading dark:text-white'>{members.length} Members</h1>
+							<h1 className='dashboard-heading dark:text-white'>
+								{t('members')}({members.length})
+							</h1>
 							<FilteredTags />
 						</div>
 						<FilterByTags className='mr-[2px]' />

@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import { ILoading, IPayout, NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import queueNotification from './QueueNotification';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from './CustomIcons';
 import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
@@ -156,7 +156,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 						maskClosable={false}
 						onCancel={() => setOpen(false)}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-						className={classNames(poppins.className, poppins.variable)}
+						className={classNames(dmSans.className, dmSans.variable)}
 						wrapClassName={'dark:bg-modalOverlayDark'}
 						title={
 							<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>

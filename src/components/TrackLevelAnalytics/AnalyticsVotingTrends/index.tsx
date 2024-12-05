@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { setTrackLevelVotesAnalyticsData } from '~src/redux/trackLevelAnalytics';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 import GovAnalyticsConvictions from '~src/components/GovAnalytics/GovAnalyticsConvictions';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 
@@ -31,6 +32,7 @@ interface ITabItem {
 const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: number; isUsedInAnalytics?: boolean }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const [activeTab, setActiveTab] = useState<string>(ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
@@ -67,17 +69,17 @@ const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: numbe
 		{
 			children: <>{!isUsedInAnalytics ? <AnalyticsConvictionVotes isSmallScreen={isSmallScreen} /> : <GovAnalyticsConvictions isSmallScreen={isSmallScreen} />}</>,
 			key: ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES,
-			label: 'Conviction Votes'
+			label: t('conviction_votes')
 		},
 		{
 			children: <AnalyticsVoteAmountVotes isSmallScreen={isSmallScreen} />,
 			key: ETrackLevelAnalyticsFilterBy.VOTE_AMOUNT,
-			label: 'Vote Amount'
+			label: t('vote_amount')
 		},
 		{
 			children: <AnalyticsAccountsVotes isSmallScreen={isSmallScreen} />,
 			key: ETrackLevelAnalyticsFilterBy.ACCOUNTS,
-			label: 'Accounts'
+			label: t('accounts')
 		}
 	];
 
@@ -106,9 +108,9 @@ const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: numbe
 						<div className='flex items-center gap-2'>
 							<ImageIcon
 								src='/assets/icons/voting-trends.svg'
-								alt='Voting Trends icon'
+								alt={t('voting_trends_icon')}
 							/>
-							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Voting Trends</span>
+							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('voting_trends')}</span>
 						</div>
 						{activeKey === '1' && !noData && (
 							<div
@@ -134,7 +136,7 @@ const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: numbe
 				{noData ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>
 						<NoVotesIcon />
-						<p className='text-sm'>Not enough data available</p>
+						<p className='text-sm'>{t('not_enough_data')}</p>
 					</div>
 				) : (
 					<>

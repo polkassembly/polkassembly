@@ -17,7 +17,7 @@ import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
 import { usePostDataContext } from '~src/context';
-
+import { useTranslation } from 'next-i18next';
 interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
 	tallyData: any;
@@ -30,6 +30,7 @@ interface IConvictionVotesProps {
 const ZERO = new BN(0);
 const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance, elapsedPeriod }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
 	const [soloBalance, setSoloBalance] = useState<BN>(new BN(0));
@@ -151,7 +152,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 
 	return (
 		<>
-			<Nudge text='Conviction vote is the number of tokens used for voting multiplied by conviction' />
+			<Nudge text={t('conviction_vote_is_the_number_of_tokens_used_for_voting_multiplied_by_conviction')} />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard

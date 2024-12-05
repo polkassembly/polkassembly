@@ -7,7 +7,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import { ESteps } from '~src/types';
 import styled from 'styled-components';
@@ -20,12 +20,15 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import CreateProposal from './CreateProposal';
 import Gov1TreasuryProposalSuccess from './Gov1TreasuryProposalSuccess';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
 	isUsedInTreasuryPage?: boolean;
 }
+
 const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
@@ -66,7 +69,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				) : (
 					<CreatePropoosalIcon className={`${isUsedInTreasuryPage ? 'scale-200' : 'ml-[-31px] cursor-pointer'} text-3xl`} />
 				)}
-				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
+				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>{t('create_treasury_proposal')}</div>
 			</CustomButton>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
@@ -74,13 +77,13 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					setOpen={setOpenAddressLinkedModal}
 					closable
 					linkAddressNeeded
-					accountSelectionFormTitle='Select Proposer Address'
+					accountSelectionFormTitle={t('select_proposer_address')}
 					onConfirm={(address: string) => {
 						setOpen(true);
 						dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: address }));
 					}}
-					walletAlertTitle='Treasury proposal creation'
-					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
+					walletAlertTitle={t('treasury_proposal_creation')}
+					accountAlertTitle={t('wallet_creation_prompt')}
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 					usedInIdentityFlow={false}
@@ -92,9 +95,9 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					setOpen(false);
 					setStep(0);
 				}}
-				className={classNames(poppins.className, poppins.variable, theme, 'gov1proposal', 'w-[650px] px-6')}
+				className={classNames(dmSans.className, dmSans.variable, theme, 'antSteps', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} gov1proposal`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} antSteps`}
 				footer={false}
 				title={
 					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
@@ -104,7 +107,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 							width={26}
 							height={26}
 						/>
-						<span className='text-xl font-semibold'>Create Treasury Proposal</span>
+						<span className='text-xl font-semibold'>{t('create_treasury_proposal')}</span>
 					</div>
 				}
 			>
@@ -147,86 +150,19 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
 				image='/assets/Gifs/login-treasury.gif'
-				title='Join Polkassembly to Create a New proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly')}
+				subtitle={t('join_polkassembly_subtitle')}
 			/>
 		</div>
 	);
 };
 
 export default styled(Gov1TreasuryProposal)`
-	.gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-icon .ant-steps-icon {
-		font-size: 14px !important;
-		color: #7788a1 !important;
-		font-weight: 700 !important;
-	}
-	.gov1proposal .ant-progress .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
-		stroke: var(--pink_primary);
-		stroke-width: 6px;
-		background: red;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-icon .ant-steps-icon {
-		font-size: 14px !important;
-		font-weight: 700 !important;
-	}
-
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: var(--bodyBlue) !important;
-	}
-	.dark .gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		font-size: 14px !important;
-		color: #96a4b6 !important;
-		line-height: 21px !important;
-		font-weight: 500 !important;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: #96a4b6 !important;
-	}
-	.ant-steps .ant-steps-item .ant-steps-item-container .ant-steps-item-tail {
-		top: 0px !important;
-		padding: 4px 15px !important;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after,
-	.gov1proposal .ant-steps .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after,
-	.gov1proposal .ant-steps .ant-steps-item-tail::after {
-		background-color: #d2d8e0 !important;
-	}
-	.gov1proposal .ant-steps.ant-steps-label-vertical .ant-steps-item-content {
-		width: 100% !important;
-		display: flex !important;
-		margin-top: 8px;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-icon {
-		background: #51d36e;
-		border: none !important;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
-		color: white !important;
-	}
-
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: #243a57 !important;
-	}
-
-	.dark .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: white !important;
-	}
-
 	input::placeholder {
 		color: #7c899b;
 		font-weight: 400 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-	}
-	.ant-steps .ant-steps-item-wait .ant-steps-item-icon {
-		background-color: rgba(0, 0, 0, 0.06) !important;
-	}
-	.dark .ant-steps .ant-steps-item-wait .ant-steps-item-icon {
-		background-color: #dde4ed !important;
 	}
 `;

@@ -5,7 +5,7 @@
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import React, { useState, useEffect } from 'react';
 import Balance from 'src/components/Balance';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
 import { Polkasafe } from 'polkasafe';
@@ -154,7 +154,7 @@ const MultisigAccountSelectionForm = ({
 								<h3 className='mb-0 text-sm font-normal'>{t('choose_linked_multisig_account')}</h3>
 								{!withoutInfo && <HelperTooltip text='You can choose an multisig account that are linked from the selected address.' />}
 								{showMultisigBalance && walletAddress && (
-									<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium`}>
+									<div className={`${dmSans.className} ${dmSans.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium`}>
 										{t('available')}: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 									</div>
 								)}

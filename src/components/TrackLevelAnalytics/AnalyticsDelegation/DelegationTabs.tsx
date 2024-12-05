@@ -6,8 +6,10 @@ import { Radio } from 'antd';
 import DelegatorsTab from './DelegatorsTab';
 import { ETrackLevelDelegationFilters } from '../types';
 import DelegateesTab from './DelegateesTab';
+import { useTranslation } from 'next-i18next';
 
 const DelegationTabs = () => {
+	const { t } = useTranslation('common');
 	const [selectedOption, setSelectedOption] = useState(ETrackLevelDelegationFilters.DELEGATEES);
 
 	const onRadioChange = (e: any) => {
@@ -27,7 +29,7 @@ const DelegationTabs = () => {
 					} dark:text-blue-dark-high`}
 					value={ETrackLevelDelegationFilters.DELEGATEES}
 				>
-					Delegatee
+					{t('delegatee')}
 				</Radio>
 				<Radio
 					className={`text-xs font-medium sm:text-sm ${
@@ -35,7 +37,7 @@ const DelegationTabs = () => {
 					} dark:text-blue-dark-high`}
 					value={ETrackLevelDelegationFilters.DELEGATORS}
 				>
-					Delegator
+					{t('delegator')}
 				</Radio>
 			</Radio.Group>
 			{selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? <DelegateesTab /> : selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? <DelegatorsTab /> : null}

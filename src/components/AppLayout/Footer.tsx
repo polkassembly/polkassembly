@@ -26,15 +26,17 @@ import PaLogoDark from '~assets/PALogoDark.svg';
 import AiBot from '../AiBot/AiBot';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 const Footer = ({ className }: { className?: string }) => {
 	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	const [floatButtonOpen, setFloatButtonOpen] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	return (
 		<footer
-			aria-label='Site Footer'
+			aria-label={t('site_footer')}
 			className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}
 		>
 			<div className='mx-auto max-w-screen-xl px-4 pt-8 dark:bg-section-dark-overlay sm:px-6 lg:pl-8 lg:pr-2'>
@@ -109,10 +111,10 @@ const Footer = ({ className }: { className?: string }) => {
 					{/* Terms Links */}
 					<div className='mx-auto mt-8 flex flex-col justify-center md:mx-0 md:ml-auto md:mt-0 md:flex-row md:justify-end'>
 						<div className='text-center sm:text-left md:ml-10 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Help Center</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>{t('help_center')}</p>
 
 							<nav
-								aria-label='Footer About Nav'
+								aria-label={t('footer_about_nav')}
 								className='mt-4 md:mt-3'
 							>
 								<div className='space-y-2 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
@@ -122,7 +124,7 @@ const Footer = ({ className }: { className?: string }) => {
 											target='_blank'
 											rel='noreferrer'
 										>
-											Report an Issue
+											{t('report_issue')}
 											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
@@ -132,12 +134,12 @@ const Footer = ({ className }: { className?: string }) => {
 											target='_blank'
 											rel='noreferrer'
 										>
-											Feedback
+											{t('feedback')}
 											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 									<div className='max-[650px]:hidden'>
-										<Link href='/terms-and-conditions'>Terms and Conditions</Link>
+										<Link href='/terms-and-conditions'>{t('terms_and_conditions')}</Link>
 									</div>
 									<div>
 										<a
@@ -154,10 +156,10 @@ const Footer = ({ className }: { className?: string }) => {
 						</div>
 
 						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-high sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Our Services</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px]'>{t('our_services')}</p>
 
 							<nav
-								aria-label='Footer Services Nav'
+								aria-label={t('footer_services_nav')}
 								className='mt-4 md:mt-3'
 							>
 								<div className='space-y-2 text-sm'>
@@ -167,17 +169,17 @@ const Footer = ({ className }: { className?: string }) => {
 											target='_blank'
 											rel='noreferrer'
 										>
-											Docs
+											{t('docs')}
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
-										<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 									</div>
 
 									<div className='max-[650px]:hidden'>
-										<Link href={'/terms-of-website'}>Terms of Website</Link>
+										<Link href={'/terms-of-website'}>{t('terms_of_website')}</Link>
 									</div>
 
 									<div className='max-[650px]:hidden'>
-										<Link href={'/privacy'}>Privacy Policy</Link>
+										<Link href={'/privacy'}>{t('privacy_policy')}</Link>
 									</div>
 								</div>
 							</nav>
@@ -190,12 +192,12 @@ const Footer = ({ className }: { className?: string }) => {
 				<div className='mt-5 pb-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 					<div className='text-center sm:flex sm:justify-between sm:text-left'>
 						<div className='flex max-[650px]:flex-col'>
-							<p className=' mr-1 max-[650px]:mb-0 '>A House of Commons Initiative.</p>
-							<p className='mt-4 sm:mt-0 '>Polka Labs Private Limited {new Date().getFullYear()}</p>
+							<p className='mr-1 max-[650px]:mb-0'>{t('commons_initiative')}</p>
+							<p className='mt-4 sm:mt-0 '>{`Polka Labs Private Limited ${new Date().getFullYear()}`}</p>
 						</div>
 
 						<p className='mb-0'>
-							<span className='block sm:inline'>All rights reserved.</span>
+							<span className='block sm:inline'>{t('all_rights_reserved')}</span>
 						</p>
 					</div>
 				</div>
@@ -241,19 +243,19 @@ const Footer = ({ className }: { className?: string }) => {
 
 					<div className='mt-2 flex flex-col justify-center text-[10px] font-normal leading-[15px] text-[#96A4B6]'>
 						<div className='flex justify-center'>
-							<Link href='/terms-and-conditions'>Terms and Conditions</Link>
+							<Link href='/terms-and-conditions'>{t('terms_and_conditions')}</Link>
 							<Link
 								href={'/terms-of-website'}
 								className='ml-2'
 							>
-								Terms of Website
+								{t('terms_of_website')}
 							</Link>
 						</div>
 						<Link
 							href={'/privacy'}
 							className='mx-auto mt-2'
 						>
-							Privacy Policy
+							{t('privacy_policy')}
 						</Link>
 					</div>
 				</div>

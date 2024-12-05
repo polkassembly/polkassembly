@@ -52,7 +52,7 @@ const InAppNotifications: FC<Props> = ({ network }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (!networkPreferences.channelPreferences?.[CHANNEL.IN_APP]?.enabled) {
+	if (!networkPreferences?.channelPreferences?.[CHANNEL.IN_APP]?.enabled) {
 		return (
 			<div className='flex flex-col gap-8 rounded-xl bg-white px-12 py-10 dark:bg-section-dark-overlay'>
 				<div className='flex items-center gap-2 text-2xl font-semibold text-bodyBlue dark:text-white'>

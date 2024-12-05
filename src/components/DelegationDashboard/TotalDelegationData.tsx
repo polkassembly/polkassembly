@@ -13,9 +13,12 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
+
 const TotalDelegationData = ({ className }: { className: string }) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -45,7 +48,6 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 			decimals: chainProperties[network].tokenDecimals,
 			unit
 		});
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -70,7 +72,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 							alt='polkadot delegation icon'
 						/>
 						<div className='flex flex-col'>
-							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Supply</span>
+							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>{t('total_supply')}</span>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalSupply.toString(), 2, true, network)}</span>
 						</div>
 					</div>
@@ -86,7 +88,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 							alt='delegate tokens icon'
 						/>
 						<div className='flex flex-col '>
-							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Delegated Tokens</span>
+							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>{t('delegated_tokens')}</span>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalStats.totalDelegatedBalance, 2, true, network)}</span>
 						</div>
 					</div>
@@ -102,7 +104,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 							alt='Total delegate tokens icon'
 						/>
 						<div className='flex flex-col '>
-							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegated Votes</span>
+							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>{t('total_delegated_votes')}</span>
 							<div className='flex space-x-2'>
 								<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
 							</div>
@@ -120,7 +122,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 							alt='Total delegate icon'
 						/>
 						<div className='flex flex-col'>
-							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegates</span>
+							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>{t('total_delegates')}</span>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegates}</span>
 						</div>
 					</div>
@@ -136,7 +138,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 							alt='Total delegatees icon'
 						/>
 						<div className='flex flex-col'>
-							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegators</span>
+							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>{t('total_delegators')}</span>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegators}</span>
 						</div>
 					</div>

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Checkbox, MenuProps, Spin } from 'antd';
+import { Button, Checkbox, MenuProps, Spin } from 'antd';
 import { Badge, Col, Divider, Row, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
@@ -28,7 +28,6 @@ import CreateEventSidebar from '../../src/components/Calendar/CreateEventSidebar
 import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
 import CustomWeekHeader, { TimeGutterHeader } from '../../src/components/Calendar/CustomWeekHeader';
-import NetworkSelect from '../../src/components/Calendar/NetworkSelect';
 import {
 	fetchAuctionInfo,
 	fetchCouncilElection,
@@ -192,10 +191,9 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
 	const [error, setError] = useState('');
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
-	const [selectedView, setSelectedView] = useState<View>('month');
+	const [selectedView, setSelectedView] = useState<View>('day');
 	const [selectedNetwork, setSelectedNetwork] = useState<string>(network);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [miniCalSelectedDate, setMiniCalSelectedDate] = useState<Date>(new Date());
 	const [selectedCategories, setSelectedCategories] = useState<CheckboxValueType[]>(initCategories);
 	const [sidebarEvent, setSidebarEvent] = useState<any>();
 	const [sidebarCreateEvent, setSidebarCreateEvent] = useState<boolean>(false);
@@ -420,8 +418,6 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	// for negative margin for toolbar
 
-	const utcDate = new Date(new Date().toISOString().slice(0, -1));
-
 	const { id, allowed_roles } = useUserDetailsSelector();
 	let accessible = false;
 	if (allowed_roles && allowed_roles?.length > 0 && allowed_roles.includes(ALLOWED_ROLE)) {
@@ -574,8 +570,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 		setSelectedView('day');
 	}
 
-	function setMiniCalendarToToday() {
-		setMiniCalSelectedDate(new Date());
+	function setCalendarToToday() {
+		showDay(new Date());
 	}
 
 	const MonthDateComponentHeader = ({ date }: DateHeaderProps) => {
@@ -589,186 +585,157 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	];
 
 	return (
-		<div className='w-full overflow-auto'>
-			<div
-				className={`${className} ${categoriesLoading ? 'w-auto' : 'w-max'} rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay md:w-auto`}
-			>
+		<>
+			<div className={`${className} mb-5 rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay`}>
+				<Spin
+					spinning={categoriesLoading}
+					indicator={<></>}
+				>
+					<StyledCalendar
+						theme={theme as any}
+						className='events-calendar-mini dark:bg-section-dark-overlay'
+						date={selectedDate}
+						onNavigate={setSelectedDate}
+						localizer={localizer}
+						events={calendarEvents}
+						startAccessor='start_time'
+						endAccessor='end_time'
+						components={{
+							event: () => null,
+							eventWrapper: EventWrapperComponent,
+							month: {
+								dateHeader: MonthDateComponentHeader
+							},
+							toolbar: (props: any) => (
+								<CustomToolbarMini
+									{...props}
+									setCalendarToToday={setCalendarToToday}
+									leftPanelWidth={calLeftPanelWidth}
+								/>
+							)
+						}}
+					/>
+				</Spin>
+				<div className='flex flex-col justify-between gap-10 p-5 pl-2 pt-0 lg:flex-row'>
+					<div>
+						<h4 className='text-md mb-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Proposal Status: </h4>
+						<Space direction='vertical'>
+							{listData.map((item) => (
+								<Badge
+									className='dark:text-blue-dark-medium'
+									key={item.color}
+									text={item.label}
+									color={item.color}
+								/>
+							))}
+						</Space>
+					</div>
+
+					<div>
+						<h4 className='text-md mb-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Categories: </h4>
+						<Checkbox.Group
+							disabled={categoriesLoading}
+							className='flex-wrap'
+							defaultValue={initCategories}
+							onChange={(checkedValues) => setSelectedCategories(checkedValues)}
+						>
+							<Row>
+								{categoryOptions.map((item) => (
+									<Col
+										key={item.value}
+										span={8}
+									>
+										<Checkbox value={item.value}>{item.label}</Checkbox>
+									</Col>
+								))}
+							</Row>
+						</Checkbox.Group>
+					</div>
+				</div>
+			</div>
+
+			<div className={`${className} rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay`}>
 				{error && <ErrorAlert errorMsg={error} />}
 
 				{accessible && (
-					<div className='event-bot-div'>
-						<CustomButton
-							variant='default'
-							className='pending-events-btn'
+					<div className='mt-2 flex w-full items-center justify-center gap-2 text-base font-medium text-sidebarBlue dark:text-blue-dark-medium'>
+						Show Pending Events:
+						<Button
+							className={`flex h-5 w-10 items-center rounded-full border border-pink_primary bg-pink-200 outline-none ${
+								queryApprovalStatus == approvalStatus.APPROVED ? 'justify-start' : 'justify-end'
+							}`}
 							onClick={togglePendingEvents}
 							disabled={Boolean(sidebarEvent)}
 						>
-							{queryApprovalStatus == approvalStatus.APPROVED ? 'Show' : 'Hide'} Pending Events
-						</CustomButton>
-					</div>
-				)}
-
-				{!small && (
-					<div className='cal-heading-div'>
-						<h1> Calendar </h1>
-						<div className='mobile-network-select'>
-							<NetworkSelect
-								selectedNetwork={selectedNetwork}
-								setSelectedNetwork={setSelectedNetwork}
-							/>
-						</div>
+							<span className='hidden'>toggle pending events button</span>
+							<span className='h-5 w-5 rounded-full border-none bg-pink_primary' />
+						</Button>
 					</div>
 				)}
 
 				<div>
-					<Row className='pt-0'>
-						{!small && width > 992 && (
-							<Col
-								span={8}
-								id='calendar-left-panel'
-								className='calendar-left-panel dark:bg-section-dark-overlay'
-							>
-								<div className='p-5 pl-2 pt-0'>
-									<p className='text-md mb-2 text-center font-medium text-sidebarBlue dark:text-white'>Current Time: {dayjs(utcDate).format('D-MM-YY | h:mm a UTC')} </p>
-
-									<Spin
-										spinning={categoriesLoading}
-										indicator={<></>}
-									>
-										<StyledCalendar
-											theme={theme as any}
-											className='events-calendar-mini dark:bg-section-dark-overlay'
-											date={miniCalSelectedDate}
-											onNavigate={setMiniCalSelectedDate}
-											localizer={localizer}
-											events={calendarEvents}
-											startAccessor='start_time'
-											endAccessor='end_time'
-											components={{
-												event: () => null,
-												eventWrapper: EventWrapperComponent,
-												month: {
-													dateHeader: MonthDateComponentHeader
-												},
-												toolbar: (props: any) => (
-													<CustomToolbarMini
-														{...props}
-														leftPanelWidth={calLeftPanelWidth}
-													/>
-												)
-											}}
-										/>
-									</Spin>
-
-									<div className='text-md mb-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Proposal Status: </div>
-									<Space direction='vertical'>
-										{listData.map((item) => (
-											<Badge
-												className='dark:text-blue-dark-medium'
-												key={item.color}
-												text={item.label}
-												color={item.color}
-											/>
-										))}
-									</Space>
-
-									<div className='text-md mb-3 mt-8 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Categories: </div>
-									<Checkbox.Group
-										disabled={categoriesLoading}
-										className='flex-wrap'
-										defaultValue={initCategories}
-										onChange={(checkedValues) => setSelectedCategories(checkedValues)}
-									>
-										<Row>
-											{categoryOptions.map((item) => (
-												<Col
-													key={item.value}
-													span={8}
-												>
-													<Checkbox value={item.value}>{item.label}</Checkbox>
-												</Col>
-											))}
-										</Row>
-									</Checkbox.Group>
-								</div>
-							</Col>
-						)}
-
-						{
-							<Col
-								span={!small && width > 992 ? 16 : 24}
-								className=' h-full'
-							>
-								<Spin spinning={categoriesLoading}>
-									{!categoriesLoading ? ( // this is needed to render (+3 more) without changing views
-										<StyledCalendar
-											theme={theme as any}
-											className={`events-calendar ${small || width < 768 ? 'small' : ''}`}
+					<Spin spinning={categoriesLoading}>
+						{!categoriesLoading ? ( // this is needed to render (+3 more) without changing views
+							<StyledCalendar
+								theme={theme as any}
+								className={`events-calendar ${small || width < 768 ? 'small' : ''}`}
+								localizer={localizer}
+								date={selectedDate}
+								view={selectedView}
+								events={calendarEvents}
+								popup={false}
+								startAccessor='start_time'
+								endAccessor='end_time'
+								components={{
+									event: Event,
+									eventWrapper: EventWrapperComponent,
+									timeGutterHeader: () => (
+										<TimeGutterHeader
 											localizer={localizer}
 											date={selectedDate}
-											view={selectedView}
-											events={calendarEvents}
-											popup={false}
-											startAccessor='start_time'
-											endAccessor='end_time'
-											components={{
-												event: Event,
-												eventWrapper: EventWrapperComponent,
-												timeGutterHeader: () => (
-													<TimeGutterHeader
-														localizer={localizer}
-														date={selectedDate}
-														selectedView={selectedView}
-													/>
-												),
-												toolbar: (props: any) => (
-													<CustomToolbar
-														{...props}
-														small={small}
-														width={width}
-														selectedNetwork={selectedNetwork}
-														setSelectedNetwork={setSelectedNetwork}
-														setSidebarCreateEvent={setSidebarCreateEvent}
-														isLoggedIn={Boolean(id)}
-														leftPanelWidth={calLeftPanelWidth}
-														setMiniCalendarToToday={setMiniCalendarToToday}
-													/>
-												),
-												week: {
-													header: (props: any) => (
-														<CustomWeekHeader
-															{...props}
-															small={small || width < 768}
-														/>
-													)
-												}
-											}}
-											formats={{
-												timeGutterFormat: 'h A'
-											}}
-											onNavigate={setSelectedDate}
-											onView={setSelectedView}
-											views={{
-												agenda: true,
-												day: true,
-												month: true,
-												week: true,
-												work_week: false
-											}}
+											selectedView={selectedView}
 										/>
-									) : (
-										<div className='flex max-h-screen flex-col gap-y-6 overflow-y-hidden px-4'>
-											<Skeleton />
-											<Skeleton />
-											<Skeleton />
-											<Skeleton />
-											<Skeleton />
-										</div>
-									)}
-								</Spin>
-							</Col>
-						}
-					</Row>
+									),
+									toolbar: (props: any) => (
+										<CustomToolbar
+											{...props}
+											small={small}
+											width={width}
+											selectedNetwork={selectedNetwork}
+											setSelectedNetwork={setSelectedNetwork}
+											setSidebarCreateEvent={setSidebarCreateEvent}
+											isLoggedIn={Boolean(id)}
+											leftPanelWidth={calLeftPanelWidth}
+										/>
+									),
+									week: {
+										header: (props: any) => (
+											<CustomWeekHeader
+												{...props}
+												small={small || width < 768}
+											/>
+										)
+									}
+								}}
+								formats={{
+									timeGutterFormat: 'h A'
+								}}
+								onNavigate={setSelectedDate}
+								onView={setSelectedView}
+								views={{
+									agenda: true,
+									day: true,
+									month: true,
+									week: true,
+									work_week: false
+								}}
+							/>
+						) : (
+							<div className='flex max-h-screen flex-col gap-y-6 overflow-y-hidden px-4'>
+								<Skeleton />
+							</div>
+						)}
+					</Spin>
 				</div>
 			</div>
 
@@ -862,25 +829,11 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 					id={id}
 				/>
 			)}
-		</div>
+		</>
 	);
 };
 
 export default styled(CalendarView)`
-	.event-bot-div {
-		width: 100%;
-		margin-bottom: 16px;
-
-		.pending-events-btn {
-			margin-left: auto;
-			margin-right: auto;
-			background-color: #e5007a;
-			color: #fff;
-			width: 50%;
-			font-size: 16px;
-		}
-	}
-
 	.approval-status-div {
 		display: flex;
 		align-items: center;
@@ -1008,159 +961,101 @@ export default styled(CalendarView)`
 		}
 	}
 
-	.cal-heading-div {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-right: 10px;
+	.events-calendar-mini {
+		height: 320px;
+		border-radius: 10px;
+		padding: 15px 8px;
+		margin-bottom: 24px;
 
-		.mobile-network-select {
-			display: none;
-			margin-top: 2rem;
-			color: #e5007a;
-			font-size: 14px;
+		.rbc-show-more {
+			display: none !important;
+		}
 
-			label {
-				display: none !important;
+		.custom-calendar-toolbar-mini {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 8px;
+
+			.button {
+				background: #fff !important;
+
+				i {
+					font-weight: 900;
+				}
 			}
 
-			.filter-by-chain-div {
-				background-color: #fff;
-				border-radius: 5px;
-				border: 1px solid #eee;
-				padding: 4px;
-				display: flex;
-				align-items: center;
-			}
-
-			@media only screen and (max-width: 768px) {
-				display: flex;
-				align-items: center;
+			span {
+				width: 104px;
+				min-width: 104px;
+				max-width: 104px;
+				text-align: center;
+				font-weight: 500 !important;
+				margin-left: 4px;
+				margin-right: 4px;
 			}
 		}
 
-		@media only screen and (max-width: 768px) {
-			h1 {
-				margin-bottom: 0 !important;
+		.rbc-month-header {
+			margin-bottom: 8px;
+		}
+
+		.rbc-header {
+			span {
+				font-size: 12px;
+				font-weight: 400 !important;
+				text-transform: uppercase;
+				color: #bbb;
 			}
 		}
 
-		@media only screen and (min-width: 769px) {
-			h1 {
-				display: none;
+		.custom-event-wrapper {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-left: -3px;
+			margin-top: -2px;
+
+			.rbc-event {
+				background: #e6007a;
+				cursor: default;
+				padding: 0 !important;
+				width: 5px;
+				height: 5px;
+				border-radius: 50%;
+				border: 2px solid #e6007a;
+
+				&.overdue-border {
+					background: #ff0000 !important;
+					border: 2px solid #ff0000;
+				}
+
+				&.completed-border {
+					background: #5bc044 !important;
+					border: 2px solid #5bc044;
+				}
+
+				&.in_progress-border {
+					background: #ea8612 !important;
+					border: 2px solid #ea8612;
+				}
+
+				&:focus {
+					outline: none;
+				}
 			}
 		}
 	}
 
-	.calendar-left-panel {
-		padding-top: 95px;
-		background-color: #fff;
-		border-top-left-radius: 10px;
-		border-right: 1px solid #e8e8e8;
+	.font-medium text-md text-sidebarBlue {
+		margin-left: 8px;
+		color: #646464;
+		font-size: 14px;
+		font-weight: 500;
+	}
 
-		.utc-time {
-			color: #646464;
-			font-size: 14px;
-			font-weight: 500;
-			margin-left: 3px;
-		}
-
-		.events-calendar-mini {
-			height: 320px;
-			border-radius: 10px;
-			padding: 15px 8px;
-			margin-bottom: 24px;
-
-			.rbc-show-more {
-				display: none !important;
-			}
-
-			.custom-calendar-toolbar-mini {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				margin-bottom: 8px;
-
-				.button {
-					background: #fff !important;
-
-					i {
-						font-weight: 900;
-					}
-				}
-
-				span {
-					width: 104px;
-					min-width: 104px;
-					max-width: 104px;
-					text-align: center;
-					font-weight: 500 !important;
-					margin-left: 4px;
-					margin-right: 4px;
-				}
-			}
-
-			.rbc-month-header {
-				margin-bottom: 8px;
-			}
-
-			.rbc-header {
-				span {
-					font-size: 10px;
-					font-weight: 400 !important;
-					text-transform: uppercase;
-					color: #bbb;
-				}
-			}
-
-			.custom-event-wrapper {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				margin-left: -3px;
-				margin-top: -2px;
-
-				.rbc-event {
-					background: #e6007a;
-					cursor: default;
-					padding: 0 !important;
-					width: 5px;
-					height: 5px;
-					border-radius: 50%;
-					border: 2px solid #e6007a;
-
-					&.overdue-border {
-						background: #ff0000 !important;
-						border: 2px solid #ff0000;
-					}
-
-					&.completed-border {
-						background: #5bc044 !important;
-						border: 2px solid #5bc044;
-					}
-
-					&.in_progress-border {
-						background: #ea8612 !important;
-						border: 2px solid #ea8612;
-					}
-
-					&:focus {
-						outline: none;
-					}
-				}
-			}
-		}
-
-		.font-medium text-md text-sidebarBlue {
-			margin-left: 8px;
-			color: #646464;
-			font-size: 14px;
-			font-weight: 500;
-		}
-
-		.legend-list {
-			margin-left: 10px;
-		}
+	.legend-list {
+		margin-left: 10px;
 	}
 
 	.events-calendar {
@@ -1200,6 +1095,7 @@ export default styled(CalendarView)`
 		.rbc-time-view,
 		.rbc-agenda-view {
 			padding: 10px 10px;
+			min-height: 100px;
 			td {
 				border: 1px solid #ddd;
 			}
@@ -1207,7 +1103,7 @@ export default styled(CalendarView)`
 
 		.custom-calendar-toolbar {
 			height: 77px;
-			padding: 6px 26px;
+			margin-bottom: 16px;
 			border-top-right-radius: 10px;
 			border-bottom: 1px solid #e8e8e8;
 			display: flex;
@@ -1296,7 +1192,8 @@ export default styled(CalendarView)`
 					padding: 10px 20px !important;
 
 					@media only screen and (max-width: 576px) {
-						margin-right: 8px;
+						font-size: 14px;
+						padding: 8px 16px !important;
 					}
 				}
 
@@ -1317,100 +1214,8 @@ export default styled(CalendarView)`
 				font-weight: 500;
 
 				@media only screen and (max-width: 768px) {
-					margin-right: 8px;
-				}
-			}
-
-			&.small {
-				height: auto;
-				padding: 10px 2%;
-				border-bottom: none;
-				justify-content: space-between;
-				border-top-left-radius: 0;
-				border-top-right-radius: 0;
-
-				.actions-right {
-					display: flex;
-					align-items: center;
-				}
-
-				.today-btn-img {
-					cursor: pointer;
-					margin-right: 8px;
-				}
-
-				.select-month-dropdown,
-				.select-view-dropdown {
-					padding-left: 5px !important;
-					border: 1px solid #eee;
-					border-radius: 5px;
-					padding: 2px;
-					font-size: 12px;
-					white-space: nowrap;
-
-					.icon {
-						padding-right: 2px !important;
-					}
-				}
-
-				.select-month-dropdown {
-					width: 50px;
-					min-width: 50px;
-					max-width: 50px;
-				}
-
-				.year-text {
-					margin-right: 8px;
-				}
-
-				.create-event-btn {
-					padding: 6px 6px !important;
-					font-size: 12px;
-					margin-left: 8px;
-				}
-			}
-		}
-
-		&.small {
-			.custom-calendar-toolbar {
-				margin-bottom: 2px !important;
-			}
-
-			.rbc-month-view,
-			.rbc-time-view,
-			.rbc-agenda-view {
-				padding: 0 !important;
-			}
-
-			.rbc-time-header-cell {
-				.rbc-header {
-					&.rbc-today {
-						.week-header-text {
-							.day-num {
-								background-color: #e6007a;
-								color: #fff;
-								width: 24px;
-								height: 24px;
-								display: flex;
-								justify-content: center;
-								align-items: center;
-								border-radius: 50%;
-							}
-						}
-					}
-
-					.week-header-text {
-						.day-num {
-							font-size: 14px;
-						}
-					}
-				}
-			}
-
-			.rbc-date-cell {
-				button {
-					font-size: 12px;
-					font-weight: 500 !important;
+					font-size: 14px;
+					padding: 8px 16px !important;
 				}
 			}
 		}

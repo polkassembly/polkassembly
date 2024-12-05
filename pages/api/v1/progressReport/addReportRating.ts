@@ -9,9 +9,10 @@ import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { Post } from '~src/types';
+import { Post, IProgressReport } from '~src/types';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { redisDel } from '~src/auth/redis';
+import { Timestamp } from 'firebase-admin/firestore';
 
 const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
 	try {
@@ -38,9 +39,9 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 
 		const user_id = user?.id?.toString();
 
-		const { postId, proposalType, rating } = req.body;
+		const { postId, proposalType, rating, reportId } = req.body;
 
-		if (!proposalType || rating === undefined || isNaN(postId) || !isProposalTypeValid(proposalType)) {
+		if (!proposalType || rating === undefined || !reportId || isNaN(postId) || !isProposalTypeValid(proposalType)) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
@@ -52,15 +53,28 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 		}
 
 		const postData = postDoc.data() as Post;
-		const progressReport = postData.progress_report || {};
-		let ratings = progressReport.ratings || [];
+		const progressReports = postData.progress_report || [];
 
-		ratings = ratings.filter((r: { user_id: string; rating: number }) => r.user_id !== user_id);
-		ratings.push({ rating, user_id });
-		progressReport.ratings = ratings;
+		const updatedProgressReports = progressReports.map((report: IProgressReport) => {
+			if (report.id === reportId) {
+				let ratings = report.ratings || [];
+				ratings = ratings.filter((r: { user_id: string }) => r.user_id !== user_id);
+				ratings.push({ rating, user_id });
+
+				return {
+					...report,
+					created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
+					ratings
+				};
+			}
+			return {
+				...report,
+				created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at
+			};
+		});
 
 		await postDocRef.update({
-			progress_report: progressReport
+			progress_report: updatedProgressReports
 		});
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType);
@@ -71,11 +85,11 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 
 		return res.status(200).json({
 			message: messages.PROGRESS_REPORT_UPDATED_SUCCESSFULLY,
-			progress_report: progressReport
+			progress_report: updatedProgressReports
 		});
 	} catch (error) {
 		console.error('Error in updating progress report:', error);
-		return res.status(500).json({ message: error || 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: error.message || 'An error occurred while processing the request.' });
 	}
 };
 

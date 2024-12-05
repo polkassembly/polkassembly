@@ -9,6 +9,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { IDelegateesModal } from '../types';
 import { styled } from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 const StyledModal = styled(Modal)`
 	@media (max-width: 640px) {
@@ -26,6 +27,7 @@ const StyledModal = styled(Modal)`
 
 const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IDelegateesModal) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const delegateeData = delegateesData[index];
 	const totalData = {
 		capital: delegateeData?.data.reduce((acc, curr) => acc + BigInt(curr.capital), BigInt(0)).toString(),
@@ -44,7 +46,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 			footer={false}
 			title={
 				<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-					Vote Details
+					{t('vote_details')}
 				</div>
 			}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
@@ -52,26 +54,26 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 		>
 			<main className='dark:bg-section-dark-overlay'>
 				<div className=' dark:bg-section-dark-overlay '>
-					<p className='mb-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>Delegation Detail</p>
+					<p className='mb-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{t('delegation_detail')}</p>
 				</div>
 				<div className='my-3 flex justify-between dark:bg-section-dark-overlay'>
 					<div className='flex w-[200px] flex-col gap-1'>
-						<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+						<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('self_votes')}</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
+								<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('voting_power')}
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
 						</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> Conviction
+								<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('conviction')}
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
 						</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+								<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
 						</div>
@@ -80,22 +82,22 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 						<>
 							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
 							<div className='mr-3 flex w-[200px] flex-col gap-1'>
-								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('delegated_votes')}</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
+										<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('voting_power')}
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.votingPower || '0').toString(), 2, true, network)}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> Delegators
+										<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> {t('delegators')}
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{totalData?.count}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+										<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.capital || '0').toString(), 2, true, network)}</span>
 								</div>
@@ -111,12 +113,12 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 					{totalData?.count > 1 && (
 						<>
 							<div>
-								<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+								<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('delegation_list')}</p>
 								<div className='mb-2 flex items-start justify-between text-xs font-semibold'>
-									<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-									<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-									<div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div>
-									<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+									<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>{t('delegators')}</div>
+									<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('amount')}</div>
+									<div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('conviction')}</div>
+									<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('voting_power')}</div>
 								</div>
 								{delegateeData.data.slice(0, showAll ? delegateeData.data.length : 3).map((item, index) => (
 									<div
@@ -142,7 +144,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 										className='cursor-pointer text-xs font-medium text-pink_primary'
 										onClick={() => setShowAll(!showAll)}
 									>
-										{showAll ? 'Show Less' : 'Show All'}
+										{showAll ? t('show_less') : t('show_all')}
 									</span>
 								)}
 							</div>

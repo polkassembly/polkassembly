@@ -16,6 +16,7 @@ import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
 import { useCurvesInformationSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import { useTranslation } from 'next-i18next';
 
 interface IRefV2ThresholdDataProps {
 	canVote: boolean;
@@ -28,6 +29,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
 	const currentUser = useUserDetailsSelector();
 	const { approval, support, approvalThreshold, supportThreshold } = useCurvesInformationSelector();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		if (thresholdOpen && isCurvesRender) {
@@ -42,7 +44,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting Details</h6>
+					<h6 className='m-0 p-0 text-xl font-semibold leading-6 text-bodyBlue dark:text-blue-dark-high'>{t('voting_details')}</h6>
 					<div className='flex items-center gap-x-2'>
 						<button
 							onClick={() => {
@@ -58,7 +60,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 								className='mt-1 text-2xl'
 								style={{ color: '#90A0B7' }}
 							/>
-							<span className='text-xs text-pink_primary'>View Vote History</span>
+							<span className='text-xs text-pink_primary'>{t('view_vote_history')}</span>
 						</button>
 					</div>
 				</div>
@@ -82,14 +84,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<AyeApprovalIcon />
-											Approval
+											{t('approval')}
 										</span>
 										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<AyeThresholdIcon />
-											Threshold
+											{t('threshold')}
 										</span>
 										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
 									</span>
@@ -98,14 +100,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<NayApprovalIcon />
-											Support
+											{t('support')}
 										</span>
 										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
 										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<NayThresholdIcon />
-											Threshold
+											{t('threshold')}
 										</span>
 										<span className='text-lightBlue dark:text-[#9E9E9E]'>{Number(supportThreshold)?.toFixed(2)}%</span>
 									</span>
@@ -124,7 +126,9 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				footer={[]}
 				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
-				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>Threshold Curves</h2>}
+				title={
+					<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>{t('threshold_curves')}</h2>
+				}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
 					{isCurvesRender ? (

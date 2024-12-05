@@ -9,8 +9,9 @@ import { Modal } from 'antd';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -24,6 +25,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 	const {
 		postData: { postType }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const [linkingModalOpen, setLinkingModalOpen] = useState(false);
 	const isOnchainPost = checkIsOnChainPost(postType);
 	return (
@@ -33,7 +35,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={[]}
-				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
@@ -42,8 +44,8 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 						alt='post edit linking icon'
 					/>
 					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
-						<h3 className='m-0 p-0 text-lg font-medium'>Link discussion</h3>
-						<p className='m-0 mt-2 text-sm'>Please add contextual info for voters to make an informed decision</p>
+						<h3 className='m-0 p-0 text-lg font-medium'>{t('link_discussion')}</h3>
+						<p className='m-0 mt-2 text-sm'>{t('please_add_contextual_info_for_voters_to_make_an_informed_decision')}</p>
 					</article>
 					<article className='flex flex-col items-center gap-y-4'>
 						<button
@@ -53,7 +55,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 								setLinkingModalOpen(true);
 							}}
 						>
-							+ Link Existing Discussion Post
+							{t('link_existing_discussion_post')}
 						</button>
 						<button
 							className='h-[40px] cursor-pointer rounded-[4px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-pink_primary outline-none dark:bg-section-dark-overlay md:min-w-[314px]'
@@ -62,7 +64,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 								// setEditModalOpen(true);
 							}}
 						>
-							Continue Without Linking
+							{t('continue_without_linking')}
 						</button>
 					</article>
 				</section>

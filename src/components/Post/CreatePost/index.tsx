@@ -27,6 +27,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import dayjs from 'dayjs';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -37,6 +38,7 @@ const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
 
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 
@@ -70,8 +72,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 		if (!pollEndBlock) {
 			queueNotification({
-				header: 'Failed to get end block number. Poll creation failed!',
-				message: 'Failed',
+				header: t('failed_to_get_end_block_number_poll_creation_failed'),
+				message: t('failed'),
 				status: NotificationStatus.ERROR
 			});
 			return;
@@ -85,7 +87,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		});
 
 		if (apiError) {
-			console.error('Error creating a poll', apiError);
+			console.error(t('error_creating_a_poll'), apiError);
 			return;
 		}
 	};
@@ -142,10 +144,10 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			});
 
 			if (apiError || !data?.post_id) {
-				setError(apiError || 'There was an error creating your post.');
+				setError(apiError || t('there_was_an_error_creating_your_post'));
 				queueNotification({
-					header: 'Error',
-					message: 'There was an error creating your post.',
+					header: t('error'),
+					message: t('there_was_an_error_creating_your_post'),
 					status: NotificationStatus.ERROR
 				});
 				console.error(apiError);
@@ -164,8 +166,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				router.push(`/${proposalType === ProposalType.GRANTS ? 'grant' : 'post'}/${postId}`);
 				setAllowedCommentors(EAllowedCommentor.ALL);
 				queueNotification({
-					header: 'Thanks for sharing!',
-					message: 'Post created successfully.',
+					header: t('thanks_for_sharing'),
+					message: t('post_created_successfully'),
 					status: NotificationStatus.SUCCESS
 				});
 				createSubscription(postId);
@@ -207,7 +209,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS ? PostCategory.DISCUSSION : PostCategory.GRANT} />
 
 			<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
-				<h2 className='dashboard-heading mb-8 text-bodyBlue dark:text-blue-dark-high'>New Post</h2>
+				<h2 className='dashboard-heading mb-8 text-bodyBlue dark:text-blue-dark-high'>{t('new_post')}</h2>
 				{error && (
 					<ErrorAlert
 						errorMsg={error}
@@ -224,7 +226,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 					validateMessages={{ required: "Please add the '${name}'" }}
 				>
 					<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
-						Title<span className='ml-1 text-red-500'>*</span>
+						{t('title')}
+						<span className='ml-1 text-red-500'>*</span>
 					</label>
 					<Form.Item
 						name='title'
@@ -234,7 +237,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							onChange={(e) => savePostFormCacheValue('title', e.target.value)}
 							name='title'
 							autoFocus
-							placeholder='Enter Title'
+							placeholder={t('enter_title')}
 							className='text-bodyBlue dark:border-[#4b4b4b] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
@@ -248,7 +251,10 @@ const CreatePost = ({ className, proposalType }: Props) => {
 								setHasPoll(checked);
 							}}
 						/>
-						<span className='ml-2 text-sm text-sidebarBlue dark:text-white'>Add poll to {proposalType === ProposalType.DISCUSSIONS ? 'discussion' : 'grant'}</span>
+						<span className='ml-2 text-sm text-sidebarBlue dark:text-white'>
+							{t('add_poll_to')}
+							{proposalType === ProposalType.DISCUSSIONS ? t('discussion') : t('grant')}
+						</span>
 					</div>
 					{proposalType === ProposalType.DISCUSSIONS && (
 						<Form.Item
@@ -256,7 +262,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							name='topic'
 							rules={[
 								{
-									message: "Please select a 'topic'",
+									message: t('please_select_a_topic'),
 									validator(rule, value = topicId, callback) {
 										if (callback && !value) {
 											callback(rule?.message?.toString());
@@ -269,7 +275,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						>
 							<>
 								<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
-									Select Topic <span className='ml-1 text-red-500'>*</span>
+									{t('select_topic')} <span className='ml-1 text-red-500'>*</span>
 								</label>
 								<TopicsRadio
 									govType={isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1}
@@ -282,7 +288,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							</>
 						</Form.Item>
 					)}
-					<h5 className='text-color mt-8 text-sm font-normal dark:text-white'>Add Tags</h5>
+					<h5 className='text-color mt-8 text-sm font-normal dark:text-white'>{t('add_tags')}</h5>
 					<AddTags
 						tags={tags}
 						setTags={setTags}
@@ -297,7 +303,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 					/>
 					<Form.Item>
 						<CustomButton
-							text='Create Post'
+							text={t('create_post')}
 							htmlType='submit'
 							disabled={!currentUser.id || formDisabled || loading}
 							className='mt-10'

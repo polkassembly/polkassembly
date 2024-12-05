@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import styled from 'styled-components';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	onClick: React.MouseEventHandler<HTMLAnchorElement> & React.MouseEventHandler<HTMLButtonElement>;
@@ -20,11 +21,13 @@ interface Props {
 }
 
 const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<>
 			{!isOptionalLogin && isLoginFlow && (
 				<Tooltip
-					title={`${text === 'Polkasafe (Multisig)' && !isAvailable ? 'Please install any wallet to access Polkasafe' : `${text} ${isAvailable ? '' : '(not installed)'}`}`}
+					title={`${text === 'Polkasafe (Multisig)' && !isAvailable ? t('please_install_any_wallet_to_access_polkasafe') : `${text} ${isAvailable ? '' : t('not_installed')}`}`}
 					placement='top'
 				>
 					<Button
@@ -52,11 +55,11 @@ const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, n
 					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
 					{isOptionalLogin && !isAvailable && text !== 'Polkasafe (Multisig)' && (
-						<p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor'>Not Installed</p>
+						<p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor'>{t('not_installed')}</p>
 					)}
 					{isOptionalLogin && !isAvailable && text === 'Polkasafe (Multisig)' && (
 						<Tooltip
-							title='Please install any wallet to access Polkasafe'
+							title={t('please_install_any_wallet_to_access_polkasafe')}
 							placement='top'
 						>
 							<InfoCircleOutlined className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor' />

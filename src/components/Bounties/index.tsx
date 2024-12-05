@@ -14,6 +14,7 @@ import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -21,6 +22,7 @@ interface IBountiesContainer {
 }
 
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
+	const { t } = useTranslation();
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
@@ -41,7 +43,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	return (
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
-				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Dashboard</span>
+				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>{t('dashboard')}</span>
 				<BountyProposalActionButton className='hidden md:block' />
 			</div>
 			<BountiesHeader />
@@ -53,10 +55,10 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 						<div className='flex items-center gap-2'>
 							<ImageIcon
 								src='/assets/bounty-icons/fire-icon.svg'
-								alt='bounty icon'
+								alt={t('hot_bounties_icon')}
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>{t('hot_bounties')}</h2>
 							{extendedData?.count && (
 								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
 									({extendedData?.count})
@@ -67,7 +69,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							href={'/bounties-listing'}
 							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
 						>
-							View All
+							{t('view_all')}
 						</Link>
 					</div>
 
@@ -80,7 +82,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
+									alt={t('carousel_icon')}
 									className='scale-75 md:scale-100'
 								/>
 							</span>
@@ -124,7 +126,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
+									alt={t('carousel_icon')}
 									className='scale-75 md:scale-100'
 								/>
 							</span>
@@ -140,10 +142,10 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 						<div className='flex items-center gap-2'>
 							<ImageIcon
 								src='/assets/bounty-icons/bounty-proposals.svg'
-								alt='bounty icon'
+								alt={t('bounty_proposals_icon')}
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>{t('bounty_proposals')}</h2>
 						</div>
 					</div>
 
@@ -156,7 +158,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
+									alt={t('carousel_icon')}
 									className='scale-75 md:scale-100'
 								/>
 							</span>
@@ -176,7 +178,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 										key={index}
 										className={chunkClass}
 									>
-										{chunk.map((post, proposalIndex) => (
+										{chunk?.map((post, proposalIndex) => (
 											<BountiesProposalsCard
 												key={proposalIndex}
 												activeData={post}
@@ -200,7 +202,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
+									alt={t('carousel_icon')}
 									className='scale-75 md:scale-100'
 								/>
 							</span>
@@ -214,7 +216,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				<Image
 					src={'assets/bounty-icons/bounty-coming-soon.svg'}
 					fill
-					alt='curator'
+					alt={t('coming_soon')}
 					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
 				/>
 				<BountyActivities />

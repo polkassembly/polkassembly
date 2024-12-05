@@ -5,7 +5,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useEffect, useState } from 'react';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import Address from './Address';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import DownIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
 import Balance from '~src/components/Balance';
@@ -68,7 +68,7 @@ const ProxyAccountSelectionForm = ({
 			key: proxyAddress,
 			label: (
 				<Address
-					className={`flex items-center ${poppins.className} ${poppins.className}`}
+					className={`flex items-center ${dmSans.className} ${dmSans.className}`}
 					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					address={proxyAddress}
 					disableAddressClick
@@ -166,7 +166,7 @@ const ProxyAccountSelectionForm = ({
 			<Modal
 				open={showWalletModal}
 				footer={false}
-				className={`${className} ${poppins.variable} ${poppins.className} alignment-close -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${className} ${dmSans.variable} ${dmSans.className} alignment-close -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`custom-modal-backdrop ${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {

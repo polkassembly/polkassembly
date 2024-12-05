@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
 import { ETrackDelegationStatus, NotificationStatus } from 'src/types';
 import AddressInput from 'src/ui-components/AddressInput';
@@ -39,6 +39,7 @@ import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import userProfileBalances from '~src/util/userProfileBalances';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -53,6 +54,7 @@ interface Props {
 
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
@@ -156,8 +158,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const getData = async () => {
 		if (!api || !apiReady || !delegationDashboardAddress) return;
-		const res = api.consts.convictionVoting.voteLockingPeriod;
-		const num = res.toJSON();
+		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+		const num = res?.toJSON();
 		const days = blockToDays(num, network);
 		setDays(days);
 		setLoading(true);
@@ -309,7 +311,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 					?.filter((item) => item?.trackId !== trackNum)
 					?.map((track, index) => (
 						<div
-							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+							className={`${dmSans.variable} ${dmSans.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 							key={index}
 						>
 							<Checkbox
@@ -335,19 +337,19 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						}}
 					>
 						<DelegatedProfileIcon className='mr-2' />
-						<span>Delegate</span>
+						<span>{t('delegate')}</span>
 					</CustomButton>
 				</div>
 			)}
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive ' />}
-				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.variable} ${dmSans.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>
 						<DelegateModalIcon className='-mt-1 mr-2 text-[20px] text-lightBlue dark:text-icon-dark-inactive ' />
-						Delegate
+						{t('delegate')}
 					</div>
 				}
 				open={open ? open : defaultOpen}
@@ -392,7 +394,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										type='error'
 										className='mb-2 h-10 rounded-[4px] sm:mb-4'
 										showIcon
-										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 									/>
 								)}
 
@@ -401,12 +403,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										type='error'
 										className='mb-2 h-10 rounded-[4px] sm:mb-4'
 										showIcon
-										message={<span className='dark:text-blue-dark-high'>Insufficient Transferable Balance for paing Gas Fee</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('insufficient_transferable_balance_for_paying_gas_fee')}</span>}
 									/>
 								)}
 
 								<div className='mt-2 '>
-									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>{t('your_address')}</label>
 									<AddressInput
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
@@ -447,13 +449,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<Alert
 										className='mb mt-2 rounded-[4px]'
 										showIcon
-										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
+										message={
+											<span className='dark:text-blue-dark-high'>
+												{t('the_substrate_address_has_been_changed_to')}
+												{network} {t('address')}.
+											</span>
+										}
 										type='info'
 									/>
 								)}
 
 								<div className='mt-4 flex cursor-pointer items-center justify-between text-lightBlue dark:text-blue-dark-medium sm:mt-6'>
-									Balance
+									{t('balance')}
 									<span
 										onClick={() => {
 											setBnBalance(availableBalance);
@@ -481,11 +488,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								/>
 								<div className='mb-2 sm:mt-4'>
 									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
-										Conviction
+										{t('conviction')}
 										<span>
 											<HelperTooltip
 												className='ml-1'
-												text='You can multiply your votes by locking your tokens for longer periods of time.'
+												text={t('you_can_multiply_your_votes_by_locking_your_tokens_for_longer_periods_of_time')}
 											/>
 										</span>
 									</label>
@@ -515,14 +522,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<div className='track-[0.0025em] mt-3 flex items-center justify-between rounded-md bg-[#F6F7F9] px-2 py-2 dark:bg-inactiveIconDark sm:mt-4 sm:px-[17px] sm:py-[13px]'>
 									<div className='flex items-center justify-center gap-2.5 text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>
 										<LockIcon />
-										<span>Locking period</span>
+										<span>{t('locking_period')}</span>
 									</div>
 									<div className='flex items-center justify-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high sm:text-sm'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
 								<div className='mb-2 mt-4 flex flex-col justify-between sm:mt-6 sm:flex-row sm:items-center'>
-									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
+									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('selected_track_s')}</span>
 									{trackArr?.length ? (
 										<Popover
 											content={content}
@@ -536,7 +543,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 												checked={checkAll}
 												className='dark:text-blue-dark-medium'
 											>
-												Delegate to all available tracks
+												{t('delegate_to_all_available_tracks')}
 											</Checkbox>
 										</Popover>
 									) : (
@@ -546,7 +553,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 											checked={checkAll}
 											className='dark:text-blue-dark-medium'
 										>
-											Select available tracks
+											{t('select_available_tracks')}
 										</Checkbox>
 									)}
 								</div>
@@ -588,7 +595,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								type='info'
 								className='mb-2 rounded-[4px] sm:mb-4'
 								message={
-									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
+									<span className='dark:text-blue-dark-high'>
+										{t('an_approximate_fees_of')} {formatBalance(txFee.toString(), { forceUnit: unit })} {t('will_be_applied_to_the_transaction')}
+									</span>
 								}
 							/>
 						)}

@@ -3,20 +3,25 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TinderCard from 'react-tinder-card';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, StopOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import SwipeActionButtons from './CardComponents/SwipeActionButtons';
-import TinderCardsComponent from './CardComponents/TinderCardsComponent';
 import dynamic from 'next/dynamic';
 import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IAddBatchVotes } from './types';
+import LikeWhite from '~assets/icons/like-white.svg';
+import DislikeWhite from '~assets/icons/dislike-white.svg';
 
 const CartOptionMenu = dynamic(() => import('./CardComponents/CartOptionMenu'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const TinderCards = dynamic(() => import('./CardComponents/TinderCard'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -32,13 +37,13 @@ const VotingCards = () => {
 	const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
+	const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
 
 	const childRefs: any = useMemo(
 		() =>
 			Array(activeProposal?.length)
-				.fill(0)
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				.map((i) => React.createRef()),
+				?.fill(0)
+				?.map(() => React.createRef()),
 		[activeProposal?.length]
 	);
 
@@ -66,16 +71,30 @@ const VotingCards = () => {
 			console.error(error);
 			return;
 		}
+		getVoteCartData();
+	};
+
+	const getVoteCartData = async () => {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
+			isExternalApiCall: true,
+			userAddress: user?.loginAddress
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
+		}
 	};
 
 	const getActiveProposals = async (callingFirstTime?: boolean) => {
 		setIsLoading(callingFirstTime === true);
-
+		const skippedIndexes = [...(voted_post_ids_array || []), ...(skippedProposals || [])];
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
 			isExternalApiCall: true,
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
-			skippedIndexes: [...voted_post_ids_array, ...skippedProposals] || [],
+			skippedIndexes: skippedIndexes,
 			userAddress: user?.loginAddress,
 			userId: user?.id
 		});
@@ -96,7 +115,7 @@ const VotingCards = () => {
 	const handleSkipProposalCard = (id: number) => {
 		const updateActiveProposals: any[] = [];
 		activeProposal.map((proposal) => {
-			if (id !== proposal.id) {
+			if (id !== proposal?.id) {
 				updateActiveProposals.push(proposal);
 			}
 		});
@@ -112,12 +131,12 @@ const VotingCards = () => {
 	};
 
 	useEffect(() => {
-		if (!network || !user?.loginAddress?.length) return;
 		getActiveProposals(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, user?.loginAddress]);
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
+		setSwipeDirection(null);
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
@@ -145,6 +164,10 @@ const VotingCards = () => {
 		}
 	};
 
+	const handleSwipe = (direction: string) => {
+		setSwipeDirection(direction);
+	};
+
 	const outOfFrame = (name: string, idx: number) => {
 		currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
 	};
@@ -154,6 +177,12 @@ const VotingCards = () => {
 		const newIndex = currentIndex + 1;
 		updateCurrentIndex(newIndex);
 		await childRefs[newIndex].current.restoreCard();
+	};
+
+	const handleRightClickSkip = () => {
+		if (currentIndex >= 0 && activeProposal[currentIndex]) {
+			handleSkipProposalCard(activeProposal[currentIndex].id);
+		}
 	};
 
 	return (
@@ -168,7 +197,7 @@ const VotingCards = () => {
 				<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Active Proposals</p>
 				<button
 					className='ml-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl dark:bg-transparent'
-					onClick={() => goBack()}
+					onClick={handleRightClickSkip}
 				>
 					<RightOutlined className='text-black dark:text-white' />
 				</button>
@@ -196,21 +225,60 @@ const VotingCards = () => {
 			)}
 
 			{!isLoading && (
-				<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
+				<div className={'relative w-full max-w-sm'}>
 					{activeProposal?.map((proposal: any, index: number) => (
 						<TinderCard
 							ref={childRefs[index]}
-							className='absolute h-full w-full'
+							className='absolute w-full'
 							key={proposal.name}
-							onSwipe={(dir) => {
-								swiped(dir, index, proposal?.id, proposal?.title);
-							}}
+							onSwipeRequirementFulfilled={(dir) => handleSwipe(dir)}
+							onSwipe={(dir) => swiped(dir, index, proposal?.id, proposal?.title)}
 							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 							preventSwipe={['down']}
 						>
-							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
-								<TinderCardsComponent
-									proposal={proposal}
+							<div className='relative rounded-2xl bg-[#f4f5f7] dark:bg-black'>
+								{swipeDirection === 'right' && index === currentIndex && (
+									<div
+										className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl'
+										style={{
+											background: 'linear-gradient(0deg, rgba(46, 212, 122, 0.12) 0%, rgba(46, 212, 122, 0.12) 100%), rgba(0, 0, 0, 0.12)',
+											border: '1px solid rgba(46, 212, 122, 0.60)'
+										}}
+									>
+										<button className='flex h-12 w-12 items-center justify-center rounded-full border-none bg-[#2ED47A] drop-shadow-2xl'>
+											<LikeWhite className='' />
+										</button>
+									</div>
+								)}
+								{swipeDirection === 'left' && index === currentIndex && (
+									<div
+										className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl'
+										style={{
+											background: 'linear-gradient(0deg, rgba(245, 60, 60, 0.38) 0%, rgba(245, 60, 60, 0.38) 100%), rgba(0, 0, 0, 0.12)',
+											border: '1px solid rgba(245, 60, 60, 0.60)'
+										}}
+									>
+										<button className='flex h-12 w-12 items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'>
+											<DislikeWhite className='' />
+										</button>
+									</div>
+								)}
+								{swipeDirection === 'up' && index === currentIndex && (
+									<div
+										className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl'
+										style={{
+											background: 'linear-gradient(0deg, rgba(255, 191, 96, 0.74) 0%, rgba(255, 191, 96, 0.74) 100%), rgba(0, 0, 0, 0.12)',
+											border: '1px solid #FFBF60'
+										}}
+									>
+										<button className='flex h-14 w-14 items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'>
+											<StopOutlined className={'text-2xl text-lightBlue'} />
+										</button>
+									</div>
+								)}
+								<TinderCards
+									post={proposal}
+									proposalType={proposal?.postType}
 									onSkip={handleSkipProposalCard}
 								/>
 							</div>
@@ -223,7 +291,8 @@ const VotingCards = () => {
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}
 				childRefs={childRefs}
-				className={show_cart_menu ? 'bottom-10' : 'bottom-1'}
+				onSwipe={handleSwipe}
+				className={show_cart_menu ? 'mb-10' : ''}
 			/>
 			{show_cart_menu && <CartOptionMenu />}
 		</div>

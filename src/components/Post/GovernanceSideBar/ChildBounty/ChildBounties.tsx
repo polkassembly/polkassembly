@@ -14,7 +14,7 @@ import { usePostDataContext } from '~src/context';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { IChildBountiesResponse } from '~src/types';
 import { Spin } from 'antd';
-
+import { useTranslation } from 'next-i18next';
 interface IChildBountiesProps {
 	bountyIndex?: any;
 	status: string;
@@ -28,6 +28,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	} = usePostDataContext();
 	const requestedAmount: BN = new BN(reward || '0');
 	const { bountyIndex, status } = props;
+	const { t } = useTranslation('common');
 	const [totalAmount, setTotalAmount] = useState<any>('');
 	const [amountDisbursed, setAmountDisbursed] = useState<any>('');
 	const [remainingAmount, setRemainingAmount] = useState<any>('');
@@ -77,19 +78,19 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 		{
 			color: '#FFC302',
 			id: 'disbursed',
-			label: 'Disbursed',
+			label: t('disbursed'),
 			value: parseFloat(formatedBalance(amountDisbursed.toString(), unit).replace(/,/g, ''))
 		},
 		{
 			color: '#F1F1EF',
 			id: 'remaining',
-			label: 'Remaining',
+			label: t('remaining'),
 			value: parseFloat(formatedBalance(remainingAmount.toString(), unit).replace(/,/g, ''))
 		},
 		{
 			color: '#FF8E11',
 			id: 'requested',
-			label: 'Requested',
+			label: t('requested'),
 			value: parseFloat((formatedBalance(requestedAmount.toString(), unit) as string).replace(/,/g, ''))
 		}
 	];
@@ -99,9 +100,10 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			<Spin spinning={!totalAmount}>
 				<div>
 					<div className='flex'>
-						<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
+						<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>{t('bounty_amount')}</h4>
 						<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
-							Total: <span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{parseBalance(totalAmount.toString(), 2, true, network)}</span>
+							{t('total')}:{' '}
+							<span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{parseBalance(totalAmount.toString(), 2, true, network)}</span>
 						</p>
 					</div>
 					<div className='-mt-3 h-[286px] '>

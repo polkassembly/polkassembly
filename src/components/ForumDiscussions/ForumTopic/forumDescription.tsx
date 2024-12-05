@@ -7,6 +7,7 @@ import Markdown from '~src/ui-components/Markdown';
 import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
 import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
 import ForumLikeButton from '../utils/ForumLikeButton';
+import { useTranslation } from 'next-i18next';
 
 interface ForumDescriptionProps {
 	description: string;
@@ -16,13 +17,13 @@ interface ForumDescriptionProps {
 
 const ForumDescription = ({ like_count, description, username }: ForumDescriptionProps) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const share = () => {
-		let message = `Check out this forum discussion ${username ? `by ${username}` : ''} \n`;
-		message += `On ${global.window.location.href}`;
+		let message = t('share_message', { username });
+		message += `\n${t('share_link', { link: global.window.location.href })}`;
 
-		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polk_gov')];
-
+		const twitterParameters = [`text=${encodeURIComponent(message)}`, 'via=' + encodeURIComponent('polk_gov')];
 		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
 		global.window.open(url);
 	};
@@ -39,15 +40,15 @@ const ForumDescription = ({ like_count, description, username }: ForumDescriptio
 					/>
 				)}
 			</div>
-			<div className=' mt-6 flex items-center justify-between'>
+			<div className='mt-6 flex items-center justify-between'>
 				<ForumLikeButton like_count={like_count} />
 				<div
 					onClick={share}
-					className=' cursor-pointer'
+					className='cursor-pointer'
 				>
-					<span className='flex items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133] '>
-						{theme == 'dark' ? <ShareIconDark /> : <ShareIcon />}
-						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Share</span>
+					<span className='flex items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
+						{theme === 'dark' ? <ShareIconDark /> : <ShareIcon />}
+						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>{t('share')}</span>
 					</span>
 				</div>
 			</div>

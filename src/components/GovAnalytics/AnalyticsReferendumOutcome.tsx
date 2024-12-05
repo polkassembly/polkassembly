@@ -13,6 +13,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useTheme } from 'next-themes';
 import { IGetStatusWiseRefOutcome } from './types';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -63,6 +64,7 @@ const LegendContainer = styled.div`
 const AnalyticsReferendumOutcome = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1260;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
@@ -127,7 +129,7 @@ const AnalyticsReferendumOutcome = () => {
 					className='m-0 p-0 text-sm capitalize'
 					style={{ color: theme === 'dark' ? '#fff' : '#000' }}
 				>
-					All Tracks
+					{t('all_tracks')}
 				</p>
 			),
 			onClick: handleMenuClick
@@ -150,31 +152,31 @@ const AnalyticsReferendumOutcome = () => {
 		{
 			color: '#ff0000',
 			id: 'Timeout',
-			label: 'Timeout',
+			label: t('timeout'),
 			value: statusInfo?.timeout
 		},
 		{
 			color: '#ff6000',
 			id: 'Ongoing',
-			label: 'Ongoing',
+			label: t('ongoing'),
 			value: statusInfo?.ongoing
 		},
 		{
 			color: '#27d941',
 			id: 'Approved',
-			label: 'Approved',
+			label: t('approved'),
 			value: statusInfo?.approved
 		},
 		{
 			color: '#6800ff',
 			id: 'Rejected',
-			label: 'Rejected',
+			label: t('rejected'),
 			value: statusInfo?.rejected
 		},
 		{
 			color: '#fdcc4a',
 			id: 'Cancelled',
-			label: 'Cancelled',
+			label: t('cancelled'),
 			value: statusInfo?.cancelled
 		}
 	];
@@ -185,7 +187,7 @@ const AnalyticsReferendumOutcome = () => {
 			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
 			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
-				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
+				<h2 className='text-base font-semibold sm:text-xl'>{t('referendum_count_by_status')}</h2>
 				<div
 					className={
 						'flex h-[30px] w-[112px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2 text-sm font-medium dark:border-blue-dark-medium'
@@ -203,7 +205,7 @@ const AnalyticsReferendumOutcome = () => {
 											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 											.join(' ')
 											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
-									: 'All Tracks'}
+									: t('all_tracks')}
 								<ArrowDownIcon className='dark:text-blue-dark-medium' />
 							</Space>
 						</a>

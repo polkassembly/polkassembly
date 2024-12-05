@@ -64,8 +64,8 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
 
-	if (statuses.length === 0) return null;
-	const minHeight = statuses.length * 50;
+	if (statuses?.length === 0) return null;
+	const minHeight = statuses?.length * 50;
 
 	const toggleCollapse = () => {
 		setIsCollapsed(!isCollapsed);
@@ -122,7 +122,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const Timeline = () => {
 		return (
 			<section className={className}>
-				{statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
+				{statuses?.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 					const blockDate = dayjs(timestamp);
 					return (
 						<div
@@ -184,7 +184,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 						{isCollapsed ? (
 							<div className='arrow-container flex w-[200px] gap-3'>
 								<p className='status-update -mt-[5px]'>
-									<StatusDiv status={timeline?.statuses[statuses.length - 1].status} />
+									<StatusDiv status={timeline?.statuses?.[statuses?.length || 1 - 1]?.status} />
 								</p>
 								<DownArrow
 									onClick={toggleCollapse}

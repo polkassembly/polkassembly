@@ -12,6 +12,7 @@ import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import UploadImage from './UploadImage';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTranslation } from 'next-i18next';
 
 interface IBasicInformationProps {
 	profile?: ProfileDetails;
@@ -32,22 +33,19 @@ const defaultCoverImagesData = [
 ];
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
+	const { t } = useTranslation('common');
 	const { profile, loading, setProfile, setUsername, username, className, errorCheck, isValidCoverImage } = props;
 	const { picture } = useUserDetailsSelector();
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
-		if (!newBadge || loading) {
-			return;
-		}
+		if (!newBadge || loading) return;
 		const badges = profile?.badges || [];
 		if (!badges.includes(newBadge.toLowerCase())) {
-			setProfile((prev) => {
-				return {
-					...prev,
-					badges: [...badges, newBadge.toLowerCase()]
-				};
-			});
+			setProfile((prev) => ({
+				...prev,
+				badges: [...badges, newBadge.toLowerCase()]
+			}));
 			setNewBadge('');
 		}
 	};
@@ -58,12 +56,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 		const index = badgesArr.indexOf(badge);
 		if (index !== -1) {
 			badgesArr.splice(index, 1);
-			setProfile((prev) => {
-				return {
-					...prev,
-					badges: badgesArr
-				};
-			});
+			setProfile((prev) => ({
+				...prev,
+				badges: badgesArr
+			}));
 		}
 	}
 
@@ -73,11 +69,12 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			addNewBadge();
 		}
 	}
+
 	return (
 		<div className={`flex max-h-[479px] flex-col justify-between overflow-y-auto ${className}`}>
 			<div className='mb-0 flex flex-col gap-1'>
-				<label className='text-base text-bodyBlue dark:text-blue-dark-medium '>Cover Photo</label>
-				<span>Choose from below or Upload a file with 1600px dimension or above</span>
+				<label className='text-base text-bodyBlue dark:text-blue-dark-medium'>{t('cover_photo')}</label>
+				<span>{t('cover_photo_description')}</span>
 				<div className='h-[100px]'>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
@@ -85,7 +82,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						width={900}
 						className='h-full w-full rounded-xl object-cover'
 						height={150}
-						alt='loading ...'
+						alt={t('loading')}
 					/>
 				</div>
 				<div className='mb-2 mt-3 flex h-14 justify-between gap-2'>
@@ -94,12 +91,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							key={image.key}
 							className={`w-1/3 ${profile?.cover_image == image.url ? 'rounded-xl border-[2px] border-solid border-white' : ''}`}
 							onClick={() =>
-								setProfile((prev) => {
-									return {
-										...prev,
-										cover_image: image.url
-									};
-								})
+								setProfile((prev) => ({
+									...prev,
+									cover_image: image.url
+								}))
 							}
 						>
 							<Image
@@ -107,7 +102,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								width={100}
 								className='h-full w-full rounded-xl object-cover'
 								height={150}
-								alt='loading ...'
+								alt={t('loading')}
 							/>
 						</div>
 					))}
@@ -116,7 +111,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					name='coverImage'
 					rules={[
 						{
-							message: 'Cover image is required.',
+							message: t('cover_image_required'),
 							required: true
 						}
 					]}
@@ -125,12 +120,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					boxWidth={530}
 					defaultImage={profile?.cover_image || ''}
 					updateProfile={(image) =>
-						setProfile((prev) => {
-							return {
-								...prev,
-								cover_image: image
-							};
-						})
+						setProfile((prev) => ({
+							...prev,
+							cover_image: image
+						}))
 					}
 				/>
 			</div>
@@ -139,7 +132,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					name='profileImage'
 					rules={[
 						{
-							message: 'Profile image is required.',
+							message: t('profile_image_required'),
 							required: true
 						}
 					]}
@@ -151,33 +144,28 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					imageInside
 					className='relative'
 					updateProfile={(image) =>
-						setProfile((prev) => {
-							return {
-								...prev,
-								image: image
-							};
-						})
+						setProfile((prev) => ({
+							...prev,
+							image: image
+						}))
 					}
 				/>
 				<div className='mt-6 flex flex-col justify-start'>
-					<h4 className='text-base font-medium text-lightBlue dark:text-blue-dark-medium '>Profile Image</h4>
-					<p className='-mt-1 text-sm font-normal'>Upload a file with 1600px dimension or above</p>
+					<h4 className='text-base font-medium text-lightBlue dark:text-blue-dark-medium'>{t('profile_image')}</h4>
+					<p className='-mt-1 text-sm font-normal'>{t('profile_image_description')}</p>
 				</div>
 			</div>
 			<div className='mt-0 flex flex-col gap-6 pr-2'>
 				<div className='cursor-pointer text-sm text-lightBlue dark:text-blue-dark-medium'>
-					<label className='mb-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Display Name</label>
+					<label className='mb-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>{t('display_name')}</label>
 					<Input
 						className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-1 text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-						placeholder='eg. John'
+						placeholder={t('display_name_placeholder')}
 						size='large'
 						type='text'
 						onChange={(e) => setUsername(e.target.value)}
 						value={username}
 						disabled={loading}
-						classNames={{
-							input: 'dark:placeholder:text-borderColorDark dark:text-white'
-						}}
 					/>
 				</div>
 				<div>
@@ -185,52 +173,41 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						className='cursor-pointer text-sm font-medium text-lightBlue dark:text-blue-dark-medium'
 						htmlFor='title'
 					>
-						Job Title
+						{t('job_title')}
 					</label>
 					<Input
 						id='title'
 						value={profile?.title}
-						placeholder='eg. Manager'
+						placeholder={t('job_title_placeholder')}
 						onChange={(e) =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									title: e.target.value
-								};
-							})
+							setProfile((prev) => ({
+								...prev,
+								title: e.target.value
+							}))
 						}
 						disabled={loading}
 						className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-						classNames={{
-							input: 'dark:placeholder:text-borderColorDark dark:text-white'
-						}}
 					/>
 				</div>
-
 				<div>
 					<label
 						className='cursor-pointer text-sm font-medium text-lightBlue dark:text-blue-dark-medium'
 						htmlFor='bio'
 					>
-						About
+						{t('about')}
 					</label>
 					<Input.TextArea
 						id='bio'
 						value={profile?.bio}
-						placeholder='eg. I am a Web Developer'
+						placeholder={t('about_placeholder')}
 						onChange={(e) =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									bio: e.target.value
-								};
-							})
+							setProfile((prev) => ({
+								...prev,
+								bio: e.target.value
+							}))
 						}
 						disabled={loading}
 						className='rounded-[4px] border border-solid border-[#d2d8e0] px-3.5 py-2.5 text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-						classNames={{
-							textarea: 'dark:placeholder:text-borderColorDark dark:text-white'
-						}}
 					/>
 				</div>
 				<div>
@@ -238,21 +215,18 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						className='cursor-pointer text-sm font-medium text-lightBlue dark:text-blue-dark-medium'
 						htmlFor='badges'
 					>
-						Tags
+						{t('tags')}
 					</label>
-					<p className='mb-1 mt-1 text-xs text-lightBlue dark:text-white'>Tags indicate individual successes, abilities, skills and/or interests</p>
+					<p className='mb-1 mt-1 text-xs text-lightBlue dark:text-white'>{t('tags_description')}</p>
 					<div className='flex items-center gap-x-2'>
 						<Input
 							id='badges'
 							value={newBadge}
-							placeholder='eg. Council Member, Voter, etc.'
+							placeholder={t('tags_placeholder')}
 							onChange={(e) => setNewBadge(e.target.value)}
 							onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
 							className='mt-[2px] h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							disabled={loading}
-							classNames={{
-								input: 'dark:placeholder:text-borderColorDark dark:text-white'
-							}}
 						/>
 						<CustomButton
 							variant='default'
@@ -260,31 +234,29 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							className='font-medium'
 							icon={<PlusOutlined />}
 							disabled={loading}
-							text='Add Tags'
+							text={t('add_tags')}
 						/>
 					</div>
 					{profile && profile?.badges && Array.isArray(profile?.badges) && profile?.badges.length >= 0 ? (
 						<div>
-							{profile?.badges.map((badge) => {
-								return (
-									<Tag
-										closeIcon={<CloseOutlined className={`m-0 flex p-0 text-white ${loading ? 'cursor-not-allowed' : ''}`} />}
-										className={`m-0 mr-2 mt-2 inline-flex items-center gap-x-1 rounded-full border-none bg-pink_primary px-3 py-0.5 font-medium capitalize text-white shadow-none outline-none ${
-											loading ? 'cursor-not-allowed' : ''
-										}`}
-										key={badge}
-										closable
-										onClose={(e) => {
-											e.preventDefault();
-											if (!loading) {
-												removeBadge(badge);
-											}
-										}}
-									>
-										{badge}
-									</Tag>
-								);
-							})}
+							{profile?.badges.map((badge) => (
+								<Tag
+									closeIcon={<CloseOutlined className={`m-0 flex p-0 text-white ${loading ? 'cursor-not-allowed' : ''}`} />}
+									className={`m-0 mr-2 mt-2 inline-flex items-center gap-x-1 rounded-full border-none bg-pink_primary px-3 py-0.5 font-medium capitalize text-white shadow-none outline-none ${
+										loading ? 'cursor-not-allowed' : ''
+									}`}
+									key={badge}
+									closable
+									onClose={(e) => {
+										e.preventDefault();
+										if (!loading) {
+											removeBadge(badge);
+										}
+									}}
+								>
+									{badge}
+								</Tag>
+							))}
 						</div>
 					) : null}
 				</div>

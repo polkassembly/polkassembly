@@ -11,8 +11,10 @@ import { NotificationSettings, UpdatedDataResponseType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 const NotificationSettings = () => {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 
 	const [changed, setChanged] = useState<boolean>(false);
@@ -62,7 +64,7 @@ const NotificationSettings = () => {
 		if (error) {
 			setError(error);
 			queueNotification({
-				header: 'Failed!',
+				header: t('Failed!'),
 				message: error,
 				status: NotificationStatus.ERROR
 			});
@@ -73,7 +75,7 @@ const NotificationSettings = () => {
 
 		if (data) {
 			queueNotification({
-				header: 'Success!',
+				header: t('Success!'),
 				message: data.message,
 				status: NotificationStatus.SUCCESS
 			});
@@ -89,9 +91,9 @@ const NotificationSettings = () => {
 			className='flex w-full flex-col gap-y-8 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'
 		>
 			<header>
-				<h3 className='text-lg font-medium tracking-wide text-sidebarBlue'>Notification Settings</h3>
+				<h3 className='text-lg font-medium tracking-wide text-sidebarBlue'>{t('notificationSettings')}</h3>
 				<h5 className='mt-2 text-sm font-normal text-navBlue'>
-					Update your notification settings. You will be receiving your notifications on <span className='text-sidebarBlue'>{currentUser?.email}</span>
+					{t('updateNotificationSettings')} <span className='text-sidebarBlue'>{currentUser?.email}</span>
 				</h5>
 			</header>
 			{error && <FilteredError text={error} />}
@@ -100,7 +102,7 @@ const NotificationSettings = () => {
 					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='postParticipated'
 				>
-					Subscribe to post you participate in
+					{t('subscribeToPostParticipated')}
 				</label>
 				<Switch
 					checked={!!email_verified && postParticipated}
@@ -118,7 +120,7 @@ const NotificationSettings = () => {
 					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='postCreated'
 				>
-					Subscribe to post you created
+					{t('subscribeToPostCreated')}
 				</label>
 				<Switch
 					checked={!!email_verified && postCreated}
@@ -136,7 +138,7 @@ const NotificationSettings = () => {
 					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='newProposal'
 				>
-					Notified for new proposal in council/motion/referendum
+					{t('notifiedForNewProposal')}
 				</label>
 				<Switch
 					checked={!!email_verified && newProposal}
@@ -154,7 +156,7 @@ const NotificationSettings = () => {
 					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='ownProposal'
 				>
-					Notified for your own proposals
+					{t('notifiedForOwnProposal')}
 				</label>
 				<Switch
 					checked={!!email_verified && ownProposal}
@@ -169,7 +171,7 @@ const NotificationSettings = () => {
 			</article>
 			<article>
 				<CustomButton
-					text='Save'
+					text={t('save')}
 					loading={loading}
 					disabled={!changed}
 					htmlType='submit'

@@ -134,7 +134,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				return;
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
-				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2] || isRefundExists.Rejected?.[2] || isRefundExists.TimedOut?.[2]);
 				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
 					decisionDeposit: isDecisionDeposit,

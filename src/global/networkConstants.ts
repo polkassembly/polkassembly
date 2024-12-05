@@ -58,6 +58,7 @@ import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
 import laossigmaLogo from '~assets/parachain-logos/laossigma-logo.png';
+import mythicalLogo from '~assets/parachain-logos/mythical-logo.png';
 
 import * as types from '../types';
 import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
@@ -124,7 +125,8 @@ export const network = {
 	ZEITGEIST: 'zeitgeist',
 	MANDALA: 'mandala',
 	CURIO: 'curio',
-	LAOSSIGMA: 'laossigma'
+	LAOSSIGMA: 'laossigma',
+	MYTHOS: 'mythos'
 };
 
 export const tokenSymbol = {
@@ -183,7 +185,8 @@ export const tokenSymbol = {
 	ZTG: 'ZTG',
 	KPGT: 'KPGT',
 	CGT: 'CGT',
-	SIGMA: 'SIGMA'
+	SIGMA: 'SIGMA',
+	MYTH: 'MYTH'
 };
 
 export const treasuryAssets = {
@@ -1984,6 +1987,28 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via Dwellir',
 				key: 'wss://rpc.laossigma.laosfoundation.io'
+			}
+		]
+	},
+	[network.MYTHOS]: {
+		blockTime: 13000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: mythicalLogo,
+		rpcEndpoint: 'wss://polkadot-mythos-rpc.polkadot.io',
+		ss58Format: 42,
+		subsquidUrl: '',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.MYTH,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://mythos.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Parity',
+				key: 'wss://polkadot-mythos-rpc.polkadot.io'
 			}
 		]
 	}

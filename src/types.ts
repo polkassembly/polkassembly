@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 
 declare global {
 	interface Window {
@@ -372,7 +373,6 @@ export enum EAllowedCommentor {
 	ONCHAIN_VERIFIED = 'onchain_verified',
 	NONE = 'none'
 }
-
 export interface Post {
 	user_id: number;
 	content: string;
@@ -607,6 +607,7 @@ export interface IProgressReport {
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	isFromOgtracker?: boolean;
 }
 
 export interface IVotesCount {
@@ -1095,6 +1096,25 @@ export enum EExpertReqStatus {
 	APPROVED = 'approved',
 	REJECTED = 'rejected',
 	PENDING = 'pending'
+}
+export interface IIdentityInfo {
+	display: string;
+	legal: string;
+	email: string;
+	twitter: string;
+	web: string;
+	github: string;
+	discord: string;
+	matrix: string;
+	displayParent: string;
+	nickname: string;
+	isIdentitySet: boolean;
+	isVerified: boolean;
+	isGood: boolean;
+	judgements: RegistrationJudgement[];
+	verifiedByPolkassembly: boolean;
+	parentProxyTitle: string | null;
+	parentProxyAddress: string;
 }
 
 export interface IMessage {

@@ -102,9 +102,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	const data = [
 		{
-			component: <ProposalActionButtons isUsedInFAB={true} />
-		},
-		{
 			component: (
 				<div
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
@@ -144,13 +141,19 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		}
 	];
 
+	if (![AllNetworks.MYTHOS].includes(network)) {
+		data.splice(0, 0, {
+			component: <ProposalActionButtons isUsedInFAB={true} />
+		});
+	}
+
 	if (treasuryProposalCreationAllowedNetwork.includes(network)) {
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal theme={theme} />
 		});
 	}
 
-	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.MYTHOS].includes(network)) {
 		data.splice(0, 0, {
 			component: <Gov1TreasuryProposal />
 		});

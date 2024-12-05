@@ -1012,7 +1012,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						)}
 
 						{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) &&
-							!postData?.progress_report?.[0]?.progress_file &&
+							Object.keys(postData?.progress_report || {}).length === 0 &&
 							id !== postData?.userId && (
 								<Alert
 									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
@@ -1177,7 +1177,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									<>
 										{canVote && (
 											<>
-												{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) ? (
+												{['moonbase', 'moonbeam', 'moonriver', 'laossigma', 'mythos'].includes(network) ? (
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 

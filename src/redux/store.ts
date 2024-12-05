@@ -33,6 +33,7 @@ import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
+import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
 import { chatsStore } from './chats';
 
@@ -113,6 +114,7 @@ export const makeStore = () => {
 
 	const rootReducer = combineReducers({
 		[globalStore.name]: globalStore.reducer,
+		[activityFeedSlice.name]: activityFeedSlice.reducer,
 		[networkStore.name]: networkStore.reducer,
 		[userDetailsStore.name]: userDetailsStore.reducer,
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
@@ -166,7 +168,8 @@ export const makeStore = () => {
 				'ambassadorRemoval',
 				'ambassadorReplacement',
 				'claimPayout',
-				'childBountyCreation'
+				'childBountyCreation',
+				'activityFeed'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

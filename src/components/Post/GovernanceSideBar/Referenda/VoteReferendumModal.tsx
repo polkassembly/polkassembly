@@ -275,12 +275,12 @@ const VoteReferendumModal = ({
 			return;
 		}
 		//deposit balance
-		const depositBase = api.consts.multisig.depositBase.toString();
-		const depositFactor = api.consts.multisig.depositFactor.toString();
+		const depositBase = api?.consts?.multisig?.depositBase.toString();
+		const depositFactor = api?.consts?.multisig?.depositFactor.toString();
 		setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 		//initiator balance
-		const initiatorBalance = await api.query.system.account(address);
-		setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		const initiatorBalance = await api?.query?.system?.account(address);
+		setInitiatorBalance(new BN(initiatorBalance?.data?.free.toString()));
 	}, [address, api, apiReady]);
 
 	const handleBalanceErr = useCallback(() => {

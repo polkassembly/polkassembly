@@ -58,6 +58,14 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	const relayChainValue = formatUSDWithUnits(String(availableValue * Number(tokenPrice)));
 	const assetHubValue = formatUSDWithUnits(String(assetValueNum * Number(tokenPrice) + assetValueUSDCNum * 1000000 + assetValueUSDTNum * 1000000));
 	const hydrationValueTotal = formatUSDWithUnits(String(hydrationValueNum * Number(tokenPrice) + hydrationValueUSDCNum + hydrationValueUSDTNum));
+
+	const bifrostValue = 500_000 * tokenPrice;
+	const pendulumValue = 50_000 * tokenPrice;
+	const hydrationValueloan = 1_000_000 * tokenPrice;
+	const centrifugeValue = 3_000_000;
+
+	const loansValue = formatUSDWithUnits(String(bifrostValue + pendulumValue + hydrationValueloan + centrifugeValue));
+
 	return (
 		<Modal
 			title={
@@ -209,17 +217,17 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{hydrationValueUSDT} </span>
 										USDt
 									</div>
-									<div className='flex gap-1 text-xs font-medium text-pink_primary'>
+									<div className='flex gap-1 text-xs text-pink_primary'>
 										<Link
 											href={'https://hydration.subscan.io/account/7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY'}
-											className='flex items-center gap-1'
+											className='flex items-center gap-1 font-medium'
 											target='_blank'
 										>
 											Address #1 <RedirectingIcon />
 										</Link>
 										<Link
 											href={'https://hydration.subscan.io/account/7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV'}
-											className='flex items-center gap-1'
+											className='flex items-center gap-1 font-medium'
 											target='_blank'
 										>
 											Address #2 <RedirectingIcon />
@@ -284,20 +292,93 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							<span className='text-sm font-medium '>Loans</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
-							<div className='ml-1 flex items-center gap-[6px] text-sm'>
-								<Image
-									alt='relay icon'
-									width={16}
-									height={16}
-									src={'/assets/treasury/dot-icon.svg'}
-									className='-mt-[2px]'
+							<span className='ml-1 text-base font-semibold'>~ {loansValue}</span>
+							<div className='flex gap-1'>
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://polkadot.polkassembly.io/referenda/432'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Bifrost <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/dot-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>500.0K</span>
+									{unit}
+								</div>
+								<Divider
+									type='vertical'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 								/>
-								<span className='font-medium'>~ $103.3M </span>
-								{unit}
-								<span className='-mb-[2px]'>
-									<RedirectingIcon />
-								</span>
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://polkadot.polkassembly.io/referenda/748'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Pendulum <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/dot-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>50.0K</span>
+									{unit}
+								</div>
+								<Divider
+									type='vertical'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+								/>
+
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://polkadot.polkassembly.io/referenda/560'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Hydration <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/dot-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>1M </span>
+									{unit}
+								</div>
+								<Divider
+									type='vertical'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+								/>
+
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Link
+										href={'https://polkadot.polkassembly.io/referenda/1122'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										Centrifuge <RedirectingIcon />
+									</Link>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/usdc-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>3M USDC</span>
+								</div>
 							</div>
 						</div>
 					</div>

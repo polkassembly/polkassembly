@@ -107,7 +107,6 @@ const useHydrationApi = (network: string) => {
 					}
 				}
 
-				console.log('Combined values:', combinedValues);
 				setHydrationValues(combinedValues);
 			} catch (e) {
 				console.error('Error fetching hydration asset balance:', e);

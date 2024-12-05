@@ -21,6 +21,7 @@ import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
 import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
+
 interface IUserProfileProps {
 	activitiesCounts: {
 		data: IActivitiesCounts | null;
@@ -162,7 +163,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			</EmptyState>
 		);
 	}
-	if (userPosts.error || userProfile.error) {
+	if ((userPosts.error || userProfile.error) && ![AllNetworks.MYTHOS, AllNetworks.POLYMESH].includes(network)) {
 		return <ErrorAlert errorMsg={userPosts.error || userProfile.error || ''} />;
 	}
 

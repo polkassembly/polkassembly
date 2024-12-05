@@ -14,6 +14,7 @@ import EditProfileModal from './EditProfile';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import { EditIcon } from '~src/ui-components/CustomIcons';
+import { chainProperties } from '~src/global/networkConstants';
 
 const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
 	ssr: false
@@ -211,7 +212,7 @@ const ProfileOverview = ({
 								)}
 							</div>
 						)}
-						{delegationSupportedNetworks.includes(network) && (
+						{delegationSupportedNetworks.includes(network) && !chainProperties[network]?.subsquidUrl?.length && (
 							<ProfileDelegationsCard
 								userProfile={userProfile}
 								addressWithIdentity={addressWithIdentity}
@@ -244,7 +245,7 @@ const ProfileOverview = ({
 								addressWithIdentity={addressWithIdentity}
 								theme={theme}
 							/>
-							{profileDetails?.user_id && (
+							{profileDetails?.user_id && !chainProperties[network]?.subsquidUrl?.length && (
 								<ProfileBadges
 									badges={achievement_badges}
 									theme={theme}

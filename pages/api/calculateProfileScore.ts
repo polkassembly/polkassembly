@@ -8,7 +8,8 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 import REPUTATION_SCORES from '~src/util/reputationScores';
-import { ProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 function chunkObject<T extends Record<string, any>>(obj: T, chunkSize: number): Array<{ [K in keyof T]?: T[K] }> {
 	const keys = Object.keys(obj);
@@ -94,8 +95,196 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		//2. loop through posts
+
+		const spamPostByUserId: any = {};
+		const spamCommentByUserId: any = {};
+		const recievedLikeOnDiscussionByUserId: any = {};
+		const recievedLikeOnCommentByUserId: any = {};
+		const recievedLikeOnReplyByUserId: any = {};
+
+		for (const network of Object.keys(AllNetworks)) {
+			const postsTypesSnapshot = firestore_db.collection('networks').doc(network).collection('post_types');
+			const postsTypesDocs = await postsTypesSnapshot.get();
+			for (const postsTypeDoc of postsTypesDocs.docs) {
+				const postSnapshot = postsTypesSnapshot.doc(postsTypeDoc.id).collection('posts');
+				const postsDocs = await postSnapshot.get();
+				if (!postsDocs.empty) {
+					for (const post of postsDocs.docs) {
+						const postData = post.data();
+
+						//create discussion score
+						if (postsTypeDoc?.id == getFirestoreProposalType(ProposalType.DISCUSSIONS)) {
+							userScores[Number(postData.user_id || postData.author_id)] =
+								(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.create_discussion.value;
+
+							//linked discussion
+							if (postData?.post_link?.id) {
+								userScores[Number(postData.user_id || postData.author_id)] =
+									(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.linked_discussion.value;
+							}
+
+							//spam discussion marked
+							if (postData?.isSpam) {
+								spamPostByUserId[Number(postData.user_id || postData.author_id)] = spamPostByUserId[Number(postData.user_id || postData.author_id)] || 0 + 1;
+
+								switch (spamPostByUserId[Number(postData.user_id || postData.author_id)]) {
+									case spamPostByUserId[Number(postData.user_id || postData.author_id)] == 1:
+										userScores[Number(postData.user_id || postData.author_id)] =
+											(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.post_taken_down_or_marked_as_spam.first;
+										break;
+									case spamPostByUserId[Number(postData.user_id || postData.author_id)] == 2:
+										userScores[Number(postData.user_id || postData.author_id)] =
+											(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.post_taken_down_or_marked_as_spam.second;
+										break;
+									case spamPostByUserId[Number(postData.user_id || postData.author_id)] > 2:
+										userScores[Number(postData.user_id || postData.author_id)] =
+											(userScores[Number(postData.user_id || postData.author_id)] || 0) + REPUTATION_SCORES.post_taken_down_or_marked_as_spam.third_or_more;
+										break;
+								}
+							}
+							const reactionsSnapshot = await postSnapshot.doc(String(postData.id)).collection('post_reactions').get();
+
+							//discussion post like score
+							if (!reactionsSnapshot.empty) {
+								const reactionsDocs = reactionsSnapshot.docs;
+								for (const doc of reactionsDocs) {
+									const reactionsData = doc.data();
+
+									userScores[Number(reactionsData.user_id || reactionsData.author_id)] = userScores[Number(reactionsData.user_id || reactionsData.author_id)]
+										? userScores[Number(reactionsData.user_id || reactionsData.author_id)] + REPUTATION_SCORES.reaction.value
+										: REPUTATION_SCORES.reaction.value;
+
+									if (reactionsData?.reaction == '👍') {
+										switch (recievedLikeOnDiscussionByUserId[Number(reactionsData.user_id || reactionsData.author_id)]) {
+											case recievedLikeOnDiscussionByUserId[Number(reactionsData.user_id || reactionsData.author_id)] <= 5:
+												userScores[Number(reactionsData.user_id || reactionsData.author_id)] =
+													(userScores[Number(reactionsData.user_id || reactionsData.author_id)] || 0) + REPUTATION_SCORES.recieved_like_on_discussion.first_five;
+												break;
+											case recievedLikeOnDiscussionByUserId[Number(reactionsData.user_id || reactionsData.author_id)] <= 10:
+												userScores[Number(reactionsData.user_id || reactionsData.author_id)] =
+													(userScores[Number(reactionsData.user_id || reactionsData.author_id)] || 0) + REPUTATION_SCORES.recieved_like_on_discussion.sixth_to_tenth;
+												break;
+											case recievedLikeOnDiscussionByUserId[Number(reactionsData.user_id || reactionsData.author_id)] > 10:
+												userScores[Number(reactionsData.user_id || reactionsData.author_id)] =
+													(userScores[Number(reactionsData.user_id || reactionsData.author_id)] || 0) + REPUTATION_SCORES.recieved_like_on_discussion.more_than_ten;
+												break;
+										}
+									}
+								}
+							}
+						}
+
+						//comments mapping
+						const commentsSnapshot = postSnapshot.doc(String(postData.id)).collection('comments');
+						const commentsDocs = await commentsSnapshot.get();
+						if (!commentsDocs.empty) {
+							for (const doc of commentsDocs.docs) {
+								const commentData = doc.data();
+
+								//comment score
+								if (!commentData?.isDeleted) {
+									userScores[Number(commentData.user_id)] = (userScores[Number(commentData.user_id)] || 0) + REPUTATION_SCORES.comment.value;
+									const repliesSnapshot = commentsSnapshot.doc(String(commentData.id)).collection('replies');
+									const repliesDocs = await repliesSnapshot.get();
+
+									//replies score on comment
+									if (!repliesDocs.empty) {
+										userScores[Number(commentData.user_id || commentData.author_id)] =
+											(userScores[Number(commentData.user_id || commentData.author_id)] || 0) + REPUTATION_SCORES.reply.value * (repliesDocs?.docs?.length || 0);
+									}
+
+									for (const replyDoc of repliesDocs.docs) {
+										// loop through reply reactions
+
+										const replyReactions = await replyDoc.ref.collection('reply_reactions').get();
+
+										console.log('Total reply reactions: ', replyReactions.docs.length);
+
+										for (const replyReactionDoc of replyReactions.docs) {
+											console.log('Processing reply reaction: ', replyReactionDoc.id, ' by user_id: ', replyReactionDoc.data().user_id || replyReactionDoc.data().author_id);
+
+											const replyReactionData = replyReactionDoc.data();
+											if (replyReactionData?.reaction == '👍') {
+												switch (recievedLikeOnReplyByUserId[Number(replyReactionData.user_id || replyReactionData.author_id)]) {
+													case recievedLikeOnReplyByUserId[Number(replyReactionData.user_id || replyReactionData.author_id)] <= 5:
+														userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] =
+															(userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] || 0) + REPUTATION_SCORES.recieved_like_on_comment_or_reply.first_five;
+														break;
+													case recievedLikeOnReplyByUserId[Number(replyReactionData.user_id || replyReactionData.author_id)] <= 10:
+														userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] =
+															(userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] || 0) +
+															REPUTATION_SCORES.recieved_like_on_comment_or_reply.sixth_to_tenth;
+														break;
+													case recievedLikeOnReplyByUserId[Number(replyReactionData.user_id || replyReactionData.author_id)] > 10:
+														userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] =
+															(userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] || 0) +
+															REPUTATION_SCORES.recieved_like_on_comment_or_reply.more_than_ten;
+														break;
+												}
+											}
+
+											userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] = userScores[Number(replyReactionData.user_id || replyReactionData.author_id)]
+												? userScores[Number(replyReactionData.user_id || replyReactionData.author_id)] + REPUTATION_SCORES.reaction.value
+												: REPUTATION_SCORES.reaction.value;
+										}
+									}
+								}
+								// comment spam added score
+								if (commentData?.isSpam) {
+									switch (spamCommentByUserId[Number(commentData.user_id || commentData.author_id)]) {
+										case spamCommentByUserId[Number(commentData.user_id || commentData.author_id)] == 1:
+											userScores[Number(commentData.user_id || commentData.author_id)] =
+												(userScores[Number(commentData.user_id || commentData.author_id)] || 0) + REPUTATION_SCORES.comment_taken_down.first;
+											break;
+										case spamCommentByUserId[Number(commentData.user_id || commentData.author_id)] == 2:
+											userScores[Number(commentData.user_id || commentData.author_id)] =
+												(userScores[Number(commentData.user_id || commentData.author_id)] || 0) + REPUTATION_SCORES.comment_taken_down.second;
+											break;
+										case spamCommentByUserId[Number(commentData.user_id || commentData.author_id)] > 2:
+											userScores[Number(commentData.user_id || commentData.author_id)] =
+												(userScores[Number(commentData.user_id || commentData.author_id)] || 0) + REPUTATION_SCORES.comment_taken_down.third_or_more;
+											break;
+									}
+								}
+
+								const commentReactionsSnapshot = await commentsSnapshot.doc(String(commentData.id)).collection('comment_reactions').get();
+								for (const commentReactionDoc of commentReactionsSnapshot.docs) {
+									const commentReactionsData = commentReactionDoc.data();
+
+									userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] = userScores[
+										Number(commentReactionsData.user_id || commentReactionsData.author_id)
+									]
+										? userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] + REPUTATION_SCORES.reaction.value
+										: REPUTATION_SCORES.reaction.value;
+									if (commentReactionsData?.reaction == '👍') {
+										switch (recievedLikeOnCommentByUserId[Number(commentReactionsData.user_id || commentReactionsData.author_id)]) {
+											case recievedLikeOnCommentByUserId[Number(commentReactionsData.user_id || commentReactionsData.author_id)] <= 5:
+												userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] =
+													(userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] || 0) +
+													REPUTATION_SCORES.recieved_like_on_comment_or_reply.first_five;
+												break;
+											case recievedLikeOnCommentByUserId[Number(commentReactionsData.user_id || commentReactionsData.author_id)] <= 10:
+												userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] =
+													(userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] || 0) +
+													REPUTATION_SCORES.recieved_like_on_comment_or_reply.sixth_to_tenth;
+												break;
+											case recievedLikeOnCommentByUserId[Number(commentReactionsData.user_id || commentReactionsData.author_id)] > 10:
+												userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] =
+													(userScores[Number(commentReactionsData.user_id || commentReactionsData.author_id)] || 0) +
+													REPUTATION_SCORES.recieved_like_on_comment_or_reply.more_than_ten;
+												break;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		// if post is a discussion, add score to user
 		// check if post has been linked, if yes, add score to user
+		// check if post is Spam, add score to user
 		// loop through post reactions, add score to users per reaction
 		// loop through comments, add score to users per comment (one comment per user per post)
 		// loop through comment reactions, add score to users per reaction

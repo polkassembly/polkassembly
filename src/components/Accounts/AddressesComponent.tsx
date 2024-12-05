@@ -82,9 +82,10 @@ const AddressesComponent = () => {
 				address: loginAddress
 			});
 
-			if (error || !data) {
+			if (error || !data?.data) {
 				console.error('Error while fetching accounts', error);
 				setIsError(true);
+				setIsLoading(false);
 				return;
 			}
 
@@ -101,7 +102,6 @@ const AddressesComponent = () => {
 			setIsError(true);
 		} finally {
 			setIsLoading(false);
-			setIsError(false);
 		}
 	};
 
@@ -140,7 +140,7 @@ const AddressesComponent = () => {
 					type='info'
 					showIcon
 					className={'my-5 dark:text-white'}
-					message='Something wrong , while fetching data '
+					message='Something wrong , while fetching data. Please try again after sometime '
 				/>
 				<div className='flex items-center justify-center'>
 					<Image

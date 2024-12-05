@@ -1,15 +1,17 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Divider, Modal } from 'antd';
-import { ChainPropType } from '~src/types';
+import { ChainPropType, IBountyStats } from '~src/types';
 import { dmSans } from 'pages/_app';
 import RedirectingIcon from '~assets/treasury/redirecting-icon.svg';
 import { styled } from 'styled-components';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Link from 'next/link';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface TreasuryDetailsModalProps {
 	visible: boolean;
@@ -71,6 +73,37 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	const loansValue = formatUSDWithUnits(String(bifrostValue + pendulumValue + hydrationValueloan + centrifugeValue));
 	const fellowshipValues = formatUSDWithUnits(String(parseFloat(assetValueFellowship) * tokenPrice + parseFloat(assetValueUSDTFellowship)));
 
+	const [statsData, setStatsData] = useState<IBountyStats>({
+		activeBounties: '',
+		availableBountyPool: '',
+		peopleEarned: '',
+		totalBountyPool: '',
+		totalRewarded: ''
+	});
+	const bountyValues = formatUSDWithUnits(String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * tokenPrice));
+	const [loading, setLoading] = useState(false);
+
+	const fetchStats = async () => {
+		setLoading(true);
+		try {
+			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
+			if (error || !data) {
+				console.error(error);
+			}
+			if (data) {
+				setStatsData(data);
+			}
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchStats();
+	}, [network]);
+
 	return (
 		<Modal
 			title={
@@ -85,7 +118,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 			footer={null}
 		>
 			<div className=''>
-				<div className={` ${dmSans.className} ${dmSans.variable} mb-[6px] mt-3 text-sm font-medium text-[#485F7DB2] dark:text-blue-dark-medium`}>Across Networks:</div>
+				<div className={` ${dmSans.className} ${dmSans.variable} mb-[10px] mt-4 text-sm font-medium text-[#485F7DB2] dark:text-blue-dark-medium`}>Across Networks:</div>
 				<div className='flex flex-col font-medium'>
 					<div className={`${dmSans.className} ${dmSans.variable} mb-[6px] flex items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
 						<div className='flex w-[106px] gap-[6px]'>
@@ -259,34 +292,42 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							</div>
 						</div>
 					)}
-					<Divider className='my-[10px] bg-section-light-container p-0 dark:bg-separatorDark' />
 				</div>
+				<Divider className='my-3 bg-section-light-container p-0 dark:bg-separatorDark' />
 
 				<div>
-					<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
-						<div className='flex w-[80px] gap-[6px]'>
-							<span className='text-sm font-medium '>Bounties</span>
-						</div>
-						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ $103.3M</span>
-							<div className='ml-1 flex items-center gap-[6px] text-sm'>
-								<Image
-									alt='relay icon'
-									width={16}
-									height={16}
-									src={'/assets/treasury/dot-icon.svg'}
-									className='-mt-[2px]'
-								/>
-								<span className='font-medium'>~ $103.3M </span>
-								{unit}
-								<span className='-mb-[2px]'>
-									<RedirectingIcon />
-								</span>
+					{!loading && (
+						<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+							<div className='flex w-[80px] gap-[6px]'>
+								<span className='text-sm font-medium '>Bounties</span>
+							</div>
+							<div className='flex flex-col'>
+								<span className='ml-1 text-base font-semibold'>~ ${bountyValues}</span>
+								<div className='ml-1 flex items-center gap-[6px] text-sm'>
+									<Image
+										alt='relay icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/dot-icon.svg'}
+										className='-mt-[2px]'
+									/>
+									<span className='font-medium'>
+										~ {formatUSDWithUnits(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}
+									</span>
+									{unit}
+									<Link
+										href={'https://polkadot.polkassembly.io/bounty-dashboard'}
+										className='flex cursor-pointer items-center gap-1 text-xs font-medium text-pink_primary'
+										target='_blank'
+									>
+										<RedirectingIcon />
+									</Link>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 
-					<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
 						<div className='flex w-[80px] gap-[6px]'>
 							<span className='text-sm font-medium '>Fellowships</span>
 						</div>
@@ -336,7 +377,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 					</div>
 
-					<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
 						<div className='flex w-[80px] gap-[6px]'>
 							<span className='text-sm font-medium '>Loans</span>
 						</div>

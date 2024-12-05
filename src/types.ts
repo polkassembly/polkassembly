@@ -145,6 +145,7 @@ export interface ChainProps {
 	assetHubTreasuryAddress?: string;
 	assetHubTreasuryAddress2?: string;
 	assetHubTreasuryAddress3?: string;
+	assetHubTreasuryAddress4?: string;
 	supportedAssets?: IAssets[];
 	hydrationTreasuryAddress?: string;
 	hydrationTreasuryAddress2?: string;

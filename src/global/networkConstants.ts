@@ -212,6 +212,7 @@ export const chainProperties: types.ChainPropType = {
 		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
 		assetHubTreasuryAddress2: '16VcQSRcMFy6ZHVjBvosKmo7FKqTb8ZATChDYo8ibutzLnos',
 		assetHubTreasuryAddress3: '13w7NdvSR1Af8xsQTArDtZmVvjE8XhWNdL4yed3iFHrUNCnS',
+		assetHubTreasuryAddress4: '13gYFscwJFJFqFMNnttzuTtMrApUEmcUARtgFubbChU9g6mh',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,

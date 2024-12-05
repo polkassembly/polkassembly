@@ -26,6 +26,8 @@ import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 
+const ZERO_BN = new BN(0);
+
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
@@ -59,6 +61,13 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				Number(hydrationValues.usdtValue) / 1000000
 		)
 	);
+
+	const totalInUSD =
+		Number(available.value) * Number(currentTokenPrice.value) +
+		(Number(assetValue) * Number(currentTokenPrice.value) + Number(assetValueUSDC) * 1000000 + Number(assetValueUSDT) * 1000000) +
+		Number(hydrationValue) * Number(currentTokenPrice.value) +
+		Number(hydrationValueUSDC) +
+		Number(hydrationValueUSDT);
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -113,6 +122,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, [assethubApiReady, hydrationApiReady, fetchAssetsAmount, fetchHydrationAssetsAmount]);
 
 	const closeModal = () => setIsModalVisible(false);
+
+	console.log('totalInUSD', totalInUSD);
 
 	return (
 		<div
@@ -216,55 +227,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								/>
 							</div>
 							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '>
-									<div className='flex items-baseline justify-start font-medium xl:justify-between'>
-										{available.value ? (
-											<div className='flex items-center'>
-												<PolkadotIcon />
-												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
-													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
-													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
-													<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-												</div>
-											</div>
-										) : (
-											<span>N/A</span>
-										)}
-									</div>
-
-									{chainProperties[network]?.assetHubTreasuryAddress && (
-										<TreasuryAssetDisplay
-											title='Asset Hub'
-											icon={<AssethubIcon />}
-											value={assetValue}
-											unit={unit}
-											valueUSDT={assetValueUSDT}
-											valueUSDC={assetValueUSDC}
-											isLoading={!assethubApiReady}
-											supportedAssets={chainProperties[network]?.supportedAssets}
-										/>
-									)}
-								</div>
-							) : (
-								<div className='flex min-h-[50px] w-full items-center justify-center'>
-									<LoadingOutlined />
-								</div>
-							)}
-							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='mt-2 flex flex-col xl:items-end'>
-									{chainProperties[network]?.hydrationTreasuryAddress && (
-										<TreasuryAssetDisplay
-											title='Hydration'
-											icon={<HydrationIcon />}
-											value={hydrationValue}
-											unit={unit}
-											valueUSDT={hydrationValueUSDT}
-											valueUSDC={hydrationValueUSDC}
-											isLoading={!hydrationApiReady}
-											supportedAssets={chainProperties[network]?.supportedAssets}
-										/>
-									)}
-								</div>
+								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '></div>
 							) : (
 								<div className='flex min-h-[50px] w-full items-center justify-center'>
 									<LoadingOutlined />

@@ -63,7 +63,6 @@ const ProfileTabs = ({
 	useEffect(() => {
 		let totalPosts = 0;
 		let totalVotes = 0;
-		console.log('statsArr: ', statsArr);
 
 		statsArr.map((item) => {
 			if (item?.label === 'Proposals Voted') {

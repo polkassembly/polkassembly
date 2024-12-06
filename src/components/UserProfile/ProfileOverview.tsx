@@ -212,7 +212,7 @@ const ProfileOverview = ({
 								)}
 							</div>
 						)}
-						{delegationSupportedNetworks.includes(network) && !chainProperties[network]?.subsquidUrl?.length && (
+						{delegationSupportedNetworks.includes(network) && chainProperties[network]?.subsquidUrl?.length > 1 && (
 							<ProfileDelegationsCard
 								userProfile={userProfile}
 								addressWithIdentity={addressWithIdentity}
@@ -245,7 +245,7 @@ const ProfileOverview = ({
 								addressWithIdentity={addressWithIdentity}
 								theme={theme}
 							/>
-							{profileDetails?.user_id && !chainProperties[network]?.subsquidUrl?.length && (
+							{profileDetails?.user_id && chainProperties[network]?.subsquidUrl?.length > 1 && (
 								<ProfileBadges
 									badges={achievement_badges}
 									theme={theme}

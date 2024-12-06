@@ -53,6 +53,8 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 		});
 	};
 
+	console.log('delegation bio: ', delegate?.bio);
+
 	console.log('delegates data: ', delegate);
 	const getCurrentuserData = async () => {
 		const username = delegate?.username;
@@ -98,8 +100,14 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 		setAddress(address);
 	};
 
-	const handleDelegationContent = (content: string) => {
-		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
+	const handleDelegationContent = (content: string): string => {
+		if (!content) return 'No Bio';
+		let sanitizedContent = content.replace(/#+\s+/g, '');
+		sanitizedContent = sanitizedContent.replace(/!\[.*?\]\(.*?\)/g, '');
+		sanitizedContent = sanitizedContent.replace(/\[([^\]]+)\]\((.*?)\)/g, '$1');
+		sanitizedContent = sanitizedContent.trim();
+		sanitizedContent = removeSymbols(sanitizedContent);
+		return sanitizedContent.split('\n').find((item: string) => item.trim().length > 0) || 'No Bio';
 	};
 
 	const getTrimmedBio = (bio: string) => {

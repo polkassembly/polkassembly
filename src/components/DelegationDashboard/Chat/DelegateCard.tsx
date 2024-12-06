@@ -63,7 +63,7 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 					theme={'polkadot'}
 				/>
 			)}
-			<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.username ? delegate?.username : shortenAddress(delegate?.address, 5)}</span>
+			<span className='mr-4 text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.username ? delegate?.username : shortenAddress(delegate?.address, 5)}</span>
 
 			{delegate?.dataSource?.map((source) => {
 				const sourceIcon = getSourceIcon(source);
@@ -73,7 +73,7 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 				return (
 					<div
 						key={source}
-						className='ml-5 flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'
+						className='ml-1 flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'
 					>
 						<Image
 							src={iconSrc}

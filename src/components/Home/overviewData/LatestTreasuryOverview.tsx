@@ -47,24 +47,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
 	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
 
-	const totalTreasuryValueUSD = formatUSDWithUnits(
-		String(
-			(tokenValue + parseFloat(assethubValues.dotValue.toString()) / 10000000000 + parseFloat(hydrationValues.dotValue.toString()) / 10000000000) *
-				parseFloat(currentTokenPrice.value) +
-				Number(assethubValues.usdcValue) / 1000000 +
-				Number(assethubValues.usdtValue) / 1000000 +
-				Number(hydrationValues.usdcValue) / 1000000 +
-				Number(hydrationValues.usdtValue) / 1000000
-		)
-	);
-
-	const totalInUSD =
-		Number(available.value) * Number(currentTokenPrice.value) +
-		(Number(assetValue) * Number(currentTokenPrice.value) + Number(assetValueUSDC) * 1000000 + Number(assetValueUSDT) * 1000000) +
-		Number(hydrationValue) * Number(currentTokenPrice.value) +
-		Number(hydrationValueUSDC) +
-		Number(hydrationValueUSDT);
-
 	const fetchDataFromApi = async () => {
 		try {
 			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
@@ -119,7 +101,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const closeModal = () => setIsModalVisible(false);
 
-	console.log('totalInUSD', totalInUSD);
+	const dotPrice = 29_600_000 * Number(currentTokenPrice.value);
+	const usdcPrice = 7_100_000;
+	const usdtPrice = 8_900_000;
+	const mythPRice = 4_800_000 * 0.37;
+
+	const totalValue = formatUSDWithUnits(String(dotPrice + usdcPrice + usdtPrice + mythPRice));
 
 	return (
 		<div
@@ -134,8 +121,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					<div>
 						{!available.isLoading ? (
 							<>
-								<div className='mb-2 justify-between sm:flex'>
-									<div>
+								<div className='mb-2 '>
+									<div className='flex items-center justify-between'>
 										{!isUsedInGovAnalytics && (
 											<div className='my-1 flex items-center gap-x-[6px]'>
 												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
@@ -145,38 +132,88 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												/>
 											</div>
 										)}
-										{totalTreasuryValueUSD && (
+										<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
+											<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
+											<div className='flex items-center gap-x-1 text-lg font-semibold'>
+												<div>
+													{currentTokenPrice.value === 'N/A' ? (
+														<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
+													) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+														<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
+													) : null}
+												</div>
+												{priceWeeklyChange.value !== 'N/A' && (
+													<div className='-mb-[2px] ml-2 flex items-center'>
+														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+															{Math.abs(Number(priceWeeklyChange.value))}%
+														</span>
+														<span>
+															{Number(priceWeeklyChange.value) < 0 ? (
+																<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
+															) : (
+																<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
+															)}
+														</span>
+													</div>
+												)}
+											</div>
+										</div>
+									</div>
+									<div className='flex items-center gap-1'>
+										{totalValue && (
 											<div className='flex items-baseline'>
-												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
-													~${totalTreasuryValueUSD}
-												</span>
+												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalValue}</span>
 											</div>
 										)}
-									</div>
-									<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
-										<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
-										<div className='flex items-center gap-x-1 text-lg font-semibold'>
-											<div>
-												{currentTokenPrice.value === 'N/A' ? (
-													<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-												) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-													<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-												) : null}
-											</div>
-											{priceWeeklyChange.value !== 'N/A' && (
-												<div className='-mb-[2px] ml-2 flex items-center'>
-													<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
-														{Math.abs(Number(priceWeeklyChange.value))}%
-													</span>
-													<span>
-														{Number(priceWeeklyChange.value) < 0 ? (
-															<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
-														) : (
-															<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
-														)}
-													</span>
-												</div>
-											)}
+										<div className='ml-1 flex items-center gap-1 text-xs'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/dot-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ 29.6M</span>
+											{unit}
+										</div>
+										<div className='ml-1 flex items-center gap-[6px] text-xs'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdc-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>7.1M</span>
+											USDC
+										</div>
+										<Divider
+											type='vertical'
+											className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+										/>
+										<div className='ml-1 flex items-center gap-[6px] text-xs'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdt-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>8.9M</span>
+											USDt
+										</div>
+										<Divider
+											type='vertical'
+											className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+										/>
+										<div className='flex items-center gap-1'>
+											<Image
+												src={'/assets/treasury/myth-icon.svg'}
+												width={16}
+												height={16}
+												alt='icon'
+											/>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>4.8M MYTH</span>
 										</div>
 									</div>
 								</div>

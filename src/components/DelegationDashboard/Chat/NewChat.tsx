@@ -116,7 +116,7 @@ const NewChat = ({ setIsNewChat }: Props) => {
 					className='h-9 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent [&_.ant-select-selection-search-input]:placeholder:text-[#485F7D] [&_.ant-select-selection-search-input]:focus:border-pink_primary [&_.ant-select-selection-search-input]:dark:text-blue-dark-high [&_.ant-select-selection-search-input]:dark:focus:border-[#91054F]'
 					autoFocus={true}
 					dropdownAlign={{ points: ['tl', 'bl'] }}
-					popupClassName='dark:bg-section-dark-overlay shadow-lg border dark:shadow-white/10'
+					popupClassName='dark:bg-section-dark-overlay shadow-lg border dark:shadow-white/10 [&_.rc-virtual-list-scrollbar]:dark:bg-white/20 [&_.rc-virtual-list-scrollbar-thumb]:dark:bg-white/50'
 				>
 					{searchedDelegates.map((delegate) => (
 						<Select.Option

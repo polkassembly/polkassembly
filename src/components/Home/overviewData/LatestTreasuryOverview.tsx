@@ -227,62 +227,92 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 									</div>
-									<div className='flex flex-wrap items-center justify-between gap-1'>
-										<div>
+									<div className='flex-wrap items-center justify-between gap-1 md:flex'>
+										<div className='flex items-baseline gap-[6px]'>
 											{totalUsd && (
 												<div className='flex items-baseline'>
 													<span className={`${dmSans.className} ${dmSans.variable} no-wrap text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
 												</div>
 											)}
-										</div>
-										<div className='flex items-center gap-1'>
-											<div className='no-wrap ml-1 flex items-center gap-1 text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/dot-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ ${totalDots}</span>
-												{unit}
-											</div>
-											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/usdc-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
-												USDC
-											</div>
-
-											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/usdt-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
-												USDt
-											</div>
-											{!mythLoading && (
-												<>
-													<div className='no-wrap ml-1 flex items-center gap-1'>
+											<div className='-mt-1 sm:hidden'>
+												{!available.isLoading && (
+													<div
+														className='cursor-pointer text-xs font-medium text-pink_primary'
+														onClick={() => setIsModalVisible(true)}
+													>
+														Details
 														<Image
-															src={'/assets/treasury/myth-icon.svg'}
+															alt='arrow icon'
 															width={16}
 															height={16}
-															alt='icon'
+															src={'/assets/treasury/arrow-icon.svg'}
+															className='-mt-[2px]'
 														/>
-														<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{MythBalance} MYTH</span>
 													</div>
-												</>
-											)}
+												)}
+											</div>
+										</div>
+										<div className='mt-1 flex items-center gap-2 sm:mt-0'>
+											<div className='items-center gap-2 sm:flex '>
+												<div className='no-wrap ml-1 flex items-center gap-1 text-xs'>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/dot-icon.svg'}
+														className='-mt-[2px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ ${totalDots}</span>
+													{unit}
+													<Divider
+														type='vertical'
+														className='border-l-1 mx-0 ml-1 mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive sm:hidden'
+													/>
+												</div>
+												<div className='no-wrap ml-1 mt-1 flex items-center gap-[6px] text-xs sm:mt-0'>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/usdc-icon.svg'}
+														className='-mt-[2px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
+													USDC
+													<Divider
+														type='vertical'
+														className='border-l-1 mx-0 ml-2 mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive  sm:hidden'
+													/>
+												</div>
+											</div>
+
+											<div className=' items-center gap-2 sm:flex '>
+												<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/usdt-icon.svg'}
+														className='-mt-[2px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
+													USDt
+												</div>
+
+												{!mythLoading && (
+													<>
+														<div className='no-wrap ml-1 mt-1 flex items-center gap-1 sm:mt-0'>
+															<Image
+																src={'/assets/treasury/myth-icon.svg'}
+																width={15}
+																height={15}
+																alt='icon'
+															/>
+															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{MythBalance} MYTH</span>
+														</div>
+													</>
+												)}
+											</div>
 										</div>
 									</div>
 								</div>
@@ -318,7 +348,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						bountyValues={bountyValues}
 					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
-						<div>
+						<div className='hidden sm:flex'>
 							{!available.isLoading && (
 								<div
 									className='cursor-pointer text-xs font-medium text-pink_primary'

@@ -228,12 +228,29 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 									</div>
 									<div className='flex-wrap items-center justify-between gap-1 md:flex'>
-										<div>
+										<div className='flex items-baseline gap-[6px]'>
 											{totalUsd && (
 												<div className='flex items-baseline'>
 													<span className={`${dmSans.className} ${dmSans.variable} no-wrap text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
 												</div>
 											)}
+											<div className='-mt-1 sm:hidden'>
+												{!available.isLoading && (
+													<div
+														className='cursor-pointer text-xs font-medium text-pink_primary'
+														onClick={() => setIsModalVisible(true)}
+													>
+														Details
+														<Image
+															alt='arrow icon'
+															width={16}
+															height={16}
+															src={'/assets/treasury/arrow-icon.svg'}
+															className='-mt-[2px]'
+														/>
+													</div>
+												)}
+											</div>
 										</div>
 										<div className='mt-1 flex items-center gap-2 sm:mt-0'>
 											<div className='items-center gap-2 sm:flex '>
@@ -331,7 +348,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						bountyValues={bountyValues}
 					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
-						<div>
+						<div className='hidden sm:flex'>
 							{!available.isLoading && (
 								<div
 									className='cursor-pointer text-xs font-medium text-pink_primary'

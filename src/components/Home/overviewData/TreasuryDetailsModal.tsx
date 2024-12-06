@@ -136,8 +136,17 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								<span className='text-sm font-medium '>Asset Hub</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='ml-1 text-base font-semibold'>~ ${assetHubValue}</span>
-								<div className='flex items-center gap-1'>
+								<span className='ml-1 text-base font-semibold'>
+									~ ${assetHubValue}{' '}
+									<Link
+										href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
+										className=' cursor-pointer sm:hidden'
+										target='_blank'
+									>
+										<RedirectingIcon />
+									</Link>
+								</span>
+								<div className='items-center gap-1 sm:flex'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -181,7 +190,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 									</div>
 									<Link
 										href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
-										className='-mb-1 cursor-pointer'
+										className='-mb-1 hidden cursor-pointer sm:flex'
 										target='_blank'
 									>
 										<RedirectingIcon />
@@ -205,7 +214,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							</div>
 							<div className='flex flex-col'>
 								<span className='ml-1 text-base font-semibold'>~ ${hydrationValueTotal}</span>
-								<div className='flex items-center gap-1'>
+								<div className='items-center gap-1 sm:flex'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
 											alt='relay icon'
@@ -307,7 +316,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 						<div className='flex flex-col'>
 							<span className='ml-1 text-base font-semibold'>~ ${fellowshipValues}</span>
-							<div className='flex items-center gap-1'>
+							<div className='items-center gap-1 sm:flex'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link
 										href={'https://assethub-polkadot.subscan.io/account/16VcQSRcMFy6ZHVjBvosKmo7FKqTb8ZATChDYo8ibutzLnos'}
@@ -357,7 +366,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 						<div className='flex flex-col'>
 							<span className='ml-1 text-base font-semibold'>~ ${loansValue}</span>
-							<div className='flex gap-1'>
+							<div className='gap-1 sm:flex'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link
 										href={'https://polkadot.polkassembly.io/referenda/432'}

@@ -1,16 +1,15 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { Divider, Modal } from 'antd';
-import { ChainPropType, IBountyStats } from '~src/types';
+import { ChainPropType } from '~src/types';
 import { dmSans } from 'pages/_app';
 import RedirectingIcon from '~assets/treasury/redirecting-icon.svg';
 import { styled } from 'styled-components';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Link from 'next/link';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import formatBnBalance from '~src/util/formatBnBalance';
 
 interface TreasuryDetailsModalProps {
@@ -31,6 +30,9 @@ interface TreasuryDetailsModalProps {
 	hydrationApiReady: boolean;
 	unit: string;
 	currentTokenPrice: string;
+	loansData: Record<'bifrost' | 'pendulum' | 'hydration' | 'centrifuge', number>;
+	totalBountyPool: string;
+	bountyValues: string;
 }
 
 const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
@@ -50,7 +52,10 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	assethubApiReady,
 	hydrationApiReady,
 	unit,
-	currentTokenPrice
+	currentTokenPrice,
+	loansData,
+	totalBountyPool,
+	bountyValues
 }: TreasuryDetailsModalProps) => {
 	const availableValue = parseFloat(String(available));
 	const tokenPrice = parseFloat(currentTokenPrice || '0');
@@ -65,44 +70,13 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	const assetHubValue = formatUSDWithUnits(String(assetValueNum * Number(tokenPrice) + assetValueUSDCNum * 1000000 + assetValueUSDTNum * 1000000));
 	const hydrationValueTotal = formatUSDWithUnits(String(hydrationValueNum * Number(tokenPrice) + hydrationValueUSDCNum + hydrationValueUSDTNum));
 
-	const bifrostValue = 500_000 * tokenPrice;
-	const pendulumValue = 50_000 * tokenPrice;
-	const hydrationValueloan = 1_000_000 * tokenPrice;
-	const centrifugeValue = 3_000_000;
+	const bifrostValue = loansData.bifrost * tokenPrice;
+	const pendulumValue = loansData.pendulum * tokenPrice;
+	const hydrationValueloan = loansData.hydration * tokenPrice;
+	const centrifugeValue = loansData.centrifuge;
 
 	const loansValue = formatUSDWithUnits(String(bifrostValue + pendulumValue + hydrationValueloan + centrifugeValue));
 	const fellowshipValues = formatUSDWithUnits(String(parseFloat(assetValueFellowship) * tokenPrice + parseFloat(assetValueUSDTFellowship)));
-
-	const [statsData, setStatsData] = useState<IBountyStats>({
-		activeBounties: '',
-		availableBountyPool: '',
-		peopleEarned: '',
-		totalBountyPool: '',
-		totalRewarded: ''
-	});
-	const bountyValues = formatUSDWithUnits(String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * tokenPrice));
-	const [loading, setLoading] = useState(false);
-
-	const fetchStats = async () => {
-		setLoading(true);
-		try {
-			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
-			if (error || !data) {
-				console.error(error);
-			}
-			if (data) {
-				setStatsData(data);
-			}
-			setLoading(false);
-		} catch (error) {
-			console.log(error);
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchStats();
-	}, [network]);
 
 	return (
 		<Modal
@@ -296,7 +270,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 				<Divider className='my-3 bg-section-light-container p-0 dark:bg-separatorDark' />
 
 				<div>
-					{!loading && (
+					{
 						<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
 							<div className='flex w-[80px] gap-[6px]'>
 								<span className='text-sm font-medium '>Bounties</span>
@@ -311,9 +285,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										src={'/assets/treasury/dot-icon.svg'}
 										className='-mt-[2px]'
 									/>
-									<span className='font-medium'>
-										~ {formatUSDWithUnits(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}
-									</span>
+									<span className='font-medium'>~ {formatUSDWithUnits(formatBnBalance(totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
 									{unit}
 									<Link
 										href={'https://polkadot.polkassembly.io/bounty-dashboard'}
@@ -325,7 +297,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								</div>
 							</div>
 						</div>
-					)}
+					}
 
 					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
 						<div className='flex w-[80px] gap-[6px]'>

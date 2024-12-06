@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -16,18 +17,38 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps } from '~src/types';
+import { IBountyStats, IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
 import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
+import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
+
+const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
+	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
+	const { balance: mythBalance, loading: mythLoading } = useMythTokenBalance(network);
+	const MythBalanceBn = mythBalance && Number(mythBalance) / MYTH_TOKEN_BASE_DECIMALS;
+
+	const MythBalance = formatUSDWithUnits(
+		formatBnBalance(
+			String(MythBalanceBn),
+			{
+				numberAfterComma: 0,
+				withThousandDelimitor: false,
+				withUnit: false
+			},
+			network
+		),
+		1
+	);
+
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -42,10 +63,37 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const assetValueUSDC = formatUSDWithUnits(new BN(assethubValues.usdcValue).div(BN_MILLION).toString());
 	const assetValueUSDT = formatUSDWithUnits(new BN(assethubValues.usdtValue).div(BN_MILLION).toString());
 	const assetValueUSDTFellowship = formatUSDWithUnits(new BN(assethubValues.usdtValueFellowship).div(BN_MILLION).toString());
+	const assetValueUSDTFellowshipRaw = new BN(assethubValues.usdtValueFellowship).div(BN_MILLION);
 
 	const hydrationValue = formatBnBalance(new BN(hydrationValues.dotValue), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
 	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
+
+	const [statsData, setStatsData] = useState<IBountyStats>({
+		activeBounties: '',
+		availableBountyPool: '',
+		peopleEarned: '',
+		totalBountyPool: '',
+		totalRewarded: ''
+	});
+
+	const bountyValues = formatUSDWithUnits(
+		String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(currentTokenPrice.value))
+	);
+
+	const fetchStats = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
+			if (error || !data) {
+				console.error(error);
+			}
+			if (data) {
+				setStatsData(data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -87,6 +135,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	useEffect(() => {
 		fetchDataFromApi();
 		getGraphData();
+		fetchStats();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -101,15 +150,29 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const closeModal = () => setIsModalVisible(false);
 
-	const totalUsdcPrice = formatUSDWithUnits(new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(3000000)).toString());
-	const totalUsdtPrice = formatUSDWithUnits(new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(new BN(2420000)).toString());
+	const loan1 = loansData.bifrost.toString();
+	const loan2 = loansData.pendulum.toString();
+	const loan3 = loansData.hydration.toString();
+	const totalToken = Math.floor(Number(tokenValue));
 
-	const dotPrice = new BN('29600000').mul(new BN(String(Number(currentTokenPrice.value || 0) * 1000000))).div(new BN('1000000'));
-	const usdcPrice = new BN('7100000');
-	const usdtPrice = new BN('8900000');
-	const mythPrice = new BN('4800000').mul(new BN('370000')).div(new BN('1000000'));
+	const totalBounty = formatBnBalance(String(statsData.totalBountyPool), { numberAfterComma: 0, withThousandDelimitor: false }, network);
 
-	const totalUsd = formatUSDWithUnits(dotPrice.add(usdcPrice).add(usdtPrice).add(mythPrice).toString());
+	const totalDotsRaw = new BN(assetValue)
+		.add(new BN(assetValueFellowship))
+		.add(new BN(totalToken))
+		.add(new BN(totalBounty))
+		.add(new BN(hydrationValue))
+		.add(new BN(loan1))
+		.add(new BN(loan2))
+		.add(new BN(loan3))
+		.toString();
+
+	const totalDots = formatUSDWithUnits(String(totalDotsRaw));
+
+	const totalUsdcPrice = formatUSDWithUnits(new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString());
+	const totalUsdtPrice = formatUSDWithUnits(new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString());
+
+	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value)));
 
 	return (
 		<div
@@ -179,7 +242,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													src={'/assets/treasury/dot-icon.svg'}
 													className='-mt-[2px]'
 												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ 29.6M</span>
+												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ ${totalDots}</span>
 												{unit}
 											</div>
 											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
@@ -193,10 +256,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
 												USDC
 											</div>
-											<Divider
-												type='vertical'
-												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-											/>
+
 											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
 												<Image
 													alt='relay icon'
@@ -208,19 +268,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
 												USDt
 											</div>
-											<Divider
-												type='vertical'
-												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-											/>
-											<div className='no-wrap flex items-center gap-1'>
-												<Image
-													src={'/assets/treasury/myth-icon.svg'}
-													width={16}
-													height={16}
-													alt='icon'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>4.8M MYTH</span>
-											</div>
+											{!mythLoading && (
+												<>
+													<div className='no-wrap ml-1 flex items-center gap-1'>
+														<Image
+															src={'/assets/treasury/myth-icon.svg'}
+															width={16}
+															height={16}
+															alt='icon'
+														/>
+														<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{MythBalance} MYTH</span>
+													</div>
+												</>
+											)}
 										</div>
 									</div>
 								</div>
@@ -250,6 +310,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						hydrationApiReady={hydrationApiReady}
 						unit={unit}
 						currentTokenPrice={currentTokenPrice.value}
+						loansData={loansData}
+						totalBountyPool={statsData.totalBountyPool}
+						bountyValues={bountyValues}
 					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
 						<div>

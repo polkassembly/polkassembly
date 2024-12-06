@@ -101,12 +101,15 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const closeModal = () => setIsModalVisible(false);
 
-	const dotPrice = 29_600_000 * Number(currentTokenPrice.value);
-	const usdcPrice = 7_100_000;
-	const usdtPrice = 8_900_000;
-	const mythPRice = 4_800_000 * 0.37;
+	const totalUsdcPrice = formatUSDWithUnits(new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(3000000)).toString());
+	const totalUsdtPrice = formatUSDWithUnits(new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(new BN(2420000)).toString());
 
-	const totalValue = formatUSDWithUnits(String(dotPrice + usdcPrice + usdtPrice + mythPRice));
+	const dotPrice = new BN('29600000').mul(new BN(String(Number(currentTokenPrice.value || 0) * 1000000))).div(new BN('1000000'));
+	const usdcPrice = new BN('7100000');
+	const usdtPrice = new BN('8900000');
+	const mythPrice = new BN('4800000').mul(new BN('370000')).div(new BN('1000000'));
+
+	const totalUsd = formatUSDWithUnits(dotPrice.add(usdcPrice).add(usdtPrice).add(mythPrice).toString());
 
 	return (
 		<div
@@ -160,9 +163,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 									</div>
 									<div className='flex items-center gap-1'>
-										{totalValue && (
+										{totalUsd && (
 											<div className='flex items-baseline'>
-												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalValue}</span>
+												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
 											</div>
 										)}
 										<div className='ml-1 flex items-center gap-1 text-xs'>
@@ -184,7 +187,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												src={'/assets/treasury/usdc-icon.svg'}
 												className='-mt-[2px]'
 											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>7.1M</span>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
 											USDC
 										</div>
 										<Divider
@@ -199,7 +202,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												src={'/assets/treasury/usdt-icon.svg'}
 												className='-mt-[2px]'
 											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>8.9M</span>
+											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
 											USDt
 										</div>
 										<Divider

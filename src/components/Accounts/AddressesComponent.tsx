@@ -20,7 +20,7 @@ const AddressesComponent = () => {
 	const [accountData, setAccountData] = useState<IAccountData | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isError, setIsError] = useState<boolean>(false);
-	const [linkedAddresses, setLinkedAddresses] = useState<Array<{ linked_address: string; type: string }>>([]);
+	const [linkedAddresses, setLinkedAddresses] = useState<Array<{ linked_address: string; is_linked: boolean }>>([]);
 	const isGifLoaded = useImagePreloader('/assets/Gifs/search.gif');
 
 	const gatherAddresses = (data: IAccountData) => {
@@ -69,7 +69,7 @@ const AddressesComponent = () => {
 				console.error('Error fetching linked address status:', error);
 				return;
 			}
-			setLinkedAddresses(data);
+			setLinkedAddresses(data?.data);
 		} catch (error) {
 			console.error('An error occurred while fetching linked addresses:', error);
 		}

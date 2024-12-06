@@ -8,7 +8,7 @@ import { dmSans } from 'pages/_app';
 
 interface Props {
 	accountData: IAccountData;
-	linkedAddresses?: Array<{ linked_address: string; type: string }>;
+	linkedAddresses?: Array<{ linked_address: string; is_linked: boolean }>;
 }
 
 const Signatories: React.FC<Props> = ({ accountData, linkedAddresses }) => {

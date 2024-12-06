@@ -43,6 +43,7 @@ export enum ProxyTypeEnum {
 interface Props {
 	openModal: boolean;
 	setOpenModal: (pre: boolean) => void;
+	setIsPureProxyCreated: (pre: boolean) => void;
 	setOpenProxySuccessModal: (pre: boolean) => void;
 	setAddress: (pre: string) => void;
 	address: string;
@@ -51,7 +52,7 @@ interface Props {
 
 const ZERO_BN = new BN(0);
 
-const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, setOpenModal, setAddress, address }: Props) => {
+const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, setOpenModal, setAddress, address, setIsPureProxyCreated }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -179,9 +180,11 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		let txn;
 		if (values.createPureProxy) {
 			txn = api?.tx?.proxy?.createPure(values.proxyType as any, 0, 0);
+			setIsPureProxyCreated(true);
 		}
 		if (values.proxyAddress && !values.createPureProxy) {
 			txn = api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType as any, 0);
+			setIsPureProxyCreated(false);
 		}
 		if (!txn) {
 			console.log('NO TXN');

@@ -7,7 +7,7 @@ import AddressComponent from './utils/AddressComponent';
 
 interface Props {
 	accountData: IAccountData;
-	linkedAddresses?: Array<{ linked_address: string; type: string }>;
+	linkedAddresses?: Array<{ linked_address: string; is_linked: boolean }>;
 }
 
 const MultisigDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {

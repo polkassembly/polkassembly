@@ -276,7 +276,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
-	if (['polkadot', 'westend'].includes(network)) {
+	if (['paseo', 'westend'].includes(network)) {
 		dropdownMenuItems.splice(1, 0, {
 			key: 'create proxy',
 			label: (

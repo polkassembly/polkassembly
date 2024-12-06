@@ -35,29 +35,34 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		const response: { linked_address: string; is_linked: boolean }[] = [];
 		await Promise.all(
-			linked_addresses.map(async ({ linked_address, type }) => {
-				if (!linked_address || !type) {
+			linked_addresses.map(async ({ linked_address }) => {
+				if (!linked_address) {
 					response.push({ linked_address, is_linked: false });
 					return;
 				}
 
-				const documentId = `${address}_${type}_${user.id}`;
-				const docRef = firestore_db.collection('proxies').doc(documentId);
-				const docSnapshot = await docRef.get();
+				const typesToCheck = ['PROXY', 'PUREPROXY', 'MULTISIG'];
+				const allLinkedAddresses: string[] = [];
 
-				if (!docSnapshot.exists) {
-					response.push({ linked_address, is_linked: false });
-					return;
-				}
+				await Promise.all(
+					typesToCheck.map(async (typeToCheck) => {
+						const documentId = `${address}_${typeToCheck}_${user.id}`;
+						const docRef = firestore_db.collection('proxies').doc(documentId);
+						const docSnapshot = await docRef.get();
 
-				const data = docSnapshot.data();
-				const existingLinkedAddresses = data?.linked_address || [];
+						if (docSnapshot.exists) {
+							const data = docSnapshot.data();
+							allLinkedAddresses.push(...(data?.linked_address || []));
+						}
+					})
+				);
 
-				if (existingLinkedAddresses.includes(linked_address)) {
-					response.push({ linked_address, is_linked: true });
-				} else {
-					response.push({ linked_address, is_linked: false });
-				}
+				const normalizedLinkedAddress = linked_address.trim().toLowerCase();
+				const normalizedAllLinkedAddresses = allLinkedAddresses.map((addr) => addr.trim().toLowerCase());
+
+				const isLinked = normalizedAllLinkedAddresses.includes(normalizedLinkedAddress);
+
+				response.push({ linked_address, is_linked: isLinked });
 			})
 		);
 

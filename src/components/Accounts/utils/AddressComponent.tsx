@@ -18,7 +18,7 @@ interface Props {
 	proxyType?: string;
 	isPureProxy?: boolean;
 	isMultisigAddress?: boolean;
-	linkedAddresses: Array<{ linked_address: string; type: string }>;
+	linkedAddresses: Array<{ linked_address: string; is_linked: boolean }>;
 }
 
 const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses }: Props) => {

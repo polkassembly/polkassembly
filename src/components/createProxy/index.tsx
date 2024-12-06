@@ -26,6 +26,7 @@ const ProxyMain = ({ openProxyModal, setOpenProxyModal }: Props) => {
 	const [openProxyMainModal, setOpenProxyMainModal] = useState<boolean>(false);
 	const [openProxySuccessModal, setOpenProxySuccessModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>(loginAddress);
+	const [isPureProxyCreated, setIsPureProxyCreated] = useState<boolean>(false);
 
 	return (
 		<>
@@ -42,11 +43,13 @@ const ProxyMain = ({ openProxyModal, setOpenProxyModal }: Props) => {
 				setAddress={setAddress}
 				address={address}
 				className=''
+				setIsPureProxyCreated={setIsPureProxyCreated}
 			/>
 			<CreateProxySuccessModal
 				openModal={openProxySuccessModal}
 				setOpenModal={setOpenProxySuccessModal}
 				address={address}
+				isPureProxyCreated={isPureProxyCreated}
 				className=''
 			/>
 		</>

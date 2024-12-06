@@ -11,6 +11,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import Loader from '~src/ui-components/Loader';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const AddressActionDropdown = ({
 	address,
@@ -20,7 +21,7 @@ const AddressActionDropdown = ({
 }: {
 	address: string;
 	type: LinkProxyType | null;
-	linkedAddresses?: Array<{ linked_address: string; type: string }>;
+	linkedAddresses?: Array<{ linked_address: string; is_linked: boolean }>;
 	isUsedInProxy?: boolean;
 }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -33,8 +34,11 @@ const AddressActionDropdown = ({
 	});
 
 	const isLinked = useMemo(() => {
-		return Array.isArray(linkedAddresses) && linkedAddresses.some((linked) => linked.linked_address === address && linked.type === type);
-	}, [address, type, linkedAddresses]);
+		if (!Array.isArray(linkedAddresses)) return false;
+		const result = linkedAddresses.map((linked) => getSubstrateAddress(linked.linked_address) === getSubstrateAddress(address) && linked.is_linked === true);
+
+		return result.includes(true);
+	}, [address, linkedAddresses]);
 
 	const toggleLinkProxy = async () => {
 		setState((prevState) => ({ ...prevState, loading: true }));
@@ -107,7 +111,7 @@ const AddressActionDropdown = ({
 				className={`flex h-8 w-8 ${
 					state.loading ? 'cursor-not-allowed' : 'cursor-pointer'
 				} items-center justify-center rounded-lg border border-solid border-section-light-container dark:border-separatorDark ${
-					theme === 'dark' ? 'border-none bg-section-dark-overlay' : state.isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+					theme === 'dark' ? 'border-none bg-section-dark-overlay' : 'bg-white hover:bg-section-light-container'
 				}`}
 				overlayClassName='z-[1056]'
 				placement='bottomRight'

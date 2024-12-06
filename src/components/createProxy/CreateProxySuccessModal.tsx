@@ -22,12 +22,13 @@ import { useTheme } from 'next-themes';
 
 interface Props {
 	openModal: boolean;
+	isPureProxyCreated: boolean;
 	setOpenModal: (pre: boolean) => void;
 	className: string;
 	address: string;
 }
 
-const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }: Props) => {
+const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, isPureProxyCreated }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [pureProxyAddress, setPureProxyAddress] = useState<string | null>(null);
@@ -111,31 +112,33 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									disableTooltip
 								/>
 							</div>
-							<div className='flex items-center gap-2'>
-								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
-								{loading ? (
-									<SkeletonInput active />
-								) : (
-									pureProxyAddress && (
-										<span
-											onClick={() => {
-												handleCopylink(pureProxyAddress);
-											}}
-											className='flex items-center gap-1'
-										>
-											<Address
-												displayInline
-												iconSize={18}
-												isTruncateUsername={false}
-												address={pureProxyAddress}
-												destroyTooltipOnHide
-												disableTooltip
-											/>
-											<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
-										</span>
-									)
-								)}
-							</div>
+							{isPureProxyCreated && (
+								<div className='flex items-center gap-2'>
+									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
+									{loading ? (
+										<SkeletonInput active />
+									) : (
+										pureProxyAddress && (
+											<span
+												onClick={() => {
+													handleCopylink(pureProxyAddress);
+												}}
+												className='flex items-center gap-1'
+											>
+												<Address
+													displayInline
+													iconSize={18}
+													isTruncateUsername={false}
+													address={pureProxyAddress}
+													destroyTooltipOnHide
+													disableTooltip
+												/>
+												<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+											</span>
+										)
+									)}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

@@ -61,7 +61,7 @@ const useHydrationApi = (network: string) => {
 		if (!hydrationApi || !hydrationApiReady) return;
 
 		const { hydrationTreasuryAddress, hydrationTreasuryAddress2, hydrationAssets } = chainProperties?.[network] || {};
-		if (hydrationApiReady && hydrationTreasuryAddress && hydrationAssets) {
+		if (hydrationApiReady && hydrationTreasuryAddress && hydrationAssets?.length) {
 			try {
 				const addresses = [hydrationTreasuryAddress, hydrationTreasuryAddress2];
 				const combinedValues = {
@@ -80,27 +80,24 @@ const useHydrationApi = (network: string) => {
 					};
 
 					// Fetch balance in DOT
-					if (hydrationAssets[0]?.assetId) {
+					if (hydrationAssets[0] && hydrationAssets[0]?.assetId) {
 						const dotResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[0].assetId)) as any;
-
 						const freeDOTBalance = new BN(dotResult.reserved.toBigInt());
 						addressValues.dotValue = freeDOTBalance;
 						combinedValues.dotValue = combinedValues.dotValue.add(freeDOTBalance);
 					}
 
 					// Fetch balance in USDT
-					if (hydrationAssets[1]?.assetId) {
+					if (hydrationAssets[1] && hydrationAssets[1]?.assetId) {
 						const usdtResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[1].assetId)) as any;
-
 						const freeUSDTBalance = new BN(usdtResult.free.toBigInt());
 						addressValues.usdtValue = freeUSDTBalance;
 						combinedValues.usdtValue = combinedValues.usdtValue.add(freeUSDTBalance);
 					}
 
 					// Fetch balance in USDC
-					if (hydrationAssets[2]?.assetId) {
+					if (hydrationAssets[2] && hydrationAssets[2]?.assetId) {
 						const usdcResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[2].assetId)) as any;
-
 						const freeUSDCBalance = new BN(usdcResult.free.toBigInt());
 						addressValues.usdcValue = freeUSDCBalance;
 						combinedValues.usdcValue = combinedValues.usdcValue.add(freeUSDCBalance);

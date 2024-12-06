@@ -21,6 +21,7 @@ interface TreasuryDetailsModalProps {
 	assetValueUSDC: string;
 	assetValueUSDT: string;
 	assetValueUSDTFellowship: string;
+	assetValueUSDTFellowshipRaw: string;
 	hydrationValue: string;
 	hydrationValueUSDC: string;
 	hydrationValueUSDT: string;
@@ -44,6 +45,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	assetValueUSDC,
 	assetValueUSDT,
 	assetValueUSDTFellowship,
+	assetValueUSDTFellowshipRaw,
 	hydrationValue,
 	hydrationValueUSDC,
 	hydrationValueUSDT,
@@ -68,7 +70,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 
 	const relayChainValue = formatUSDWithUnits(String(availableValue * Number(tokenPrice)));
 	const assetHubValue = formatUSDWithUnits(String(assetValueNum * Number(tokenPrice) + assetValueUSDCNum * 1000000 + assetValueUSDTNum * 1000000));
-	const hydrationValueTotal = formatUSDWithUnits(String(hydrationValueNum * Number(tokenPrice) + hydrationValueUSDCNum + hydrationValueUSDTNum));
+	const hydrationValueTotal = formatUSDWithUnits(String(hydrationValueNum * Number(tokenPrice) + hydrationValueUSDCNum * 1000 + hydrationValueUSDTNum * 1000));
 
 	const bifrostValue = loansData.bifrost * tokenPrice;
 	const pendulumValue = loansData.pendulum * tokenPrice;
@@ -76,7 +78,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 	const centrifugeValue = loansData.centrifuge;
 
 	const loansValue = formatUSDWithUnits(String(bifrostValue + pendulumValue + hydrationValueloan + centrifugeValue));
-	const fellowshipValues = formatUSDWithUnits(String(parseFloat(assetValueFellowship) * tokenPrice + parseFloat(assetValueUSDTFellowship)));
+	const fellowshipValues = formatUSDWithUnits(String(parseFloat(assetValueFellowship) * tokenPrice + parseFloat(assetValueUSDTFellowshipRaw)));
 
 	return (
 		<Modal

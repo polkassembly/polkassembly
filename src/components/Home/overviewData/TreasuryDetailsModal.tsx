@@ -7,7 +7,7 @@ import { Divider, Modal } from 'antd';
 import { ChainPropType } from '~src/types';
 import { dmSans } from 'pages/_app';
 import RedirectingIcon from '~assets/treasury/redirecting-icon.svg';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Link from 'next/link';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -36,7 +36,7 @@ interface TreasuryDetailsModalProps {
 	bountyValues: string;
 }
 
-const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
+const TreasuryDetailsModal = ({
 	visible,
 	onClose,
 	available,
@@ -96,7 +96,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 			<div className=''>
 				<div className={` ${dmSans.className} ${dmSans.variable} mb-[10px] mt-4 text-sm font-medium text-[#485F7DB2] dark:text-blue-dark-medium`}>Across Networks:</div>
 				<div className='flex flex-col font-medium'>
-					<div className={`${dmSans.className} ${dmSans.variable} mb-[6px] flex items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mb-[6px] items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 						<div className='flex w-[106px] gap-[6px]'>
 							<Image
 								alt='relay icon'
@@ -107,7 +107,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 							/>
 							<span className={`${dmSans.className} ${dmSans.variable} text-sm font-medium `}>Relay Chain</span>
 						</div>
-						<div className={`${dmSans.className} ${dmSans.variable} -mt-[2px] flex flex-col`}>
+						<div className={`${dmSans.className} ${dmSans.variable} -mt-[2px] ml-6 flex flex-col sm:ml-0`}>
 							<span className='ml-1 text-base font-semibold'>~ ${relayChainValue}</span>
 							<div className='ml-1 flex items-center gap-[6px] text-sm'>
 								<Image
@@ -124,7 +124,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 					</div>
 
 					{chainProperties[network]?.assetHubTreasuryAddress && assethubApiReady && (
-						<div className={`${dmSans.className} ${dmSans.variable} mb-[6px] flex items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+						<div className={`${dmSans.className} ${dmSans.variable} mb-[6px] items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 							<div className='flex w-[106px] gap-[6px]'>
 								<Image
 									alt='relay icon'
@@ -135,7 +135,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								/>
 								<span className='text-sm font-medium '>Asset Hub</span>
 							</div>
-							<div className='flex flex-col'>
+							<div className='ml-6 flex flex-col sm:ml-0'>
 								<span className='ml-1 text-base font-semibold'>
 									~ ${assetHubValue}{' '}
 									<Link
@@ -158,50 +158,53 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 										<span className='font-medium'>{formatUSDWithUnits(assetValue)}</span>
 										{unit}
 									</div>
+
 									<Divider
 										type='vertical'
 										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<div className='ml-1 flex items-center gap-[6px] text-sm'>
-										<Image
-											alt='relay icon'
-											width={16}
-											height={16}
-											src={'/assets/treasury/usdc-icon.svg'}
-											className='-mt-[2px]'
+									<div className='flex'>
+										<div className='ml-1 flex items-center gap-[6px] text-sm'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdc-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='font-medium'>{assetValueUSDC}</span>
+											USDC
+										</div>
+										<Divider
+											type='vertical'
+											className='border-l-1 mx-0 ml-[5px] mt-[4px] border-[#90A0B7] dark:border-icon-dark-inactive'
 										/>
-										<span className='font-medium'>{assetValueUSDC}</span>
-										USDC
+										<div className='ml-1 flex items-center gap-[6px] text-sm'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdt-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='font-medium'>{assetValueUSDT}</span>
+											USDt
+										</div>
+										<Link
+											href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
+											className='-mb-1 hidden cursor-pointer sm:ml-[2px] sm:flex'
+											target='_blank'
+										>
+											<RedirectingIcon />
+										</Link>
 									</div>
-									<Divider
-										type='vertical'
-										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-									/>
-									<div className='ml-1 flex items-center gap-[6px] text-sm'>
-										<Image
-											alt='relay icon'
-											width={16}
-											height={16}
-											src={'/assets/treasury/usdt-icon.svg'}
-											className='-mt-[2px]'
-										/>
-										<span className='font-medium'>{assetValueUSDT}</span>
-										USDt
-									</div>
-									<Link
-										href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
-										className='-mb-1 hidden cursor-pointer sm:flex'
-										target='_blank'
-									>
-										<RedirectingIcon />
-									</Link>
 								</div>
 							</div>
 						</div>
 					)}
 
 					{chainProperties[network]?.hydrationTreasuryAddress && hydrationApiReady && (
-						<div className={`${dmSans.className} ${dmSans.variable} flex items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+						<div className={`${dmSans.className} ${dmSans.variable} items-start gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 							<div className='flex w-[106px] gap-[6px]'>
 								<Image
 									alt='relay icon'
@@ -212,66 +215,70 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								/>
 								<span className='text-sm font-medium '>Hydration</span>
 							</div>
-							<div className='flex flex-col'>
+							<div className='ml-6 flex flex-col sm:ml-0'>
 								<span className='ml-1 text-base font-semibold'>~ ${hydrationValueTotal}</span>
 								<div className='items-center gap-1 sm:flex'>
-									<div className='ml-1 flex items-center gap-[6px] text-sm'>
-										<Image
-											alt='relay icon'
-											width={16}
-											height={16}
-											src={'/assets/treasury/dot-icon.svg'}
-											className='-mt-[2px]'
+									<div className='flex'>
+										<div className='ml-1 flex items-center gap-[6px] text-sm'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/dot-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='font-medium'>{formatUSDWithUnits(hydrationValue)}</span>
+											{unit}
+										</div>
+										<Divider
+											type='vertical'
+											className='border-l-1 mx-0 ml-[5px] mt-[4px] border-[#90A0B7] dark:border-icon-dark-inactive'
 										/>
-										<span className='font-medium'>{formatUSDWithUnits(hydrationValue)}</span>
-										{unit}
+										<div className='ml-1 flex items-center gap-[4px] text-sm'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdc-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='font-medium'>{hydrationValueUSDC} </span>
+											USDC
+										</div>
 									</div>
 									<Divider
 										type='vertical'
 										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<div className='ml-1 flex items-center gap-[6px] text-sm'>
-										<Image
-											alt='relay icon'
-											width={16}
-											height={16}
-											src={'/assets/treasury/usdc-icon.svg'}
-											className='-mt-[2px]'
-										/>
-										<span className='font-medium'>{hydrationValueUSDC} </span>
-										USDC
-									</div>
-									<Divider
-										type='vertical'
-										className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-									/>
-									<div className='ml-1 flex items-center gap-[6px] text-sm'>
-										<Image
-											alt='relay icon'
-											width={16}
-											height={16}
-											src={'/assets/treasury/usdt-icon.svg'}
-											className='-mt-[2px]'
-										/>
-										<span className='font-medium'>{hydrationValueUSDT} </span>
-										USDt
-									</div>
+									<div className='flex gap-[4px] max-sm:flex-wrap'>
+										<div className='ml-1 flex items-center gap-[4px] text-sm'>
+											<Image
+												alt='relay icon'
+												width={16}
+												height={16}
+												src={'/assets/treasury/usdt-icon.svg'}
+												className='-mt-[2px]'
+											/>
+											<span className='font-medium'>{hydrationValueUSDT} </span>
+											USDt
+										</div>
 
-									<div className='flex gap-1 text-xs text-pink_primary'>
-										<Link
-											href={'https://hydration.subscan.io/account/7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY'}
-											className='flex items-center gap-1 font-medium'
-											target='_blank'
-										>
-											Address #1 <RedirectingIcon />
-										</Link>
-										<Link
-											href={'https://hydration.subscan.io/account/7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV'}
-											className='flex items-center gap-1 font-medium'
-											target='_blank'
-										>
-											Address #2 <RedirectingIcon />
-										</Link>
+										<div className='flex gap-1 text-xs text-pink_primary'>
+											<Link
+												href={'https://hydration.subscan.io/account/7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY'}
+												className='flex flex-shrink-0  items-center gap-1 font-medium'
+												target='_blank'
+											>
+												Address #1 <RedirectingIcon />
+											</Link>
+											<Link
+												href={'https://hydration.subscan.io/account/7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV'}
+												className='flex flex-shrink-0  items-center gap-1 font-medium'
+												target='_blank'
+											>
+												Address #2 <RedirectingIcon />
+											</Link>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -282,7 +289,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 
 				<div>
 					{
-						<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+						<div className={`${dmSans.className} ${dmSans.variable} items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 							<div className='flex w-[80px] gap-[6px]'>
 								<span className='text-sm font-medium '>Bounties</span>
 							</div>
@@ -310,7 +317,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 					}
 
-					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 						<div className='flex w-[80px] gap-[6px]'>
 							<span className='text-sm font-medium '>Fellowships</span>
 						</div>
@@ -360,13 +367,13 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 						</div>
 					</div>
 
-					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] flex items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high`}>
+					<div className={`${dmSans.className} ${dmSans.variable} mt-[6px] items-baseline gap-[6px] text-blue-light-high dark:text-blue-dark-high sm:flex`}>
 						<div className='flex w-[80px] gap-[6px]'>
 							<span className='text-sm font-medium '>Loans</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='ml-1 text-base font-semibold'>~ ${loansValue}</span>
-							<div className='gap-1 sm:flex'>
+							<div className='items-center gap-1 md:flex'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link
 										href={'https://polkadot.polkassembly.io/referenda/432'}
@@ -387,7 +394,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								</div>
 								<Divider
 									type='vertical'
-									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-md:hidden'
 								/>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link
@@ -409,7 +416,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								</div>
 								<Divider
 									type='vertical'
-									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-md:hidden'
 								/>
 
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
@@ -432,7 +439,7 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 								</div>
 								<Divider
 									type='vertical'
-									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+									className='border-l-1 mx-0 ml-[2px] mt-1 border-[#90A0B7] dark:border-icon-dark-inactive max-md:hidden'
 								/>
 
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
@@ -462,12 +469,8 @@ const TreasuryDetailsModal: React.FC<TreasuryDetailsModalProps> = ({
 };
 
 export default styled(TreasuryDetailsModal)`
-	.ant-modal {
-		width: auto;
-	}
 	.ant-modal-content {
 		padding: 0px !important;
-		border-radius: 14px;
-		min-width: 100%;
+		border-radius: 14px !important;
 	}
 `;

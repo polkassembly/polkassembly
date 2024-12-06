@@ -37,7 +37,7 @@ const NewChat = ({ setIsNewChat }: Props) => {
 			const updatedDelegates = data || [];
 
 			setAllDelegates(updatedDelegates);
-			setSearchedDelegates(updatedDelegates.slice(0, 10));
+			setSearchedDelegates(updatedDelegates);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -96,7 +96,7 @@ const NewChat = ({ setIsNewChat }: Props) => {
 					}}
 					onSearch={(value) => {
 						if (!value?.length) {
-							setSearchedDelegates(allDelegates.slice(0, 10));
+							setSearchedDelegates(allDelegates);
 						} else {
 							setSearchAddress(value.trim());
 							handleSearch(value.trim());

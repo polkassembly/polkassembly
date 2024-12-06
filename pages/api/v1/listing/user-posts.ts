@@ -21,7 +21,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { getTimeline } from '~src/util/getTimeline';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 	return {
@@ -168,7 +168,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		});
 
 		let subsquidRes;
-		if (![AllNetworks.MYTHOS, AllNetworks.POLYMESH].includes(network)) {
+		if (chainProperties[network]?.subsquidUrl?.length > 1) {
 			subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ONCHAIN_POSTS_BY_PROPOSER_ADDRESSES,

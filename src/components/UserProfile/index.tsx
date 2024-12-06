@@ -183,7 +183,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 				onchainIdentity={onChainIdentity}
 			/>
 
-			{chainProperties[network]?.subsquidUrl?.length > 1 && (
+			{!!chainProperties[network]?.subsquidUrl && (
 				<ProfileStatsCard
 					userProfile={userProfile}
 					className='mx-2'

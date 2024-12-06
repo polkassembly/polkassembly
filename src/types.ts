@@ -1146,6 +1146,12 @@ export enum EChatTab {
 	REQUESTS = 'requests'
 }
 
+export interface IChatRecipient {
+	username?: string;
+	address: string;
+	image?: string;
+}
+
 export interface IChat {
 	chatId: string;
 	participants: string[];
@@ -1154,11 +1160,7 @@ export interface IChat {
 	updated_at: Date;
 	requestStatus: EChatRequestStatus;
 	latestMessage: IMessage;
-	recipientProfile: {
-		username?: string;
-		address: string;
-		image?: string;
-	} | null;
+	recipientProfile: IChatRecipient | null;
 }
 
 export interface IChatsResponse {

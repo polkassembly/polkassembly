@@ -154,7 +154,8 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 
 				{!isSearch && (
 					<div className='hidden items-start justify-start gap-2.5 text-pink_primary sm:flex'>
-						<span>
+						<span className='flex items-center gap-2'>
+							<ChatWithDelegates />
 							{userBio || bio ? (
 								<div className='flex space-x-2'>
 									<CustomButton
@@ -169,8 +170,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 									</CustomButton>
 								</div>
 							) : (
-								<div className='flex items-center justify-center gap-2'>
-									<ChatWithDelegates />
+								<div className='flex space-x-2'>
 									<Button
 										onClick={() => setIsModalOpen(true)}
 										className={'h-10 border-pink_primary bg-white font-medium font-semibold text-pink_primary dark:bg-black'}

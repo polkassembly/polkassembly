@@ -2,15 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Spin, Input } from 'antd';
+import { Spin, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import DelegateList from './DelegateList';
-import EmptyState from './feedbacks/EmptyState';
+import DelegateCard from './DelegateCard';
 import { chatsActions } from '~src/redux/chats';
 import { useDispatch } from 'react-redux';
 
@@ -35,30 +34,21 @@ const NewChat = ({ setIsNewChat }: Props) => {
 
 		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
 		if (data) {
-			//putting polkassembly Delegate first;
 			const updatedDelegates = data || [];
 
-			updatedDelegates.sort((a: any, b: any) => {
-				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
-				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
-				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
-
-				if (aIndex !== -1 && bIndex !== -1) {
-					return aIndex - bIndex;
-				}
-
-				if (aIndex !== -1) return -1;
-				if (bIndex !== -1) return 1;
-				return 0;
-			});
-
 			setAllDelegates(updatedDelegates);
+			setSearchedDelegates(updatedDelegates.slice(0, 10));
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
 			setLoading(false);
 		}
 	};
+
+	const input = document.querySelector('.ant-select-selection-search-input') as HTMLInputElement;
+	if (input && !loading) {
+		input.focus();
+	}
 
 	const handleSearch = (searchAddress: string) => {
 		if (!searchAddress.length) {
@@ -93,34 +83,61 @@ const NewChat = ({ setIsNewChat }: Props) => {
 	return (
 		<div className='flex h-full w-full flex-col'>
 			<div className='p-5'>
-				<Input
-					type='search'
-					value={searchAddress}
-					onChange={(e) => {
-						if (!e.target.value?.length) {
-							setSearchedDelegates([]);
-						}
-						setSearchAddress(e.target.value.trim());
-						handleSearch(e.target.value.trim());
+				<Select
+					showSearch
+					autoClearSearchValue={true}
+					loading={loading}
+					defaultValue={loading ? 'Loading...' : 'Enter or select a delegate address'}
+					defaultOpen={false}
+					open={!loading}
+					onChange={(value) => {
+						setSearchAddress(value);
+						handleStartChat(value);
 					}}
-					ref={(input) => input?.focus()}
-					placeholder='Enter an address to send message'
-					className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white focus:border-pink_primary dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-				/>
-			</div>
-			<Spin
-				spinning={loading}
-				className='h-[250px]'
-			>
-				{!searchedDelegates?.length && !loading ? (
-					<EmptyState />
-				) : (
-					<DelegateList
-						delegates={searchedDelegates}
-						onStartChat={handleStartChat}
+					onSearch={(value) => {
+						if (!value?.length) {
+							setSearchedDelegates(allDelegates.slice(0, 10));
+						} else {
+							setSearchAddress(value.trim());
+							handleSearch(value.trim());
+						}
+					}}
+					notFoundContent={
+						loading ? (
+							<Spin
+								size='small'
+								className='flex h-8 items-center justify-center p-5'
+							/>
+						) : (
+							<p className='mb-0 px-3 py-2 text-base text-blue-light-medium dark:text-[#b4afaf]'>No results found</p>
+						)
+					}
+					filterOption={false}
+					className='h-9 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent [&_.ant-select-selection-search-input]:placeholder:text-[#485F7D] [&_.ant-select-selection-search-input]:focus:border-pink_primary [&_.ant-select-selection-search-input]:dark:text-blue-dark-high [&_.ant-select-selection-search-input]:dark:focus:border-[#91054F]'
+					autoFocus={true}
+					dropdownAlign={{ points: ['tl', 'bl'] }}
+					popupClassName='dark:bg-section-dark-overlay shadow-lg border dark:shadow-white/10'
+				>
+					{searchedDelegates.map((delegate) => (
+						<Select.Option
+							key={delegate.address}
+							value={delegate.address}
+							className='p-0 dark:bg-section-dark-overlay'
+						>
+							<DelegateCard
+								delegate={delegate}
+								onStartChat={handleStartChat}
+							/>
+						</Select.Option>
+					))}
+				</Select>
+				{loading ? (
+					<Spin
+						size='large'
+						className='flex h-full items-center justify-center p-5'
 					/>
-				)}
-			</Spin>
+				) : null}
+			</div>
 		</div>
 	);
 };

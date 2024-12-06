@@ -225,7 +225,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 									</div>
-									<div className='flex items-center gap-1'>
+									<div className='flex flex-wrap items-center gap-1'>
 										<div>
 											{totalUsd && (
 												<div className='flex items-baseline'>

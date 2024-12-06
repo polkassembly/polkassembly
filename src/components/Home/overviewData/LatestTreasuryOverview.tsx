@@ -162,16 +162,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 									</div>
-									<div className='flex flex-wrap items-center gap-1'>
+									<div className='flex items-center gap-1'>
 										<div>
 											{totalUsd && (
 												<div className='flex items-baseline'>
-													<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
+													<span className={`${dmSans.className} ${dmSans.variable} no-wrap text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
 												</div>
 											)}
 										</div>
-										<div className='flex flex-wrap items-center gap-1'>
-											<div className='ml-1 flex items-center gap-1 text-xs'>
+										<div className='flex items-center gap-1'>
+											<div className='no-wrap ml-1 flex items-center gap-1 text-xs'>
 												<Image
 													alt='relay icon'
 													width={16}
@@ -182,7 +182,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ 29.6M</span>
 												{unit}
 											</div>
-											<div className='ml-1 flex items-center gap-[6px] text-xs'>
+											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
 												<Image
 													alt='relay icon'
 													width={16}
@@ -197,7 +197,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												type='vertical'
 												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 											/>
-											<div className='ml-1 flex items-center gap-[6px] text-xs'>
+											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
 												<Image
 													alt='relay icon'
 													width={16}
@@ -212,7 +212,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												type='vertical'
 												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 											/>
-											<div className='flex items-center gap-1'>
+											<div className='no-wrap flex items-center gap-1'>
 												<Image
 													src={'/assets/treasury/myth-icon.svg'}
 													width={16}
@@ -253,24 +253,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					/>
 					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
 						<div>
-							<div
-								className='cursor-pointer text-xs font-medium text-pink_primary'
-								onClick={() => setIsModalVisible(true)}
-							>
-								Details
-								<Image
-									alt='arrow icon'
-									width={16}
-									height={16}
-									src={'/assets/treasury/arrow-icon.svg'}
-									className='-mt-[2px]'
-								/>
-							</div>
-							{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-								<div className='flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between '></div>
-							) : (
-								<div className='flex min-h-[50px] w-full items-center justify-center'>
-									<LoadingOutlined />
+							{!available.isLoading && (
+								<div
+									className='cursor-pointer text-xs font-medium text-pink_primary'
+									onClick={() => setIsModalVisible(true)}
+								>
+									Details
+									<Image
+										alt='arrow icon'
+										width={16}
+										height={16}
+										src={'/assets/treasury/arrow-icon.svg'}
+										className='-mt-[2px]'
+									/>
 								</div>
 							)}
 						</div>

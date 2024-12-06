@@ -22,12 +22,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (networkRedirect) return networkRedirect;
 
 	// if (!isOpenGovSupported(network)) {
-	// 	return {
-	// 		props: {},
-	// 		redirect: {
-	// 			destination: '/'
-	// 		}
-	// 	};
+	// return {
+	// props: {},
+	// redirect: {
+	// destination: '/'
+	// }
+	// };
 	// }
 
 	const props: IAccountsProps = {

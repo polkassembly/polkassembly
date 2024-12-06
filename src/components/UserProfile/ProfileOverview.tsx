@@ -64,48 +64,46 @@ const ProfileOverview = ({
 			{TippingUnavailableNetworks.includes(network) && !delegationSupportedNetworks.includes(network) ? (
 				<div className='flex w-full gap-6'>
 					<div className='flex w-[60%] flex-col gap-6 max-lg:w-full'>
-						{!!bio?.length && (
-							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
-								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
-									<Image
-										src='/assets/profile/about.svg'
-										alt=''
-										width={24}
-										height={24}
-									/>
-									About
-								</span>
+						<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+							<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
+								<Image
+									src='/assets/profile/about.svg'
+									alt=''
+									width={24}
+									height={24}
+								/>
+								About
+							</span>
+							<span
+								className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
+								onClick={() => {
+									if (username !== userProfile.username) return;
+									setOpenEditModal(true);
+								}}
+							>
+								{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
+							</span>
+							{(bio?.length || 0) > 300 && (
 								<span
-									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
-									onClick={() => {
-										if (username !== userProfile.username) return;
-										setOpenEditModal(true);
-									}}
+									className='-mt-4 cursor-pointer text-xs text-pink_primary'
+									onClick={() => setShowFullBio(!showFullBio)}
 								>
-									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
+									{showFullBio ? 'Show less' : 'See More'}
 								</span>
-								{(bio?.length || 0) > 300 && (
-									<span
-										className='-mt-4 cursor-pointer text-xs text-pink_primary'
-										onClick={() => setShowFullBio(!showFullBio)}
-									>
-										{showFullBio ? 'Show less' : 'See More'}
-									</span>
-								)}
-								{!!badges?.length && (
-									<span>
-										{badges.map((badge) => (
-											<Tag
-												key={badge}
-												className='rounded-full px-3 py-1 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'
-											>
-												{badge}
-											</Tag>
-										))}
-									</span>
-								)}
-							</div>
-						)}
+							)}
+							{!!badges?.length && (
+								<span>
+									{badges.map((badge) => (
+										<Tag
+											key={badge}
+											className='rounded-full px-3 py-1 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'
+										>
+											{badge}
+										</Tag>
+									))}
+								</span>
+							)}
+						</div>
 						<ProfileLinkedAddress
 							userProfile={userProfile}
 							addressWithIdentity={addressWithIdentity}

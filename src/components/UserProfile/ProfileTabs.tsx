@@ -183,7 +183,7 @@ const ProfileTabs = ({
 			)
 		});
 	}
-	if (!votesHistoryUnavailableNetworks.includes(network) && chainProperties[network]?.subsquidUrl?.length > 1) {
+	if (!votesHistoryUnavailableNetworks.includes(network) && !!chainProperties[network]?.subsquidUrl) {
 		tabItems.splice(1, 0, {
 			children: (
 				<VotesHistory

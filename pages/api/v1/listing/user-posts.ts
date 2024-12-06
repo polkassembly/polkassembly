@@ -168,7 +168,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		});
 
 		let subsquidRes;
-		if (chainProperties[network]?.subsquidUrl?.length > 1) {
+		if (chainProperties[network]?.subsquidUrl) {
 			subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ONCHAIN_POSTS_BY_PROPOSER_ADDRESSES,

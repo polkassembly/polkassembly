@@ -5,5 +5,6 @@
 export enum EAssets {
 	DED = 'ded',
 	USDT = 'usdt',
-	USDC = 'usdc'
+	USDC = 'usdc',
+	MYTH = 'myth'
 }

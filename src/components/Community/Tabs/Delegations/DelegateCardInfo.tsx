@@ -104,7 +104,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 
 	const getTrimmedBio = (bio: string) => {
 		if (!bio) return 'No Bio';
-		return bio?.length > 100 ? `${bio?.slice(0, 100)}?.?.?.` : bio;
+		return bio?.length > 100 ? `${bio?.slice(0, 100)}...` : bio;
 	};
 
 	return (
@@ -328,7 +328,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mb-4 mt-2  flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mt-2  flex h-8 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio w-4/5'>
 						{delegate?.bio ? (
 							<Markdown
@@ -350,7 +350,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						</span>
 					)}
 				</div>
-				<div className='flex items-center gap-2 px-5 py-3'>
+				<div className='flex items-center gap-2 px-5 pb-3'>
 					<SocialsHandle
 						address={delegate?.address}
 						onchainIdentity={delegate?.identityInfo || null}
@@ -431,9 +431,9 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 					</div>
 
 					<div
-						className={`${dmSans?.variable} ${dmSans?.className} flex h-8 max-h-8 gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${dmSans.variable} ${dmSans.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
-						<p className='m-0 w-full p-0 sm:w-[90%] '>
+						<p className='w-full sm:w-[90%]'>
 							{delegate?.bio ? (
 								<Markdown
 									className='post-content'
@@ -442,7 +442,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 									imgHidden
 								/>
 							) : (
-								<p className='m-0 p-0 text-lightBlue opacity-60'>No Bio</p>
+								'No Bio'
 							)}
 						</p>
 					</div>
@@ -456,19 +456,19 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						/>
 					</div>
 					<div className='flex min-h-[82px] justify-between border-0 border-t-[1px] border-solid border-section-light-container  dark:border-[#3B444F] dark:border-separatorDark  sm:min-h-[92px] '>
-						<div className='pt-1?.5 flex w-[33%] flex-col items-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-							<div className={`${dmSans?.variable} ${dmSans?.className} flex items-center justify-center gap-1`}>
-								{parseBalance(delegate?.delegatedBalance?.toString(), 1, false, network)}
+						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+							<div className={`${dmSans.variable} ${dmSans.className} flex items-center justify-center gap-1`}>
+								{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}
 								<span className='mt-1 text-xs font-normal text-bodyBlue dark:text-blue-dark-high sm:text-sm'>{unit}</span>
 							</div>
 							<div className='w-[50%] text-center text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:w-full sm:text-xs'>Voting power</div>
 						</div>
-						<div className='pt-1?.5 flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-section-light-container pt-1.5  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.votedProposalsCount}
 							<span className='text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:text-xs'>Voted proposals </span>
 							<span className='text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:text-xs'>(Past 30 days)</span>
 						</div>
-						<div className='pt-1?.5 flex w-[33%] flex-col items-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{delegate?.receivedDelegationsCount}
 							<span className='mb-[2px] w-[55%] text-center text-[10px] font-normal text-[#576D8B] dark:text-blue-dark-medium sm:w-full sm:text-xs'>Received Delegation</span>
 						</div>

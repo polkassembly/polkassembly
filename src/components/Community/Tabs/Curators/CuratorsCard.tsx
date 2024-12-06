@@ -195,12 +195,16 @@ const CuratorsCard = ({ user, className }: Props) => {
 						</div>
 					</div>
 				</div>
-				<div className={'mb-2 flex h-10 flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'flex h-10 flex-col px-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{user?.profile?.bio ? (
 							<Markdown
 								className='post-content m-0 p-0'
-								md={`${handleDelegationContent(user?.profile?.bio || '')?.slice(0, 100)}?.?.?.`}
+								md={`${
+									handleDelegationContent(user?.profile?.bio || '')?.length > 50
+										? handleDelegationContent(user?.profile?.bio || '')?.slice(0, 50) + '...'
+										: handleDelegationContent(user?.profile?.bio || '')
+								}`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -208,7 +212,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
-					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (
+					{user?.profile?.bio && user?.profile?.bio?.length > 50 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
 							className='m-0 -mt-1 flex cursor-pointer items-center justify-start p-0 text-xs font-medium text-[#3C74E1]'

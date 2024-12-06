@@ -54,6 +54,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<IMythTokenBalan
 	storeApiKeyUsage(req);
 
 	const network = req.headers['x-network'] as string;
+
+	if (!isValidNetwork(String(network))) {
+		return res.status(400).json({ error: 'Invalid network' });
+	}
 	const address = chainProperties[network]?.assetHubTreasuryAddress4;
 	const apiUrl = `${chainProperties[network]?.assethubExternalLinks}/api/scan/foreignAssets/account/balances`;
 

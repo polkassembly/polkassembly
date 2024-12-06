@@ -172,7 +172,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const totalUsdcPrice = formatUSDWithUnits(new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString());
 	const totalUsdtPrice = formatUSDWithUnits(new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString());
 
-	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value)));
+	const totalUsdcRaw = new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString();
+	const totalUsdtRaw = new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString();
+	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)));
 
 	return (
 		<div
@@ -301,6 +303,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						assetValueUSDC={assetValueUSDC}
 						assetValueUSDT={assetValueUSDT}
 						assetValueUSDTFellowship={assetValueUSDTFellowship}
+						assetValueUSDTFellowshipRaw={assetValueUSDTFellowshipRaw.toString()}
 						hydrationValue={hydrationValue}
 						hydrationValueUSDC={hydrationValueUSDC}
 						hydrationValueUSDT={hydrationValueUSDT}

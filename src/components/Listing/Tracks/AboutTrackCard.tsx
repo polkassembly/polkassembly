@@ -4,6 +4,7 @@
 
 import { Divider } from 'antd';
 import BN from 'bn.js';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -22,7 +23,6 @@ import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
-import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
@@ -47,6 +47,8 @@ interface IAboutTrackCardProps {
 	className?: string;
 	trackName: string;
 }
+
+export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNetworks.POLKADOT, AllNetworks.ROCOCO];
 
 export const getDefaultTrackMetaData = () => {
 	return {

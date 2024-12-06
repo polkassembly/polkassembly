@@ -162,61 +162,65 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 									</div>
-									<div className='flex items-center gap-1'>
-										{totalUsd && (
-											<div className='flex items-baseline'>
-												<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
+									<div className='flex flex-wrap items-center gap-1'>
+										<div>
+											{totalUsd && (
+												<div className='flex items-baseline'>
+													<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
+												</div>
+											)}
+										</div>
+										<div className='flex flex-wrap items-center gap-1'>
+											<div className='ml-1 flex items-center gap-1 text-xs'>
+												<Image
+													alt='relay icon'
+													width={16}
+													height={16}
+													src={'/assets/treasury/dot-icon.svg'}
+													className='-mt-[2px]'
+												/>
+												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ 29.6M</span>
+												{unit}
 											</div>
-										)}
-										<div className='ml-1 flex items-center gap-1 text-xs'>
-											<Image
-												alt='relay icon'
-												width={16}
-												height={16}
-												src={'/assets/treasury/dot-icon.svg'}
-												className='-mt-[2px]'
+											<div className='ml-1 flex items-center gap-[6px] text-xs'>
+												<Image
+													alt='relay icon'
+													width={16}
+													height={16}
+													src={'/assets/treasury/usdc-icon.svg'}
+													className='-mt-[2px]'
+												/>
+												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
+												USDC
+											</div>
+											<Divider
+												type='vertical'
+												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ 29.6M</span>
-											{unit}
-										</div>
-										<div className='ml-1 flex items-center gap-[6px] text-xs'>
-											<Image
-												alt='relay icon'
-												width={16}
-												height={16}
-												src={'/assets/treasury/usdc-icon.svg'}
-												className='-mt-[2px]'
+											<div className='ml-1 flex items-center gap-[6px] text-xs'>
+												<Image
+													alt='relay icon'
+													width={16}
+													height={16}
+													src={'/assets/treasury/usdt-icon.svg'}
+													className='-mt-[2px]'
+												/>
+												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
+												USDt
+											</div>
+											<Divider
+												type='vertical'
+												className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
-											USDC
-										</div>
-										<Divider
-											type='vertical'
-											className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-										/>
-										<div className='ml-1 flex items-center gap-[6px] text-xs'>
-											<Image
-												alt='relay icon'
-												width={16}
-												height={16}
-												src={'/assets/treasury/usdt-icon.svg'}
-												className='-mt-[2px]'
-											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
-											USDt
-										</div>
-										<Divider
-											type='vertical'
-											className='border-l-1 mx-0 ml-[2px] mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-										/>
-										<div className='flex items-center gap-1'>
-											<Image
-												src={'/assets/treasury/myth-icon.svg'}
-												width={16}
-												height={16}
-												alt='icon'
-											/>
-											<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>4.8M MYTH</span>
+											<div className='flex items-center gap-1'>
+												<Image
+													src={'/assets/treasury/myth-icon.svg'}
+													width={16}
+													height={16}
+													alt='icon'
+												/>
+												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>4.8M MYTH</span>
+											</div>
 										</div>
 									</div>
 								</div>

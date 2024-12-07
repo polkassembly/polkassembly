@@ -4,7 +4,7 @@
 import React, { FC, useState } from 'react';
 import CommentCard from './CommentsContainer/CommentCard';
 import { IComment } from './Comment';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import LoadMoreicon from '~assets/icons/load-more-icon.svg';
 import LoadMoreiconDark from '~assets/icons/load-more-icon-dark.svg';
 import { useTheme } from 'next-themes';
@@ -60,7 +60,7 @@ const Comments: FC<ICommentsProps> = (props) => {
 			{uniqueComments.length > 4 && visibleCommentsCount < uniqueComments.length && (
 				<div
 					onClick={handleShowMoreComments}
-					className={`${poppins.variable} ${poppins.className} mx-auto flex w-[230px] cursor-pointer items-center justify-center gap-[10px] rounded-full bg-[#F6F7F9] p-4 text-sm text-blue-light-medium dark:text-blue-dark-medium`}
+					className={`${dmSans.variable} ${dmSans.className} mx-auto flex w-[230px] cursor-pointer items-center justify-center gap-[10px] rounded-full bg-[#F6F7F9] p-4 text-sm text-blue-light-medium dark:text-blue-dark-medium`}
 				>
 					Load more comments {theme == 'dark' ? <LoadMoreiconDark /> : <LoadMoreicon />}
 				</div>

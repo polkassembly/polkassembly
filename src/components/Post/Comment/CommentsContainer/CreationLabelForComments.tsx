@@ -5,7 +5,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import { Divider, Modal, Dropdown } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { ESentiment, EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
@@ -57,7 +57,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 		e.stopPropagation();
 	};
 	const getSentimentLabel = (sentiment: ESentiment) => {
-		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+		return <div className={`${dmSans.variable} ${dmSans.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 640;
 
@@ -122,7 +122,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 								if (votesArr.length >= 1) setShowVotesModal(!showVotesModal);
 							}}
 						>
-							<span className={`${poppins.variable} ${poppins.className} mr-[6px] hidden text-xs text-blue-light-high dark:text-blue-dark-high sm:mt-[2px] sm:flex`}>voted</span>
+							<span className={`${dmSans.variable} ${dmSans.className} mr-[6px] hidden text-xs text-blue-light-high dark:text-blue-dark-high sm:mt-[2px] sm:flex`}>voted</span>
 							{votesArr[0].decision == 'yes' ? (
 								<div className=''>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'> Aye</span>
@@ -145,7 +145,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${dmSans.variable} ${dmSans.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName='dark:bg-modalOverlayDark'
 								title={
@@ -167,7 +167,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 					) : null}
 				</div>
 				{relativeCreatedAt && (
-					<div className={`${poppins.variable} ${poppins.className} flex flex-shrink-0 items-center`}>
+					<div className={`${dmSans.variable} ${dmSans.className} flex flex-shrink-0 items-center`}>
 						<Divider
 							className='ml-1 mr-2 mt-[2px] border-lightBlue dark:border-blue-dark-medium'
 							type='vertical'

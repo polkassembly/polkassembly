@@ -17,7 +17,7 @@ import NavHeader from './NavHeader';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -50,7 +50,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const { loginAddress, id: userId } = useUserDetailsSelector();
+	const { loginAddress, addresses } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
@@ -72,7 +72,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const hideFooter = router?.pathname?.includes('/batch-voting') && isMobile;
-	const hideCommentLoginBanner = router.pathname.includes('referenda/') || router.pathname.includes('post/');
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -148,20 +147,40 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	const handleVerifiedUserProposal = async () => {
+		const promiseArr: any[] = [];
+		if (!addresses?.length) return;
+
+		addresses?.map((address) => {
+			promiseArr?.push(getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
+		});
+
+		try {
+			const resolve = await Promise.all(promiseArr);
+			const isVerified = !!resolve.find((info: any) => {
+				return info?.isVerified;
+			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified));
+			const displayNameInfo = resolve?.find((info: any) => {
+				return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
+			});
+			setMainDisplay(displayNameInfo?.displayParent || displayNameInfo?.display || displayNameInfo?.nickname || '');
+			setIsGood(isVerified);
+			setIsIdentitySet(
+				!!resolve.find((info: any) => {
+					return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
+				})
+			);
+			setIsIdentityUnverified(!isVerified);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		(async () => {
-			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
-				address: loginAddress,
-				api: peopleChainApi ?? api,
-				network: network
-			});
-			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
-			setMainDisplay(displayParent || display || nickname);
-			setIsGood(isGood);
-			setIsIdentitySet(isIdentitySet);
-			setIsIdentityUnverified(!isVerified);
-		})();
+
+		handleVerifiedUserProposal();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
@@ -318,35 +337,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
-												{(!userId || !loginAddress) && hideCommentLoginBanner ? (
-													<div
-														className={`z-1000 fixed top-[91%] flex items-center justify-between ${
-															is_sidebar_collapsed ? 'pl-[140px]' : 'pl-[260px]'
-														} w-full bg-[#0095F6] py-[14px] pr-20`}
-													>
-														<div className='flex flex-col'>
-															<span className={`${poppins.className} ${poppins.variable} text-lg font-semibold text-white`}>
-																Join Polkassembly to Comment on this {router.pathname.includes('referenda/') ? 'proposal' : 'post'}.
-															</span>
-															<span className={`${poppins.className} ${poppins.variable} text-sm text-white`}>Discuss, contribute and get regular updates from Polkassembly.</span>
-														</div>
-														<div className='flex gap-4'>
-															<button
-																onClick={() => setLoginOpen(true)}
-																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-[#0095F6] bg-white text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-[#0095F6] `}
-															>
-																Log In
-															</button>
-															<button
-																onClick={() => setSignupOpen(true)}
-																className={`${poppins.className} ${poppins.variable} flex h-10 w-[150px] items-center justify-center rounded-md border border-solid border-white bg-[#0095F6] px-4 py-1 text-sm font-semibold capitalize leading-6 tracking-[0.0125em] text-white`}
-															>
-																Sign Up
-															</button>
-														</div>
-													</div>
-												) : null}
-
 												{!hideFooter && (
 													<Footer
 														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
@@ -416,7 +406,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				footer={false}
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${dmSans.className} ${dmSans.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
@@ -552,7 +542,7 @@ export default styled(AppLayout)`
 	}
 	.sidebar .ant-menu-item-selected span {
 		color: var(--pink_primary) !important;
-		font-weight: 500;
+		font-weight: 600 !important;
 	}
 
 	.sidebar .ant-menu-item-selected .opacity {

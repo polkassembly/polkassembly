@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useReducer, useState } from 'react';
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { Form, Modal, Steps } from 'antd';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
@@ -22,6 +22,8 @@ import { EAllowedCommentor, ESteps, IBeneficiary } from '~src/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
+import CreateProposalGrayIcon from '~assets/icons/create-proposal-gray.svg';
+import CreateProposalGrayIconDark from '~assets/icons/create-proposal-gray-dark.svg';
 import { useDispatch } from 'react-redux';
 import {
 	setIdentityCardLoading,
@@ -52,6 +54,7 @@ interface Props {
 	theme?: string;
 	isUsedInTreasuryTrack?: boolean;
 	isUsedInReferedumComponent?: boolean;
+	isUsedInSidebar?: boolean;
 	onClick?: () => void;
 }
 
@@ -136,7 +139,7 @@ export const INIT_BENEFICIARIES = [
 	}
 ];
 
-const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent, onClick }: Props) => {
+const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent, onClick, isUsedInSidebar = false }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const dispatch = useDispatch();
@@ -316,19 +319,27 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			) : (
 				<div
 					className={`${
-						isUsedInTreasuryTrack
-							? 'flex'
+						isUsedInTreasuryTrack || isUsedInSidebar
+							? 'flex gap-2'
 							: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					}`}
 					onClick={handleClick}
 				>
 					{isUsedInTreasuryTrack ? (
 						<CreateProposalWhiteIcon className='mr-2' />
+					) : isUsedInSidebar ? (
+						theme == 'dark' ? (
+							<CreateProposalGrayIconDark />
+						) : (
+							<CreateProposalGrayIcon />
+						)
 					) : (
 						<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
 					)}
 					{isUsedInTreasuryTrack ? (
 						<p className='m-0 p-0'>Create Proposal</p>
+					) : isUsedInSidebar ? (
+						<span className={`${dmSans.variable} ${dmSans.className} text-sm text-blue-light-medium dark:text-blue-dark-medium`}>Treasury Proposal</span>
 					) : (
 						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 					)}
@@ -361,7 +372,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
@@ -420,7 +431,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={

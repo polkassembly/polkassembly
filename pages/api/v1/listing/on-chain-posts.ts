@@ -813,7 +813,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			} else {
 				const parentBountyIndexes: any = {};
 
-				const bountyIds = subsquidPosts.reduce((acc: number[], post: any) => {
+				const bountyIds = subsquidPosts?.reduce((acc: number[], post: any) => {
 					if (!isNaN(post?.preimage?.proposedCall?.args?.bountyId)) {
 						acc.push(Number(post?.preimage?.proposedCall?.args?.bountyId));
 					}
@@ -1094,7 +1094,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 				}
 
-				posts = postsResults.reduce((prev, post) => {
+				posts = postsResults?.reduce((prev, post) => {
 					if (post && post.status === 'fulfilled') {
 						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
 							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });

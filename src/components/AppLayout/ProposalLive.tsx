@@ -28,7 +28,7 @@ const ProposalLive = () => {
 				})();
 			}}
 		>
-			<h2 className='m-0 flex items-center gap-x-2 p-0 font-poppins text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
+			<h2 className='m-0 flex items-center gap-x-2 p-0 font-dmSans text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
 				<Image
 					alt='party image'
 					src='/assets/handshake.svg'

@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
@@ -117,7 +117,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				<div>
 					{allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama', 'picasso', 'composable'].includes(network) && (
 						<ReportButton
-							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className}`}
 							proposalType={postType}
 							onSuccess={deletePost}
 							isDeleteModal={true}

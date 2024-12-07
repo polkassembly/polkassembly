@@ -46,7 +46,7 @@ import {
 	EditPencilIcon
 } from '~src/ui-components/CustomIcons';
 
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
@@ -524,7 +524,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 1,
 					label: (
 						<div
-							className={`flex items-center text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${dmSans.variable} ${dmSans.className}`}
 							onClick={() => {
 								toggleEdit();
 								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
@@ -544,7 +544,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key: 2,
 			label: (
 				<div
-					className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+					className={`flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${dmSans.variable} ${dmSans.className}`}
 					onClick={() => {
 						copyLink();
 					}}
@@ -559,7 +559,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					label: (
 						<ReportButton
 							proposalType={postType}
-							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
 							type='comment'
 							commentId={commentId}
 							postId={postIndex}
@@ -575,7 +575,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 4,
 					label: (
 						<div
-							className={`flex items-center gap-1 text-xs font-medium text-blue-light-medium shadow-none dark:text-blue-dark-medium ${poppins.variable} ${poppins.className}`}
+							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${dmSans.variable} ${dmSans.className} border-none`}
 							onClick={() => {
 								deleteComment();
 								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
@@ -597,7 +597,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<ReportButton
 							isDeleteModal={true}
 							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
 							type={EReportType.COMMENT}
 							onSuccess={removeCommentContent}
 							commentId={commentId}
@@ -728,56 +728,52 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							isUsedInComments={true}
 						/>
 
-						<div className='-mt-3 flex flex-row flex-wrap items-center justify-between gap-[1px] bg-white dark:bg-section-dark-overlay'>
-							<div className='flex items-center'>
-								<CommentReactionBar
-									className='reactions mr-0'
-									commentId={commentId}
-									comment_reactions={comment.comment_reactions}
-									importedReactions={props.isSubsquareUser}
-								/>
-								{id && (
-									<Button
-										disabled={props.disableEdit || !isCommentAllowed}
-										className={classNames(
-											props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
-											'-mt-[2px] flex items-center justify-start border-none pl-1 pr-1 text-xs font-medium text-[#485F7DCC] shadow-none dark:bg-transparent dark:text-[#9E9E9ECC]'
-										)}
-										onClick={props.isSubsquareUser ? toggleReply : toggleReply}
-									>
-										{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1  ' />} Reply
-									</Button>
-								)}
-							</div>
-							<div>
-								<Dropdown
-									theme={theme}
-									className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-									overlayClassName='sentiment-dropdown z-[1056]'
-									placement='bottomRight'
-									menu={{ items }}
-								>
-									{theme === 'dark' ? (
-										<ThreeDotsIconDark className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
-									) : (
-										<ThreeDotsIcon className=' mt-[-1px] rounded-xl hover:bg-pink-100' />
+						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
+							<CommentReactionBar
+								className='reactions mr-0'
+								commentId={commentId}
+								comment_reactions={comment.comment_reactions}
+								importedReactions={props.isSubsquareUser}
+							/>
+							{id && (
+								<Button
+									disabled={props.disableEdit || !isCommentAllowed}
+									className={classNames(
+										props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
+										'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'
 									)}
-								</Dropdown>
-								{comment.isError && (
-									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<Caution className='icon-container relative top-[4px] text-2xl' />
-										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
-										<div
-											onClick={handleRetry}
-											className='retry-container relative flex w-[66px] cursor-pointer px-1'
-											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-										>
-											<IconRetry className='relative top-[3px] text-2xl' />
-											<span className='relative top-[3px] m-0 p-0'>Retry</span>
-										</div>
-									</div>
+									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
+								>
+									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+								</Button>
+							)}
+							<Dropdown
+								theme={theme}
+								className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
+								overlayClassName='sentiment-dropdown z-[1056]'
+								placement='bottomRight'
+								menu={{ items }}
+							>
+								{theme === 'dark' ? (
+									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								) : (
+									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
 								)}
-							</div>
+							</Dropdown>
+							{comment.isError && (
+								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+									<Caution className='icon-container relative top-[4px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
+									<div
+										onClick={handleRetry}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+									>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+									</div>
+								</div>
+							)}
 						</div>
 
 						{/* Add Reply Form*/}

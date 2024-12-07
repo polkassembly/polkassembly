@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { message, Modal } from 'antd';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -15,16 +15,22 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
 import Link from 'next/link';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import copyToClipboard from '~src/util/copyToClipboard';
+import CopyContentIcon from '~assets/icons/content_copy_small.svg';
+import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	openModal: boolean;
+	isPureProxyCreated: boolean;
 	setOpenModal: (pre: boolean) => void;
 	className: string;
 	address: string;
 }
 
-const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }: Props) => {
+const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, isPureProxyCreated }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [pureProxyAddress, setPureProxyAddress] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -37,18 +43,14 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 			setError(null);
 			try {
 				const { data, error } = await nextApiClientFetch<any>('/api/v1/accounts/proxyAddress', {
-					address,
-					network
+					address
 				});
 
 				if (error) {
 					setError(error);
 				}
-				console.log('data', data);
 				if (data?.proxyAddress) {
 					const substrateAddress = getSubstrateAddress(data?.proxyAddress);
-					console.log('substrateAddress', substrateAddress);
-
 					setPureProxyAddress(substrateAddress || data?.proxyAddress);
 				}
 			} catch (err) {
@@ -58,6 +60,11 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				setLoading(false);
 			}
 		}
+	};
+
+	const handleCopylink = (addr: string) => {
+		copyToClipboard(addr);
+		message.success('Address copied to clipboard');
 	};
 
 	useEffect(() => {
@@ -73,7 +80,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 			footer={false}
 			zIndex={1008}
 			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
-			className={`${className} ${poppins.variable} ${poppins.className} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${className} ${dmSans.className} ${dmSans.variable} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setOpenModal(false)}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
@@ -90,10 +97,10 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 								priority={true}
 							/>
 						</div>
-						<h2 className={`${poppins.variable} ${poppins.className} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+						<h2 className={`${dmSans.className} ${dmSans.variable} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 							Proxy created successfully
 						</h2>
-						<div className='ml-5 mt-4 flex flex-col gap-1'>
+						<div className='ml-16 mt-4 flex flex-col items-start gap-1'>
 							<div className='flex items-center gap-2'>
 								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>With Address:</span>
 								<Address
@@ -102,30 +109,42 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 									isTruncateUsername={false}
 									address={address}
 									destroyTooltipOnHide
+									disableTooltip
 								/>
 							</div>
-							<div className='flex items-center gap-2'>
-								<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
-								{loading ? (
-									<SkeletonInput active />
-								) : (
-									pureProxyAddress && (
-										<Address
-											displayInline
-											iconSize={18}
-											isTruncateUsername={false}
-											address={pureProxyAddress}
-											destroyTooltipOnHide
-										/>
-									)
-								)}
-							</div>
+							{isPureProxyCreated && (
+								<div className='flex items-center gap-2'>
+									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
+									{loading ? (
+										<SkeletonInput active />
+									) : (
+										pureProxyAddress && (
+											<span
+												onClick={() => {
+													handleCopylink(pureProxyAddress);
+												}}
+												className='flex items-center gap-1'
+											>
+												<Address
+													displayInline
+													iconSize={18}
+													isTruncateUsername={false}
+													address={pureProxyAddress}
+													destroyTooltipOnHide
+													disableTooltip
+												/>
+												<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+											</span>
+										)
+									)}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 				<Alert
 					type='info'
-					className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+					className={`mx-8 mb-5 h-10 rounded-[4px] text-bodyBlue ${dmSans.className} ${dmSans.variable}`}
 					showIcon
 					message={
 						<span className='text-sm dark:text-blue-dark-high'>
@@ -135,7 +154,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 								className='cursor-pointer font-medium text-pink_primary'
 								onClick={() => setOpenModal(false)}
 							>
-								Profile
+								Accounts
 							</Link>{' '}
 							to view proxy address
 						</span>
@@ -144,7 +163,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address }
 				{error && (
 					<Alert
 						type='error'
-						className={`mx-10 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						className={`mx-10 h-10 rounded-[4px] text-bodyBlue ${dmSans.className} ${dmSans.variable}`}
 						showIcon
 						message={<span className='dark:text-blue-dark-high'>{error}</span>}
 					/>

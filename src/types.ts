@@ -1137,6 +1137,12 @@ export enum EExpertReqStatus {
 	REJECTED = 'rejected',
 	PENDING = 'pending'
 }
+
+export enum LinkProxyType {
+	MULTISIG = 'MULTISIG',
+	PROXY = 'PROXY',
+	PUREPROXY = 'PUREPROXY'
+}
 export interface IIdentityInfo {
 	display: string;
 	legal: string;

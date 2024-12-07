@@ -9,7 +9,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 import AccountsMain from '~src/components/Accounts';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
+// import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface IAccountsProps {
 	network: string;
@@ -21,14 +21,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (!isOpenGovSupported(network)) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/'
-			}
-		};
-	}
+	// if (!isOpenGovSupported(network)) {
+	// return {
+	// props: {},
+	// redirect: {
+	// destination: '/'
+	// }
+	// };
+	// }
 
 	const props: IAccountsProps = {
 		network

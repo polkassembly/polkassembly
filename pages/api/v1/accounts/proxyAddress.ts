@@ -7,6 +7,8 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { SUBSCAN_API_HEADERS } from '../subscanApi';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import messages from '~src/auth/utils/messages';
+import { isValidNetwork } from '~src/api-utils';
 export interface ProxyAddressResponse {
 	data: {
 		proxyAddress: string;
@@ -62,10 +64,15 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 		return res.status(405).json({ error: 'Method not allowed' });
 	}
 	storeApiKeyUsage(req);
-	const { address, network } = req.body;
+	const { address } = req.body;
+	const network = String(req.headers['x-network']);
 
-	if (!address || !network) {
-		return res.status(400).json({ error: 'Address and network are required' });
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
+
+	if (!address) {
+		return res.status(400).json({ error: 'Address is required' });
 	}
 
 	try {

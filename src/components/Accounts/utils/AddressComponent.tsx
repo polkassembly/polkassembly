@@ -4,25 +4,25 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import BalanceDetails from './BalanceDetails';
-import SendFundsComponent from './SendFundsComponent';
 import AddressActionDropdown from './AddressActionDropdown';
 import ProxyTypeBadges from './ProxyTypeBadges';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { message } from 'antd';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
+import { LinkProxyType } from '~src/types';
 
 interface Props {
 	address: string;
 	proxyType?: string;
 	isPureProxy?: boolean;
 	isMultisigAddress?: boolean;
+	linkedAddresses: Array<{ linked_address: string; is_linked: boolean }>;
 }
 
-const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false }: Props) => {
+const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses }: Props) => {
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
 	const [messageApi] = message.useMessage();
 	const success = () => {
 		messageApi.open({
@@ -45,8 +45,17 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
+	const getType = (): LinkProxyType | null => {
+		if (isMultisigAddress) return LinkProxyType.MULTISIG;
+		if (isPureProxy) return LinkProxyType.PUREPROXY;
+		if (proxyType) return LinkProxyType.PROXY;
+		return null;
+	};
+
+	const type = getType();
+
 	return (
-		<div className='mt-3 w-full rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-[10px] dark:border-separatorDark dark:bg-section-dark-overlay md:mt-5 md:p-4'>
+		<div className='mt-3 w-full rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-[10px] dark:border-separatorDark dark:bg-section-dark-overlay md:mb-5 md:mt-2 md:p-4'>
 			<div className=' items-start justify-between md:flex'>
 				<div className='relative'>
 					<div className=''>
@@ -84,7 +93,7 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 								</div>
 							</div>
 						</div>
-						<span className='md:absolute md:left-[94px] md:top-9 '>
+						<span className='md:absolute md:left-[94px] md:top-8 '>
 							<BalanceDetails address={address} />
 						</span>
 						<div className='mt-[6px] flex gap-2 md:hidden'>
@@ -95,8 +104,12 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 					</div>
 				</div>
 				<div className='mt-2 flex items-center gap-2 md:mt-0'>
-					{loginAddress != address && <SendFundsComponent address={address} />}
-					<AddressActionDropdown address={address} />
+					<AddressActionDropdown
+						address={address}
+						type={type}
+						isUsedInProxy={true}
+						linkedAddresses={linkedAddresses}
+					/>
 				</div>
 			</div>
 		</div>

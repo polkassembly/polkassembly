@@ -65,6 +65,7 @@ import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 
 export const network = {
 	POLKADOT: 'polkadot',
+	PASEO: 'paseo',
 	KUSAMA: 'kusama',
 	ACALA: 'acala',
 	ACUITY: 'acuity',
@@ -206,6 +207,34 @@ export const treasuryAssets = {
 };
 
 export const chainProperties: types.ChainPropType = {
+	[network.PASEO]: {
+		preImageBaseDeposit: '0',
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://paseo.dotters.network',
+		ss58Format: 42,
+		subsquidUrl: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.ROC,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://rococo.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Parity',
+				key: 'wss://rococo-rpc.polkadot.io'
+			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		]
+	},
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
 		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',

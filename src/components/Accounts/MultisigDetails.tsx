@@ -7,20 +7,25 @@ import AddressComponent from './utils/AddressComponent';
 
 interface Props {
 	accountData: IAccountData;
+	linkedAddresses?: Array<{ linked_address: string; is_linked: boolean }>;
 }
 
-const MultisigDetails: React.FC<Props> = ({ accountData }) => {
+const MultisigDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 	if (!accountData?.multisig?.multi_account?.length) return null;
 
 	return (
 		<>
 			<h3 className='mt-5 text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Multisigs</h3>
 			<div>
-				{accountData?.multisig?.multi_account.map((multisigAddress, index) => (
-					<div key={index}>
-						<AddressComponent address={multisigAddress?.address} />
-					</div>
-				))}
+				{linkedAddresses &&
+					accountData?.multisig?.multi_account.map((multisigAddress, index) => (
+						<div key={index}>
+							<AddressComponent
+								address={multisigAddress?.address}
+								linkedAddresses={linkedAddresses}
+							/>
+						</div>
+					))}
 			</div>
 		</>
 	);

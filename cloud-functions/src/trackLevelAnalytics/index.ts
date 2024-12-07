@@ -14,15 +14,15 @@ import fetchSubsquid from '../utils/fetchSubsquid';
 const ZERO_BN = new BN(0);
 
 enum EVoteType {
-ACCOUNTS='accounts',
-CONVICTIONVOTES = 'convictionVotes',
-VOTEAMOUNT = 'voteAmount',
+	ACCOUNTS = 'accounts',
+	CONVICTIONVOTES = 'convictionVotes',
+	VOTEAMOUNT = 'voteAmount'
 }
 
 interface IVoteType {
 	lockPeriod: number;
 	balance: string;
-	decision: 'aye'| 'nay'|'abstain';
+	decision: 'aye' | 'nay' | 'abstain';
 	delegatedVotingPower: string;
 	selfVotingPower: string;
 	isDelegatedVote: boolean;
@@ -31,57 +31,57 @@ interface IVoteType {
 
 interface IDataType {
 	index: number;
-	votes: IVoteType[]
+	votes: IVoteType[];
 }
-interface IResponse{
-	network : string,
-	trackNumber: number,
-	referendaIndex: number,
+interface IResponse {
+	network: string;
+	trackNumber: number;
+	referendaIndex: number;
 	votes: {
 		convictionVotes: {
-			delegationSplitData: { delegated: string | number, index: number, solo: string| number },
-			supportData:{ percentage: string, index: number },
-			votesSplitData: { abstain: string | number, aye: string | number, nay: string | number, index: number }
-		},
+			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+		};
 		voteAmount: {
-			delegationSplitData: { delegated: string | number, index: number, solo: string | number },
-			supportData:{ percentage: string, index: number },
-			votesSplitData: { abstain: string| number, aye: string| number, nay: string| number, index: number }
-		},
+			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+		};
 		accounts: {
-			delegationSplitData: { delegated: number | string, index: number, solo: number | string },
-			supportData:{ percentage: string, index: number },
-			votesSplitData: { abstain: number | string, aye: number | string, nay: number | string, index: number }
-		},
-		referendaIndex: number,
-		created_at : Date;
-	}
+			delegationSplitData: { delegated: number | string; index: number; solo: number | string };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: number | string; aye: number | string; nay: number | string; index: number };
+		};
+		referendaIndex: number;
+		created_at: Date;
+	};
 }
 
 const logger = functions.logger;
 
 const getWSProvider = (network: string) => {
 	switch (network) {
-	case 'kusama':
-		return 'wss://kusama-rpc.polkadot.io';
-	case 'polkadot':
-		return 'wss://rpc.polkadot.io';
-	case 'vara':
-		return 'wss://rpc.vara.network';
-	case 'rococo':
-		return 'wss://rococo-rpc.polkadot.io';
-	case 'moonbeam':
-		return 'wss://wss.api.moonbeam.network';
-	case 'moonriver':
-		return 'wss://wss.moonriver.moonbeam.network';
-	case 'moonbase':
-		return 'wss://wss.api.moonbase.moonbeam.network';
-	case 'picasso':
-		return 'wss://picasso-rpc.composable.finance';
-	case 'westend':
-		return 'wss://westend-rpc.dwellir.com';
-	default:
-		return null;
+		case 'kusama':
+			return 'wss://kusama-rpc.polkadot.io';
+		case 'polkadot':
+			return 'wss://rpc.polkadot.io';
+		case 'vara':
+			return 'wss://rpc.vara.network';
+		case 'rococo':
+			return 'wss://rococo-rpc.polkadot.io';
+		case 'moonbeam':
+			return 'wss://wss.api.moonbeam.network';
+		case 'moonriver':
+			return 'wss://wss.moonriver.moonbeam.network';
+		case 'moonbase':
+			return 'wss://wss.api.moonbase.moonbeam.network';
+		case 'picasso':
+			return 'wss://picasso-rpc.composable.finance';
+		case 'westend':
+			return 'wss://westend-rpc.dwellir.com';
+		default:
+			return null;
 	}
 };
 
@@ -94,7 +94,7 @@ const getDelegationSplit = (data: IDataType, type: EVoteType) => {
 
 	if (type === EVoteType.ACCOUNTS) {
 		const delegatedVotes = data?.votes.filter((vote: IVoteType) => !!vote.isDelegatedVote)?.length;
-		const soloVotes = (data?.votes.length - delegatedVotes);
+		const soloVotes = data?.votes.length - delegatedVotes;
 		accountsData = { ...accountsData, delegated: accountsData?.delegated + delegatedVotes, solo: accountsData.solo + soloVotes };
 	} else if (type === EVoteType.CONVICTIONVOTES) {
 		data?.votes?.map((vote: IVoteType) => {
@@ -118,12 +118,12 @@ const getDelegationSplit = (data: IDataType, type: EVoteType) => {
 		});
 	}
 	switch (type) {
-	case EVoteType.ACCOUNTS:
-		return accountsData;
-	case EVoteType.CONVICTIONVOTES:
-		return { ...convictionData, delegated: convictionData?.delegated?.toString(), solo: convictionData?.solo?.toString() };
-	case EVoteType.VOTEAMOUNT:
-		return { ...voteAmountData, delegated: voteAmountData?.delegated?.toString(), solo: voteAmountData?.solo?.toString() };
+		case EVoteType.ACCOUNTS:
+			return accountsData;
+		case EVoteType.CONVICTIONVOTES:
+			return { ...convictionData, delegated: convictionData?.delegated?.toString(), solo: convictionData?.solo?.toString() };
+		case EVoteType.VOTEAMOUNT:
+			return { ...voteAmountData, delegated: voteAmountData?.delegated?.toString(), solo: voteAmountData?.solo?.toString() };
 	}
 };
 
@@ -136,7 +136,7 @@ const getVotesSplit = (data: IDataType, type: EVoteType) => {
 		const ayeVotes = data?.votes.filter((vote: IVoteType) => vote.decision === 'aye')?.length;
 		const nayVotes = data?.votes.filter((vote: IVoteType) => vote.decision === 'nay')?.length;
 
-		const abstainVotes = data?.votes.length - (ayeVotes+ nayVotes);
+		const abstainVotes = data?.votes.length - (ayeVotes + nayVotes);
 		accountsData = { ...accountsData, abstain: abstainVotes, aye: ayeVotes, nay: nayVotes };
 	} else if (type === EVoteType.CONVICTIONVOTES) {
 		data?.votes?.map((vote: IVoteType) => {
@@ -150,26 +150,26 @@ const getVotesSplit = (data: IDataType, type: EVoteType) => {
 		});
 	}
 	switch (type) {
-	case EVoteType.ACCOUNTS:
-		return accountsData;
-	case EVoteType.CONVICTIONVOTES:
-		return { ...convictionData, abstain: convictionData?.abstain?.toString(), aye: convictionData?.aye?.toString(), nay: convictionData?.nay?.toString() };
-	case EVoteType.VOTEAMOUNT:
-		return { ...voteAmountData, abstain: voteAmountData?.abstain?.toString(), aye: voteAmountData?.aye?.toString(), nay: voteAmountData?.nay?.toString() };
+		case EVoteType.ACCOUNTS:
+			return accountsData;
+		case EVoteType.CONVICTIONVOTES:
+			return { ...convictionData, abstain: convictionData?.abstain?.toString(), aye: convictionData?.aye?.toString(), nay: convictionData?.nay?.toString() };
+		case EVoteType.VOTEAMOUNT:
+			return { ...voteAmountData, abstain: voteAmountData?.abstain?.toString(), aye: voteAmountData?.aye?.toString(), nay: voteAmountData?.nay?.toString() };
 	}
 };
 
-const bnToIntBalance = function(bn: BN, network:string): number {
+const bnToIntBalance = function (bn: BN, network: string): number {
 	return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 };
 
 const getTotalIssuance = async (api: any, network: string) => {
 	if (network === 'picasso') {
-		const totalIssuance = await api.query.openGovBalances.totalIssuance();
+		const totalIssuance = await api.query.openGovBalances?.totalIssuance();
 		const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
 		return (totalIssuance as any).sub(inactiveIssuance);
 	} else {
-		const totalIssuance = await api.query.balances.totalIssuance();
+		const totalIssuance = await api.query.balances?.totalIssuance();
 		const inactiveIssuance = await api.query.balances.inactiveIssuance();
 		return (totalIssuance as any).sub(inactiveIssuance);
 	}
@@ -196,7 +196,7 @@ const getSupportData = async (data: IDataType, network: string, api: any) => {
 
 const trackLevelAnalytics = async () => {
 	const analyticsData: any = [];
-	const trackDetails: { network: string; trackNumber:number, count: number}[] = [];
+	const trackDetails: { network: string; trackNumber: number; count: number }[] = [];
 
 	const analyticsDataPromise = AllNetworks.map(async (network) => {
 		const wsProvider = new WsProvider(getWSProvider(network) as string);
@@ -288,7 +288,11 @@ const trackLevelAnalytics = async () => {
 	if (trackDetails.length) {
 		const batch = firestoreDB.batch();
 		trackDetails.map((item) => {
-			const snapshot = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber));
+			const snapshot = firestoreDB
+				.collection('networks')
+				.doc(item?.network)
+				.collection('track_level_analytics')
+				.doc(String(item.trackNumber));
 			batch.set(snapshot, { totalProposalsCount: item?.count || 0 });
 		});
 
@@ -309,8 +313,14 @@ const trackLevelAnalytics = async () => {
 	for (const chunk of chunkedArray) {
 		const batch = firestoreDB.batch();
 		for (const item of chunk) {
-			if (item?.network && typeof item?.trackNumber=='number' && typeof item?.referendaIndex === 'number' && item?.votes) {
-				const activityRef = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
+			if (item?.network && typeof item?.trackNumber == 'number' && typeof item?.referendaIndex === 'number' && item?.votes) {
+				const activityRef = firestoreDB
+					.collection('networks')
+					.doc(item?.network)
+					.collection('track_level_analytics')
+					.doc(String(item.trackNumber))
+					.collection('votes')
+					.doc(String(item?.referendaIndex));
 				batch.set(activityRef, item?.votes, { merge: true });
 			}
 		}

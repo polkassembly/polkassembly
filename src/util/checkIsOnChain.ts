@@ -15,9 +15,9 @@ export async function checkIsOnChain(id: number | string, postType: ProposalType
 			dataFromChain = ((await api.query.democracy.publicProps()).toJSON() as any[]) || [];
 			return Boolean(dataFromChain.filter(([id]) => id === id).length);
 		case ProposalType.FELLOWSHIP_REFERENDUMS:
-			return Boolean(await api.query.fellowshipReferenda.referendumInfoFor(Number(id)));
+			return Boolean(await api?.query?.fellowshipReferenda?.referendumInfoFor(Number(id)));
 		case ProposalType.OPEN_GOV || ProposalType.REFERENDUM_V2:
-			return Boolean(await api.query.referenda.referendumInfoFor(Number(id)));
+			return Boolean(await api?.query?.referenda?.referendumInfoFor(Number(id)));
 		case ProposalType.TECH_COMMITTEE_PROPOSALS:
 			dataFromChain = ((await api.query.technicalCommittee.proposals()).toJSON() as any[]) || [];
 			return Boolean(dataFromChain.filter(([id]) => id === id).length);

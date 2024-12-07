@@ -63,7 +63,7 @@ const TotalDelegationDataSmall = ({
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		(async () => {
-			const totalIssuance = await api?.query?.balances?.totalIssuance();
+			const totalIssuance = await api?.query?.balances??.totalIssuance();
 			const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
 			setTotalSupply(totalIssuance.sub(inactiveIssuance));
 		})();

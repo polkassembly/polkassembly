@@ -125,11 +125,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		handleTallyData(tally);
 		(async () => {
 			if (network === 'picasso') {
-				const totalIssuance = await api.query.openGovBalances.totalIssuance();
+				const totalIssuance = await api.query.openGovBalances?.totalIssuance();
 				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
 				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
 			} else {
-				const totalIssuance = await api.query.balances.totalIssuance();
+				const totalIssuance = await api.query.balances?.totalIssuance();
 				const inactiveIssuance = await api.query.balances.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance) as any);
 			}

@@ -206,11 +206,14 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
 				}
 				const newApi = createApiPromise(provider.current, props.network);
+				await newApi.isReady;
 				setApi(newApi);
+				setApiReady(true);
 			} else {
 				await api.connect();
+				await api.isReady;
+				setApiReady(true);
 			}
-			setApiReady(true);
 			console.log('API reconnected successfully');
 		} catch (error) {
 			console.error('Failed to reconnect API:', error);

@@ -106,7 +106,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 				disabled={loading}
 				validateMessages={{ required: "Please add the  '${name}'" }}
 			>
-				<div className='flex gap-4 pt-4 font-poppins md:pt-0'>
+				<div className='flex gap-4 pt-4 font-dmSans md:pt-0'>
 					<div className='flex flex-col items-center gap-2   '>
 						<ImageComponent
 							className='mt-1 hidden flex-none md:inline-block'
@@ -152,7 +152,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='font-poppins text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
+						<p className='font-dmSans text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
 						<div className='w-[250px] md:w-[500px]  md:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}
@@ -170,7 +170,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 									disabled={!content || (typeof content === 'string' && content.trim() === '')}
 									loading={loading}
 									htmlType='submit'
-									className={`my-0 flex h-[40px] w-[100px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
+									className={`my-0 flex h-[40px] w-[100px] items-center justify-center border-none bg-pink_primary font-semibold text-white hover:bg-pink_secondary ${
 										!content ? 'opacity-50' : ''
 									}`}
 								>

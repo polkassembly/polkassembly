@@ -17,7 +17,7 @@ import SearchErrorsCard from './SearchErrorsCard';
 import { post_topic } from '~src/global/post_topics';
 import { optionTextToTopic, topicToOptionText } from '../Post/CreatePost/TopicsRadio';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import NetworkDropdown from '~src/ui-components/NetworkDropdown';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -509,7 +509,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			open={openModal}
 			onCancel={() => handleClearFilters(true)}
 			footer={false}
-			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${className} w-[850px] max-md:w-full ${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			closeIcon={<CloseIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
@@ -576,7 +576,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							setPeoplePage({ ...peoplePage, page: 1 });
 						}}
 						value={filterBy}
-						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} sm:flex-wrap`}
+						className={`flex gap-[1px] ${dmSans.variable} ${dmSans.className} sm:flex-wrap`}
 					>
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
@@ -632,7 +632,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 											size='large'
 											onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)}
 											value={dateFilter}
-											className={`flex flex-col gap-[1px] ${poppins.variable} ${poppins.className}`}
+											className={`flex flex-col gap-[1px] ${dmSans.variable} ${dmSans.className}`}
 										>
 											<Radio
 												value={EDateFilter.Today}
@@ -705,7 +705,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 									content={
 										<Collapse
 											collapsible='header'
-											className={`${poppins.className} ${poppins.variable} cursor-pointer`}
+											className={`${dmSans.className} ${dmSans.variable} cursor-pointer`}
 										>
 											<Collapse.Panel
 												key={1}
@@ -713,7 +713,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 												className='cursor-pointer'
 											>
 												<Checkbox.Group
-													className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+													className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${dmSans.className} ${dmSans.variable}`}
 													onChange={(list) => setSelectedGov1Tracks(list)}
 													value={selectedGov1Tracks}
 												>
@@ -738,7 +738,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 													className='cursor-pointer'
 												>
 													<Checkbox.Group
-														className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+														className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${dmSans.className} ${dmSans.variable}`}
 														onChange={(list) => setSelectedOpengovTracks(list)}
 														value={selectedOpengovTracks}
 													>
@@ -780,7 +780,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, topic: !openFilter.topic })}
 								content={
 									<Checkbox.Group
-										className={`checkboxStyle flex flex-col justify-start tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+										className={`checkboxStyle flex flex-col justify-start tracking-[0.01em] ${dmSans.className} ${dmSans.variable}`}
 										onChange={(list) => setSelectedTopics(list)}
 										value={selectedTopics}
 									>

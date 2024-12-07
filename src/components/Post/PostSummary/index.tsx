@@ -8,7 +8,7 @@ import Markdown from '~src/ui-components/Markdown';
 import styled from 'styled-components';
 import { AiStarIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import EvalutionSummary from './EvalutionSummary';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
@@ -52,8 +52,8 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 				className={classNames(
 					className,
 					'ml-auto h-[calc(100vh-250px)] pb-0 pl-0 md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay',
-					poppins.className,
-					poppins.variable
+					dmSans.className,
+					dmSans.variable
 				)}
 				open={open}
 				onCancel={() => setOpen(false)}

@@ -30,7 +30,7 @@ import Popover from '~src/basic-components/Popover';
 import _ from 'lodash';
 import Link from 'next/link';
 import ImageComponent from '../ImageComponent';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
 
 export const ActivityFeedPostActions: React.FC<{
@@ -66,7 +66,7 @@ export const ActivityFeedPostActions: React.FC<{
 		const userImages = reaction === '👍' ? reactionState?.likesImages : reactionState?.dislikesImages;
 
 		return usernames?.length ? (
-			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', poppins.className, poppins.variable)}>
+			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', dmSans.className, dmSans.variable)}>
 				{usernames?.map((name: string, index: number) => (
 					<Link
 						href={`https://${network}.polkassembly.io/user/${name}`}

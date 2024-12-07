@@ -15,7 +15,7 @@ import LinkPostPreview from './LinkPostPreview';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -205,7 +205,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					</CustomButton>
 				</div>
 			]}
-			className={`md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay ${poppins.className} ${poppins.variable}`}
+			className={`md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay ${dmSans.className} ${dmSans.variable}`}
 		>
 			<section className='flex flex-col'>
 				<div className='-mx-6 border-0 border-b-[1px] border-solid border-lightBlue px-6 dark:border-separatorDark'>

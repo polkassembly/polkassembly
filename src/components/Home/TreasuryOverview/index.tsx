@@ -88,7 +88,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				total: 0
 			}
 		});
-		api.derive.chain
+		api?.derive.chain
 			.bestNumber((currentBlock) => {
 				const spendPeriodConst = api.consts.treasury ? api.consts.treasury.spendPeriod : BN_ZERO;
 				if (spendPeriodConst) {
@@ -152,7 +152,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			EMPTY_U8A_32
 		);
 
-		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
+		api?.derive?.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
 			api.query.system
 				.account(treasuryAccount)
 				.then((res) => {

@@ -34,5 +34,23 @@
 		"longDescription": "",
 		"name": "Staker Space",
 		"shortDescription": ""
-  }
+  },
+  {
+		"address": "HYmYudY1cxN6XyY98dd82TckYF2YiPFc6sXmHqMoKifGAje",
+		"longDescription": "",
+		"name": "Le Nexus",
+		"shortDescription": ""
+  },
+  {
+		"address": "JHTfbt39EL1CcbKteN6hG5L5pWo9XWi9XFiyuS9q24cAc8u",
+		"longDescription": "",
+		"name": "KusDAO",
+		"shortDescription": ""
+  },
+  {
+		"address": "Hgm7ELPfRmPKbHgGZCYEZGTjJX8VicXEnFKec7YAeFgAd4d",
+		"longDescription": "",
+		"name": "Polkadot Hungary DAO",
+		"shortDescription": ""
+}
 ]

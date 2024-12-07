@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import React, { FC, useEffect, useState } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import GovernanceCard from '../GovernanceCard';
@@ -92,7 +92,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}`}>
 								<GovernanceCard
-									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${dmSans.variable} ${dmSans.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}

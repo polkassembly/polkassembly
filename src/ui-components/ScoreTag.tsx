@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import StarIcon from '~assets/icons/StarIcon.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	score: number;
@@ -15,7 +15,7 @@ interface Props {
 const ScoreTag = ({ score, className, iconWrapperClassName, scale }: Props) => {
 	return (
 		<div
-			className={`${poppins.className} ${poppins.variable} flex items-center justify-start gap-x-0.5 rounded-md px-1 ${className}`}
+			className={`${dmSans.className} ${dmSans.variable} flex items-center justify-start gap-x-0.5 rounded-md px-1 ${className}`}
 			style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
 		>
 			<span className={`${iconWrapperClassName}`}>

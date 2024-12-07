@@ -45,9 +45,6 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
-import { usePostDataContext } from '~src/context';
-import { showProgressReportUploadFlow } from '../ProgressReport/utils';
-
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -130,7 +127,6 @@ const Post: FC<IPostProps> = (props) => {
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 	const [selectedTabKey, setSelectedTabKey] = useState<string>('description');
-	const { postData } = usePostDataContext();
 
 	useEffect(() => {
 		const { tab } = router.query;
@@ -489,9 +485,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && post?.progress_report && post?.progress_report?.length > 0 && (
-						<PostProgressReport theme={theme} />
-					)}
+					{post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

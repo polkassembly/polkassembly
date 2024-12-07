@@ -4,7 +4,7 @@
 
 import { Modal } from 'antd';
 import React, { useState } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import SignupPopup from './SignupPopup';
 import LoginPopup from './loginPopup';
 import Image from 'next/image';
@@ -39,7 +39,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 		<div>
 			<Modal
 				open={modalOpen}
-				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.variable} ${dmSans.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => setModalOpen(false)}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				centered
@@ -72,7 +72,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 						alt=''
 					/>
 					<h5 className='leading-24 traking-normal mt-8 text-center text-xl font-semibold dark:text-white max-sm:text-base'>{title}</h5>
-					<h5 className='leading-21 text-center font-poppins text-sm font-medium tracking-normal dark:text-white max-sm:text-xs'>{subtitle}</h5>
+					<h5 className='leading-21 text-center font-dmSans text-sm font-medium tracking-normal dark:text-white max-sm:text-xs'>{subtitle}</h5>
 				</div>
 			</Modal>
 			<SignupPopup

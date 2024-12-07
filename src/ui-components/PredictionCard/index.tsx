@@ -137,7 +137,7 @@ const PredictionCard = () => {
 
 	return (
 		<Container aria-expanded={isFixed}>
-			<div className='flex items-center justify-between font-poppins'>
+			<div className='flex items-center justify-between font-dmSans'>
 				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
 					Prediction
 					<Tooltip

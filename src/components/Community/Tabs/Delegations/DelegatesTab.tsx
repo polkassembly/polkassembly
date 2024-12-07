@@ -70,7 +70,6 @@ const DelegatesTab: FC<IDelegatesTab> = (props) => {
 								key={index}
 								delegate={delegate}
 								disabled={!delegationDashboardAddress}
-								// handleUsername={(objWithUsername) => handleUsernameUpdateInDelegate(objWithUsername)}
 							/>
 						))}
 					</div>

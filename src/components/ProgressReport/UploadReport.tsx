@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal } from 'antd';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -83,7 +83,7 @@ const UploadReport = () => {
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
-			className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+			className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 			open={add_progress_report_modal_open}
 			footer={
 				<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>

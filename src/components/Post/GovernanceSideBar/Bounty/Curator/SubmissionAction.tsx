@@ -8,7 +8,7 @@ import { EditOutlined, ExclamationCircleOutlined, CheckCircleOutlined, CloseCirc
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CreateChildBountyButton from '~src/components/ChildBountyCreation/CreateChildBountyButton';
@@ -122,7 +122,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 					setIsDeleteConfirm(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={'dark:bg-modalOverlayDark'}
 				closable={false}
 				title={

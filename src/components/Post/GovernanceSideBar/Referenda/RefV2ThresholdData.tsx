@@ -42,7 +42,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting Details</h6>
+					<h6 className='m-0 p-0 text-xl font-semibold leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting Details</h6>
 					<div className='flex items-center gap-x-2'>
 						<button
 							onClick={() => {

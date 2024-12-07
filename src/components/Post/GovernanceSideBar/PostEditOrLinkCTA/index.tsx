@@ -9,7 +9,7 @@ import { Modal } from 'antd';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IPostEditOrLinkCTA {
@@ -33,7 +33,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={[]}
-				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>

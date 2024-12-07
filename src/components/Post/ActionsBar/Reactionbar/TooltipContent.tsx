@@ -9,7 +9,7 @@ import Loader from '~src/ui-components/Loader';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface TooltipContentProps {
 	users: UserProfileImage[];
@@ -29,7 +29,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 	}));
 
 	return (
-		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>
+		<div className={classNames('max-h-24 w-min overflow-y-auto', dmSans.className, dmSans.variable)}>
 			{isLoading ? (
 				<Loader className='h-7 w-7' />
 			) : (

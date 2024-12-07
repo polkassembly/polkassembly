@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import Link from 'next/link';
 import DownArrowIcon from '~assets/icons/down-icon.svg';
@@ -69,7 +69,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 	return (
 		<Alert
 			type='warning'
-			className={`mt-5 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className} ${className}`}
+			className={`mt-5 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className} ${className}`}
 			showIcon
 			message={
 				<div className='mt-0.5 text-xs leading-5 dark:text-blue-dark-high'>

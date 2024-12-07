@@ -19,7 +19,7 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import { getConvictionVoteOptions } from './VoteReferendumModal';
@@ -516,7 +516,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					handleModalReset();
 				}}
 				footer={false}
-				className={`alignment-close max-h-[675px] w-[550px] rounded-sm max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`alignment-close max-h-[675px] w-[550px] rounded-sm max-md:w-full ${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
@@ -627,7 +627,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								withBalance
 								onAccountChange={onAccountChange}
 								onBalanceChange={handleOnBalanceChange}
-								className={`${poppins.variable} ${poppins.className} text-light text-sm font-normal`}
+								className={`${dmSans.variable} ${dmSans.className} text-light text-sm font-normal`}
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								isVoting={true}

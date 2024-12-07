@@ -29,7 +29,7 @@ const OpenGovHeaderBanner: FC<IOpenGovHeaderBannerProps> = (props) => {
 	const { network } = props;
 	return (
 		<section className='opengov_banner flex flex-col items-center justify-center gap-x-2 rounded-b-[20px] px-4 py-[10px] md:px-9 md:py-6 lg:ml-[80px] lg:flex-row'>
-			<h2 className='m-0 flex items-center gap-x-2 p-0 font-poppins text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
+			<h2 className='m-0 flex items-center gap-x-2 p-0 font-dmSans text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
 				<Image
 					alt='party image'
 					src='/assets/confetti.png'

@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
 
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
@@ -65,8 +65,8 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 									>
 										<GovernanceCard
 											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white dark:bg-section-dark-overlay' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${
-												poppins.variable
-											} ${poppins.className}`}
+												dmSans.variable
+											} ${dmSans.className}`}
 											assetId={post?.assetId || null}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import { Badge } from '~src/auth/types';
@@ -41,7 +41,7 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate mt-[5vh] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} delegate mt-[5vh] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {

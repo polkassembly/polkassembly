@@ -29,7 +29,7 @@ import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
@@ -454,7 +454,7 @@ const Address = (props: Props) => {
 									</div>
 								</div>
 							) : (
-								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex items-center gap-0.5 font-semibold`}>
+								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex items-center gap-0.5 font-normal`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 									{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
@@ -478,7 +478,7 @@ const Address = (props: Props) => {
 						<div
 							className={`${
 								isUsedInDelegationProfile
-									? `${poppins.variable} ${poppins.className} flex flex-col items-center text-[20px] text-blue-light-high dark:text-blue-dark-high`
+									? `${dmSans.variable} ${dmSans.className} flex flex-col items-center text-[20px] text-blue-light-high dark:text-blue-dark-high`
 									: 'flex items-center gap-x-2 font-semibold text-bodyBlue'
 							} ${!addressSuffix && 'gap-0'}`}
 						>
@@ -523,7 +523,7 @@ const Address = (props: Props) => {
 								{isW3FDelegate && (
 									<Tooltip
 										title='Decentralized voices delegates'
-										className={classNames(poppins.className, poppins.variable)}
+										className={classNames(dmSans.className, dmSans.variable)}
 									>
 										<Image
 											src={'/assets/profile/w3f.svg'}

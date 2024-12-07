@@ -19,7 +19,7 @@ import messages from '~src/auth/utils/messages';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { EmailIcon, InfoIcon, MatrixIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -725,7 +725,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 								withBalance
 								heading={'Proxy Address'}
 								isUsedInIdentity={true}
-								className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								className={`${dmSans.variable} ${dmSans.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-0.5'
 								wallet={wallet}
 								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}

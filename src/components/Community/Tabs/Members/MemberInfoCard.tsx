@@ -6,14 +6,16 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { BadgeName, User } from '~src/auth/types';
 import ImageComponent from '~src/components/ImageComponent';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Tipping from '~src/components/Tipping';
 import FollowButton from '~src/components/UserProfile/Follow/FollowButton';
 import { chainProperties } from '~src/global/networkConstants';
+import { isFollowing } from '~src/redux/follow';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
@@ -34,14 +36,27 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { resolvedTheme: theme } = useTheme();
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [totalFollowers, setTotalFollower] = useState<number>(user?.followers_count?.[network] || 0);
 
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
+	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, user?.id));
+
 	const [messageApi, contextHolder] = message.useMessage();
+
+	console.log('user', user);
 
 	const handleDelegationContent = (content: string) => {
 		return content?.split('\n')?.find((item: string) => item?.length > 0) || '';
+	};
+
+	const updateFollowerCount = () => {
+		if (isUserFollowing) {
+			setTotalFollower(totalFollowers - 1);
+		} else {
+			setTotalFollower(totalFollowers + 1);
+		}
 	};
 
 	const success = () => {
@@ -70,10 +85,10 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 	return (
 		<div className={`${className}`}>
 			<div
-				className={`flex flex-col gap-y-2 rounded-[16px] rounded-[6px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
+				className={`flex flex-col gap-y-2 rounded-[16px] border-[1px] border-solid border-section-light-container bg-white px-5 pt-4 hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark
         dark:bg-black ${className} w-full sm:w-auto`}
 			>
-				<div className='flex items-center justify-between'>
+				<div className='mt-1 flex items-center justify-between'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!user?.profile?.image?.length && (
 							<ImageComponent
@@ -88,26 +103,37 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							destroyTooltipOnHide
 							disableIdenticon={Boolean(user?.profile?.image?.length)}
 							iconSize={26}
+							isTruncateUsername={false}
 							usernameClassName='font-semibold text-xl'
-							isTruncateUsername={true}
 							className='flex items-center'
 						/>
-						<div className='mr-2 flex items-center gap-2'>
-							<SocialsHandle
-								address={user?.addresses?.[0] || user?.address || ''}
-								onchainIdentity={user?.identityInfo || null}
-								socials={[]}
-								iconSize={18}
-								boxSize={32}
-							/>
-						</div>
 					</div>
 					<div className='flex items-center gap-x-4'>
-						<FollowButton
-							userId={user?.id || user?.userId}
-							isUsedInProfileHeaders={false}
-							isUsedInCommunityTab
-						/>
+						<Button
+							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
+							onClick={() => {
+								setOpenTipping(true);
+							}}
+						>
+							<Image
+								src='/assets/icons/tipping-pink_icon.svg'
+								alt='tipping-icon'
+								width={20}
+								height={20}
+							/>{' '}
+							Tip
+						</Button>
+						<div
+							className='flex items-center gap-x-4'
+							onClick={updateFollowerCount}
+						>
+							<FollowButton
+								userId={user?.id || user?.userId}
+								user={user}
+								isUsedInProfileHeaders={false}
+								isUsedInCommunityTab
+							/>
+						</div>
 					</div>
 				</div>
 				<div className='flex items-center justify-between'>
@@ -137,7 +163,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						<ScoreTag
 							className='h-6 w-min px-[6px] py-1'
 							score={user?.profile_score || 0}
-							iconWrapperClassName='mt-[5?.5px]'
+							iconWrapperClassName='mt-[5.5px]'
 						/>
 						{isUsedInExpertTab && user?.dataSource && user?.dataSource?.length && (
 							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
@@ -168,10 +194,10 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex items-center justify-between'>
-					<div className='flex w-full items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-						<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
-						<span className='flex items-center gap-x-1 text-xs font-medium text-bodyBlue dark:text-white'>
+				<div className='flex w-full flex-col items-start gap-y-1 md:flex-row md:items-center md:gap-x-3 md:gap-y-0'>
+					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+						<p className='m-0 whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
+						<span className='flex items-center gap-x-1 whitespace-nowrap text-xs font-medium text-bodyBlue dark:text-white'>
 							<Image
 								src='/assets/icons/orange-calender-icon.svg'
 								alt='calender-icon'
@@ -181,52 +207,46 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							/>
 							{dayjs(user?.created_at)?.format('DD MMM YYYY')}
 						</span>
-						<div className='flex items-center gap-x-1'>
-							<Divider
-								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
-								type='vertical'
-							/>
-							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers}</span>
+					</div>
+					<div className='flex w-full items-center justify-between gap-x-2'>
+						<div className='flex items-center gap-x-2'>
+							<div className='flex items-center gap-x-3'>
+								<Divider
+									className='m-0 hidden border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
+									type='vertical'
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers_count?.[network] || 0}</span>
+							</div>
+							<div className='flex items-center gap-x-3'>
+								<Divider
+									className='m-0 border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
+									type='vertical'
+								/>
+								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
+								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings_count?.[network] || 0}</span>
+							</div>
 						</div>
-						<div className='flex items-center gap-x-1'>
-							<Divider
-								className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
-								type='vertical'
-							/>
-							<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-							<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings}</span>
-						</div>
-						<Button
-							className='m-0 ml-auto flex items-center gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
-							onClick={() => {
-								setOpenTipping(true);
-							}}
-						>
-							<Image
-								src='/assets/icons/tipping-pink_icon.svg'
-								alt='tipping-icon'
-								width={20}
-								height={20}
-							/>{' '}
-							Tip
-						</Button>
 					</div>
 				</div>
-				<div className={'mb-2 flex max-h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-2 flex h-[40px] flex-col text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio m-0 w-full p-0 '>
 						{user?.profile?.bio ? (
 							<Markdown
 								className='post-content m-0 p-0'
-								md={`${handleDelegationContent(user?.profile?.bio || '')?.slice(0, 100)}?.?.?.`}
+								md={`${
+									handleDelegationContent(user?.profile?.bio || '')?.length > 50
+										? handleDelegationContent(user?.profile?.bio || '')?.slice(0, 50) + '...'
+										: handleDelegationContent(user?.profile?.bio || '')
+								}`}
 								isPreview={true}
 								imgHidden
 							/>
 						) : (
-							'No Bio'
+							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
-					{user?.profile?.bio && user?.profile?.bio?.length > 100 && (
+					{user?.profile?.bio && user?.profile?.bio?.length > 50 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
 							className='m-0 -mt-1 flex cursor-pointer items-center justify-start p-0 text-xs font-medium text-[#3C74E1]'
@@ -235,8 +255,18 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						</span>
 					)}
 				</div>
+				<div className='mr-2 flex items-center gap-2'>
+					<SocialsHandle
+						address={user?.addresses?.[0] || user?.address || ''}
+						onchainIdentity={user?.identityInfo || null}
+						socials={[]}
+						iconSize={18}
+						boxSize={32}
+						isUsedInCommunityTab
+					/>
+				</div>
 				{!isUsedInExpertTab ? (
-					<div className=' flex min-h-[92px] items-center justify-start gap-x-2'>
+					<div className='-mt-3 flex min-h-[92px] items-center justify-start gap-x-2'>
 						<Image
 							src={
 								user?.profile?.achievement_badges?.some((badge: any) => badge?.name === BadgeName?.DECENTRALISED_VOICE)
@@ -302,7 +332,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', poppins?.className, poppins?.variable)}
+				className={classNames('modal w-[725px] max-md:w-full dark:[&>?.ant-modal-content]:bg-section-dark-overlay', dmSans?.className, dmSans?.variable)}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -343,7 +373,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 					</div>
 
 					<div
-						className={`${poppins?.variable} ${poppins?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
+						className={`${dmSans?.variable} ${dmSans?.className} flex min-h-[56px] gap-1 px-[46px] text-sm tracking-[0?.015em] text-[#576D8B] dark:text-blue-dark-high max-sm:-mt-2 sm:mt-4 sm:px-0 sm:pl-[56px]`}
 					>
 						<p className='w-full sm:w-[90%]'>
 							{user?.profile?.bio ? (

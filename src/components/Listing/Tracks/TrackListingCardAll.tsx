@@ -18,7 +18,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { sortValues } from '~src/global/sortOptions';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	className?: string;
@@ -146,7 +146,7 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
-					className={`my-auto flex gap-[1px] ${poppins.variable} ${poppins.className} sm:flex-wrap`}
+					className={`my-auto flex gap-[1px] ${dmSans.variable} ${dmSans.className} sm:flex-wrap`}
 					style={{ marginBottom: 16 }}
 				>
 					<Radio

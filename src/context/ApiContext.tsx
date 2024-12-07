@@ -157,10 +157,10 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					console.log('API ready');
 					try {
 						if (props.network === 'collectives') {
-							const value = api.consts.fellowshipReferenda.tracks.toJSON();
+							const value = api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else if (isOpenGovSupported(props.network || '')) {
-							const value = api.consts.referenda.tracks.toJSON();
+							const value = api?.consts?.referenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else {
 							localStorage.removeItem('tracks');

@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
@@ -163,7 +163,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		<>
 			<Modal
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.variable} ${dmSans.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>

@@ -133,7 +133,8 @@ const messages = {
 	CHILD_BOUNTY_SUBMISSION_ALREADY_EXISTS: 'Child bounty submission already exists',
 	CHILD_BOUNTY_SUBMISSION_NOT_EXISTS: 'Child bounty submission does not exists.',
 	CHILD_BOUNTY_SUBMISSION_EDITED_SUCCESSFULLY: 'Child bounty submission edited successfully',
-	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully'
+	CHILD_BOUNTY_SUBMISSION_DELETED_SUCCESSFULLY: 'Child bounty submission deleted successfully',
+	EXPERT_REQ_ALREADY_EXIST: 'Expert Req Already Exists.'
 };
 
 export default messages;

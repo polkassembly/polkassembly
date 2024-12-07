@@ -17,7 +17,7 @@ import BN from 'bn.js';
 import { Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 const ZERO_BN = new BN(0);
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
@@ -66,7 +66,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 							<Tooltip
 								color='#363636'
 								title={
-									<div className={`${poppins.className} ${poppins.variable} flex flex-col gap-y-2 p-2`}>
+									<div className={`${dmSans.className} ${dmSans.variable} flex flex-col gap-y-2 p-2`}>
 										<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
 										<p className='m-0 p-0 text-white'>
 											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.

@@ -194,7 +194,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex w-full flex-col items-start gap-y-1 md:flex-row md:items-center md:gap-x-2 md:gap-y-0'>
+				<div className='flex w-full flex-col items-start gap-y-1 md:flex-row md:items-center md:gap-x-3 md:gap-y-0'>
 					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<p className='m-0 whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>User Since: </p>
 						<span className='flex items-center gap-x-1 whitespace-nowrap text-xs font-medium text-bodyBlue dark:text-white'>
@@ -210,17 +210,17 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 					</div>
 					<div className='flex w-full items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-2'>
-							<div className='flex items-center gap-x-1'>
+							<div className='flex items-center gap-x-3'>
 								<Divider
-									className='hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+									className='m-0 hidden border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
 									type='vertical'
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
 								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers_count?.[network] || 0}</span>
 							</div>
-							<div className='flex items-center gap-x-1'>
+							<div className='flex items-center gap-x-3'>
 								<Divider
-									className='border-lightBlue dark:border-icon-dark-inactive md:inline-block'
+									className='m-0 border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
 									type='vertical'
 								/>
 								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>

@@ -7,6 +7,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import Image from 'next/image';
 import { Spin } from 'antd';
 import CuratorsCard from './CuratorsCard';
+import CardSkeleton from '../../CardSkeleton';
 
 interface ICuratorsTab {
 	totalUsers?: number;
@@ -19,6 +20,14 @@ const CuratorsTab: FC<ICuratorsTab> = (props) => {
 	const { totalUsers, userData, loading, currentPage, setCurrentPage } = props;
 	return (
 		<Spin spinning={loading}>
+			{loading && (
+				<div className='grid grid-cols-2 items-end gap-6 opacity-100 max-lg:grid-cols-1 sm:mt-6'>
+					<CardSkeleton />
+					<CardSkeleton />
+					<CardSkeleton />
+					<CardSkeleton />
+				</div>
+			)}
 			<div className='min-h-[250px]'>
 				{!userData?.length && !loading ? (
 					<div className='mt-4 flex flex-col items-center justify-center gap-4'>

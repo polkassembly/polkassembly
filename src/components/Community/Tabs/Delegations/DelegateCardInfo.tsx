@@ -336,12 +336,12 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						)}
 					</div>
 				</div>
-				<div className={'mt-2  flex h-8 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
-					<p className='bio w-4/5'>
+				<div className={'mb-3 flex h-8 flex-col pl-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'}>
+					<p className='m-0 w-full p-0'>
 						{delegate?.bio ? (
 							<Markdown
 								className='post-content'
-								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 54)}...`}
+								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 65)}...`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -349,10 +349,10 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
-					{delegate?.bio?.length > 100 && (
+					{delegate?.bio?.length > 65 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
-							className='mt-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'
+							className='m-0 -mt-2 flex cursor-pointer items-start justify-start p-0 text-xs font-medium text-[#1B61FF]'
 						>
 							Read more
 						</span>
@@ -463,7 +463,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							boxSize={30}
 						/>
 					</div>
-					<div className='flex min-h-[82px] justify-between border-0 border-t-[1px] border-solid border-section-light-container  dark:border-[#3B444F] dark:border-separatorDark  sm:min-h-[92px] '>
+					<div className='flex min-h-[82px] items-center justify-between border-0 border-t-[1px] border-solid border-section-light-container  dark:border-[#3B444F] dark:border-separatorDark  sm:min-h-[92px] '>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							<div className={`${dmSans.variable} ${dmSans.className} flex items-center justify-center gap-1`}>
 								{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}

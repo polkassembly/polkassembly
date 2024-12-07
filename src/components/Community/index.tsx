@@ -680,15 +680,13 @@ const Community = () => {
 				</Spin>
 			)}
 			{selectedTab === ECommunityTabs?.MEMBERS && (
-				<Spin spinning={membersLoading}>
-					<MembersTab
-						totalUsers={totalMembers}
-						userData={membersData}
-						loading={membersLoading}
-						currentPage={currentPage}
-						setCurrentPage={setCurrentPage}
-					/>
-				</Spin>
+				<MembersTab
+					totalUsers={totalMembers}
+					userData={membersData}
+					loading={membersLoading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
 			)}
 			{selectedTab === ECommunityTabs?.EXPERTS && (
 				<Spin spinning={expertsLoading}>
@@ -702,15 +700,13 @@ const Community = () => {
 				</Spin>
 			)}
 			{selectedTab === ECommunityTabs?.CURATORS && (
-				<Spin spinning={curatorsLoading}>
-					<CuratorsTab
-						totalUsers={totalCurators}
-						userData={curatorsData}
-						loading={curatorsLoading}
-						currentPage={currentPage}
-						setCurrentPage={setCurrentPage}
-					/>
-				</Spin>
+				<CuratorsTab
+					totalUsers={totalCurators}
+					userData={curatorsData}
+					loading={curatorsLoading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
 			)}
 		</section>
 	);

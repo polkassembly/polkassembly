@@ -20,6 +20,8 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import BecomeDelegateSmall from './smallScreenComponents/BecomeDelegateSmall';
+import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 
 interface Props {
 	className?: string;
@@ -80,31 +82,39 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	return (
 		<div className={`${className} delegation-dashboard`}>
-			{isLoggedOut ? (
-				<div className='wallet-info-board mt-[-25px] flex h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20'>
+			{isLoggedOut || !userDetails.loginAddress ? (
+				<div className='wallet-info-board min-sm:absolute min-sm:left-0 min-sm:top-20 mt-[-25px] hidden h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-6 sm:flex'>
 					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
 					<Button
 						onClick={() => {
 							setOpenLoginModal(true);
 						}}
-						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium text-white'
+						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium font-semibold text-white'
 					>
 						Connect wallet
 					</Button>
 				</div>
 			) : (
-				<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw]'>
+				<div className='wallet-info-board h-[50px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:-mt-28 max-lg:w-[99.3vw] max-sm:mt-[-65px] sm:h-[90px] lg:left-0 lg:-mt-10 '>
 					<ProfileBalances />
 				</div>
 			)}
+			{(isLoggedOut || !userDetails.loginAddress) && <BecomeDelegateSmall />}
+
 			{(isLoggedOut || !userDetails.loginAddress) && (
-				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+				<div className='hidden sm:block'>
+					<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high md:mb-5'>Delegation </h2>
+				</div>
 			)}
 
 			{(isLoggedOut || !userDetails.loginAddress) && (
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
-					<TotalDelegationData />
+					<TotalDelegationData className='hidden sm:block' />
+					<TotalDelegationDataSmall
+						setOpenLoginModal={setOpenLoginModal}
+						className='sm:hidden'
+					/>
 					<TrendingDelegates theme={theme} />
 				</>
 			)}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { Modal } from 'antd';
 import Address from '~src/ui-components/Address';
 import { chainProperties } from '~src/global/networkConstants';
@@ -17,7 +17,7 @@ import { ESetIdentitySteps, IIdentitySuccessState } from './types';
 const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep }: IIdentitySuccessState) => {
 	const { network } = useNetworkSelector();
 	const { socials, displayName, identityAddress } = useOnchainIdentitySelector();
-	const { email, web, twitter, riot } = socials;
+	const { email, web, twitter, matrix } = socials;
 	const { id, username, loginAddress } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -33,7 +33,7 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 		<Modal
 			centered
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
@@ -81,10 +81,10 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{twitter?.value}</span>
 							</span>
 						)}
-						{riot?.value?.length > 0 && (
+						{matrix?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Riot: </span>
-								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{riot?.value}</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Matrix: </span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{matrix?.value}</span>
 							</span>
 						)}
 					</div>

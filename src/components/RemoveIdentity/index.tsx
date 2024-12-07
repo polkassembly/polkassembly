@@ -4,7 +4,7 @@
 import { Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
@@ -24,6 +24,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { useRouter } from 'next/router';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -78,7 +79,10 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		if (!api || !apiReady) return;
 
 		setLoading({ ...loading, isLoading: true });
-		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
+
+		if (!peopleChainApiReady && isPeopleChainSupportedNetwork(network)) return;
+
+		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
 		const paymentInfo = await tx.paymentInfo(addr);
 		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
 		setGasFee(bnGasFee);
@@ -118,6 +122,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			dispatch(setOpenRemoveIdentityModal(false));
 			router.reload();
 		};
+		if (!peopleChainApiReady && isPeopleChainSupportedNetwork(network)) return;
 		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
 
 		executeTx({
@@ -175,7 +180,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				open={openRemoveIdentityModal}
 				onCancel={() => dispatch(setOpenRemoveIdentityModal(false))}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>

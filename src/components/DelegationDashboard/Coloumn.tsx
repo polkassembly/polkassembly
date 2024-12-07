@@ -34,7 +34,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Image from 'next/image';
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {
@@ -484,8 +484,8 @@ const GetTracksColumns = (
 						{Boolean(date) && <span>{dayjs(date).format('DD MMM YYYY')}</span>}
 						{Boolean(timeLeftInUndelegation?.time) && Boolean(timeLeftInUndelegation?.percentage) && undelegationButtonDisable && (
 							<Tooltip
-								title={<div className={classNames(poppins.className, poppins.variable, 'text-[13px]')}>You can undelegate votes on {timeLeftInUndelegation?.time}</div>}
-								className={classNames(poppins.className, poppins.variable, 'text-xs')}
+								title={<div className={classNames(dmSans.className, dmSans.variable, 'text-[13px]')}>You can undelegate votes on {timeLeftInUndelegation?.time}</div>}
+								className={classNames(dmSans.className, dmSans.variable, 'text-xs')}
 								overlayClassName='px-1 max-w-[300px]'
 							>
 								<span>

@@ -11,13 +11,10 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { ESetIdentitySteps, IOnChainIdentity, ITxFee } from './types';
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { Form, Modal, Spin } from 'antd';
 import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
-import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
-import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
 import { ILoading } from '~src/types';
-import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
 import IdentityForm from './IdentityForm';
@@ -33,7 +30,6 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 const ZERO_BN = new BN(0);
 
 const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnChainIdentity) => {
-	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
@@ -49,9 +45,8 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const [openIdentitySuccessModal, setOpenIdentitySuccessModal] = useState<boolean>(false);
 	const [step, setStep] = useState<ESetIdentitySteps>(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
-	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
 	const [isRequestedJudgmentFromPolkassembly, setIsRequestedJudgmentFromPolkassembly] = useState<boolean>(false);
-	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
+	const [txFee, setTxFee] = useState<ITxFee>({ gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
 		if (loginAddress && !identityAddress) {
@@ -63,14 +58,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;
-		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
 		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
 		const registerarIndex = getIdentityRegistrarIndex({ network });
 		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
 		const minDeposite = (peopleChainApi ?? api)?.consts?.identity?.basicDeposit || ZERO_BN;
-		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
-		setPerSocialBondFee(bondFee as any);
+		setTxFee({ ...txFee, minDeposite, registerarFee: bnRegisterarFee });
 		setLoading({ ...loading, isLoading: false });
 	};
 
@@ -81,11 +74,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 			const identityHash = await (peopleChainApi ?? api)?.query?.identity
 				?.identityOf(encoded_addr)
-				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
+				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res?.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
 				console.log('Error in unwrapping identity hash');
 			}
 			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			if (!identityAddress) {
+				dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
+			}
 		} catch (err) {
 			console.log(err);
 		}
@@ -108,7 +104,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (!api || !apiReady) return;
 
 		try {
-			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
+			const { discord, display, email, isVerified, isIdentitySet, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
 				api: peopleChainApi ?? api,
 				network: network
@@ -122,6 +118,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			form.setFieldValue('legalName', legal || '');
 			form.setFieldValue('email', email || '');
 			form.setFieldValue('twitter', twitter || '');
+			form.setFieldValue('matrix', matrix || '');
 
 			const infoCall = judgements?.filter(([, judgement]: any[]): boolean => {
 				return !!judgement?.FeePaid;
@@ -147,7 +144,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						isIdentitySet: isIdentitySet,
 						legalName: legal || '',
 						matrix: matrix || '',
-						riot: riot || '',
 						twitter: twitter || '',
 						verifiedByPolkassembly: verifiedByPolkassembly || false,
 						web: web || ''
@@ -156,6 +152,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 					socials: {
 						...socials,
 						email: { ...socials.email, value: email || '' },
+						matrix: { ...socials.matrix, value: matrix || '' },
 						twitter: { ...socials.twitter, value: twitter || '' }
 					},
 					userId: userId || null
@@ -202,7 +199,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 					setIsExitModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -247,7 +244,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				onCancel={handleCancel}
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
@@ -267,12 +264,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								/>
 							</div>
 						) : null}
-						{!identityInfo.alreadyVerified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
-								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>
-								In Progress
-							</span>
-						)}
 					</div>
 				}
 			>
@@ -285,7 +276,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						<TotalAmountBreakdown
 							loading={loading?.isLoading}
 							txFee={txFee}
-							perSocialBondFee={perSocialBondFee}
 							setStartLoading={setLoading}
 							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 						/>
@@ -298,7 +288,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							setTxFee={setTxFee}
 							setStartLoading={setLoading}
 							onCancel={handleCancel}
-							perSocialBondFee={perSocialBondFee}
 							closeModal={(open) => setOpen(!open)}
 							setOpenIdentitySuccessModal={setOpenIdentitySuccessModal}
 							setAddressChangeModalOpen={() => (setOpenAddressModal ? setOpenAddressModal(true) : setOpenAddressSelectModal(true))}
@@ -309,7 +298,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						<SocialVerification
 							startLoading={setLoading}
 							onCancel={handleCancel}
-							perSocialBondFee={perSocialBondFee}
 							closeModal={(open) => setOpen(!open)}
 							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 							setOpenSuccessModal={setOpenJudgementSuccessModal}

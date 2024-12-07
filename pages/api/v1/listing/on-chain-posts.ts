@@ -21,13 +21,12 @@ import {
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST
 } from '~src/queries';
-import { IApiResponse } from '~src/types';
+import { ESentiments, IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
+import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -35,6 +34,8 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { getTimeline } from '~src/util/getTimeline';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -66,6 +67,7 @@ export interface IPostListing {
 	hash?: string;
 	post_id: string | number;
 	description?: string;
+	votesCount?: number;
 	post_reactions: {
 		'👍': number;
 		'👎': number;
@@ -108,6 +110,8 @@ export interface IPostListing {
 	reward?: string;
 	content?: string;
 	includeContent?: boolean;
+	isVoted?: boolean;
+	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }
 
 export interface IPostsListingResponse {
@@ -137,27 +141,6 @@ interface IGetOnChainPostsParams {
 	proposalStatus?: string | string[];
 	includeContent?: boolean;
 	getBountyReward?: boolean;
-}
-
-export function getProposerAddressFromFirestorePostData(data: any, network: string) {
-	let proposer_address = '';
-	if (data) {
-		if (Array.isArray(data?.proposer_address)) {
-			if (data.proposer_address.length > 0) {
-				proposer_address = data?.proposer_address?.[0];
-			}
-		} else if (typeof data.proposer_address === 'string') {
-			proposer_address = data.proposer_address;
-		}
-		if (data?.default_address && !proposer_address) {
-			proposer_address = data?.default_address;
-		}
-	}
-
-	if (proposer_address.startsWith('0x')) {
-		return proposer_address;
-	}
-	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
@@ -830,7 +813,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			} else {
 				const parentBountyIndexes: any = {};
 
-				const bountyIds = subsquidPosts.reduce((acc: number[], post: any) => {
+				const bountyIds = subsquidPosts?.reduce((acc: number[], post: any) => {
 					if (!isNaN(post?.preimage?.proposedCall?.args?.bountyId)) {
 						acc.push(Number(post?.preimage?.proposedCall?.args?.bountyId));
 					}
@@ -1111,7 +1094,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 				}
 
-				posts = postsResults.reduce((prev, post) => {
+				posts = postsResults?.reduce((prev, post) => {
 					if (post && post.status === 'fulfilled') {
 						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
 							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });

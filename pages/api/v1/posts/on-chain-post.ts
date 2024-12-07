@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
@@ -17,14 +16,12 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
@@ -42,6 +39,8 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
+import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { getTimeline } from '~src/util/getTimeline';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -56,38 +55,21 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
-export const getTimeline = (
-	proposals: any,
-	isStatus?: {
-		swap: boolean;
+export const fetchOGTracker = async (id: string) => {
+	try {
+		const res = await fetch('https://api.ogtracker.io/proposals', {
+			body: JSON.stringify({
+				refNum: id
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			},
+			method: 'POST'
+		});
+		return await res.json();
+	} catch (error) {
+		return [];
 	}
-) => {
-	return (
-		proposals?.map((obj: any) => {
-			const statuses = obj?.statusHistory as { status: string }[];
-			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
-				if (index >= 0) {
-					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
-					if (decidingIndex >= 0) {
-						const obj = statuses[index];
-						statuses.splice(index, 1);
-						statuses.splice(decidingIndex, 0, obj);
-						if (isStatus) {
-							isStatus.swap = true;
-						}
-					}
-				}
-			}
-			return {
-				created_at: obj?.createdAt,
-				hash: obj?.hash,
-				index: obj?.index,
-				statuses,
-				type: obj?.type
-			};
-		}) || []
-	);
 };
 
 export interface IReactions {
@@ -136,6 +118,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
+	progress_report?: IProgressReport[];
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -151,6 +134,14 @@ interface IGetOnChainPostParams {
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
 	includeSubsquareComments?: boolean;
+}
+
+interface IOGData {
+	fdate: string;
+	id: string;
+	propLink: string;
+	summary: string;
+	refNum: string;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -286,6 +277,9 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.created_at && !newData.created_at) {
 								newData.created_at = data.created_at;
+							}
+							if (data.progress_report) {
+								newData.progress_report = data.progress_report;
 							}
 							if (!newData.topic_id) {
 								newData.topic_id = getTopicFromFirestoreData(data, proposalType)?.id || null;
@@ -426,6 +420,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
+						isExpertComment: data?.isisExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -446,6 +441,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: history,
 						id: data.id,
+						isExpertComment: data?.isExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -552,7 +548,7 @@ export async function getComments(
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments = comments.concat(subsquareComments);
+	comments = comments.concat(subsquareComments as any[]);
 
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {
@@ -698,6 +694,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
+		let OGdata: IOGData[] = [];
+		if (postId) {
+			OGdata = await fetchOGTracker(postId.toString());
+		}
 		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
 			if (proposalType === ProposalType.TIPS) {
 				if (!strPostId) {
@@ -766,6 +766,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.MOTION;
+		}
 		if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
 			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
@@ -777,6 +780,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
+
 		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
@@ -1105,7 +1109,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
+		if (
+			[ProposalType.COUNCIL_MOTIONS, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType as ProposalType) ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')
+		) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {
@@ -1162,6 +1169,27 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				data = undefined;
 			}
 
+			if (data && OGdata && OGdata?.length) {
+				const ogReport = {
+					created_at: OGdata?.[0]?.fdate,
+					id: OGdata?.[0]?.id,
+					isFromOgtracker: true,
+					progress_file: OGdata?.[0]?.propLink,
+					progress_summary: OGdata?.[0]?.summary,
+					refNum: OGdata?.[0]?.refNum
+				};
+
+				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+					ogReport.progress_file = '';
+				}
+
+				data.progress_report = data?.progress_report || [];
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				if (!isOgReportPresent) {
+					data?.progress_report?.push(ogReport);
+				}
+			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
@@ -1177,6 +1205,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
+				post.progress_report = {
+					...data?.progress_report?.map((report: any) => {
+						return { ...report, created_at: report?.created_at?.toDate ? report?.created_at?.toDate() : report?.created_at };
+					}),
+					created_at: data?.progress_report?.created_at?.toDate?.()
+				};
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1213,12 +1247,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
-			if (post.content === '' || post.title === '' || post.title === undefined || post.content === undefined) {
+			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
 
-				if (!post.content && !post.title && (res.title || res.content)) {
+				if (res.title || res.content) {
 					post.dataSource = 'subsquare';
 				}
 
@@ -1248,7 +1282,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					date: dayjs(currentTimelineObj?.created_at),
 					firstCommentId: '',
 					id: 1,
-					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash || postId,
 					status: getStatus(currentTimelineObj?.type),
 					type: currentTimelineObj?.type
 				};

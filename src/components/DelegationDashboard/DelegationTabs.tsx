@@ -19,6 +19,8 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { useApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
+import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 
 interface Props {
 	className?: string;
@@ -41,6 +43,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	});
 	const [userBio, setUserBio] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
+	const [openBecomeDelegateModal, setOpenBecomeDelegateModal] = useState<boolean>(false);
 
 	const getData = async () => {
 		try {
@@ -90,7 +93,11 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						setUserBio={setUserBio}
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
-					<TotalDelegationData />
+					<TotalDelegationData className='hidden sm:block' />
+					<TotalDelegationDataSmall
+						setOpenBecomeDelegateModal={setOpenBecomeDelegateModal}
+						className='sm:hidden'
+					/>
 					<TrendingDelegates theme={theme} />
 				</>
 			),
@@ -116,7 +123,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						setUserBio={setUserBio}
 						identity={identity || null}
 					/>
-					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
+					<div className='mt-8 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay sm:p-5'>
 						{!!userProfile?.delegationDashboardAddress && userProfile?.delegationDashboardAddress?.length > 0 ? (
 							<DashboardTrackListing
 								theme={theme}
@@ -139,8 +146,17 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 				defaultActiveKey='2'
 				theme={theme}
 				type='card'
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
+				className={`ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high ${isLoggedOut ? '' : 'max-lg:mt-28 max-sm:mt-16'}`}
 				items={tabItems}
+			/>
+			<BecomeDelegateModal
+				isModalOpen={openBecomeDelegateModal as boolean}
+				setIsModalOpen={setOpenBecomeDelegateModal as any}
+				className=''
+				profileDetails={profileDetails as any}
+				userBio={userBio as any}
+				setUserBio={setUserBio as any}
+				onchainUsername={identity?.display || identity?.legal || ''}
 			/>
 		</div>
 	);

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import BN from 'bn.js';
-import React from 'react';
+import React, { useMemo } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useOnchainIdentitySelector } from '~src/redux/selectors';
 import { IIdentityFormActionButtons } from './types';
@@ -23,13 +23,15 @@ const IdentityFormActionButtons = ({
 	isProxyExistsOnWallet
 }: IIdentityFormActionButtons) => {
 	const { identityInfo, displayName, legalName, socials } = useOnchainIdentitySelector();
-	const { bondFee, registerarFee, minDeposite, gasFee } = txFee;
-	const { email, twitter } = socials;
+	const { registerarFee, minDeposite, gasFee } = txFee;
+	const { email, twitter, matrix } = socials;
 
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = useMemo(() => {
+		return gasFee.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite));
+	}, [gasFee, registerarFee, minDeposite, identityInfo]);
 
 	const handleAllowSetIdentity = () => {
-		return allowSetIdentity({ displayName, email: email, identityInfo: identityInfo, legalName: legalName, twitter: twitter });
+		return allowSetIdentity({ displayName, email: email, identityInfo: identityInfo, legalName: legalName, matrix, twitter: twitter });
 	};
 
 	return (

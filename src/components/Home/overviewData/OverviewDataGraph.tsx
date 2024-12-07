@@ -71,7 +71,7 @@ const OverviewDataGraph = ({
 	}
 
 	return (
-		<div style={{ height: '80px' }}>
+		<div style={{ height: '75px' }}>
 			<ResponsiveLine
 				data={formattedData}
 				margin={{ bottom: 40, left: 0, right: 0, top: 15 }}
@@ -81,13 +81,13 @@ const OverviewDataGraph = ({
 				axisRight={null}
 				axisBottom={{
 					tickSize: 3,
-					tickPadding: 25,
+					tickPadding: 20,
 					tickRotation: 0,
 					format: (value) => {
 						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
 							return '';
 						}
-						return value;
+						return value.slice(0, 3);
 					}
 				}}
 				axisLeft={null}
@@ -120,7 +120,7 @@ const OverviewDataGraph = ({
 							},
 							text: {
 								fill: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 10,
+								fontSize: 12,
 								outlineColor: 'transparent',
 								outlineWidth: 0
 							}
@@ -135,7 +135,7 @@ const OverviewDataGraph = ({
 					},
 					legends: {
 						text: {
-							fontSize: 10,
+							fontSize: 12,
 							textTransform: 'capitalize'
 						}
 					}

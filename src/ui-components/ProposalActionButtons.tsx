@@ -9,11 +9,18 @@ import { MenuProps } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
+import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
+import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
+import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
+import { dmSans } from 'pages/_app';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -35,14 +42,18 @@ interface Props {
 
 const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal, isUsedInFAB }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
+	const pathname = usePathname();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [isDropdownActive, setIsDropdownActive] = useState(false);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	const router = useRouter();
+	const isRelevantPath = ['/activity-feed', '/opengov'].includes(pathname);
 
 	const handleClick = (num: number) => {
 		if (id) {
@@ -59,6 +70,23 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			setOpenLoginPrompt(true);
 		}
 	};
+	const SwitchViewButton = ({ pathname }: { pathname: string }) => (
+		<Link
+			href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
+			className=''
+		>
+			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-dmSans text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
+				Switch to <span className='font-semibold'>{pathname === '/activity-feed' ? 'Overview' : 'Activity Feed'}</span>
+				<span>
+					<ImageIcon
+						src='/assets/icons/loop.svg'
+						alt='loop'
+						className=' h-4 w-4 lg:h-5 lg:w-5'
+					/>
+				</span>
+			</div>
+		</Link>
+	);
 
 	const items: MenuProps['items'] = [
 		{
@@ -121,24 +149,38 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
+			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
-				<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
-					<CustomButton
-						// htmlType='submit'
-						className='w-min max-sm:p-1.5'
-						height={32}
-						variant='primary'
-					>
-						<OpenGovTreasuryProposal
-							theme={theme}
-							isUsedInReferedumComponent={true}
-						/>
-					</CustomButton>
+				<div className='flex justify-between space-x-2 sm:space-x-4'>
+					{router.pathname === '/activity-feed' ? (
+						<CustomButton
+							className='hidden w-min max-sm:p-1.5 xl:block'
+							height={32}
+							variant='primary'
+						>
+							<OpenGovTreasuryProposal
+								theme={theme}
+								isUsedInReferedumComponent={true}
+							/>
+						</CustomButton>
+					) : (
+						<CustomButton
+							className='  w-min max-sm:p-1.5 '
+							height={32}
+							variant='primary'
+						>
+							<OpenGovTreasuryProposal
+								theme={theme}
+								isUsedInReferedumComponent={true}
+							/>
+						</CustomButton>
+					)}
+
 					<div className='-mt-1'>
 						<Dropdown
 							theme={theme}
 							overlayStyle={{ marginTop: '20px' }}
-							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
+							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container  ${
 								theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 							}`}
 							overlayClassName='z-[1056'
@@ -205,21 +247,11 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			)}
 			{isUsedInFAB && (
 				<div
-					className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					className=' flex items-center gap-2 '
 					onClick={() => handleClick(1)}
 				>
-					{theme == 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab-dark.svg'
-							alt='Create proposal icon'
-						/>
-					) : (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab.svg'
-							alt='Create proposal icon'
-						/>
-					)}
-					<span className=' text-sm font-medium leading-5 tracking-[1.25%] '>Create Proposal</span>
+					{theme == 'dark' ? <CreateProposalsFabIconDark /> : <CreateProposalsFabIcon />}
+					<span className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposal</span>
 				</div>
 			)}
 

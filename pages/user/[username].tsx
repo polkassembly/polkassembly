@@ -21,6 +21,7 @@ import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
 import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
+
 interface IUserProfileProps {
 	activitiesCounts: {
 		data: IActivitiesCounts | null;
@@ -162,8 +163,23 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			</EmptyState>
 		);
 	}
-	if (userPosts.error || userProfile.error) {
-		return <ErrorAlert errorMsg={userPosts.error || userProfile.error || ''} />;
+
+	if (userPosts?.error === 'UserId is invalid') {
+		return (
+			<EmptyState>
+				<ErrorAlert
+					className={`dark:text-white ${className} ${theme}`}
+					errorMsg="Invalid User. This user does't have any account with Polkassembly"
+				/>
+				{/* <UserNotFound /> */}
+				<ImageIcon
+					src='/assets/user-not-found.svg'
+					alt='user not found icon'
+					imgWrapperClassName='w-full h-full flex justify-center items-center'
+					imgClassName='max-w-[600px] max-h-[600px]'
+				/>
+			</EmptyState>
+		);
 	}
 
 	return (

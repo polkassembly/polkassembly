@@ -12,7 +12,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Popover from '~src/basic-components/Popover';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Image from 'next/image';
 import classNames from 'classnames';
@@ -200,8 +200,8 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			<span
 				className={classNames(
 					'-mx-3 flex cursor-pointer justify-end border-0 border-b-[1px] border-solid border-x-section-light-container px-3 pb-0.5 pt-1 text-xs text-pink_primary dark:border-separatorDark',
-					poppins.className,
-					poppins.variable
+					dmSans.className,
+					dmSans.variable
 				)}
 				onClick={() => {
 					setSelectedSources([]);
@@ -213,7 +213,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			<Checkbox.Group
 				onChange={(checked) => handleCheckboxChange(checked as any)}
 				value={selectedSources}
-				className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
+				className={classNames('mt-1 flex flex-col', dmSans.className, dmSans.variable)}
 				disabled={loading}
 			>
 				<div className='flex flex-col gap-1'>
@@ -221,7 +221,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						return (
 							<div
 								key={index}
-								className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+								className={`${dmSans.variable} ${dmSans.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 							>
 								<Checkbox
 									checked={selectedSources.includes(source)}
@@ -257,19 +257,19 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${dmSans.variable} ${dmSans.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
@@ -278,20 +278,70 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 	);
 
 	return (
-		<div className={classNames(className, 'mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6')}>
-			<div className='flex items-center space-x-3'>
+		<div className={classNames(className, 'mt-4 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:mt-8 sm:p-5 md:p-6')}>
+			<div className='flex items-center gap-1 sm:space-x-3'>
 				<ImageIcon
 					src='/assets/delegation-tracks/trending-icon.svg'
 					alt='trending icon'
-					imgClassName='h-6 w-6 mt-[2.5px]'
+					imgClassName='h-5 w-6 sm:h-6 sm:w-6 mt-[2.5px]'
 				/>
-				<span className='text-xl font-semibold'>Trending Delegates</span>
+				<span className={`${dmSans.variable} ${dmSans.className} text-sm font-semibold text-bodyBlue dark:text-white sm:text-xl`}>Trending Delegates</span>
 			</div>
 
-			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
+			<h4
+				className={`${dmSans.variable} ${dmSans.className} my-[4px] text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:my-4 sm:text-sm sm:text-bodyBlue dark:sm:text-white `}
+			>
+				Enter an address or Select from the list below to delegate your voting power
+			</h4>
 
 			<div className='flex items-center gap-3'>
-				<div className='dark:placeholder:white flex h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white'>
+				{/* For small screen */}
+				<div className=' mt-1 flex w-full items-center gap-[3px] sm:hidden'>
+					<Input
+						type='search'
+						allowClear={{ clearIcon: <InputClearIcon /> }}
+						placeholder='Enter username or address to Delegate vote'
+						onChange={(e) => {
+							if (!e.target.value?.length) {
+								setFilteredDelegates(delegatesData?.current || []);
+							}
+							setSearchInput(e.target.value.trim());
+						}}
+						onPressEnter={handleSearchSubmit}
+						value={searchInput}
+						className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+					/>
+					<Popover
+						content={filterContent}
+						placement='bottomRight'
+						zIndex={1056}
+					>
+						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+							<ImageIcon
+								src='/assets/icons/filter-icon-delegates.svg'
+								alt='filter icon'
+								imgClassName='h-4 w-4'
+							/>
+						</Button>
+					</Popover>
+
+					<Popover
+						content={sortContent}
+						placement='topRight'
+						zIndex={1056}
+					>
+						<Button className='border-1 flex h-8 w-8 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+							<ImageIcon
+								src='/assets/icons/sort-icon-delegates.svg'
+								alt='sort icon'
+								imgClassName='h-4 w-4'
+							/>
+						</Button>
+					</Popover>
+				</div>
+
+				{/* For Large screen */}
+				<div className='dark:placeholder:white hidden h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex'>
 					{/* Input Component */}
 					<Input
 						type='search'
@@ -325,8 +375,9 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					content={filterContent}
 					placement='bottomRight'
 					zIndex={1056}
+					className='hidden sm:flex'
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
@@ -338,8 +389,9 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					content={sortContent}
 					placement='topRight'
 					zIndex={1056}
+					className='hidden sm:flex'
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container font-semibold hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/sort-icon-delegates.svg'
 							alt='sort icon'
@@ -379,7 +431,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						</div>
 					) : (
 						<>
-							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
+							<div className='mt-3 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1 sm:mt-6'>
 								{filteredDelegates?.slice((currentPage - 1) * DELEGATION_LISTING, (currentPage - 1) * DELEGATION_LISTING + DELEGATION_LISTING)?.map((delegate, index) => (
 									<DelegateCard
 										key={index}
@@ -431,5 +483,12 @@ export default styled(TrendingDelegates)`
 		background: #edeff3;
 		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
 		font-size: 14px !important;
+	}
+	@media (max-width: 640px) {
+		.ant-input-affix-wrapper > input.ant-input {
+			background: #edeff3;
+			color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
+			font-size: 10px !important;
+		}
 	}
 `;

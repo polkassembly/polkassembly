@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
@@ -55,7 +55,16 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const lock = Number(2 ** (conviction - 1));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
+	const [isMobile, setIsMobile] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 640);
+		handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	useEffect(() => {
 		if (!network) return;
@@ -80,17 +89,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			setLoading(false);
 		})();
 	}, [defaultAddress, api, apiReady, balance, trackNum, conviction, network, target]);
-
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultAddress]);
 
 	const onSuccess = () => {
 		queueNotification({
@@ -165,10 +163,10 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		<>
 			<Modal
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.variable} ${dmSans.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>
 						<UndelegateProfileIcon className='mr-2' />
 						Undelegate
 					</div>
@@ -178,7 +176,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				confirmLoading={loading}
 				onCancel={() => setOpen(false)}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 flex items-center justify-evenly gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark sm:justify-end'>
 						<CustomButton
 							key='back'
 							text='Cancel'
@@ -186,6 +184,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							variant='default'
 							disabled={loading}
 							onClick={() => setOpen(false)}
+							className='rounded-[4px] text-sm sm:text-base'
 						/>
 						<CustomButton
 							htmlType='submit'
@@ -195,6 +194,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							variant='primary'
 							disabled={loading}
 							onClick={handleSubmit}
+							className='rounded-[4px] text-sm sm:text-base'
 						/>
 					</div>
 				}
@@ -204,55 +204,53 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					indicator={<LoadingOutlined />}
 				>
 					<div className='flex flex-col border-0'>
-						{
-							<Alert
-								showIcon
-								type='info'
-								className='rounded-[4px] text-sm'
-								message={
-									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction</span>
-								}
-							/>
-						}
+						<Alert
+							showIcon
+							type='info'
+							className='mt-1 rounded-[4px] text-sm'
+							message={
+								<span className='text-sm dark:text-blue-dark-high sm:text-base'>
+									An approximate fee of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction
+								</span>
+							}
+						/>
 						<Form
 							form={form}
 							disabled={true}
 						>
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-								<div className='h-10 rounded-sm px-0 py-[px] text-[#7c899b]'>
-									<Address
-										isTruncateUsername={false}
-										address={defaultAddress}
-										iconSize={32}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-									/>
-								</div>
+								<Address
+									isTruncateUsername={false}
+									address={defaultAddress}
+									iconSize={isMobile ? 24 : 32}
+									addressClassName='text-[#7c899b] text-sm'
+									displayInline
+									className={`mt-1 ${isMobile ? '' : 'hidden sm:flex'}`}
+								/>
 							</div>
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
-								<div className='h-10 rounded-sm px-0 py-[px] text-bodyBlue dark:text-blue-dark-high'>
-									<Address
-										isTruncateUsername={false}
-										address={defaultTarget}
-										iconSize={32}
-										addressClassName='text-[#7c899b] text-sm'
-										displayInline
-									/>
-								</div>
+								<Address
+									isTruncateUsername={false}
+									address={defaultTarget}
+									iconSize={isMobile ? 24 : 32}
+									addressClassName='text-[#7c899b] text-sm'
+									displayInline
+									className={`mt-1 ${isMobile ? '' : 'hidden sm:flex'}`}
+								/>
 							</div>
 
 							<div className='mt-4'>
 								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>Balance </label>
-								<div className='h-10 cursor-not-allowed rounded-sm px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high'>{`${formatedBalance(
+								<div className='cursor-not-allowed rounded-sm px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high sm:h-10'>{`${formatedBalance(
 									balance.toString(),
 									unit
 								)} ${unit}`}</div>
 							</div>
 
-							<div className='mb-[2px] border-solid border-white dark:border-0'>
+							<div className=' mt-3 border-solid border-white dark:border-0 sm:mt-4'>
 								<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Conviction
 									<span>
@@ -263,12 +261,12 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 									</span>
 								</label>
 							</div>
-							<div className='track-[0.0025em] flex items-center justify-between rounded-md'>
+							<div className='track-[0.0025em] mt-[2px] flex items-center justify-between rounded-md'>
 								<div className='flex items-center justify-center text-sm text-[#7c899b] dark:text-blue-dark-high'>
 									{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
-							<div className='mb-4 mt-6 flex items-center justify-start gap-2'>
+							<div className='mt-4 flex items-center justify-start gap-2 sm:mb-4 sm:mt-6'>
 								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue dark:text-blue-dark-medium'>Track:</label>
 								<span className='tracking-medium text-sm text-[#7c899b] dark:text-blue-dark-high'>
 									{trackName} #{trackNum}
@@ -344,5 +342,13 @@ export default styled(UndelegateModal)`
 		border-radius: 8px !important;
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
+	}
+	@media (max-width: 640px) {
+		.ant-modal-content {
+			padding: 12px !important;
+		}
+		.ant-modal-content .ant-modal-close {
+			margin-top: -2px !important;
+		}
 	}
 `;

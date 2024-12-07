@@ -4,7 +4,7 @@
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import userProfileBalances from '~src/util/userProfileBalances';
@@ -37,6 +37,8 @@ interface Props {
 	addresses: string[];
 	isReferendaPage?: boolean;
 	referendumIndex?: number;
+	refreshKey?: boolean;
+	setRefreshKey?: (pre: boolean) => void;
 }
 export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -44,7 +46,8 @@ export const votesUnlockUnavailableNetworks = [
 	AllNetworks.POLYMESH,
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
-	AllNetworks.MOONBEAM
+	AllNetworks.MOONBEAM,
+	AllNetworks.MYTHOS
 ];
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {
@@ -56,7 +59,7 @@ export const handlePrevData = (data: IUnlockTokenskData[]) => {
 	});
 	return newData;
 };
-const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: Props) => {
+const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, setRefreshKey, refreshKey }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -262,6 +265,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 		setIsReferesh(true);
 		setLoadingStatus({ isLoading: false, message: 'Success!' });
 		setOpen(false);
+		setRefreshKey?.(!refreshKey);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({
@@ -310,7 +314,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
-					className={`text-sm ${
+					className={`text-sm font-semibold ${
 						totalUnlockableBalance.eq(ZERO_BN)
 							? 'border-[#407BFF] bg-[#F1F6FF] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: `${
@@ -333,7 +337,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			>

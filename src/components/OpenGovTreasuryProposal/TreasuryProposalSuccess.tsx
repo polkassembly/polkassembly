@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import Link from 'next/link';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
@@ -78,7 +78,7 @@ const TreasuryProposalSuccessPopup = ({
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, selectedTrack));
@@ -97,7 +97,7 @@ const TreasuryProposalSuccessPopup = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onCancel}

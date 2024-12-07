@@ -5,7 +5,7 @@
 import '@polkadot/api-augment';
 
 import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { chainProperties, network, treasuryAssets } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
@@ -57,6 +57,21 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		}
 	};
 
+	const createApiPromise = (provider: WsProvider | ScProvider, network?: string): ApiPromise => {
+		switch (network) {
+			case 'genshiro':
+				return new ApiPromise({ provider, typesBundle: typesBundleGenshiro });
+			case 'crust':
+				return new ApiPromise({ provider, typesBundle: typesBundleCrust });
+			case 'equilibrium':
+				return new ApiPromise({ provider, typesBundle: typesBundleEquilibrium });
+			case 'kilt':
+				return new ApiPromise({ provider, typesBundle });
+			default:
+				return new ApiPromise({ provider });
+		}
+	};
+
 	useEffect(() => {
 		if (!props?.network) return;
 		if (!isMultiassetSupportedNetwork(props?.network)) return;
@@ -99,23 +114,9 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 
 		setApiReady(false);
 		setApi(undefined);
-		let api = undefined;
 		if (!provider.current) return;
-		if (props.network == 'genshiro') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleGenshiro });
-		}
-		if (props.network == 'crust') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleCrust });
-		}
-		if (props.network == 'equilibrium') {
-			api = new ApiPromise({ provider: provider.current, typesBundle: typesBundleEquilibrium });
-		}
-		if (props.network == 'kilt') {
-			api = new ApiPromise({ provider: provider.current, typesBundle });
-		} else {
-			api = new ApiPromise({ provider: provider.current, typesBundle });
-		}
-		setApi(api);
+		const newApi = createApiPromise(provider.current, props.network);
+		setApi(newApi);
 	}, [props.network, wsProvider]);
 
 	useEffect(() => {
@@ -156,10 +157,10 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					console.log('API ready');
 					try {
 						if (props.network === 'collectives') {
-							const value = api.consts.fellowshipReferenda.tracks.toJSON();
+							const value = api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else if (isOpenGovSupported(props.network || '')) {
-							const value = api.consts.referenda.tracks.toJSON();
+							const value = api?.consts?.referenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else {
 							localStorage.removeItem('tracks');
@@ -187,6 +188,52 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
+
+	const checkAndReconnectApi = useCallback(async () => {
+		if (api?.isConnected) {
+			return;
+		}
+
+		console.log('API disconnected, attempting to reconnect...');
+		setIsApiLoading(true);
+		setApiReady(false);
+		try {
+			if (!api) {
+				if (!provider.current) {
+					provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
+				}
+				const newApi = createApiPromise(provider.current, props.network);
+				setApi(newApi);
+			} else {
+				await api.connect();
+			}
+			setApiReady(true);
+			console.log('API reconnected successfully');
+		} catch (error) {
+			console.error('Failed to reconnect API:', error);
+			queueNotification({
+				header: 'Error!',
+				message: 'Failed to reconnect to the RPC. Please refresh the page.',
+				status: NotificationStatus.ERROR
+			});
+		} finally {
+			setIsApiLoading(false);
+		}
+	}, [api, wsProvider, props.network]);
+
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				checkAndReconnectApi();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [checkAndReconnectApi]);
 
 	return <ApiContext.Provider value={{ api, apiReady, isApiLoading, relayApi, relayApiReady, setWsProvider, wsProvider }}>{children}</ApiContext.Provider>;
 }

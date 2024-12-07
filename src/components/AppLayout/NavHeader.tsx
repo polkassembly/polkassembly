@@ -376,7 +376,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className={`type-container ${sidedrawer && 'pl-32 2xl:pl-0'} hidden items-center gap-1 sm:flex`}>
+					<div className={`type-container ${sidedrawer && '3xl:pl-0 pl-28'} hidden items-center gap-1 sm:flex`}>
 						<span className='line-container ml-4 mr-2  h-5 w-[1.5px] bg-pink_primary  dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
@@ -401,7 +401,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									height={22}
 									width={60}
 									text='Login'
-									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[16px]'
 									onClick={() => {
 										if (isMobile) {
 											dispatch(GlobalActions.setIsSidebarCollapsed(true));

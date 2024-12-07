@@ -45,7 +45,7 @@ import {
 	CopyIcon
 } from '~src/ui-components/CustomIcons';
 
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
@@ -523,7 +523,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 1,
 					label: (
 						<div
-							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${poppins.variable} ${poppins.className}`}
+							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${dmSans.variable} ${dmSans.className}`}
 							onClick={() => {
 								toggleEdit();
 								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
@@ -545,7 +545,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key: 2,
 			label: (
 				<div
-					className={`flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className}`}
+					className={`flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${dmSans.variable} ${dmSans.className}`}
 					onClick={() => {
 						copyLink();
 					}}
@@ -564,7 +564,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					label: (
 						<ReportButton
 							proposalType={postType}
-							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
 							type='comment'
 							commentId={commentId}
 							postId={postIndex}
@@ -578,7 +578,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 4,
 					label: (
 						<div
-							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className} border-none`}
+							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${dmSans.variable} ${dmSans.className} border-none`}
 							onClick={() => {
 								deleteComment();
 								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
@@ -600,7 +600,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<ReportButton
 							isDeleteModal={true}
 							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
 							type={EReportType.COMMENT}
 							onSuccess={removeCommentContent}
 							commentId={commentId}
@@ -750,7 +750,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							)}
 							<Dropdown
 								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+								className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
 								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}

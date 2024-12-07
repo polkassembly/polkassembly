@@ -5,13 +5,11 @@ import React, { FC, useState } from 'react';
 import CardPostHeading from '../PostInfoComponents/CardPostHeading';
 import { Button, Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
-// import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
 import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
 import Link from 'next/link';
 import { ITinderCardsComponent } from '../types';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal, onSkip } = props;
@@ -24,7 +22,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 
 	return (
 		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
-			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-inner dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
 				<div className='flex items-start justify-between'>
 					<CardPostHeading
 						method={proposal?.method}
@@ -34,10 +32,11 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						post={proposal}
 					/>
 					<Button
-						className='border-none bg-transparent p-0'
+						className='border-none bg-transparent p-0 text-pink_primary'
 						onClick={() => onSkip(proposal.id)}
 					>
-						<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+						Skip &gt;
+						{/* <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> */}
 					</Button>
 				</div>
 				<Divider
@@ -59,8 +58,9 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</Link>
 				{proposal?.comments?.length > 0 && <CardComments proposal={proposal} />}
 			</div>
-			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
+			<div className='h-full w-full rounded-2xl bg-white p-4 px-4 py-6 shadow-inner dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
 				<ReferendumV2CardInfo
+					className='shadow-none'
 					ayeNayAbstainCounts={ayeNayAbstainCounts}
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 					tally={proposal?.tally}

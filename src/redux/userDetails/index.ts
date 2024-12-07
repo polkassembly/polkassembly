@@ -93,6 +93,7 @@ export const userDetailsStore = createSlice({
 			state.loginAddress = action.payload.loginAddress;
 			state.loginWallet = action.payload.loginWallet;
 			state.multisigAssociatedAddress = action.payload.multisigAssociatedAddress;
+			state.multisigAddressInfo = action.payload.multisigAddressInfo;
 			state.networkPreferences = action.payload.networkPreferences;
 			state.picture = action.payload.picture;
 			state.primaryNetwork = action.payload.primaryNetwork;

@@ -9,18 +9,18 @@ import { treasuryAssets } from '~src/global/networkConstants';
 
 export default async function fetchTokenToUSDPrice(networkOrAsset: string) {
 	try {
-		const response = await fetch(
-			'https://api.coingecko.com/api/v3/simple/price?' +
-				new URLSearchParams({ ids: coinGeckoNetworks[networkOrAsset] ? coinGeckoNetworks[networkOrAsset] : networkOrAsset, include_24hr_change: 'true', vs_currencies: 'usd' })
-		);
+		const coinId = coinGeckoNetworks[networkOrAsset] || networkOrAsset;
+		const response = await fetch('https://api.coingecko.com/api/v3/simple/price?' + new URLSearchParams({ ids: coinId, include_24hr_change: 'true', vs_currencies: 'usd' }));
 		const responseJSON = await response.json();
 
-		if (Object.keys(responseJSON[coinGeckoNetworks[networkOrAsset] ? coinGeckoNetworks[networkOrAsset] : networkOrAsset] || {}).length == 0) {
+		if (!responseJSON[coinId] || !responseJSON[coinId]['usd']) {
 			return 'N/A';
-		} else if (['cere', treasuryAssets.DED.name].includes(networkOrAsset)) {
-			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[networkOrAsset] ? coinGeckoNetworks[networkOrAsset] : networkOrAsset]['usd'], 4);
+		}
+
+		if (['cere', treasuryAssets.DED.name].includes(networkOrAsset)) {
+			return formatUSDWithUnits(String(responseJSON[coinId]['usd']), 4);
 		} else {
-			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[networkOrAsset] ? coinGeckoNetworks[networkOrAsset] : networkOrAsset]['usd']);
+			return formatUSDWithUnits(String(responseJSON[coinId]['usd']));
 		}
 	} catch (error) {
 		return 'N/A';

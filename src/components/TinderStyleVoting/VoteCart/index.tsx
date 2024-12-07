@@ -14,7 +14,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import VoteSuccessModal from './VoteSuccessModal';
 import executeTx from '~src/util/executeTx';
@@ -22,6 +22,8 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IDeleteBatchVotes } from '../types';
+import Alert from '~src/basic-components/Alert';
+import Address from '~src/ui-components/Address';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
@@ -51,6 +53,10 @@ const VoteCart: React.FC = () => {
 			dispatch(batchVotesActions.setVoteCartData(data?.votes));
 			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
 		}
+	};
+
+	const reloadBatchCart = () => {
+		getVoteCartData();
 	};
 
 	useEffect(() => {
@@ -152,7 +158,23 @@ const VoteCart: React.FC = () => {
 	return (
 		<section>
 			<article className='px-2'>
-				<div className='max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md dark:bg-black'>
+				{!!loginAddress?.length && (
+					<Alert
+						type='info'
+						showIcon
+						className='icon-alert my-2'
+						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-white'>All Votes will be made with</span>}
+						description={
+							<Address
+								disableTooltip
+								displayInline
+								address={loginAddress}
+								iconSize={20}
+							/>
+						}
+					/>
+				)}
+				<div className={'max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md  dark:bg-black'}>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
@@ -178,11 +200,13 @@ const VoteCart: React.FC = () => {
 								key={index}
 								voteInfo={voteCardInfo}
 								index={index}
+								reloadBatchCart={reloadBatchCart}
 							/>
 						))}
 					</Spin>
 				</div>
 			</article>
+
 			<article
 				className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
 				style={{ borderRadius: '8px 8px 0 0' }}
@@ -207,9 +231,10 @@ const VoteCart: React.FC = () => {
 					</Button>
 				</div>
 			</article>
+
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[600px]')}
 				open={openSuccessModal}
 				maskClosable={false}
 				footer={

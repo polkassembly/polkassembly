@@ -14,7 +14,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { CastVoteIcon, CloseIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
@@ -22,6 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
+import VoteSummary from '~src/components/BatchVoting/VotingOptions/VoteSummary';
 import { chainProperties } from '~src/global/networkConstants';
 
 interface IReferendumV2CardInfoProps {
@@ -33,11 +34,22 @@ interface IReferendumV2CardInfoProps {
 	updateTally?: boolean;
 	post?: any;
 	hideInfo?: boolean;
+	isUsedInTinderWebView?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
+	className,
+	tally,
+	ayeNayAbstainCounts,
+	setAyeNayAbstainCounts,
+	setUpdatetally,
+	isUsedInTinderWebView,
+	updateTally,
+	post,
+	hideInfo
+}) => {
 	const { network } = useNetworkSelector();
 	const { status } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
@@ -169,9 +181,14 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 
 	return (
 		<>
-			<GovSidebarCard className={className}>
-				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Summary</h6>
+			<GovSidebarCard
+				className={`${className}`}
+				isUsedInTinderWebView={true}
+			>
+				<div className='relative flex items-center justify-between'>
+					<h6 className={`m-0 p-0 ${isUsedInTinderWebView ? '-ml-6 -mt-3 text-base' : 'text-xl'} font-medium leading-6 text-bodyBlue dark:text-blue-dark-high`}>
+						{isUsedInTinderWebView ? 'Vote History' : 'Summary'}
+					</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag
@@ -194,11 +211,19 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 					indicator={<LoadingOutlined />}
 				>
 					<div>
-						<VoteProgress
-							ayeVotes={tallyData.ayes}
-							className='vote-progress'
-							nayVotes={tallyData.nays}
-						/>
+						{isUsedInTinderWebView ? (
+							<VoteSummary
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						) : (
+							<VoteProgress
+								ayeVotes={tallyData.ayes}
+								className='vote-progress'
+								nayVotes={tallyData.nays}
+							/>
+						)}
 					</div>
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
@@ -259,11 +284,11 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${dmSans.variable} ${dmSans.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 						closeIcon={<CloseIcon className='mt-2.5 text-lightBlue dark:text-icon-dark-inactive' />}
 						title={
 							<div
-								className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
+								className={`${dmSans.variable} ${dmSans.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
 							>
 								<InfoCircleOutlined className='mr-2 h-6 w-6' />
 								<span className='font-semibold dark:text-white'>How are votes calculated</span>

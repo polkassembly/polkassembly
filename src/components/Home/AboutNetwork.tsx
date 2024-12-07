@@ -4,6 +4,7 @@
 
 import { DesktopOutlined, FileTextOutlined, HomeFilled, PlayCircleFilled, TwitterOutlined, YoutubeFilled } from '@ant-design/icons';
 import { Space } from 'antd';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -18,7 +19,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 	return (
 		<Space
 			size={19}
-			className='items-center'
+			className='flex flex-wrap items-center'
 		>
 			{blockchain_socials.homepage ? (
 				<Tooltip
@@ -163,13 +164,13 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	const [showGallery, setShowGallery] = useState(false);
+	const router = useRouter();
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
-				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
+				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high'>About</h2>
+				{router.pathname !== '/activity-feed' && <div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>}
 			</div>
-
 			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				Join our Community to discuss, contribute and get regular updates from us!
 				{showGallery && showGov2Links && (
@@ -191,7 +192,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 			</p>
 
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
-
+			{router.pathname === '/activity-feed' && <div className='mt-3 flex'>{networkSocialsData && socialLinks(networkSocialsData)}</div>}
 			{showGallery && (
 				<div>
 					{showGov2Links && (

@@ -23,13 +23,9 @@ import DiscordIconDarkSm from '~assets/icons/discord-dark-mobile.svg';
 import TelegramIconDarkSm from '~assets/icons/telegram-dark-mobile.svg';
 import InternetIconDarkSm from '~assets/icons/web-dark-mobile.svg';
 import PaLogoDark from '~assets/PALogoDark.svg';
-import AiBot from '../AiBot/AiBot';
-import { useState } from 'react';
 import { useTheme } from 'next-themes';
 
 const Footer = ({ className }: { className?: string }) => {
-	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
-	const [floatButtonOpen, setFloatButtonOpen] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
@@ -258,12 +254,6 @@ const Footer = ({ className }: { className?: string }) => {
 					</div>
 				</div>
 			</div>
-			<AiBot
-				isAIChatBotOpen={isAIChatBotOpen}
-				setIsAIChatBotOpen={setIsAIChatBotOpen}
-				floatButtonOpen={floatButtonOpen}
-				setFloatButtonOpen={setFloatButtonOpen}
-			/>
 		</footer>
 	);
 };

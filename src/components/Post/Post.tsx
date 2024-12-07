@@ -43,7 +43,8 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
-
+import PostProgressReport from '../ProgressReport/PostProgressReport';
+import { useRouter } from 'next/router';
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -122,15 +123,37 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const router = useRouter();
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const [selectedTabKey, setSelectedTabKey] = useState<string>('description');
+
+	useEffect(() => {
+		const { tab } = router.query;
+		if (tab && typeof tab === 'string') {
+			setSelectedTabKey(tab);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.query]);
+
+	const handleTabChange = (key: string) => {
+		setSelectedTabKey(key);
+		router.replace(
+			{
+				pathname: router.pathname,
+				query: { ...router.query, tab: key }
+			}
+			// { shallow: true }
+		);
+	};
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
 		setCanEdit(post.user_id === id);
+		const substrateAddress = getSubstrateAddress(proposer);
 
-		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		let isProposer = proposer && addresses?.includes(substrateAddress || proposer);
 		const network = getNetwork();
 		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
@@ -139,9 +162,8 @@ const Post: FC<IPostProps> = (props) => {
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
-		const substrateAddress = getSubstrateAddress(proposer);
 		if (!isProposer) {
-			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			isProposer = await checkIsProposer(substrateAddress || proposer, [...(addresses || loginAddress)]);
 			if (isProposer) {
 				setCanEdit(true);
 				return;
@@ -221,15 +243,11 @@ const Post: FC<IPostProps> = (props) => {
 	const productData = useCallback(async () => {
 		try {
 			if (networkModified) {
-				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
-					headers: {
-						Accept: 'application/vnd.github.v3+json',
-						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28'
-					}
-				});
-				if (response.ok) {
-					const data = await response.json();
+				// api/v1/posts/githubAction
+				const { data = null } = (await nextApiClientFetch(`api/v1/posts/githubAction?network=${networkModified}&postType=${postType}&postTypeInfo=${postTypeInfo}`)) as {
+					data: IDataType[];
+				};
+				if (data) {
 					setAuditData(data);
 					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
 					setTotalAuditCount(count);
@@ -331,6 +349,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
+						curator={post?.curator || ''}
 					/>
 				</div>
 
@@ -465,15 +484,18 @@ const Post: FC<IPostProps> = (props) => {
 	const tabItems: any[] = [
 		{
 			children: (
-				<PostDescription
-					id={id}
-					isEditing={isEditing}
-					canEdit={canEdit}
-					toggleEdit={toggleEdit}
-					isOnchainPost={isOnchainPost}
-					TrackerButtonComp={TrackerButtonComp}
-					Sidebar={() => <Sidebar />}
-				/>
+				<>
+					{post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
+					<PostDescription
+						id={id}
+						isEditing={isEditing}
+						canEdit={canEdit}
+						toggleEdit={toggleEdit}
+						isOnchainPost={isOnchainPost}
+						TrackerButtonComp={TrackerButtonComp}
+						Sidebar={() => <Sidebar />}
+					/>
+				</>
 			),
 			key: 'description',
 			label: 'Description'
@@ -505,6 +527,7 @@ const Post: FC<IPostProps> = (props) => {
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',
+					progress_report: post?.progress_report,
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,
@@ -586,6 +609,8 @@ const Post: FC<IPostProps> = (props) => {
 												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
+												activeKey={selectedTabKey} // This sets the currently active tab
+												onChange={handleTabChange}
 											/>
 										</>
 									)}

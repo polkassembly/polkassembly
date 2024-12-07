@@ -64,9 +64,9 @@ fill-rule="evenodd" stroke="none">
 `;
 
 const editorContentStyle = `
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=dmSans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
 body {
-	font-family: "Poppins", sans-serif;
+	font-family: "dmSans", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
 }
@@ -85,9 +85,9 @@ img {
 `;
 
 const editorContentStyleDark = `
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=dmSans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
 body {
-	font-family: "Poppins", sans-serif;
+	font-family: "dmSans", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
 }
@@ -223,7 +223,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								onChange(content);
 							}}
 							apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-							cloudChannel='5-stable'
+							cloudChannel='5'
 							onInit={() => setLoading(false)}
 							onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
 							onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
@@ -302,7 +302,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									});
 
 									editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
-										ch: '@',
+										trigger: '@',
 										minChars: 1,
 										columns: 1,
 										fetch: (pattern: string) => {

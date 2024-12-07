@@ -21,8 +21,22 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 
 	return (
 		<div className={className}>
-			{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
+			{['moonbase', 'moonbeam', 'moonriver', 'laossigma', 'mythos'].includes(network) ? (
 				<>
+					{availableWallets[Wallet.SUBWALLET] && (
+						<WalletButton
+							className={`h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.SUBWALLET && 'border border-solid border-pink_primary'}`}
+							disabled={!apiReady}
+							onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
+							name='Subwallet'
+							icon={
+								<WalletIcon
+									which={Wallet.SUBWALLET}
+									className='h-6 w-6'
+								/>
+							}
+						/>
+					)}
 					{availableWallets[Wallet.TALISMAN] && (
 						<WalletButton
 							className={`h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.TALISMAN && 'border border-solid border-pink_primary'}`}

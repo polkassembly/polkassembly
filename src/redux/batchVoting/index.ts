@@ -5,6 +5,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IBatchVotesDetails, IBatchVoteStore, IVoteCardInfo } from './@types';
 import { HYDRATE } from 'next-redux-wrapper';
+import { EVoteDecisionType } from '~src/types';
 
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {
@@ -16,6 +17,7 @@ const initialState: IBatchVoteStore = {
 		nyeVoteBalance: '0',
 		voteOption: 'aye'
 	},
+	batch_voting_address: '',
 	edit_vote_details: {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
@@ -25,11 +27,16 @@ const initialState: IBatchVoteStore = {
 		nyeVoteBalance: '0',
 		voteOption: 'aye'
 	},
+	is_cancel_button_clicked: false,
+	is_default_selected: true,
+	is_field_edited: false,
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
+	show_post_info: false,
 	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
+	vote: EVoteDecisionType.AYE,
 	vote_card_info: {
 		abstainAyeBalance: '0',
 		abstainNayBalance: '0',
@@ -76,12 +83,18 @@ export const batchVoteStore = createSlice({
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
 				batch_vote_details: {},
+				batch_voting_address: '',
 				edit_vote_details: {},
+				is_cancel_button_clicked: false,
+				is_default_selected: true,
+				is_field_edited: false,
 				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
+				show_post_info: false,
 				total_active_posts: 0,
 				total_proposals_added_in_Cart: 0,
+				vote: EVoteDecisionType.AYE,
 				vote_card_info: {
 					abstainAyeBalance: '',
 					abstainNayBalance: '',
@@ -96,6 +109,9 @@ export const batchVoteStore = createSlice({
 				voted_post_ids_array: [],
 				voted_proposal_id: 0
 			};
+		},
+		setBatchVotingAddress: (state, action: PayloadAction<string>) => {
+			state.batch_voting_address = action.payload;
 		},
 		setBatchVoting_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
 			const obj = action.payload;
@@ -155,6 +171,15 @@ export const batchVoteStore = createSlice({
 				}
 			}
 		},
+		setIsCancelButtonClicked: (state, action: PayloadAction<boolean>) => {
+			state.is_default_selected = action.payload;
+		},
+		setIsDefaultSelected: (state, action: PayloadAction<boolean>) => {
+			state.is_default_selected = action.payload;
+		},
+		setIsFieldEdited: (state, action: PayloadAction<boolean>) => {
+			state.is_field_edited = action.payload;
+		},
 		setRemoveCartItems: (state, action: PayloadAction<any>) => {
 			state.vote_cart_data = action.payload;
 		},
@@ -171,11 +196,17 @@ export const batchVoteStore = createSlice({
 		setShowDefaultOptionsModal: (state, action: PayloadAction<boolean>) => {
 			state.show_default_options_modal = action.payload;
 		},
+		setShowPostInfo: (state, action: PayloadAction<boolean>) => {
+			state.show_post_info = action.payload;
+		},
 		setTotalActivePosts: (state, action: PayloadAction<number>) => {
 			state.total_active_posts = action.payload;
 		},
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
+		},
+		setVote: (state, action: PayloadAction<string | EVoteDecisionType>) => {
+			state.vote = action.payload;
 		},
 		setVoteCartData: (state, action: PayloadAction<any[]>) => {
 			state.vote_cart_data = action.payload;

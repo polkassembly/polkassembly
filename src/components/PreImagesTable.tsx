@@ -34,17 +34,18 @@ interface IPreImagesTableProps {
 	theme?: string;
 }
 
-interface UnnoteButtonProps {
+interface IUnnoteOrUnreqrestedButtonProps {
 	proposer: string;
 	hash: string;
 	api?: ApiPromise;
 	apiReady: boolean;
 	network: string;
 	substrateAddresses?: (string | null)[];
-	afterUnnotePreimage: () => void;
+	isUnrequesting?: boolean;
+	onConfirm: () => void;
 }
 
-const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses, afterUnnotePreimage }: UnnoteButtonProps) => {
+const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, substrateAddresses, onConfirm, isUnrequesting = false }: IUnnoteOrUnreqrestedButtonProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
 
@@ -55,10 +56,16 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 			return;
 		}
 		setLoading(true);
-		const preimageTx = api.tx.preimage.unnotePreimage(hash);
+
+		let preimageTx;
+		if (isUnrequesting) {
+			preimageTx = api.tx.preimage.unrequestPreimage(hash);
+		} else {
+			preimageTx = api.tx.preimage.unnotePreimage(hash);
+		}
 
 		const onSuccess = () => {
-			afterUnnotePreimage();
+			onConfirm();
 			setLoading(false);
 			queueNotification({
 				header: 'Success!',
@@ -88,11 +95,12 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 			tx: preimageTx
 		});
 	};
+
 	return (
 		<div className='flex items-center space-x-2'>
 			<Tooltip
 				placement='top'
-				title={'Unnote'}
+				title={isUnrequesting ? 'Unrequest' : 'Unnote'}
 				trigger={'hover'}
 			>
 				<button
@@ -212,7 +220,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				proposedCall.method && (
 					<div className='flex items-center'>
 						<code className='rounded-md px-2 dark:bg-separatorDark dark:text-white'>
-							{proposedCall.section}.{proposedCall.method}
+							{proposedCall.section}.{proposedCall.method?.length > 6 ? `${proposedCall.method?.slice(0, 6)}...` : proposedCall.method}
 						</code>
 						{proposedCall.args && (
 							<ProfileOutlined
@@ -242,14 +250,30 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				<div className='flex items-center justify-start space-x-4'>
 					<span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
 					{status == 'Noted' && (
-						<UnnoteButton
+						<UnnoteOrUnrequestedButton
 							proposer={obj.proposer}
 							hash={obj.hash}
 							api={api}
 							apiReady={apiReady}
 							network={network}
 							substrateAddresses={substrateAddresses}
-							afterUnnotePreimage={() => {
+							onConfirm={() => {
+								setPreimages((prev) => {
+									return prev.filter((preimage: any) => preimage.hash !== obj.hash && preimage.proposer !== obj.proposer);
+								});
+							}}
+						/>
+					)}
+					{status == 'Requested' && (
+						<UnnoteOrUnrequestedButton
+							proposer={obj.proposer}
+							isUnrequesting
+							hash={obj.hash}
+							api={api}
+							apiReady={apiReady}
+							network={network}
+							substrateAddresses={substrateAddresses}
+							onConfirm={() => {
 								setPreimages((prev) => {
 									return prev.filter((preimage: any) => preimage.hash !== obj.hash && preimage.proposer !== obj.proposer);
 								});

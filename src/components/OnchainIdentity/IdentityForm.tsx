@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Divider, Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
 import { trackEvent } from 'analytics';
@@ -19,14 +19,13 @@ import messages from '~src/auth/utils/messages';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
-import { poppins } from 'pages/_app';
-import { EmailIcon, InfoIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { dmSans } from 'pages/_app';
+import { EmailIcon, InfoIcon, MatrixIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { checkIdentityFieldsValidity } from './utils/checkIdentityFieldsValidity';
-import { BN_ONE } from '@polkadot/util';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
@@ -39,6 +38,8 @@ import userProfileBalances from '~src/util/userProfileBalances';
 import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 import PeopleChainTeleport from '../PeopleChainTeleport';
 import _ from 'lodash';
+import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -46,40 +47,34 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
-const IdentityForm = ({
-	closeModal,
-	onCancel,
-	perSocialBondFee,
-	setAddressChangeModalOpen,
-	setStartLoading,
-	setTxFee,
-	txFee,
-	className,
-	form,
-	setOpenIdentitySuccessModal
-}: IIdentityForm) => {
-	const dispach = useDispatch();
+const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
-	const { email, twitter } = socials;
-	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
+	const { email, twitter, matrix } = socials;
+	const { gasFee, registerarFee, minDeposite } = txFee;
 	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
+	const [availableBalanceForSignatory, setAvailableBalanceForSignatory] = useState<BN | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultChainUserBalance, setDefaultChainUserBalance] = useState<BN>(ZERO_BN);
+	const [defaultChainUserBalanceForSignatory, setDefaultChainUserBalanceForSignatory] = useState<BN>(ZERO_BN);
 	const totalFee = gasFee
-		.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)))
+		.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite))
 		.add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))));
+	const totalFeeForSignatory = new BN('21').mul(new BN(String(10 ** chainProperties[network].tokenDecimals)));
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
+	const [isBalanceUpdatedForSignatory, setIsBalanceUpdatedForSignatory] = useState<boolean>(false);
+	const [isBalanceUpdatedLoadingForSignatory, setIsBalanceUpdatedLoadingForSignatory] = useState<boolean>(false);
 
 	const getDefaultChainBalance = async () => {
 		if (!api || !apiReady) return;
@@ -88,11 +83,29 @@ const IdentityForm = ({
 		setDefaultChainUserBalance(transferableBalance);
 	};
 
+	const getDefaultChainBalanceForSignatory = async () => {
+		if (!peopleChainApi || !peopleChainApiReady || !currentUser?.multisigAssociatedAddress) return;
+
+		const { transferableBalance } = await userProfileBalances({
+			address: currentUser?.multisigAssociatedAddress || '',
+			api: peopleChainApi,
+			apiReady: peopleChainApiReady,
+			network
+		});
+		setDefaultChainUserBalanceForSignatory(transferableBalance);
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady || !isPeopleChainSupportedNetwork(network)) return;
 		getDefaultChainBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
+
+	useEffect(() => {
+		if (!peopleChainApi || !peopleChainApiReady || !isPeopleChainSupportedNetwork(network)) return;
+		getDefaultChainBalanceForSignatory();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [peopleChainApi, peopleChainApiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -114,22 +127,38 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async (requestJudgement: boolean) => {
-		const onSuccess = async () => {
-			const identityHash = await (peopleChainApi ?? api)?.query?.identity
-				?.identityOf(identityAddress)
-				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
-			if (!identityHash) {
+		const onSuccess = async (pre?: any) => {
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+				if (!pre) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Transaction failed!',
+						status: NotificationStatus.ERROR
+					});
+					setStartLoading({ isLoading: false, message: '' });
+					return;
+				}
 				setStartLoading({ isLoading: false, message: '' });
-				console.log('Error in unwraping identityHash');
+				closeModal(true);
+				setOpenIdentitySuccessModal(true);
+				// TODO: save identity multisig call hash
+			} else {
+				const identityHash = await (peopleChainApi ?? api)?.query?.identity
+					?.identityOf(identityAddress)
+					.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
+				if (!identityHash) {
+					setStartLoading({ isLoading: false, message: '' });
+					console.log('Error in unwraping identityHash');
+				}
+				setStartLoading({ isLoading: false, message: '' });
+				closeModal(true);
+				setOpenIdentitySuccessModal(true);
+				dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+				await handleIdentityHashSave(identityHash);
 			}
-			setStartLoading({ isLoading: false, message: '' });
-			closeModal(true);
-			setOpenIdentitySuccessModal(true);
-			dispach(onchainIdentityActions.setOnchainIdentityHash(identityHash));
-			await handleIdentityHashSave(identityHash);
 		};
 
-		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -150,10 +179,88 @@ const IdentityForm = ({
 		let tx;
 		if (requestJudgement) {
 			tx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+				if (!currentUser?.multisigAssociatedAddress) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig associated address not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const multisigInfo = currentUser.multisigAddressInfo;
+				if (!multisigInfo) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig info not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const signatories = multisigInfo?.multisig?.multi_account_member?.map((obj: any) => getSubstrateAddress(obj.address)) || [];
+				const threshold = multisigInfo?.multisig?.threshold || null;
+				if (!signatories.length || !threshold) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig signatories or threshold not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const weight = (await tx.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
+					threshold,
+					signatories.filter((signatory: string) => {
+						return signatory != getSubstrateAddress(currentUser?.multisigAssociatedAddress || '');
+					}),
+					null,
+					tx,
+					weight
+				);
+			}
 		} else {
 			const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 			const identityTx = (peopleChainApi ?? api).tx?.identity?.setIdentity(info);
 			tx = (peopleChainApi ?? api).tx.utility.batchAll([identityTx, requestedJudgementTx]);
+			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+				if (!currentUser?.multisigAssociatedAddress) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig associated address not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const multisigInfo = currentUser.multisigAddressInfo;
+				if (!multisigInfo) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig info not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const signatories = multisigInfo?.multisig?.multi_account_member?.map((obj: any) => getSubstrateAddress(obj.address)) || [];
+				const threshold = multisigInfo?.multisig?.threshold || null;
+				if (!signatories.length || !threshold) {
+					queueNotification({
+						header: 'failed!',
+						message: 'Multisig signatories or threshold not found!',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+				const weight = (await tx.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
+					threshold,
+					signatories.filter((signatory: string) => {
+						return signatory != getSubstrateAddress(currentUser?.multisigAssociatedAddress || '');
+					}),
+					null,
+					tx,
+					weight
+				);
+			}
 		}
 
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
@@ -180,7 +287,12 @@ const IdentityForm = ({
 			tx
 		};
 
-		if (selectedProxyAddress?.length && showProxyDropdown) {
+		if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+			payload = {
+				...payload,
+				address: currentUser?.multisigAssociatedAddress || ''
+			};
+		} else if (selectedProxyAddress?.length && showProxyDropdown) {
 			payload = {
 				...payload,
 				proxyAddress: selectedProxyAddress || ''
@@ -199,6 +311,17 @@ const IdentityForm = ({
 			console.log(err);
 		}
 		setAvailableBalance(balance);
+	};
+
+	const handleOnAvailableBalanceChangeForSignatory = (balanceStr: string) => {
+		let balance = ZERO_BN;
+
+		try {
+			balance = new BN(balanceStr);
+		} catch (err) {
+			console.log(err);
+		}
+		setAvailableBalanceForSignatory(balance);
 	};
 
 	const getGasFee = async (initialLoading?: boolean, txFeeVal?: ITxFee) => {
@@ -227,7 +350,7 @@ const IdentityForm = ({
 		}
 
 		if (identityInfo.isIdentitySet) {
-			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
+			if (allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && requestJudgementTx) {
 				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			} else {
@@ -250,26 +373,27 @@ const IdentityForm = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceUpdateAvailableBalance = useCallback(_.debounce(handleUpdateAvailableBalance, 10000), []);
 
+	const handleUpdateAvailableBalanceForSignatory = () => {
+		setIsBalanceUpdatedForSignatory(!isBalanceUpdatedForSignatory);
+		setIsBalanceUpdatedLoadingForSignatory(false);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debounceUpdateAvailableBalanceForSignatory = useCallback(_.debounce(handleUpdateAvailableBalanceForSignatory, 10000), []);
+
 	const handleInfo = (initialLoading?: boolean) => {
 		const displayNameVal = form.getFieldValue('displayName')?.trim();
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = (form.getFieldValue('twitter') || '').trim();
+		const matrixVal = (form.getFieldValue('matrix') || '').trim();
 
 		const okDisplay = checkIdentityFieldsValidity(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkIdentityFieldsValidity(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkIdentityFieldsValidity(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
-		// const okRiot = checkIdentityFieldsValidity((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
+		const okMatrix = checkIdentityFieldsValidity(matrixVal.length > 0, matrixVal, 6, [':', '.org'], WHITESPACE, []);
 		const okTwitter = checkIdentityFieldsValidity(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
-
-		let okSocials = 1;
-		if (okEmail && emailVal.length > 0 && identityInfo?.email !== emailVal) {
-			okSocials += 1;
-		}
-		if (okTwitter && twitterVal.length > 0 && identityInfo?.twitter !== twitterVal) {
-			okSocials += 1;
-		}
 
 		setInfo({
 			info: {
@@ -278,20 +402,23 @@ const IdentityForm = ({
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				github: { [identityInfo?.github.length > 0 ? 'raw' : 'none']: identityInfo?.github.length > 0 ? identityInfo?.github : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
-				matrix: { [identityInfo?.matrix.length > 0 ? 'raw' : 'none']: identityInfo?.matrix.length > 0 ? identityInfo?.matrix : null },
-				riot: { [identityInfo?.riot.length > 0 ? 'raw' : 'none']: identityInfo?.riot.length > 0 ? identityInfo?.riot : null },
+				matrix: { [okMatrix && matrixVal.length > 0 ? 'raw' : 'none']: okMatrix && matrixVal.length > 0 ? (matrixVal?.[0] === '@' ? matrixVal : `@${matrixVal}`) : null },
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
 				web: { [identityInfo?.web.length > 0 ? 'raw' : 'none']: identityInfo?.web.length > 0 ? identityInfo?.web : null }
 			},
-			okAll: twitterVal.length
-				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
-				: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal
+			okAll:
+				okDisplay &&
+				okEmail &&
+				okLegal &&
+				okTwitter &&
+				okMatrix &&
+				displayNameVal?.length > 1 &&
+				!!emailVal &&
+				(twitterVal?.length ? !!twitterVal : true) &&
+				(matrixVal?.length ? !!matrixVal : true)
 		});
-		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
-		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
-		setTxFee(fee);
 		if (initialLoading) {
-			getGasFee(true, fee);
+			getGasFee(true);
 		}
 	};
 
@@ -320,44 +447,123 @@ const IdentityForm = ({
 					</div>
 				)}
 
-				{!!totalFee.gt(ZERO_BN) &&
-					isPeopleChainSupportedNetwork(network) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
-					availableBalance &&
-					availableBalance.lt(totalFee) &&
-					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
-						<div>
-							<PeopleChainTeleport
-								defaultAmount={totalFee.sub(availableBalance)}
-								defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
-								onConfirm={(amount: BN) => {
-									setIsBalanceUpdatedLoading(true);
-									debounceUpdateAvailableBalance();
-									setAvailableBalance(availableBalance.add(amount));
-								}}
+				{isCurrentlyLoggedInUsingMultisig(currentUser) ? (
+					<>
+						{!!totalFee.gt(ZERO_BN) &&
+							isPeopleChainSupportedNetwork(network) &&
+							(!identityInfo?.alreadyVerified || !allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalance &&
+							availableBalance.lt(totalFee) &&
+							!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
+								<div>
+									<PeopleChainTeleport
+										defaultAmount={totalFee.sub(availableBalance)}
+										defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
+										onConfirm={(amount: BN) => {
+											setIsBalanceUpdatedLoading(true);
+											debounceUpdateAvailableBalance();
+											setAvailableBalance(availableBalance.add(amount));
+										}}
+									/>
+								</div>
+							)}
+						{isBalanceUpdatedLoading && isPeopleChainSupportedNetwork(network) && (
+							<Alert
+								className='mb-6 rounded-[4px]'
+								type='info'
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds for multisig. This may take a few seconds...</p>}
 							/>
-						</div>
-					)}
-
-				{isBalanceUpdatedLoading && isPeopleChainSupportedNetwork(network) && (
-					<Alert
-						className='mb-6 rounded-[4px]'
-						type='info'
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds. This may take a few seconds...</p>}
-					/>
+						)}
+						{!!totalFee.gt(ZERO_BN) &&
+							(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalance &&
+							availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
+								<Alert
+									className='mb-6 rounded-[4px]'
+									type='warning'
+									showIcon
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance in multisig</p>}
+								/>
+							)}
+						{!!totalFeeForSignatory.gt(ZERO_BN) &&
+							isPeopleChainSupportedNetwork(network) &&
+							(!identityInfo?.alreadyVerified || !allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalanceForSignatory &&
+							availableBalanceForSignatory.lt(totalFeeForSignatory) &&
+							!totalFeeForSignatory.sub(availableBalanceForSignatory).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
+								<div>
+									<PeopleChainTeleport
+										defaultAmount={totalFeeForSignatory.sub(availableBalanceForSignatory)}
+										defaultBeneficiaryAddress={currentUser?.multisigAssociatedAddress || ''}
+										onConfirm={(amount: BN) => {
+											setIsBalanceUpdatedLoadingForSignatory(true);
+											debounceUpdateAvailableBalanceForSignatory();
+											setAvailableBalanceForSignatory(availableBalanceForSignatory.add(amount));
+										}}
+									/>
+								</div>
+							)}
+						{isBalanceUpdatedLoadingForSignatory && isPeopleChainSupportedNetwork(network) && (
+							<Alert
+								className='mb-6 rounded-[4px]'
+								type='info'
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds for signatory. This may take a few seconds...</p>}
+							/>
+						)}
+						{!!totalFeeForSignatory.gt(ZERO_BN) &&
+							(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalanceForSignatory &&
+							availableBalanceForSignatory.add(defaultChainUserBalanceForSignatory).lte(totalFeeForSignatory) && (
+								<Alert
+									className='mb-6 rounded-[4px]'
+									type='warning'
+									showIcon
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance in signatory</p>}
+								/>
+							)}
+					</>
+				) : (
+					<>
+						{!!totalFee.gt(ZERO_BN) &&
+							isPeopleChainSupportedNetwork(network) &&
+							(!identityInfo?.alreadyVerified || !allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalance &&
+							availableBalance.lt(totalFee) &&
+							!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
+								<div>
+									<PeopleChainTeleport
+										defaultAmount={totalFee.sub(availableBalance)}
+										defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
+										onConfirm={(amount: BN) => {
+											setIsBalanceUpdatedLoading(true);
+											debounceUpdateAvailableBalance();
+											setAvailableBalance(availableBalance.add(amount));
+										}}
+									/>
+								</div>
+							)}
+						{isBalanceUpdatedLoading && isPeopleChainSupportedNetwork(network) && (
+							<Alert
+								className='mb-6 rounded-[4px]'
+								type='info'
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds. This may take a few seconds...</p>}
+							/>
+						)}
+						{!!totalFee.gt(ZERO_BN) &&
+							(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) &&
+							availableBalance &&
+							availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
+								<Alert
+									className='mb-6 rounded-[4px]'
+									type='warning'
+									showIcon
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
+								/>
+							)}
+					</>
 				)}
-				{!!totalFee.gt(ZERO_BN) &&
-					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
-					availableBalance &&
-					availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
-						<Alert
-							className='mb-6 rounded-[4px]'
-							type='warning'
-							showIcon
-							message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
-						/>
-					)}
-				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
+
+				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
 						type='success'
@@ -368,7 +574,7 @@ const IdentityForm = ({
 				{!!identityInfo?.email &&
 					!!identityInfo?.displayName &&
 					!identityInfo.verifiedByPolkassembly &&
-					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
+					allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) &&
 					availableBalance &&
 					availableBalance.add(defaultChainUserBalance).gt(totalFee) && (
 						<Alert
@@ -398,78 +604,143 @@ const IdentityForm = ({
 						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Please provide your email for request judgement. </p>}
 					/>
 				)}
-				<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-						Your Address{' '}
-						<HelperTooltip
-							className='ml-1'
-							text='Please note the verification cannot be transferred to another address.'
-						/>
-					</label>
-					{(!!identityAddress || !!currentUser.loginAddress) && (
-						<Balance
-							address={identityAddress || currentUser.loginAddress}
-							onChange={handleOnAvailableBalanceChange}
-							isBalanceUpdated={isBalanceUpdated}
-							usedInIdentityFlow
-						/>
-					)}
-				</div>
-				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-						<Address
-							address={identityAddress || currentUser.loginAddress}
-							isTruncateUsername={false}
-							displayInline
-						/>
-						<CustomButton
-							text='Change Wallet'
-							onClick={() => {
-								setAddressChangeModalOpen();
-								closeModal(true);
-							}}
-							width={91}
-							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
-							height={21}
-							variant='primary'
-						/>
-					</div>
-				</div>
-				{!!proxyAddresses && proxyAddresses?.length > 0 && (
-					<div className='mt-2'>
-						<Checkbox
-							value=''
-							className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-							onChange={() => {
-								setShowProxyDropdown(!showProxyDropdown);
-							}}
-						>
-							<p className='m-0 mt-1 p-0'>Use proxy address</p>
-						</Checkbox>
-					</div>
+				{isCurrentlyLoggedInUsingMultisig(currentUser) ? (
+					<>
+						<div>
+							<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
+									Your Multisig Address{' '}
+									<HelperTooltip
+										className='ml-1'
+										text='Please note the verification cannot be transferred to another address.'
+									/>
+								</label>
+								{(!!identityAddress || !!currentUser.loginAddress) && (
+									<Balance
+										address={identityAddress || currentUser.loginAddress}
+										onChange={handleOnAvailableBalanceChange}
+										isBalanceUpdated={isBalanceUpdated}
+										usedInIdentityFlow
+									/>
+								)}
+							</div>
+							<div className='flex w-full items-end gap-2 text-sm '>
+								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+									<Address
+										address={identityAddress || currentUser.loginAddress}
+										isTruncateUsername={false}
+										displayInline
+									/>
+								</div>
+							</div>
+						</div>
+						<div className='mt-4'>
+							<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
+									Your Multisig signatory Address{' '}
+									<HelperTooltip
+										className='ml-1'
+										text='Please note the verification cannot be transferred to another address.'
+									/>
+								</label>
+								<Balance
+									address={currentUser.multisigAssociatedAddress || ''}
+									onChange={handleOnAvailableBalanceChangeForSignatory}
+									isBalanceUpdated={isBalanceUpdatedForSignatory}
+									usedInIdentityFlow
+								/>
+							</div>
+							<div className='flex w-full items-end gap-2 text-sm '>
+								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+									<Address
+										address={currentUser.multisigAssociatedAddress || ''}
+										isTruncateUsername={false}
+										displayInline
+									/>
+								</div>
+							</div>
+						</div>
+					</>
+				) : (
+					<>
+						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
+								Your Address{' '}
+								<HelperTooltip
+									className='ml-1'
+									text='Please note the verification cannot be transferred to another address.'
+								/>
+							</label>
+							{(!!identityAddress || !!currentUser.loginAddress) && (
+								<Balance
+									address={identityAddress || currentUser.loginAddress}
+									onChange={handleOnAvailableBalanceChange}
+									isBalanceUpdated={isBalanceUpdated}
+									usedInIdentityFlow
+								/>
+							)}
+						</div>
+						<div className='flex w-full items-end gap-2 text-sm '>
+							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+								<Address
+									address={identityAddress || currentUser.loginAddress}
+									isTruncateUsername={false}
+									displayInline
+								/>
+								<CustomButton
+									text='Change Wallet'
+									onClick={() => {
+										setAddressChangeModalOpen();
+										closeModal(true);
+									}}
+									width={91}
+									className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+									height={21}
+									variant='primary'
+								/>
+							</div>
+						</div>
+					</>
 				)}
-				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
-					<ProxyAccountSelectionForm
-						proxyAddresses={proxyAddresses}
-						theme={theme as string}
-						address={identityAddress || currentUser.loginAddress}
-						withBalance
-						heading={'Proxy Address'}
-						isUsedInIdentity={true}
-						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-						inputClassName='rounded-[4px] px-3 py-0.5'
-						wallet={wallet}
-						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
-						setSelectedProxyAddress={setSelectedProxyAddress}
-						selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
-					/>
-				)}
-				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
-					<div className='mt-2 flex items-center gap-x-1'>
-						<InfoIcon />
-						<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
-					</div>
-				)}
+				{!isCurrentlyLoggedInUsingMultisig(currentUser) ? (
+					<>
+						{!!proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='mt-2'>
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={() => {
+										setShowProxyDropdown(!showProxyDropdown);
+									}}
+								>
+									<p className='m-0 mt-1 p-0'>Use proxy address</p>
+								</Checkbox>
+							</div>
+						)}
+						{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
+							<ProxyAccountSelectionForm
+								proxyAddresses={proxyAddresses}
+								theme={theme as string}
+								address={identityAddress || currentUser.loginAddress}
+								withBalance
+								heading={'Proxy Address'}
+								isUsedInIdentity={true}
+								className={`${dmSans.variable} ${dmSans.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-0.5'
+								wallet={wallet}
+								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+								setSelectedProxyAddress={setSelectedProxyAddress}
+								selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
+							/>
+						)}
+						{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
+							<div className='mt-2 flex items-center gap-x-1'>
+								<InfoIcon />
+								<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+							</div>
+						)}
+					</>
+				) : null}
 				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>
@@ -500,7 +771,7 @@ const IdentityForm = ({
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
@@ -534,13 +805,12 @@ const IdentityForm = ({
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
-								dispach(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
+								dispatch(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
 								handleInfo();
 							}}
 						/>
 					</Form.Item>
 				</div>
-				<Divider />
 				<div>
 					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 						Socials{' '}
@@ -585,7 +855,7 @@ const IdentityForm = ({
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -627,7 +897,49 @@ const IdentityForm = ({
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
+									handleInfo();
+								}}
+							/>
+						</Form.Item>
+					</div>
+
+					<div className='mt-1 flex items-center  '>
+						<span className='mb-6 flex w-[150px] items-center gap-2'>
+							<MatrixIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Matrix</span>
+						</span>
+						<Form.Item
+							name='matrix'
+							className='w-full'
+							rules={[
+								{
+									message: 'Invalid matrix address',
+									validator(rule, value, callback) {
+										if (
+											callback &&
+											value.length > 0 &&
+											!checkIdentityFieldsValidity(form.getFieldValue('matrix')?.trim()?.length > 0, form.getFieldValue('matrix')?.trim(), 6, [':', '.org'], WHITESPACE, [])
+										) {
+											callback(rule?.message?.toString());
+										} else {
+											callback();
+										}
+									}
+								}
+							]}
+						>
+							<Input
+								onBlur={() => getGasFee()}
+								addonAfter={
+									!!identityInfo?.matrix && !!identityInfo.alreadyVerified && identityInfo?.matrix === form?.getFieldValue('matrix') && <VerifiedIcon className='text-xl' />
+								}
+								name='matrix'
+								value={matrix?.value}
+								placeholder='Enter your matrix id ex:(alex:matrix.org)'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+								onChange={(e) => {
+									dispatch(onchainIdentityActions.setOnchainSocials({ ...socials, matrix: { ...matrix, value: e.target.value?.trim() } }));
 									handleInfo();
 								}}
 							/>
@@ -639,7 +951,6 @@ const IdentityForm = ({
 			{/* tx amount breakdown */}
 			<IdentityTxBreakdown
 				loading={loading}
-				perSocialBondFee={perSocialBondFee}
 				txFee={txFee}
 			/>
 			<IdentityFormActionButtons

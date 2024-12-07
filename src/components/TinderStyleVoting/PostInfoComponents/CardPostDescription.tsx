@@ -3,18 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
+import Markdown from '~src/ui-components/Markdown';
 
 interface ICardPostDescription {
 	postContent: any;
 	postId: any;
+	className?: string;
 }
 const CardPostDescription: FC<ICardPostDescription> = (props) => {
-	const { postContent, postId } = props;
+	const { postContent, postId, className } = props;
 	const router = useRouter();
 
 	return (
-		<section>
-			<p>{postContent}</p>
+		<section className={`${className}`}>
+			<p className='dark:text-blue-dark-high'>
+				<Markdown md={postContent} />
+			</p>
 			<p
 				className='m-0 my-4 flex cursor-pointer justify-start p-0 text-xs text-pink_primary'
 				onClick={() => {

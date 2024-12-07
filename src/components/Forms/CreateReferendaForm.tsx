@@ -33,6 +33,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 // Testing adding a new commit
 interface ParamField {
@@ -393,7 +394,7 @@ export default function CreateReferendaForm({
 	};
 	const trackArr: string[] = [];
 
-	if (network) {
+	if (network && isOpenGovSupported(network)) {
 		Object.values(PostOrigin).forEach((value) => {
 			trackArr.push(value);
 		});
@@ -814,7 +815,7 @@ export default function CreateReferendaForm({
 				<div className='mt-6 flex items-center justify-end space-x-3'>
 					<Button
 						onClick={() => setSteps({ percent: 100, step: 0 })}
-						className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+						className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 					>
 						Back
 					</Button>

@@ -4,7 +4,7 @@
 
 import { Form } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
@@ -21,7 +21,7 @@ import Input from '~src/basic-components/Input';
 import Popover from '~src/basic-components/Popover';
 import { ArrowDownIcon } from './CustomIcons';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { getGeneralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
@@ -29,7 +29,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
-	label?: string;
+	label?: string | ReactNode;
 	helpText?: string;
 	onChange?: (balance: BN) => void;
 	placeholder?: string;
@@ -156,8 +156,10 @@ const BalanceInput = ({
 										if (
 											callback &&
 											(isNaN(Number(value)) ||
-												(Number(value) > 0 && value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals < (value?.split('.')?.[1].length || 0)) ||
-												(value.length && Number(value) <= 0))
+												(Number(value) > 0 &&
+													value.toString()?.split('.')?.[1]?.length &&
+													chainProperties[network]?.tokenDecimals < (value.toString()?.split('.')?.[1].length || 0)) ||
+												(value.toString().length && Number(value) <= 0))
 										) {
 											setIsBalanceSet?.(false);
 											callback(rule?.message?.toString());
@@ -178,7 +180,7 @@ const BalanceInput = ({
 									open={open}
 									onOpenChange={setOpen}
 									trigger='click'
-									overlayClassName={classNames(poppins.className, poppins.variable, 'mt-2 px-0 py-1 w-[100px]')}
+									overlayClassName={classNames(dmSans.className, dmSans.variable, 'mt-2 px-0 py-1 w-[100px]')}
 									placement='bottom'
 									content={
 										<div className='flex flex-col'>

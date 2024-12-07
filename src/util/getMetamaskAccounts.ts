@@ -5,7 +5,6 @@
 import { Wallet } from '~src/types';
 import addEthereumChain from './addEthereumChain';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import getSubstrateAddress from './getSubstrateAddress';
 interface Props {
 	chosenWallet: Wallet;
 	network: string;
@@ -38,14 +37,15 @@ const getMetamaskAccounts = async ({
 	if (!ethereum) {
 		return;
 	}
-
-	try {
-		await addEthereumChain({
-			ethereum,
-			network
-		});
-	} catch (error) {
-		return;
+	if (Wallet.TALISMAN !== chosenWallet) {
+		try {
+			await addEthereumChain({
+				ethereum,
+				network
+			});
+		} catch (error) {
+			return;
+		}
 	}
 
 	const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -62,8 +62,8 @@ const getMetamaskAccounts = async ({
 			address,
 			meta: {
 				genesisHash: null,
-				name: 'metamask',
-				source: 'metamask'
+				name: chosenWallet,
+				source: chosenWallet
 			}
 		};
 
@@ -71,8 +71,8 @@ const getMetamaskAccounts = async ({
 	});
 
 	if (accounts && Array.isArray(accounts)) {
-		const substrate_address = getSubstrateAddress(loginAddress);
-		const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+		const address = loginAddress;
+		const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (address || '').toLowerCase());
 		if (index >= 0) {
 			const account = accounts[index];
 			accounts.splice(index, 1);

@@ -1,38 +1,53 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
+import _ from 'lodash';
 
 const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 	const [inputValue, setInputValue] = useState<string>('');
 
+	// eslint-disable-next-line
+	const debouncedSearch = useCallback(
+		_.debounce((value: string) => {
+			handleSearch(value);
+		}, 300),
+		[]
+	);
+
 	const handleSearch = (value: string) => {
-		if (value.length >= 3) {
-			setSearchedUsername(value.trim());
+		if (value.length >= 1) {
+			setSearchedUsername(value.trim().toLowerCase());
 		} else {
 			setSearchedUsername(undefined);
 		}
+	};
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setInputValue(value);
+		debouncedSearch(value);
 	};
 
 	return (
 		<section className={`${className}`}>
 			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
 				<div className='table-header items-center'>
-					<p className={`${poppins.className} ${poppins.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>Top 50 Ranks</p>
+					<p className={`${dmSans.className} ${dmSans.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>Top 50 Ranks</p>
 					<div className='search-box mr-8 flex'>
 						<Input.Search
 							placeholder='Enter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							onSearch={handleSearch}
-							onChange={(e) => setInputValue(e.target.value)}
+							onChange={handleInputChange}
 							value={inputValue}
 							allowClear
 						/>

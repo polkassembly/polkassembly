@@ -34,7 +34,7 @@ const News: FC<INewsProps> = (props) => {
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
-			<h2 className='mb-6 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high'>News</h2>
+			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>News</h2>
 			<div className='overflow-hidden rounded-[10px]'>
 				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
 				<TwitterTimelineEmbed

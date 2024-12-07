@@ -37,9 +37,9 @@ import { Bytes } from '@polkadot/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -139,7 +139,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -154,7 +154,7 @@ const CreatePreimage = ({
 	const trackArr: string[] = [];
 	const maxSpendArr: { track: string; maxSpend: number }[] = [];
 	const [gasFee, setGasFee] = useState(ZERO_BN);
-	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit || 0}` || 0);
 
 	if (network) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
@@ -274,12 +274,24 @@ const CreatePreimage = ({
 		}
 	};
 
-	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
+	const handleSelectTrack = (amount: BN, isPreimage: boolean, generalInd: string | null, inputAm?: string) => {
 		let selectedTrack = '';
+
+		if (generalInd) {
+			const dotAmount =
+				getUsdValueFromAsset({
+					currentTokenPrice: currentTokenPrice || '0',
+					dedTokenUsdPrice: dedTokenUsdPrice || '0',
+					generalIndex: generalInd,
+					inputAmountValue: inputAm || '0',
+					network
+				}) || 0;
+			amount = new BN(dotAmount || '0').mul(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)));
+		}
 
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-			if (maxSpend.gte(fundingAmount)) {
+			if (maxSpend.gte(amount)) {
 				selectedTrack = maxSpendArr[i].track;
 				setSelectedTrack(maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
@@ -445,7 +457,11 @@ const CreatePreimage = ({
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 				if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					if (network === 'cere') {
+						txArr.push((api?.tx?.treasury?.spend as any)(balance.toString(), beneficiary.address));
+					} else {
+						txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+					}
 				}
 			});
 		}
@@ -607,9 +623,9 @@ const CreatePreimage = ({
 					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
 
 					setFundingAmount(balance);
-					onChangeLocalStorageSet({ beneficiaryAddresses: [newBeneficiaryAddress] || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
+					onChangeLocalStorageSet({ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100, step: 1 });
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 				} else {
 					setPreimageLength(0);
 					queueNotification({
@@ -689,11 +705,11 @@ const CreatePreimage = ({
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet(
-						{ beneficiaryAddresses: [newBeneficiaryAddress] || [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
+						{ beneficiaryAddresses: newBeneficiaryAddress ? [newBeneficiaryAddress] : [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
 						Boolean(isPreimage)
 					);
 					//select track
-					handleSelectTrack(balance, isPreimage);
+					handleSelectTrack(balance, isPreimage, generalIndex);
 
 					setSteps({ percent: 100, step: 1 });
 				}
@@ -858,10 +874,11 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
 
-		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage), generalIndex, totalAmt.toString());
 		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
+	//
 	const addBeneficiary = () => {
 		dispatchBeneficiaryAddresses({
 			payload: {
@@ -888,7 +905,7 @@ const CreatePreimage = ({
 
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
-		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+		handleSelectTrack(ZERO_BN, Boolean(isPreimage), generalIndex);
 	};
 
 	const fundingAmtToBN = () => {
@@ -1005,7 +1022,7 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 									showIcon
 									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
@@ -1095,7 +1112,10 @@ const CreatePreimage = ({
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												onAssetConfirm={setGeneralIndex}
+												onAssetConfirm={(index: string | null) => {
+													setGeneralIndex(index);
+													handleSelectTrack(fundingAmount, isPreimage, index);
+												}}
 											/>
 										</div>
 									</div>
@@ -1106,7 +1126,7 @@ const CreatePreimage = ({
 								<div className='flex items-center justify-between'>
 									<Button
 										type='text'
-										className='mt-2 flex items-center text-xs text-[#407BFF]'
+										className='mt-2 flex items-center text-xs font-semibold text-[#407BFF]'
 										size='small'
 										onClick={addBeneficiary}
 									>
@@ -1116,7 +1136,7 @@ const CreatePreimage = ({
 
 									<Button
 										type='text'
-										className='mt-2 flex items-center text-xs text-red-light-text dark:text-red-dark-text'
+										className='mt-2 flex items-center text-xs font-semibold text-red-light-text dark:text-red-dark-text'
 										size='small'
 										onClick={removeAllBeneficiaries}
 									>
@@ -1385,13 +1405,13 @@ const CreatePreimage = ({
 								setSteps({ percent: 100, step: 0 });
 								setGeneralIndex(null);
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
+							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium font-semibold tracking-[0.05em] text-white dark:border-pink_primary ${
 								(isPreimage !== null && !isPreimage
 									? !(
 											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&

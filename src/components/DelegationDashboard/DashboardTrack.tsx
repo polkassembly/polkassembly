@@ -7,7 +7,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-
+import Image from 'next/image';
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
 import Table from '~src/basic-components/Tables/Table';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
@@ -25,6 +25,10 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import dayjs from 'dayjs';
+import { dmSans } from 'pages/_app';
+import Address from '~src/ui-components/Address';
+import classNames from 'classnames';
+import Tooltip from '~src/basic-components/Tooltip';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -69,6 +73,13 @@ export const handleTrack = (track: string) => {
 	const trackName = track.replace(/-/g, ' ');
 	return trackName.trim();
 };
+
+export function capitalizeWords(input: string): string {
+	return input
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(' ');
+}
 
 const CONVICTION_VOTES_LOCKED_DAYS = 7;
 
@@ -168,12 +179,24 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, id]);
 
+	const getIconForUndelegationTimeLeft = (percentage: number) => {
+		if (percentage >= 75) {
+			return '/assets/icons/whole-time-left-clock.svg';
+		} else if (percentage < 75 && percentage >= 50) {
+			return '/assets/icons/three-forth-time-left-clock.svg';
+		} else if (percentage < 50 && percentage >= 25) {
+			return '/assets/icons/half-time-left-clock.svg';
+		} else {
+			return '/assets/icons/one-third-time-left-clock.svg';
+		}
+	};
+
 	return (
 		<div className={`${className}`}>
-			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
+			<div className='wallet-info-board gap mt-[-110px] flex h-[70px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw] sm:h-[90px]'>
 				<ProfileBalances />
 			</div>
-			<div className='dashboard-heading mb-4 mt-5 flex items-center gap-2 dark:text-white max-lg:pt-[60px] md:mb-5'>
+			<div className='dashboard-heading mb-4 flex items-center gap-2 dark:text-white max-lg:pt-[60px] sm:mt-4 md:mb-5'>
 				<span
 					className='cursor-pointer text-sm'
 					onClick={() => router.push('/delegation')}
@@ -191,24 +214,187 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
-					<div className='flex items-center gap-3 text-xl font-semibold capitalize tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
-						{handleTracksIcon(handleTrack(String(track)), 28)}
-						<span>{handleTrack(String(track))}</span>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-3 dark:border-separatorDark dark:bg-section-dark-overlay sm:px-9 sm:py-6'>
+					<div className='flex items-center gap-2 text-xl font-semibold capitalize tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high sm:gap-3'>
+						<div className='flex items-center gap-2 '>
+							<span className='sm:hidden'>{handleTracksIcon(capitalizeWords(handleTrack(String(track))), 20)}</span>
+							<span className='hidden sm:block'>{handleTracksIcon(capitalizeWords(handleTrack(String(track))), 28)}</span>
+							<span className='max-sm:text-[18px]'>{handleTrack(String(track))}</span>
+						</div>
 						{status &&
 							status.map((item: ETrackDelegationStatus, index: number) => (
 								<span
 									key={index}
-									className={`text-sm ${item === ETrackDelegationStatus.RECEIVED_DELEGATION && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
+									className={` text-xs sm:text-sm ${item === ETrackDelegationStatus.RECEIVED_DELEGATION && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
 										item === ETrackDelegationStatus.DELEGATED && 'bg-[#FFFBD8] dark:bg-[#69600B]'
-									} ${item === ETrackDelegationStatus.UNDELEGATED && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-3 py-2 text-center`}
+									} ${item === ETrackDelegationStatus.UNDELEGATED && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-2 py-1 text-center sm:px-3 sm:py-2 ${
+										item === ETrackDelegationStatus.RECEIVED_DELEGATION && status && status.length > 1 ? 'w-[115px] truncate' : ''
+									}`}
 								>
 									{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 								</span>
 							))}
 					</div>
-					<p className='mt-5 text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>{trackDetails.description}</p>
-					<div className='mt-6 flex flex-col gap-4'>
+					<p className='mt-[10px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high sm:mt-5'>{trackDetails.description}</p>
+
+					{/* For small screens */}
+					<div className='mb-[6px] sm:hidden'>
+						{showTable &&
+							status.map((item: ETrackDelegationStatus, index: number) => (
+								<div
+									className='mt-3 flex flex-col gap-2'
+									key={index}
+								>
+									<span className=' text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
+										{item === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Received Delegation(s)' : 'Delegated'}
+									</span>
+									<div className='mt-1 flex flex-col gap-4 border-[1px] border-solid border-section-light-container bg-white p-4 dark:border-separatorDark dark:bg-section-dark-overlay'>
+										{rowData
+											.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+											?.map((row, rowIndex) => (
+												<div
+													key={rowIndex}
+													className='dark:border-separatorDark dark:bg-section-dark-overlay'
+												>
+													<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between`}>
+														<div className='flex items-center gap-2'>
+															<div className='text-sm font-medium text-bodyBlue dark:text-white'>#{row.index}</div>
+															<span
+																className={`rounded-[26px] px-2 py-1 text-xs font-medium ${
+																	item === ETrackDelegationStatus.RECEIVED_DELEGATION
+																		? 'bg-[#E7DCFF] text-[#6C2CF8] dark:bg-[#6C2CF8] dark:text-white'
+																		: item === ETrackDelegationStatus.DELEGATED
+																		? 'bg-[#FFFBD8] text-[#69600B] dark:bg-[#69600B] dark:text-white'
+																		: ''
+																}`}
+															>
+																{item === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Received Delegation' : 'Delegated'}
+															</span>
+														</div>
+														{item === ETrackDelegationStatus.DELEGATED && (
+															<div className='flex items-start justify-center'>
+																<CustomButton
+																	onClick={() => setOpenUndelegateModal(true)}
+																	disabled={
+																		handleUndelegationDisable(
+																			rowData
+																				.filter((row) => row?.delegatedTo !== address)
+																				.map((filteredItem, index) => {
+																					return { ...filteredItem, index: index + 1 };
+																				})
+																		)?.delegationDisable || false
+																	}
+																	height={24}
+																	width={90}
+																	shape='default'
+																	variant='default'
+																	className={classNames(
+																		'gap-[2px]',
+																		handleUndelegationDisable(
+																			rowData
+																				.filter((row) => row?.delegatedTo !== address)
+																				.map((filteredItem, index) => {
+																					return { ...filteredItem, index: index + 1 };
+																				})
+																		)?.delegationDisable
+																			? 'opacity-50'
+																			: ''
+																	)}
+																>
+																	<Image
+																		src={'/assets/icons/undelegate-profile.svg'}
+																		height={14}
+																		width={14}
+																		alt=''
+																		className={'dark:text-white'}
+																	/>
+																	<span className={`${dmSans.className} ${dmSans.variable} text-[10px] font-medium tracking-wide text-pink_primary`}>Undelegate</span>
+																</CustomButton>
+															</div>
+														)}
+													</div>
+
+													<div className={`${dmSans.className} ${dmSans.variable} mt-2 grid grid-cols-2 gap-4 text-sm `}>
+														<div className='flex flex-col'>
+															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Delegated to:</span>{' '}
+															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>
+																<Address
+																	address={row.delegatedTo || ''}
+																	isTruncateUsername={false}
+																	displayInline
+																	usernameClassName='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+																	addressClassName='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+																	iconSize={18}
+																/>
+															</span>
+														</div>
+														<div className='flex flex-col'>
+															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Conviction:</span>{' '}
+															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{row.lockPeriod}x</span>
+														</div>
+														<div className='flex flex-col'>
+															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Balance:</span>{' '}
+															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{row.balance} DOT</span>
+														</div>
+														<div className='flex flex-col'>
+															<span className='text-[10px] text-blue-light-medium dark:text-blue-dark-medium'>Delegated on:</span>{' '}
+															<div className='flex items-center gap-1'>
+																<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{dayjs(row.delegatedOn).format('DD MMM YYYY')}</span>
+																{handleUndelegationDisable(
+																	rowData
+																		.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																		?.map((item, index) => {
+																			return { ...item, index: index + 1 };
+																		})
+																)?.timeLeftInUndelegation && (
+																	<Tooltip
+																		title={
+																			<div className={classNames(dmSans.className, dmSans.variable, 'text-[13px]')}>
+																				You can undelegate votes on{' '}
+																				{
+																					handleUndelegationDisable(
+																						rowData
+																							.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																							?.map((item, index) => {
+																								return { ...item, index: index + 1 };
+																							})
+																					)?.timeLeftInUndelegation?.time
+																				}
+																			</div>
+																		}
+																		className={classNames(dmSans.className, dmSans.variable, 'text-xs')}
+																		overlayClassName='px-1 max-w-[300px]'
+																	>
+																		<span className='-mt-1'>
+																			<Image
+																				src={getIconForUndelegationTimeLeft(
+																					handleUndelegationDisable(
+																						rowData
+																							.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+																							?.map((item, index) => {
+																								return { ...item, index: index + 1 };
+																							})
+																					)?.timeLeftInUndelegation?.percentage || 0
+																				)}
+																				alt=''
+																				width={16}
+																				height={16}
+																			/>
+																		</span>
+																	</Tooltip>
+																)}
+															</div>
+														</div>
+													</div>
+												</div>
+											))}
+									</div>
+								</div>
+							))}
+					</div>
+
+					{/* For Large screens */}
+					<div className='mt-3 hidden flex-col gap-4 sm:mt-6 sm:flex'>
 						{showTable &&
 							status.map((item: ETrackDelegationStatus, index: number) => (
 								<div
@@ -255,13 +441,13 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 							))}
 					</div>
 					{status.includes(ETrackDelegationStatus.UNDELEGATED) && (
-						<div className='flex flex-col items-center rounded-b-[14px] bg-white pb-8 pt-6 text-[169px] dark:bg-section-dark-overlay'>
+						<div className='flex flex-col items-center rounded-b-[14px] bg-white pt-2 text-[169px] dark:bg-section-dark-overlay sm:pb-8 sm:pt-6'>
 							<DelegateDelegationIcon />
-							<div className='mt-5 text-center text-bodyBlue dark:text-blue-dark-high'>
+							<div className='mt-3 text-center text-bodyBlue dark:text-blue-dark-high sm:mt-5'>
 								<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 									Voting power for this track has not been delegated yet
 									<CustomButton
-										className='border-none dark:bg-transparent max-md:mt-[10px]'
+										className='border-none dark:bg-transparent max-sm:mt-1'
 										onClick={() => setOpenDelegateModal(true)}
 										variant='default'
 									>

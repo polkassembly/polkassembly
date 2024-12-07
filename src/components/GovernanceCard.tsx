@@ -6,7 +6,7 @@ import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined }
 import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -24,7 +24,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod, IVotesHistoryResponse } from '~src/types';
+import { IPeriod, IProgressReport, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -44,6 +44,11 @@ import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import classNames from 'classnames';
 import TrackTag from '~src/ui-components/TrackTag';
+import { StarFilled } from '@ant-design/icons';
+import { gov2ReferendumStatus } from '~src/global/statuses';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
+import RateModal from '~src/ui-components/RateModal';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -155,6 +160,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const [progressReport, setProgressReport] = useState<IProgressReport[]>();
+	const [isLoadingReport, setIsLoadingReport] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	let titleString = title || method || tipReason || noTitle;
@@ -176,6 +183,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const [rateModal, setRateModal] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
 
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const content = description;
@@ -223,6 +233,28 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 	};
 	const isAllRefPage = router.pathname.includes('all-posts');
+
+	const getProgressReport = async () => {
+		setIsLoadingReport(true);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/progressReport/getProgressReport', {
+			postId: onchainId,
+			type: proposalType
+		});
+
+		if (error || !data) {
+			setProgressReport([]);
+		}
+
+		if (data) {
+			setProgressReport(data?.progress_report);
+		}
+		setIsLoadingReport(false);
+	};
+
+	useEffect(() => {
+		getProgressReport();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onchainId]);
 
 	useEffect(() => {
 		if (!api) {
@@ -330,6 +362,37 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
+							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && progressReport?.length > 0 && (
+								<Tooltip
+									color='#363636'
+									title={
+										<p
+											className='m-0 whitespace-nowrap p-0 text-xs font-normal text-white'
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+										>
+											Progress Report Added, <span className='m-0 cursor-pointer p-0 text-yellowColor'>Rate Delivery</span>
+										</p>
+									}
+								>
+									<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6] dark:bg-transparent'>
+										<StarFilled
+											className='text-[14px] text-[#FFBF60]'
+											onClick={(e) => {
+												if (loginAddress) {
+													e.preventDefault();
+													e.stopPropagation();
+													setRateModal(true);
+												} else {
+													setLoginOpen(true);
+												}
+											}}
+										/>
+									</div>
+								</Tooltip>
+							)}
 						</div>
 						<div className={' flex items-center justify-end'}>
 							{status && (
@@ -422,7 +485,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-xs font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -477,7 +540,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}
@@ -518,7 +581,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackTag
 										theme={theme as any}
-										className='sm:mt-0'
+										className='font-semibold sm:mt-0'
 										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
 									/>
 								</>
@@ -760,6 +823,25 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 			</div>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
+			<RateModal
+				index={onchainId}
+				open={rateModal}
+				setRateModal={setRateModal}
+				proposalType={proposalType}
+				reports={progressReport}
+			/>
 			<TagsModal
 				tags={tags}
 				proposalType={proposalType}

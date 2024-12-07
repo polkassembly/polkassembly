@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Wallet } from 'src/types';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
@@ -27,12 +27,13 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	const { network } = useNetworkSelector();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState(true);
 
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
 		onWalletSelect(wallet);
 	}
-	const getWallet = () => {
+	const getWallet = async () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setAvailableWallets(injectedWindow.injectedWeb3 || {});
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
@@ -41,6 +42,24 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	useEffect(() => {
 		getWallet();
 	}, [onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, selectedWallet, isOptionalLogin, isSigningUp]);
+
+	useEffect(() => {
+		const handleLoad = async () => {
+			await getWallet();
+			setIsLoading(false);
+		};
+
+		if (document.readyState === 'complete') {
+			handleLoad();
+		} else {
+			window.addEventListener('load', handleLoad);
+			return () => window.removeEventListener('load', handleLoad);
+		}
+	}, []);
+
+	if (isLoading) {
+		return <Skeleton active />;
+	}
 
 	return (
 		<div className='w-full'>
@@ -67,7 +86,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						text='SubWallet'
 						isLoginFlow={isLoginFlow}
 					/>
-					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 							// disabled={!availableWallets?.[Wallet.POLKADOT]}
@@ -103,7 +122,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					/>
 				</div>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${
 								selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''
@@ -165,9 +184,9 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						/>
 					)}
 				</div>
-				{['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network) ? (
+				{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network) ? (
 					<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
+						{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) ? (
 							<WalletButton
 								className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
 								// disabled={!isMetamaskWallet}

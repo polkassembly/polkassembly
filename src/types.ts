@@ -7,6 +7,8 @@ import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposal
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
+import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 
 declare global {
 	interface Window {
@@ -110,6 +112,11 @@ export interface IAssets {
 	genralIndex: string;
 }
 
+interface Asset {
+	label: string;
+	assetId: number;
+}
+
 export interface ChainProps {
 	peopleChainRpcEndpoint?: string;
 	peopleChainParachain?: string;
@@ -136,7 +143,14 @@ export interface ChainProps {
 	gTag: string | null;
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
+	assetHubTreasuryAddress2?: string;
+	assetHubTreasuryAddress3?: string;
+	assetHubTreasuryAddress4?: string;
 	supportedAssets?: IAssets[];
+	hydrationTreasuryAddress?: string;
+	hydrationTreasuryAddress2?: string;
+	hydrationEndpoints?: string[];
+	hydrationAssets?: Asset[];
 }
 
 export type TRPCEndpoint = {
@@ -215,6 +229,7 @@ export enum Wallet {
 }
 
 export const PostOrigin = {
+	ASTRAL_SCORECARD: 'AstralScorcard',
 	AUCTION_ADMIN: 'AuctionAdmin',
 	BIG_SPENDER: 'BigSpender',
 	BIG_TIPPER: 'BigTipper',
@@ -304,6 +319,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {
@@ -361,7 +377,6 @@ export enum EAllowedCommentor {
 	ONCHAIN_VERIFIED = 'onchain_verified',
 	NONE = 'none'
 }
-
 export interface Post {
 	user_id: number;
 	content: string;
@@ -385,6 +400,9 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
+	progress_report?: IProgressReport[];
+	link?: string;
+	updated_at?: Date;
 }
 
 export interface IPostTag {
@@ -555,11 +573,12 @@ export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	PLEASE_VERIFY_MATRIX = 'Please verify matrix account',
 	NOT_VERIFIED = 'Not verified'
 }
 export enum ESocials {
 	EMAIL = 'email',
-	RIOT = 'riot',
+	MATRIX = 'matrix',
 	TWITTER = 'twitter',
 	WEB = 'web'
 }
@@ -578,6 +597,21 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+}
+
+export interface IRating {
+	rating: number;
+	user_id: string;
+}
+export interface IProgressReport {
+	id?: string;
+	created_at?: Date;
+	isEdited?: boolean;
+	progress_file?: string;
+	progress_name?: string;
+	progress_summary?: string;
+	ratings?: IRating[];
+	isFromOgtracker?: boolean;
 }
 
 export interface IVotesCount {
@@ -659,7 +693,34 @@ export enum EUserActivityType {
 	REACTED = 'REACTED',
 	COMMENTED = 'COMMENTED',
 	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
+	MENTIONED = 'MENTIONED',
+	VOTED = 'VOTED',
+	VOTE_PASSED = 'VOTE_PASSED',
+	VOTE_FAILED = 'VOTE_FAILED',
+	CREATE_DISCUSSION = 'CREATE_DISCUSSION',
+	CREATE_REFERENDUM = 'CREATE_REFERENDUM',
+	ADD_CONTEXT = 'ADD_CONTEXT',
+	TAKE_QUIZ = 'TAKE_QUIZ',
+	QUIZ_ANSWER_CORRECT = 'QUIZ_ANSWER_CORRECT',
+	CREATE_TIP = 'CREATE_TIP',
+	GIVE_TIP = 'GIVE_TIP',
+	VOTE_TREASURY_PROPOSAL = 'VOTE_TREASURY_PROPOSAL',
+	CREATE_BOUNTY = 'CREATE_BOUNTY',
+	APPROVE_BOUNTY = 'APPROVE_BOUNTY',
+	CREATE_CHILD_BOUNTY = 'CREATE_CHILD_BOUNTY',
+	CLAIM_BOUNTY = 'CLAIM_BOUNTY',
+	UPDATE_PROFILE = 'UPDATE_PROFILE',
+	CENSORED = 'CENSORED',
+	ON_CHAIN_IDENTITY_INITIATED = 'ON_CHAIN_IDENTITY_INITIATED',
+	DELEGATED = 'DELEGATED',
+	UNDELEGATED = 'UNDELEGATED',
+	RECEIVED_DELEGATION = 'RECEIVED_DELEGATION',
+	DECISION_DEPOSIT_ON_FORIEGN_PROPOSAL = 'DECISION_DEPOSIT_ON_FORIEGN_PROPOSAL',
+	RECIEVED_REACTION = 'RECIEVED_REACTION',
+	REMOVED_VOTE = 'REMOVED_VOTE',
+	PROPOSAL_FAILED = 'PROPOSAL_FAILED',
+	PROPOSAL_PASSED = 'PROPOSAL_PASSED',
+	IDENTITY_CLEARED = 'IDENTITY_CLEARED'
 }
 
 export enum EUserActivityIn {
@@ -706,14 +767,20 @@ export interface IDelegatorsAndDelegatees {
 	};
 }
 
+export interface IChildBounty {
+	description: string;
+	index: number;
+	status: string;
+	reward: string;
+	title: string;
+	curator?: string;
+	createdAt?: Date;
+	source?: 'polkassembly' | 'subsquare';
+	categories?: string[];
+	payee?: string;
+}
 export interface IChildBountiesResponse {
-	child_bounties: {
-		description: string;
-		index: number;
-		status: string;
-		reward: string;
-		title: string;
-	}[];
+	child_bounties: IChildBounty[];
 	child_bounties_count: number;
 }
 
@@ -951,4 +1018,105 @@ export enum EDelegationSourceFilters {
 export interface ICommentsSummary {
 	summary_negative: string;
 	summary_positive: string;
+	summary_neutral: string;
+}
+
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}
+
+export interface IChildBountySubmission {
+	content: string;
+	createdAt: Date;
+	link: string;
+	parentBountyIndex: number;
+	proposer: string;
+	reqAmount: string;
+	status: EChildbountySubmissionStatus;
+	tags: string[];
+	title: string;
+	updatedAt: Date;
+	userId: number;
+	bountyData?: {
+		title?: string;
+		content?: string;
+		reqAmount?: string;
+		status?: string;
+		curator?: string;
+		createdAt?: Date;
+	};
+	id: string;
+	rejectionMessage?: string;
+	expand?: boolean;
+	loading?: boolean;
+}
+
+export enum EChildbountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	OUTDATED = 'outdated',
+	DELETED = 'deleted'
+}
+
+export enum EPendingCuratorReqType {
+	SENT = 'sent',
+	RECEIVED = 'received'
+}
+
+export interface IPendingCuratorReq extends IBountyListing {
+	reqType: EPendingCuratorReqType;
+	proposalType: ProposalType;
+	content: string;
+	parentBountyIndex?: number;
+	accepted?: boolean;
+	expand?: boolean;
+	loading?: boolean;
+}
+
+export interface ISubsquidChildBontyAndBountyRes {
+	proposer: string;
+	index: number;
+	status: string;
+	reward: string;
+	payee: string;
+	curator: string;
+	createdAt: string;
+	parentBountyIndex: number;
+}
+export interface IFollowEntry {
+	id: string;
+	network: string;
+	created_at: Date;
+	follower_user_id: number;
+	followed_user_id: number;
+	updated_at: Date;
+	isFollow: boolean;
+}
+
+export enum EExpertReqStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+export interface IIdentityInfo {
+	display: string;
+	legal: string;
+	email: string;
+	twitter: string;
+	web: string;
+	github: string;
+	discord: string;
+	matrix: string;
+	displayParent: string;
+	nickname: string;
+	isIdentitySet: boolean;
+	isVerified: boolean;
+	isGood: boolean;
+	judgements: RegistrationJudgement[];
+	verifiedByPolkassembly: boolean;
+	parentProxyTitle: string | null;
+	parentProxyAddress: string;
 }

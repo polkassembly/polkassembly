@@ -131,6 +131,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
+				setApiReady(false);
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
 				}
@@ -142,6 +143,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
 					status: NotificationStatus.ERROR
 				});
+				setApiReady(true);
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
@@ -177,6 +179,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 						status: NotificationStatus.ERROR
 					});
 					setIsApiLoading(false);
+					setApiReady(false);
 					await api.disconnect();
 					console.error(error);
 					localStorage.removeItem('tracks');

@@ -58,7 +58,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	const items: MenuProps['items'] = [
 		{
 			label: (
-				<div className='pt-[6px]'>
+				<div className='pb-[3px] pt-[7.5px]'>
 					<OpenGovTreasuryProposal
 						theme={theme}
 						isUsedInSidebar={true}
@@ -74,7 +74,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		{
 			label: (
 				<div
-					className='flex cursor-pointer gap-2 pb-[6px]'
+					className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}

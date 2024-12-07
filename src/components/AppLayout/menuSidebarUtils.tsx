@@ -28,7 +28,10 @@ export const SidebarFoot1 = () => {
 			</Link>
 			<div className='mt-3 flex items-center justify-center gap-[15px]'>
 				<div className='group relative'>
-					<Link href='https://townhallgov.com/'>
+					<Link
+						href='https://townhallgov.com/'
+						target='_blank'
+					>
 						<Image
 							src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
 							alt='Foot1'
@@ -43,7 +46,10 @@ export const SidebarFoot1 = () => {
 					</Link>
 				</div>
 				<div className='group relative'>
-					<Link href='https://polkasafe.xyz/'>
+					<Link
+						href='https://polkasafe.xyz/'
+						target='_blank'
+					>
 						<Image
 							src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
 							alt='Foot2'
@@ -58,7 +64,10 @@ export const SidebarFoot1 = () => {
 					</Link>
 				</div>
 				<div className='group relative'>
-					<Link href='https://collectives.polkassembly.io/'>
+					<Link
+						href='https://collectives.polkassembly.io/'
+						target='_blank'
+					>
 						<Image
 							src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
 							alt='Foot3'
@@ -73,7 +82,10 @@ export const SidebarFoot1 = () => {
 					</Link>
 				</div>
 				<div className='group relative'>
-					<Link href='https://staking.polkadot.cloud/#/overview'>
+					<Link
+						href='https://staking.polkadot.cloud/#/overview'
+						target='_blank'
+					>
 						<Image
 							src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
 							alt='Foot4'

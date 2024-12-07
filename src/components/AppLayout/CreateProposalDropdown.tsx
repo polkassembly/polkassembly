@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { MenuProps } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
@@ -54,11 +54,31 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const [dropdownVisible, setDropdownVisible] = useState(false);
+
+	const handleScroll = () => {
+		if (dropdownVisible) {
+			setDropdownVisible(false);
+		}
+	};
+
+	useEffect(() => {
+		if (dropdownVisible) {
+			window.addEventListener('scroll', handleScroll, { passive: true });
+		} else {
+			window.removeEventListener('scroll', handleScroll);
+		}
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [dropdownVisible]);
 
 	const items: MenuProps['items'] = [
 		{
 			label: (
-				<div className='pt-[6px]'>
+				<div className='pb-[3px] pt-[7.5px]'>
 					<OpenGovTreasuryProposal
 						theme={theme}
 						isUsedInSidebar={true}
@@ -74,7 +94,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		{
 			label: (
 				<div
-					className='flex cursor-pointer gap-2 pb-[6px]'
+					className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
@@ -93,10 +113,15 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 	}
 
 	return (
-		<div className='mx-auto max-w-[200px]'>
+		<div
+			className='mx-auto max-w-[200px]'
+			ref={dropdownRef}
+		>
 			<Dropdown
 				theme={theme}
 				trigger={['click']}
+				visible={dropdownVisible}
+				onVisibleChange={(visible: any) => setDropdownVisible(visible)}
 				overlayStyle={{ marginTop: '40px', marginLeft: '10px', marginRight: '10px' }}
 				className={'mt-2 flex cursor-pointer items-center justify-center bg-[#ffffff] dark:bg-section-dark-overlay'}
 				overlayClassName='z-[1056]'

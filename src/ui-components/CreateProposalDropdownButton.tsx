@@ -54,7 +54,7 @@ const CreateProposalDropdownButton = ({ sidebarCollapsed }: { sidebarCollapsed: 
 				<CreatePencilIcon />
 				{!sidebarCollapsed && (
 					<>
-						<span className={`${dmSans.variable} ${dmSans.className} py-[6px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
+						<span className={`${dmSans.variable} ${dmSans.className} py-[6px] text-[17px] font-medium leading-4 text-[#0A3EAF] dark:text-[#49CFFC]`}>Create</span>
 						<ArrowDownIcon className='ml-1 text-sm text-[#0A3EAF] dark:text-[#49CFFC]' />
 					</>
 				)}

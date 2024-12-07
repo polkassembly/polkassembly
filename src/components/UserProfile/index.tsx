@@ -15,6 +15,7 @@ import { useTheme } from 'next-themes';
 import ProfileStatsCard from './ProfileStatsCard';
 import { IUserPostsListingResponse } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { chainProperties } from '~src/global/networkConstants';
 
 export interface IActivitiesCounts {
 	totalActivitiesCount: number;
@@ -181,14 +182,17 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}
 			/>
-			<ProfileStatsCard
-				userProfile={userProfile}
-				className='mx-2'
-				addressWithIdentity={addressWithIdentity}
-				theme={theme}
-				statsArr={statsArr}
-				setStatsArr={setStatsArr}
-			/>
+
+			{!!chainProperties[network]?.subsquidUrl && (
+				<ProfileStatsCard
+					userProfile={userProfile}
+					className='mx-2'
+					addressWithIdentity={addressWithIdentity}
+					theme={theme}
+					statsArr={statsArr}
+					setStatsArr={setStatsArr}
+				/>
+			)}
 			<ProfileTabs
 				userProfile={userProfile}
 				theme={theme}

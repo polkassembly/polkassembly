@@ -68,6 +68,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
 
@@ -143,6 +144,33 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
+
+		const fetchInitialBalance = async () => {
+			try {
+				const accountData = await api?.query?.system?.account(address || loginAddress);
+				const balance = new BN(accountData.data.free.toString() || '0');
+				setAvailableBalance(balance);
+
+				if (balance.lt(gasFee.add(baseDepositValue))) {
+					queueNotification({
+						header: 'Insufficient Balance',
+						message: `Your balance (${formatedBalance(balance.toString(), unit)} ${unit}) is insufficient to cover the gas fees and deposit .`,
+						status: NotificationStatus.ERROR
+					});
+					setShowBalanceAlert(true);
+				}
+				setShowBalanceAlert(false);
+			} catch (error) {
+				console.error('Failed to fetch initial balance:', error);
+			}
+		};
+
+		fetchInitialBalance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, address, loginAddress]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
 		calculateGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
@@ -176,6 +204,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		if (!values.proxyType) {
 			return;
 		}
+
+		console.log('value', values);
 
 		let txn;
 		if (values.createPureProxy) {
@@ -257,6 +287,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						disabled={
 							loadingStatus.isLoading ||
 							form.getFieldsError().some((field) => field.errors.length > 0) ||
+							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
 							availableBalance.lt(gasFee.add(baseDepositValue))
 						}
@@ -547,12 +578,34 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						)}
 
 						{/* Insufficient balance check */}
-						{availableBalance?.lt(gasFee) && (
+						{availableBalance.lt(gasFee.add(baseDepositValue)) && showBalanceAlert && (
 							<Alert
 								type='info'
 								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
 								showIcon
 								description={<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>Insufficient Balance</div>}
+							/>
+						)}
+
+						{(loadingStatus.isLoading ||
+							form.getFieldsError().some((field) => field.errors.length > 0) ||
+							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
+							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+							availableBalance.lt(gasFee.add(baseDepositValue))) && (
+							<Alert
+								type='error'
+								className='mt-4 rounded-[4px] px-4 py-2 text-bodyBlue'
+								showIcon
+								description={
+									<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>
+										{form.getFieldsError().some((field) => field.errors.length > 0) && <span>There are validation errors in the form.</span>}
+										{!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress') && <span>Provide a Proxy address or enable Create Pure Proxy.</span>}
+										{getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) && (
+											<span>The proxy address must be different from the selected account address.</span>
+										)}
+										{availableBalance.lt(gasFee.add(baseDepositValue)) && <span>Insufficient balance to cover gas fees and deposit.</span>}
+									</div>
+								}
 							/>
 						)}
 					</Form>

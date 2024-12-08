@@ -61,6 +61,7 @@ const AddressActionDropdown = ({
 					...prevState,
 					loading: false
 				}));
+				window.location.reload();
 			}
 		} catch (error) {
 			console.error('Error toggling link proxy:', error);

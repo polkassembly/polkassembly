@@ -157,15 +157,12 @@ const AddressesComponent = () => {
 	}
 
 	return (
-		<Spin spinning={!accountData}>
+		<Spin spinning={!accountData || isLoading}>
 			<section className='min-h-[80vh]'>
 				<h3 className='mt-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high md:mt-5 md:text-2xl'>
 					{accountData && accountData?.multisig?.multi_account_member?.length > 0 ? 'Multisig Address' : 'Addresses'}
 				</h3>
-				<Spin
-					spinning={isLoading}
-					className='min-h-screen'
-				>
+				<div className='min-h-screen'>
 					{accountData && (
 						<div className='w-full rounded-[14px] bg-white p-[10px] drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
 							<AccountInfo
@@ -186,7 +183,7 @@ const AddressesComponent = () => {
 							/>
 						</div>
 					)}
-				</Spin>
+				</div>
 			</section>
 		</Spin>
 	);

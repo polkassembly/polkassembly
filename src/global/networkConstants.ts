@@ -187,7 +187,8 @@ export const tokenSymbol = {
 	KPGT: 'KPGT',
 	CGT: 'CGT',
 	SIGMA: 'SIGMA',
-	MYTH: 'MYTH'
+	MYTH: 'MYTH',
+	PAS: 'PAS'
 };
 
 export const treasuryAssets = {
@@ -216,8 +217,8 @@ export const chainProperties: types.ChainPropType = {
 		rpcEndpoint: 'wss://paseo.dotters.network',
 		ss58Format: 42,
 		subsquidUrl: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
-		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.ROC,
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.PAS,
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

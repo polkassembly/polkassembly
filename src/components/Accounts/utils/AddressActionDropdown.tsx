@@ -6,12 +6,13 @@ import { MenuProps } from 'antd';
 import { useTheme } from 'next-themes';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ProxyMain from '~src/components/createProxy';
-import { LinkProxyType } from '~src/types';
+import { LinkProxyType, NotificationStatus } from '~src/types';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import Loader from '~src/ui-components/Loader';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 const AddressActionDropdown = ({
 	address,
@@ -57,6 +58,12 @@ const AddressActionDropdown = ({
 			}
 
 			if (data) {
+				queueNotification({
+					header: 'Success!',
+					message: isLinked ? 'Address has been successfully unlinked.' : 'Address has been successfully linked.',
+					status: NotificationStatus.SUCCESS
+				});
+
 				setState((prevState) => ({
 					...prevState,
 					loading: false
@@ -65,6 +72,12 @@ const AddressActionDropdown = ({
 			}
 		} catch (error) {
 			console.error('Error toggling link proxy:', error);
+			queueNotification({
+				header: 'Error!',
+				message: 'Failed to toggle link proxy. Please try again.',
+				status: NotificationStatus.ERROR
+			});
+
 			setState((prevState) => ({ ...prevState, loading: false }));
 		}
 	};

@@ -16,7 +16,7 @@ import Socials from './Socials';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -219,7 +219,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		<div>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={`h-full max-h-[774px] w-full max-w-[600px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`h-full max-h-[774px] w-full max-w-[600px] ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);

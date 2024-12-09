@@ -67,7 +67,7 @@ const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 		}
 	};
 	return (
-		<div className={`${className} mt-[36px] rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+		<div className={`${className} mt-6 rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<Tabs
 				activeKey={activeKey}
 				onChange={handleOnchange}

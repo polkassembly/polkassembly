@@ -16,7 +16,7 @@ import Link from 'next/link';
 import Address from './Address';
 import AyeIcon from '~assets/icons/aye-green-icon.svg';
 import NayIcon from '~assets/icons/profile-nay.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { EGovType, NotificationStatus } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
@@ -99,7 +99,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 			>
 				{addresses?.map((address, index) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
 					>
 						<Checkbox

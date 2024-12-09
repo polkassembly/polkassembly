@@ -10,7 +10,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -71,7 +71,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 		<>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={`${className} ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${className} ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={Title}
 				open={showModal}

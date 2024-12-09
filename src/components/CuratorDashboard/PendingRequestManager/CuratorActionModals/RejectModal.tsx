@@ -8,7 +8,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 function RejectModal({
@@ -29,7 +29,7 @@ function RejectModal({
 	return (
 		<div>
 			<Modal
-				className={classNames(poppins.className, poppins.variable)}
+				className={classNames(dmSans.className, dmSans.variable)}
 				title={
 					<div className='text-bodyBlue dark:text-white'>
 						<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-lg font-bold'>Reject Submission</span>

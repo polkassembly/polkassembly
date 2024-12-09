@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Modal, Divider } from 'antd';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
@@ -160,7 +160,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								/>
 							</div>
 						]}
-						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${className} ${dmSans.variable} ${dmSans.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<Divider
 							style={{ background: '#D2D8E0', flexGrow: 1 }}

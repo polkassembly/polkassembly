@@ -308,7 +308,7 @@ const ReferendumCount = () => {
 						{data.length > 6 && ( // Show "Show More" if there are more than 6 legends
 							<Button
 								type='link'
-								className='mt-2 flex h-[24px] w-[101px] items-center justify-center rounded-xl border border-solid border-[#D2D8E0] text-xs text-pink_primary dark:border-blue-dark-medium'
+								className='mt-2 flex h-[24px] w-[101px] items-center justify-center rounded-xl border border-solid border-[#D2D8E0] text-xs font-semibold text-pink_primary dark:border-blue-dark-medium'
 								onClick={() => setShowMore(!showMore)}
 							>
 								{showMore ? 'Show Less' : 'Show More'}

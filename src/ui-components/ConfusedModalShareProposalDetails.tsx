@@ -14,7 +14,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { ProposalType } from '~src/global/proposalType';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	modalOpen: boolean;
@@ -106,9 +106,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						width={320}
 						height={320}
 					/>
-					<p className={`-mt-4 text-xl ${poppins.className} ${poppins.variable} font-semibold text-[#243A57] dark:text-blue-dark-high`}>
-						Confusion everywhere, It&apos;s a Menace!
-					</p>
+					<p className={`-mt-4 text-xl ${dmSans.className} ${dmSans.variable} font-semibold text-[#243A57] dark:text-blue-dark-high`}>Confusion everywhere, It&apos;s a Menace!</p>
 				</div>
 				<div className='mx-auto -mt-3'>
 					<div className='relative h-12 w-[480px]'>
@@ -119,7 +117,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 						<div className='absolute inset-0 left-5 top-5 z-10 '>
 							<div className=''>
-								<p className='font-poppins text-[14px] text-[#485F7D]  dark:text-[#7D7C81]'>Add a message</p>
+								<p className='font-dmSans text-[14px] text-[#485F7D]  dark:text-[#7D7C81]'>Add a message</p>
 							</div>
 							<textarea
 								name='content'
@@ -136,7 +134,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 				</div>
 				<div className='mt-24 flex justify-center gap-5'>
 					<Button
-						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 						onClick={shareOnTwitter}
 					>
 						<ImageIcon
@@ -145,7 +143,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 					</Button>
 					<Button
-						className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+						className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 						onClick={copyLinkToClipboard}
 					>
 						<ImageIcon

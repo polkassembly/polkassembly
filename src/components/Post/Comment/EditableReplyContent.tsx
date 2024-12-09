@@ -28,7 +28,7 @@ import { IconRetry } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { IComment } from './Comment';
@@ -579,7 +579,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 						<ReportButton
 							isDeleteModal={true}
 							proposalType={(reply.post_type as any) || postType}
-							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
+							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${dmSans.variable} ${dmSans.className}`}
 							type={EReportType.REPLY}
 							onSuccess={removeReplyContent}
 							commentId={commentId}
@@ -699,7 +699,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							</div>
 							<Dropdown
 								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+								className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
 								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}

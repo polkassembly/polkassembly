@@ -5,7 +5,7 @@ import { Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import RatingSuccessModal from '~src/components/ProgressReport/RatingModal/RatingSuccessModal';
 import RatingModal from '~src/components/ProgressReport/RatingModal';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
@@ -75,7 +75,7 @@ const RateModal: FC<IRateModal> = (props) => {
 		<>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay max-w-full shrink-0 max-sm:w-[100%] md:w-[600px]`}
+				className={`${dmSans.variable} ${dmSans.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay max-w-full shrink-0 max-sm:w-[100%] md:w-[600px]`}
 				open={open}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
@@ -118,7 +118,7 @@ const RateModal: FC<IRateModal> = (props) => {
 			</Modal>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[600px]')}
 				open={open_rating_success_modal}
 				maskClosable={false}
 				footer={null}

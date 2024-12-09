@@ -10,7 +10,7 @@ import CardPostHeading from '../PostInfoComponents/CardPostHeading';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon, DetailsIcon, InfoIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import InfoModalContent from './InfoModalContent';
@@ -150,7 +150,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 			</div>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'z-100000 w-full dark:bg-black')}
+				className={classNames(dmSans.className, dmSans.variable, 'z-100000 w-full dark:bg-black')}
 				open={isModalVisible}
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>

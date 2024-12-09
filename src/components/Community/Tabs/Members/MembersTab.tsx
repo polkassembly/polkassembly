@@ -7,6 +7,8 @@ import MemberInfoCard from './MemberInfoCard';
 import { Pagination } from '~src/ui-components/Pagination';
 import Image from 'next/image';
 import { Spin } from 'antd';
+import CardSkeleton from '../../CardSkeleton';
+import { useTheme } from 'next-themes';
 
 interface IMembersTab {
 	totalUsers?: number;
@@ -17,45 +19,56 @@ interface IMembersTab {
 }
 const MembersTab: FC<IMembersTab> = (props) => {
 	const { totalUsers, userData, loading, currentPage, setCurrentPage } = props;
-
+	const { resolvedTheme: theme } = useTheme();
 	return (
-		<Spin spinning={loading}>
-			<div className='min-h-[250px]'>
-				{!userData?.length && !loading ? (
-					<div className='mt-4 flex flex-col items-center justify-center gap-4'>
-						<Image
-							src='/assets/Gifs/search.gif'
-							alt='empty-state'
-							width={150}
-							height={150}
-						/>
-						<p>No User Found</p>
+		<>
+			<Spin spinning={loading}>
+				{loading && (
+					<div className='grid grid-cols-2 items-end gap-6 opacity-100 max-lg:grid-cols-1 sm:mt-6'>
+						<CardSkeleton />
+						<CardSkeleton />
+						<CardSkeleton />
+						<CardSkeleton />
 					</div>
-				) : (
-					<>
-						<div className='mt-3 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1 sm:mt-6'>
-							{userData?.map((user: User, index: number) => (
-								<MemberInfoCard
-									user={user}
-									key={index}
-								/>
-							))}
-						</div>
-						<div className='mt-6 flex justify-end'>
-							<Pagination
-								size='large'
-								current={currentPage}
-								onChange={(page: number) => setCurrentPage(page)}
-								total={totalUsers}
-								pageSize={10}
-								showSizeChanger={false}
-								hideOnSinglePage={true}
-							/>
-						</div>
-					</>
 				)}
-			</div>
-		</Spin>
+				<div className='min-h-[250px]'>
+					{!userData?.length && !loading ? (
+						<div className='mt-4 flex flex-col items-center justify-center gap-4'>
+							<Image
+								src='/assets/Gifs/search.gif'
+								alt='empty-state'
+								width={350}
+								height={350}
+							/>
+							<p>No User Found</p>
+						</div>
+					) : (
+						<>
+							<div className='mt-3 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1 sm:mt-6'>
+								{userData?.map((user: User, index: number) => (
+									<MemberInfoCard
+										user={user}
+										key={index}
+									/>
+								))}
+							</div>
+							<div className='mt-6 flex justify-end'>
+								<Pagination
+									size='large'
+									current={currentPage}
+									onChange={(page: number) => setCurrentPage(page)}
+									total={totalUsers}
+									pageSize={10}
+									theme={theme}
+									showSizeChanger={false}
+									hideOnSinglePage={true}
+								/>
+							</div>
+						</>
+					)}
+				</div>
+			</Spin>
+		</>
 	);
 };
 

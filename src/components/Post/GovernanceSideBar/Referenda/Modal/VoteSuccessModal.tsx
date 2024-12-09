@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, message, Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 
 import { useCommentDataContext, usePostDataContext } from '~src/context';
@@ -117,7 +117,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate mt-[100px] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} delegate mt-[100px] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
@@ -275,7 +275,7 @@ const VoteInitiatedModal = ({
 			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Share your vote on:</p>
 			<div className='mb-1 mt-2 flex items-center justify-center gap-x-2'>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 					onClick={() => {
 						onShareTwitter();
 					}}
@@ -286,7 +286,7 @@ const VoteInitiatedModal = ({
 					/>
 				</Button>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
+					className='flex h-[40px] w-[44px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] font-semibold dark:bg-[#33071E]'
 					onClick={() => {
 						onShareDiscord();
 					}}

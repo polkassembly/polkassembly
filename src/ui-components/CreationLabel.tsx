@@ -7,7 +7,7 @@ import { Divider, MenuProps, Modal } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
@@ -83,6 +83,7 @@ interface ICreationLabelProps {
 	beneficiaries?: IBeneficiary[];
 	inPostHeading?: boolean;
 	assetId?: null | string;
+	expertComment?: boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -105,7 +106,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		isRow,
 		voterAddress,
 		inPostHeading,
-		assetId
+		assetId,
+		expertComment
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
@@ -115,7 +117,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const getSentimentLabel = (sentiment: ESentiment) => {
-		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+		return <div className={`${dmSans.variable} ${dmSans.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 
 	const items: MenuProps['items'] = [
@@ -275,7 +277,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${dmSans.variable} ${dmSans.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName='dark:bg-modalOverlayDark'
 								title={
@@ -308,6 +310,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</Tooltip>
 					</div>
 				) : null}
+				<div>{expertComment && <p className='mx-3 rounded-md bg-[#F57B60] px-1.5 py-0.5 text-[10px] text-white'>EXPERT</p>}</div>
+
 				{votesArr.length > 0 ? (
 					<div
 						className={votesArr.length >= 1 ? 'ml-1 flex items-center justify-center hover:cursor-pointer' : 'ml-1 flex items-center justify-center'}

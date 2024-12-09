@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
@@ -97,7 +97,7 @@ const TreasuryProposalSuccessPopup = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onCancel}

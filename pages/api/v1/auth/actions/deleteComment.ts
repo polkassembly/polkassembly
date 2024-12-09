@@ -77,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			console.error('Error deleting comment: ', error);
 			return res.status(500).json({ message: 'Error deleting comment' });
 		});
-	getCommentsAISummaryByPost({ network, postId, postType });
+	await getCommentsAISummaryByPost({ network, postId, postType });
 	try {
 		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, postId, type: EUserActivityType.COMMENTED, userId: userId });
 		return;

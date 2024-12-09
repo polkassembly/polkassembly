@@ -22,7 +22,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { capitalizeWords, handleTrack } from './DashboardTrack';
 
 interface Props {
@@ -199,7 +199,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					showTable && 'sm:border-b-[1px] sm:border-solid sm:border-[#e7ebf0] sm:dark:border-separatorDark sm:dark:text-blue-dark-high'
 				} max-sm:px-4 max-sm:py-5`}
 			>
-				<span className={`${poppins.className} ${poppins.variable} font-semibold text-bodyBlue dark:text-blue-dark-high max-sm:text-xl `}>Tracks</span>
+				<span className={`${dmSans.className} ${dmSans.variable} font-semibold text-bodyBlue dark:text-blue-dark-high max-sm:text-xl `}>Tracks</span>
 				<Radio.Group
 					buttonStyle='solid'
 					defaultValue={ETrackDelegationStatus.ALL}
@@ -229,7 +229,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 					placement='bottomLeft'
 					className='sm:hidden'
 				>
-					<Button className={`${poppins.className} ${poppins.variable} flex items-center rounded-full border-none bg-[#fef2f8] px-3 py-2 dark:bg-section-dark-garyBackground `}>
+					<Button
+						className={`${dmSans.className} ${dmSans.variable} flex items-center rounded-full border-none bg-[#fef2f8] px-3 py-2 font-semibold dark:bg-section-dark-garyBackground `}
+					>
 						<div className='flex items-center'>
 							<Radio
 								checked={true}
@@ -299,21 +301,21 @@ const DashboardTrackListing = ({ className }: Props) => {
 											</span>
 										))}
 									</div>
-									<span className={`${poppins.className} ${poppins.variable} text-[10px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
+									<span className={`${dmSans.className} ${dmSans.variable} text-[10px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
 										{item.active_proposals} Active proposal(s)
 									</span>
 								</div>
 
 								<div className='mb-[6px] flex items-center justify-between'>
 									<span
-										className={`${poppins.className} ${poppins.variable} flex items-center gap-1 whitespace-nowrap text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}
+										className={`${dmSans.className} ${dmSans.variable} flex items-center gap-1 whitespace-nowrap text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}
 									>
 										#{item.index}
 										<span className='-mb-[2px] sm:hidden'>{handleTracksIcon(capitalizeWords(handleTrack(String(item.track))), 20)}</span>
 										{item.track}
 									</span>
 								</div>
-								<span className={`${poppins.className} ${poppins.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{item.description}</span>
+								<span className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{item.description}</span>
 							</div>
 						))}
 					</div>

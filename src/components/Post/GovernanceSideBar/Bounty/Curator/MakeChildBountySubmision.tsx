@@ -8,7 +8,7 @@ import Input from '~src/basic-components/Input';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import { useTheme } from 'next-themes';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Balance from '~src/components/Balance';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -107,7 +107,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 		<>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={open}
 				footer={false}
 				maskClosable={false}

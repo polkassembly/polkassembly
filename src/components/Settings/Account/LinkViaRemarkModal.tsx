@@ -5,7 +5,7 @@
 /* eslint-disable no-tabs */
 
 import { Divider, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -132,7 +132,7 @@ const LinkViaRemarkModal = ({ dismissModal, open }: Props) => {
 				</div>
 			}
 			open={open}
-			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`mb-8 md:min-w-[600px] ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

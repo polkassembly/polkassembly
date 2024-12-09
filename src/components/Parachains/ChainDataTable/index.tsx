@@ -67,7 +67,7 @@ const columns: ColumnsType<any> = [
 		fixed: 'left',
 		key: 'index',
 		render: (index) => <div className='text-blue-light-high dark:text-blue-dark-high'>#{index}</div>,
-		title: 'Index',
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Index</p>,
 		width: 75
 	},
 	{
@@ -100,7 +100,7 @@ const columns: ColumnsType<any> = [
 				))}
 			</div>
 		),
-		title: 'Project',
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Projects</p>,
 		width: 420
 	},
 	{
@@ -151,13 +151,13 @@ const columns: ColumnsType<any> = [
 				) : null}
 			</>
 		),
-		title: 'Status'
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Status</p>
 	},
 	{
 		dataIndex: 'token',
 		key: 'token',
 		render: (token) => <div className='text-blue-light-high dark:text-blue-dark-high'>{token}</div>,
-		title: 'Token'
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Token</p>
 	},
 	{
 		dataIndex: 'w3fGrant',
@@ -215,7 +215,7 @@ const columns: ColumnsType<any> = [
 		dataIndex: 'investors',
 		key: 'investors',
 		render: (investors) => <div className='text-blue-light-high dark:text-blue-dark-high'>{!!investors && investors}</div>,
-		title: 'Investors',
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Investors</p>,
 		width: 'auto'
 	},
 	{
@@ -235,7 +235,7 @@ const columns: ColumnsType<any> = [
 				/>
 			</a>
 		),
-		title: 'Github'
+		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Github</p>
 	}
 ];
 

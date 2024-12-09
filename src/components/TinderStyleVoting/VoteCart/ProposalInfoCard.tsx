@@ -11,7 +11,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DefaultVotingOptionsModal from '../../Listing/Tracks/DefaultVotingOptionsModal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -199,7 +199,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				</div>
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
-					className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+					className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 					open={openEditModal}
 					footer={
 						<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
@@ -288,7 +288,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				</Modal>
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
-					className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+					className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 					open={openViewProposalModal}
 					footer={
 						<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
@@ -317,7 +317,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				</Modal>
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
-					className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+					className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 					open={openDeleteModal}
 					footer={
 						<div className='-mx-6 mt-4 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>

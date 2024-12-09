@@ -401,7 +401,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									height={22}
 									width={60}
 									text='Login'
-									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[16px]'
 									onClick={() => {
 										if (isMobile) {
 											dispatch(GlobalActions.setIsSidebarCollapsed(true));

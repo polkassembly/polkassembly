@@ -5,7 +5,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useApiContext } from '~src/context';
@@ -342,8 +342,8 @@ const CreateBounty = ({
 					{!isBounty && (
 						<>
 							<div>
-								<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
-								<span className={`${poppins.variable} ${poppins.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+								<span className={`${dmSans.variable} ${dmSans.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
+								<span className={`${dmSans.variable} ${dmSans.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 									{formatedBalance(String(bountyBond.toString()), unit, 2)}
 								</span>
 							</div>
@@ -354,7 +354,7 @@ const CreateBounty = ({
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -362,7 +362,7 @@ const CreateBounty = ({
 							htmlType='submit'
 							className={`${
 								isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee)) ? 'opacity-50' : ''
-							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
+							} h-10 w-[165px]  rounded-[4px] bg-pink_primary text-center text-sm font-medium font-semibold tracking-[0.05em] text-white
 						dark:border-pink_primary`}
 							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee))}
 						>

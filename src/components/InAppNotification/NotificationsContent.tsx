@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
@@ -200,8 +200,8 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		<div
 			className={classNames(
 				className,
-				poppins.className,
-				poppins.variable,
+				dmSans.className,
+				dmSans.variable,
 				'flex min-h-[540px] flex-col justify-between',
 				inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : ''
 			)}

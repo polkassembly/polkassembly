@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Image from 'next/image';
 import Address from '~src/ui-components/Address';
@@ -77,7 +77,7 @@ const DelegationSuccessPopup = ({
 		<Modal
 			zIndex={100000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={isDelegate ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : <UndelegateCloseIcon />}
 			onCancel={() => {

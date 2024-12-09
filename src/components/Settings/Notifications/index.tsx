@@ -49,9 +49,9 @@ export default function Notifications({ network }: { network: string }) {
 			setUserDetailsState({
 				...currentUser,
 				networkPreferences: {
-					...currentUser.networkPreferences,
+					...(currentUser?.networkPreferences || {}),
 					triggerPreferences: {
-						...currentUser.networkPreferences?.triggerPreferences,
+						...(currentUser?.networkPreferences?.triggerPreferences || {}),
 						[network]: obj
 					}
 				}
@@ -78,8 +78,8 @@ export default function Notifications({ network }: { network: string }) {
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
 				networkPreferences = {
-					...currentUser.networkPreferences,
-					...networkPreferences,
+					...currentUser?.networkPreferences,
+					...(networkPreferences || {}),
 					triggerPreferences: data?.notification_preferences?.triggerPreferences
 				};
 				reduxDispatch(
@@ -112,7 +112,7 @@ export default function Notifications({ network }: { network: string }) {
 				reduxDispatch(
 					setUserDetailsState({
 						...currentUser,
-						primaryNetwork: data.primary_network || ''
+						primaryNetwork: data?.primary_network || ''
 					})
 				);
 			} else {
@@ -175,9 +175,9 @@ export default function Notifications({ network }: { network: string }) {
 				setUserDetailsState({
 					...currentUser,
 					networkPreferences: {
-						...currentUser.networkPreferences,
+						...(currentUser?.networkPreferences || {}),
 						channelPreferences: {
-							...currentUser.networkPreferences.channelPreferences,
+							...(currentUser?.networkPreferences?.channelPreferences || {}),
 							[channel]: {}
 						}
 					}
@@ -202,9 +202,9 @@ export default function Notifications({ network }: { network: string }) {
 				setUserDetailsState({
 					...currentUser,
 					networkPreferences: {
-						...currentUser.networkPreferences,
+						...(currentUser.networkPreferences || {}),
 						channelPreferences: {
-							...currentUser.networkPreferences?.channelPreferences,
+							...currentUser?.networkPreferences?.channelPreferences,
 							[channel]: {
 								...currentUser.networkPreferences?.channelPreferences?.channel,
 								enabled: enabled

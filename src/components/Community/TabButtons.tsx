@@ -25,7 +25,7 @@ const TabButtons: FC<ITabButtons> = (props) => {
 	const { selectedTab } = useCommunityTabSelector();
 
 	return (
-		<article className='mt-5 flex flex-col items-center gap-y-1 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0'>
+		<article className='mb-4 mt-5 flex flex-row items-center gap-x-1 gap-y-1 overflow-x-auto md:mb-0 md:flex-row md:items-center md:justify-start md:gap-x-3 md:gap-y-0 md:overflow-x-visible'>
 			<div
 				className='cursor-pointer'
 				onClick={() => {

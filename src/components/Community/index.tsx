@@ -588,8 +588,8 @@ const Community = () => {
 					totalDelegates={totalDelegates}
 					totalCurators={totalCurators}
 				/>
-				<div className='flex w-full items-center gap-3'>
-					<div className='dark:placeholder:white hidden h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex'>
+				<div className='mb-2 flex w-full items-center justify-start gap-3 md:mb-0'>
+					<div className='dark:placeholder:white flex h-12 w-[70%] items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex md:w-full'>
 						<Input
 							type='search'
 							allowClear={{ clearIcon: <InputClearIcon /> }}
@@ -642,7 +642,7 @@ const Community = () => {
 							content={filterContent}
 							placement='bottomRight'
 							zIndex={1056}
-							className='hidden sm:flex'
+							className='sm:flex'
 						>
 							<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 								<ImageIcon
@@ -657,7 +657,7 @@ const Community = () => {
 						content={sortContent}
 						placement='topRight'
 						zIndex={1056}
-						className='hidden sm:flex'
+						className=' sm:flex'
 					>
 						<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 							<ImageIcon

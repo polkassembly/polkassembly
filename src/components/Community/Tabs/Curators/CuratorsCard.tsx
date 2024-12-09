@@ -152,7 +152,7 @@ const CuratorsCard = ({ user, className }: Props) => {
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
 							addressMaxLength={5}
-							addressClassName='text-base font-normal dark:text-blue-dark-medium'
+							addressClassName='text-base font-normal dark:text-white'
 							disableTooltip
 							showKiltAddress={network === 'kilt'}
 						/>

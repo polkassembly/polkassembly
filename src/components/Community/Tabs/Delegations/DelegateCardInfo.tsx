@@ -222,7 +222,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						</span>
 					)}
 				</div>
-				<div className='mt-[6px] flex items-center gap-2'>
+				<div className='mb-2 flex items-center gap-2'>
 					<SocialsHandle
 						address={address}
 						onchainIdentity={delegate?.identityInfo || null}
@@ -231,18 +231,20 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						boxSize={18}
 					/>
 				</div>
-				<div className='mb-2 flex justify-between'>
-					<div className={`${dmSans?.variable} ${dmSans?.className}`}>
+				<div className='mb-2 flex justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F] dark:border-separatorDark '>
+					<div className={`${dmSans?.variable} ${dmSans?.className} w-[33%] px-2 py-2`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
 						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance?.toString(), 1, false, network)}</span>
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className={`${dmSans?.variable} ${dmSans?.className}`}>
+					<div
+						className={`${dmSans?.variable} ${dmSans?.className} w-[33%] border-0 border-x-[1px] border-solid border-section-light-container px-2 py-2 dark:border-[#3B444F] dark:border-separatorDark`}
+					>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv&apos;d Delegation</div>
 
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
-					<div className={`${dmSans?.variable} ${dmSans?.className}`}>
+					<div className={`${dmSans?.variable} ${dmSans?.className} w-[33%] px-2 py-2`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
@@ -287,7 +289,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
 							addressMaxLength={5}
-							addressClassName='text-base font-normal dark:text-blue-dark-medium'
+							addressClassName='text-base font-normal dark:text-white'
 							disableTooltip
 							showKiltAddress={network === 'kilt'}
 						/>
@@ -309,18 +311,20 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 								iconWrapperClassName='mt-[5?.5px]'
 							/>
 						)}
-						<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
-							{delegate?.dataSource?.map((source, index) => (
-								<Image
-									key={index}
-									src={renderSourceIcon(source)}
-									alt={source}
-									className={`${source === 'parity' ? 'scale-90' : ''}`}
-									width={20}
-									height={20}
-								/>
-							))}
-						</div>
+						{delegate?.dataSource && delegate?.dataSource?.length > 0 && (
+							<div className='flex gap-x-2 rounded-md bg-[#FFF7EF] px-2 py-1'>
+								{delegate?.dataSource?.map((source, index) => (
+									<Image
+										key={index}
+										src={renderSourceIcon(source)}
+										alt={source}
+										className={`${source === 'parity' ? 'scale-90' : ''}`}
+										width={20}
+										height={20}
+									/>
+								))}
+							</div>
+						)}
 						{delegate?.identityInfo?.isVerified && (
 							<div className='ml-auto flex items-center gap-x-1'>
 								<Image
@@ -341,7 +345,11 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 						{delegate?.bio ? (
 							<Markdown
 								className='post-content'
-								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 65)}...`}
+								md={`${
+									handleDelegationContent(delegate?.bio || '')?.length > 74
+										? handleDelegationContent(delegate?.bio || '').slice(0, 74) + '...'
+										: handleDelegationContent(delegate?.bio || '')
+								}`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -349,7 +357,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 							<p className='m-0 p-0 text-lightBlue opacity-60 dark:text-blue-dark-medium'>No Bio</p>
 						)}
 					</p>
-					{delegate?.bio?.length > 65 && (
+					{delegate?.bio?.length > 74 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
 							className='m-0 -mt-2 flex cursor-pointer items-start justify-start p-0 text-xs font-medium text-[#1B61FF]'

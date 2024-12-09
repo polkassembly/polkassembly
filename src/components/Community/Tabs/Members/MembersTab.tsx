@@ -8,6 +8,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import Image from 'next/image';
 import { Spin } from 'antd';
 import CardSkeleton from '../../CardSkeleton';
+import { useTheme } from 'next-themes';
 
 interface IMembersTab {
 	totalUsers?: number;
@@ -18,7 +19,7 @@ interface IMembersTab {
 }
 const MembersTab: FC<IMembersTab> = (props) => {
 	const { totalUsers, userData, loading, currentPage, setCurrentPage } = props;
-
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<>
 			<Spin spinning={loading}>
@@ -58,6 +59,7 @@ const MembersTab: FC<IMembersTab> = (props) => {
 									onChange={(page: number) => setCurrentPage(page)}
 									total={totalUsers}
 									pageSize={10}
+									theme={theme}
 									showSizeChanger={false}
 									hideOnSinglePage={true}
 								/>

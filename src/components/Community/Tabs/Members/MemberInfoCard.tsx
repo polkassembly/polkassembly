@@ -144,7 +144,7 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 							iconSize={network === 'kilt' ? 26 : 20}
 							disableIdenticon={true}
 							addressMaxLength={5}
-							addressClassName='text-base font-normal dark:text-blue-dark-medium'
+							addressClassName='text-base font-normal dark:text-white'
 							disableTooltip
 							showKiltAddress={network === 'kilt'}
 						/>
@@ -215,16 +215,20 @@ const MemberInfoCard = ({ user, className, isUsedInExpertTab }: Props) => {
 									className='m-0 hidden border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
 									type='vertical'
 								/>
-								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
-								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followers_count?.[network] || 0}</span>
+								<div className='flex items-center gap-x-1'>
+									<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Followers: </p>
+									<span className='m-0 mt-1 flex items-center gap-x-1 p-0 text-xs font-medium text-pink_primary'>{user?.followers_count?.[network] || 0}</span>
+								</div>
 							</div>
 							<div className='flex items-center gap-x-3'>
 								<Divider
 									className='m-0 border-[#D2D8E0] p-0 dark:border-icon-dark-inactive md:inline-block'
 									type='vertical'
 								/>
-								<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
-								<span className='flex items-center gap-x-1 text-xs font-medium text-pink_primary'>{user?.followings_count?.[network] || 0}</span>
+								<div className='flex items-center gap-x-1'>
+									<p className='m-0 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>Following: </p>
+									<span className='m-0 mt-1 flex items-center gap-x-1 p-0 text-xs font-medium text-pink_primary'>{user?.followings_count?.[network] || 0}</span>
+								</div>
 							</div>
 						</div>
 					</div>

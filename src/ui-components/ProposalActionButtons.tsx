@@ -17,7 +17,10 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
+import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
+import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
 import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
+import { dmSans } from 'pages/_app';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -72,7 +75,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 			className=''
 		>
-			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-poppins text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
+			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-dmSans text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
 				Switch to <span className='font-semibold'>{pathname === '/activity-feed' ? 'Overview' : 'Activity Feed'}</span>
 				<span>
 					<ImageIcon
@@ -244,21 +247,11 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			)}
 			{isUsedInFAB && (
 				<div
-					className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					className=' flex items-center gap-2 '
 					onClick={() => handleClick(1)}
 				>
-					{theme == 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab-dark.svg'
-							alt='Create proposal icon'
-						/>
-					) : (
-						<ImageIcon
-							src='/assets/icons/create-proposals-fab.svg'
-							alt='Create proposal icon'
-						/>
-					)}
-					<span className=' text-sm font-medium leading-5 tracking-[1.25%] '>Create Proposal</span>
+					{theme == 'dark' ? <CreateProposalsFabIconDark /> : <CreateProposalsFabIcon />}
+					<span className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposal</span>
 				</div>
 			)}
 

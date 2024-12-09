@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { DeriveAccountFlags } from '@polkadot/api-derive/types';
 import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -15,11 +15,11 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import { EAddressOtherTextType } from '~src/types';
+import { EAddressOtherTextType, IIdentityInfo } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { message, Space } from 'antd';
+import { Divider, message, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -29,7 +29,7 @@ import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
@@ -88,6 +88,29 @@ const shortenUsername = (username: string, usernameMaxLength?: number) => {
 	return username;
 };
 
+const ParentProxyTitle = ({ className, title }: { className?: string; title: string | null }) => {
+	if (!title?.length) return null;
+	return (
+		<Tooltip title={<div className='text-xs'>Sub Account: The on-chain identity is obtained from the parent account.</div>}>
+			<div className={classNames(className, 'flex items-center gap-0.5')}>
+				<Divider
+					type='vertical'
+					className='border-[1px] bg-lightBlue dark:bg-separatorDark'
+				/>
+				<span className='font-medium text-[#407BFF]'>{title}</span>
+				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
+					<Image
+						src={'/assets/icons/proxy-icon.svg'}
+						height={14}
+						width={14}
+						alt=''
+					/>
+				</span>
+			</div>
+		</Tooltip>
+	);
+};
+
 const Address = (props: Props) => {
 	const {
 		className,
@@ -125,7 +148,7 @@ const Address = (props: Props) => {
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 	const [flags, setFlags] = useState<DeriveAccountFlags>();
 	const [username, setUsername] = useState<string>(passedUsername || '');
 	const [kiltName, setKiltName] = useState<string>('');
@@ -327,7 +350,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<>
+		<div className='flex items-center'>
 			<Tooltip
 				arrow
 				color='#fff'
@@ -400,6 +423,13 @@ const Address = (props: Props) => {
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 										</div>
 									</div>
+									{/* proxy parent title
+									{!!identity?.parentProxyTitle && (
+										<ParentProxyTitle
+											title={identity?.parentProxyTitle}
+											className='text-xs font-normal'
+										/>
+									)} */}
 								</div>
 							) : !!extensionName || !!mainDisplay ? (
 								<div className='ml-0.5 font-semibold text-bodyBlue'>
@@ -436,8 +466,17 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										{/* proxy parent title
+										{addressWithVerifiedTick && !!identity?.parentProxyTitle && (
+											<ParentProxyTitle
+												title={identity?.parentProxyTitle}
+												className='text-xs font-normal'
+											/>
+										)} */}
+
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+
 										{addressWithVerifiedTick && (
 											<div>
 												{!kiltName && !isGood && (
@@ -478,7 +517,7 @@ const Address = (props: Props) => {
 						<div
 							className={`${
 								isUsedInDelegationProfile
-									? `${poppins.variable} ${poppins.className} flex flex-col items-center text-[20px] text-blue-light-high dark:text-blue-dark-high`
+									? `${dmSans.variable} ${dmSans.className} flex flex-col items-center text-[20px] text-blue-light-high dark:text-blue-dark-high`
 									: 'flex items-center gap-x-2 font-semibold text-bodyBlue'
 							} ${!addressSuffix && 'gap-0'}`}
 						>
@@ -518,12 +557,19 @@ const Address = (props: Props) => {
 									</span>
 								)}
 							</div>
+							{/* proxy parent title
+							{!!identity?.parentProxyTitle && (
+								<ParentProxyTitle
+									title={identity?.parentProxyTitle}
+									className='text-sm font-normal'
+								/>
+							)} */}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
 									<Tooltip
 										title='Decentralized voices delegates'
-										className={classNames(poppins.className, poppins.variable)}
+										className={classNames(dmSans.className, dmSans.variable)}
 									>
 										<Image
 											src={'/assets/profile/w3f.svg'}
@@ -552,6 +598,13 @@ const Address = (props: Props) => {
 					) : null}
 				</div>
 			</Tooltip>
+			{/* proxy parent title */}
+			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && (
+				<ParentProxyTitle
+					title={identity?.parentProxyTitle}
+					className={`${isProfileView ? 'text-sm' : 'text-xs'} font-normal`}
+				/>
+			)}
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
 					username={addressPrefix}
@@ -563,7 +616,7 @@ const Address = (props: Props) => {
 					openAddressChangeModal={openAddressChangeModal}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal } from 'antd';
 import classNames from 'classnames';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React from 'react';
 import styled from 'styled-components'; // Fixed styled import
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -53,7 +53,7 @@ const ProfileBalanceModal = ({
 		<Modal
 			open={open}
 			onCancel={() => setOpen(false)}
-			className={classNames('max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
+			className={classNames('max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', dmSans.className, dmSans.variable)}
 			footer={
 				<div>
 					<div className='-mt-4 mb-[14px]'>
@@ -85,7 +85,7 @@ const ProfileBalanceModal = ({
 								key={balance?.label}
 								className='mt-1 flex h-full gap-1'
 							>
-								<div className={`${poppins.variable} ${poppins.className} flex items-center justify-start gap-1`}>
+								<div className={`${dmSans.variable} ${dmSans.className} flex items-center justify-start gap-1`}>
 									<Image
 										className='h-5 w-5 rounded-full object-contain'
 										src={balance.icon}
@@ -111,7 +111,7 @@ const ProfileBalanceModal = ({
 							key={balance?.label}
 							className='flex h-full gap-1'
 						>
-							<div className={`${poppins.variable} ${poppins.className} flex items-center justify-start gap-1`}>
+							<div className={`${dmSans.variable} ${dmSans.className} flex items-center justify-start gap-1`}>
 								<Image
 									src={'/assets/icons/polkadot-logo.svg'}
 									height={20}

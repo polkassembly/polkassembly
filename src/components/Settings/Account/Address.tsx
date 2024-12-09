@@ -19,7 +19,7 @@ import getAllAccounts, { initResponse } from '~src/util/getAllAccounts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -439,7 +439,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				</div>
 			}
 			open={open}
-			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`mb-8 md:min-w-[600px] ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

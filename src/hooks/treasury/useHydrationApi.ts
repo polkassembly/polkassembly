@@ -32,6 +32,8 @@ const useHydrationApi = (network: string) => {
 					await apiPromise.disconnect();
 				}, 60000);
 
+				if (!apiPromise) return;
+
 				apiPromise.isReady
 					.then(() => {
 						clearTimeout(timer);
@@ -58,38 +60,51 @@ const useHydrationApi = (network: string) => {
 	const fetchHydrationAssetsAmount = async () => {
 		if (!hydrationApi || !hydrationApiReady) return;
 
-		if (hydrationApiReady && chainProperties?.[network]?.hydrationTreasuryAddress) {
+		const { hydrationTreasuryAddress, hydrationTreasuryAddress2, hydrationAssets } = chainProperties?.[network] || {};
+		if (hydrationApiReady && hydrationTreasuryAddress && hydrationAssets?.length) {
 			try {
-				// Fetch balance in DOT
-				const dotResult = (await hydrationApi?.query?.tokens?.accounts(
-					chainProperties[network].hydrationTreasuryAddress,
-					chainProperties[network]?.hydrationAssets?.[0]?.assetId
-				)) as any;
+				const addresses = [hydrationTreasuryAddress, hydrationTreasuryAddress2];
+				const combinedValues = {
+					dotValue: ZERO_BN,
+					usdcValue: ZERO_BN,
+					usdtValue: ZERO_BN
+				};
 
-				const freeDOTBalance = new BN(dotResult.reserved.toBigInt());
-				setHydrationValues((values) => ({ ...values, dotValue: freeDOTBalance }));
+				for (const address of addresses) {
+					if (!address) continue;
 
-				// Fetch balance in USDT
-				if (chainProperties[network]?.hydrationAssets?.[1]?.assetId) {
-					const usdtResult = (await hydrationApi?.query?.tokens?.accounts(
-						chainProperties[network].hydrationTreasuryAddress,
-						chainProperties[network]?.hydrationAssets?.[1]?.assetId
-					)) as any;
+					const addressValues = {
+						dotValue: ZERO_BN,
+						usdcValue: ZERO_BN,
+						usdtValue: ZERO_BN
+					};
 
-					const freeUSDTBalance = new BN(usdtResult.free.toBigInt());
-					setHydrationValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
+					// Fetch balance in DOT
+					if (hydrationAssets[0] && hydrationAssets[0]?.assetId) {
+						const dotResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[0].assetId)) as any;
+						const freeDOTBalance = new BN(dotResult.reserved.toBigInt());
+						addressValues.dotValue = freeDOTBalance;
+						combinedValues.dotValue = combinedValues.dotValue.add(freeDOTBalance);
+					}
+
+					// Fetch balance in USDT
+					if (hydrationAssets[1] && hydrationAssets[1]?.assetId) {
+						const usdtResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[1].assetId)) as any;
+						const freeUSDTBalance = new BN(usdtResult.free.toBigInt());
+						addressValues.usdtValue = freeUSDTBalance;
+						combinedValues.usdtValue = combinedValues.usdtValue.add(freeUSDTBalance);
+					}
+
+					// Fetch balance in USDC
+					if (hydrationAssets[2] && hydrationAssets[2]?.assetId) {
+						const usdcResult = (await hydrationApi?.query?.tokens?.accounts(address, hydrationAssets[2].assetId)) as any;
+						const freeUSDCBalance = new BN(usdcResult.free.toBigInt());
+						addressValues.usdcValue = freeUSDCBalance;
+						combinedValues.usdcValue = combinedValues.usdcValue.add(freeUSDCBalance);
+					}
 				}
 
-				// Fetch balance in USDC
-				if (chainProperties[network]?.hydrationAssets?.[2]?.assetId) {
-					const usdcResult = (await hydrationApi?.query?.tokens?.accounts(
-						chainProperties[network].hydrationTreasuryAddress,
-						chainProperties[network]?.hydrationAssets?.[2]?.assetId
-					)) as any;
-
-					const freeUSDCBalance = new BN(usdcResult.free.toBigInt());
-					setHydrationValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
-				}
+				setHydrationValues(combinedValues);
 			} catch (e) {
 				console.error('Error fetching hydration asset balance:', e);
 			}

@@ -134,7 +134,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				return;
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
-				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2] || isRefundExists.Rejected?.[2] || isRefundExists.TimedOut?.[2]);
 				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
 					decisionDeposit: isDecisionDeposit,
@@ -291,7 +291,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				linkingAndEditingOpen={linkingAndEditingOpen}
 				setLinkingAndEditingOpen={setLinkingAndEditingOpen}
 			/>
-			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl rounded-tr-none bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
+			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl rounded-tr-none bg-[#f5f6f8] font-dmSans shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>
 					<div className='slide relative flex sm:h-3/4'>
 						{RHSCards.map((card, index) => (

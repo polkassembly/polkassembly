@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { Form, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
@@ -164,7 +164,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 					form.setFieldValue('balance', formatedBalance(String(defaultAmount || ZERO_BN), unit));
 				}}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>

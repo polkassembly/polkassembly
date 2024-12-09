@@ -7,6 +7,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { followsCollRef } from '~src/api-utils/firestore_refs';
+import updateFollowCounts from '~src/api-utils/updateUserFollowCounts';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -39,7 +40,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const userRef = firestore_db.collection('users').doc(String(userIdToUnfollow));
 	const userDoc = await userRef.get();
-
 	if (!userDoc.exists) {
 		return res.status(404).json({ message: 'User to unfollow not found' });
 	}
@@ -50,16 +50,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (followsDoc.empty) {
 		return res.status(400).json({ message: 'User not followed' });
 	}
+	try {
+		await followsDoc.docs[0].ref.update({
+			isFollow: false,
+			updated_at: new Date()
+		});
 
-	await followsDoc.docs[0].ref.update({
-		isFollow: false,
-		updated_at: new Date()
-	});
+		res.status(200).json({ message: 'User unfollowed' });
+
+		await updateFollowCounts({ isFollowing: false, network, targetUserId: userIdToUnfollow, userId: user.id });
+
+		return;
+	} catch (error) {
+		console.error('Error updating unfollow counts:', error);
+		return res.status(500).json({ message: 'Failed to update unfollow counts' });
+	}
 
 	//TODO: delete activity for the user unfollowed
 	//TODO: send notification to the user unfollowed
-
-	return res.status(200).json({ message: 'User unfollowed' });
 }
 
 export default withErrorHandling(handler);

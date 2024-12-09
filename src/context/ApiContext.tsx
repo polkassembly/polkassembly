@@ -131,6 +131,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
+				setApiReady(false);
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
 				}
@@ -142,6 +143,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
 					status: NotificationStatus.ERROR
 				});
+				setApiReady(true);
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
@@ -157,10 +159,10 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					console.log('API ready');
 					try {
 						if (props.network === 'collectives') {
-							const value = api.consts.fellowshipReferenda.tracks.toJSON();
+							const value = api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else if (isOpenGovSupported(props.network || '')) {
-							const value = api.consts.referenda.tracks.toJSON();
+							const value = api?.consts?.referenda?.tracks?.toJSON();
 							localStorage.setItem('tracks', JSON.stringify(value));
 						} else {
 							localStorage.removeItem('tracks');
@@ -177,6 +179,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 						status: NotificationStatus.ERROR
 					});
 					setIsApiLoading(false);
+					setApiReady(false);
 					await api.disconnect();
 					console.error(error);
 					localStorage.removeItem('tracks');
@@ -203,11 +206,14 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
 				}
 				const newApi = createApiPromise(provider.current, props.network);
+				await newApi.isReady;
 				setApi(newApi);
+				setApiReady(true);
 			} else {
 				await api.connect();
+				await api.isReady;
+				setApiReady(true);
 			}
-			setApiReady(true);
 			console.log('API reconnected successfully');
 		} catch (error) {
 			console.error('Failed to reconnect API:', error);

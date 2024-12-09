@@ -19,7 +19,7 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import { getConvictionVoteOptions } from './VoteReferendumModal';
@@ -398,7 +398,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					handleModalReset();
 				}}
 				footer={false}
-				className={`alignment-close max-h-[675px] w-[550px] rounded-sm max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`alignment-close max-h-[675px] w-[550px] rounded-sm max-md:w-full ${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>

@@ -5,7 +5,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Tag } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
 import DownIcon from '~assets/icons/down-icon.svg';
@@ -85,7 +85,7 @@ const AddressDropdown = ({
 			key: account.address,
 			label: (
 				<Address
-					className={`flex items-center ${poppins.className} ${poppins.className}`}
+					className={`flex items-center ${dmSans.className} ${dmSans.className}`}
 					addressOtherTextType={getOtherTextType(account)}
 					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					extensionName={account.name}
@@ -112,7 +112,7 @@ const AddressDropdown = ({
 						variant='primary'
 						onClick={() => setSwitchModalOpen(true)}
 						text='Switch Wallet'
-						className={`w-full ${poppins.variable} ${poppins.className}`}
+						className={`w-full ${dmSans.variable} ${dmSans.className}`}
 					/>
 				</div>
 			)

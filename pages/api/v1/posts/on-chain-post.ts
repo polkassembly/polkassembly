@@ -55,6 +55,23 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+export const fetchOGTracker = async (id: string) => {
+	try {
+		const res = await fetch('https://api.ogtracker.io/proposals', {
+			body: JSON.stringify({
+				refNum: id
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			},
+			method: 'POST'
+		});
+		return await res.json();
+	} catch (error) {
+		return [];
+	}
+};
+
 export interface IReactions {
 	'👍': {
 		count: number;
@@ -117,6 +134,14 @@ interface IGetOnChainPostParams {
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
 	includeSubsquareComments?: boolean;
+}
+
+interface IOGData {
+	fdate: string;
+	id: string;
+	propLink: string;
+	summary: string;
+	refNum: string;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -395,6 +420,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
+						isExpertComment: data?.isisExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -415,6 +441,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: history,
 						id: data.id,
+						isExpertComment: data?.isExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -521,7 +548,7 @@ export async function getComments(
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments = comments.concat(subsquareComments);
+	comments = comments.concat(subsquareComments as any[]);
 
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {
@@ -667,6 +694,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
+		let OGdata: IOGData[] = [];
+		if (postId) {
+			OGdata = await fetchOGTracker(postId.toString());
+		}
 		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
 			if (proposalType === ProposalType.TIPS) {
 				if (!strPostId) {
@@ -1136,6 +1167,27 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				});
 			} catch (e) {
 				data = undefined;
+			}
+
+			if (data && OGdata && OGdata?.length) {
+				const ogReport = {
+					created_at: OGdata?.[0]?.fdate,
+					id: OGdata?.[0]?.id,
+					isFromOgtracker: true,
+					progress_file: OGdata?.[0]?.propLink,
+					progress_summary: OGdata?.[0]?.summary,
+					refNum: OGdata?.[0]?.refNum
+				};
+
+				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+					ogReport.progress_file = '';
+				}
+
+				data.progress_report = data?.progress_report || [];
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				if (!isOgReportPresent) {
+					data?.progress_report?.push(ogReport);
+				}
 			}
 
 			// Populate firestore post data into the post object

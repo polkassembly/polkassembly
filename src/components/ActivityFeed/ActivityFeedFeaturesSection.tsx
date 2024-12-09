@@ -6,7 +6,7 @@ import { trackEvent } from 'analytics';
 import { Modal } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useState, useEffect } from 'react';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -106,7 +106,7 @@ function FeaturesSection() {
 	}, [features?.length]);
 
 	return (
-		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-poppins text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>
+		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-dmSans text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>
 			<div className='flex items-start justify-between gap-2'>
 				<div className='flex items-start gap-1'>
 					<p className='text-[20px] font-semibold text-[#243A57] dark:text-white'>Features</p>
@@ -146,7 +146,7 @@ function FeaturesSection() {
 				footer={false}
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins?.className} ${poppins?.variable} w-[600px] max-sm:w-full`}
+				className={`${dmSans?.className} ${dmSans?.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>

@@ -11,7 +11,7 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { ESetIdentitySteps, IOnChainIdentity, ITxFee } from './types';
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { Form, Modal, Spin } from 'antd';
 import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { ILoading } from '~src/types';
@@ -79,6 +79,9 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				console.log('Error in unwrapping identity hash');
 			}
 			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			if (!identityAddress) {
+				dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
+			}
 		} catch (err) {
 			console.log(err);
 		}
@@ -196,7 +199,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 					setIsExitModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -241,7 +244,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				onCancel={handleCancel}
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (

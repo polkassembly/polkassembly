@@ -13,6 +13,7 @@ import shortenAddress from '~src/util/shortenAddress';
 import AuthForm from '~src/ui-components/AuthForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import RequestStatus from './feedbacks/RequestStatus';
+import PendingRequestTab from './PendingRequestTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useDispatch } from 'react-redux';
 import { chatsActions } from '~src/redux/chats';
@@ -43,6 +44,8 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 	const isRequestSent = chat?.requestStatus !== EChatRequestStatus.ACCEPTED && (messages.length > 0 || !!chat?.latestMessage?.content);
 
 	const chatRecipientAddress = isNewChat ? recipientAddress : chat?.recipientProfile?.address;
+
+	const isReceiverAddress = chat?.chatInitiatedBy !== substrateAddress;
 
 	const renderUserImage = useMemo(() => {
 		if (chat?.recipientProfile?.image) {
@@ -206,14 +209,23 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 			</Spin>
 			{!loading ? (
 				<>
-					{messages.length > 0 && chat?.requestStatus !== EChatRequestStatus.ACCEPTED ? <RequestStatus isRequestSent={isRequestSent} /> : null}
+					{messages.length > 0 && chat?.requestStatus !== EChatRequestStatus.ACCEPTED ? (
+						isReceiverAddress && chat ? (
+							<PendingRequestTab
+								chat={chat}
+								className='mt-auto w-full px-5 py-2'
+							/>
+						) : (
+							<RequestStatus isRequestSent={isRequestSent} />
+						)
+					) : null}
 					<AuthForm
 						onSubmit={handleSubmit}
 						className={messages.length > 0 ? `${chat?.requestStatus === EChatRequestStatus.ACCEPTED && 'mt-auto'} justify-self-end` : 'flex h-[440px] flex-col justify-between'}
 					>
 						{isRequestSent ? (
 							<div className='bg-[#F6F7F9] px-5 py-2 shadow-sm'>
-								<span className='text-sm text-[#576D8BCC]'>You can chat once message request is accepted</span>
+								<span className='text-sm text-[#576D8BCC]'>{isReceiverAddress ? 'Accept message request to initiate chat' : 'You can chat once message request is accepted'}</span>
 							</div>
 						) : (
 							<TextArea

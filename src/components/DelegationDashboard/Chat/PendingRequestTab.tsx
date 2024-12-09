@@ -13,10 +13,10 @@ import { chatsActions } from '~src/redux/chats';
 
 interface Props {
 	chat: IChat;
-	handleAcceptRequestSuccess: (chat: IChat) => void;
+	className?: string;
 }
 
-const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
+const PendingRequestTab = ({ chat, className }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress, loginAddress } = userProfile;
 	const dispatch = useDispatch();
@@ -41,6 +41,15 @@ const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
 			},
 			type: 'success'
 		});
+	};
+
+	const handleAcceptRequestSuccess = (chat: IChat) => {
+		dispatch(
+			chatsActions.updateChatStatus({
+				chatId: chat.chatId,
+				status: EChatRequestStatus.ACCEPTED
+			})
+		);
 	};
 
 	const handleRejectRequest = async (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
@@ -96,10 +105,10 @@ const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
 	return (
 		<>
 			{contextHolder}
-			<div className='flex items-center gap-2'>
+			<div className={`flex w-fit items-center gap-2 ${className}`}>
 				<Button
 					type='primary'
-					className='rounded-lg px-5'
+					className='w-full rounded-lg px-5'
 					onClick={handleAcceptRequest}
 					disabled={loading || rejectLoading}
 					loading={loading}
@@ -107,7 +116,7 @@ const PendingRequestTab = ({ chat, handleAcceptRequestSuccess }: Props) => {
 					Accept
 				</Button>
 				<Button
-					className={`rounded-lg bg-transparent px-5 font-medium ${
+					className={`w-full rounded-lg bg-transparent px-5 font-medium ${
 						rejectLoading || loading ? 'cursor-not-allowed border-grey_primary text-grey_primary' : 'border-pink_primary text-pink_primary'
 					}`}
 					onClick={handleRejectRequest}

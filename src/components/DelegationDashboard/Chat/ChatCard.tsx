@@ -58,14 +58,6 @@ const ChatCard = ({ chat }: Props) => {
 		}
 	};
 
-	const handleAcceptRequestSuccess = (chat: IChat) => {
-		dispatch(
-			chatsActions.updateChatStatus({
-				chatId: chat.chatId,
-				status: EChatRequestStatus.ACCEPTED
-			})
-		);
-	};
 	const renderUserImage = useMemo(() => {
 		if (chat?.recipientProfile?.image) {
 			return (
@@ -128,12 +120,7 @@ const ChatCard = ({ chat }: Props) => {
 					{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
 				</div>
 
-				{isPendingRequest && chat.chatInitiatedBy !== substrateAddress ? (
-					<PendingRequestTab
-						chat={chat}
-						handleAcceptRequestSuccess={handleAcceptRequestSuccess}
-					/>
-				) : null}
+				{isPendingRequest && chat.chatInitiatedBy !== substrateAddress ? <PendingRequestTab chat={chat} /> : null}
 			</div>
 		</Card>
 	);

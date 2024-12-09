@@ -232,18 +232,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		{
-			key: 'accounts',
-			label: (
-				<Link
-					className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					href={'/accounts'}
-				>
-					<AccountsIcon className='userdropdown-icon text-2xl' />
-					<span>Accounts</span>
-				</Link>
-			)
-		},
+		...(['paseo', 'westend'].includes(network)
+			? [
+					{
+						key: 'accounts',
+						label: (
+							<Link
+								className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+								href={'/accounts'}
+							>
+								<AccountsIcon className='userdropdown-icon text-2xl' />
+								<span>Accounts</span>
+							</Link>
+						)
+					}
+			  ]
+			: []),
 		{
 			key: 'settings',
 			label: (

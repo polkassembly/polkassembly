@@ -102,8 +102,8 @@ const ChatCard = ({ chat }: Props) => {
 					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{renderUsername}</span>
 					<Image
 						src='/assets/icons/timer.svg'
-						height={16}
-						width={16}
+						height={12}
+						width={12}
 						className='dark:grayscale dark:invert dark:filter'
 						alt='timer icon'
 					/>
@@ -116,7 +116,7 @@ const ChatCard = ({ chat }: Props) => {
 					) : null}
 				</div>
 
-				<div className='line-clamp-2 w-full break-words text-xs text-blue-light-medium dark:text-[#9e9e9e]'>
+				<div className='-mt-1 line-clamp-2 w-full break-words text-xs text-blue-light-medium dark:text-[#9e9e9e]'>
 					{latestMessage?.content?.length > 100 ? `${latestMessage.content.slice(0, 100)}...` : latestMessage?.content}
 				</div>
 

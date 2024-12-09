@@ -9,8 +9,6 @@ import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import CreationLabel from 'src/ui-components/CreationLabel';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-import UserAvatar from 'src/ui-components/UserAvatar';
-
 import { usePostDataContext } from '~src/context';
 import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
@@ -51,7 +49,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at, sentiment, comment_source = 'polkassembly', history, spam_users_count, profile, vote = null } = comment;
+	const { user_id, content, created_at, id, replies, updated_at, sentiment, comment_source = 'polkassembly', history, spam_users_count, vote = null } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment, setNewSentiment] = useState<number>(sentiment || 0);
@@ -104,19 +102,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (
 		<div className={`${className} mb-9 flex gap-x-4 `}>
-			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
-			<div
-				id={id}
-				ref={commentScrollRef}
-				className='invisible absolute mt-[-100px]'
-			></div>
-			<UserAvatar
-				className='mt-1 hidden flex-none md:inline-block'
-				username={comment.username}
-				size='large'
-				id={user_id}
-				profile={profile}
-			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
 					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'

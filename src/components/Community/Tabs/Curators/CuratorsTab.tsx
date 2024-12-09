@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { Spin } from 'antd';
 import CuratorsCard from './CuratorsCard';
 import CardSkeleton from '../../CardSkeleton';
+import { useTheme } from 'next-themes';
 
 interface ICuratorsTab {
 	totalUsers?: number;
@@ -18,6 +19,7 @@ interface ICuratorsTab {
 }
 const CuratorsTab: FC<ICuratorsTab> = (props) => {
 	const { totalUsers, userData, loading, currentPage, setCurrentPage } = props;
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Spin spinning={loading}>
 			{loading && (
@@ -52,6 +54,7 @@ const CuratorsTab: FC<ICuratorsTab> = (props) => {
 						<div className='mt-6 flex justify-end'>
 							<Pagination
 								size='large'
+								theme={theme}
 								current={currentPage}
 								onChange={(page: number) => setCurrentPage(page)}
 								total={totalUsers}

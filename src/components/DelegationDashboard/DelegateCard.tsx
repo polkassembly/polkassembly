@@ -57,7 +57,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 
 	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 0) || '';
+		return content.split('\n').find((item: string) => item.length > 20) || '';
 	};
 
 	const getTrimmedBio = (bio: string) => {
@@ -299,7 +299,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							disableIdenticon={Boolean(delegate?.image?.length)}
 							iconSize={26}
 							usernameClassName='font-semibold'
-							isTruncateUsername={false}
+							isTruncateUsername={Boolean(delegate?.identityInfo?.parentProxyAddress) || Boolean(delegate?.identityInfo?.display && delegate?.identityInfo?.display?.length > 15)}
 							className='flex items-center'
 						/>
 						<div className='mr-2 flex items-center gap-2'>
@@ -359,7 +359,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						</div>
 					</div>
 					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						<span className='text-2xl font-semibold text-bodyBlue text-bodyBlue dark:text-blue-dark-high dark:text-white'>{delegate?.receivedDelegationsCount}</span>
+						<span className='text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>
 						<span className='mb-[2px] mt-1 text-center text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Received Delegation</span>
 					</div>
 				</div>

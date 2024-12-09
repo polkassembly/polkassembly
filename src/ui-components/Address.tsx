@@ -88,16 +88,49 @@ const shortenUsername = (username: string, usernameMaxLength?: number) => {
 	return username;
 };
 
-const ParentProxyTitle = ({ className, title }: { className?: string; title: string | null }) => {
+const ParentProxyTitle = ({
+	className,
+	title,
+	truncate,
+	parentProxyAddress
+}: {
+	className?: string;
+	title: string | null;
+	truncate?: boolean;
+	parentProxyAddress: string | null;
+}) => {
 	if (!title?.length) return null;
 	return (
-		<Tooltip title={<div className='text-xs'>Sub Account: The on-chain identity is obtained from the parent account.</div>}>
+		<Tooltip
+			color='#575255'
+			open={true}
+			title={
+				<div className='flex flex-col items-start justify-start gap-1 text-xs'>
+					<span>Sub Account: The on-chain identity is obtained from the parent account.</span>
+					<div className='l-0 flex justify-start gap-1'>
+						<span>Parent Address:</span>
+						<Address
+							address={parentProxyAddress || ''}
+							displayInline
+							disableTooltip
+							usernameClassName='text-blue-dark-high text-xs'
+							className='flex items-start text-xs'
+						/>
+					</div>
+				</div>
+			}
+		>
 			<div className={classNames(className, 'flex items-center gap-0.5')}>
 				<Divider
 					type='vertical'
 					className='border-[1px] bg-lightBlue dark:bg-separatorDark'
 				/>
-				<span className='font-medium text-[#407BFF]'>{title}</span>
+				<span
+					className='font-medium text-[#407BFF]'
+					title={title}
+				>
+					{title?.length > 6 ? (truncate ? `${title?.slice(0, 6)}...` : title) : title}
+				</span>
 				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
 					<Image
 						src={'/assets/icons/proxy-icon.svg'}
@@ -423,13 +456,6 @@ const Address = (props: Props) => {
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 										</div>
 									</div>
-									{/* proxy parent title
-									{!!identity?.parentProxyTitle && (
-										<ParentProxyTitle
-											title={identity?.parentProxyTitle}
-											className='text-xs font-normal'
-										/>
-									)} */}
 								</div>
 							) : !!extensionName || !!mainDisplay ? (
 								<div className='ml-0.5 font-semibold text-bodyBlue'>
@@ -466,13 +492,6 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-										{/* proxy parent title
-										{addressWithVerifiedTick && !!identity?.parentProxyTitle && (
-											<ParentProxyTitle
-												title={identity?.parentProxyTitle}
-												className='text-xs font-normal'
-											/>
-										)} */}
 
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
@@ -557,13 +576,6 @@ const Address = (props: Props) => {
 									</span>
 								)}
 							</div>
-							{/* proxy parent title
-							{!!identity?.parentProxyTitle && (
-								<ParentProxyTitle
-									title={identity?.parentProxyTitle}
-									className='text-sm font-normal'
-								/>
-							)} */}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
@@ -602,6 +614,8 @@ const Address = (props: Props) => {
 			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && (
 				<ParentProxyTitle
 					title={identity?.parentProxyTitle}
+					truncate={isTruncateUsername}
+					parentProxyAddress={identity?.parentProxyAddress}
 					className={`${isProfileView ? 'text-sm' : 'text-xs'} font-normal`}
 				/>
 			)}

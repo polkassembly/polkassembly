@@ -593,7 +593,7 @@ const Community = () => {
 						<Input
 							type='search'
 							allowClear={{ clearIcon: <InputClearIcon /> }}
-							placeholder='Enter username or address to Delegate vote'
+							placeholder='Enter username to search'
 							onChange={(e) => {
 								const value = e?.target?.value?.trim();
 								setSearchInput(value);

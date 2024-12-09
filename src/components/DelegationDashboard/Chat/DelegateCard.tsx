@@ -24,17 +24,17 @@ const getSourceIcon = (source: string) => {
 		case 'polkassembly':
 			return {
 				altText: 'polkassembly logo',
-				iconSrc: '/assets/delegation-tracks/pa-logo-small-delegate.svg'
+				iconSrc: '/assets/icon/pa-logo-sm.svg'
 			};
 		case 'parity':
 			return {
 				altText: 'polkadot logo',
-				iconSrc: '/assets/icons/polkadot-logo.svg'
+				iconSrc: '/assets/icons/polkadot-logo-sm.svg'
 			};
 		case 'w3f':
 			return {
 				altText: 'w3f logo',
-				iconSrc: '/assets/profile/w3f.svg'
+				iconSrc: '/assets/icons/w3f-logo-sm.svg'
 			};
 		default:
 			return null;

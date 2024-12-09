@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
-import { Divider, Modal, Checkbox, Input, Radio, Form, Spin } from 'antd';
+import { Divider, Modal, Checkbox, Input, Radio, Form, Spin, AutoComplete } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
@@ -29,6 +29,7 @@ import executeTx from '~src/util/executeTx';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { dmSans } from 'pages/_app';
+import Address from '~src/ui-components/Address';
 
 export enum ProxyTypeEnum {
 	Any = 'Any',
@@ -196,7 +197,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
-			console.log('NO API READY');
 			return;
 		}
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
@@ -204,8 +204,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		if (!values.proxyType) {
 			return;
 		}
-
-		console.log('value', values);
 
 		let txn;
 		if (values.createPureProxy) {
@@ -296,10 +294,11 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						text='Create Proxy'
 						variant='primary'
 						className={
+							loadingStatus.isLoading ||
 							form.getFieldsError().some((field) => field.errors.length > 0) ||
+							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue)) ||
-							loadingStatus.isLoading
+							availableBalance.lt(gasFee.add(baseDepositValue))
 								? 'opacity-50'
 								: ''
 						}
@@ -372,7 +371,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						{/* Proxy Address */}
 						<Form.Item
 							name='proxyAddress'
-							className=' mb-0'
+							className={`mb-0 ${!form.getFieldValue('proxyAddress') ? 'proxy-address' : ''}`}
 							rules={[
 								{ required: !form.getFieldValue('createPureProxy'), message: 'Proxy Address is required' },
 								{
@@ -392,21 +391,53 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								}
 							]}
 						>
-							<AccountSelectionForm
-								title='Select an address for proxy'
-								isTruncateUsername={false}
-								accounts={accounts.filter((account) => getSubstrateAddress(account.address) !== getSubstrateAddress(form.getFieldValue('proxyAddress') || loginAddress))}
-								address={form.getFieldValue('proxyAddress') || loginAddress}
-								withBalance={false}
-								onAccountChange={(address) => form.setFieldsValue({ proxyAddress: address })}
-								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
-								withoutInfo={true}
-								linkAddressTextDisabled
-								theme={theme}
-								isDisabled={form.getFieldValue('createPureProxy')}
-								isVoting
-							/>
+							{!form.getFieldValue('proxyAddress') ? (
+								<AutoComplete
+									options={accounts
+										?.filter((account) => getSubstrateAddress(account.address) !== getSubstrateAddress(form.getFieldValue('proxyAddress') || loginAddress))
+										.map((account) => ({
+											value: account?.address,
+											label: (
+												<div className='flex items-center gap-2'>
+													<Address
+														address={account?.address}
+														className='flex items-center dark:text-blue-dark-high'
+														usernameClassName='font-medium'
+														disableTooltip
+														isTruncateUsername
+													/>
+												</div>
+											)
+										}))}
+									style={{
+										width: '100%',
+										height: '40px',
+										borderRadius: '6px'
+									}}
+									placeholder='Select an address for proxy'
+									onChange={(value) => {
+										form.setFieldsValue({ proxyAddress: value });
+									}}
+									className='h-10 rounded-[6px]'
+									disabled={form.getFieldValue('createPureProxy')}
+									popupClassName='dark:bg-section-dark-garyBackground'
+									filterOption={(inputValue, option) => option?.value.toLowerCase().includes(inputValue.toLowerCase()) ?? false}
+								/>
+							) : (
+								<div
+									onClick={() => form.setFieldsValue({ proxyAddress: null })}
+									className='flex h-10 w-full cursor-pointer items-center justify-between gap-2 rounded-[6px] border border-solid border-section-light-container p-[14px]'
+								>
+									<Address
+										address={form.getFieldValue('proxyAddress')}
+										className='ml-1 flex items-center'
+										displayInline
+										isTruncateUsername
+										iconSize={32}
+										usernameClassName='font-semibold'
+									/>
+								</div>
+							)}
 						</Form.Item>
 
 						<Form.Item
@@ -619,5 +650,62 @@ export default styled(CreateProxyMainModal)`
 	.ant-modal-content {
 		padding: 0px !important;
 		border-radius: 14px;
+	}
+
+	.proxy-address {
+		.ant-form-item-control-input-content {
+			display: flex;
+			align-items: center;
+			height: 40px !important;
+		}
+
+		.ant-select-selector {
+			height: 40px !important;
+			border-radius: 4px !important;
+			padding: 0 12px !important;
+			display: flex;
+			align-items: center;
+		}
+
+		.ant-select-selection-search-input {
+			height: 40px !important;
+			line-height: 40px !important;
+			border-radius: 6px !important;
+		}
+
+		.ant-select-selection-item {
+			display: flex;
+			align-items: center;
+		}
+
+		.flex {
+			display: flex;
+			align-items: center;
+			height: 40px !important;
+			justify-content: space-between;
+			border: 1px solid var(--border-color, #d9d9d9);
+			border-radius: 6px;
+			padding: 0 14px;
+			cursor: pointer;
+		}
+	}
+
+	.proxy-dropdown {
+		background-color: #d2d8e0;
+		background-color: #1c1d1f;
+		border-radius: 4px;
+		padding: 4px;
+	}
+
+	.proxy-dropdown .ant-select-item {
+		background-color: transparent;
+		padding: 8px 12px;
+		border-radius: 4px;
+		transition: background-color 0.2s ease;
+
+		&:hover {
+			background-color: var(--bg-hover-light);
+			background-color: var(--bg-hover-dark);
+		}
 	}
 `;

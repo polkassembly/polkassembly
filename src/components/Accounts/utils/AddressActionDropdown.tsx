@@ -63,7 +63,6 @@ const AddressActionDropdown = ({
 					message: isLinked ? 'Address has been successfully unlinked.' : 'Address has been successfully linked.',
 					status: NotificationStatus.SUCCESS
 				});
-
 				setState((prevState) => ({
 					...prevState,
 					loading: false

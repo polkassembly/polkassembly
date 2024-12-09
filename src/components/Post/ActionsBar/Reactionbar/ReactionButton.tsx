@@ -11,7 +11,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import TooltipContent from './TooltipContent';
 import Popover from '~src/basic-components/Popover';
@@ -189,7 +189,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
 					<span
-						className={`${poppins.variable} ${poppins.className} ml-[5px] text-xs font-medium ${
+						className={`${dmSans.variable} ${dmSans.className} ml-[5px] text-xs font-medium ${
 							!reacted ? 'text-[#485F7DCC] dark:text-[#9E9E9ECC]' : 'text-pink_primary dark:text-blue-dark-helper'
 						} `}
 					>

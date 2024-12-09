@@ -2032,7 +2032,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://rococo.api.subscan.io',
+		externalLinks: 'https://paseo.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: [
 			{

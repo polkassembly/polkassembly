@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useChatsSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateCard from './DelegateCard';
 import { chatsActions } from '~src/redux/chats';
@@ -22,6 +22,11 @@ const NewChat = ({ setIsNewChat }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const dispatch = useDispatch();
+	const { filteredMessages, filteredRequests } = useChatsSelector();
+	const userProfile = useUserDetailsSelector();
+	const { delegationDashboardAddress, loginAddress } = userProfile;
+	const address = delegationDashboardAddress || loginAddress;
+	const substrateAddress = getSubstrateAddress(address);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [allDelegates, setAllDelegates] = useState<IDelegateAddressDetails[]>([]);
@@ -70,8 +75,17 @@ const NewChat = ({ setIsNewChat }: Props) => {
 		const recipientAddress = recipientAddr ?? searchAddress.trim();
 		if (!recipientAddress) return;
 
-		dispatch(chatsActions.setTempRecipient(recipientAddress));
-		dispatch(chatsActions.setOpenChat({ chat: null, isOpen: true }));
+		const existingChat = [...filteredRequests, ...filteredMessages].find(
+			(chat) => chat.participants.includes(getSubstrateAddress(recipientAddress) || '') && chat.participants.includes(String(substrateAddress))
+		);
+
+		if (existingChat) {
+			// If chat exists, open that chat instead
+			dispatch(chatsActions.setOpenChat({ chat: existingChat, isOpen: true }));
+		} else {
+			dispatch(chatsActions.setTempRecipient(recipientAddress));
+			dispatch(chatsActions.setOpenChat({ chat: null, isOpen: true }));
+		}
 		setIsNewChat(false);
 	};
 

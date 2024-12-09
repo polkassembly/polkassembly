@@ -12,9 +12,10 @@ import { usePostDataContext } from '~src/context';
 
 interface IHiglightMenuProps {
 	markdownRef: React.RefObject<HTMLDivElement>;
+	isUsedInComments?: boolean;
 }
 
-const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
+const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const { postData } = usePostDataContext();
 
@@ -91,7 +92,7 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
 			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
-			style={{ left: menuPosition.left, top: menuPosition.top - 10 }}
+			style={!isUsedInComments ? { left: menuPosition.left, top: menuPosition.top - 10 } : {}}
 		>
 			<div
 				className='flex h-4 cursor-pointer items-center justify-between gap-1'

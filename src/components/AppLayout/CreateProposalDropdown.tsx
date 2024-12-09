@@ -73,25 +73,13 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dropdownVisible]);
 
-	const items: MenuProps['items'] = [
-		{
-			label: (
-				<div className='pb-[3px] pt-[7.5px]'>
-					<OpenGovTreasuryProposal
-						theme={theme}
-						isUsedInSidebar={true}
-					/>
-				</div>
-			),
-			key: '0'
-		},
-		{
-			label: <ProposalActionButtons isUsedInFAB={true} />,
-			key: '1'
-		},
-		{
+	const items: MenuProps['items'] = [];
+
+	if (network === 'mythos') {
+		items.push({
 			label: (
 				<div
 					className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
@@ -102,14 +90,44 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 				</div>
 			),
 			key: '2'
-		}
-	];
-
-	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
-		items.unshift({
-			label: <Gov1TreasuryProposal />,
-			key: '3'
 		});
+	} else {
+		items.push(
+			{
+				label: (
+					<div className='pb-[3px] pt-[7.5px]'>
+						<OpenGovTreasuryProposal
+							theme={theme}
+							isUsedInSidebar={true}
+						/>
+					</div>
+				),
+				key: '0'
+			},
+			{
+				label: <ProposalActionButtons isUsedInFAB={true} />,
+				key: '1'
+			},
+			{
+				label: (
+					<div
+						className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
+						onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
+					>
+						{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
+						<span className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
+					</div>
+				),
+				key: '2'
+			}
+		);
+
+		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+			items.unshift({
+				label: <Gov1TreasuryProposal />,
+				key: '3'
+			});
+		}
 	}
 
 	return (

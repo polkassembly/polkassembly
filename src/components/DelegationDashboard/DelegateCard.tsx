@@ -57,7 +57,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 
 	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 20) || '';
+		return content.split('\n').find((item: string) => item.length > 25) || '';
 	};
 
 	const getTrimmedBio = (bio: string) => {
@@ -299,7 +299,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							disableIdenticon={Boolean(delegate?.image?.length)}
 							iconSize={26}
 							usernameClassName='font-semibold'
-							isTruncateUsername={Boolean(delegate?.identityInfo?.parentProxyAddress) || Boolean(delegate?.identityInfo?.display && delegate?.identityInfo?.display?.length > 15)}
+							isTruncateUsername={Boolean(delegate?.identityInfo?.parentProxyAddress) || !!(delegate?.identityInfo?.display && delegate?.identityInfo?.display?.length > 15)}
 							className='flex items-center'
 						/>
 						<div className='mr-2 flex items-center gap-2'>
@@ -326,7 +326,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						{delegate?.bio ? (
 							<Markdown
 								className='post-content'
-								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 54)}...`}
+								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 50)}...`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -334,7 +334,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							'No Bio'
 						)}
 					</p>
-					{delegate?.bio?.length > 100 && (
+					{delegate?.bio?.length > 50 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
 							className='mt-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'

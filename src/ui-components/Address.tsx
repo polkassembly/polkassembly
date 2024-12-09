@@ -79,6 +79,7 @@ interface Props {
 	addressWithVerifiedTick?: boolean;
 	isUsedIndelegationNudge?: boolean;
 	isUsedInDelegationProfile?: boolean;
+	disableParentProxyAddressTitle?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -92,29 +93,32 @@ const ParentProxyTitle = ({
 	className,
 	title,
 	truncate,
-	parentProxyAddress
+	parentProxyAddress,
+	disableParentProxyAddressTitle = false
 }: {
 	className?: string;
 	title: string | null;
 	truncate?: boolean;
 	parentProxyAddress: string | null;
+	disableParentProxyAddressTitle?: boolean;
 }) => {
-	if (!title?.length) return null;
+	if (!title?.length || disableParentProxyAddressTitle) return null;
 	return (
 		<Tooltip
-			color='#575255'
-			open={true}
+			className={className}
 			title={
 				<div className='flex flex-col items-start justify-start gap-1 text-xs'>
-					<span>Sub Account: The on-chain identity is obtained from the parent account.</span>
-					<div className='l-0 flex justify-start gap-1'>
-						<span>Parent Address:</span>
+					<span>Sub-account: On-chain Identity derived </span>
+					<div className='flex items-center justify-start gap-1'>
+						from the parent-{' '}
 						<Address
 							address={parentProxyAddress || ''}
 							displayInline
 							disableTooltip
 							usernameClassName='text-blue-dark-high text-xs'
-							className='flex items-start text-xs'
+							className='text-xs'
+							disableParentProxyAddressTitle
+							iconSize={14}
 						/>
 					</div>
 				</div>
@@ -172,7 +176,8 @@ const Address = (props: Props) => {
 		isProfileView = false,
 		addressWithVerifiedTick = false,
 		isUsedIndelegationNudge = false,
-		isUsedInDelegationProfile = false
+		isUsedInDelegationProfile = false,
+		disableParentProxyAddressTitle = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -613,10 +618,11 @@ const Address = (props: Props) => {
 			{/* proxy parent title */}
 			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && (
 				<ParentProxyTitle
+					disableParentProxyAddressTitle={disableParentProxyAddressTitle}
 					title={identity?.parentProxyTitle}
 					truncate={isTruncateUsername}
 					parentProxyAddress={identity?.parentProxyAddress}
-					className={`${isProfileView ? 'text-sm' : 'text-xs'} font-normal`}
+					className={`${isProfileView ? 'text-sm' : 'text-xs'} font-normal ${className}`}
 				/>
 			)}
 			{!TippingUnavailableNetworks.includes(network) && (

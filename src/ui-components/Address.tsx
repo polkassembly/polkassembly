@@ -79,6 +79,7 @@ interface Props {
 	addressWithVerifiedTick?: boolean;
 	isUsedIndelegationNudge?: boolean;
 	isUsedInDelegationProfile?: boolean;
+	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
 }
 
@@ -177,6 +178,7 @@ const Address = (props: Props) => {
 		addressWithVerifiedTick = false,
 		isUsedIndelegationNudge = false,
 		isUsedInDelegationProfile = false,
+		isUsedInAccountsPage = false,
 		disableParentProxyAddressTitle = false
 	} = props;
 	const { network } = useNetworkSelector();
@@ -415,7 +417,7 @@ const Address = (props: Props) => {
 					setOpen(e);
 				}}
 			>
-				<div className={`${className} flex items-center gap-1`}>
+				<div className={`${className} flex ${isUsedInAccountsPage ? 'items-center md:items-start' : 'items-end '} gap-1`}>
 					{!disableIdenticon &&
 						(encodedAddr.startsWith('0x') ? (
 							<EthIdenticon
@@ -445,13 +447,17 @@ const Address = (props: Props) => {
 											/>
 										))}
 
-									<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
+									<div
+										className={`flex items-center font-semibold text-bodyBlue ${isUsedInAccountsPage && 'ml-1 text-xl md:ml-3 md:mt-1'} dark:text-blue-dark-high  ${
+											!disableAddressClick && 'cursor-pointer hover:underline'
+										}`}
+									>
 										<div
 											onClick={(e) => handleClick(e)}
 											title={mainDisplay || encodedAddr}
 											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
+											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} `}
 										>
 											{!!addressPrefix && (
 												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>

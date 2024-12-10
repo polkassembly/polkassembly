@@ -132,21 +132,19 @@ const NewChat = ({ setIsNewChat }: Props) => {
 					dropdownAlign={{ points: ['tl', 'bl'] }}
 					popupClassName='dark:bg-section-dark-overlay shadow-lg border dark:shadow-white/10 [&_.rc-virtual-list-scrollbar]:dark:bg-white/20 [&_.rc-virtual-list-scrollbar-thumb]:dark:bg-white/50'
 				>
-					<div className='flex flex-col gap-2 bg-white dark:bg-section-dark-overlay'>
-						<h2 className='text-sm font-medium text-[#485F7DB2] dark:text-[#b4afaf]'>DELEGATES</h2>
-						{searchedDelegates.map((delegate) => (
-							<Select.Option
-								key={delegate.address}
-								value={delegate.address}
-								className='p-0 dark:bg-section-dark-overlay'
-							>
-								<DelegateCard
-									delegate={delegate}
-									onStartChat={handleStartChat}
-								/>
-							</Select.Option>
-						))}
-					</div>
+					<h2 className='bg-white text-sm font-medium text-[#485F7DB2] dark:bg-section-dark-overlay dark:text-[#b4afaf]'>DELEGATES</h2>
+					{searchedDelegates.map((delegate) => (
+						<Select.Option
+							key={delegate.address}
+							value={delegate.address}
+							className='p-0 dark:bg-section-dark-overlay'
+						>
+							<DelegateCard
+								delegate={delegate}
+								onStartChat={handleStartChat}
+							/>
+						</Select.Option>
+					))}
 				</Select>
 				{loading ? (
 					<Spin

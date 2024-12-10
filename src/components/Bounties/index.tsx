@@ -15,6 +15,7 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
+import { useRouter } from 'next/router';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -24,6 +25,7 @@ interface IBountiesContainer {
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
+	const router = useRouter();
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
@@ -225,6 +227,9 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[466px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[40px] text-2xl font-bold text-white`}
 					style={{
 						background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
+					}}
+					onClick={() => {
+						router.push('/user-created-bounties');
 					}}
 				>
 					View All

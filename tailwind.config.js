@@ -24,6 +24,8 @@ module.exports = {
 				blue_secondary: 'var(--blue_secondary)',
 				green_primary: 'var(--green_primary)',
 				green_secondary: 'var(--green_secondary)',
+				green_tertiary: 'var(--green_tertiary)',
+				grey_primary_transparent: 'var(--grey_primary_transparent)',
 				grey_app_background: 'var(--grey_app_background)',
 				grey_border: 'var(--grey_border)',
 				grey_light: 'var(--grey_light)',

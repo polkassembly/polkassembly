@@ -35,6 +35,7 @@ import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
 import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
+import { communityTabStore } from './communityTab';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -136,7 +137,8 @@ export const makeStore = () => {
 		[claimPayoutStore.name]: claimPayoutStore.reducer,
 		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer,
 		[childBountyCreationStore.name]: childBountyCreationStore.reducer,
-		[followStore.name]: followStore.reducer
+		[followStore.name]: followStore.reducer,
+		[communityTabStore.name]: communityTabStore.reducer
 	});
 
 	if (isServer) {

@@ -1120,3 +1120,22 @@ export interface IIdentityInfo {
 	parentProxyTitle: string | null;
 	parentProxyAddress: string;
 }
+
+export enum EMembersSortFilters {
+	ALPHABETICAL = 'Alphabetic',
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	SINGLE_SIGNATORY = 'SingleSignatory',
+	MULTI_SIGNATORY = 'MultiSignatory'
+}
+
+export enum EExpertsSortFilters {
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	REVIEWS_COUNT = 'ReviewsCount'
+}
+
+export enum ECuratorsSortFilters {
+	ACTIVE_BOUNTIES = 'ActiveBounties',
+	CHILD_BOUNTIES_DISBURSED = 'ChildBountiesDisbursed'
+}

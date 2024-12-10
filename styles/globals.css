@@ -23,6 +23,7 @@
   --blue: #3C74E1;
   --green_primary: #4dd18f;
   --green_secondary: #399969;
+  --green_tertiary: #11B04A;
   --grey_app_background: #eaeef0;
   --grey_border: #dde4ed;
   --grey_stroke: #D2D8E0;
@@ -30,6 +31,7 @@
   --grey_light: #ebf0f5;
   --grey_primary: #777b80;
   --grey_secondary: #a6acb3;
+  --grey_primary_transparent: rgba(216, 216, 216, 0.05);
   --icon_grey: #c2cfe0;
   --nav_black: #1e1e28;
   --pink_primary: #e5007a;

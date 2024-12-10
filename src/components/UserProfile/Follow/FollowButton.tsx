@@ -16,7 +16,8 @@ const FollowButton = ({
 	isUsedInProfileHeaders,
 	addToFollowing,
 	removeFromFollowing,
-	user
+	user,
+	isUsedInCommunityTab
 }: {
 	userId: number;
 	isUsedInProfileTab?: boolean;
@@ -24,6 +25,7 @@ const FollowButton = ({
 	addToFollowing?: (user: FollowUserData) => void;
 	removeFromFollowing?: (userId: number) => void;
 	user?: FollowUserData;
+	isUsedInCommunityTab?: boolean;
 }) => {
 	const { id } = useUserDetailsSelector();
 	const { loading, followUser, unfollowUser, setIsFollowing } = useFollowStatus(userId);
@@ -43,8 +45,10 @@ const FollowButton = ({
 		setIsFollowing(!isFollowing);
 	};
 
-	const buttonClass = isUsedInProfileTab ? 'rounded-md border-none px-3 py-0 text-xs text-white' : 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
-	const buttonHeight = isUsedInProfileTab ? 28 : undefined;
+	const buttonClass = isUsedInProfileTab
+		? 'rounded-md border-none px-3 py-0 text-xs text-white'
+		: `rounded-full border-none py-2.5 text-white ${isUsedInCommunityTab ? 'px-3 max-md:p-2' : 'px-4 max-md:p-3'}`;
+	const buttonHeight = isUsedInProfileTab ? 28 : isUsedInCommunityTab ? 30 : undefined;
 	const buttonText = isUserFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
 
 	return (

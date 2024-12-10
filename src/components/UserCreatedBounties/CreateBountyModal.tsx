@@ -19,7 +19,7 @@ const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: 
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
-			className={classNames(dmSans.className, dmSans.variable, 'mt-[100px] w-[50%]')}
+			className={classNames(dmSans.className, dmSans.variable, 'mt-[20px] w-[50%]')}
 			open={openCreateBountyModal}
 			// open={true}
 			maskClosable={false}

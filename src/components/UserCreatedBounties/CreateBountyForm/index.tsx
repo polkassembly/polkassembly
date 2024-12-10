@@ -14,6 +14,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/es/date-picker';
 import styled from 'styled-components';
+import ContentForm from '~src/components/ContentForm';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -46,7 +47,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			<Form
 				layout='vertical'
 				onFinish={handleFormSubmit}
-				className='w-full'
+				className='mt-4 w-full'
 				form={form}
 			>
 				{/* address and twitter */}
@@ -263,8 +264,28 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 						</div>
 					</div>
 				</article>
+				{/* description */}
+				<article className='-mb-6 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+					<div className='flex w-full items-center gap-x-2 text-sm'>
+						<div className='flex w-full flex-col gap-y-1'>
+							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Description*</p>
+							<Form.Item
+								name='description'
+								className='w-full'
+								rules={[
+									{
+										message: 'Please add bounty description',
+										required: true
+									}
+								]}
+							>
+								<ContentForm onChange={(v: string) => console.log(v)} />
+							</Form.Item>
+						</div>
+					</div>
+				</article>
 				{/* footer buttons */}
-				<div className='-mx-6 -mb-5 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-6'>
+				<div className='-mx-6 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-6'>
 					<Form.Item>
 						<CustomButton
 							variant='default'

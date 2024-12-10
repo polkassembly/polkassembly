@@ -5,6 +5,9 @@ import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { spaceGrotesk } from 'pages/_app';
 import CreateBountyModal from './CreateBountyModal';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface ICreateBountyBtnProps {
 	className?: string;
@@ -12,11 +15,20 @@ interface ICreateBountyBtnProps {
 
 const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
 	const [openCreateBountyModal, setOpenCreateBountyModal] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const { loginAddress } = useUserDetailsSelector();
 
 	return (
 		<div className={className}>
 			<button
-				onClick={() => setOpenCreateBountyModal(true)}
+				onClick={() => {
+					if (loginAddress) {
+						setOpenCreateBountyModal(true);
+					} else {
+						setLoginOpen(true);
+					}
+				}}
 				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[14px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
 			>
 				<ImageIcon
@@ -26,6 +38,19 @@ const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
 				/>
 				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty</span>
 			</button>
+
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			<CreateBountyModal
 				openCreateBountyModal={openCreateBountyModal}
 				setOpenCreateBountyModal={setOpenCreateBountyModal}

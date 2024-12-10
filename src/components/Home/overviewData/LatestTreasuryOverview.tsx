@@ -172,7 +172,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const totalUsdcPrice = formatUSDWithUnits(new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString());
 	const totalUsdtPrice = formatUSDWithUnits(new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString());
 
-	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value)));
+	const totalUsdcRaw = new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString();
+	const totalUsdtRaw = new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString();
+	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)));
 
 	return (
 		<div
@@ -190,7 +192,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								<div className='mb-2 '>
 									<div className='flex items-center justify-between'>
 										{!isUsedInGovAnalytics && (
-											<div className='my-1 flex items-center gap-x-[6px]'>
+											<div className=' flex items-center gap-x-[6px]'>
 												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
 												<HelperTooltip
 													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
@@ -200,7 +202,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										)}
 										<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
 											<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
-											<div className='flex items-center gap-x-1 text-lg font-semibold'>
+											<div className='flex items-end gap-x-1 text-lg font-semibold'>
 												<div>
 													{currentTokenPrice.value === 'N/A' ? (
 														<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
@@ -209,7 +211,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													) : null}
 												</div>
 												{priceWeeklyChange.value !== 'N/A' && (
-													<div className='-mb-[2px] ml-2 flex items-center'>
+													<div className='-mb-1 flex items-center'>
 														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
 															{Math.abs(Number(priceWeeklyChange.value))}%
 														</span>
@@ -225,62 +227,97 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										</div>
 									</div>
-									<div className='flex flex-wrap items-center justify-between gap-1'>
-										<div>
+									<div className='flex flex-col flex-wrap items-start justify-between gap-1'>
+										<div className='flex items-baseline gap-[6px]'>
 											{totalUsd && (
 												<div className='flex items-baseline'>
 													<span className={`${dmSans.className} ${dmSans.variable} no-wrap text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>~${totalUsd}</span>
 												</div>
 											)}
-										</div>
-										<div className='flex items-center gap-1'>
-											<div className='no-wrap ml-1 flex items-center gap-1 text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/dot-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>~ ${totalDots}</span>
-												{unit}
-											</div>
-											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/usdc-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
-												USDC
-											</div>
-
-											<div className='no-wrap ml-1 flex items-center gap-[6px] text-xs'>
-												<Image
-													alt='relay icon'
-													width={16}
-													height={16}
-													src={'/assets/treasury/usdt-icon.svg'}
-													className='-mt-[2px]'
-												/>
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
-												USDt
-											</div>
-											{!mythLoading && (
-												<>
-													<div className='no-wrap ml-1 flex items-center gap-1'>
+											<div className='-mt-1'>
+												{!available.isLoading && (
+													<div
+														className='cursor-pointer text-xs font-medium text-pink_primary'
+														onClick={() => setIsModalVisible(true)}
+													>
+														Details
 														<Image
-															src={'/assets/treasury/myth-icon.svg'}
+															alt='arrow icon'
 															width={16}
 															height={16}
-															alt='icon'
+															src={'/assets/treasury/arrow-icon.svg'}
+															className='-mt-[2px]'
 														/>
-														<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{MythBalance} MYTH</span>
 													</div>
-												</>
-											)}
+												)}
+											</div>
+										</div>
+										<div className='mt-1 items-center sm:mt-0  sm:flex'>
+											<div className='flex items-center '>
+												<div className='no-wrap flex items-center gap-1 text-xs'>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/dot-icon.svg'}
+														className='-mt-[2px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalDots}</span>
+													{unit}
+													<Divider
+														type='vertical'
+														className='border-l-1 mx-1 mt-[1px] border-[#90A0B7] dark:border-icon-dark-inactive '
+													/>
+												</div>
+												<div className='no-wrap flex items-center gap-[4px] text-xs '>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/usdc-icon.svg'}
+														className='-mt-[2px] ml-[3px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
+													USDC
+													<Divider
+														type='vertical'
+														className='border-l-1 mx-1 mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+													/>
+												</div>
+											</div>
+
+											<div className=' mt-1 flex items-center sm:mt-0 '>
+												<div className='no-wrap flex items-center gap-[4px] text-xs'>
+													<Image
+														alt='relay icon'
+														width={16}
+														height={16}
+														src={'/assets/treasury/usdt-icon.svg'}
+														className='-mt-[2px] ml-[3px]'
+													/>
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
+													USDt
+													<Divider
+														type='vertical'
+														className='border-l-1 mx-1 mt-[1px] border-[#90A0B7] dark:border-icon-dark-inactive '
+													/>
+												</div>
+
+												{!mythLoading && (
+													<>
+														<div className='no-wrap mt-1 flex items-center gap-[4px] sm:mt-0'>
+															<Image
+																src={'/assets/treasury/myth-icon.svg'}
+																width={15}
+																height={15}
+																alt='icon'
+																className='-mt-[2px] ml-[3px]'
+															/>
+															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{MythBalance} MYTH</span>
+														</div>
+													</>
+												)}
+											</div>
 										</div>
 									</div>
 								</div>
@@ -292,47 +329,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						)}
 					</div>
 					{/* // current Price */}
-					<TreasuryDetailsModal
-						visible={isModalVisible}
-						onClose={closeModal}
-						available={tokenValue}
-						assetValue={assetValue}
-						assetValueFellowship={assetValueFellowship}
-						assetValueUSDC={assetValueUSDC}
-						assetValueUSDT={assetValueUSDT}
-						assetValueUSDTFellowship={assetValueUSDTFellowship}
-						hydrationValue={hydrationValue}
-						hydrationValueUSDC={hydrationValueUSDC}
-						hydrationValueUSDT={hydrationValueUSDT}
-						chainProperties={chainProperties}
-						network={network}
-						assethubApiReady={assethubApiReady}
-						hydrationApiReady={hydrationApiReady}
-						unit={unit}
-						currentTokenPrice={currentTokenPrice.value}
-						loansData={loansData}
-						totalBountyPool={statsData.totalBountyPool}
-						bountyValues={bountyValues}
-					/>
-					{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma', 'mythos'].includes(network) && (
-						<div>
-							{!available.isLoading && (
-								<div
-									className='cursor-pointer text-xs font-medium text-pink_primary'
-									onClick={() => setIsModalVisible(true)}
-								>
-									Details
-									<Image
-										alt='arrow icon'
-										width={16}
-										height={16}
-										src={'/assets/treasury/arrow-icon.svg'}
-										className='-mt-[2px]'
-									/>
-								</div>
-							)}
-						</div>
-					)}
 				</div>
 				{/* graph */}
 				<div>
@@ -497,6 +493,29 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 				</div>
 			)}
+			<TreasuryDetailsModal
+				visible={isModalVisible}
+				onClose={closeModal}
+				available={tokenValue}
+				assetValue={assetValue}
+				assetValueFellowship={assetValueFellowship}
+				assetValueUSDC={assetValueUSDC}
+				assetValueUSDT={assetValueUSDT}
+				assetValueUSDTFellowship={assetValueUSDTFellowship}
+				assetValueUSDTFellowshipRaw={assetValueUSDTFellowshipRaw.toString()}
+				hydrationValue={hydrationValue}
+				hydrationValueUSDC={hydrationValueUSDC}
+				hydrationValueUSDT={hydrationValueUSDT}
+				chainProperties={chainProperties}
+				network={network}
+				assethubApiReady={assethubApiReady}
+				hydrationApiReady={hydrationApiReady}
+				unit={unit}
+				currentTokenPrice={currentTokenPrice.value}
+				loansData={loansData}
+				totalBountyPool={statsData.totalBountyPool}
+				bountyValues={bountyValues}
+			/>
 		</div>
 	);
 };

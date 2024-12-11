@@ -8,6 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 
@@ -18,7 +19,7 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { status, tags } = req.body;
+		const { status, filterBy, page } = req.body;
 
 		let userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties').where('network', '==', network);
 
@@ -28,20 +29,25 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 		) {
 			return res.status(400).json({ message: 'Invalid Status Param' });
 		}
-
-		if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
+		if (filterBy?.length && !!filterBy?.filter((tag: string) => typeof tag !== 'string')?.length) {
 			return res.status(400).json({ message: 'Invalid Tags Param' });
 		}
-
-		if (tags?.length) {
-			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('tags', 'array-contains-any', tags);
+		if (isNaN(page)) {
+			return res.status(400).json({ message: 'Invalid Page Param' });
+		}
+		if (filterBy?.length) {
+			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('tags', 'array-contains-any', filterBy);
 		}
 
 		if (status) {
 			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('status', '==', status);
 		}
 
-		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.get();
+		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot
+			.limit(LISTING_LIMIT)
+			.offset((Number(page) - 1) * Number(LISTING_LIMIT))
+			.get();
+
 		const allBounties: IUserCreatedBounty[] = [];
 
 		//TODO: pie graph percentage acc to submission count
@@ -69,7 +75,7 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 			}
 		});
 
-		return res.status(200).json(allBounties);
+		return res.status(200).json(allBounties || []);
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

@@ -43,6 +43,8 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import FilteredError from '~src/ui-components/FilteredError';
+import { chainProperties } from '~src/global/networkConstants';
+import { subscanApiHeaders } from '~src/global/apiHeaders';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -110,7 +112,7 @@ const Web3Login: FC<Props> = ({
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<void> => {
-		if (['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network)) {
+		if (['moonbase', 'moonbeam', 'moonriver', 'laossigma', 'mythos'].includes(network)) {
 			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
 				if (!extensionNotFound) {
@@ -260,6 +262,22 @@ const Web3Login: FC<Props> = ({
 				substrate_address = address;
 			}
 
+			let multisigAddressInfo = {};
+			if (multisigAddress) {
+				const response = await fetch(`${chainProperties[network].externalLinks}/api/v2/scan/search`, {
+					body: JSON.stringify({
+						key: multisigAddress,
+						row: 1
+					}),
+					headers: subscanApiHeaders,
+					method: 'POST'
+				});
+				const responseJSON = await response.json();
+				if (responseJSON.data?.account) {
+					multisigAddressInfo = responseJSON.data?.account;
+				}
+			}
+
 			const { data: loginStartData, error: loginStartError } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressLoginStart', {
 				address: substrate_address,
 				wallet: chosenWallet
@@ -375,6 +393,7 @@ const Web3Login: FC<Props> = ({
 				user.loginAddress = multisigAddress || address;
 				user.delegationDashboardAddress = multisigAddress || address;
 				user.multisigAssociatedAddress = address;
+				user.multisigAddressInfo = multisigAddressInfo;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 				localStorage.setItem('multisigDelegationAssociatedAddress', address);
@@ -382,6 +401,7 @@ const Web3Login: FC<Props> = ({
 				localStorage.setItem('loginAddress', address);
 
 				localStorage.setItem('multisigAssociatedAddress', address);
+				localStorage.setItem('multisigAddressInfo', JSON.stringify(multisigAddressInfo));
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 
 				if (isModal) {
@@ -418,6 +438,7 @@ const Web3Login: FC<Props> = ({
 				setLoading(false);
 			}
 		} catch (error) {
+			console.log(error);
 			setError(error.message);
 			setLoading(false);
 		}

@@ -74,7 +74,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed', 'ExecutionFailed'].includes(status);
-	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'DecisionDepositPlaced');
+	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const confirmStartedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'ConfirmStarted');
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
@@ -200,7 +200,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 w-full justify-center whitespace-nowrap text-xl font-normal leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+						<h3 className='m-0 w-full justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 							Voting has Started
 						</h3>
 						<div className='w-13 flex h-[33px] gap-1'>

@@ -9,7 +9,7 @@ import ClientOnly, { Search } from './ClientOnly';
 import NewSearch from 'src/components/Search';
 import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
@@ -117,7 +117,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						open={open}
 						onCancel={() => setOpen(false)}
 						footer={[]}
-						className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${className} ${dmSans.className} ${dmSans.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<div className='client'>
 							<ClientOnly>

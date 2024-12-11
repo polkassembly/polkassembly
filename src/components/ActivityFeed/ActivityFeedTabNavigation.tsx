@@ -25,7 +25,7 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { useTranslation } from 'next-i18next';
 
@@ -169,7 +169,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 		};
 	}, []);
 	const popoverContent = (
-		<div className='left-2 w-40 py-1 font-poppins text-sm text-gray-700 dark:text-gray-200'>
+		<div className='font-dmSams left-2 w-40 py-1 text-sm text-gray-700 dark:text-gray-200'>
 			<li className='text-md block pb-2 font-semibold text-[#485F7DB2] text-opacity-[70%] dark:text-white'>{t('tracks')}</li>
 			{['Treasury', 'Whitelist']?.map((category) => (
 				<React.Fragment key={category}>
@@ -191,7 +191,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 												<span className='flex w-full items-center justify-between'>
 													<div>
 														{tabIcons[tabItem?.key?.toLowerCase()]}
-														<span className={`ml-2 ${poppins.className} ${poppins.variable}`}>{tabItem?.label} </span>
+														<span className={`ml-2 ${dmSans.className} ${dmSans.variable}`}>{tabItem?.label} </span>
 													</div>
 													{tabItem?.posts > 0 && (
 														<span
@@ -220,7 +220,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 						>
 							<span className='flex items-center'>
 								{isTabSelected(category) ? selectedtabIcons[category?.toLowerCase()?.replace(/\s+/g, '-')] : tabIcons[category?.toLowerCase()?.replace(/\s+/g, '-')]}
-								<span className={`ml-2 ${poppins.className} ${poppins.variable} whitespace-nowrap`}>{category}</span>
+								<span className={`ml-2 ${dmSans.className} ${dmSans.variable} whitespace-nowrap`}>{category}</span>
 							</span>
 							{tabCategories[category].length > 1 && <ArrowDownIcon className={'ml-1 -rotate-90 transform transition-transform'} />}
 						</p>
@@ -231,7 +231,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 	);
 
 	return (
-		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 font-poppins dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
+		<div className=' mb-5 flex  justify-between overflow-x-auto rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-white px-4 pt-3 font-dmSans dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D]'>
 			{Object?.keys(tabCategories)
 				?.filter((category) => !['Treasury', 'Whitelist']?.includes(category))
 				?.map((category, index) => (
@@ -263,7 +263,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 															<span className='flex w-full items-center justify-between py-1'>
 																<div>
 																	{tabIcons[tabItem?.key?.toLowerCase()]}
-																	<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
+																	<span className={`ml-2 whitespace-nowrap ${dmSans.className} ${dmSans.variable}`}>{tabItem.label} </span>
 																</div>
 																{tabItem.posts > 0 && (
 																	<span
@@ -367,7 +367,7 @@ const ActivityFeedTabNavigation: React.FC<ITabNavigationProps> = ({ currentTab, 
 														<span className='flex w-full items-center justify-between'>
 															<div>
 																{tabIcons[tabItem.key.toLowerCase()]}
-																<span className={`ml-2 whitespace-nowrap ${poppins.className} ${poppins.variable}`}>{tabItem.label} </span>
+																<span className={`ml-2 whitespace-nowrap ${dmSans.className} ${dmSans.variable}`}>{tabItem.label} </span>
 															</div>
 															{tabItem.posts > 0 && (
 																<span

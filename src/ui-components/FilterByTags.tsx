@@ -9,7 +9,7 @@ import useGetFilterByFromUrl from '~src/hooks/useGetFilterbyFromUrl';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import { IPostTag } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
@@ -135,7 +135,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		<div className='min-h-[150px] w-[180px] '>
 			{!isSearch ? (
 				<div
-					className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${poppins.variable} ${poppins.className} dark:text-blue-dark-high`}
+					className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${dmSans.variable} ${dmSans.className} dark:text-blue-dark-high`}
 				>
 					{t('tags')}
 					{!isSearch && (
@@ -166,13 +166,13 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
 				<div className='flex-col'>
-					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className} dark:text-white`}>{t('suggestions')}</div>}
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${dmSans.variable} ${dmSans.className} dark:text-white`}>{t('suggestions')}</div>}
 
 					{trendingTags.slice(0, 5).map((tag, index) => (
 						<div
 							key={index}
 							onClick={() => handleSetTags(tag?.name)}
-							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable} dark:text-white`}
+							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${dmSans.className} ${dmSans.variable} dark:text-white`}
 						>
 							<TrendingIcon />
 							<span className='text-xs tracking-wide text-separatorDark dark:text-white'>{tag.name}</span>
@@ -181,7 +181,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				</div>
 			) : (
 				<Checkbox.Group
-					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable} dark:text-white`}
+					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${dmSans.className} ${dmSans.variable} dark:text-white`}
 					value={tags}
 				>
 					{displayTags.map((item, index) => (
@@ -199,7 +199,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			{filteredTags.length === 0 && searchInput.length > 0 ? (
 				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2 text-[50px] dark:text-white'>
 					<NoTagFoundIcon />
-					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} dark:text-white`}>{t('no_tags_found')}</span>
+					<span className={`text-[10px] tracking-wide text-navBlue ${dmSans.className} ${dmSans.variable} dark:text-white`}>{t('no_tags_found')}</span>
 				</div>
 			) : null}
 		</div>
@@ -218,7 +218,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		>
 			{!isSearch ? (
 				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
-					<span className='text-xs opacity-70 dark:text-[#96A4B6] dark:opacity-100'>{t('tags')}</span>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('tags')}</span>
 					<DropdownGreyIcon className='ml-1' />
 				</div>
 			) : (

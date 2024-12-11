@@ -4,6 +4,7 @@
 
 import { Divider } from 'antd';
 import BN from 'bn.js';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -22,7 +23,6 @@ import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
-import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
@@ -47,6 +47,8 @@ interface IAboutTrackCardProps {
 	className?: string;
 	trackName: string;
 }
+
+export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNetworks.POLKADOT, AllNetworks.ROCOCO];
 
 export const getDefaultTrackMetaData = () => {
 	return {
@@ -206,16 +208,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		setCurvesLoading(true);
 
 		const getData = async () => {
-			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+			const tracks = network != 'collectives' ? api?.consts?.referenda?.tracks.toJSON() : api?.consts?.fellowshipReferenda?.tracks?.toJSON();
 			if (tracks && Array.isArray(tracks)) {
-				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === trackNum);
-				if (track && Array.isArray(track) && track.length > 1) {
+				const track = tracks?.find((track) => track && Array.isArray(track) && track?.length >= 2 && track[0] === trackNum);
+				if (track && Array.isArray(track) && track?.length > 1) {
 					const trackInfo = track[1] as any;
 					const { decisionPeriod } = trackInfo;
 					const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 					let decisionPeriodHrs = 0;
 					if (strArr && Array.isArray(strArr)) {
-						strArr.forEach((str) => {
+						strArr?.forEach((str) => {
 							if (str.includes('h')) {
 								decisionPeriodHrs += parseInt(str.replace('h', ''));
 							} else if (str.includes('d')) {
@@ -359,7 +361,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{trackMetaData?.description}
 						{showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(false)}
 							>
 								Hide Track details
@@ -367,7 +369,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						)}
 						{!showDetails && (
 							<span
-								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs font-medium text-pink_primary`}
 								onClick={() => setShowDetails(true)}
 							>
 								Show Track details

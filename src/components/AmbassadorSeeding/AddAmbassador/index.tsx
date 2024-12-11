@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Modal } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useAmbassadorSeedingSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
 import PromoteCall from './PromoteCall';
@@ -56,6 +56,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
 		dispatch(ambassadorSeedingActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -68,7 +69,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 					dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
@@ -105,7 +106,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 			</Modal>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(className, poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(className, dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={open}
 				footer={false}
 				maskClosable={false}

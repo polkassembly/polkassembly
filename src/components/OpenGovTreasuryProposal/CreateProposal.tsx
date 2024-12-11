@@ -21,7 +21,7 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
@@ -62,8 +62,11 @@ interface Props {
 	allowedCommentors?: EAllowedCommentor;
 }
 export const getDiscussionIdFromLink = (discussion: string) => {
-	const splitedArr = discussion?.split('/');
-	return splitedArr[splitedArr.length - 1];
+	const splitedArr = discussion?.trim()?.split('/');
+	if (discussion.includes('post')) {
+		return splitedArr[splitedArr.length - 1];
+	}
+	return null;
 };
 
 const CreateProposal = ({
@@ -167,7 +170,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
-			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,
@@ -296,14 +299,14 @@ const CreateProposal = ({
 				{submitionDeposite.gt(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 						showIcon
 						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
 				<Alert
 					message={<span className='text-[13px] dark:text-blue-dark-high'>Preimage {isPreimage ? 'linked' : 'created'} successfully</span>}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${dmSans.variable} ${dmSans.className}`}
 					type='success'
 					showIcon
 				/>

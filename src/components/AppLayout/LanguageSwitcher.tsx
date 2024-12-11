@@ -7,7 +7,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 const languages = [
 	{
 		code: 'en',
@@ -48,7 +48,7 @@ function LanguageSwitcher() {
 						return {
 							key: language.code,
 							label: (
-								<div className={classNames(`${poppins.className} ${poppins.variable} flex w-[100px] flex-col pt-1 text-blue-light-high dark:text-blue-dark-high`)}>
+								<div className={classNames(`${dmSans.className} ${dmSans.variable} flex w-[100px] flex-col pt-1 text-blue-light-high dark:text-blue-dark-high`)}>
 									{language.name}
 								</div>
 							)

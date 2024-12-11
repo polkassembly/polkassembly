@@ -22,6 +22,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+import CuratorDashboardButton from '~src/components/CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesListingProps {
 	data?: {
@@ -65,8 +66,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const { t } = useTranslation('common');
 
 	const onPaginationChange = (page: number) => {
-		router.push({
-			pathname: router.pathname,
+		router?.push({
+			pathname: router?.pathname,
 			query: {
 				...router?.query,
 				page
@@ -77,9 +78,9 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const totalBountiesCount = data?.totalBountiesCount ?? 0;
 
 	useEffect(() => {
-		dispatch(setNetwork(props.network));
+		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.network]);
+	}, [props?.network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -93,7 +94,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 			<div>
 				<Link
 					className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
-					href='/bounty'
+					href='/bounty-dashboard'
 					aria-label='Back to Bounty Dashboard'
 				>
 					<div className='flex items-center'>
@@ -109,8 +110,9 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
 						{t('on_chain_bounties')}
 					</span>
-					<div className='flex items-center gap-2'>
+					<div className='flex gap-2'>
 						<BountyProposalActionButton className='hidden md:block' />
+						<CuratorDashboardButton />
 					</div>
 				</div>
 
@@ -120,7 +122,7 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination
 							pageSize={BOUNTIES_LISTING_LIMIT}
-							current={Number(router.query.page) || 1}
+							current={Number(router?.query?.page) || 1}
 							total={totalBountiesCount}
 							showSizeChanger={false}
 							hideOnSinglePage={true}

@@ -28,7 +28,7 @@ import NameLabel from '~src/ui-components/NameLabel';
 import TopicTag from '~src/ui-components/TopicTag';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Divider, Spin, Tooltip } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import ActivityFeedProgressinlisting from './ActivityFeedProgressinlisting';
 import { ProposalType } from '~src/global/proposalType';
@@ -320,9 +320,9 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 											<Tooltip
 												overlayClassName='max-w-none'
 												title={
-													<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`${t(
-														'deciding_ends_in'
-													)} ${remainingTime} ${decidingBlock !== 0 ? `#${decidingBlock}` : ''}`}</div>
+													<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`${t('deciding_ends_in')} ${remainingTime} ${
+														decidingBlock !== 0 ? `#${decidingBlock}` : ''
+													}`}</div>
 												}
 												color='#575255'
 											>
@@ -378,6 +378,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 				/>
 			)}
 
+			{/* Added Halloween Login Prompt */}
 			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={modalOpen}

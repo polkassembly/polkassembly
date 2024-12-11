@@ -55,6 +55,23 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+export const fetchOGTracker = async (id: string) => {
+	try {
+		const res = await fetch('https://api.ogtracker.io/proposals', {
+			body: JSON.stringify({
+				refNum: id
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			},
+			method: 'POST'
+		});
+		return await res.json();
+	} catch (error) {
+		return [];
+	}
+};
+
 export interface IReactions {
 	'👍': {
 		count: number;
@@ -101,7 +118,7 @@ export interface IPostResponse {
 	pips_voters?: IPIPsVoting[];
 	title?: string;
 	beneficiaries?: IBeneficiary[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	[key: string]: any;
 	preimageHash?: string;
 	dataSource: string;
@@ -117,6 +134,14 @@ interface IGetOnChainPostParams {
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
 	includeSubsquareComments?: boolean;
+}
+
+interface IOGData {
+	fdate: string;
+	id: string;
+	propLink: string;
+	summary: string;
+	refNum: string;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -395,6 +420,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
+						isExpertComment: data?.isisExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -415,6 +441,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: history,
 						id: data.id,
+						isExpertComment: data?.isExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,
 						post_type: postType,
@@ -521,7 +548,7 @@ export async function getComments(
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments = comments.concat(subsquareComments);
+	comments = comments.concat(subsquareComments as any[]);
 
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {
@@ -667,6 +694,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
+		let OGdata: IOGData[] = [];
+		if (postId) {
+			OGdata = await fetchOGTracker(postId.toString());
+		}
 		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
 			if (proposalType === ProposalType.TIPS) {
 				if (!strPostId) {
@@ -749,6 +780,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
+
 		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
@@ -1077,7 +1109,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
+		if (
+			[ProposalType.COUNCIL_MOTIONS, ProposalType.TECH_COMMITTEE_PROPOSALS].includes(proposalType as ProposalType) ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')
+		) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {
@@ -1134,6 +1169,27 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				data = undefined;
 			}
 
+			if (data && OGdata && OGdata?.length) {
+				const ogReport = {
+					created_at: OGdata?.[0]?.fdate,
+					id: OGdata?.[0]?.id,
+					isFromOgtracker: true,
+					progress_file: OGdata?.[0]?.propLink,
+					progress_summary: OGdata?.[0]?.summary,
+					refNum: OGdata?.[0]?.refNum
+				};
+
+				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+					ogReport.progress_file = '';
+				}
+
+				data.progress_report = data?.progress_report || [];
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				if (!isOgReportPresent) {
+					data?.progress_report?.push(ogReport);
+				}
+			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
@@ -1149,7 +1205,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
-				post.progress_report = { ...data.progress_report, created_at: data?.progress_report?.created_at?.toDate?.() };
+				post.progress_report = {
+					...data?.progress_report?.map((report: any) => {
+						return { ...report, created_at: report?.created_at?.toDate ? report?.created_at?.toDate() : report?.created_at };
+					}),
+					created_at: data?.progress_report?.created_at?.toDate?.()
+				};
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1209,7 +1270,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip' ? timeline.hash : timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
-					return { ...timeline, commentsCount, index: postId };
+					return { ...timeline, commentsCount };
 				});
 				const timelines: Array<any> = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map((timeline) => timeline.value);

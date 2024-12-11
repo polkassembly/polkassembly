@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
@@ -56,13 +56,13 @@ interface Props {
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
-			const num = res.toJSON();
+			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+			const num = res?.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
 					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
+						className={`text-bodyBlue  ${dmSans.variable}`}
 						key={0}
 						value={0}
 					>
@@ -70,7 +70,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue ${dmSans.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
@@ -81,7 +81,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue ${dmSans.variable}`}
 			key={0}
 			value={0}
 		>
@@ -89,7 +89,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue ${dmSans.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>

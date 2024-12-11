@@ -14,6 +14,7 @@ import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
+import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -41,8 +42,11 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	return (
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
-				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Dashboard</span>
-				<BountyProposalActionButton className='hidden md:block' />
+				<span className='font-pixelify text-3xl font-bold text-bodyBlue dark:text-blue-dark-high'>Dashboard</span>
+				<div className='flex gap-2'>
+					<BountyProposalActionButton className='hidden md:block' />
+					<CuratorDashboardButton />
+				</div>
 			</div>
 			<BountiesHeader />
 
@@ -56,7 +60,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt='bounty icon'
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>Hot Bounties</h2>
 							{extendedData?.count && (
 								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
 									({extendedData?.count})
@@ -143,7 +147,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								alt='bounty icon'
 								imgClassName='-mt-[18px]'
 							/>
-							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>Bounty Proposals</h2>
 						</div>
 					</div>
 
@@ -176,7 +180,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 										key={index}
 										className={chunkClass}
 									>
-										{chunk.map((post, proposalIndex) => (
+										{chunk?.map((post, proposalIndex) => (
 											<BountiesProposalsCard
 												key={proposalIndex}
 												activeData={post}

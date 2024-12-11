@@ -11,17 +11,17 @@ export default function useCurrentBlock() {
 	const { api, apiReady } = useContext(ApiContext);
 
 	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
+		if (!api || !apiReady) {
 			return;
 		}
 
 		let unsubscribe: () => void;
 
-		api.derive.chain
+		if (!api.derive || !api.derive.chain) {
+			return;
+		}
+
+		api?.derive?.chain
 			.bestNumber((number) => {
 				setCurrentBlock(number);
 			})

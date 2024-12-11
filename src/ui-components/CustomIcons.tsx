@@ -49,6 +49,7 @@ import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
 import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
 import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
+import BatchVotingSVGDark from '~assets/sidebar/batch-voting-dark.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
 import AuctionAdminSVG from '~assets/sidebar/auction.svg';
@@ -115,7 +116,9 @@ import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import profileSVG from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
+import proxyIcon from '~assets/icons/userDropdown/proxy-icon.svg';
 import logoutSVG from '~assets/icons/userDropdown/logout.svg';
+import AccountsSVG from '~assets/icons/userDropdown/accounts.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 // import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
@@ -155,6 +158,7 @@ import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
 import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
 import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
+import ProfileFollowSVG from '~assets/profile/profile-follows.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
 import MailFilled from '~assets/icons/email-notification.svg';
 import SlackIconSVG from '~assets/icons/slack.svg';
@@ -183,6 +187,7 @@ import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
 import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
 import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
+import SelectedCalendarIcon from '~assets/selected-icons/Calendar.svg';
 import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
 import SelectedRootIcon from '~assets/selected-icons/Root.svg';
 import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
@@ -193,6 +198,7 @@ import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
+import DetailsIconSVG from '~assets/icons/details-icons.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -248,6 +254,12 @@ export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
 		{...props}
 	/>
 );
+export const AccountsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AccountsSVG}
+		{...props}
+	/>
+);
 
 export const ProposalsIconListing = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -280,6 +292,12 @@ export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (
 export const IconSettings = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={settingsIcon}
+		{...props}
+	/>
+);
+export const ProxyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={proxyIcon}
 		{...props}
 	/>
 );
@@ -511,6 +529,12 @@ export const CalendarIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BatchVotingSVG}
+		{...props}
+	/>
+);
+export const BatchVotingIconDark = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BatchVotingSVGDark}
 		{...props}
 	/>
 );
@@ -1197,6 +1221,12 @@ export const ProfileReactionsIcon = (props: Partial<CustomIconComponentProps>) =
 		{...props}
 	/>
 );
+export const ProfileFollowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileFollowSVG}
+		{...props}
+	/>
+);
 
 export const OnChainIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1355,6 +1385,13 @@ export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) =>
 	/>
 );
 
+export const SelectedCalendar = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedCalendarIcon}
+		{...props}
+	/>
+);
+
 export const SelectedGovernance = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={SelectedGovernanceIcon}
@@ -1442,6 +1479,13 @@ export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
 export const AnalyticsSVGIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AnalyticsSVG}
+		{...props}
+	/>
+);
+
+export const DetailsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DetailsIconSVG}
 		{...props}
 	/>
 );

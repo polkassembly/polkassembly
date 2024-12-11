@@ -17,7 +17,7 @@ import NavHeader from './NavHeader';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -50,7 +50,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { is_sidebar_collapsed } = useGlobalSelector();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, addresses } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	// const [is_sidebar_collapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
@@ -71,6 +71,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const hideFooter = router?.pathname?.includes('/batch-voting') && isMobile;
 
 	const headerRef = useRef<HTMLDivElement>(null); // Ref for header
 
@@ -84,6 +85,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+
 	useEffect(() => {
 		const handleResize = () => {
 			const isMobile = window.innerWidth < 1024;
@@ -145,20 +147,40 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	const handleVerifiedUserProposal = async () => {
+		const promiseArr: any[] = [];
+		if (!addresses?.length) return;
+
+		addresses?.map((address) => {
+			promiseArr?.push(getIdentityInformation({ address, api: peopleChainApi ?? api, network }));
+		});
+
+		try {
+			const resolve = await Promise.all(promiseArr);
+			const isVerified = !!resolve.find((info: any) => {
+				return info?.isVerified;
+			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified));
+			const displayNameInfo = resolve?.find((info: any) => {
+				return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
+			});
+			setMainDisplay(displayNameInfo?.displayParent || displayNameInfo?.display || displayNameInfo?.nickname || '');
+			setIsGood(isVerified);
+			setIsIdentitySet(
+				!!resolve.find((info: any) => {
+					return !!(info?.displayParent || info?.display || info?.nickname || '')?.length;
+				})
+			);
+			setIsIdentityUnverified(!isVerified);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		(async () => {
-			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
-				address: loginAddress,
-				api: peopleChainApi ?? api,
-				network: network
-			});
-			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
-			setMainDisplay(displayParent || display || nickname);
-			setIsGood(isGood);
-			setIsIdentitySet(isIdentitySet);
-			setIsIdentityUnverified(!isVerified);
-		})();
+
+		handleVerifiedUserProposal();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
@@ -195,6 +217,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								isIdentitySet={isIdentitySet}
 								isIdentityUnverified={isIdentityUnverified}
 								setLoginOpen={setLoginOpen}
+								setIdentityOpen={setOpen}
 							/>
 						)}
 						{!isMobile && (
@@ -212,6 +235,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									isIdentitySet={isIdentitySet}
 									isIdentityUnverified={isIdentityUnverified}
 									setLoginOpen={setLoginOpen}
+									setIdentityOpen={setOpen}
 								/>
 								<div className={`fixed  ${is_sidebar_collapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 									{is_sidebar_collapsed ? (
@@ -266,10 +290,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 														<Component {...pageProps} />
 													</Content>
 												</div>
-												<Footer
-													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-													theme={theme as any}
-												/>
+												{!hideFooter && (
+													<Footer
+														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+														theme={theme as any}
+													/>
+												)}
 											</div>
 										) : (
 											<div className='relative mx-auto  w-full'>
@@ -279,7 +305,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													<Footer theme={theme as any} />
+													{!hideFooter && <Footer theme={theme as any} />}
 												</div>
 												{sidedrawer && (
 													<div
@@ -296,7 +322,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									</div>
 								</Layout>
 							) : (
-								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
+								<Layout className={`min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background ${hideFooter ? 'h-[100vh]' : ''}`}>
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div className={`${!is_sidebar_collapsed && ''}`}>
@@ -311,10 +337,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													</Content>
 												</div>
 
-												<Footer
-													className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
-													theme={theme as any}
-												/>
+												{!hideFooter && (
+													<Footer
+														className={` ${!is_sidebar_collapsed && 'pl-[210px] pr-20'} `}
+														theme={theme as any}
+													/>
+												)}
 											</div>
 										) : (
 											<div
@@ -329,7 +357,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															<Component {...pageProps} />
 														</Content>
 													</div>
-													<Footer theme={theme as any} />
+													{!hideFooter && <Footer theme={theme as any} />}
 												</div>
 												{sidedrawer && (
 													<div
@@ -378,7 +406,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				footer={false}
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${dmSans.className} ${dmSans.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
@@ -514,7 +542,7 @@ export default styled(AppLayout)`
 	}
 	.sidebar .ant-menu-item-selected span {
 		color: var(--pink_primary) !important;
-		font-weight: 500;
+		font-weight: 600 !important;
 	}
 
 	.sidebar .ant-menu-item-selected .opacity {
@@ -645,8 +673,9 @@ export default styled(AppLayout)`
 		overflow: hidden; /* Ensures no scrollbars for other browsers */
 	}
 
-	.width-content{
-	@media (max-width: 1532px and min-width: 1700px) {
-		margin-left: 0px;
+	.width-content {
+		@media (max-width: 1532px) and (min-width: 1700px) {
+			margin-left: 0px;
+		}
 	}
 `;

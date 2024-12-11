@@ -5,7 +5,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
@@ -61,7 +61,7 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 									<Link href={`/referenda/${post.post_id}`}>
 										<GovernanceCard
 											assetId={post?.assetId || null}
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${dmSans.variable} ${dmSans.className}`}
 											postReactionCount={post.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { Button, Modal, Slider } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import { ESentiment } from '~src/types';
@@ -61,7 +61,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 		<Modal
 			open={openModal}
 			wrapClassName={`${className}  sentiment_${sentiment} dark:bg-modalOverlayDark`}
-			className={`${poppins.variable} ${poppins.className} padding center-aligned w-[433px] max-w-full shrink-0 justify-center max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} padding center-aligned w-[433px] max-w-full shrink-0 justify-center max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {
 				setModalOpen(false);
 				setIsComment(true);

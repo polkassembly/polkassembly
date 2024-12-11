@@ -45,7 +45,6 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
-
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -139,13 +138,12 @@ const Post: FC<IPostProps> = (props) => {
 
 	const handleTabChange = (key: string) => {
 		setSelectedTabKey(key);
-		router.push(
+		router.replace(
 			{
 				pathname: router.pathname,
 				query: { ...router.query, tab: key }
-			},
-			undefined,
-			{ shallow: true }
+			}
+			// { shallow: true }
 		);
 	};
 
@@ -245,15 +243,11 @@ const Post: FC<IPostProps> = (props) => {
 	const productData = useCallback(async () => {
 		try {
 			if (networkModified) {
-				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
-					headers: {
-						Accept: 'application/vnd.github.v3+json',
-						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28'
-					}
-				});
-				if (response.ok) {
-					const data = await response.json();
+				// api/v1/posts/githubAction
+				const { data = null } = (await nextApiClientFetch(`api/v1/posts/githubAction?network=${networkModified}&postType=${postType}&postTypeInfo=${postTypeInfo}`)) as {
+					data: IDataType[];
+				};
+				if (data) {
 					setAuditData(data);
 					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
 					setTotalAuditCount(count);
@@ -355,6 +349,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
+						curator={post?.curator || ''}
 					/>
 				</div>
 
@@ -490,7 +485,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{post?.progress_report?.progress_file && <PostProgressReport />}
+					{post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

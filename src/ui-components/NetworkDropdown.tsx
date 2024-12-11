@@ -114,7 +114,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			overlayClassName='z-[1070]'
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
-			className='navbar-dropdowns'
+			className='navbar-dropdowns font-bold'
 			trigger={[isSearch ? 'hover' : 'click']}
 			dropdownRender={() => {
 				return (
@@ -220,7 +220,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 							alt='Logo'
 						/>
-						<span className='text-xs font-semibold capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high'>{network}</span>
+						<span className='text-sm font-semibold capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high'>{network}</span>
 					</div>
 					<span className='text-lightBlue dark:text-blue-dark-medium'>
 						<ArrowDownIcon />
@@ -242,7 +242,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 						src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 						alt='Logo'
 					/>
-					<span className='hidden text-xs font-semibold capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high lg:ml-[9.25px] lg:mr-[13.35px] lg:flex lg:items-center lg:justify-center'>
+					<span className='hidden text-sm font-medium capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high lg:ml-[9.25px] lg:mr-[13.35px] lg:flex lg:items-center lg:justify-center'>
 						{network}
 					</span>
 					<span className='hidden text-lightBlue dark:text-blue-dark-medium lg:flex lg:items-center lg:justify-center'>

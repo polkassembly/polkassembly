@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import copyToClipboard from '~src/util/copyToClipboard';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Address from './Address';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
@@ -35,7 +35,9 @@ export const TippingUnavailableNetworks = [
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM,
-	AllNetworks.EQUILIBRIUM
+	AllNetworks.EQUILIBRIUM,
+	AllNetworks.LAOSSIGMA,
+	AllNetworks.MYTHOS
 ];
 
 interface Props {
@@ -113,7 +115,7 @@ const QuickView = ({
 
 	return (
 		<div
-			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
+			className={`${dmSans.variable} ${dmSans.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
 			onClick={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
@@ -133,7 +135,7 @@ const QuickView = ({
 						{isW3FDelegate && (
 							<Tooltip
 								title='Web3 foundation delegate'
-								className={classNames(poppins.className, poppins.variable)}
+								className={classNames(dmSans.className, dmSans.variable)}
 							>
 								<Image
 									src={'/assets/profile/w3f.svg'}

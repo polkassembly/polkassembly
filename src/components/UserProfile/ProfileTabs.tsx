@@ -12,13 +12,15 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IActivitiesCounts, IStats } from '.';
-import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, MyActivityIcon, ProfileFollowIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from '~src/types';
+import ProfileFollows from './ProfileFollows';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -111,7 +113,8 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<ClipboardIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
-					Posts<span className='ml-[2px]'>({totals?.posts})</span>
+					Posts
+					<span className='ml-[2px]'>({totals?.posts || userPosts?.gov1_total})</span>
 				</div>
 			)
 		},
@@ -166,7 +169,21 @@ const ProfileTabs = ({
 			)
 		}
 	];
-	if (!votesHistoryUnavailableNetworks.includes(network)) {
+
+	if (userId === userProfile.user_id) {
+		tabItems.push({
+			children: <ProfileFollows className='' />,
+			key: 'Connections',
+			label: (
+				<div className='flex items-center'>
+					<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Connections
+					{/* <span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span> */}
+				</div>
+			)
+		});
+	}
+	if (!votesHistoryUnavailableNetworks.includes(network) && !!chainProperties[network]?.subsquidUrl) {
 		tabItems.splice(1, 0, {
 			children: (
 				<VotesHistory

@@ -46,6 +46,7 @@ interface Props {
 	setOpenModal: (pre: boolean) => void;
 	setIsPureProxyCreated: (pre: boolean) => void;
 	setOpenProxySuccessModal: (pre: boolean) => void;
+	setProxiedAddress: (pre: string) => void;
 	setAddress: (pre: string) => void;
 	address: string;
 	className: string;
@@ -53,7 +54,7 @@ interface Props {
 
 const ZERO_BN = new BN(0);
 
-const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, setOpenModal, setAddress, address, setIsPureProxyCreated }: Props) => {
+const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, setOpenModal, setAddress, address, setIsPureProxyCreated, setProxiedAddress }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -70,6 +71,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
+	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
 
@@ -199,8 +201,22 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		if (!api || !apiReady) {
 			return;
 		}
+
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Transaction' });
 		const values = form.getFieldsValue();
+
+		const hasValidationErrors =
+			(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
+			getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+			availableBalance.lt(gasFee.add(baseDepositValue));
+
+		if (hasValidationErrors) {
+			setShowError(true);
+			return;
+		}
+
+		setShowError(false);
+
 		if (!values.proxyType) {
 			return;
 		}
@@ -209,10 +225,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		if (values.createPureProxy) {
 			txn = api?.tx?.proxy?.createPure(values.proxyType as any, 0, 0);
 			setIsPureProxyCreated(true);
+			setProxiedAddress('');
 		}
 		if (values.proxyAddress && !values.createPureProxy) {
 			txn = api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType as any, 0);
 			setIsPureProxyCreated(false);
+			setProxiedAddress(values.proxyAddress);
 		}
 		if (!txn) {
 			console.log('NO TXN');
@@ -418,7 +436,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									onChange={(value) => {
 										form.setFieldsValue({ proxyAddress: value });
 									}}
-									className='h-10 rounded-[6px]'
+									className='h-10 rounded-[6px] text-blue-light-high dark:text-blue-dark-high'
 									disabled={form.getFieldValue('createPureProxy')}
 									popupClassName='dark:bg-section-dark-garyBackground'
 									filterOption={(inputValue, option) => option?.value.toLowerCase().includes(inputValue.toLowerCase()) ?? false}
@@ -618,18 +636,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							/>
 						)}
 
-						{(loadingStatus.isLoading ||
-							form.getFieldsError().some((field) => field.errors.length > 0) ||
-							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
-							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))) && (
+						{showError && (
 							<Alert
 								type='error'
 								className='mt-4 rounded-[4px] px-4 py-2 text-bodyBlue'
 								showIcon
 								description={
 									<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>
-										{form.getFieldsError().some((field) => field.errors.length > 0) && <span>There are validation errors in the form.</span>}
 										{!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress') && <span>Provide a Proxy address or enable Create Pure Proxy.</span>}
 										{getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) && (
 											<span>The proxy address must be different from the selected account address.</span>

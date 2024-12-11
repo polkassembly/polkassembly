@@ -25,10 +25,11 @@ interface Props {
 	isPureProxyCreated: boolean;
 	setOpenModal: (pre: boolean) => void;
 	className: string;
+	proxiedAddress: string;
 	address: string;
 }
 
-const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, isPureProxyCreated }: Props) => {
+const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, isPureProxyCreated, proxiedAddress }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [pureProxyAddress, setPureProxyAddress] = useState<string | null>(null);
@@ -81,7 +82,10 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 			zIndex={1008}
 			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
 			className={`${className} ${dmSans.className} ${dmSans.variable} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			onCancel={() => setOpenModal(false)}
+			onCancel={() => {
+				setOpenModal(false);
+				window.location.reload();
+			}}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${error && 'pb-10'} pb-2`}>
@@ -137,6 +141,27 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 											</span>
 										)
 									)}
+								</div>
+							)}
+							{proxiedAddress && (
+								<div className='flex items-center gap-2'>
+									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
+									<span
+										onClick={() => {
+											handleCopylink(proxiedAddress);
+										}}
+										className='flex items-center gap-1'
+									>
+										<Address
+											displayInline
+											iconSize={18}
+											isTruncateUsername={false}
+											address={proxiedAddress}
+											destroyTooltipOnHide
+											disableTooltip
+										/>
+										<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+									</span>
 								</div>
 							)}
 						</div>

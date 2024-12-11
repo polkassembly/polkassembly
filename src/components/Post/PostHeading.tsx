@@ -338,7 +338,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</>
 						)}
-						{summary ? (
+						{content?.length > 200 && summary ? (
 							<>
 								<Divider
 									className='ml-1 mr-2 xs:mt-2 xs:inline-block md:mt-0 md:hidden'

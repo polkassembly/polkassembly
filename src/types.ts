@@ -998,7 +998,7 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
-	identityInfo?: { display: string; leagal: string } | null;
+	identityInfo?: IIdentityInfo | null;
 }
 
 export enum EDelegationAddressFilters {
@@ -1021,6 +1021,42 @@ export interface ICommentsSummary {
 	summary_neutral: string;
 }
 
+interface IProxyAccount {
+	account_display: {
+		address: string;
+	};
+	proxy_type: string;
+}
+
+interface IProxy {
+	proxy_account: IProxyAccount[];
+	real_account: IProxyAccount[];
+}
+
+interface IMultisigAccount {
+	address: string;
+}
+
+interface IMultiAccountMember {
+	address: string;
+}
+
+interface IMultisig {
+	multi_account: IMultisigAccount[];
+	multi_account_member: IMultiAccountMember[];
+	threshold: number;
+}
+
+export interface IAccountData {
+	address: string;
+	balance: string;
+	balance_lock: string;
+	lock: string;
+	multisig: IMultisig;
+	proxy: IProxy;
+	nft_amount: string;
+	nonce: number;
+}
 export interface INetworkWalletErr {
 	message: string;
 	description: string;
@@ -1101,6 +1137,12 @@ export enum EExpertReqStatus {
 	REJECTED = 'rejected',
 	PENDING = 'pending'
 }
+
+export enum LinkProxyType {
+	MULTISIG = 'MULTISIG',
+	PROXY = 'PROXY',
+	PUREPROXY = 'PUREPROXY'
+}
 export interface IIdentityInfo {
 	display: string;
 	legal: string;
@@ -1119,4 +1161,55 @@ export interface IIdentityInfo {
 	verifiedByPolkassembly: boolean;
 	parentProxyTitle: string | null;
 	parentProxyAddress: string;
+}
+
+export interface IMessage {
+	id: string;
+	content: string;
+	created_at: Date;
+	updated_at: Date;
+	senderAddress: string;
+	receiverAddress: string;
+	senderImage?: string;
+	senderUsername?: string;
+	viewed_by: string[];
+}
+
+export enum EChatRequestStatus {
+	ACCEPTED = 'accepted',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
+export enum EChatFilter {
+	ALL = 'all',
+	UNREAD = 'unread',
+	READ = 'read'
+}
+
+export enum EChatTab {
+	MESSAGES = 'messages',
+	REQUESTS = 'requests'
+}
+
+export interface IChatRecipient {
+	username?: string;
+	address: string;
+	image?: string;
+}
+
+export interface IChat {
+	chatId: string;
+	participants: string[];
+	chatInitiatedBy: string;
+	created_at: Date;
+	updated_at: Date;
+	requestStatus: EChatRequestStatus;
+	latestMessage: IMessage;
+	recipientProfile: IChatRecipient | null;
+}
+
+export interface IChatsResponse {
+	messages: IChat[];
+	requests: IChat[];
 }

@@ -1213,3 +1213,10 @@ export interface IChatsResponse {
 	messages: IChat[];
 	requests: IChat[];
 }
+
+export enum EUserCreatedBountiesStatuses {
+	ACTIVE = 'active',
+	CLOSED = 'closed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled'
+}

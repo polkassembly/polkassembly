@@ -167,6 +167,10 @@ export interface User {
 	two_factor_auth?: IUser2FADetails;
 	roles?: Role[];
 	profile_score: number;
+	addresses?: string[];
+	identityInfo?: any;
+	followers_count?: { [key: string]: number };
+	followings_count?: { [key: string]: number };
 }
 
 export interface Roles {

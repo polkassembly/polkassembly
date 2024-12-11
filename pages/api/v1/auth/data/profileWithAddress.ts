@@ -49,12 +49,11 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 			throw apiErrorWithStatusCode(`No user found with the address '${address}'.`, 404);
 		}
 		const userData = userDoc.data() as User;
-		const profile = userData.profile as ProfileDetails;
 		const data: IGetProfileWithAddressResponse = {
 			created_at: dayjs((userData.created_at as any)?.toDate?.() || userData.created_at).toDate(),
 			custom_username: userData.custom_username || false,
 			profile: {
-				...profile,
+				...userData?.profile,
 				achievement_badges: userData.profile?.achievement_badges || []
 			},
 			user_id: userData?.id || null,

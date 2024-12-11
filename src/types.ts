@@ -998,13 +998,32 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
-	identityInfo?: IIdentityInfo | null;
+	identityInfo?: { display: string; leagal: string; isVerified?: boolean; judgements?: any; parentProxyAddress: string } | null;
 }
 
 export enum EDelegationAddressFilters {
 	DELEGATED_VOTES = 'delegatedBalance',
 	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
 	VOTED_PROPOSALS = 'votedProposalsCount'
+}
+
+export enum EMembersSortFilters {
+	ALPHABETICAL = 'Alphabetic',
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	SINGLE_SIGNATORY = 'SingleSignatory',
+	MULTI_SIGNATORY = 'MultiSignatory'
+}
+
+export enum EExpertsSortFilters {
+	FOLLOWERS = 'Followers',
+	FOLLOWINGS = 'Followings',
+	REVIEWS_COUNT = 'ReviewsCount'
+}
+
+export enum ECuratorsSortFilters {
+	ACTIVE_BOUNTIES = 'ActiveBounties',
+	CHILD_BOUNTIES_DISBURSED = 'ChildBountiesDisbursed'
 }
 
 export enum EDelegationSourceFilters {

@@ -20,11 +20,11 @@ import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
-// import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
+import { useTranslation } from 'next-i18next';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
@@ -58,6 +58,7 @@ const StyledCard = styled(Card)`
 const MonthlySpend = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 
 	const dispatch = useDispatch();
 	const blockTime: number = chainProperties?.[network]?.blockTime;
@@ -114,8 +115,6 @@ const MonthlySpend = () => {
 					const spendPeriod = spendPeriodConst.toNumber();
 					const totalSpendPeriod: number = blockToDays(spendPeriod, network, blockTime);
 					const goneBlocks = currentBlock.toNumber() % spendPeriod;
-					// const spendPeriodElapsed: number = blockToDays(goneBlocks, network, blockTime);
-					// const spendPeriodRemaining: number = totalSpendPeriod - spendPeriodElapsed;
 					const { time } = blockToTime(spendPeriod - goneBlocks, network, blockTime);
 					const { d, h, m } = getDaysTimeObj(time);
 
@@ -123,7 +122,6 @@ const MonthlySpend = () => {
 
 					setSpendPeriod({
 						isLoading: false,
-						// spendPeriodElapsed/totalSpendPeriod for opposite
 						percentage: parseFloat(percentage),
 						value: {
 							days: d,
@@ -187,8 +185,6 @@ const MonthlySpend = () => {
 					});
 				})
 				.finally(() => {
-					// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
 					let valueUSD = '';
 					let value = '';
 					{
@@ -197,7 +193,6 @@ const MonthlySpend = () => {
 								treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
 
 							if (burn) {
-								// replace spaces returned in string by format function
 								const nextBurnValueUSD = parseFloat(
 									formatBnBalance(
 										burn.toString(),
@@ -283,15 +278,11 @@ const MonthlySpend = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
-	// set availableUSD and nextBurnUSD whenever they or current price of the token changes
-
-	// fetch current price of the token
 	useEffect(() => {
 		if (!network) return;
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
 
-	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
 		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
@@ -348,9 +339,10 @@ const MonthlySpend = () => {
 			cancel = true;
 		};
 	}, [currentTokenPrice, network]);
+
 	return (
 		<StyledCard className='mx-auto h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<h2 className='text-base font-semibold sm:text-xl'>Monthly DOT Spent</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>{t('monthly_spend')}</h2>
 			{isAssetHubSupportedNetwork(network) ? (
 				<div className='mt-[64px]'>
 					<LatestTreasuryOverview
@@ -367,10 +359,10 @@ const MonthlySpend = () => {
 				<div className='flex flex-col items-center justify-center'>
 					<ImageIcon
 						src='/assets/icons/no-graph.gif'
-						alt='empty-state'
+						alt={t('empty_state')}
 						imgClassName='h-[165px] w-[241px]'
 					/>
-					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>No Graph Available</p>
+					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{t('no_graph_available')}</p>
 				</div>
 			)}
 		</StyledCard>

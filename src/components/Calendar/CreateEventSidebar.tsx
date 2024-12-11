@@ -18,6 +18,7 @@ import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -28,6 +29,7 @@ interface Props {
 }
 
 const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent, id, open }: Props) => {
+	const { t } = useTranslation('common');
 	const [eventTitle, setEventTitle] = useState<string>('');
 	const [eventDescription, setEventDescription] = useState<string>('');
 	const [eventType, setEventType] = useState<string>('online');
@@ -141,13 +143,13 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 			closeSidebar={() => setSidebarCreateEvent(false)}
 		>
 			<div className='dashboard-heading dark:font-medium dark:text-white'>
-				<h1>Create Event</h1>
+				<h1>{t('create_event')}</h1>
 			</div>
 
 			<div className='create-event-form'>
 				<Form>
 					<div>
-						<label className='input-label dark:text-blue-dark-medium'>Event Title</label>
+						<label className='input-label dark:text-blue-dark-medium'>{t('event_title')}</label>
 						<Form.Item validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}>
 							<Input
 								type='text'
@@ -160,7 +162,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					</div>
 
 					<div>
-						<label className='input-label'>Description</label>
+						<label className='input-label'>{t('description')}</label>
 						<Form.Item validateStatus={errorsFound.includes('eventDescription') ? 'error' : ''}>
 							<Input
 								type='text'
@@ -172,7 +174,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</Form.Item>
 					</div>
 
-					<label className='input-label mr-3'>Event Type</label>
+					<label className='input-label mr-3'>{t('event_type')}</label>
 					<Radio.Group
 						onChange={onEventTypeRadioToggle}
 						value={eventType}
@@ -184,7 +186,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							disabled={loading}
 							className='dark:text-white'
 						>
-							Online
+							{t('online')}
 						</Radio>
 						<Radio
 							value='offline'
@@ -192,13 +194,13 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							disabled={loading}
 							className='dark:text-white'
 						>
-							Offline
+							{t('offline')}
 						</Radio>
 					</Radio.Group>
 
 					<div className='d-flex date-input-row'>
 						<div className='start-date-div'>
-							<label className='input-label'>Start Date</label>
+							<label className='input-label'>{t('start_date')}</label>
 							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''}>
 								<DatePicker
 									popupClassName='z-[9999]'
@@ -211,7 +213,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 
 						<div>
-							<label className='input-label'>End Date</label>
+							<label className='input-label'>{t('end_date')}</label>
 							<Form.Item validateStatus={errorsFound.includes('eventEndDateTime') ? 'error' : ''}>
 								<DatePicker
 									popupClassName='z-[9999]'
@@ -230,7 +232,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 
 					{eventType == 'online' ? (
 						<div>
-							<label className='input-label'>Joining Link</label>
+							<label className='input-label'>{t('joining_link')}</label>
 							<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
 								<Input
 									type='text'
@@ -243,7 +245,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 					) : (
 						<div>
-							<label className='input-label'>Location</label>
+							<label className='input-label'>{t('location')}</label>
 							<Form.Item validateStatus={errorsFound.includes('eventLocation') ? 'error' : ''}>
 								<Input
 									type='text'
@@ -258,14 +260,14 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 
 					<div className='form-actions flex justify-end gap-x-2'>
 						<CustomButton
-							text='Cancel'
+							text={t('cancel')}
 							variant='default'
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
 							buttonsize='sm'
 						/>
 						<CustomButton
-							text='Create Event'
+							text={t('create_event')}
 							variant='primary'
 							onClick={handleCreateEvent}
 							loading={loading}

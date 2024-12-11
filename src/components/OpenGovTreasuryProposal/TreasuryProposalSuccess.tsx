@@ -24,6 +24,7 @@ import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -75,6 +76,7 @@ const TreasuryProposalSuccessPopup = ({
 	inputAmountValue
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -112,7 +114,7 @@ const TreasuryProposalSuccessPopup = ({
 						height={40}
 						className='w-full'
 						variant='primary'
-						text='View Proposal'
+						text={t('view_proposal')}
 					/>
 				</Link>
 			}
@@ -126,12 +128,12 @@ const TreasuryProposalSuccessPopup = ({
 				/>
 				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					{isCancelReferendaForm
-						? 'Referendum Canceled Successfully '
+						? t('referendum_canceled_successfully')
 						: isKillReferendumForm
-						? 'Referendum Killed successfully'
+						? t('referendum_killed_successfully')
 						: isCreateReferendumForm
-						? 'Referendum created successfully'
-						: 'Proposal created successfully for'}
+						? t('referendum_created_successfully')
+						: t('proposal_created_successfully_for')}
 				</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
@@ -153,7 +155,7 @@ const TreasuryProposalSuccessPopup = ({
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
-								<span className='w-[172px]'>Proposer Address:</span>
+								<span className='w-[172px]'>{t('proposer_address')}:</span>
 								<Address
 									addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
 									address={proposerAddress}
@@ -162,7 +164,7 @@ const TreasuryProposalSuccessPopup = ({
 								/>
 							</span>
 							<span className='flex'>
-								<span className='w-[172px]'>Beneficiary Address:</span>
+								<span className='w-[172px]'>{t('beneficiary_address')}:</span>
 								<div className='flex flex-col gap-2'>
 									{beneficiaryAddresses?.map((beneficiary, index) => (
 										<Beneficiary
@@ -177,14 +179,14 @@ const TreasuryProposalSuccessPopup = ({
 							</span>
 
 							<span className='flex'>
-								<span className='w-[172px]'>Track:</span>
+								<span className='w-[172px]'>{t('track')}:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{selectedTrack}
 									<span className='ml-1 text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
 								</span>
 							</span>
 							<span className='flex'>
-								<span className='w-[172px]'>Funding Amount:</span>
+								<span className='w-[172px]'>{t('funding_amount')}:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{fundingAmount ? (
 										generalIndex ? (
@@ -193,7 +195,7 @@ const TreasuryProposalSuccessPopup = ({
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-															<span>Current value:</span>
+															<span>{t('current_value')}:</span>
 															<span>
 																{getUsdValueFromAsset({
 																	currentTokenPrice: currentTokenPrice || '0',
@@ -217,7 +219,7 @@ const TreasuryProposalSuccessPopup = ({
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-															<span>Current value:</span>
+															<span>{t('current_value')}:</span>
 															<span>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD </span>
 														</div>
 													}
@@ -229,11 +231,11 @@ const TreasuryProposalSuccessPopup = ({
 								</span>
 							</span>
 							<span className='flex items-center'>
-								<span className='w-[172px]'>Preimage Hash:</span>
+								<span className='w-[172px]'>{t('preimage_hash')}:</span>
 								<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							</span>
 							<span className='flex'>
-								<span className='w-[172px]'>Preimage Length:</span>
+								<span className='w-[172px]'>{t('preimage_length')}:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{preimageLength}</span>
 							</span>
 						</div>
@@ -245,8 +247,8 @@ const TreasuryProposalSuccessPopup = ({
 					type='info'
 					message={
 						<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being
-							timed out.
+							{t('place_a_decision_deposit_in')} {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))}{' '}
+							{t('to_prevent_your_proposal_from_being_timed_out')}
 						</span>
 					}
 					description={
@@ -256,7 +258,7 @@ const TreasuryProposalSuccessPopup = ({
 							target='_blank'
 							rel='noopener noreferrer'
 						>
-							Pay Decision Deposit
+							{t('pay_decision_deposit')}
 						</Link>
 					}
 				/>

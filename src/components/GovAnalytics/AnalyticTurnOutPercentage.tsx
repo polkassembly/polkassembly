@@ -10,6 +10,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { AnalyticsTrackInfo } from './types';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -51,6 +52,7 @@ const AnalyticTurnOutPercentage = () => {
 	const [trackInfo, setTrackInfo] = useState<AnalyticsTrackInfo>();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const getVoteData = async () => {
 		setIsLoading(true);
@@ -95,7 +97,7 @@ const AnalyticTurnOutPercentage = () => {
 		: [];
 	return (
 		<StyledCard className='mx-auto max-h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>{t('average_turnout_percentage')}</h2>
 			<Spin spinning={isLoading}>
 				<div
 					className='flex justify-start'

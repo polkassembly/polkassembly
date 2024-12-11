@@ -26,6 +26,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 const NETWORK = getNetwork();
 
@@ -49,6 +50,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
 	const router = useRouter();
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 
 	const connect = async () => {
 		setIsAccountLoading(true);
@@ -119,7 +121,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
 		if (chainId !== chainProperties[NETWORK].chainId) {
-			setError(`Please login using the ${NETWORK} network`);
+			setError(t('please_login_network', { network: NETWORK }));
 			setAccountsNotFound(true);
 			setIsAccountLoading(false);
 			return;
@@ -180,14 +182,14 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
 			if (error || !data) {
-				setError(error || 'Something went wrong');
+				setError(error || t('something_went_wrong'));
 				setLoading(false);
 				return;
 			}
 
 			signMessage = data?.signMessage;
 			if (!signMessage) {
-				setError('Challenge message not found');
+				setError(t('challenge_message_not_found'));
 				setLoading(false);
 				return;
 			}
@@ -229,8 +231,8 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 						handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 
 						setModal({
-							content: 'Add an email in settings if you want to be able to recover your account!',
-							title: 'Add optional email'
+							content: t('add_email_settings'),
+							title: t('add_optional_email')
 						});
 						if (isModal) {
 							setSignupOpen && setSignupOpen(false);
@@ -238,7 +240,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 						}
 						router.back();
 					} else {
-						setError(confirmError || 'WalletConnect signup failed');
+						setError(confirmError || t('walletconnect_signup_failed'));
 					}
 				} catch (error) {
 					setError(error);
@@ -257,16 +259,16 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 
 	return (
 		<div className={className}>
-			<h3>Sign-up with WalletConnect</h3>
+			<h3>{t('sign_up_walletconnect')}</h3>
 			{accountsNotFound ? (
 				<div className='card'>
-					<div className='text-muted'>You need at least one account via WalletConnect to login.</div>
-					<div className='text-muted'>Please reload this page after adding accounts.</div>
+					<div className='text-muted'>{t('need_at_least_one_account_walletconnect')}</div>
+					<div className='text-muted'>{t('please_reload_after_adding_accounts')}</div>
 				</div>
 			) : null}
 			{isAccountLoading ? (
 				<div className='loader-cont'>
-					<Loader text={'Requesting accounts'} />
+					<Loader text={t('requesting_accounts')} />
 				</div>
 			) : (
 				accounts.length > 0 && (
@@ -274,7 +276,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 						<div>
 							<AccountSelectionForm
 								isTruncateUsername={false}
-								title='Choose linked account'
+								title={t('choose_linked_account')}
 								accounts={accounts}
 								address={address}
 								onAccountChange={onAccountChange}
@@ -290,17 +292,17 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 									value='yes'
 									type='checkbox'
 								/>
-								I have read and agree to the terms of the <Link href='/terms-and-conditions'>Polkassembly end user agreement</Link>.
+								{t('agree_terms')} <Link href='/terms-and-conditions'>{t('polkassembly_end_user_agreement')}</Link>.
 							</label>
-							{error && <div className={'errorText'}>Please agree to the terms of the Polkassembly end user agreement.</div>}
+							{error && <div className={'errorText'}>{t('agree_terms_error')}</div>}
 						</div>
 						<div className='text-muted'>
-							To see how we use your personal data please see our <Link href='/privacy'>privacy notice</Link>.
+							{t('personal_data_usage')} <Link href='/privacy'>{t('privacy_notice')}</Link>.
 						</div>
 						<div className={'mainButtonContainer'}>
 							<CustomButton
 								variant='primary'
-								text='Sign-up'
+								text={t('sign_up')}
 								buttonsize='sm'
 								disabled={loading}
 								onClick={handleSignup}
@@ -310,22 +312,22 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 				)
 			)}
 			<div className='my-2'>{error && <FilteredError text={error} />}</div>
-			<Divider plain>Or</Divider>
+			<Divider plain>{t('or')}</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
 					variant='default'
 					className='m-0 border-none p-0'
-					text='Sign-up with username'
+					text={t('sign_up_username')}
 					disabled={loading}
 					onClick={() => setMethod('web2')}
 				/>
 			</div>
-			<Divider plain>Or</Divider>
+			<Divider plain>{t('or')}</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
 					variant='default'
 					className='m-0 border-none p-0'
-					text='Sign-up with polkadot.js'
+					text={t('sign_up_polkadotjs')}
 					disabled={loading}
 					onClick={() => setMethod('polkadotjs')}
 				/>

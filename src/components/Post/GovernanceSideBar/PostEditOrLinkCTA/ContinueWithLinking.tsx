@@ -16,6 +16,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import { dmSans } from 'pages/_app';
+import { useTranslation } from 'next-i18next';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,6 +66,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const {
 		postData: { postIndex, postType },
 		setPostData
@@ -88,15 +90,15 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					postType: postTypeAndId.type
 				});
 				if (error || !data) {
-					setError(error || 'Something went wrong');
+					setError(error || t('something_went_wrong'));
 					setFormDisabled(false);
 					setLoading(false);
 					return;
 				}
 				if (data) {
 					queueNotification({
-						header: 'Success!',
-						message: 'Post data fetched successfully.',
+						header: t('success'),
+						message: t('post_data_fetched_successfully'),
 						status: NotificationStatus.SUCCESS
 					});
 					setPost(data);
@@ -109,15 +111,15 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					postType: postTypeAndId.type
 				});
 				if (error || !data) {
-					setError(error || 'Something went wrong');
+					setError(error || t('something_went_wrong'));
 					setFormDisabled(false);
 					setLoading(false);
 					return;
 				}
 				if (data) {
 					queueNotification({
-						header: 'Success!',
-						message: 'Post linked successfully.',
+						header: t('success'),
+						message: t('post_linked_successfully'),
 						status: NotificationStatus.SUCCESS
 					});
 
@@ -161,10 +163,10 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 				} else if (typeof error === 'object' && typeof error.message === 'string') {
 					setError(error.message);
 				} else {
-					setError('Something went wrong');
+					setError(t('something_went_wrong'));
 				}
 			} else {
-				setError('Something went wrong');
+				setError(t('something_went_wrong'));
 			}
 			setFormDisabled(false);
 			setLoading(false);
@@ -201,7 +203,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 						onClick={() => form.submit()}
 						className={`h-10 rounded-[4px] px-8 text-sm capitalize tracking-wide ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'}`}
 					>
-						{url && prevUrl === url ? 'Link' : 'Preview'}
+						{url && prevUrl === url ? t('link') : t('preview')}
 					</CustomButton>
 				</div>
 			]}
@@ -209,7 +211,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 		>
 			<section className='flex flex-col'>
 				<div className='-mx-6 border-0 border-b-[1px] border-solid border-lightBlue px-6 dark:border-separatorDark'>
-					<h2 className='mt-3 text-xl font-semibold leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Discussion details</h2>
+					<h2 className='mt-3 text-xl font-semibold leading-[24px] text-bodyBlue dark:text-blue-dark-high'>{t('discussion_details')}</h2>
 				</div>
 				<Form
 					form={form}
@@ -221,7 +223,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 				>
 					<Form.Item
 						name='url'
-						label={<span className='text-base font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link Discussion Post</span>}
+						label={<span className='text-base font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('link_discussion_post')}</span>}
 						rules={[
 							{
 								required: true

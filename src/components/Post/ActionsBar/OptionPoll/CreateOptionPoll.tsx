@@ -19,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CreatePollOpt from '~assets/icons/reactions/CreatePoll.svg';
 import CreatePollOptDark from '~assets/icons/reactions/CreatePollDark.svg';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface ICreatePollProps {
 	postId: number | string;
@@ -72,7 +73,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const { setPostData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const handleCreate = async () => {
 		try {
 			await form.validateFields();
@@ -98,11 +99,11 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			if (apiError || !data) {
 				queueNotification({
 					header: 'Error!',
-					message: 'There was an error in creating the poll :(',
+					message: t('there_was_an_error_in_creating_the_poll'),
 					status: NotificationStatus.ERROR
 				});
 				console.error('Error creating poll', apiError);
-				setError(apiError || 'Error in creating poll');
+				setError(apiError || t('error_in_creating_poll'));
 			}
 
 			if (data) {
@@ -111,7 +112,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				form.resetFields();
 				queueNotification({
 					header: 'Success!',
-					message: 'Poll Created',
+					message: t('poll_created'),
 					status: NotificationStatus.SUCCESS
 				});
 				setPostData((prev) => {
@@ -153,14 +154,14 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			>
 				<span className='flex items-center justify-between gap-[6px]'>
 					{theme == 'dark' ? <CreatePollOptDark /> : <CreatePollOpt />}
-					<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Create Poll</span>
+					<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>{t('create_poll')}</span>
 				</span>
 			</div>
 
 			<Modal
 				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName='dark:bg-modalOverlayDark z-[105]'
-				title={<span className='dark:text-blue-dark-high'>Create Poll</span>}
+				title={<span className='dark:text-blue-dark-high'>{t('create_poll')}</span>}
 				open={showModal}
 				onOk={handleCreate}
 				onCancel={() => {
@@ -238,7 +239,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							<>
 								{fields.map((field, index) => (
 									<Form.Item
-										label={index === 0 && <span className='dark:text-blue-dark-high'>Options</span>}
+										label={index === 0 && <span className='dark:text-blue-dark-high'>{t('options')}</span>}
 										required={false}
 										key={field.key}
 									>
@@ -247,7 +248,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											validateTrigger={['onChange', 'onBlur']}
 											rules={[
 												{
-													message: 'Please input an option text or remove this field.',
+													message: t('please_input_an_option_text_or_remove_this_field'),
 													required: true,
 													whitespace: true
 												}
@@ -276,7 +277,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 										icon={<PlusOutlined />}
 										className='flex items-center dark:bg-section-dark-background dark:text-blue-dark-high'
 									>
-										Add Option
+										{t('add_option')}
 									</Button>
 									<Form.ErrorList errors={errors} />
 								</Form.Item>
@@ -287,7 +288,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					<div className='flex justify-between space-x-4'>
 						<Form.Item
 							name='days'
-							label={<span className='dark:text-blue-dark-high'>Days</span>}
+							label={<span className='dark:text-blue-dark-high'>{t('days')}</span>}
 							className='w-full'
 						>
 							<Select>{daysOptions}</Select>
@@ -295,7 +296,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 						<Form.Item
 							name='hours'
-							label={<span className='dark:text-blue-dark-high'>Hours</span>}
+							label={<span className='dark:text-blue-dark-high'>{t('hours')}</span>}
 							className='w-full'
 						>
 							<Select>{hoursOptions}</Select>
@@ -303,7 +304,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 						<Form.Item
 							name='minutes'
-							label={<span className='dark:text-blue-dark-high'>Minutes</span>}
+							label={<span className='dark:text-blue-dark-high'>{t('minutes')}</span>}
 							className='w-full'
 						>
 							<Select>{minutesOptions}</Select>

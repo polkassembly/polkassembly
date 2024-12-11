@@ -9,6 +9,7 @@ import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface IVoteSummaryProps {
 	ayeVotes?: BN;
@@ -65,6 +66,7 @@ export const VoteSummaryLegacy = ({ ayeVotes, className, nayVotes, ayesNum, nays
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, ayesNum, naysNum, turnoutPercentage }) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const { resolvedTheme: theme } = useTheme();
 
@@ -84,7 +86,7 @@ const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, aye
 		<div className={`${className} -mt-[48px] flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[24px] font-semibold leading-6 text-aye_green dark:text-aye_green_Dark'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
-				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>Aye</span>
+				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>{t('aye')}</span>
 			</div>
 			<>
 				<PieChart
@@ -102,7 +104,7 @@ const VoteSummary: FC<IVoteSummaryProps> = ({ ayeVotes, className, nayVotes, aye
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[24px] font-semibold leading-6 text-nay_red dark:text-nay_red_Dark'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
-				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>Nay</span>
+				<span className='text-base font-medium leading-[18px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-medium'>{t('nay')}</span>
 			</div>
 		</div>
 	);

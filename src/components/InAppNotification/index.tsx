@@ -23,6 +23,7 @@ import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { GlobalActions } from '~src/redux/global';
+import { useTranslation } from 'next-i18next';
 
 interface INotificationProps {
 	className?: string;
@@ -31,7 +32,7 @@ interface INotificationProps {
 
 const InAppNotification: FC<INotificationProps> = (props) => {
 	const { className, setSidedrawer } = props;
-
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
@@ -229,8 +230,8 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
 				image='/assets/Gifs/login-endorse.gif'
-				title='Join Polkassembly to start using notifications.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly_to_start_using_notifications')}
+				subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 			/>
 		</div>
 	);

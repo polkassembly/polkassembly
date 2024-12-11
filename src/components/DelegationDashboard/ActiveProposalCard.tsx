@@ -25,6 +25,7 @@ import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	proposal: IPostListing;
@@ -35,6 +36,7 @@ interface Props {
 const ZERO_BN = new BN(0);
 
 const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress: address } = useUserDetailsSelector();
 
@@ -49,7 +51,6 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [isMobile, setIsMobile] = useState<boolean>(false);
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
-
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
@@ -62,9 +63,8 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	);
 	const relativeCreatedAt = getRelativeCreatedAt(new Date(proposal?.created_at));
 
-	const convertRemainingTime = (preiodEndsAt: any) => {
-		const diffMilliseconds = preiodEndsAt.diff();
-
+	const convertRemainingTime = (periodEndsAt: any) => {
+		const diffMilliseconds = periodEndsAt.diff();
 		const diffDuration = dayjs.duration(diffMilliseconds);
 		const diffDays = diffDuration.days();
 		const diffHours = diffDuration.hours();
@@ -92,8 +92,6 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	const getData = async () => {
@@ -123,11 +121,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	useEffect(() => {
 		const prepare = getPeriodData(network, dayjs(proposal.created_at), trackDetails, 'preparePeriod');
-
 		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, votingData]);
 
@@ -142,7 +138,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							<div className='flex shrink-0 flex-wrap items-center gap-2 sm:hidden'>
 								<div className={`flex items-center text-xs ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-blue-light-medium dark:text-blue-dark-medium'} shrink-0`}>
 									<ClockCircleOutlined className='mr-1 shrink-0' />
-									{remainingTime} Remaining
+									{remainingTime} {t('remaining')}
 								</div>
 							</div>
 						)}
@@ -150,7 +146,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						<div className='flex shrink-0 flex-wrap gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium sm:mt-[5px] sm:items-start lg:items-center'>
 							<div className='flex shrink-0 flex-wrap items-center justify-between max-sm:w-full'>
 								<div className='flex shrink-0 flex-wrap items-center gap-[2px] sm:gap-1'>
-									By:
+									{t('by')}:
 									<Address
 										address={String(proposal?.proposer)}
 										className='address ml-1.5 flex shrink-0 items-center break-words'
@@ -186,7 +182,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 										alt=''
 										className={'dark:text-white'}
 									/>
-									<span className='shrink-0 text-[10px] font-medium text-pink_primary'>Cast Vote</span>
+									<span className='shrink-0 text-[10px] font-medium text-pink_primary'>{t('cast_vote')}</span>
 								</CustomButton>
 							</div>
 
@@ -211,7 +207,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									/>
 									<div className={`flex shrink-0 items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue dark:text-white'}`}>
 										<ClockCircleOutlined className='mr-1 shrink-0' />
-										{remainingTime} Remaining
+										{remainingTime} {t('remaining')}
 									</div>
 								</div>
 							)}
@@ -235,22 +231,22 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 								className='text-xs sm:hidden'
 							/>
 						)}
-						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
+						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>{t('voted')}:</div>
 						{!isAbstain ? (
 							<div className='flex gap-2'>
 								<span className='-ml-1 flex items-center justify-center'>
 									{isAye && <AyeIcon />} {isNay && <NayIcon />}
 								</span>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
-									Balance:<span className='font-medium text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
+									{t('balance')}:<span className='font-medium text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 								</div>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
-									Conviction:{' '}
+									{t('conviction')}:{' '}
 									<span className='font-medium text-bodyBlue dark:text-white'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 								</div>
 							</div>
 						) : (
-							<div className='ml-1 flex items-center text-xs font-medium text-abstainBlueColor dark:text-abstainDarkBlueColor'>Abstain</div>
+							<div className='ml-1 flex items-center text-xs font-medium text-abstainBlueColor dark:text-abstainDarkBlueColor'>{t('abstain')}</div>
 						)}
 					</div>
 				) : (
@@ -267,7 +263,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 								/>
 							)}
 							<div className='flex items-center justify-center text-[10px] text-lightBlue dark:text-blue-dark-medium max-sm:pl-[10px] sm:text-xs'>
-								Not Voted yet <CautionIcon className='ml-1' />
+								{t('not_voted_yet')} <CautionIcon className='ml-1' />
 							</div>
 						</div>
 					)

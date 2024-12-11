@@ -15,6 +15,7 @@ import { useGov1treasuryProposal, useNetworkSelector } from '~src/redux/selector
 import Address from '~src/ui-components/Address';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	open: boolean;
@@ -22,6 +23,7 @@ interface Props {
 	setStep: (pre: number) => void;
 }
 const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
+	const { t } = useTranslation('common');
 	const { proposalIndex, beneficiary, proposer, fundingAmount } = useGov1treasuryProposal();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -49,18 +51,17 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 						height={40}
 						className='w-full'
 						variant='primary'
-						text='View Proposal'
+						text={t('view_proposal')}
 					/>
 				</Link>
 			}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				{/* <SuccessIcon /> */}
 				<ImageIcon
 					src='/assets/delegation-tracks/success-delegate.svg'
-					alt='success delegate icon'
+					alt={t('success_icon_alt')}
 				/>
-				<label className='mt-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Proposal created successfully for</label>
+				<label className='mt-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('proposal_created_success')}</label>
 				{!!bnFundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						{formatedBalance(bnFundingAmount.toString(), unit)} {unit}
@@ -70,7 +71,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
-								<span className='w-[172px]'>Proposer Address:</span>
+								<span className='w-[172px]'>{t('proposer_address')}:</span>
 								<Address
 									addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
 									address={proposer}
@@ -80,7 +81,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 								/>
 							</span>
 							<span className='flex'>
-								<span className='w-[172px]'>Beneficiary Address:</span>
+								<span className='w-[172px]'>{t('beneficiary_address')}:</span>
 								<div className='flex flex-col gap-2'>
 									<Address
 										address={beneficiary}
@@ -92,7 +93,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 							</span>
 
 							<span className='flex'>
-								<span className='w-[172px]'>Funding Amount:</span>
+								<span className='w-[172px]'>{t('funding_amount')}:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{fundingAmount && formatedBalance(fundingAmount.toString(), unit)} {unit}
 								</span>

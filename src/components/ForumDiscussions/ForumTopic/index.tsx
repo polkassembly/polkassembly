@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Divider } from 'antd';
 import { Tabs } from '~src/ui-components/Tabs';
@@ -16,12 +16,14 @@ import ForumComments from './ForumComments';
 import CommentMapping from '../utils/CommentsMapping';
 import formatAvatarUrl from '../utils/FormatAvatarUrl';
 import getCategoryName from '../utils/getCategoryName';
+import { useTranslation } from 'next-i18next';
 
 interface ForumTopicProps {
 	data: any;
 }
 
 const ForumTopicContainer = ({ data }: ForumTopicProps) => {
+	const { t } = useTranslation('common');
 	const {
 		fancy_title,
 		title,
@@ -48,7 +50,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				/>
 			),
 			key: 'description',
-			label: 'Description'
+			label: t('description')
 		}
 	];
 
@@ -60,7 +62,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 			>
 				<div className='flex items-center'>
 					<LeftOutlined className='mr-2 text-xs' />
-					<span className='text-sm font-medium'>Back to Forum </span>
+					<span className='text-sm font-medium'>{t('back_to_forum')}</span>
 				</div>
 			</Link>
 			<div className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[67%] lg:p-6 '>
@@ -74,7 +76,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 					>
 						<Image
 							src='/assets/icons/redirect.svg'
-							alt='redirection-icon'
+							alt={t('redirection_icon')}
 							width={16}
 							height={16}
 							className='-mt-3'
@@ -95,13 +97,13 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 						<div className='rounded-full'>
 							<ImageIcon
 								src={formatAvatarUrl(cImg, '14')}
-								alt='user image'
+								alt={t('user_image')}
 								imgClassName='rounded-full'
 							/>
 						</div>
 						<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center gap-1'}>
 							<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
-							<div className='hidden text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:flex'>in</div>
+							<div className='hidden text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:flex'>{t('in')}</div>
 							<div
 								className={` hidden rounded-[4px] ${
 									[9, 25, 27].includes(category_id)
@@ -121,7 +123,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 						<>
 							<div className='items-center text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 								<ClockCircleOutlined className='mr-1' /> <span></span>
-								{getRelativeCreatedAt(date)}
+								{t('relative_time', { time: getRelativeCreatedAt(date) })}
 							</div>
 						</>
 					)}
@@ -135,8 +137,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				/>
 				<Divider className='border-l-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
 				<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
-					{participant_count || 0}
-					<span className='ml-1'>{participant_count > 1 ? 'Comments' : 'Comment'}</span>
+					{participant_count || 0} <span className='ml-1'>{t(participant_count > 1 ? 'comments' : 'comment')}</span>
 				</span>
 				<ForumComments comments={allComments} />
 			</div>

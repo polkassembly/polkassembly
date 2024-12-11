@@ -30,6 +30,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
@@ -245,7 +247,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 			onCancel={() => setOpenModal(false)}
 			title={
 				<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-					Pay Decision Deposit
+					{t('pay_decision_deposit')}
 				</div>
 			}
 			footer={
@@ -254,14 +256,14 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 						onClick={() => setOpenModal(false)}
 						buttonsize='xs'
 						variant='default'
-						text='Back'
+						text={t('back')}
 					/>
 					<CustomButton
 						onClick={handleSubmit}
 						disabled={!accounts.length || availableBalance.lte(amount)}
 						buttonsize='xs'
 						variant='primary'
-						text='Continue'
+						text={t('continue')}
 						className={`${!accounts.length || (availableBalance.lte(amount) && 'opacity-50')}`}
 					/>
 				</div>

@@ -19,6 +19,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { MessageType } from '~src/auth/types';
 import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
 import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBar/Bounty/Curator/MakeChildBountySubmision';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -32,6 +33,7 @@ interface Props {
 const Submission = ({ className, submission, index, updateData, submissions, bountyId }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const { loginAddress } = useUserDetailsSelector();
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -149,7 +151,7 @@ const Submission = ({ className, submission, index, updateData, submissions, bou
 							md={submission?.content}
 							className='mt-1 text-[14px] text-blue-light-high dark:text-white'
 						/>
-						<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>Read More</span>
+						<span className='mt-2 cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'>{t('read_more')}</span>
 					</div>
 				</div>
 				{submission?.status === EChildbountySubmissionStatus.OUTDATED && (

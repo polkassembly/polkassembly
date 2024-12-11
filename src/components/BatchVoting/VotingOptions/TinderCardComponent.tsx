@@ -10,9 +10,11 @@ import { ITinderCardsComponent } from '~src/components/TinderStyleVoting/types';
 import CardPostHeading from '~src/components/TinderStyleVoting/PostInfoComponents/CardPostHeading';
 import CardComments from '~src/components/TinderStyleVoting/CardComponents/CardComments';
 import ReferendumV2CardInfo from '~src/components/TinderStyleVoting/PostInfoComponents/ReferendumV2CardInfo';
+import { useTranslation } from 'next-i18next';
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal, onSkip } = props;
+	const { t } = useTranslation('common');
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
@@ -35,7 +37,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						className='border-none bg-transparent p-0 text-pink_primary shadow-none'
 						onClick={() => onSkip(proposal.id)}
 					>
-						Skip &gt;
+						{t('skip')} &gt;
 					</Button>
 				</div>
 				<Divider
@@ -54,7 +56,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						href={`/referenda/${proposal.id}`}
 						target='_blank'
 					>
-						Read Full Proposal
+						{t('read_full_proposal')}
 					</Link>
 					{proposal?.comments?.length > 0 && <CardComments proposal={proposal} />}
 					<Divider

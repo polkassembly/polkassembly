@@ -16,6 +16,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import Skeleton from '~src/basic-components/Skeleton';
 import { dmSans } from 'pages/_app';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -33,6 +34,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 });
 
 const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, totalCount }: Props) => {
+	const { t } = useTranslation('common');
 	const [expandProposals, setExpandProposals] = useState<boolean>(totalCount > 0);
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
@@ -55,7 +57,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 					<span className='hidden sm:block'>
 						<ActiveProposalsIcon className='mr-1' />
 					</span>
-					<span className='text-base font-semibold tracking-[0.0015em] text-blue-light-high dark:text-white sm:text-2xl'>Active Proposals</span>
+					<span className='text-base font-semibold tracking-[0.0015em] text-blue-light-high dark:text-white sm:text-2xl'>{t('active_proposals')}</span>
 					<span className='flex items-center justify-center rounded-3xl bg-[#D2D8E04D] px-2 py-1 text-[10px] font-semibold text-bodyBlue dark:text-white sm:px-3 sm:py-1.5 sm:text-base'>
 						{totalCount}
 					</span>
@@ -102,7 +104,10 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 						</div>
 					</div>
 				) : (
-					<Empty className='mb-4' />
+					<Empty
+						className='mb-4'
+						description={t('no_active_proposals')}
+					/>
 				)
 			) : null}
 		</div>

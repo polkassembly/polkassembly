@@ -35,6 +35,7 @@ import {
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { usePostDataContext } from '~src/context';
 import { CalenderIcon, CapitalIcon, ConvictionIcon, EmailIconNew, PowerIcon, VoterIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 interface IVoterRow {
 	className?: string;
@@ -113,6 +114,7 @@ const VoterRow: FC<IVoterRow> = ({
 	const {
 		postData: { postIndex }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
 	// const [delegatorLoading, setDelegatorLoading] = useState<boolean>(true);
@@ -134,7 +136,7 @@ const VoterRow: FC<IVoterRow> = ({
 				const { data, error } = await nextApiClientFetch<any>(url);
 
 				if (error) {
-					console.log('Error in fetching delegated Data');
+					console.log(t('error_in_fetching_delegated_data'));
 				}
 				if (data) {
 					const payload = {
@@ -311,7 +313,7 @@ const VoterRow: FC<IVoterRow> = ({
 							{voteData?.decision !== 'abstain' && isReferendum2 && (
 								<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
 									<PowerIcon className='text-blue-light-mediume dark:text-blue-dark-medium' />
-									Voting Power:{' '}
+									{t('voting_power')}:{' '}
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
 									</span>
@@ -319,19 +321,19 @@ const VoterRow: FC<IVoterRow> = ({
 							)}
 						</div>
 						<div>
-							<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
+							<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('vote_breakdown')}</p>
 							<div className='flex justify-between'>
 								<div className='flex w-[200px] flex-col gap-1'>
-									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('self_votes')}</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
+											<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {t('voting_power')}
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<ConvictionIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Conviction
+											<ConvictionIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {t('conviction')}
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 											{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
@@ -350,22 +352,22 @@ const VoterRow: FC<IVoterRow> = ({
 									<>
 										<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
 										<div className='mr-3 flex w-[200px] flex-col gap-1'>
-											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('delegated_votes')}</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
+													<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {t('voting_power')}
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<EmailIconNew className='text-blue-light-medium dark:text-blue-dark-medium' /> Delegators
+													<EmailIconNew className='text-blue-light-medium dark:text-blue-dark-medium' /> {t('delegators')}
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
+													<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {t('capital')}
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 													{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
@@ -383,12 +385,12 @@ const VoterRow: FC<IVoterRow> = ({
 									className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 								/>
 								<div>
-									<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+									<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('delegation_list')}</p>
 									<div className='mb-2 flex items-center text-xs font-semibold'>
-										<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-										<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-										{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
-										<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+										<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>{t('delegators')}</div>
+										<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('amount')}</div>
+										{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('conviction')}</div> : null}
+										<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('voting_power')}</div>
 									</div>
 									<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
 										{voteData?.delegatedVotes.map((data: any, i: number) => (
@@ -407,7 +409,7 @@ const VoterRow: FC<IVoterRow> = ({
 												className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
 												onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData.voter })}
 											>
-												Show More
+												{t('show_more')}
 											</p>
 										)
 									)}

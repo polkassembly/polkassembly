@@ -19,6 +19,7 @@ import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from '~src/types';
+import { useTranslation } from 'next-i18next';
 import ProfileFollows from './ProfileFollows';
 import { chainProperties } from '~src/global/networkConstants';
 
@@ -52,6 +53,7 @@ const ProfileTabs = ({
 	onchainIdentity,
 	activitiesCounts
 }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
@@ -65,7 +67,7 @@ const ProfileTabs = ({
 		let totalVotes = 0;
 
 		statsArr.map((item) => {
-			if (item?.label === 'Proposals Voted') {
+			if (item?.label === t('proposals_voted')) {
 				totalVotes = item?.value || 0;
 			} else {
 				totalPosts += item?.value;
@@ -75,7 +77,7 @@ const ProfileTabs = ({
 			posts: totalPosts,
 			votes: totalVotes
 		});
-	}, [statsArr, userProfile]);
+	}, [statsArr, userProfile, t]);
 
 	const tabItems = [
 		{
@@ -95,7 +97,7 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<ProfileOverviewIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					Overview
+					{t('overview')}
 				</div>
 			)
 		},
@@ -126,11 +128,12 @@ const ProfileTabs = ({
 					addressWithIdentity={addressWithIdentity}
 				/>
 			),
-			key: userId === userProfile.user_id ? 'My Activity' : 'Activity',
+			key: userId === userProfile.user_id ? t('my_activity') : t('activity'),
 			label: (
 				<div className='flex items-center'>
 					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount || 0})</span>
+					{userId === userProfile.user_id ? t('my_activity') : t('activity')}
+					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount || 0})</span>
 				</div>
 			)
 		},
@@ -146,7 +149,7 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
-					Reactions
+					{t('reactions')}
 					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount || 0})</span>
 				</div>
 			)
@@ -163,7 +166,7 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
-					Mentions
+					{t('mentions')}
 					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span>
 				</div>
 			)
@@ -198,7 +201,8 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
-					Votes<span className='ml-[2px]'>({totals?.votes})</span>
+					{t('votes')}
+					<span className='ml-[2px]'>({totals?.votes})</span>
 				</div>
 			)
 		});
@@ -219,8 +223,4 @@ export default styled(ProfileTabs)`
 	.ant-tabs-tab-active .active-icon {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}
-	//dark mode icon color change
-	// .dark .darkmode-icons {
-	// filter: brightness(100%) saturate(0%) contrast(4) invert(100%) !important;
-	// }
 `;

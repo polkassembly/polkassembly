@@ -31,6 +31,7 @@ import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -77,6 +78,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 	const [openChangeAddressModal, setOpenChangeAddressModal] = useState<boolean>(false);
 	const [openSuccessState, setOpenSuccessState] = useState<boolean>(false);
 	const [isReferesh, setIsReferesh] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -326,11 +328,11 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
 						? isReferendaPage
-							? 'Clear expired referenda locks'
-							: 'Unlock Your Tokens'
+							? t('clear_expired_referenda_locks')
+							: t('unlock_your_tokens')
 						: handlePrevData(totalLockData).length
 						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
-						: 'No Unlocks Available'}
+						: t('no_unlocks_available')}
 				</Button>
 			</div>
 			<Modal
@@ -365,7 +367,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 								setOpenChangeAddressModal(true);
 								setOpen(false);
 							}}
-							text='Change'
+							text={t('change')}
 						/>
 					</div>
 					<LockVotesList
@@ -384,7 +386,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 								fontSize='sm'
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}
-								text='Unlock Tokens'
+								text={t('unlock_tokens')}
 							/>
 						</div>
 					)}
@@ -395,7 +397,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 				setOpen={setOpenChangeAddressModal}
 				localStorageAddressKeyName='unlockAddress'
 				localStorageWalletKeyName='unlockWallet'
-				walletAlertTitle={isReferendaPage ? 'Clear expired referenda locks' : 'Unlock Your Tokens'}
+				walletAlertTitle={isReferendaPage ? t('clear_expired_referenda_locks') : t('unlock_your_tokens')}
 				linkAddressNeeded={false}
 				onConfirm={(address: string) => {
 					setAddress(address);

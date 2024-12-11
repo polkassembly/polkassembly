@@ -7,9 +7,11 @@ import classNames from 'classnames';
 import { ISwipeActionButtons } from '~src/components/TinderStyleVoting/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Button } from 'antd';
+import { useTranslation } from 'next-i18next';
 
 const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 	const { currentIndex, trackPosts, onSwipeAction, className, decision, isLoading } = props;
+	const { t } = useTranslation('common');
 	const canSwipe = currentIndex >= 0;
 
 	const handleAction = (direction: string) => {
@@ -37,7 +39,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 						src='/assets/icons/red-dislike-icon.svg'
 						alt='dislike-icon'
 					/>
-					<p className='m-0 p-0 text-[#F53C3C]'>Nay</p>
+					<p className='m-0 p-0 text-[#F53C3C]'>{t('nay')}</p>
 				</Button>
 				<Button
 					className={`${
@@ -48,7 +50,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 					disabled={isLoading}
 				>
 					<StopOutlined className={'text-base text-[#407BFF]'} />
-					<p className='m-0 p-0 text-[#407BFF]'>Abstain</p>
+					<p className='m-0 p-0 text-[#407BFF]'>{t('abstain')}</p>
 				</Button>
 				<Button
 					className={`${
@@ -62,7 +64,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 						src='/assets/icons/green-like-icon.svg'
 						alt='dislike-icon'
 					/>
-					<p className='m-0 p-0 text-[#2ED47A]'>Aye</p>
+					<p className='m-0 p-0 text-[#2ED47A]'>{t('aye')}</p>
 				</Button>
 			</div>
 		</section>

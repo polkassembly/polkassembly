@@ -28,6 +28,7 @@ import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -83,6 +84,7 @@ const Web2Login: FC<Props> = ({
 	const { username } = validation;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -181,7 +183,7 @@ const Web2Login: FC<Props> = ({
 		<Container className={`flex flex-col rounded-md bg-white ${!showWeb2Option ? '' : 'shadow-md'} dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
-				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>{showWeb2Option ? 'Login to Polkassembly' : 'Change Wallet'}</span>
+				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>{showWeb2Option ? t('login_to_polkassembly') : t('change_wallet')}</span>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -193,7 +195,7 @@ const Web2Login: FC<Props> = ({
 						onSubmit={handleSubmitForm}
 						className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-24' : 'px-12'}`}
 					>
-						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
+						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>{t('select_wallet')}</p>
 						<div onClick={() => setShowWalletModal?.(false)}>
 							<WalletButtons
 								disabled={loading}
@@ -212,7 +214,7 @@ const Web2Login: FC<Props> = ({
 									setWeb3Login(false);
 								}}
 							>
-								Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
+								{t('or')} <span className='font-semibold text-pink_primary'>{t('login_with_username_email')}</span>
 							</p>
 						)}
 					</AuthForm>
@@ -220,12 +222,8 @@ const Web2Login: FC<Props> = ({
 			)}
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
-					message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
-					description={
-						<span className='dark:text-blue-dark-high'>
-							No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
-						</span>
-					}
+					message={<span className='dark:text-blue-dark-high'>{t('wallet_extension_not_detected')}</span>}
+					description={<span className='dark:text-blue-dark-high'>{t('no_web3_account_integration')}</span>}
 					type='info'
 					showIcon
 					className='changeColor mx-8 mb-5 text-bodyBlue'
@@ -258,7 +256,7 @@ const Web2Login: FC<Props> = ({
 								className='text-base text-lightBlue dark:text-blue-dark-medium '
 								htmlFor='username'
 							>
-								Enter Username or Email
+								{t('enter_username_or_email')}
 							</label>
 							<Form.Item
 								name='username'
@@ -280,7 +278,7 @@ const Web2Login: FC<Props> = ({
 							>
 								<Input
 									disabled={loading}
-									placeholder='Type here'
+									placeholder={t('type_here')}
 									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='username'
 								/>
@@ -292,7 +290,7 @@ const Web2Login: FC<Props> = ({
 								className='text-base text-lightBlue dark:text-blue-dark-medium'
 								htmlFor='password'
 							>
-								Enter Password
+								{t('enter_password')}
 							</label>
 							<Form.Item
 								name='password'
@@ -301,7 +299,7 @@ const Web2Login: FC<Props> = ({
 								<Input
 									type='password'
 									disabled={loading}
-									placeholder='Type here'
+									placeholder={t('type_here')}
 									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 									id='password'
 								/>
@@ -314,7 +312,7 @@ const Web2Login: FC<Props> = ({
 										router.push('/request-reset-password');
 									}}
 								>
-									Forgot Password?
+									{t('forgot_password')}
 								</div>
 							</div>
 						</div>
@@ -323,7 +321,7 @@ const Web2Login: FC<Props> = ({
 							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								text='Login'
+								text={t('login')}
 								buttonsize='xs'
 								variant='primary'
 							/>
@@ -342,13 +340,13 @@ const Web2Login: FC<Props> = ({
 						{error && <FilteredError text={error} />}
 
 						<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold dark:font-medium'>
-							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>{t('dont_have_an_account')}</label>
 							<div
 								onClick={handleClick}
 								className='text-md cursor-pointer text-pink_primary'
 							>
 								{' '}
-								Sign Up{' '}
+								{t('sign_up')}{' '}
 							</div>
 						</div>
 					</AuthForm>

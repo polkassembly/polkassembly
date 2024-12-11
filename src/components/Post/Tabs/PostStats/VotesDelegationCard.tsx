@@ -12,6 +12,7 @@ import { Card } from 'antd';
 import DelegatedIcon from '~assets/icons/analytics/delegated.svg';
 import DelegatedIconDark from '~assets/icons/analytics/delegated-dark.svg';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 interface IVoteDelegationProps {
 	delegatedValue: number;
@@ -23,7 +24,7 @@ interface IVoteDelegationProps {
 
 const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloValue, className, isCurrencyValue, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 
 	const maxValue = Math.max(Number(delegatedValue), Number(soloValue));
@@ -35,13 +36,13 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 		{
 			color: delegatedColor,
 			id: 'delegated',
-			label: 'Delegated',
+			label: t('delegated'),
 			value: delegatedValue
 		},
 		{
 			color: soloColor,
 			id: 'solo',
-			label: 'Solo',
+			label: t('solo'),
 			value: soloValue
 		}
 	];
@@ -49,7 +50,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='flex items-center gap-1 text-base font-semibold'>
 				{theme === 'dark' ? <DelegatedIconDark /> : <DelegatedIcon />}
-				Delegated Vs Solo
+				{t('delegated_vs_solo')}
 			</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie

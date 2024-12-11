@@ -15,6 +15,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import userProfileBalances from '~src/util/userProfileBalances';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	address: string;
@@ -28,6 +29,7 @@ interface Props {
 }
 const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
+	const { t } = useTranslation('common');
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
@@ -76,15 +78,17 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 
 	return (
 		<div className={`${dmSans.className} ${dmSans.variable} mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium msm:ml-auto ${classname}`}>
-			<span>Free Balance</span>
+			<span>{t('Free Balance')}</span>
 			<HelperTooltip
 				className='mx-1'
 				text={
 					<div className='text-xs'>
-						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+						<span>
+							{t('Free Balance')}: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
+						</span>
 						<br />
 						<span>
-							Transferable Balance: {formatedBalance(transferableBalance.toString(), unit, 2)} {unit}
+							{t('Transferable Balance')}: {formatedBalance(transferableBalance.toString(), unit, 2)} {unit}
 						</span>
 					</div>
 				}

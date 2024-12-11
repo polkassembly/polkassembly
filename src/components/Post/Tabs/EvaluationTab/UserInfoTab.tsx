@@ -9,6 +9,7 @@ import { usePostDataContext } from '~src/context';
 import ProfileData from '~src/ui-components/ProfileData';
 import styled from 'styled-components';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'react-i18next';
 const { Panel } = Collapse;
 
 interface Props {
@@ -20,6 +21,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 	const {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	let postAddr: any = [];
 	postAddr = isProposerTab ? [proposer] : beneficiaries?.map((beneficiary: any) => (typeof beneficiary.address === 'string' ? beneficiary?.address : beneficiary?.address?.value));
 	return (
@@ -47,7 +49,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 								/>
 							)}
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								{isProposerTab ? 'Proposer' : postAddr.length > 1 ? 'Beneficiaries' : 'Beneficiary'}
+								{isProposerTab ? t('proposer') : postAddr.length > 1 ? t('beneficiaries') : t('beneficiary')}
 							</h3>
 						</div>
 					}

@@ -18,26 +18,32 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { status } = req.body;
+		const { status, tags } = req.body;
 
-		const userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties').where('network', '==', network);
+		let userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties').where('network', '==', network);
 
 		if (
 			status &&
 			![EUserCreatedBountiesStatuses.ACTIVE, EUserCreatedBountiesStatuses?.CANCELLED, EUserCreatedBountiesStatuses?.CLAIMED, EUserCreatedBountiesStatuses?.CLOSED].includes(status)
 		) {
-			return res.status(400).json({ message: 'Invalid status param' });
+			return res.status(400).json({ message: 'Invalid Status Param' });
 		}
 
-		let totalCreatedBountiesSnapshot;
+		if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
+			return res.status(400).json({ message: 'Invalid Tags Param' });
+		}
+
+		if (tags?.length) {
+			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('tags', 'array-contains-any', tags);
+		}
 
 		if (status) {
-			totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.where('status', '==', status).get();
-		} else {
-			totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.get();
+			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('status', '==', status);
 		}
 
+		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.get();
 		const allBounties: IUserCreatedBounty[] = [];
+
 		//TODO: pie graph percentage acc to submission count
 		totalCreatedBountiesSnapshot?.docs?.map((doc) => {
 			if (doc?.exists) {

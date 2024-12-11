@@ -73,7 +73,7 @@ const DelegateCard = ({ delegate, onStartChat }: DelegateCardProps) => (
 				return (
 					<div
 						key={source}
-						className='ml-1 flex h-7 w-7 items-center justify-center rounded-md bg-[#E2EAFB] p-1.5'
+						className='ml-1 flex h-7 w-7 items-center justify-center rounded-md'
 					>
 						<Image
 							src={iconSrc}

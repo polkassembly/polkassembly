@@ -16,7 +16,7 @@ import Socials from './Socials';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -24,6 +24,7 @@ import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -48,6 +49,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false, onConfirm } = props;
 	const [open, setOpen] = useState(false);
@@ -65,11 +67,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [isValidCoverImage, setIsValidCoverImage] = useState<boolean>(false);
 
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
-		// eslint-disable-next-line no-useless-escape
 		const regex = validator.isURL(image || '', { protocols: ['http', 'https'], require_protocol: true });
 
 		if (image && image.trim() && !regex) {
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Image URL is invalid.' });
+			setErrorCheck({ ...errorCheck, basicInformationError: t('image_url_invalid') });
 			return true;
 		} else if (regex) {
 			setErrorCheck({ ...errorCheck, basicInformationError: '' });
@@ -78,7 +79,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if (social_links && Array.isArray(social_links)) {
 			for (const link of social_links) {
 				if (link.link && !validator.isURL(link.link, { protocols: ['http', 'https'], require_protocol: true }) && !validator.isEmail(link.link)) {
-					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email' ? '' : 'URL'} is invalid.` });
+					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email' ? '' : t('url_invalid')}` });
 					return true;
 				} else {
 					setErrorCheck({ ...errorCheck, socialsError: '' });
@@ -93,7 +94,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		const format = /^[a-zA-Z0-9_@]*$/;
 		if (!format.test(username) || username.length > 30 || username.length < 3) {
 			queueNotification({
-				header: 'Error',
+				header: t('error'),
 				message: messages.USERNAME_INVALID_ERROR,
 				status: NotificationStatus.ERROR
 			});
@@ -103,7 +104,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		for (let i = 0; i < nameBlacklist.length; i++) {
 			if (username.toLowerCase().includes(nameBlacklist[i])) {
 				queueNotification({
-					header: 'Error',
+					header: t('error'),
 					message: messages.USERNAME_BANNED,
 					status: NotificationStatus.ERROR
 				});
@@ -154,7 +155,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const updateProfileData = async () => {
 		if (!profile) {
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Please fill in the required fields.' });
+			setErrorCheck({ ...errorCheck, basicInformationError: t('please_fill_required_fields') });
 			return;
 		}
 
@@ -179,31 +180,29 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if (error || !data) {
 			console.error('Error updating profile: ', error);
 			queueNotification({
-				header: 'Error!',
-				message: error || 'Your profile is not updated.',
+				header: t('error'),
+				message: error || t('profile_not_updated'),
 				status: NotificationStatus.ERROR
 			});
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Your profile is not updated.' });
+			setErrorCheck({ ...errorCheck, basicInformationError: t('profile_not_updated') });
 		}
 
 		if (data?.token) {
 			queueNotification({
-				header: 'Success!',
-				message: 'Your profile is updated.',
+				header: t('success'),
+				message: t('profile_updated'),
 				status: NotificationStatus.SUCCESS
 			});
 			onConfirm?.();
-			setProfileDetails((prev) => {
-				return {
-					...prev,
-					badges: badges || [],
-					bio: bio || '',
-					cover_image: cover_image,
-					image: image || '',
-					social_links: social_links || [],
-					title: title || ''
-				};
-			});
+			setProfileDetails((prev) => ({
+				...prev,
+				badges: badges || [],
+				bio: bio || '',
+				cover_image: cover_image,
+				image: image || '',
+				social_links: social_links || [],
+				title: title || ''
+			}));
 			setProfile(getDefaultProfile());
 			handleTokenChange(data?.token, { ...userDetailsContext, picture: image }, dispatch);
 			if (!fromDelegation) {
@@ -215,11 +214,12 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		setOpen(false);
 		setOpenModal?.(false);
 	};
+
 	return (
 		<div>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={`h-full max-h-[774px] w-full max-w-[600px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`h-full max-h-[774px] w-full max-w-[600px] ${dmSans.variable} ${dmSans.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);
@@ -227,7 +227,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				title={
 					<div className={'flex items-center gap-1 text-xl font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-white'}>
 						<EditIcon className='text-[21px] font-semibold' />
-						Edit Profile
+						{t('edit_profile')}
 					</div>
 				}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
@@ -243,17 +243,16 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 							disabled={loading}
 							className='font-medium'
 							buttonsize='xs'
-							text='Cancel'
+							text={t('cancel')}
 						/>
 						<CustomButton
 							variant='primary'
-							key='update profile'
+							key='update_profile'
 							disabled={loading}
 							loading={loading}
 							onClick={async () => {
 								try {
 									await updateProfileData();
-									//GAEvent to track user profile edit
 									trackEvent('user_profile_updated', 'user_profile_edit', {
 										userId: currentUser?.id || '',
 										username: username || currentUser.username || ''
@@ -267,7 +266,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								}
 							}}
 							buttonsize='xs'
-							text='Save'
+							text={t('save')}
 						/>
 					</div>
 				}
@@ -293,7 +292,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								/>
 							),
 							key: 'basic_information',
-							label: 'Basic Information'
+							label: t('basic_information')
 						},
 						{
 							children: (
@@ -306,7 +305,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								/>
 							),
 							key: 'socials',
-							label: 'Socials'
+							label: t('socials')
 						}
 					]}
 				/>
@@ -315,7 +314,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				<button
 					className='flex cursor-pointer items-center justify-center gap-1 rounded-full border-none bg-pink_primary px-4 py-2.5 text-sm font-medium text-[#fff]'
 					onClick={() => {
-						// GAEvent when user clicks on profile edit button
 						trackEvent('profile_edit_clicked', 'edit_profile', {
 							address: currentUser?.loginAddress || '',
 							userId: currentUser?.id || '',
@@ -327,7 +325,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					}}
 				>
 					<EditIcon className='text-xl' />
-					<span className='max-md:hidden'>Edit</span>
+					<span className='max-md:hidden'>{t('edit')}</span>
 				</button>
 			)}
 		</div>

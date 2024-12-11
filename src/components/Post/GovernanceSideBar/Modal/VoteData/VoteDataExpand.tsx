@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { setClearInitialState, setIsVoteDataModalClose } from '~src/redux/voteData';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { CalenderIcon, CapitalIcon, ConvictionIcon, EmailIconNew, PowerIcon, VoterIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 const getPercentage = (userVotes: string, totalVotes: string) => {
 	if (!totalVotes) {
@@ -38,6 +39,7 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 };
 
 const VoteDataExpand = () => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { voteData, isReferendum2, delegatedData, tally, delegatorLoading, voteType, setDelegationVoteModal } = useVoteDataSelector();
 	const dispatch = useDispatch();
@@ -49,7 +51,7 @@ const VoteDataExpand = () => {
 				<div className='flex space-x-[6px]'>
 					<LikeFilled />
 					<span className='text-lg font-semibold text-blue-light-high dark:text-white'>
-						Voted <span>{voteData?.decision === 'yes' ? 'Aye' : 'Nays'}</span>
+						{t('voted')} <span>{voteData?.decision === 'yes' ? t('aye') : t('nays')}</span>
 					</span>
 				</div>
 				<span
@@ -64,7 +66,7 @@ const VoteDataExpand = () => {
 			<Divider />
 			<div className='flex justify-between px-4 pb-3 dark:bg-section-dark-overlay'>
 				<div className=''>
-					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>Voter</span>
+					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>{t('voter')}</span>
 					<div>
 						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 							<a
@@ -97,7 +99,7 @@ const VoteDataExpand = () => {
 					</div>
 				</div>
 				<div className='flex flex-col'>
-					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>Voting Power</span>
+					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>{t('voting_power')}</span>
 					<span className='text-sm font-normal tracking-tighter'>
 						{parseBalance(
 							voteData && voteData.decision !== 'abstain'
@@ -121,7 +123,7 @@ const VoteDataExpand = () => {
 					{voteData?.decision !== 'abstain' && isReferendum2 && (
 						<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
 							<PowerIcon className='text-lightBlue dark:text-blue-dark-medium' />
-							Voting Power:{' '}
+							{t('voting_power')}:{' '}
 							<span className='text-bodyBlue dark:text-blue-dark-high'>
 								{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
 							</span>
@@ -129,20 +131,20 @@ const VoteDataExpand = () => {
 					)}
 				</div>
 				<div>
-					<p className='mb-2.5 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
+					<p className='mb-2.5 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('vote_breakdown')}</p>
 					<div className=''>
 						<div className='flex flex-col gap-1 border-x-0 border-t-0 border-dashed border-section-light-container px-1 pb-2 dark:border-[#3B444F] dark:border-separatorDark'>
-							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('self_votes')}</div>
 							<div className='flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
-									<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
+									<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('voting_power')}
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.selfVotingPower || 0).toString(), 2, true, network)}</span>
 							</div>
 							<div className='flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 									<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' />
-									Conviction
+									{t('conviction')}
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 									{voteData?.lockPeriod ? `${voteData?.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
@@ -150,7 +152,7 @@ const VoteDataExpand = () => {
 							</div>
 							<div className='flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
-									<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+									<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 									{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
@@ -162,22 +164,22 @@ const VoteDataExpand = () => {
 							<>
 								<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
 								<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
-									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{t('delegated_votes')}</div>
 									<div className='mt-1.5 flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
-											<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
+											<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('voting_power')}
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
-											<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> Delegators
+											<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> {t('delegators')}
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
-											<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+											<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 											{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
@@ -195,12 +197,12 @@ const VoteDataExpand = () => {
 							className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 						/>
 						<div>
-							<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+							<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{t('delegation_list')}</p>
 							<div className='mb-2 flex items-start text-xs font-semibold'>
-								<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-								<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-								{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
-								<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+								<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>{t('delegators')}</div>
+								<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('amount')}</div>
+								{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('conviction')}</div> : null}
+								<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>{t('voting_power')}</div>
 							</div>
 							<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
 								{voteData?.delegatedVotes?.map((data: any, i: number) => (
@@ -219,7 +221,7 @@ const VoteDataExpand = () => {
 										className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
 										onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData?.voter })}
 									>
-										Show More
+										{t('show_more')}
 									</p>
 								)
 							)}

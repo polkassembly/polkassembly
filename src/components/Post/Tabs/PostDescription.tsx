@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
@@ -26,6 +26,7 @@ import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { MenuProps } from 'antd';
 import ExpandableMarkdown from './ExpandableMarkdown';
+import { useTranslation } from 'next-i18next';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -56,6 +57,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { allowed_roles } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -80,8 +82,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	};
 	const deletePost = () => {
 		queueNotification({
-			header: 'Success!',
-			message: 'The post was deleted successfully',
+			header: t('success'),
+			message: t('the_post_was_deleted_successfully'),
 			status: NotificationStatus.SUCCESS
 		});
 		goToListingViewPath(postType);
@@ -132,7 +134,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				<div>
 					{allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama', 'picasso', 'composable'].includes(network) && (
 						<ReportButton
-							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className}`}
 							proposalType={postType}
 							onSuccess={deletePost}
 							isDeleteModal={true}
@@ -181,7 +183,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 							>
 								<span className='flex items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 									{theme == 'dark' ? <EditIconDark /> : <EditIcon />}
-									<span className='ml-1 font-medium leading-[18px] text-lightBlue dark:text-icon-dark-inactive'>Edit</span>
+									<span className='ml-1 font-medium leading-[18px] text-lightBlue dark:text-icon-dark-inactive'>{t('edit')}</span>
 								</span>
 							</button>
 						)}

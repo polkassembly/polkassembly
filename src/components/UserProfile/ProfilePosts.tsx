@@ -6,7 +6,7 @@ import { Checkbox, Popover } from 'antd';
 import classNames from 'classnames';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
@@ -20,6 +20,7 @@ import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -29,10 +30,12 @@ interface Props {
 	userPosts: IUserPostsListingResponse;
 	totalPosts: number;
 }
+
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
 	return newStr.charAt(0).toUpperCase() + newStr.slice(1);
 };
+
 const handleInitialFilter = (data: IUserPostsListingResponse, govType: EGovType) => {
 	let filter = Object.keys(data?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1'])?.[0];
 	Object.entries(data?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']).map(([key, value]) => {
@@ -42,6 +45,7 @@ const handleInitialFilter = (data: IUserPostsListingResponse, govType: EGovType)
 	});
 	return filter;
 };
+
 const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingResponse, addresses: string[], network: string) => {
 	const newPosts =
 		(posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts || (posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] || [];
@@ -52,6 +56,7 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 };
 
 const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
@@ -111,7 +116,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			>
 				{addresses?.map((address, index) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
 					>
 						<Checkbox
@@ -143,7 +148,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			{Object.entries(selectedSubFilters).map(([key, value]) =>
 				key === 'total' || key === 'posts' ? null : (
 					<div
-						className={`${poppins.variable} ${poppins.className} mt-2 flex items-center gap-3 px-2 text-xs tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${dmSans.variable} ${dmSans.className} mt-2 flex items-center gap-3 px-2 text-xs tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={key}
 					>
 						<Checkbox
@@ -156,6 +161,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			)}
 		</Checkbox.Group>
 	) : null;
+
 	return (
 		<div
 			className={classNames(
@@ -166,15 +172,14 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<ClipboardIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
-
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
-						Posts
+						{t('posts')}
 						<span className='flex items-end text-sm font-normal'>({totalPosts})</span>
 					</div>
 				</div>
 				<div className='flex gap-4'>
 					{addresses.length > 1 && (
-						<div className=''>
+						<div>
 							<Popover
 								destroyTooltipOnHide
 								zIndex={1056}
@@ -183,7 +188,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 								onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
 							>
 								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									Select Addresses
+									{t('select_addresses')}
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 									</span>
@@ -233,7 +238,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 								onOpenChange={() => setSubFilterExpand(!subFilterExpand)}
 							>
 								<div className='flex h-8 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-xs font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									All
+									{t('all')}
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer text-2xl ${subFilterExpand && 'pink-color rotate-180'}`} />
 									</span>
@@ -250,30 +255,28 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 									key={post.id}
 									className='my-0'
 								>
-									{
-										<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
-											<GovernanceCard
-												className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
-												postReactionCount={post.post_reactions}
-												address={post.proposer}
-												commentsCount={post.comments_count || 0}
-												onchainId={post.id}
-												status={post.status}
-												title={post.title}
-												created_at={post.created_at}
-												tags={post?.tags}
-												tally={post?.tally}
-												timeline={post?.timeline || []}
-												statusHistory={(post?.status_history as any) || []}
-												index={index}
-												proposalType={post?.type}
-												trackNumber={post?.track_number}
-												assetId={post?.assetId || null}
-												truncateUsername={false}
-												requestedAmount={(post.requestedAmount || null) as any}
-											/>
-										</Link>
-									}
+									<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
+										<GovernanceCard
+											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${dmSans.variable} ${dmSans.className}`}
+											postReactionCount={post.post_reactions}
+											address={post.proposer}
+											commentsCount={post.comments_count || 0}
+											onchainId={post.id}
+											status={post.status}
+											title={post.title}
+											created_at={post.created_at}
+											tags={post?.tags}
+											tally={post?.tally}
+											timeline={post?.timeline || []}
+											statusHistory={(post?.status_history as any) || []}
+											index={index}
+											proposalType={post?.type}
+											trackNumber={post?.track_number}
+											assetId={post?.assetId || null}
+											truncateUsername={false}
+											requestedAmount={(post.requestedAmount || null) as any}
+										/>
+									</Link>
 								</div>
 							);
 						})
@@ -284,7 +287,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 								alt='Empty Icon'
 								imgClassName='w-[225px] h-[225px]'
 							/>
-							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Posts found</h3>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_posts_found')}</h3>
 						</div>
 					)}
 				</div>
@@ -292,6 +295,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 		</div>
 	);
 };
+
 export default styled(ProfilePosts)`
 	.pink-color {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);

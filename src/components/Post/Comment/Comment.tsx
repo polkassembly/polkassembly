@@ -16,6 +16,7 @@ import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
 import { ICommentHistory } from '~src/types';
 import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
+import { useTranslation } from 'next-i18next';
 
 export interface IComment {
 	user_id: number;
@@ -40,6 +41,7 @@ export interface IComment {
 	votes?: any[];
 	isRow?: boolean;
 	isDeleted?: boolean;
+	isExpertComment?: boolean;
 }
 
 interface ICommentProps {
@@ -58,6 +60,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 		postData: { postIndex, postType }
 	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -74,7 +77,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					size='large'
 					icon={<UserOutlined />}
 				/>
-				<div className='comment-content'>Comment not available</div>
+				<div className='comment-content'>{t('comment_not_available')}</div>
 			</div>
 		);
 
@@ -126,6 +129,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					expertComment={comment.isExpertComment}
 					vote={vote}
 					votesArr={comment?.votes}
 					isRow={true}

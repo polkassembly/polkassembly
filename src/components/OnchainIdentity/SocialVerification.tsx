@@ -22,9 +22,11 @@ import Image from 'next/image';
 import messages from '~src/auth/utils/messages';
 import { MessageType } from '~src/auth/types';
 import copyToClipboard from '~src/util/copyToClipboard';
+import { useTranslation } from 'next-i18next';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { socials, identityAddress, identityHash } = useOnchainIdentitySelector();
 	const { email, twitter, matrix } = socials;
@@ -37,6 +39,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const isTwitterVerified = useRef(false);
 	const isMatrixVerified = useRef(false);
 	const [messageApi, contextHolder] = message.useMessage();
+	const [matrixDisplayName, setMatrixDisplayname] = useState<string>('');
 
 	const success = (msg: string) => {
 		messageApi.open({
@@ -48,9 +51,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 
 	const items: TimelineItemProps[] = [];
 
-	const handleUpdatedUserName = (name: string) => {
-		if (!name?.length || !identityAddress) return '';
-		const updatedUsername = `${name.split(':')[0]}_${identityAddress.slice(0, 5)}`;
+	const handleUpdatedUserName = () => {
+		if (!matrixDisplayName?.length || !identityAddress) return '';
+		const updatedUsername = `${matrixDisplayName?.split(':')?.[0]}:${identityAddress.slice(0, 5)}`;
 		return updatedUsername;
 	};
 
@@ -71,8 +74,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		items.push({
 			children: (
 				<SocialsLayout
-					title='Email'
-					description='Check your primary inbox or spam to verify your email address.'
+					title={t('email')}
+					description={t('check_your_primary_inbox_or_spam_to_verify_your_email_address')}
 					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false)}
 					value={email?.value}
 					verified={isEmailVerified.current || false}
@@ -92,8 +95,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		items.push({
 			children: (
 				<SocialsLayout
-					title='Twitter'
-					description='Please login to Twitter to verify your email address.'
+					title={t('twitter')}
+					description={t('please_login_to_twitter_to_verify_your_email_address')}
 					onVerify={handleTwitterVerificationClick}
 					value={twitter?.value}
 					verified={isTwitterVerified.current || false}
@@ -115,7 +118,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		items.push({
 			children: (
 				<SocialsLayout
-					title='Matrix'
+					title={t('matrix')}
 					description={
 						<div className='mt-0.5 text-xs tracking-wide'>
 							{contextHolder}
@@ -125,17 +128,19 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 									<div
 										className='flex cursor-pointer items-center gap-2 text-xs text-white'
 										onClick={() => {
-											copyLink(handleUpdatedUserName(matrix?.value || ''));
-											success('Update username has been copied');
+											copyLink(handleUpdatedUserName());
+											success('Update display name has been copied');
 										}}
 									>
-										Copy updated username
+										{t('copy_updated_display_name')}
 										<CopyIcon className='ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive' />
 									</div>
 								}
 							>
-								To verify your Matrix ID, please set your Element display name to {handleUpdatedUserName(matrix?.value || '')}. Make sure to follow this format for successful
-								verification.
+								<div className='hover:text-xs'>
+									{t('to_verify_your_matrix_id_please_set_your_element_display_name_to')} {handleUpdatedUserName()}.{' '}
+									{t('make_sure_to_follow_this_format_for_successful_verification')}
+								</div>
 							</Tooltip>
 						</div>
 					}
@@ -155,10 +160,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			key: 3
 		});
 	}
-
-	const handleMatrixVerificationClick = async () => {
-		if (!matrix?.value?.length) return;
-		let matrixDisplayName = '';
+	const getMatrixDisplayName = async () => {
+		if (!matrix?.value?.length) return '';
+		let displayName = '';
 		try {
 			const homeUrl = matrix.value.split(':')[1];
 
@@ -169,7 +173,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			});
 
 			const resJSON = await response.json();
-			matrixDisplayName = resJSON?.displayname || '';
+			displayName = resJSON?.displayname || '';
 		} catch (err) {
 			queueNotification({
 				header: 'Error!',
@@ -177,11 +181,17 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				status: NotificationStatus.ERROR
 			});
 
-			return;
+			return '';
 		}
+		return displayName;
+	};
+
+	const handleMatrixVerificationClick = async () => {
+		if (!matrix?.value?.length) return;
+		const displayName = await getMatrixDisplayName();
 		setFieldLoading({ ...fieldLoading, matrix: true });
 
-		if (`@${matrixDisplayName}`?.toLowerCase() == handleUpdatedUserName(matrix?.value)?.toLowerCase()) {
+		if (`${displayName}`?.toLowerCase() == handleUpdatedUserName()?.toLowerCase()) {
 			const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/verification/verifyMatrix', {
 				matrixHandle: matrix?.value || ''
 			});
@@ -355,6 +365,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		})();
 		if (matrix?.value?.length) {
 			(async () => {
+				const displayName = await getMatrixDisplayName();
+				setMatrixDisplayname(displayName || '');
 				await handleVerify(ESocials.MATRIX, true);
 			})();
 		}
@@ -391,7 +403,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			/>
 
 			<div className='-ml-4 mb-4 flex w-full items-center justify-start gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
-				Regarding any query Contact us
+				{t('regarding_any_query_contact_us')}
 				<a href='mailto:hello@polkassembly.io'>
 					<Image
 						width={16}

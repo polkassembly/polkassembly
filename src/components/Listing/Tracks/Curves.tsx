@@ -7,6 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import * as Chart from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Spin } from 'antd';
+import { useTranslation } from 'next-i18next';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -20,6 +21,7 @@ interface ICurvesProps {
 
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data, curvesLoading } = props;
+	const { t } = useTranslation('common');
 	const labelsLength = data.labels.length;
 	return (
 		<Spin
@@ -106,11 +108,11 @@ const Curves: FC<ICurvesProps> = (props) => {
 			<article className='mx-10 mt-5 flex items-center justify-start gap-x-5'>
 				<div className='flex flex-col items-center'>
 					<div className='h-0.5 w-10 rounded-full bg-[#E5007A]'></div>
-					<p className='my-0.5 text-xs text-bodyBlue dark:text-blue-dark-high'>Support</p>
+					<p className='my-0.5 text-xs text-bodyBlue dark:text-blue-dark-high'>{t('support')}</p>
 				</div>
 				<div className='flex flex-col items-center'>
 					<div className='h-0.5 w-10 rounded-full bg-[#5BC044]'></div>
-					<p className='my-0.5 text-xs text-bodyBlue dark:text-blue-dark-high'>Approval</p>
+					<p className='my-0.5 text-xs text-bodyBlue dark:text-blue-dark-high'>{t('approval')}</p>
 				</div>
 			</article>
 		</Spin>

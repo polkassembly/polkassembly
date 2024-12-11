@@ -26,6 +26,7 @@ import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import { useTranslation } from 'next-i18next';
 
 interface IVotersListProps {
 	className?: string;
@@ -40,6 +41,7 @@ type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -182,7 +184,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center rounded-[20px] text-green-700'>
-					<LikeFilled className='mr-1.5' /> <span>Ayes</span>
+					<LikeFilled className='mr-1.5' /> <span>{t('ayes')}</span>
 				</div>
 			),
 			value: 'yes'
@@ -190,7 +192,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center rounded-[20px] text-red-700'>
-					<DislikeFilled className='mr-1.5' /> <span>Nays</span>
+					<DislikeFilled className='mr-1.5' /> <span>{t('nays')}</span>
 				</div>
 			),
 			value: 'no'
@@ -201,7 +203,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		decisionOptions.push({
 			label: (
 				<div className='flex items-center justify-center rounded-[20px] text-blue-500'>
-					<MinusCircleFilled className='mr-1.5' /> <span>Abstain</span>
+					<MinusCircleFilled className='mr-1.5' /> <span>{t('abstain')}</span>
 				</div>
 			),
 			value: 'abstain'
@@ -249,7 +251,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			trigger={['click']}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center rounded px-2 py-1 hover:text-pink_primary'>
-				<span className='mr-2'>Sort By</span>
+				<span className='mr-2'>{t('sort_by')}</span>
 				<SwapOutlined
 					rotate={90}
 					style={{ fontSize: '14px' }}
@@ -265,7 +267,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='z-10 mb-6 flex justify-between bg-white dark:bg-section-dark-overlay'>
-					<h6 className='dashboard-heading'>Votes</h6>
+					<h6 className='dashboard-heading'>{t('votes')}</h6>
 					{![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <div>{sortByDropdown}</div>}
 				</div>
 
@@ -285,7 +287,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 				<div className='flex flex-col gap-y-1 overflow-y-auto px-0 text-xs text-sidebarBlue xl:max-h-screen xl:text-sm'>
 					<div className='mb-9 flex items-center justify-between text-xs font-semibold'>
-						<div className='w-[110px]'>Voter</div>
+						<div className='w-[110px]'>{t('voter')}</div>
 						<div
 							className={classNames('', {
 								'w-[100px]': network === AllNetworks.COLLECTIVES,
@@ -294,13 +296,13 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						>
 							{![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && (
 								<>
-									<span className='hidden md:inline-block'>Amount</span>
-									<span className='inline-block md:hidden'>Amt.</span>
+									<span className='hidden md:inline-block'>{t('amount')}</span>
+									<span className='inline-block md:hidden'>{t('amt')}</span>
 								</>
 							)}
 						</div>
-						{![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH].includes(network) ? <div className='w-[70px]'>Conviction</div> : null}
-						<div className='w-[30px]'>Vote</div>
+						{![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH].includes(network) ? <div className='w-[70px]'>{t('conviction')}</div> : null}
+						<div className='w-[30px]'>{t('vote')}</div>
 					</div>
 
 					{votesRes && decision && !!votesRes[decision]?.votes?.length ? (

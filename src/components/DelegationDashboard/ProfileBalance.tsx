@@ -19,8 +19,9 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import ProfileBalanceModal from './utils/ProfileBalanceModal';
+import { useTranslation } from 'next-i18next';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -32,6 +33,7 @@ interface Props {
 const ZERO_BN = new BN(0);
 
 const ProfileBalances = ({ className }: Props) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -50,9 +52,9 @@ const ProfileBalances = ({ className }: Props) => {
 	const [openBalanceDetailsModal, setOpenBalanceDetailsModal] = useState<boolean>(false);
 
 	const balancesArr = [
-		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.total.toString() },
-		{ icon: '/assets/icons/verified-tick.svg', key: 'transferableBalance', label: 'Transferable', value: balances.lockedBalance.toString() },
-		{ icon: '/assets/icons/lock-balance.svg', key: 'lockedBalance', label: 'Total Locked', value: balances.transferableBalance.toString() }
+		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: t('balance'), value: balances.total.toString() },
+		{ icon: '/assets/icons/verified-tick.svg', key: 'transferableBalance', label: t('transferable'), value: balances.lockedBalance.toString() },
+		{ icon: '/assets/icons/lock-balance.svg', key: 'lockedBalance', label: t('total_locked'), value: balances.transferableBalance.toString() }
 	];
 
 	const getAllAccounts = async () => {
@@ -101,8 +103,8 @@ const ProfileBalances = ({ className }: Props) => {
 						>
 							<div className='flex flex-col justify-start gap-1'>
 								<div
-									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-										poppins.className
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${dmSans.variable} ${
+										dmSans.className
 									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
 								>
 									{formatedBalance(balance.value, unit, 2)}
@@ -141,8 +143,8 @@ const ProfileBalances = ({ className }: Props) => {
 						>
 							<div className='flex flex-col justify-start gap-1'>
 								<div
-									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
-										poppins.className
+									className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${dmSans.variable} ${
+										dmSans.className
 									} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
 								>
 									{formatedBalance(balance.value, unit, 2)}
@@ -199,7 +201,7 @@ const ProfileBalances = ({ className }: Props) => {
 								<span className='text-sm font-normal tracking-[0.01em] text-white'>{balance.label}</span>
 							</div>
 						</div>
-						{balance.label === 'Balance' && (
+						{balance.label === t('balance') && (
 							<Divider
 								type='vertical'
 								style={{ borderLeft: '1px solid #D2D8E0', height: '100%' }}
@@ -234,7 +236,7 @@ const ProfileBalances = ({ className }: Props) => {
 				localStorageAddressKeyName='delegationDashboardAddress'
 				open={openModal}
 				setOpen={setOpenModal}
-				walletAlertTitle={'Delegation'}
+				walletAlertTitle={t('delegation')}
 				closable={true}
 				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
 				usedInIdentityFlow={false}

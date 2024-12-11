@@ -85,6 +85,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 
 	useEffect(() => {
 		handlePromotesCall();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collectivesApi, collectivesApiReady, applicantAddress, removingApplicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {
@@ -178,7 +179,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 						</Radio.Group>
 					</div>
 
-					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
+					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 font-semibold dark:border-separatorDark'>
 						<Button
 							disabled={checkDisabled()}
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}

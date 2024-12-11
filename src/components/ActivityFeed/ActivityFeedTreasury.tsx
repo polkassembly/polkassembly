@@ -22,7 +22,7 @@ import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
 import { useTranslation } from 'next-i18next';
 
@@ -282,7 +282,7 @@ const ActivityFeedSidebar = () => {
 
 	return (
 		<div
-			className={`${poppins.className} ${poppins.variable} ${
+			className={`${dmSans.className} ${dmSans.variable} ${
 				!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-1' : ''
 			} mt-5 grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
 		>
@@ -310,7 +310,7 @@ const ActivityFeedSidebar = () => {
 											)}
 											{totalTreasuryValueUSD && (
 												<div className='flex items-baseline'>
-													<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+													<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 														~${totalTreasuryValueUSD}
 													</span>
 												</div>
@@ -336,7 +336,7 @@ const ActivityFeedSidebar = () => {
 														</div>
 														<div>
 															{chainProperties[network]?.assetHubTreasuryAddress && (
-																<div className={`${poppins.className} ${poppins.variable} ml-0 flex flex-wrap `}>
+																<div className={`${dmSans.className} ${dmSans.variable} ml-0 flex flex-wrap `}>
 																	<div className='flex items-center gap-2 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 																		<AssethubIcon />
 																		<span className='whitespace-nowrap'>Asset Hub</span>
@@ -397,7 +397,7 @@ const ActivityFeedSidebar = () => {
 						currentTokenPrice={currentTokenPrice}
 					/>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
+				<div className={`${dmSans.className} ${dmSans.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>
 						{chainProperties[network]?.tokenSymbol} {t('price')}
 					</span>
@@ -432,7 +432,7 @@ const ActivityFeedSidebar = () => {
 							{!nextBurn?.isLoading ? (
 								<div className='items-start sm:flex sm:gap-2'>
 									<div className='mt-2  h-12'>
-										<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
+										<div className={`${dmSans.className} ${dmSans.variable} flex flex-col text-xs`}>
 											<div className=' flex items-center gap-x-[6px]'>
 												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('next_burn')}</span>
 												<HelperTooltip

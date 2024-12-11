@@ -12,12 +12,15 @@ import AnalyticsReferendumCount from './AnalyticsReferendumCount';
 import ReferendumCount from './ReferendumCount';
 import MonthlySpend from './MonthlySpend';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
+
 const AnalyticTurnOutPercentage = dynamic(() => import('./AnalyticTurnOutPercentage'), { ssr: false });
 
 const { Panel } = Collapse;
 
 const AnalyticsTrends = () => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [noData, setNoData] = useState<boolean>(false);
@@ -55,9 +58,9 @@ const AnalyticsTrends = () => {
 						<div className='flex items-center gap-2'>
 							<ImageIcon
 								src='/assets/icons/voting-trends.svg'
-								alt='Voting Trends icon'
+								alt={t('voting_trends_icon')}
 							/>
-							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Overview</span>
+							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('overview')}</span>
 						</div>
 					</div>
 				}
@@ -66,7 +69,7 @@ const AnalyticsTrends = () => {
 				{noData ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>
 						<NoVotesIcon />
-						<p className='text-sm'>Not enough data available</p>
+						<p className='text-sm'>{t('not_enough_data_available')}</p>
 					</div>
 				) : (
 					<>

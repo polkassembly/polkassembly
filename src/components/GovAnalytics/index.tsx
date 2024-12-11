@@ -12,9 +12,11 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { Spin } from 'antd';
+import { useTranslation } from 'next-i18next';
 
 const GovAnalytics = () => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const [totalApprovedProposalCount, setTotalApprovedProposalCount] = useState(0);
 	const [totalProposalCount, setTotalProposalCount] = useState(0);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -63,11 +65,11 @@ const GovAnalytics = () => {
 							<div className='flex flex-col items-center justify-center'>
 								<ImageIcon
 									src='/assets/icons/analytics/discussions-created.svg'
-									alt='proposal created icon'
+									alt={t('proposal_created_icon')}
 									className='scale-[60%]'
 								/>
 								<div className='flex flex-col items-center justify-center'>
-									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>Monitored Tracks</span>
+									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>{t('monitored_tracks')}</span>
 									<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{Object.keys(networkTrackInfo[network]).length}</span>
 								</div>
 							</div>
@@ -77,12 +79,12 @@ const GovAnalytics = () => {
 								<div className='flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#CCF3FF]'>
 									<ImageIcon
 										src='/assets/icons/total-proposal-icon.svg'
-										alt='proposal created icon'
+										alt={t('approved_proposals_icon')}
 										className='ml-1 scale-[60%]'
 									/>
 								</div>
 								<div className='mt-4 flex flex-col items-center justify-center'>
-									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>Approved Proposals</span>
+									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>{t('approved_proposals')}</span>
 									<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalApprovedProposalCount}</span>
 								</div>
 							</div>
@@ -91,11 +93,11 @@ const GovAnalytics = () => {
 							<div className='flex flex-col items-center justify-center'>
 								<ImageIcon
 									src='/assets/icons/analytics/proposal-created.svg'
-									alt='proposal created icon'
+									alt={t('proposal_created_icon')}
 									className='scale-[60%]'
 								/>
 								<div className='flex flex-col items-center justify-center'>
-									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Proposals</span>
+									<span className='text-[10px] font-normal text-blue-light-medium dark:text-blue-dark-medium'>{t('total_proposals')}</span>
 									<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalProposalCount}</span>
 								</div>
 							</div>

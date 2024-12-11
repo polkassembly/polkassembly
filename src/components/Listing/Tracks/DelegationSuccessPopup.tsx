@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
 import Image from 'next/image';
 import Address from '~src/ui-components/Address';
@@ -21,6 +21,7 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -62,6 +63,7 @@ const DelegationSuccessPopup = ({
 	isVote
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
 	useEffect(() => {
@@ -77,7 +79,7 @@ const DelegationSuccessPopup = ({
 		<Modal
 			zIndex={100000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={isDelegate ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : <UndelegateCloseIcon />}
 			onCancel={() => {
@@ -97,7 +99,7 @@ const DelegationSuccessPopup = ({
 						height={220}
 					/>
 					<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
-						{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
+						{title ? title : isDelegate ? `${title} ${t('successfully')}` : t('undelegated_successfully')}
 					</h2>
 				</div>
 				{isDelegate && (
@@ -112,14 +114,14 @@ const DelegationSuccessPopup = ({
 							<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 								{' '}
 								<span className='mr-3'>
-									<span className='font-semibold'> Aye: </span>
+									<span className='font-semibold'> {t('aye')}: </span>
 									<span className='font-normal'>
 										{ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}
 										{` ${unit}`}
 									</span>
 								</span>{' '}
 								<span className='mr-3'>
-									<span className='font-semibold'>Nay: </span>
+									<span className='font-semibold'>{t('nay')}: </span>
 									<span className='font-normal'>
 										{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit) : 0}
 										{` ${unit}`}
@@ -131,7 +133,7 @@ const DelegationSuccessPopup = ({
 							<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 								{' '}
 								<span className='mr-3'>
-									<span className='font-semibold'> Abstain:</span>{' '}
+									<span className='font-semibold'> {t('abstain')}:</span>{' '}
 									<span className='font-normal'>
 										{abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}
 										{` ${unit}`}
@@ -139,7 +141,7 @@ const DelegationSuccessPopup = ({
 								</span>{' '}
 								<span className='mr-3'>
 									{' '}
-									<span className='font-semibold'>Aye:</span>{' '}
+									<span className='font-semibold'>{t('aye')}:</span>{' '}
 									<span className='font-normal'>
 										{' '}
 										{ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}
@@ -147,7 +149,7 @@ const DelegationSuccessPopup = ({
 									</span>
 								</span>{' '}
 								<span className='mr-3'>
-									<span className='font-semibold'>Nay:</span>{' '}
+									<span className='font-semibold'>{t('nay')}:</span>{' '}
 									<span className='font-normal'>
 										{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit) : 0}
 										{` ${unit}`}
@@ -171,7 +173,7 @@ const DelegationSuccessPopup = ({
 							)}
 							{vote && (
 								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
-									Vote :
+									{t('vote')}:
 									{vote === EVoteDecisionType.AYE ? (
 										<p>
 											<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
@@ -193,12 +195,12 @@ const DelegationSuccessPopup = ({
 							)}
 							{!isNaN(Number(conviction)) && (
 								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
-									Conviction:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
+									{t('conviction')}:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
 								</div>
 							)}
 							{tracks && (
 								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-blue-dark-medium'>
-									Track(s):
+									{t('track_s')}:
 									<span>
 										<div
 											className={`flex max-h-[100px] min-h-[50px] flex-col gap-1 pr-2 font-medium text-bodyBlue dark:text-blue-dark-high ${
@@ -219,7 +221,7 @@ const DelegationSuccessPopup = ({
 							)}
 							{votedAt && (
 								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
-									Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
+									{t('time_of_vote')}: <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 								</div>
 							)}
 						</div>

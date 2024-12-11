@@ -4,6 +4,7 @@
 import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -21,6 +22,8 @@ interface Props {
 const NextBurn = ({ nextBurn }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
+
 	return (
 		<>
 			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
@@ -30,13 +33,13 @@ const NextBurn = ({ nextBurn }: Props) => {
 							{theme === 'dark' ? (
 								<ImageIcon
 									src='/assets/icons/NextBurnDark.svg'
-									alt='next burn dark icon'
+									alt={t('next_burn_dark_icon')}
 									imgClassName='lg:hidden'
 								/>
 							) : (
 								<ImageIcon
 									src='/assets/icons/nextburn.svg'
-									alt='next burn icon'
+									alt={t('next_burn_icon')}
 									imgClassName='lg:hidden'
 								/>
 							)}
@@ -45,9 +48,8 @@ const NextBurn = ({ nextBurn }: Props) => {
 							<>
 								<div className='mb-4'>
 									<div className='my-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<span className='mr-2 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
-
-										<HelperTooltip text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.' />
+										<span className='mr-2 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('next_burn')}</span>
+										<HelperTooltip text={t('next_burn_tooltip')} />
 									</div>
 
 									<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -60,7 +62,7 @@ const NextBurn = ({ nextBurn }: Props) => {
 								</div>
 								<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
 									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
+									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : t('na')}</span>
 								</div>
 							</>
 						) : (
@@ -73,13 +75,13 @@ const NextBurn = ({ nextBurn }: Props) => {
 						{theme === 'dark' ? (
 							<ImageIcon
 								src='/assets/icons/NextBurnDark.svg'
-								alt='next burn dark icon'
+								alt={t('next_burn_dark_icon')}
 								imgClassName='xs:hidden lg:block w-full'
 							/>
 						) : (
 							<ImageIcon
 								src='/assets/icons/nextburn.svg'
-								alt='next burn icon'
+								alt={t('next_burn_icon')}
 								imgClassName='xs:hidden lg:block w-full'
 							/>
 						)}

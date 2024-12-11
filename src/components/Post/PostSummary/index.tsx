@@ -8,9 +8,10 @@ import Markdown from '~src/ui-components/Markdown';
 import styled from 'styled-components';
 import { AiStarIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import EvalutionSummary from './EvalutionSummary';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface IPostSummaryProps {
 	className?: string;
@@ -25,6 +26,7 @@ const sanitizeSummary = (md: string) => {
 const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, theme } = props;
+	const { t } = useTranslation('common');
 	const {
 		postData: { summary }
 	} = usePostDataContext();
@@ -44,7 +46,7 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 					<span className='flex items-center justify-center text-lg text-lightBlue dark:text-blue-dark-medium'>
 						<AiStarIcon />
 					</span>
-					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>AI Summary</span>
+					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>{t('ai_summary')}</span>
 				</p>
 			</button>
 			<Modal
@@ -52,8 +54,8 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 				className={classNames(
 					className,
 					'ml-auto h-[calc(100vh-250px)] pb-0 pl-0 md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay',
-					poppins.className,
-					poppins.variable
+					dmSans.className,
+					dmSans.variable
 				)}
 				open={open}
 				onCancel={() => setOpen(false)}
@@ -65,7 +67,7 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>
 									<AiStarIcon />
 								</span>
-								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>AI Summary</span>
+								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>{t('ai_summary')}</span>
 							</h3>
 							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] dark:border-[#3B444F] md:py-[6px] md:pl-[10px] md:pr-3'>
 								{/* <OpenAiIcon className='text-base md:text-2xl' /> */}
@@ -74,7 +76,7 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 									alt='openai icon'
 									imgWrapperClassName='w-6 h-6  text-base md:text-2xl flex justify-center items-center'
 								/>
-								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-blue-dark-high md:text-xs'>Powered by OpenAI</p>
+								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-blue-dark-high md:text-xs'>{t('powered_by_openai')}</p>
 							</div>
 						</article>
 						<button

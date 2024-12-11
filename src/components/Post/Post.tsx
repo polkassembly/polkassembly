@@ -45,6 +45,9 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
+import { usePostDataContext } from '~src/context';
+import { showProgressReportUploadFlow } from '../ProgressReport/utils';
+import { useTranslation } from 'next-i18next';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -128,7 +131,8 @@ const Post: FC<IPostProps> = (props) => {
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 	const [selectedTabKey, setSelectedTabKey] = useState<string>('description');
-
+	const { postData } = usePostDataContext();
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		const { tab } = router.query;
 		if (tab && typeof tab === 'string') {
@@ -139,13 +143,12 @@ const Post: FC<IPostProps> = (props) => {
 
 	const handleTabChange = (key: string) => {
 		setSelectedTabKey(key);
-		router.push(
+		router.replace(
 			{
 				pathname: router.pathname,
 				query: { ...router.query, tab: key }
-			},
-			undefined,
-			{ shallow: true }
+			}
+			// { shallow: true }
 		);
 	};
 
@@ -245,15 +248,11 @@ const Post: FC<IPostProps> = (props) => {
 	const productData = useCallback(async () => {
 		try {
 			if (networkModified) {
-				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
-					headers: {
-						Accept: 'application/vnd.github.v3+json',
-						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28'
-					}
-				});
-				if (response.ok) {
-					const data = await response.json();
+				// api/v1/posts/githubAction
+				const { data = null } = (await nextApiClientFetch(`api/v1/posts/githubAction?network=${networkModified}&postType=${postType}&postTypeInfo=${postTypeInfo}`)) as {
+					data: IDataType[];
+				};
+				if (data) {
 					setAuditData(data);
 					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
 					setTotalAuditCount(count);
@@ -355,6 +354,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						bountyIndex={post.parent_bounty_index}
+						curator={post?.curator || ''}
 					/>
 				</div>
 
@@ -391,7 +391,7 @@ const Post: FC<IPostProps> = (props) => {
 			{
 				children: <PostTimeline />,
 				key: 'timeline',
-				label: 'Timeline'
+				label: t('timeline')
 			}
 		];
 
@@ -463,7 +463,7 @@ const Post: FC<IPostProps> = (props) => {
 						/>
 					),
 					key: 'onChainInfo',
-					label: 'On Chain Info'
+					label: t('on_chain_info')
 				},
 				isAnalyticsSupportedNetwork(network) &&
 					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
@@ -478,7 +478,7 @@ const Post: FC<IPostProps> = (props) => {
 							/>
 						),
 						key: 'stats',
-						label: <div className='flex items-center gap-2'>Stats</div>
+						label: <div className='flex items-center gap-2'>{t('stats')}</div>
 					}
 			);
 		}
@@ -490,7 +490,9 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{post?.progress_report?.progress_file && <PostProgressReport />}
+					{showProgressReportUploadFlow(network, postData?.track_name, postData?.postType, postData) && post?.progress_report && post?.progress_report?.length > 0 && (
+						<PostProgressReport theme={theme} />
+					)}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}
@@ -503,7 +505,7 @@ const Post: FC<IPostProps> = (props) => {
 				</>
 			),
 			key: 'description',
-			label: 'Description'
+			label: t('description')
 		},
 		...getOnChainTabs()
 	];
@@ -574,13 +576,16 @@ const Post: FC<IPostProps> = (props) => {
 						{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
 							<Link href={`/bounty/${post.parent_bounty_index}`}>
 								<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
-									This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
+									{t('this_is_a_child_bounty_of')}{' '}
+									<span className='text-pink_primary dark:text-blue-dark-helper'>
+										{t('bounty')} #{post.parent_bounty_index}
+									</span>
 								</div>
 							</Link>
 						)}
 						{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
 							<div className='dashboard-heading mb-6 flex w-full items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
-								<span>The child bounty payout is ready to be claimed</span>
+								<span>{t('the_child_bounty_payout_is_ready_to_be_claimed')}</span>
 								<ClaimPayoutModal
 									parentBountyId={post?.parentBountyId}
 									childBountyId={onchainId}
@@ -592,7 +597,7 @@ const Post: FC<IPostProps> = (props) => {
 							<div className='xl:col-span-8'>
 								{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
 									<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
-										This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
+										{t('this_grant_will_be_closed_in')} <span className='text-pink_primary'>{formatDuration(duration)}</span>
 									</div>
 								)}
 
@@ -622,7 +627,7 @@ const Post: FC<IPostProps> = (props) => {
 								</div>
 								<div className='flex items-center'>
 									<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
-									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>{t('discover_similar_proposals')}</p>
 									<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
 								</div>
 								{isSimilarLoading ? (

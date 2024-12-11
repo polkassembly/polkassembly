@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useReducer, useState } from 'react';
 import BN from 'bn.js';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { Form, Modal, Steps } from 'antd';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
@@ -33,6 +33,7 @@ import {
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { useTranslation } from 'next-i18next';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -137,6 +138,7 @@ export const INIT_BENEFICIARIES = [
 ];
 
 const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent, onClick }: Props) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const dispatch = useDispatch();
@@ -311,7 +313,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						alt='Create Treasury Proposal icon'
 						className='-mt-[2px]'
 					/>
-					<span className='hidden text-sm font-medium text-white sm:flex'>Create Treasury Proposal</span>
+					<span className='hidden text-sm font-medium text-white sm:flex'>{t('create_treasury_proposal')}</span>
 				</div>
 			) : (
 				<div
@@ -328,9 +330,9 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
 					)}
 					{isUsedInTreasuryTrack ? (
-						<p className='m-0 p-0'>Create Proposal</p>
+						<p className='m-0 p-0'>{t('create_proposal')}</p>
 					) : (
-						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
+						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>{t('create_treasury_proposal')}</p>
 					)}
 				</div>
 			)}
@@ -361,24 +363,24 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Treasury Proposal Creation
+						{t('exit_treasury_proposal_creation')}
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
+						{t('your_treasury_proposal_information_title_description_tags_would_be_lost')}. {t('are_you_sure_you_want_to_exit_proposal_creation_process')}
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleClose}
 							buttonsize='sm'
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							variant='default'
 						/>
 						<CustomButton
@@ -389,7 +391,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							}}
 							height={40}
 							width={200}
-							text='No, Continue Editing'
+							text={t('no_continue_editing')}
 							variant='primary'
 						/>
 					</div>
@@ -420,13 +422,13 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
-						Create Treasury Proposal
+						{t('create_treasury_proposal')}
 					</div>
 				}
 			>

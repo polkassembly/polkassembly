@@ -5,7 +5,7 @@
 import { formatBalance } from '@polkadot/util';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useApiContext } from '~src/context';
@@ -210,7 +210,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 					color='#575255'
 					overlayClassName='max-w-none'
 					title={
-						<div className={`flex flex-col gap-1 whitespace-nowrap p-1.5 text-xs ${poppins.className} ${poppins.variable}`}>
+						<div className={`flex flex-col gap-1 whitespace-nowrap p-1.5 text-xs ${dmSans.className} ${dmSans.variable}`}>
 							<span>
 								{t('aye')} ={' '}
 								{usingTallyForAyeNayVotes

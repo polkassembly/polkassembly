@@ -4,8 +4,9 @@
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import DefaultVotingOptionsModal from '~src/components/Listing/Tracks/DefaultVotingOptionsModal';
@@ -16,6 +17,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 const BatchVotingBadge = () => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const user = useUserDetailsSelector();
 	const { id } = user;
 	const router = useRouter();
@@ -30,17 +32,17 @@ const BatchVotingBadge = () => {
 					imgClassName='-mt-3'
 				/>
 				<Button
-					className='relative -top-[70px] z-[100] mx-auto flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs text-white'
+					className='relative -top-[70px] z-[100] mx-auto flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs font-semibold text-white'
 					onClick={() => {
 						dispatch(batchVotesActions.setShowDefaultOptionsModal(true));
 					}}
 				>
-					Lets Begin
+					{t('lets_begin')}
 				</Button>
 			</section>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				className={classNames(dmSans.className, dmSans.variable, 'w-[600px]')}
 				open={show_default_options_modal}
 				footer={
 					id ? (
@@ -73,7 +75,7 @@ const BatchVotingBadge = () => {
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						Set Defaults
+						{t('set_defaults')}
 					</div>
 				}
 			>

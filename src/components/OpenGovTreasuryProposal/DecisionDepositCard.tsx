@@ -7,7 +7,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -30,6 +30,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
@@ -163,7 +165,12 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 
 				setAddress(accounts[0]?.address);
 				if (defaultWalletAddress) {
-					setAddress(accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0]?.address);
+					const matchingAccount = accounts?.find((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress));
+					if (matchingAccount) {
+						setAddress(matchingAccount?.address);
+					} else {
+						console.warn('No matching account found');
+					}
 				}
 			}
 		}
@@ -234,13 +241,13 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.className} ${dmSans.variable}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={openModal}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpenModal(false)}
 			title={
 				<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-					Pay Decision Deposit
+					{t('pay_decision_deposit')}
 				</div>
 			}
 			footer={
@@ -249,14 +256,14 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 						onClick={() => setOpenModal(false)}
 						buttonsize='xs'
 						variant='default'
-						text='Back'
+						text={t('back')}
 					/>
 					<CustomButton
 						onClick={handleSubmit}
 						disabled={!accounts.length || availableBalance.lte(amount)}
 						buttonsize='xs'
 						variant='primary'
-						text='Continue'
+						text={t('continue')}
 						className={`${!accounts.length || (availableBalance.lte(amount) && 'opacity-50')}`}
 					/>
 				</div>

@@ -94,7 +94,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 			/>
 			<Link
 				className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
-				href={'/bounty'}
+				href={'/bounty-dashboard'}
 			>
 				<div className='flex items-center'>
 					<LeftOutlined className='mr-2 text-xs' />

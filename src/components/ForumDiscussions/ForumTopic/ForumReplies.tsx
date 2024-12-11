@@ -8,10 +8,13 @@ import ForumReply from './ForumReply';
 import formatAvatarUrl from '../utils/FormatAvatarUrl';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import LikeButton from '../utils/ForumLikeButton';
+import { useTranslation } from 'next-i18next';
 
 const ForumReplies = ({ replies }: any) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
+	const { t } = useTranslation('common');
 	const toggleShowReplies = () => setShowReplies(!showReplies);
+
 	return (
 		<div className='comment-content my-3 sm:ml-[44px]'>
 			{replies.length > 0 ? (
@@ -20,14 +23,14 @@ const ForumReplies = ({ replies }: any) => {
 						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white sm:ml-5'
 						onClick={toggleShowReplies}
 					>
-						{replies.length} replies <DownOutlined className='ml-1' />
+						{t('replies_count', { count: replies.length })} <DownOutlined className='ml-1' />
 					</div>
 				) : (
 					<div
 						className='mb-4 flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white sm:ml-5'
 						onClick={toggleShowReplies}
 					>
-						Hide replies <UpOutlined className='ml-1' />
+						{t('hide_replies')} <UpOutlined className='ml-1' />
 					</div>
 				)
 			) : null}
@@ -39,7 +42,7 @@ const ForumReplies = ({ replies }: any) => {
 								<div className='flex gap-4'>
 									<ImageIcon
 										src={formatAvatarUrl(reply.avatar_template, '46')}
-										alt='user image'
+										alt={t('user_image_alt')}
 										imgClassName='rounded-full'
 									/>
 									<div className='reply-user-container -mt-1 rounded-t-md dark:bg-[#141416]'>

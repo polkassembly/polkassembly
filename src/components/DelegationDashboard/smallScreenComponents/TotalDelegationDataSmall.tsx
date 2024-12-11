@@ -12,8 +12,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -26,6 +27,7 @@ const TotalDelegationDataSmall = ({
 	setOpenBecomeDelegateModal?: (pre: boolean) => void;
 	setOpenLoginModal?: (pre: boolean) => void;
 }) => {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -80,12 +82,12 @@ const TotalDelegationDataSmall = ({
 							<div className='flex flex-col items-center gap-[6px]'>
 								<Image
 									src='/assets/delegation-tracks/total-delegatees.svg'
-									alt='Total delegatees icon'
+									alt={t('total_delegatees_icon')}
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegatees</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegatees')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
 							</div>
 							<Divider
 								type='vertical'
@@ -96,12 +98,12 @@ const TotalDelegationDataSmall = ({
 							<div className='flex flex-col items-center gap-[6px]'>
 								<Image
 									src='/assets/delegation-tracks/polkadot-delegation.svg'
-									alt='polkadot delegation icon'
+									alt={t('total_supply_icon')}
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Supply</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_supply')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 									{parseBalance(totalSupply.toString(), 1, true, network)}
 								</span>
 							</div>
@@ -114,12 +116,12 @@ const TotalDelegationDataSmall = ({
 							<div className='flex flex-col items-center gap-[6px]'>
 								<Image
 									src='/assets/delegation-tracks/total-delegates.svg'
-									alt='Total delegate icon'
+									alt={t('total_delegates_icon')}
 									height={24}
 									width={24}
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegates</span>
-								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegates')}</span>
+								<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
 							</div>
 						</div>
 					</div>
@@ -133,12 +135,12 @@ const TotalDelegationDataSmall = ({
 						<div className='flex flex-col items-center gap-[6px]'>
 							<Image
 								src='/assets/delegation-tracks/total-delegated-tokens.svg'
-								alt='Total delegate tokens icon'
+								alt={t('total_delegated_votes_icon')}
 								height={24}
 								width={24}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegated Votes</span>
-							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('total_delegated_votes')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
 						</div>
 						<Divider
 							type='vertical'
@@ -149,12 +151,12 @@ const TotalDelegationDataSmall = ({
 						<div className='flex flex-col items-center gap-[6px]'>
 							<Image
 								src='/assets/delegation-tracks/delegate-tokens.svg'
-								alt='delegate tokens icon'
+								alt={t('delegated_tokens_icon')}
 								height={24}
 								width={24}
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Delegated Tokens</span>
-							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+							<span className={`${dmSans.variable} ${dmSans.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>{t('delegated_tokens')}</span>
+							<span className={`${dmSans.variable} ${dmSans.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 								{parseBalance(totalStats.totalDelegatedBalance, 1, true, network)}
 							</span>
 						</div>
@@ -169,11 +171,11 @@ const TotalDelegationDataSmall = ({
 						}
 					}}
 					// disabled={!currentUser.id || !currentUser.loginAddress}
-					className={`mt-[14px] w-full border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${
+					className={` mt-[14px] w-full border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
 						(!currentUser.id || !currentUser.loginAddress) && 'opacity-60'
 					}`}
 				>
-					Become a Delegate
+					{t('become_delegate')}
 				</Button>
 			</Spin>
 		</section>

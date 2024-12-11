@@ -6,7 +6,7 @@ import Loader from '~src/ui-components/Loader';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Form, Modal, Steps } from 'antd';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
@@ -19,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus, PostOrigin, EReferendumType, EKillOrCancel } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -37,13 +38,6 @@ const CreateReferendaForm = dynamic(() => import('../Forms/CreateReferendaForm')
 const WriteProposal = dynamic(() => import('../OpenGovTreasuryProposal/WriteProposal'), {
 	ssr: false
 });
-
-enum ESteps {
-	Write_Proposal = 'Write a Proposal',
-	Create_Proposal = 'Create a Referenda',
-	Cancel_Proposal = 'Cancel a Referenda',
-	Kill_Proposal = 'Kill a Referenda'
-}
 
 interface Props {
 	referendaModal: number;
@@ -77,6 +71,7 @@ const ReferendaActionModal = ({
 	proposerAddress,
 	theme
 }: Props) => {
+	const { t } = useTranslation();
 	const { network } = useNetworkSelector();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
@@ -110,7 +105,7 @@ const ReferendaActionModal = ({
 
 		if (apiError || !data?.post_id) {
 			queueNotification({
-				header: 'Error',
+				header: t('error'),
 				message: apiError,
 				status: NotificationStatus.ERROR
 			});
@@ -155,21 +150,21 @@ const ReferendaActionModal = ({
 					isProposalCreation
 					closable
 					linkAddressNeeded
-					accountSelectionFormTitle='Select Proposer Address'
+					accountSelectionFormTitle={t('select_proposer_address')}
 					onConfirm={(address: string) => {
 						setOpenModal(true);
 						setProposerAddress(address);
 					}}
 					walletAlertTitle={
 						referendaModal === 1
-							? 'Creating a Referendum'
+							? t('creating_referendum')
 							: referendaModal === 2
-							? 'Cancelling a Referendum'
+							? t('cancelling_referendum')
 							: referendaModal === 3
-							? 'Killing a Referendum'
-							: 'Treasury Proposal Creation'
+							? t('killing_referendum')
+							: t('treasury_proposal_creation')
 					}
-					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
+					accountAlertTitle={t('install_wallet_to_create_proposal')}
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 					usedInIdentityFlow={false}
@@ -183,24 +178,22 @@ const ReferendaActionModal = ({
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Proposal Creation
+						{t('exit_proposal_creation')}
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
-					</span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{t('proposal_info_lost_confirmation')}</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleClose}
 							buttonsize='sm'
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							variant='default'
 						/>
 						<CustomButton
@@ -210,7 +203,7 @@ const ReferendaActionModal = ({
 							}}
 							height={40}
 							width={200}
-							text='No, Continue Editing'
+							text={t('no_continue_editing')}
 							variant='primary'
 						/>
 					</div>
@@ -224,13 +217,19 @@ const ReferendaActionModal = ({
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${dmSans.className} ${dmSans.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
-						{referendaModal === 1 ? 'Create Referenda' : referendaModal === 2 ? 'Cancel Referenda' : referendaModal === 3 ? 'Kill Referenda' : 'Create Treasury Proposal'}
+						{referendaModal === 1
+							? t('create_referenda')
+							: referendaModal === 2
+							? t('cancel_referenda')
+							: referendaModal === 3
+							? t('kill_referenda')
+							: t('create_treasury_proposal')}
 					</div>
 				}
 			>
@@ -243,10 +242,10 @@ const ReferendaActionModal = ({
 						labelPlacement='vertical'
 						items={[
 							{
-								title: ESteps.Write_Proposal
+								title: t('write_proposal')
 							},
 							{
-								title: referendaModal === 1 ? ESteps.Create_Proposal : referendaModal === 2 ? ESteps.Cancel_Proposal : referendaModal === 3 ? ESteps.Kill_Proposal : ''
+								title: referendaModal === 1 ? t('create_proposal') : referendaModal === 2 ? t('cancel_proposal') : referendaModal === 3 ? t('kill_proposal') : ''
 							}
 						]}
 					/>
@@ -321,8 +320,8 @@ const ReferendaActionModal = ({
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}
 				image='/assets/Gifs/login-treasury.gif'
-				title='Join Polkassembly to Create a New proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_to_create_proposal')}
+				subtitle={t('discuss_contribute_get_updates')}
 			/>
 		</div>
 	);

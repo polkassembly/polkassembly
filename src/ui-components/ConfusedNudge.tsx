@@ -46,7 +46,7 @@ const ConfusedNudge = ({ postIndex, postType, status, title, setOpenNudge }: Pro
 			<div
 				className={`absolute left-0 top-0 flex w-full justify-between bg-gradient-to-r from-[#D80676] to-[#FF778F] pr-10 font-medium transition-opacity duration-100 ${
 					is_sidebar_collapsed ? 'pl-28' : 'pl-[265px]'
-				} font-poppins text-[12px] font-medium text-white`}
+				} font-dmSans text-[12px] font-medium text-white`}
 			>
 				<div className='flex gap-2'>
 					<p className='pt-3 '>{t('confused_about_making_a_decision')}</p>

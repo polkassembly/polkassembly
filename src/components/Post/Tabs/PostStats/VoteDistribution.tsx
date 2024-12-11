@@ -9,6 +9,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from 'src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
+import { useTranslation } from 'next-i18next';
 
 interface IVoteDistributionProps {
 	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
@@ -22,7 +23,7 @@ interface IVoteType {
 }
 const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const [ayeVotes, setAyeVotes] = useState<IVoteType>({
 		count: 0,
 		percent: 0,
@@ -90,7 +91,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	return (
 		<Card className='mx-auto h-fit w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white md:max-h-[500px]'>
 			<div className='flex items-center justify-between gap-5'>
-				<h2 className='text-xl font-semibold'>Vote Distribution</h2>
+				<h2 className='text-xl font-semibold'>{t('vote_distribution')}</h2>
 				<Legend className='hidden md:flex' />
 			</div>
 			<div className='flex h-[200px] w-full justify-center gap-1.5'>

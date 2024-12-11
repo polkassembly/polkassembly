@@ -1,14 +1,15 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import React, { useState } from 'react';
 import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Loader from '~src/ui-components/Loader';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
+import { useTranslation } from 'next-i18next';
 
 const BecomeDelegateModal = dynamic(() => import('../../ui-components/BecomeDelegateModal'), {
 	loading: () => <Loader />,
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, setUserBio, onchainUsername }: Props) => {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const [isBecomedelegateVisible, setsBecomedelegateVisible] = useState(true);
 	const showModal = () => {
@@ -41,14 +43,16 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 				<>
 					<div className='mb-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<div className='flex items-center justify-between'>
-							<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
+							<span className='text-xl font-semibold text-bodyBlue dark:text-white'>{t('how_to_delegate')}</span>
 							<div className='flex items-center space-x-5'>
 								<Button
 									onClick={showModal}
 									disabled={!currentUser.id || !currentUser.loginAddress}
-									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
+									className={`border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
+										(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'
+									}`}
 								>
-									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
+									{!currentUser.id ? <Tooltip title={t('login_to_continue')}>{t('become_delegate')}</Tooltip> : t('become_delegate')}
 								</Button>
 								<span onClick={handleNotificationNudgeClose}>
 									<CloseIcon className='mt-1 cursor-pointer dark:text-white' />
@@ -59,31 +63,31 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 							<div className='flex space-x-3'>
 								<ImageIcon
 									src='/assets/delegation-tracks/become-delegate-1.svg'
-									alt='Become delegate icon'
+									alt={t('delegate_icon')}
 									className='-ml-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>STEP 1</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>{t('step_1')}</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold '>Select Track for Delegation</span>
-									<span className='text-blue-light-high dark:text-blue-dark-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>{t('select_track')}</span>
+									<span className='text-blue-light-high dark:text-blue-dark-high'>{t('track_level_delegation')}</span>
 								</div>
 							</div>
 							<div className='mr-2 mt-10'>
 								<ImageIcon
 									src='/assets/delegation-tracks/become-arrow.svg'
-									alt='Double side arrow icon'
+									alt={t('double_arrow_icon')}
 								/>
 							</div>
 							<div className='flex space-x-3'>
 								<ImageIcon
 									src='/assets/delegation-tracks/become-delegate-2.svg'
-									alt='Become delegate icon'
+									alt={t('delegate_icon')}
 									imgClassName='mt-[22px] mr-3'
 								/>
-								<span className='mt-[22px] text-sm font-semibold'>STEP 2</span>
+								<span className='mt-[22px] whitespace-nowrap text-sm font-semibold'>{t('step_2')}</span>
 								<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
-									<span className='font-semibold'>Select Delegate</span>
-									<span className='text-blue-light-high dark:text-blue-dark-high'>Choose a delegate based on the stats to complete your delegation process.</span>
+									<span className='font-semibold text-bodyBlue dark:text-white'>{t('select_delegate')}</span>
+									<span className='text-blue-light-high dark:text-blue-dark-high'>{t('choose_delegate')}</span>
 								</div>
 							</div>
 						</div>
@@ -93,14 +97,14 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 							showIcon
 							message={
 								<span className='text-blue-light-medium dark:text-[#9E9E9E]'>
-									Want to learn more about delegation process before locking your tokens. Click
+									{t('learn_more_before_locking')}
 									<a
 										href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
 										className='ml-[3px] text-[#407BFF] underline'
 										target='_blank'
 										rel='noreferrer'
 									>
-										here
+										{t('here')}
 									</a>
 								</span>
 							}

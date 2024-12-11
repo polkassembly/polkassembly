@@ -16,6 +16,7 @@ import { getColumns } from './columns';
 import PostsTable from './PostsTable';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { useTranslation } from 'next-i18next';
 
 interface ILatestActivityProps {
 	latestPosts: {
@@ -92,6 +93,10 @@ const Container = styled.div`
 	.ant-table-wrapper .ant-table-thead > tr > td {
 		border-bottom: ${(props: any) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
 	}
+	.ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
+	.ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+		font-weight: 800 !important;
+	}
 `;
 
 type TCapitalizeFn = (str: string, lower?: boolean) => string;
@@ -118,6 +123,7 @@ const getLabel = (key: 'all' | ProposalType): string => {
 
 const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) => {
 	const [currentTab, setCurrentTab] = useState('all');
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const tabItems = (Object.entries(latestPosts) as [key: 'all' | ProposalType, value: IApiResponse<ILatestActivityPostsListingResponse>][]).map(([key, value]) => {
 		const label = getLabel(key);
@@ -148,13 +154,13 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 				theme={theme as any}
 			>
 				<div className='flex items-center justify-between pl-1 pr-4'>
-					<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
+					<h2 className='mx-3.5 mb-6 mt-6 text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>{t('latest_activity')}</h2>
 					{currentTab !== 'all' && (
 						<Link
 							className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 							href={`/${currentTab}`}
 						>
-							View all
+							{t('view_all')}
 						</Link>
 					)}
 				</div>

@@ -21,7 +21,7 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
@@ -36,6 +36,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import userProfileBalances from '~src/util/userProfileBalances';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -62,8 +63,11 @@ interface Props {
 	allowedCommentors?: EAllowedCommentor;
 }
 export const getDiscussionIdFromLink = (discussion: string) => {
-	const splitedArr = discussion?.split('/');
-	return splitedArr[splitedArr.length - 1];
+	const splitedArr = discussion?.trim()?.split('/');
+	if (discussion.includes('post')) {
+		return splitedArr[splitedArr.length - 1];
+	}
+	return null;
 };
 
 const CreateProposal = ({
@@ -88,6 +92,7 @@ const CreateProposal = ({
 	inputAmountValue,
 	allowedCommentors
 }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -167,7 +172,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
-			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,
@@ -296,14 +301,18 @@ const CreateProposal = ({
 				{submitionDeposite.gt(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${dmSans.variable} ${dmSans.className}`}
 						showIcon
-						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
+						message={<span className='text-[13px] dark:text-blue-dark-high'>{t('insufficient_available_balance')}</span>}
 					/>
 				)}
 				<Alert
-					message={<span className='text-[13px] dark:text-blue-dark-high'>Preimage {isPreimage ? 'linked' : 'created'} successfully</span>}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+					message={
+						<span className='text-[13px] dark:text-blue-dark-high'>
+							{t('preimage')} {isPreimage ? t('linked') : t('created')} {t('successfully')}
+						</span>
+					}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${dmSans.variable} ${dmSans.className}`}
 					type='success'
 					showIcon
 				/>
@@ -314,7 +323,7 @@ const CreateProposal = ({
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex'>
-							<span className='w-[150px]'>Proposer Address:</span>
+							<span className='w-[150px]'>{t('proposer_address')}:</span>
 							<Address
 								addressClassName='text-bodyBlue text-sm dark:text-blue-dark-high'
 								address={proposerAddress}
@@ -324,7 +333,7 @@ const CreateProposal = ({
 							/>
 						</span>
 						<span className='flex'>
-							<span className='w-[150px]'>Beneficiary Address:</span>
+							<span className='w-[150px]'>{t('beneficiary_address')}:</span>
 							<div className='flex flex-col gap-2'>
 								{beneficiaryAddresses.map((beneficiary, index) => (
 									<Beneficiary
@@ -338,13 +347,13 @@ const CreateProposal = ({
 							</div>
 						</span>
 						<span className='flex'>
-							<span className='w-[150px]'>Track:</span>
+							<span className='w-[150px]'>{t('track')}:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{selectedTrack} <span className='ml-1 text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
 							</span>
 						</span>
 						<span className='flex'>
-							<span className='w-[150px]'>Funding Amount:</span>
+							<span className='w-[150px]'>{t('funding_amount')}:</span>
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{generalIndex ? (
 									<div className='flex items-center gap-1'>
@@ -352,7 +361,7 @@ const CreateProposal = ({
 										<HelperTooltip
 											text={
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-													<span>Current value:</span>
+													<span>{t('current_value')}:</span>
 													<span>
 														{getUsdValueFromAsset({
 															currentTokenPrice: currentTokenPrice || '0',
@@ -376,7 +385,7 @@ const CreateProposal = ({
 										<HelperTooltip
 											text={
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-													<span>Current value:</span>
+													<span>{t('current_value')}:</span>
 													<span>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD </span>
 												</div>
 											}
@@ -386,7 +395,7 @@ const CreateProposal = ({
 							</div>
 						</span>
 						<span className='flex items-center'>
-							<span className='w-[150px]'>Preimage Hash:</span>
+							<span className='w-[150px]'>{t('preimage_hash')}:</span>
 							<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							<span
 								className='ml-1 flex cursor-pointer items-center'
@@ -401,11 +410,11 @@ const CreateProposal = ({
 							</span>
 						</span>
 						<span className='flex'>
-							<span className='w-[150px]'>Preimage Length:</span>
+							<span className='w-[150px]'>{t('preimage_length')}:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{preimageLength}</span>
 						</span>
 						<span className='flex items-center'>
-							<span className='w-[150px]'>Preimage Link:</span>
+							<span className='w-[150px]'>{t('preimage_link')}:</span>
 							<a
 								target='_blank'
 								rel='noreferrer'
@@ -433,29 +442,29 @@ const CreateProposal = ({
 						type='info'
 						message={
 							<span className='text-[13px] text-bodyBlue dark:text-blue-dark-high'>
-								An amount of{' '}
+								{t('an_amount_of')}
 								<span className='font-semibold'>
 									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
 								</span>{' '}
-								will be required to submit proposal.
+								{t('will_be_required_to_submit_proposal')}
 							</span>
 						}
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
 								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
-									<span className='w-[150px] dark:text-blue-dark-medium'>Deposit amount</span>
+									<span className='w-[150px] dark:text-blue-dark-medium'>{t('deposit_amount')}</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
 								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-									<span className='w-[150px]'>Gas fees</span>
+									<span className='w-[150px]'>{t('gas_fees')}</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
 								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium '>
-									<span className='w-[150px]'>Total</span>
+									<span className='w-[150px]'>{t('total')}</span>
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
 									</span>
@@ -466,7 +475,7 @@ const CreateProposal = ({
 				)}
 				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
-						text='Create Proposal'
+						text={t('create_proposal')}
 						variant='primary'
 						height={40}
 						width={155}

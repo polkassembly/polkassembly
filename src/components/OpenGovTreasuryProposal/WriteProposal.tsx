@@ -19,6 +19,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -54,6 +55,7 @@ const WriteProposal = ({
 	setAllowedCommentors
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
 
@@ -89,8 +91,8 @@ const WriteProposal = ({
 		} else if (error) {
 			setIsDiscussionFound(false);
 			queueNotification({
-				header: 'Failed!',
-				message: 'Unable to fetch data for this discussion number.',
+				header: t('Failed!'),
+				message: t('Unable to fetch data for this discussion number.'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -183,7 +185,7 @@ const WriteProposal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='write-proposal my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Have you initiated a discussion post for your proposal already? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('Have you initiated a discussion post for your proposal already?')}</label>
 					<Radio.Group
 						disabled={loading}
 						onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)}
@@ -195,13 +197,13 @@ const WriteProposal = ({
 							value={true}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							Yes
+							{t('Yes')}
 						</Radio>
 						<Radio
 							value={false}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							No
+							{t('No')}
 						</Radio>
 					</Radio.Group>
 				</div>
@@ -210,16 +212,16 @@ const WriteProposal = ({
 					form={form}
 					disabled={loading}
 					initialValues={{ content, discussion_link: discussionLink, tags, title }}
-					validateMessages={{ required: "Please add the '${name}'" }}
+					validateMessages={{ required: t("Please add the '${name}'") }}
 				>
 					{isDiscussionLinked && (
 						<>
-							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Link Discussion Post</label>
+							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>{t('Link Discussion Post')}</label>
 							<Form.Item
 								name='discussion_link'
 								rules={[
 									{
-										message: `Please add a valid discussion link for ${network} Network`,
+										message: t(`Please add a valid discussion link for ${network} Network`),
 										validator(rule, value, callback) {
 											if (callback && isDiscussionLinkedValid(value)) {
 												callback(rule?.message?.toString());
@@ -247,14 +249,14 @@ const WriteProposal = ({
 							showIcon
 							message={
 								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>
-									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
+									{t('Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.')}
 									<a
 										className='ml-1 text-xs font-semibold text-pink_primary'
 										target='_blank'
 										rel='noreferrer'
 										href={'/post/create'}
 									>
-										Create Discussion Post
+										{t('Create Discussion Post')}
 									</a>
 								</span>
 							}
@@ -263,10 +265,10 @@ const WriteProposal = ({
 
 					{isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound : true) && (
 						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
-							<label className='font-medium'>Write a proposal :</label>
+							<label className='font-medium'>{t('Write a proposal')} :</label>
 							<div className='mt-4'>
 								<label className='mb-0.5'>
-									Title <span className='text-nay_red'>*</span>
+									{t('Title')} <span className='text-nay_red'>*</span>
 								</label>
 								<Form.Item
 									name='title'
@@ -275,7 +277,7 @@ const WriteProposal = ({
 											? []
 											: [
 													{
-														message: 'Title should not exceed 150 characters.',
+														message: t('Title should not exceed 150 characters.'),
 														validator(rule, value, callback) {
 															if (callback && value?.length > 150) {
 																callback(rule?.message?.toString());
@@ -300,7 +302,7 @@ const WriteProposal = ({
 								</Form.Item>
 							</div>
 							<div className='mt-6'>
-								<label className='mb-0.5'>{isDiscussionLinked ? 'Tags' : 'Add Tags'}</label>
+								<label className='mb-0.5'>{isDiscussionLinked ? t('Tags') : t('Add Tags')}</label>
 								<Form.Item name='tags'>
 									<AddTags
 										onChange={(e) => onChangeLocalStorageSet({ tags: e }, isDiscussionLinked)}
@@ -312,7 +314,7 @@ const WriteProposal = ({
 							</div>
 							<div className='mt-6'>
 								<label className='mb-0.5'>
-									Description <span className='text-nay_red'>*</span>
+									{t('Description')} <span className='text-nay_red'>*</span>
 								</label>
 								{isDiscussionLinked ? (
 									<Markdown
@@ -348,7 +350,7 @@ const WriteProposal = ({
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'
-							text='Next'
+							text={t('next')}
 							variant='primary'
 							height={40}
 							width={155}

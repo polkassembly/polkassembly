@@ -28,7 +28,7 @@ import { IconRetry } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { IComment } from './Comment';
@@ -37,6 +37,7 @@ import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	userId: number;
@@ -58,6 +59,7 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 
 const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 
@@ -228,14 +230,14 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			});
 			queueNotification({
 				header: 'Error!',
-				message: 'Failed to save reply',
+				message: t('failed_to_save_reply'),
 				status: NotificationStatus.ERROR
 			});
-			setError(editReplyError || 'Error in saving reply');
+			setError(editReplyError || t('error_in_saving_reply'));
 		} else {
 			queueNotification({
 				header: 'Success!',
-				message: 'Your reply was edited.',
+				message: t('your_reply_was_edited'),
 				status: NotificationStatus.SUCCESS
 			});
 		}
@@ -256,11 +258,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			userId: id
 		});
 		if (error || !data) {
-			setError('There was an error in saving your reply.');
+			setError(t('there_was_an_error_in_saving_your_reply'));
 			console.error('Error saving reply: ', error);
 			queueNotification({
 				header: 'Error!',
-				message: error || 'There was an error in saving your reply.',
+				message: error || t('there_was_an_error_in_saving_your_reply'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -371,11 +373,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 				userId: id
 			});
 			if (error || !data) {
-				setError('There was an error in saving your reply.');
+				setError(t('there_was_an_error_in_editing_your_reply'));
 				console.error('Error saving reply: ', error);
 				queueNotification({
 					header: 'Error!',
-					message: error || 'There was an error in saving your reply.',
+					message: error || t('there_was_an_error_in_editing_your_reply'),
 					status: NotificationStatus.ERROR
 				});
 				setComments((prev) => {
@@ -458,7 +460,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'Your reply was deleted.',
+			message: t('your_reply_was_deleted'),
 			status: NotificationStatus.SUCCESS
 		});
 	};
@@ -493,7 +495,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'Your reply was deleted.',
+			message: t('your_reply_was_deleted'),
 			status: NotificationStatus.SUCCESS
 		});
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
@@ -526,10 +528,10 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 				}
 				return comments;
 			});
-			console.error('Error deleting reply: ', deleteReplyError);
+			console.error(t('error_deleting_reply'), deleteReplyError);
 			queueNotification({
 				header: 'Error!',
-				message: deleteReplyError || 'Error in deleting reply',
+				message: deleteReplyError || t('error_deleting_reply'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -548,11 +550,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 						>
 							{loading ? (
 								<span className='flex items-center text-xs'>
-									<LoadingOutlined className='mr-1' /> Editing
+									<LoadingOutlined className='mr-1' /> {t('editing')}
 								</span>
 							) : (
 								<span className='flex items-center text-xs'>
-									<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
+									<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> {t('edit')}
 								</span>
 							)}
 						</button>
@@ -568,7 +570,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							onClick={deleteReply}
 						>
 							<DeleteOutlined />
-							<span className='m-0 p-1'>Delete</span>
+							<span className='m-0 p-1'>{t('delete')}</span>
 						</button>
 					)
 			  }
@@ -579,7 +581,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 						<ReportButton
 							isDeleteModal={true}
 							proposalType={(reply.post_type as any) || postType}
-							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
+							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${dmSans.variable} ${dmSans.className}`}
 							type={EReportType.REPLY}
 							onSuccess={removeReplyContent}
 							commentId={commentId}
@@ -637,13 +639,13 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									onClick={handleCancel}
 									className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 								>
-									<CloseOutlined /> Cancel
+									<CloseOutlined /> {t('cancel')}
 								</Button>
 								<Button
 									htmlType='submit'
 									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F] dark:border-borderColorDark'
 								>
-									<CheckOutlined /> Reply
+									<CheckOutlined /> {t('reply')}
 								</Button>
 							</div>
 						</Form.Item>
@@ -678,7 +680,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 													reply.reply_source ? 'disabled-reply' : ''
 												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
 											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} {t('reply')}
 											</Button>
 										</Tooltip>
 									) : (
@@ -691,7 +693,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 												onClick={() => setIsReplying(!isReplying)}
 											>
 												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
-												Reply
+												{t('reply')}
 											</Button>
 										)
 									)
@@ -699,7 +701,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							</div>
 							<Dropdown
 								theme={theme}
-								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+								className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
 								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}
@@ -713,14 +715,14 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							{reply.isReplyError && (
 								<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>{t('reply_not_posted')}</span>
 									<div
 										onClick={handleRetry}
 										className='retry-container relative flex w-[66px] cursor-pointer px-1'
 										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
 									>
 										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										<span className='relative top-[3px] m-0 p-0'>{t('retry')}</span>
 									</div>
 								</div>
 							)}
@@ -748,7 +750,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 											onClick={() => handleReplyCancel()}
 											className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 										>
-											<CloseOutlined /> Cancel
+											<CloseOutlined /> {t('cancel')}
 										</Button>
 										<Button
 											loading={loading}
@@ -756,7 +758,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 											className='flex items-center bg-pink_primary text-white hover:bg-pink_secondary dark:border-none'
 										>
 											<CheckOutlined />
-											Reply
+											{t('reply')}
 										</Button>
 									</div>
 								</Form.Item>

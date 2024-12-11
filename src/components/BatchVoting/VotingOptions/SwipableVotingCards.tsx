@@ -11,8 +11,10 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import SwipeBtns from './SwipeBtns';
 import TinderCardsComponent from './TinderCardComponent';
+import { useTranslation } from 'next-i18next';
 
 const SwipableVotingCards = () => {
+	const { t } = useTranslation();
 	const { total_proposals_added_in_Cart, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
@@ -141,7 +143,7 @@ const SwipableVotingCards = () => {
 						<PostEmptyState
 							description={
 								<div className='p-5'>
-									<p>Currently no active proposals found</p>
+									<p>{t('no_active_proposals_found')}</p>
 								</div>
 							}
 						/>

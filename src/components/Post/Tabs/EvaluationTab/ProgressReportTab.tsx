@@ -10,7 +10,6 @@ import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
-import ProgressReportInfo from '~src/components/ProgressReport/ProgressReportInfo';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -18,8 +17,13 @@ import { NotificationStatus } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
+import UserReportInfo from '~src/components/ProgressReport/ProgressReportInfo/UserReportInfo';
+import { useTranslation } from 'next-i18next';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const UploadMultipleReports = dynamic(() => import('~src/components/ProgressReport/MultipleReports'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -34,35 +38,55 @@ const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState<boolean>(false);
-	const { report_uploaded, summary_content, progress_report_link } = useProgressReportSelector();
-	const [originalSummary, setOriginalSummary] = useState<string>(summary_content);
-
-	useEffect(() => {
-		setOriginalSummary(summary_content);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const { summary_content, progress_report_link } = useProgressReportSelector();
 	const dispatch = useDispatch();
-
-	const router = useRouter();
 
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
 	} = usePostDataContext();
 
-	useEffect(() => {
-		if (postData?.progress_report?.progress_file) {
-			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.progress_summary || ''));
-			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.progress_file || ''));
+	const getProgressReportViews = async () => {
+		setLoading(true);
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/getProgressReportViews', {
+			postId: postIndex,
+			proposalType
+		});
+
+		if (editError || !data) {
+			setLoading(false);
+			console.error('Error saving post', editError);
 		}
-	}, [postData?.progress_report?.progress_file, postData, dispatch]);
+
+		if (data) {
+			setLoading(false);
+			const { progress_report_views } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report_views
+			}));
+		}
+	};
+
+	useEffect(() => {
+		getProgressReportViews();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUser?.loginAddress, postIndex]);
+
+	useEffect(() => {
+		if (postData?.progress_report?.[0]?.progress_file) {
+			dispatch(progressReportActions.setSummaryContent(postData?.progress_report?.[0]?.progress_summary || ''));
+			dispatch(progressReportActions.setProgressReportLink(postData?.progress_report?.[0]?.progress_file || ''));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postData?.progress_report?.[0]?.progress_file, postData, dispatch]);
 
 	const addProgressReport = async () => {
 		const progress_report = {
 			progress_file: progress_report_link,
-			progress_summary: summary_content,
+			progress_summary: summary_content || '',
 			ratings: []
 		};
 		setLoading(true);
@@ -76,8 +100,8 @@ const ProgressReportTab = ({ className }: Props) => {
 			setLoading(false);
 			console.error('Error saving post', editError);
 			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
+				header: t('error'),
+				message: t('error_in_saving_your_post'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -85,8 +109,8 @@ const ProgressReportTab = ({ className }: Props) => {
 		if (data) {
 			setLoading(false);
 			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
+				header: t('success'),
+				message: t('your_post_is_now_edited'),
 				status: NotificationStatus.SUCCESS
 			});
 
@@ -99,48 +123,10 @@ const ProgressReportTab = ({ className }: Props) => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-			router.reload();
+			dispatch(progressReportActions.setReportUploaded(false));
 		} else {
-			console.log('failed to save report');
+			console.log(t('failed_to_save_report'));
 		}
-	};
-
-	const editProgressReport = async () => {
-		setLoading(true);
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/editProgressReportSummary', {
-			postId: postIndex,
-			proposalType,
-			summary: summary_content
-		});
-
-		if (editError || !data) {
-			setLoading(false);
-			console.error('Error saving post', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if (data) {
-			setLoading(false);
-			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
-				status: NotificationStatus.SUCCESS
-			});
-			dispatch(progressReportActions.setIsSummaryEdited(true));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.log('failed to save report');
-		}
-		dispatch(progressReportActions.setAddSummaryCTAClicked(false));
 	};
 
 	return (
@@ -162,16 +148,16 @@ const ProgressReportTab = ({ className }: Props) => {
 								alt='progress-file-icon'
 							/>
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								Progress Reports
+								{t('progress_reports')}
 							</h3>
-							{!postData?.progress_report?.progress_file && (
+							{!postData?.progress_report?.[0]?.progress_file && (
 								<div className='ml-auto flex items-center justify-end gap-x-1'>
 									<ImageIcon
 										src='/assets/delegation-tracks/info-icon-blue.svg'
 										alt='info-icon'
 										imgClassName='scale-90'
 									/>
-									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>Progress Report not added</p>
+									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>{t('progress_report_not_added')}</p>
 								</div>
 							)}
 						</div>
@@ -180,27 +166,28 @@ const ProgressReportTab = ({ className }: Props) => {
 				>
 					{postData.userId === currentUser?.id ? (
 						<>
-							<UploadModalContent />
-							<div className='mt-4 flex justify-end'>
-								<CustomButton
-									variant='primary'
-									text={postData?.progress_report?.progress_file ? 'Save' : 'Done'}
-									buttonsize='sm'
-									loading={loading}
-									className={`${loading ? 'opacity-60' : ''} ${
-										(postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file)
-											? 'opacity-60'
-											: ''
-									} `}
-									disabled={postData?.progress_report?.progress_file ? originalSummary === summary_content : !report_uploaded && !postData?.progress_report?.progress_file}
-									onClick={() => {
-										postData?.progress_report?.progress_file ? editProgressReport() : addProgressReport();
-									}}
-								/>
-							</div>
+							{!postData?.progress_report?.[0]?.progress_file ? (
+								<>
+									<UploadModalContent />
+									<div className='mt-4 flex justify-end'>
+										<CustomButton
+											variant='primary'
+											text='Done'
+											buttonsize='sm'
+											loading={loading}
+											className={`${loading ? 'opacity-60' : ''}`}
+											onClick={() => {
+												addProgressReport();
+											}}
+										/>
+									</div>
+								</>
+							) : (
+								<UploadMultipleReports theme={theme} />
+							)}
 						</>
-					) : postData?.progress_report?.progress_file ? (
-						<ProgressReportInfo />
+					) : postData?.progress_report?.[0]?.progress_file ? (
+						<UserReportInfo theme={theme} />
 					) : (
 						<div className='my-[60px] flex flex-col items-center gap-6'>
 							<ImageIcon
@@ -208,7 +195,7 @@ const ProgressReportTab = ({ className }: Props) => {
 								alt='Empty Icon'
 								imgClassName='w-[225px] h-[225px]'
 							/>
-							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Progress Report Added</h3>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_progress_report_added')}</h3>
 						</div>
 					)}
 				</Panel>

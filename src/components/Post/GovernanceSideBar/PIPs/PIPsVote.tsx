@@ -17,7 +17,7 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
@@ -39,6 +39,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -56,13 +57,13 @@ interface Props {
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
 	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
-			const res = api.consts.convictionVoting.voteLockingPeriod;
-			const num = res.toJSON();
+			const res = api?.consts?.convictionVoting?.voteLockingPeriod;
+			const num = res?.toJSON();
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
 					<SelectOption
-						className={`text-bodyBlue  ${poppins.variable}`}
+						className={`text-bodyBlue  ${dmSans.variable}`}
 						key={0}
 						value={0}
 					>
@@ -70,7 +71,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<SelectOption
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue ${dmSans.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
@@ -81,7 +82,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<SelectOption
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue ${dmSans.variable}`}
 			key={0}
 			value={0}
 		>
@@ -89,7 +90,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<SelectOption
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue ${dmSans.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
@@ -115,14 +116,34 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	const [successModal, setSuccessModal] = useState<boolean>(false);
 	const [isPolymeshCommitteeMember, setIsPolymeshCommitteeMember] = useState<boolean>(false);
 	const [ayeNayForm] = Form.useForm();
+	const { t } = useTranslation('common');
 
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const getPolymeshCommitteeMembers = async () => {
-		const members = await api?.query?.polymeshCommittee?.members().then((members) => members.toJSON());
-		if ((members as string[]).includes(address)) {
-			setIsPolymeshCommitteeMember(true);
+		try {
+			if (!api || !apiReady || !api.query || network !== AllNetworks.POLYMESH) return;
+			const members = await api.query.polymeshCommittee.members();
+			if (!members) {
+				setIsPolymeshCommitteeMember(false);
+				return;
+			}
+			const membersArray = members.toJSON();
+
+			if (Array.isArray(membersArray) && membersArray?.includes(address)) {
+				setIsPolymeshCommitteeMember(true);
+			} else {
+				setIsPolymeshCommitteeMember(false);
+			}
+		} catch (error) {
+			console.error('Error fetching committee members:', error);
+			setIsPolymeshCommitteeMember(false);
+			queueNotification({
+				header: 'Failed!',
+				message: t('failed_to_fetch_committee_members'),
+				status: NotificationStatus.ERROR
+			});
 		}
 	};
 
@@ -205,7 +226,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	const onBalanceChange = (balance: BN) => {
 		if (!balance) return;
 		else if (availableBalance.lte(balance)) {
-			setBalanceErr('Insufficient balance.');
+			setBalanceErr(t('insufficient_balance'));
 		} else {
 			setBalanceErr('');
 			setLockedBalance(balance);
@@ -224,7 +245,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 
 	const handleSubmit = async () => {
 		if (!referendumId) {
-			console.error('referendumId not set');
+			console.error(t('referendum_id_not_set'));
 			return;
 		}
 
@@ -291,7 +312,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 			label: (
 				<div className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'aye' ? 'bg-[#2ED47A] text-white' : ''}`}>
 					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-					<span className='text-base font-medium'>Aye</span>
+					<span className='text-base font-medium'>{t('ayes')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -299,7 +320,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		{
 			label: (
 				<div className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'nay' ? 'bg-[#F53C3C] text-white' : ''}`}>
-					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>Nay</span>
+					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>{t('nays')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -315,19 +336,19 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					variant='primary'
 					onClick={() => setShowModal(true)}
 				>
-					{lastVote === null || lastVote === undefined ? 'Cast Your Vote' : 'Cast Vote Again'}
+					{lastVote === null || lastVote === undefined ? t('cast_your_vote') : t('cast_vote_again')}
 				</CustomButton>
 				<Modal
 					open={showModal}
 					onCancel={() => setShowModal(false)}
 					footer={false}
-					className={`w-[500px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[605px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+					className={`w-[500px] ${dmSans.variable} ${dmSans.className} alignment-close vote-referendum max-h-[605px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 							<CastVoteIcon className='ml-6' />
-							<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+							<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('cast_your_vote')}</span>
 						</div>
 					}
 				>
@@ -339,7 +360,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 						>
 							<>
 								<div className='mb-6'>
-									<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>{t('select_a_wallet')}</div>
 									<div className='mt-1 flex items-center justify-center gap-x-5'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
@@ -445,7 +466,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
-										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('no_addresses_found_in_the_address_selection_tab')}</span>}
 										showIcon
 										type='info'
 									/>
@@ -458,21 +479,21 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										className={`${dmSans.variable} ${dmSans.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 										isVoting
 									/>
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
-										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('please_select_a_wallet')}</span>}
 										showIcon
 										type='info'
 									/>
 								) : null}
 
 								{/* aye nye split abstain buttons */}
-								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
+								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>{t('choose_your_vote')}</h3>
 								<Segmented
 									block
 									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white dark:border-[#3B444F] dark:bg-section-dark-overlay`}
@@ -508,7 +529,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												className='mr-[15px] font-semibold'
 												buttonsize='xs'
 												variant='default'
-												text='Cancel'
+												text={t('cancel')}
 											/>
 											<CustomButton
 												onClick={() => setShowModal(false)}
@@ -517,7 +538,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												className='mr-[24px] font-semibold'
 												buttonsize='xs'
 												variant='primary'
-												text='Confirm'
+												text={t('confirm')}
 											/>
 										</div>
 									</Form>
@@ -527,7 +548,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					</>
 				</Modal>
 				<VoteInitiatedModal
-					title={'Voting'}
+					title={t('voting')}
 					vote={vote}
 					balance={ZERO_BN}
 					open={successModal}
@@ -548,7 +569,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType)) {
 		if (isPolymeshCommitteeMember) return VoteUI;
 
-		return <div className={classNames(className, 'dark:text-blue-dark-high')}>Only Polymesh Committee members may vote.</div>;
+		return <div className={classNames(className, 'dark:text-blue-dark-high')}>{t('only_polymesh_committee_members_may_vote')}</div>;
 	}
 
 	return VoteUI;

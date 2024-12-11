@@ -1220,3 +1220,22 @@ export enum EUserCreatedBountiesStatuses {
 	CLAIMED = 'claimed',
 	CANCELLED = 'cancelled'
 }
+
+export interface IUserCreatedBounty {
+	content: string;
+	createdAt: string;
+	deadlineDate: string;
+	id: number;
+	maxClaim: number;
+	proposalType: ProposalType;
+	proposer: string;
+	reward: string;
+	status: EUserCreatedBountiesStatuses;
+	submissionGuidelines: string;
+	tags: string[];
+	title: string;
+	network?: string;
+	twitterHandle: string;
+	updatedAt: string;
+	userId: number;
+}

@@ -588,7 +588,7 @@ const Community = () => {
 					totalDelegates={totalDelegates}
 					totalCurators={totalCurators}
 				/>
-				<div className='mb-2 flex w-full items-center justify-start gap-3 md:mb-0'>
+				<div className='mb-2 flex w-full items-center justify-between gap-3 md:mb-0 md:justify-start'>
 					<div className='dark:placeholder:white flex h-12 w-[70%] items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white sm:flex md:w-full'>
 						<Input
 							type='search'

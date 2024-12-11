@@ -73,6 +73,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dropdownVisible]);
 
 	const items: MenuProps['items'] = [

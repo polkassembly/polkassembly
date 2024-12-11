@@ -122,7 +122,7 @@ const DelegateCardInfo = ({ delegate, className, trackNum, disabled }: Props) =>
 			${className}`}
 		>
 			{/* For Small Screen */}
-			<div className='px-[10px] py-[5px] sm:hidden'>
+			<div className='bg-white px-[10px] py-[5px] dark:bg-black sm:hidden'>
 				<div className=' flex items-center justify-between'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!delegate?.image?.length && (

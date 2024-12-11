@@ -13,9 +13,21 @@ import { Timestamp } from 'firebase-admin/firestore';
 import { EMembersSortFilters } from '~src/types';
 import { isValidNetwork } from '~src/api-utils';
 
+export interface IUserData {
+	created_at: Date | undefined;
+	custom_username: boolean | undefined;
+	email: string;
+	followers_count: { [key: string]: number } | undefined;
+	followings_count: { [key: string]: number } | undefined;
+	id: number;
+	identityInfo: any;
+	profile_score: number;
+	username: string;
+	addresses: string[];
+}
 export interface UsersResponse {
 	count: number;
-	data: User[];
+	data: IUserData[];
 }
 
 export const getAllUsers = async ({ network, page, username, sortOption }: { network: string; page: number; username?: string; sortOption?: EMembersSortFilters }) => {
@@ -35,9 +47,16 @@ export const getAllUsers = async ({ network, page, username, sortOption }: { net
 
 				const addresses = await getAddressesFromUserId(user?.id);
 				return {
-					...user,
 					addresses: addresses?.map((a) => a?.address) || [],
-					created_at: createdAt
+					created_at: createdAt,
+					custom_username: user.custom_username,
+					email: user.email,
+					followers_count: user.followers_count,
+					followings_count: user.followings_count,
+					id: user.id,
+					identityInfo: user.identityInfo,
+					profile_score: user.profile_score,
+					username: user.username
 				};
 			})
 		);

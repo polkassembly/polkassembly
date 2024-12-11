@@ -13,7 +13,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EChildbountySubmissionStatus } from '~src/types';
+import { EUserCreatedBountiesStatuses } from '~src/types';
+import { ProposalType } from '~src/global/proposalType';
 
 const ZERO_BN = new BN(0);
 
@@ -68,12 +69,14 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			deadlineDate: firebaseFormatedDeadline,
 			id: totalCreatedBountiesCount,
 			maxClaim: maxClaim,
+			network: network,
 			proposer: getEncodedAddress(proposerAddress, network) || '',
 			reward: reward || '0',
-			status: EChildbountySubmissionStatus.PENDING,
+			status: EUserCreatedBountiesStatuses.ACTIVE,
 			submissionGuidelines: submissionGuidelines || '',
 			tags: tags || [],
 			title: title || '',
+			type: ProposalType.BOUNTIES,
 			updatedAt: new Date(),
 			userId: user?.id
 		};

@@ -15,6 +15,12 @@ import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/es/date-picker';
 import styled from 'styled-components';
 import ContentForm from '~src/components/ContentForm';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { MessageType } from '~src/auth/types';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
+import AddTags from '~src/ui-components/AddTags';
+import BN from 'bn.js';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -26,9 +32,15 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const { className, setOpenCreateBountyModal } = props;
 	const [open, setOpen] = useState(false);
 	const { loginAddress } = useUserDetailsSelector();
+	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>(loginAddress);
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
+	const [tags, setTags] = useState<string[]>([]);
+	const [newBountyAmount, setNewBountyAmount] = useState<any>();
+
+	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
+
 	useEffect(() => {
 		form.setFieldsValue({ address: selectedAddress });
 	}, [selectedAddress, form]);
@@ -38,8 +50,32 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		return current && current < dayjs().endOf('day');
 	};
 
-	const handleFormSubmit = (values: any) => {
-		console.log('Form Submitted with Values:', values);
+	const handleFormSubmit = async (values: any) => {
+		setLoading(true);
+		// title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim
+		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/user-created-bounties/createBounty', {
+			content: values?.description,
+			deadlineDate: dayjs(values?.deadline).toDate(),
+			maxClaim: values?.claims,
+			proposerAddress: values?.address,
+			reward: newBountyAmount.toString(),
+			submissionGuidelines: values?.guidelines,
+			tags: values?.categories,
+			title: values?.title
+		});
+		if (error) {
+			console.error('error resetting passoword : ', error);
+			setLoading(false);
+		}
+
+		if (data) {
+			queueNotification({
+				header: 'Success!',
+				message: data.message,
+				status: NotificationStatus.SUCCESS
+			});
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -90,7 +126,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								rules={[
 									{
 										message: 'Please enter your Twitter handle',
-										required: true
+										required: false
 									}
 								]}
 							>
@@ -99,9 +135,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									suffix={
 										<CustomButton
 											text='Verify'
-											onClick={() => {
-												console.log('Twitter handle verification triggered.');
-											}}
 											width={80}
 											className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
 											height={24}
@@ -110,7 +143,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									}
 									placeholder='@YourTwitter (case sensitive)'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-									onChange={(e) => console.log(e.target.value)}
 								/>
 							</Form.Item>
 						</div>
@@ -135,7 +167,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									name='title'
 									placeholder='Add title for your bounty'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-									onChange={(e) => console.log(e.target.value)}
 								/>
 							</Form.Item>
 						</div>
@@ -158,12 +189,18 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 							>
 								<BalanceInput
 									placeholder={'Enter an amount for your bounty '}
-									onChange={(e) => {
-										console.log(e);
-									}}
 									className='m-0 p-0 text-sm font-medium'
-									formItemName={'balance'}
+									// formItemName={'balance'}
 									theme={theme}
+								/>
+								<BalanceInput
+									theme={theme}
+									balance={newBountyAmount}
+									formItemName='balance'
+									placeholder='Enter an amount for your bounty'
+									inputClassName='dark:text-blue-dark-high text-bodyBlue'
+									noRules
+									onChange={onValueChange}
 								/>
 							</Form.Item>
 						</div>
@@ -187,7 +224,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									name='guidelines'
 									placeholder='Add more context for submissions'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-									onChange={(e) => console.log(e.target.value)}
 								/>
 							</Form.Item>
 						</div>
@@ -208,13 +244,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									}
 								]}
 							>
-								<DatePicker
-									disabledDate={disabledDate}
-									format='DD-MM-YYYY'
-									onChange={(e) => {
-										console.log(e);
-									}}
-								/>
+								<DatePicker disabledDate={disabledDate} />
 							</Form.Item>
 						</div>
 						<div className='flex w-full flex-col gap-y-1'>
@@ -233,7 +263,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									name='claims'
 									placeholder='Enter maximum number of requests'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-									onChange={(e) => console.log(e.target.value)}
 								/>
 							</Form.Item>
 						</div>
@@ -244,21 +273,10 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					<div className='flex w-full items-center gap-x-2 text-sm'>
 						<div className='flex w-full flex-col gap-y-1'>
 							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Categories*</p>
-							<Form.Item
-								name='categories'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please add categories',
-										required: true
-									}
-								]}
-							>
-								<Input
-									name='categories'
-									placeholder='Add more context for your request'
-									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-									onChange={(e) => console.log(e.target.value)}
+							<Form.Item name='categories'>
+								<AddTags
+									tags={tags}
+									setTags={setTags}
 								/>
 							</Form.Item>
 						</div>
@@ -279,7 +297,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									}
 								]}
 							>
-								<ContentForm onChange={(v: string) => console.log(v)} />
+								<ContentForm />
 							</Form.Item>
 						</div>
 					</div>
@@ -290,6 +308,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 						<CustomButton
 							variant='default'
 							text='Cancel'
+							disabled={loading}
 							htmlType='reset'
 							buttonsize='sm'
 							onClick={() => {
@@ -301,6 +320,8 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 						<CustomButton
 							variant='primary'
 							text='Create'
+							loading={loading}
+							disabled={loading}
 							buttonsize='sm'
 							htmlType='submit'
 							// loading={loading}

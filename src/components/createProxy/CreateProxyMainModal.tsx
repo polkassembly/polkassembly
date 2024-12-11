@@ -272,6 +272,16 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		});
 	};
 
+	const proxyTypeDescriptions = {
+		[ProxyTypeEnum.Any]: 'Allows all transactions, including balance transfers',
+		[ProxyTypeEnum.NonTransfer]: 'Allows all transactions except balance transfers',
+		[ProxyTypeEnum.Governance]: 'For governance-related actions (e.g., Democracy, Treasury',
+		[ProxyTypeEnum.Staking]: 'For staking-related transactions, replacing controller accounts',
+		[ProxyTypeEnum.CancelProxy]: 'For registrars to make identity judgments',
+		[ProxyTypeEnum.Auction]: 'For transactions related to auctions and crowdloans',
+		[ProxyTypeEnum.NominationPools]: 'For transactions involving nomination pools'
+	};
+
 	return (
 		<Modal
 			title={
@@ -518,15 +528,20 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						>
 							<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 							<Select
-								className='w-full rounded-[4px] py-1'
-								style={{ width: '100%' }}
+								className='flex w-full items-center rounded-[4px] py-1'
+								style={{ width: '100%', textAlign: 'center' }}
 								value={form.getFieldValue('proxyType')}
 								size='large'
 								suffixIcon={<DownArrow className='down-icon absolute right-2 top-[5px]' />}
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
-								options={Object.values(ProxyTypeEnum).map((type) => ({
-									label: type,
-									value: type
+								options={Object.entries(proxyTypeDescriptions).map(([key, description], index) => ({
+									label: (
+										<div className={`${index === 0 ? 'mt-[7px]' : ''} items-center gap-1 sm:flex`}>
+											<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>{key}</span>
+											<span className='text-sm italic text-blue-light-medium dark:text-blue-dark-medium'>({description})</span>
+										</div>
+									),
+									value: key
 								}))}
 							/>
 						</Form.Item>

@@ -12,6 +12,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import { Card } from 'antd';
 import styled from 'styled-components';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
+import { useTranslation } from 'next-i18next';
 
 interface ITimeSplitProps {
 	className?: string;
@@ -26,7 +27,7 @@ const ZERO = new BN(0);
 const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit, isUsedInAccounts, elapsedPeriod }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-
+	const { t } = useTranslation('common');
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
@@ -44,11 +45,11 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 
 	return (
 		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
-			<h2 className='text-xl font-semibold'>Time Split</h2>
+			<h2 className='text-xl font-semibold'>{t('time_split')}</h2>
 			{elapsedPeriod < 1 ? (
 				<div className='flex flex-col items-center justify-center gap-5'>
 					<NoVotesIcon />
-					<p className='text-sm'>Not enough data available, pls check back after 1 day.</p>
+					<p className='text-sm'>{t('not_enough_data_available_pls_check_back_after_1_day')}</p>
 				</div>
 			) : (
 				<div className={`${className} relative -mt-7 flex h-[200px] items-center justify-center gap-x-2`}>

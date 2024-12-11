@@ -40,6 +40,7 @@ import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -116,6 +117,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -395,7 +397,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 		<article className='flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay'>
 			<div className='mb-1 mt-1 flex items-center'>
 				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Login</h3>
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('login')}</h3>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -412,21 +414,19 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 								{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 							</span>
 						</div>
-						<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
-							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-						</p>
+						<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>{t('fetching_addresses_message')}</p>
 						<Divider
 							style={{ background: '#D2D8E0', flexGrow: 1 }}
 							className='m-0 mt-5 p-0 dark:bg-separatorDark'
 						/>
 						<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
-							<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+							<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>{t('no_account')}</label>
 							<div
 								onClick={handleClick}
 								className='cursor-pointer text-base text-pink_primary'
 							>
 								{' '}
-								Sign Up{' '}
+								{t('sign_up')}{' '}
 							</div>
 						</div>
 						<Divider
@@ -435,7 +435,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 						/>
 						<div className='flex justify-end'>
 							<CustomButton
-								text='Go Back'
+								text={t('go_back')}
 								variant='default'
 								className='mr-3'
 								buttonsize='sm'
@@ -444,7 +444,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 							<CustomButton
 								key='got-it'
 								icon={<CheckOutlined />}
-								text='Got it!'
+								text={t('got_it')}
 								variant='primary'
 								buttonsize='sm'
 								onClick={() => {
@@ -486,8 +486,8 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 							{accountsNotFound && (
 								<div className='my-5 flex items-center justify-center'>
 									<Alert
-										message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
-										description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
+										message={<span className='dark:text-blue-dark-high'>{t('need_at_least_one_account')}</span>}
+										description={<span className='dark:text-blue-dark-high'>{t('reload_after_adding_accounts')}</span>}
 										type='info'
 										showIcon
 									/>
@@ -533,12 +533,12 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 												type='info'
 												message={
 													<span className='dark:text-blue-dark-high'>
-														By Signing up you agree to the terms of the{' '}
+														{t('singup_agreement')}{' '}
 														<Link
 															href='/terms-and-conditions'
 															className='text-pink_primary'
 														>
-															Polkassembly end user agreement
+															{t('polkassembly_end_user_agreement')}
 														</Link>
 														.
 													</span>
@@ -547,14 +547,14 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										)}
 										<div className='flex items-center justify-center gap-x-2'>
 											<CustomButton
-												text='Go Back'
+												text={t('go_back')}
 												variant='default'
 												buttonsize='sm'
 												onClick={() => handleBackToLogin()}
 												className='mr-3'
 											/>
 											<CustomButton
-												text='Login'
+												text={t('login')}
 												variant='primary'
 												buttonsize='sm'
 												loading={loading}
@@ -580,7 +580,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 					{!!chosenWallet && !accounts.length && (
 						<div className='mb-6 mt-4 flex items-center justify-center'>
 							<CustomButton
-								text='Go Back'
+								text={t('go_back')}
 								variant='default'
 								buttonsize='sm'
 								onClick={() => handleBackToLogin()}

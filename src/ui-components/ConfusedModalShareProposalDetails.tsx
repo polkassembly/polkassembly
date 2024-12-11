@@ -14,6 +14,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { ProposalType } from '~src/global/proposalType';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 import { dmSans } from 'pages/_app';
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
 
 const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className, postId, proposalType, title }: Props) => {
 	const [message, setMessage] = useState<string>('');
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
@@ -49,7 +51,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 		if (data) {
 			setSocialsData(data);
 		}
-		if (error) antdMessage.error('Failed to load social media data. Please try again later.');
+		if (error) antdMessage.error(t('failed_to_load_social_media_data_Please_try_again_later'));
 	};
 
 	useEffect(() => {
@@ -76,15 +78,15 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 	const copyLinkToClipboard = () => {
 		const link = window.location.href;
 		const textMessage = message;
-		const finalMessage = `${textMessage}\n 'Check out this proposal here:' \n${link}`;
+		const finalMessage = `${textMessage}\n ${t('check_out_this_proposal_here')} \n${link}`;
 
 		navigator.clipboard
 			.writeText(finalMessage)
 			.then(() => {
-				antdMessage.success('Link and message copied to clipboard!');
+				antdMessage.success(t('link_and_message_copied_to_clipboard'));
 			})
 			.catch(() => {
-				antdMessage.error('Failed to copy link to clipboard. Please try again.');
+				antdMessage.error(t('failed_to_copy_link_to_clipboard_Please_try_again'));
 			});
 	};
 
@@ -106,7 +108,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						width={320}
 						height={320}
 					/>
-					<p className={`-mt-4 text-xl ${dmSans.className} ${dmSans.variable} font-semibold text-[#243A57] dark:text-blue-dark-high`}>Confusion everywhere, It&apos;s a Menace!</p>
+					<p className={`-mt-4 text-xl ${dmSans.className} ${dmSans.variable} font-semibold text-[#243A57] dark:text-blue-dark-high`}>{t('confusion_everywhere')}</p>
 				</div>
 				<div className='mx-auto -mt-3'>
 					<div className='relative h-12 w-[480px]'>
@@ -117,7 +119,7 @@ const ConfusedModalShareProposalDetails = ({ modalOpen, setModalOpen, className,
 						/>
 						<div className='absolute inset-0 left-5 top-5 z-10 '>
 							<div className=''>
-								<p className='font-dmSans text-[14px] text-[#485F7D]  dark:text-[#7D7C81]'>Add a message</p>
+								<p className='font-dmSans text-[14px] text-[#485F7D]  dark:text-[#7D7C81]'>{t('add_message')}</p>
 							</div>
 							<textarea
 								name='content'

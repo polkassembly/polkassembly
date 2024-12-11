@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Form, Input } from 'antd';
 import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -12,14 +13,17 @@ import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import { EChildBountySteps } from './types';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
 	setStep: (pre: EChildBountySteps) => void;
 }
+
 const WriteChildBounty = ({ setStep, className }: Props) => {
 	const useChildBountyStore = useChildBountyCreationSelector();
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const [form] = Form.useForm();
 	const { title, content, categories, allowedCommentors, link } = useChildBountyStore;
 
@@ -34,25 +38,25 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 				form={form}
 				onFinish={handleSubmit}
 				initialValues={{ content, link, tags: categories, title }}
-				validateMessages={{ required: "Please add the '${name}'" }}
+				validateMessages={{ required: t('validate_required_field') }}
 			>
 				<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
 					{!!link?.length && !link?.startsWith('https:') && (
 						<Alert
 							showIcon
 							type='info'
-							message={<div>Invalid Link Parameter.</div>}
+							message={<div>{t('invalid_link')}</div>}
 						/>
 					)}
 					<section className='mt-4'>
 						<label className='mb-0.5'>
-							Title <span className='text-nay_red'>*</span>
+							{t('title')} <span className='text-nay_red'>*</span>
 						</label>
 						<Form.Item
 							name='title'
 							rules={[
 								{
-									message: 'Title should not exceed 150 characters.',
+									message: t('title_exceeds_limit'),
 									validator(rule, value, callback) {
 										if (callback && value?.length > 150) {
 											callback(rule?.message?.toString());
@@ -75,7 +79,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 						</Form.Item>
 					</section>
 					<section className='mt-6'>
-						<label className='mb-0.5'>Link</label>
+						<label className='mb-0.5'>{t('link')}</label>
 						<Form.Item name='link'>
 							<Input
 								name='link'
@@ -84,12 +88,12 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 									dispatch(childBountyCreationActions.setLink(e?.target?.value?.trim()));
 								}}
 								value={link}
-								placeholder='eg:https://polkadot.polkassembly.io'
+								placeholder={t('link_placeholder')}
 							/>
 						</Form.Item>
 					</section>
 					<section className='mt-6'>
-						<label className='mb-0.5'>Categories</label>
+						<label className='mb-0.5'>{t('categories')}</label>
 						<Form.Item name='tags'>
 							<AddTags
 								tags={categories}
@@ -101,9 +105,8 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 					</section>
 					<section className='mt-6'>
 						<label className='mb-0.5'>
-							Description <span className='text-nay_red'>*</span>
+							{t('description')} <span className='text-nay_red'>*</span>
 						</label>
-
 						<Form.Item name='content'>
 							<ContentForm
 								value={content}
@@ -116,17 +119,15 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 						</Form.Item>
 					</section>
 				</div>
-
-				{/* who can comment */}
 				<AllowedCommentorsRadioButtons
-					className={'-mt-8'}
+					className='-mt-8'
 					onChange={(value) => dispatch(childBountyCreationActions.setAllowedCommentors(value))}
 					allowedCommentors={allowedCommentors}
 				/>
 				<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
 						htmlType='submit'
-						text='Next'
+						text={t('next')}
 						variant='primary'
 						height={40}
 						width={155}

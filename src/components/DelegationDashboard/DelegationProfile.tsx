@@ -15,6 +15,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Markdown from '../../ui-components/Markdown';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next'; // Import for translations
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -42,6 +43,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
+	const { t } = useTranslation(); // Initialize translation hook
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress: address } = userProfile;
 	const { image, social_links, username, bio } = profileDetails;
@@ -137,7 +139,9 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 										isPreview={true}
 									/>
 								</h2>
-							) : null}
+							) : (
+								<span>{t('No Bio')}</span>
+							)}
 							{!!identity && social_links && (
 								<SocialsHandle
 									className='mt-3 gap-3 max-md:mr-0 max-md:mt-3 max-sm:flex max-sm:items-center max-sm:justify-center max-sm:gap-5'
@@ -166,7 +170,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 										className='max-lg:w-auto'
 									>
 										<EditIcon className='mt-1 text-base text-pink_primary ' />
-										<span className='max-md:hidden'>Edit</span>
+										<span className='max-md:hidden'>{t('Edit')}</span>
 									</CustomButton>
 								</div>
 							) : (
@@ -175,7 +179,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 										onClick={() => setIsModalOpen(true)}
 										className={'h-10 border-pink_primary bg-white font-medium font-semibold text-pink_primary dark:bg-black'}
 									>
-										Become a Delegate
+										{t('Become a Delegate')}
 									</Button>
 								</div>
 							)}

@@ -6,8 +6,10 @@ import React from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import AddressDropdown from '~src/ui-components/AddressDropdown';
+import { useTranslation } from 'next-i18next';
 
 function ApproveModal({ isApproveModalVisible, handleCancel, handleApprove }: { isApproveModalVisible: boolean; handleCancel: () => void; handleApprove: () => void }) {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 
 	return (
@@ -15,7 +17,7 @@ function ApproveModal({ isApproveModalVisible, handleCancel, handleApprove }: { 
 			<Modal
 				title={
 					<>
-						<CheckCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>Approve Submission</span>
+						<CheckCircleOutlined className='pr-2 text-lg' /> <span className='text-[18px] font-bold'>{t('approve_submission')}</span>
 					</>
 				}
 				visible={isApproveModalVisible}
@@ -26,7 +28,7 @@ function ApproveModal({ isApproveModalVisible, handleCancel, handleApprove }: { 
 						onClick={handleCancel}
 						className='w-24 rounded-md border border-solid border-pink_primary pb-2 text-center text-[14px] font-medium text-pink_primary'
 					>
-						Cancel
+						{t('cancel')}
 					</Button>,
 					<Button
 						key='reject'
@@ -34,7 +36,7 @@ function ApproveModal({ isApproveModalVisible, handleCancel, handleApprove }: { 
 						className='w-24 rounded-md bg-pink_primary pb-2 text-center font-medium text-white'
 						onClick={handleApprove}
 					>
-						Approve
+						{t('approve')}
 					</Button>
 				]}
 			>
@@ -47,7 +49,7 @@ function ApproveModal({ isApproveModalVisible, handleCancel, handleApprove }: { 
 						htmlFor='account'
 						className='mb-1 block text-sm text-blue-light-medium'
 					>
-						Account
+						{t('account')}
 					</label>
 					<AddressDropdown
 						accounts={currentUser?.addresses?.map((address) => ({ address })) || []}

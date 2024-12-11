@@ -18,6 +18,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useApiContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import NetworkIcon from '~assets/icons/USB.svg';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	proxyAddresses: string[];
@@ -55,6 +56,7 @@ const ProxyAccountSelectionForm = ({
 	onBalanceChange
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [changedWallet, setChangedWallet] = useState(wallet);
@@ -137,7 +139,7 @@ const ProxyAccountSelectionForm = ({
 							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
 						>
 							<NetworkIcon />
-							<p className='m-0 p-0 text-[10px] text-lightBlue'>Proxy Address</p>
+							<p className='m-0 p-0 text-[10px] text-lightBlue'>{t('proxy_address')}</p>
 						</div>
 						<Button
 							className='flex h-[25px] items-center border border-section-light-container bg-[#F9FAFB] p-0 px-2 text-xs text-bodyBlue hover:border-section-light-container hover:bg-[#EFF0F1] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-medium hover:dark:bg-transparent'
@@ -152,7 +154,7 @@ const ProxyAccountSelectionForm = ({
 								isProxyAccountForm={true}
 								className='walletIcon-container mr-[2px]'
 							/>
-							Change Wallet
+							{t('change_wallet')}
 						</Button>
 						<span className='ml-1'>
 							<DownIcon />

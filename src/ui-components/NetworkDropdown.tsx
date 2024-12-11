@@ -16,6 +16,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
 import { GlobalActions } from '~src/redux/global';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'next-i18next';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -87,6 +88,7 @@ interface INetworkDropdown {
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
@@ -118,7 +120,9 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				return (
 					<Card className='max-h-[52vh] max-w-[356px] overflow-y-auto dark:border-none dark:bg-section-dark-overlay'>
 						<>
-							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>Polkadot &amp; Parachains</div>
+							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{t('polkadot')} &amp; {t('parachains')}
+							</div>
 							<Row className='mt-2'>
 								{polkadotChains.map((optionObj) => (
 									<Col
@@ -134,7 +138,9 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Kusama &amp; Parachains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{t('kusama')} &amp; {t('parachains')}
+							</div>
 							<Row className='mt-2'>
 								{kusamaChains.map((optionObj) => (
 									<Col
@@ -150,7 +156,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Solo Chains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>{t('solo_Chains')}</div>
 							<Row className='mt-2'>
 								{soloChains.map((optionObj) => (
 									<Col
@@ -166,7 +172,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Test Chains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>{t('test_chains')}</div>
 							<Row className='mt-2'>
 								{testChains.map((optionObj) => (
 									<Col
@@ -192,7 +198,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 						(openFilter || selectedNetworks.length > 0) && 'text-pink_primary'
 					} dark:text-blue-dark-high max-sm:text-[10px]`}
 				>
-					Network
+					{t('network')}
 					<span className='text-[#96A4B6] dark:text-icon-dark-inactive'>
 						{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1' /> : <DownOutlined className='ml-2.5 mt-1 max-md:ml-1' />}
 					</span>

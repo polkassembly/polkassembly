@@ -16,6 +16,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[];
@@ -34,7 +35,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const [modalOpen, setModalOpen] = useState(false);
 	const [seconds, setSeconds] = useState<number>(0);
 	const { id } = useUserDetailsSelector();
-
+	const { t } = useTranslation('common');
 	const onSuccess = () => {
 		setLoadingStatus({ isLoading: false, message: '' });
 		queueNotification({
@@ -106,7 +107,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 		<div className={className}>
 			<CustomButton
 				variant='primary'
-				text='Second'
+				text={t('second')}
 				onClick={openModal}
 				fontSize='lg'
 				className='mx-auto mb-10 w-[90%] p-7'
@@ -121,7 +122,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 					<CustomButton
 						key='second'
 						variant='primary'
-						text='Second'
+						text={t('second')}
 						loading={loadingStatus.isLoading}
 						disabled={!apiReady}
 						onClick={secondProposal}
@@ -134,7 +135,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 					indicator={<LoadingOutlined />}
 				>
 					<AccountSelectionForm
-						title='Endorse with account'
+						title={t('endorse_with_account')}
 						accounts={accounts}
 						address={address}
 						withBalance
@@ -146,8 +147,8 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
 				image='/assets/Gifs/login-endorse.gif'
-				title='Join Polkassembly to Endorse this proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly_to_endorse_this_proposal')}
+				subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 			/>
 		</div>
 	);

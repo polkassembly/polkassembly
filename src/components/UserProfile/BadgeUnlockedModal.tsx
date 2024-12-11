@@ -11,6 +11,7 @@ import { Badge } from '~src/auth/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { badgeDetails } from './utils/GetAchievementBadgesText';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 
 	if (!badge) return <></>;
@@ -57,10 +59,10 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 							<span className='flex items-center gap-1'>
 								<ImageIcon
 									src='/assets/badges/hourglass_move_dark.svg'
-									alt='hourglass'
+									alt={t('hourglass')}
 									className='text-[#485F7D]'
 								/>
-								<span>{`Unlocked on ${badge.unlockedAt.split('T')[0]}`}</span>
+								<span>{`${t('unlocked_on')} ${badge.unlockedAt.split('T')[0]}`}</span>
 							</span>
 						</button>
 					)}
@@ -76,11 +78,11 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 					width={218}
 					height={136}
 				/>
-				<h1 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'> {badge.check ? ' Achievement Unlocked' : `${badge.name} Locked`}</h1>
+				<h1 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{badge.check ? t('achievement_unlocked') : `${badge.name} ${t('locked')}`}</h1>
 
 				{badge.check && (
 					<h2 className='mt-2 text-[20px] tracking-[0.0015em] dark:text-white'>
-						You Earned <span className='font-semibold text-pink_primary'>{badge.name}</span> Badge
+						{t('you_earned')} <span className='font-semibold text-pink_primary'>{badge.name}</span> {t('badge')}
 					</h2>
 				)}
 				<p className='mt-2 text-center text-[16px] font-light dark:text-white'>{description}</p>

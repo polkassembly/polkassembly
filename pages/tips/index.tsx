@@ -25,12 +25,15 @@ import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.TIPS;
@@ -43,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network, page } };
+	return { props: { data, error, network, page, ...translations } };
 };
 
 interface ITipsProps {
@@ -58,6 +61,7 @@ const Tips: FC<ITipsProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+	const { t } = useTranslation('common');
 	const [statusItem, setStatusItem] = useState([]);
 
 	useEffect(() => {
@@ -94,13 +98,15 @@ const Tips: FC<ITipsProps> = (props) => {
 					alt='tip icon'
 					imgClassName='-mt-3.5'
 				/>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Tips ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					{t('on_chain_tips')} ({count})
+				</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain tips. Tip posts are automatically generated as soon as they are created on-chain. Only the proposer is able to edit them.
+					{t('on_chain_tips_desc')}
 				</p>
 			</div>
 

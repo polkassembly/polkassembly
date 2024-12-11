@@ -6,6 +6,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { EMembersType } from 'pages/members';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { PageLink, PostCategory } from 'src/global/post_categories';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 
 const BackToListingView = ({ postCategory, trackName, network }: Props) => {
 	let path: string = '';
+	const { t } = useTranslation('common');
 
 	if (trackName) {
 		path = `${trackName
@@ -99,7 +101,7 @@ const BackToListingView = ({ postCategory, trackName, network }: Props) => {
 			<div className='flex items-center'>
 				<LeftOutlined className='mr-2 text-xs' />
 				<span className='text-sm font-medium'>
-					Back to <span className='capitalize'>{trackName ? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText}</span>
+					{t('back_to')} <span className='capitalize'>{trackName ? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText}</span>
 				</span>
 			</div>
 		</Link>

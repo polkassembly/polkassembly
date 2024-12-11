@@ -16,10 +16,11 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
-import { EActivityFilter, EUserActivityIn, EUserActivityType } from '~src/types';
+import { EActivityFilter, EUserActivityType, EUserActivityIn } from '~src/types';
 import Select from '~src/basic-components/Select';
 import { dmSans } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -45,6 +46,7 @@ export interface IUserActivityTypes {
 }
 
 const ProfileUserActivity = ({ className, userProfile }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { addresses, user_id: profileUserId, username } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
@@ -93,7 +95,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<MyActivityIcon className='text-xl text-lightBlue dark:text-[#9e9e9e]' />
-						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>My Activity</div>
+						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>{t('my_activity')}</div>
 						<span className='text-sm font-normal'>({totalCount})</span>
 					</div>
 					<div>
@@ -106,12 +108,12 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 							}}
 							options={[EActivityFilter.ALL, EActivityFilter.COMMENTS, EActivityFilter.REPLIES, EActivityFilter.MENTIONS, EActivityFilter.REACTS].map((option) => {
 								return {
-									label: <span className={classNames(dmSans.className, dmSans.variable, 'text-sm capitalize tracking-[0.0015em]')}>{option.toLowerCase()}</span>,
+									label: <span className={classNames(dmSans.className, dmSans.variable, 'text-sm capitalize tracking-[0.0015em]')}>{t(option.toLowerCase())}</span>,
 									value: option
 								};
 							})}
 						>
-							{filter?.toLowerCase()}
+							{t(filter?.toLowerCase())}
 						</Select>
 					</div>
 				</div>
@@ -129,8 +131,8 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 												/>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
-														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : t('you')}</span>
+														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{t('mentioned')}</span>
 														<div className='flex gap-2'>
 															{!!activity?.mentions &&
 																activity?.mentions?.map((username, index) => (
@@ -145,7 +147,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 																	</Link>
 																))}
 														</div>
-														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>in</span>
+														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{t('in')}</span>
 													</div>
 													<ActivityBottomContent activity={activity} />
 												</div>
@@ -168,16 +170,16 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 												</span>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
-														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : t('you')}</span>
+														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{t('reacted')}</span>
 														{activity.reaction == '👍' ? (
 															<span className='flex items-center gap-2 text-pink_primary'>
-																<LikeOutlined className='text-base' /> Liked
+																<LikeOutlined className='text-base' /> {t('liked')}
 															</span>
 														) : (
 															<span className='flex items-center gap-2 text-[#FF3C5F]'>
 																<DislikeFilled className='mt-0.5 text-base' />
-																Disliked
+																{t('disliked')}
 															</span>
 														)}
 													</div>
@@ -192,9 +194,9 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 												</span>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : t('you')}</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-															added a {activity?.type === EUserActivityType.COMMENTED ? 'comment' : 'reply'} on
+															{t(activity.type === EUserActivityType.COMMENTED ? 'added_comment' : 'added_reply')}
 														</span>
 													</div>
 													<ActivityBottomContent activity={activity} />
@@ -219,7 +221,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 										alt='Empty Icon'
 										imgClassName='w-[225px] h-[225px]'
 									/>
-									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No current activities</h3>
+									<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_activity')}</h3>
 								</div>
 						  )}
 				</div>

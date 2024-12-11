@@ -28,6 +28,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTranslation } from 'next-i18next';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -75,6 +76,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -103,7 +105,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				});
 
 				if (error || !data) {
-					setError(error || 'Something went wrong');
+					setError(error || t('something_went_wrong'));
 					console.error('Signup error', error);
 					setLoading(false);
 				}
@@ -128,10 +130,10 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 			const { data: resData, error } = await nextApiClientFetch<IUsernameExistResponse>(`api/v1/users/username-exist?username=${username}`);
 			if (error || !resData) {
-				setError(error || 'Error while checking username exist or not.');
+				setError(error || t('username_exist_check_error'));
 			} else {
 				if (resData.isExist) {
-					setError('Username already exists. Please choose a different username.');
+					setError(t('username_already_exists'));
 				} else {
 					if (username && email) {
 						setSignUpInfo((prevInfo) => ({ ...prevInfo, email, username }));
@@ -160,7 +162,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			<div>
 				<div className='mt-4 flex gap-x-2 px-8'>
 					<IconSignup className='m-0 p-0 text-2xl' />
-					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Sign Up</p>
+					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>{t('sign_up')}</p>
 				</div>
 				<Divider
 					className='m-0 mt-4 p-0 '
@@ -181,7 +183,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>
-							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Create Username</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>{t('create_username')}</span>
 						</div>
 						<div>
 							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
@@ -190,7 +192,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>02</span>
-							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Set Password</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>{t('set_password')}</span>
 						</div>
 						<div>
 							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
@@ -200,12 +202,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 				{defaultWallets.length === 0 && isDelegation && (
 					<Alert
-						message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
-						description={
-							<span className='dark:text-blue-dark-high'>
-								No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
-							</span>
-						}
+						message={<span className='dark:text-blue-dark-high'>{t('wallet_extension_not_detected')}</span>}
+						description={<span className='dark:text-blue-dark-high'>{t('no_web3_integration_found')}</span>}
 						type='info'
 						showIcon
 						className='changeColor px-8 text-[#243A57] dark:text-white'
@@ -229,7 +227,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
 									htmlFor='first_password'
 								>
-									Set Password
+									{t('set_password')}
 								</label>
 								<Form.Item
 									name='first_password'
@@ -249,7 +247,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 										onChange={(e) => {
 											setFirstPassword(e.target.value);
 										}}
-										placeholder='Password'
+										placeholder={t('password_placeholder')}
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='first_password'
 									/>
@@ -260,13 +258,13 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									className='text-base text-[#485F7D] dark:text-blue-dark-medium '
 									htmlFor='second_password'
 								>
-									Re-enter Password
+									{t('re_enter_password')}
 								</label>
 								<Form.Item
 									name='second_password'
 									rules={[
 										{
-											message: "Password don't match",
+											message: t('password_do_not_match'),
 											validator(rule, value, callback) {
 												if (callback && value !== firstPassword) {
 													callback(rule?.message?.toString());
@@ -280,7 +278,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									<Input
 										type='password'
 										onChange={() => setInputPassword(true)}
-										placeholder='Password'
+										placeholder={t('password_placeholder')}
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='second_password'
 									/>
@@ -294,7 +292,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
 									htmlFor='username'
 								>
-									Enter Username
+									{t('enter_username')}
 								</label>
 								<Form.Item
 									name='username'
@@ -318,7 +316,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									]}
 								>
 									<Input
-										placeholder='John'
+										placeholder={t('username_placeholder')}
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='username'
 									/>
@@ -329,7 +327,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									htmlFor='email'
 									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
 								>
-									Enter Email
+									{t('enter_email')}
 								</label>
 								<Form.Item
 									name='email'
@@ -341,7 +339,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									]}
 								>
 									<Input
-										placeholder='email@example.com'
+										placeholder={t('email_placeholder')}
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='email'
 									/>
@@ -366,12 +364,12 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						/>
 					)}
 					<div className='flex items-center justify-center gap-x-2 px-8 font-semibold '>
-						<label className='text-md text-[#243A57] dark:text-blue-dark-high'>Already have an account?</label>
+						<label className='text-md text-[#243A57] dark:text-blue-dark-high'>{t('already_have_account')}</label>
 						<div
 							onClick={() => handleClick()}
 							className='text-md cursor-pointer text-pink_primary'
 						>
-							Login
+							{t('login')}
 						</div>
 					</div>
 					<Divider
@@ -385,7 +383,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							disabled={loading}
 							htmlType='submit'
 						>
-							{isPassword ? 'Sign Up' : 'Next'}
+							{isPassword ? t('sign_up') : t('next')}
 						</CustomButton>
 					</div>
 				</AuthForm>
@@ -393,7 +391,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					wrapClassName='dark:bg-modalOverlayDark'
 					className='rounded-md px-8 dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					centered={true}
-					title={"You've got some mail"}
+					title={t('youve_got_some_mail')}
 					open={open}
 					closable={false}
 					footer={[
@@ -403,7 +401,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						>
 							<CustomButton
 								variant='primary'
-								text='Got it!'
+								text={t('got_it')}
 								icon={<CheckOutlined />}
 								buttonsize='sm'
 								onClick={() => {
@@ -414,7 +412,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						</div>
 					]}
 				>
-					We sent you an email to verify your address. Click on the link in the email.
+					{t('verify_email_instruction')}
 				</Modal>
 			</Container>
 		</div>

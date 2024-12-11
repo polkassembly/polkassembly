@@ -26,6 +26,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
@@ -44,8 +45,6 @@ interface Props {
 	error?: any;
 }
 
-// const CouncilEmoji = () => <span aria-label="council member" className='councilMember' role="img">👑</span>;
-
 const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/setOnChainIdentityButton'), {
 	loading: () => <SkeletonButton active />,
 	ssr: false
@@ -54,6 +53,7 @@ const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/s
 const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation();
 
 	const router = useRouter();
 	const { address, username, membersType } = router.query;
@@ -71,7 +71,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string>('');
 
-	const noDescription = `This page belongs to address (${address}). Only this user can edit this description and the title. If you own this address, edit this page and tell us more about yourself.`;
+	const noDescription = t('edit_profile_prompt', { address });
 
 	useEffect(() => {
 		const getAccounts = async (): Promise<undefined> => {
@@ -112,7 +112,6 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			});
 			setIdentity(info);
 		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	const judgements = identity ? identity.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid) : [];
@@ -142,8 +141,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (!extensions || !extensions.length) {
 			queueNotification({
-				header: 'Failed',
-				message: 'No web 3 account integration could be found. To be able to vote on-chain, visit this page on a computer with polkadot-js entension.',
+				header: t('failed'),
+				message: t('no_web3_integration'),
 				status: NotificationStatus.ERROR
 			});
 			return;
@@ -153,8 +152,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (accounts.length === 0) {
 			queueNotification({
-				header: 'Failed',
-				message: 'You need at least one account in Polkadot-js extenstion to login.',
+				header: t('failed'),
+				message: t('no_accounts_found'),
 				status: NotificationStatus.ERROR
 			});
 			return;
@@ -170,8 +169,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (!injected) {
 			queueNotification({
-				header: 'Failed',
-				message: 'Address not available.',
+				header: t('failed'),
+				message: t('address_not_available'),
 				status: NotificationStatus.ERROR
 			});
 			return;
@@ -181,8 +180,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (!signRaw) {
 			queueNotification({
-				header: 'Failed',
-				message: 'Signer not available.',
+				header: t('failed'),
+				message: t('signer_not_available'),
 				status: NotificationStatus.ERROR
 			});
 			return;
@@ -196,7 +195,6 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			substrate_address = address;
 		}
 
-		// TODO: metamask specefic sign message
 		const signMessage = `<Bytes>about::network:${network}|address:${substrate_address}|title:${title || ''}|description:${description || ''}|image:</Bytes>`;
 
 		const { signature } = await signRaw({
@@ -219,7 +217,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (fetchError) {
 			queueNotification({
-				header: 'Failed',
+				header: t('failed'),
 				message: fetchError,
 				status: NotificationStatus.ERROR
 			});
@@ -228,8 +226,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 		if (data) {
 			queueNotification({
-				header: 'SUCCESS.',
-				message: data.message || 'Profile Updated.',
+				header: t('success'),
+				message: data.message || t('profile_updated'),
 				status: NotificationStatus.SUCCESS
 			});
 		}
@@ -238,14 +236,14 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	};
 
 	if (!apiReady) {
-		return <Loader text={'Initializing Connection...'} />;
+		return <Loader text={t('initializing_connection')} />;
 	}
 
 	const votingTab = (
 		<div>
 			{isEditing ? (
 				<Form>
-					<h3>Update Profile</h3>
+					<h3>{t('profile_update')}</h3>
 					<TitleForm onChange={onTitleChange} />
 					<ContentForm onChange={onDescriptionChange} />
 
@@ -256,27 +254,25 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 							variant='primary'
 							htmlType='submit'
 						>
-							{loading ? <>Creating</> : 'Update'}
+							{loading ? t('creating') : t('update')}
 						</CustomButton>
 					</div>
 					{error && <FilteredError text={error} />}
 				</Form>
 			) : (
 				<div className='mb-[1rem]'>
-					<>
-						{canEdit ? (
-							<div className={'mt-[3rem] flex flex-col items-center justify-center'}>
-								<CustomButton
-									onClick={handleEdit}
-									disabled={loading}
-									htmlType='submit'
-									variant='primary'
-								>
-									{loading ? <>Creating</> : 'Update'}
-								</CustomButton>
-							</div>
-						) : null}
-					</>
+					{canEdit ? (
+						<div className={'mt-[3rem] flex flex-col items-center justify-center'}>
+							<CustomButton
+								onClick={handleEdit}
+								disabled={loading}
+								htmlType='submit'
+								variant='primary'
+							>
+								{loading ? t('creating') : t('update')}
+							</CustomButton>
+						</div>
+					) : null}
 				</div>
 			)}
 			{membersType ? <CouncilVotes address={`${address}`} /> : null}
@@ -292,12 +288,12 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 						{identity && (
 							<Row gutter={[8, 40]}>
 								<Col span={8}>
-									<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Account</div>
+									<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('account')}</div>
 									<AddressComponent address={`${address}`} />
 								</Col>
 								{identity?.email && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Email</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('email')}</div>
 										<a
 											href={`mailto:${identity.email}`}
 											className='text-navBlue hover:text-pink_primary dark:text-white'
@@ -308,19 +304,19 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 								)}
 								{identity?.legal && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Legal</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('legal')}</div>
 										<div className='text-navBlue dark:text-white'>{identity.legal}</div>
 									</Col>
 								)}
 								{identity?.riot && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Riot</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('riot')}</div>
 										<div className='text-navBlue dark:text-white'>{identity.riot}</div>
 									</Col>
 								)}
 								{identity?.judgements?.length > 0 && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Judgements</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('judgements')}</div>
 										<div className='text-navBlue dark:text-white'>
 											{icon} {displayJudgements}
 										</div>
@@ -328,13 +324,13 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 								)}
 								{identity?.web && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Web</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('web')}</div>
 										<div className='text-navBlue dark:text-white'>{identity.web}</div>
 									</Col>
 								)}
 								{identity?.twitter && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Web</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('twitter')}</div>
 										<a
 											href={`https://twitter.com/${identity.twitter.substring(1)}`}
 											className='text-navBlue hover:text-pink_primary dark:text-white'
@@ -347,17 +343,15 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 						)}
 					</>
 				) : (
-					<p>No address attached to this account</p>
+					<p>{t('no_address_attached')}</p>
 				)}
 			</div>
 		</div>
 	);
 
 	const tabItems = [
-		// eslint-disable-next-line sort-keys
-		{ label: 'Description', key: 'description', children: descriptionTab },
-		// eslint-disable-next-line sort-keys
-		{ label: 'Voting History', key: 'voting_history', children: votingTab }
+		{ children: descriptionTab, key: 'description', label: t('description') },
+		{ children: votingTab, key: 'voting_history', label: t('voting_history') }
 	];
 
 	return (

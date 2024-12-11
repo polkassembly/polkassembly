@@ -10,8 +10,7 @@ import { ActivityFeedCommentModal } from './ActivityFeedCommentModal';
 import { PostType } from '~src/auth/types';
 import Alert from '~src/basic-components/Alert';
 import ImageComponent from '../ImageComponent';
-const COMMENT_PLACEHOLDER = 'Type your comment here';
-const POST_LABEL = 'Post';
+import { useTranslation } from 'next-i18next';
 
 interface IPostCommentSectionProps {
 	post: PostType;
@@ -27,6 +26,7 @@ const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 	reasonForNoComment: string;
 	isUserNotAllowedToComment: boolean;
 }) => {
+	const { t } = useTranslation('common');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const currentUserdata = useUserDetailsSelector();
 	const userid = currentUserdata?.id;
@@ -76,13 +76,13 @@ const ActivityFeedCommentSection: React.FC<IPostCommentSectionProps> = ({
 						}
 						onClick={openModal}
 					>
-						{COMMENT_PLACEHOLDER}{' '}
+						{t('comment_placeholder')}{' '}
 					</div>
 					<button
 						onClick={openModal}
 						className='h-9 w-28 cursor-pointer rounded-r-lg  border border-solid border-[#D2D8E0] bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] dark:border dark:border-solid dark:border-[#4B4B4B] dark:bg-[#262627] dark:text-white'
 					>
-						{POST_LABEL}
+						{t('post_label')}
 					</button>
 
 					<ReferendaLoginPrompts

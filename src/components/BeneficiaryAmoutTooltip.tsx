@@ -15,6 +15,7 @@ import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/pars
 import { formatedBalance } from '~src/util/formatedBalance';
 import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
+import { useTranslation } from 'next-i18next';
 
 interface Args {
 	className?: string;
@@ -30,6 +31,7 @@ const ZERO_BN = new BN(0);
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { t } = useTranslation('common');
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = requestedAmt ? new BN(requestedAmt).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
@@ -93,7 +95,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 								<Spin spinning={loading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
+											<span>{isProposalClosed ? t('value_on_day_of_txn') : t('current_value')}</span>
 											<span>
 												{getUsdValueFromAsset({
 													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
@@ -109,7 +111,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-											<span className='flex'>Value on day of creation:</span>
+											<span className='flex'>{t('value_on_day_of_creation')}</span>
 											<span>
 												{getUsdValueFromAsset({
 													currentTokenPrice: usdValueOnCreation || '0',
@@ -142,7 +144,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 								<Spin spinning={loading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-											<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
+											<div className='flex'>{isProposalClosed ? t('value_on_day_of_txn') : t('current_value')}</div>
 											<span>
 												{parseBalance(
 													requestedAmountFormatted
@@ -162,7 +164,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-											<span>Value on day of creation:</span>
+											<span>{t('value_on_day_of_creation')}</span>
 											<span>{parseBalance(requestedAmountFormatted?.mul(bnUsdValueOnCreation)?.toString() || '0', 0, false, network)} USD </span>
 										</div>
 									</div>

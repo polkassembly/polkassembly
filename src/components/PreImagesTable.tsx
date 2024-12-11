@@ -28,6 +28,7 @@ import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -47,6 +48,7 @@ interface IUnnoteOrUnreqrestedButtonProps {
 
 const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, substrateAddresses, onConfirm, isUnrequesting = false }: IUnnoteOrUnreqrestedButtonProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
 
 	if (!isProposer) return null;
@@ -69,7 +71,7 @@ const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, sub
 			setLoading(false);
 			queueNotification({
 				header: 'Success!',
-				message: 'Preimage Cleared Successfully',
+				message: t('preimage_cleared_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 		};
@@ -88,7 +90,7 @@ const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, sub
 			address: proposer,
 			api,
 			apiReady,
-			errorMessageFallback: 'Transaction failed.',
+			errorMessageFallback: t('transaction_failed'),
 			network,
 			onFailed,
 			onSuccess,
@@ -100,7 +102,7 @@ const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, sub
 		<div className='flex items-center space-x-2'>
 			<Tooltip
 				placement='top'
-				title={isUnrequesting ? 'Unrequest' : 'Unnote'}
+				title={isUnrequesting ? t('unrequest') : t('unnote')}
 				trigger={'hover'}
 			>
 				<button
@@ -110,7 +112,7 @@ const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, sub
 				>
 					<ImageIcon
 						src='/assets/icons/close-icon.svg'
-						alt='close icon'
+						alt={t('close_icon')}
 						imgClassName='w-full h-full'
 						imgWrapperClassName='flex cursor-pointer justify-center text-sm text-grey_border dark:text-white'
 					/>
@@ -123,6 +125,7 @@ const UnnoteOrUnrequestedButton = ({ proposer, hash, api, apiReady, network, sub
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [preimages, setPreimages] = useState(props.preimages);
@@ -143,7 +146,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 
 	const success = () => {
 		messageApi.open({
-			content: 'Hash copied to clipboard',
+			content: t('hash_copied_to_clipboard'),
 			type: 'success'
 		});
 	};
@@ -169,7 +172,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			render: (hash, obj) => (
 				<div className='flex items-center space-x-[6px]'>
 					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 6)}...${hash.substring(hash.length - 6)}`}</span>
-					<Tooltip title='Copy'>
+					<Tooltip title={t('copy')}>
 						<span
 							className='mt-[2px] cursor-pointer'
 							onClick={(e) => {
@@ -314,7 +317,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					footer={[
 						<CustomButton
 							variant='default'
-							text='Close'
+							text={t('close')}
 							key='back'
 							onClick={() => setModalArgs(null)}
 							className='border-none dark:bg-transparent dark:text-white'

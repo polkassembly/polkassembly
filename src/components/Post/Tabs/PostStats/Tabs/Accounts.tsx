@@ -14,6 +14,7 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import Nudge from './Nudge';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
@@ -26,6 +27,7 @@ interface IVotesAccountProps {
 const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance, elapsedPeriod }: IVotesAccountProps) => {
 	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [soloVotesCount, setSoloVotesCount] = useState<number>(0);
+	const { t } = useTranslation('common');
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
 	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
@@ -98,7 +100,7 @@ const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance,
 
 	return (
 		<>
-			<Nudge text='Accounts are the number of unique addresses casting a vote' />
+			<Nudge text={t('accounts_are_the_number_of_unique_addresses_casting_a_vote')} />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard

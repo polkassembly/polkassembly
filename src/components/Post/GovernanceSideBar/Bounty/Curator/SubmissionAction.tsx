@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Modal, Spin } from 'antd';
-import { EditOutlined, ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -12,6 +12,7 @@ import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CreateChildBountyButton from '~src/components/ChildBountyCreation/CreateChildBountyButton';
+import { useTranslation } from 'next-i18next';
 
 interface SubmissionActionProps {
 	submission: IChildBountySubmission;
@@ -51,6 +52,7 @@ const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
 const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = false, submission, handleDelete, handleEditClick, handleApprove, showRejectModal }) => {
 	const [loading, setLoading] = useState(false);
 	const { loginAddress } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const encodedAddress = getEncodedAddress(loginAddress, network);
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
@@ -77,14 +79,14 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 								onClick={() => showRejectModal?.(true)}
 								className='w-1/2'
 							>
-								Reject
+								{t('reject')}
 							</CustomButton>
 							<CreateChildBountyButton
 								className='w-1/2 text-pink_primary'
 								handleSuccess={handleApprove}
 								defaultCurator={submission?.proposer}
 							>
-								Approve
+								{t('approve')}
 							</CreateChildBountyButton>
 						</div>
 					)
@@ -98,7 +100,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							loading={loading}
 							height={32}
 						>
-							Delete
+							{t('delete')}
 						</CustomButton>
 						<CustomButton
 							variant='primary'
@@ -107,7 +109,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							className='h-8 w-full'
 							height={32}
 						>
-							<EditOutlined /> Edit
+							{t('edit')}
 						</CustomButton>
 					</div>
 				) : (
@@ -127,19 +129,19 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Delete Your Submission
+						{t('delete_your_submission')}
 					</div>
 				}
 			>
 				<Spin spinning={loading}>
 					<div className='-mx-6 mt-6 px-6'>
 						<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-							Your Submission information (Title, Description & Tags) would be delete. Are you sure you want to delete your submission?{' '}
+							{t('your_submission_information_title_description_tags_would_be_lost')}. {t('are_you_sure_you_want_to_delete_your_submission')}
 						</span>
 						<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 							<CustomButton
 								onClick={handleDeleteSubmission}
-								text='Yes'
+								text={t('yes')}
 								variant='default'
 								width={100}
 								height={32}
@@ -150,7 +152,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 								}}
 								height={32}
 								width={100}
-								text='Cancel'
+								text={t('cancel')}
 								variant='primary'
 							/>
 						</div>

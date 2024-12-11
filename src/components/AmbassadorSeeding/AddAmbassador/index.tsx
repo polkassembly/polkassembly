@@ -18,8 +18,10 @@ import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
+import { useTranslation } from 'next-i18next';
 
 const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => {
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { loginAddress } = useUserDetailsSelector();
 	const {
@@ -72,14 +74,12 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 				closable={false}
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Ambassador Proposal Creation
+						{t('exit_ambassador_proposal_creation')}
 					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your ambassador proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
-					</span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{t('exit_ambassador_warning')}</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
@@ -88,7 +88,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 								setOpenWarningModal(false);
 							}}
 							buttonsize='sm'
-							text='Yes, Exit'
+							text={t('yes_exit')}
 							variant='default'
 						/>
 						<CustomButton
@@ -98,7 +98,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 							}}
 							height={40}
 							width={200}
-							text='No, Continue Editing'
+							text={t('no_continue_editing')}
 							variant='primary'
 						/>
 					</div>

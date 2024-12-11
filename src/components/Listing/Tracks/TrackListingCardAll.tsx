@@ -19,6 +19,7 @@ import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { sortValues } from '~src/global/sortOptions';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import { dmSans } from 'pages/_app';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -35,6 +36,7 @@ export enum CustomStatus {
 
 const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const [selectedRadio, setSelectedRadio] = useState('All');
 	const trackStatus = router.query['trackStatus'];
@@ -153,25 +155,25 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 						value='All'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						All ({initialCountForAll || 0}){' '}
+						{t('all')} ({initialCountForAll || 0}){' '}
 					</Radio>
 					<Radio
 						value='Submitted'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Submitted ({initialCountForSubmitted || 0})
+						{t('submitted')} ({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Voting ({initialCountForVoting || 0})
+						{t('voting')} ({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Closed ({initialCountForClosed || 0})
+						{t('closed')} ({initialCountForClosed || 0})
 					</Radio>
 				</Radio.Group>
 			</div>

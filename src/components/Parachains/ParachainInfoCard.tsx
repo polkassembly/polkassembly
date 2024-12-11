@@ -13,6 +13,7 @@ import chainIcon from '~assets/parachains/chain-link.png';
 import crowdloansIcon from '~assets/parachains/crowdloan.png';
 import projectsIcon from '~assets/parachains/projects.png';
 import polkadotLogo from '~assets/parachain-logos/polkadot-logo.jpg';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -23,6 +24,8 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
+	const { t } = useTranslation('common');
+
 	const polkadotMetrics = {
 		auction: '14th',
 		crowdloans: '5',
@@ -45,13 +48,14 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 				<div className='parachain-card-header'>
 					<Image
 						src={network == 'polkadot' ? polkadotLogo : kusamaLogo}
-						alt='Chain Logo'
+						alt={t('chain_logo')}
 						className='rounded-full'
 					/>
 					<span className='network-name'>{network}</span>
 				</div>
 				<div className='parachain-card-meta text-blue-light-high opacity-80 dark:text-blue-dark-high'>
-					{network == 'polkadot' ? '11%' : '31%'} of Total Supply Locked<span className='hidden-sm'> in Parachains and Crowdloans</span>
+					{network == 'polkadot' ? '11%' : '31%'} {t('total_supply_locked')}
+					<span className='hidden-sm'> {t('in_parachains_and_crowdloans')}</span>
 				</div>
 				<Divider className='my-3' />
 				<div className='parachain-card-desc'>
@@ -61,11 +65,11 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 							<Image
 								className='h-[14px] w-auto md:h-auto'
 								src={auctionIcon}
-								alt='Auction Icon'
+								alt={t('auction_icon')}
 							/>
 							<span className='metric-num ml-[7px] text-xs font-medium text-blue-light-high dark:text-blue-dark-high md:text-base'>{metrics.auction}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>Auction</div>
+						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>{t('auction')}</div>
 					</div>
 
 					{/* Crowdloans */}
@@ -74,11 +78,11 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 							<Image
 								className='h-[14px] w-auto md:h-auto'
 								src={crowdloansIcon}
-								alt='Crowdloans Icon'
+								alt={t('crowdloans_icon')}
 							/>
 							<span className='metric-num ml-[7px] text-xs font-medium text-blue-light-high dark:text-blue-dark-high md:text-sm'>{metrics.crowdloans}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>Crowdloans</div>
+						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>{t('crowdloans')}</div>
 					</div>
 
 					{/* Parachains */}
@@ -87,11 +91,11 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 							<Image
 								className='h-[14px] w-auto md:h-auto'
 								src={chainIcon}
-								alt='Parachains Icon'
+								alt={t('parachains_icon')}
 							/>
 							<span className='metric-num ml-[7px] text-xs font-medium text-blue-light-high dark:text-blue-dark-high md:text-sm'>{metrics.parachains}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>Parachains</div>
+						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>{t('parachains')}</div>
 					</div>
 
 					{/* Projects */}
@@ -100,11 +104,11 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 							<Image
 								className='h-[14px] w-auto md:h-auto'
 								src={projectsIcon}
-								alt='Parachains Icon'
+								alt={t('projects_icon')}
 							/>
 							<span className='metric-num ml-[7px] text-xs font-medium text-blue-light-high dark:text-blue-dark-high md:text-sm'>{metrics.projects}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>Projects</div>
+						<div className='metric-name mt-[8px] text-xs text-lightBlue dark:text-blue-dark-medium md:text-sm'>{t('projects')}</div>
 					</div>
 				</div>
 			</div>

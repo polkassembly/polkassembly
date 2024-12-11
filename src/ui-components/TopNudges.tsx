@@ -6,11 +6,13 @@ import { useApiContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import ImageIcon from './ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 const TopNudges = () => {
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -44,13 +46,13 @@ const TopNudges = () => {
 						className='flex flex-col gap-2 text-white sm:inline-flex sm:flex-row sm:items-center'
 						onClick={handleSetNotificationClicked}
 					>
-						Get Alerts for the governance events you are interested in!
+						{t('get_alerts')}
 						<span className='inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#000000]/30 px-2 py-1 hover:opacity-80'>
 							<ImageIcon
 								src='/assets/icons/BellNotificationIcon.svg'
 								alt='notificationIcon'
 							/>
-							Set Notifications
+							{t('set_notifications')}
 						</span>
 					</div>
 					<span

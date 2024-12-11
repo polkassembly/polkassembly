@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React from 'react';
 import { Button, Modal, message } from 'antd';
 import { dmSans } from 'pages/_app';
@@ -17,6 +16,7 @@ import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types'
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	open: boolean;
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimageSuccess = false, action, ambassadorPostIndex, ambassadorPreimage, step }: Props) => {
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const [messageApi, contextHolder] = message.useMessage();
@@ -60,6 +61,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 				break;
 		}
 	};
+
 	const handleAmbassadorReset = () => {
 		switch (action) {
 			case EAmbassadorActions.ADD_AMBASSADOR:
@@ -101,7 +103,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 								openPrevModal();
 							}}
 						>
-							Create Proposal
+							{t('create_proposal')}
 						</Button>
 					</div>
 				) : (
@@ -115,7 +117,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 							height={40}
 							className='w-full rounded-[4px]'
 							variant='primary'
-							text='View Proposal'
+							text={t('view_proposal')}
 						/>
 					</Link>
 				)
@@ -125,7 +127,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 				<div className='flex flex-col items-center justify-center'>
 					<SuccessIcon />
 					<h2 className='py-4 text-xl font-medium tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
-						{isPreimageSuccess ? 'Preimage created successfully!' : 'Proppsal created successfully!'}
+						{isPreimageSuccess ? t('preimage_created_successfully') : t('proposal_created_successfully')}
 					</h2>
 				</div>
 				{isPreimageSuccess && (
@@ -135,10 +137,10 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 							onClick={(e) => {
 								e.preventDefault();
 								copyLink(ambassadorPreimage?.hash);
-								success('Preimage hash copied to clipboard');
+								success(t('preimage_hash_copied'));
 							}}
 						>
-							Preimage: {ambassadorPreimage?.hash.slice(0, 20)}...
+							{t('preimage')}: {ambassadorPreimage?.hash.slice(0, 20)}...
 							{contextHolder}
 							<CopyIcon className='ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive' />
 						</span>

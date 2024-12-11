@@ -18,6 +18,7 @@ import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface IVotersListProps {
 	className?: string;
@@ -45,6 +46,7 @@ const sortedCheck = {
 
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const {
 		postData: { postType }
@@ -103,7 +105,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					<div className='overflow-x-auto md:overflow-visible'>
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-								<div className={'w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium'}>Delegator</div>
+								<div className={'w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium'}>{t('delegator')}</div>
 								<div
 									className={'flex w-[110px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 									onClick={() => {
@@ -113,7 +115,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 										setOrderBy((prev) => ({ ...sortedCheck, balanceIsAsc: !prev.balanceIsAsc }));
 									}}
 								>
-									Amount
+									{t('amount')}
 									<ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />
 								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
@@ -126,7 +128,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 											setOrderBy((prev) => ({ ...sortedCheck, convictionIsAsc: !prev.convictionIsAsc }));
 										}}
 									>
-										Conviction
+										{t('conviction')}
 										<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
 									</div>
 								) : null}
@@ -140,7 +142,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 										setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
 									}}
 								>
-									Voting Power
+									{t('voting_power')}
 									<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
 								</div>
 							</div>

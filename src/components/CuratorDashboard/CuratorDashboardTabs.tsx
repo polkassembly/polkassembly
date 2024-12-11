@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { useState } from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
@@ -11,6 +12,8 @@ import { spaceGrotesk } from 'pages/_app';
 import CuratorPendingRequestManager from './PendingRequestManager';
 import { useTheme } from 'next-themes';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
+
 interface Props {
 	handleClick: () => void;
 }
@@ -22,6 +25,7 @@ enum ECuratorDashboardTabs {
 }
 
 const CuratorDashboardTabItems = ({ handleClick }: Props) => {
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [activeTab, setActiveTab] = useState<ECuratorDashboardTabs>((router?.query?.tab as ECuratorDashboardTabs) || ECuratorDashboardTabs.GENERAL);
@@ -29,24 +33,24 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 	const tabs = [
 		{
 			children: <CuratorProfile />,
-			description: 'Track your bounty via notifications',
+			description: t('curator_general_tab_description'),
 			icon: '/assets/icons/curator-dashboard/general.svg',
-			key: ECuratorDashboardTabs?.GENERAL,
-			title: 'General'
+			key: ECuratorDashboardTabs.GENERAL,
+			title: t('curator_general_tab_title')
 		},
 		{
 			children: <BountiesCuratorInfo handleClick={handleClick} />,
-			description: 'Review and Reward submissions on curated bounties',
+			description: t('curator_curated_tab_description'),
 			icon: '/assets/icons/curator-dashboard/bounties-curated.svg',
 			key: ECuratorDashboardTabs.CURATED,
-			title: 'Bounties Curated'
+			title: t('curator_curated_tab_title')
 		},
 		{
 			children: <CuratorPendingRequestManager />,
-			description: 'Review curator and child bounty requests',
+			description: t('curator_pending_requests_tab_description'),
 			icon: '/assets/icons/curator-dashboard/pending-request.svg',
 			key: ECuratorDashboardTabs.PENDING_REQUESTS,
-			title: 'Pending Requests'
+			title: t('curator_pending_requests_tab_title')
 		}
 	];
 
@@ -66,18 +70,18 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 						<div
 							key={tab.key}
 							className={`flex cursor-pointer items-center justify-between px-3 py-2 transition-colors duration-300 ${
-								activeTab === tab.key ? 'rounded-lg border-[1.2px] border-solid border-[text-pink_primary] text-pink_primary  ' : 'border-none text-black dark:text-white'
+								activeTab === tab.key ? 'rounded-lg border-[1.2px] border-solid border-pink_primary text-pink_primary' : 'border-none text-black dark:text-white'
 							}`}
 							onClick={() => handleTabClick(tab.key)}
 						>
 							<div className='flex items-start gap-3'>
-								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? ' bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5] dark:bg-[#303030]'} p-2`}>
+								<div className={`flex-shrink-0 rounded-full ${activeTab === tab.key ? 'bg-[#FCE5F2] dark:bg-[#540E33]' : 'bg-[#F0F2F5] dark:bg-[#303030]'} p-2`}>
 									<Image
 										src={tab.icon}
-										alt={`Curator Dashboard Icon ${tab.key}`}
+										alt={t('curator_dashboard_icon_alt', { tab: tab.title })}
 										width={24}
 										height={24}
-										className={activeTab !== tab.key && theme == 'dark' ? 'dark-icons' : ''}
+										className={activeTab !== tab.key && theme === 'dark' ? 'dark-icons' : ''}
 										style={{
 											filter:
 												activeTab === tab.key ? 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)' : 'none'
@@ -86,28 +90,27 @@ const CuratorDashboardTabItems = ({ handleClick }: Props) => {
 								</div>
 								<div className='flex flex-col'>
 									<span
-										className={`${activeTab === tab.key ? ' font-extrabold text-pink_primary dark:text-[#FF4098]' : ''} whitespace-normal break-words ${spaceGrotesk.className} ${
-											spaceGrotesk.variable
-										} text-base font-medium text-blue-light-medium dark:text-icon-dark-inactive`}
+										className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-base font-medium ${
+											activeTab === tab.key ? 'font-extrabold text-pink_primary dark:text-[#FF4098]' : 'text-blue-light-medium dark:text-icon-dark-inactive'
+										}`}
 									>
 										{tab.title}
 									</span>
 									<span
-										className={`${activeTab === tab.key ? 'text-pink_primary dark:text-[#FF4098]' : ''}  mt-1 ${spaceGrotesk.className} ${
-											spaceGrotesk.variable
-										} whitespace-normal break-words text-sm text-blue-light-medium dark:text-icon-dark-inactive`}
+										className={`${spaceGrotesk.className} ${spaceGrotesk.variable} mt-1 text-sm ${
+											activeTab === tab.key ? 'text-pink_primary dark:text-[#FF4098]' : 'text-blue-light-medium dark:text-icon-dark-inactive'
+										}`}
 									>
 										{tab.description}
 									</span>
 								</div>
 							</div>
-
-							<RightOutlined className={classNames('ml-5', theme == 'dark' ? 'dark-icons' : '')} />
+							<RightOutlined className={classNames('ml-5', theme === 'dark' ? 'dark-icons' : '')} />
 						</div>
 					))}
 				</div>
 			</div>
-			<div className='mt-3 w-2/3 flex-grow'>{activeTab && tabs.find((tab) => tab.key === activeTab)?.children}</div>
+			<div className='mt-3 w-2/3 flex-grow'>{tabs.find((tab) => tab.key === activeTab)?.children}</div>
 		</div>
 	);
 };

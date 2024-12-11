@@ -4,6 +4,7 @@
 
 import Image from 'next/image';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import styled from 'styled-components';
 import announcedIcon from '~assets/parachains/announced.png';
 import auctionIcon from '~assets/parachains/auction.png';
@@ -30,19 +31,9 @@ interface AllParachainsCardProps {
 	w3fGrant: { [key: string]: any } | null;
 }
 
-const Cards = function ({
-	className,
-	index,
-	// id,
-	badgeArray,
-	githubLink,
-	investors,
-	logoURL,
-	project: name,
-	status,
-	token,
-	w3fGrant
-}: AllParachainsCardProps) {
+const Cards = function ({ className, index, badgeArray, githubLink, investors, logoURL, project: name, status, token, w3fGrant }: AllParachainsCardProps) {
+	const { t } = useTranslation('common');
+
 	function toTitleCase(str: string): string {
 		return str.replace(/\w\S*/g, function (txt) {
 			return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
@@ -50,19 +41,18 @@ const Cards = function ({
 	}
 
 	const grantPopupContent = () => {
-		let content = '';
 		if (w3fGrant) {
 			if (w3fGrant.terminated) {
-				content = toTitleCase(`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`);
+				return toTitleCase(t('w3f_grant_terminated', { reason: w3fGrant.terminationReason }));
 			} else if (w3fGrant.milestoneText) {
-				content = toTitleCase(`${w3fGrant.received} received, ${w3fGrant.milestoneText}`);
+				// eslint-disable-next-line sort-keys
+				return toTitleCase(t('w3f_grant_milestone', { received: w3fGrant.received, milestone: w3fGrant.milestoneText }));
 			} else {
-				content = toTitleCase(`${w3fGrant.received} received, ${w3fGrant.completed} completed`);
+				// eslint-disable-next-line sort-keys
+				return toTitleCase(t('w3f_grant_completed', { received: w3fGrant.received, completed: w3fGrant.completed }));
 			}
-		} else {
-			content = '';
 		}
-		return content;
+		return '';
 	};
 
 	const title = grantPopupContent();
@@ -79,7 +69,7 @@ const Cards = function ({
 						src={logoURL}
 						height={34}
 						width={34}
-						alt={`${name} Logo`}
+						alt={`${name} ${t('logo')}`}
 					/>
 					<span className='project-name'>{name}</span>
 				</div>
@@ -92,82 +82,80 @@ const Cards = function ({
 						src={githubLogo}
 						height={16}
 						width={16}
-						alt='Github'
+						alt={t('github')}
 					/>
 				</a>
 			</div>
 
 			<div className='parachain-card-meta'>
 				<div className='div1'>
-					<h3>Tokens</h3>
-					<p>{token == '' ? 'N/A' : token}</p>
+					<h3>{t('tokens')}</h3>
+					<p>{token ? token : t('na')}</p>
 				</div>
 				<div className='div2'>
-					<h3>Investors</h3>
-					<p>{investors == 0 ? 'N/A' : investors}</p>
+					<h3>{t('investors')}</h3>
+					<p>{investors > 0 ? investors : t('na')}</p>
 				</div>
 				<div className='div3'>
-					<h3>Status</h3>
+					<h3>{t('status')}</h3>
 					<p className='status'>
-						{status.search('auction') !== -1 ? (
+						{status.toLowerCase().includes('auction') ? (
 							<>
 								<Image
 									src={auctionIcon}
 									height={12}
 									width={12}
-									alt='Auction Icon'
+									alt={t('auction_icon')}
 								/>{' '}
-								In Auction
+								{t('in_auction')}
 							</>
-						) : status.search('Testing') !== -1 ? (
+						) : status.toLowerCase().includes('testing') ? (
 							<>
 								<Image
 									src={testingIcon}
 									height={12}
 									width={12}
-									alt='Testing Icon'
+									alt={t('testing_icon')}
 								/>{' '}
-								Testing
+								{t('testing')}
 							</>
-						) : status.search('announced') !== -1 ? (
+						) : status.toLowerCase().includes('announced') ? (
 							<>
 								<Image
 									src={announcedIcon}
 									height={12}
 									width={12}
-									alt='Announced Icon'
+									alt={t('announced_icon')}
 								/>{' '}
-								Announced
+								{t('announced')}
 							</>
-						) : status.search('live') !== -1 ? (
+						) : status.toLowerCase().includes('live') ? (
 							<>
 								<Image
 									src={liveIcon}
 									height={12}
 									width={12}
-									alt='Live Icon'
+									alt={t('live_icon')}
 								/>{' '}
-								Live
+								{t('live')}
 							</>
 						) : null}
 					</p>
 				</div>
 				<div className='div4'>
-					<h3>W3F Grant</h3>
+					<h3>{t('w3f_grant')}</h3>
 					<div>
 						{w3fGrant ? (
-							<div className='grant-data-div'>
-								<Tooltip title={title}>
-									<Image
-										src={w3fGrant?.terminated ? w3fRedLogo : w3fGrant?.milestoneText ? w3fBlackLogo : w3fGreenLogo}
-										height={34}
-										width={34}
-										alt='W3F Logo'
-									/>
-								</Tooltip>
-							</div>
+							<Tooltip title={title}>
+								<Image
+									src={w3fGrant.terminated ? w3fRedLogo : w3fGrant.milestoneText ? w3fBlackLogo : w3fGreenLogo}
+									height={34}
+									width={34}
+									alt={t('w3f_logo')}
+								/>
+							</Tooltip>
 						) : (
-							'N/A'
+							t('na')
 						)}
 					</div>
 				</div>
@@ -175,16 +163,14 @@ const Cards = function ({
 
 			<div className='parachain-card-tags'>
 				<div className='project-badges'>
-					{badgeArray.map((badge: string) => {
-						return (
-							<div
-								key={badge}
-								style={{ backgroundColor: '#EA729D', borderRadius: '48px', color: '#ffffff', marginRight: '10px', padding: '4px 10px' }}
-							>
-								{badge}
-							</div>
-						);
-					})}
+					{badgeArray.map((badge) => (
+						<div
+							key={badge}
+							style={{ backgroundColor: '#EA729D', borderRadius: '48px', color: '#ffffff', marginRight: '10px', padding: '4px 10px' }}
+						>
+							{badge}
+						</div>
+					))}
 				</div>
 			</div>
 		</div>

@@ -17,6 +17,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
 import { dmSans } from 'pages/_app';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTranslation } from 'next-i18next';
 
 const LeaderBoardTable = dynamic(() => import('src/components/Leaderboard/LeaderBoardTable'), {
 	loading: () => <Skeleton active />,
@@ -36,6 +37,7 @@ const Leaderboard = ({ network, className }: Props) => {
 	const dispatch = useDispatch();
 	const [leaderboardData, setLeaderboardData] = useState<any>([]);
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
@@ -65,9 +67,9 @@ const Leaderboard = ({ network, className }: Props) => {
 				<div className='-ml-[236px] flex justify-center px-4'>
 					<TrophyIcon className='trophy-icon -mt-[92px] ml-[190px] md:ml-0' />
 					<div className={`${dmSans.className} ${dmSans.variable} relative ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center`}>
-						<h1 className=' m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>Leaderboard</h1>
+						<h1 className=' m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>{t('leaderboard')}</h1>
 						<p className='m-0 mt-2 flex items-center justify-center p-0 text-sm text-white md:text-base'>
-							Find your rank in {network?.charAt(0)?.toUpperCase() + network?.slice(1)} ecosystem
+							{t('find_your_rank_in')} {network?.charAt(0)?.toUpperCase() + network?.slice(1)} {t('ecosystem')}
 						</p>
 					</div>
 				</div>

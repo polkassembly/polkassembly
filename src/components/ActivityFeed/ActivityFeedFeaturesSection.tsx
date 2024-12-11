@@ -15,6 +15,7 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -28,6 +29,7 @@ interface IFeature {
 }
 
 function FeaturesSection() {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,28 +41,28 @@ function FeaturesSection() {
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const features = [
 		{
-			description: 'Delegate your vote and catchup with Delegation Dashboard',
+			description: t('delegate_your_vote'),
 			image: '/assets/features1.svg',
 			path: '/delegation',
-			title: 'Delegation Dashboard'
+			title: t('delegation_dashboard')
 		},
 		{
-			description: 'Vote on top proposals in a single transaction',
+			description: t('vote_on_top_proposals'),
 			image: '/assets/features2.svg',
 			path: '/batch-voting',
-			title: 'Batch Voting'
+			title: t('batch_voting')
 		},
 		{
-			description: 'Create, Manage and Participate in Bounties',
+			description: t('create_manage_participate_bounties'),
 			image: '/assets/features3.svg',
 			path: 'bounty',
-			title: 'Bounties'
+			title: t('bounties')
 		},
 		{
-			description: 'Set identity with Polkassembly at 1/4th of the cost',
+			description: t('set_identity_desc'),
 			image: '/assets/features4.svg',
 			path: '',
-			title: 'Identity'
+			title: t('identity')
 		}
 	];
 
@@ -69,7 +71,7 @@ function FeaturesSection() {
 	};
 
 	const handleFeatureClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, feature: IFeature) => {
-		if (feature?.title === 'Identity') {
+		if (feature?.title === t('identity')) {
 			e.stopPropagation();
 			e.preventDefault();
 			if (typeof currentUser?.id === 'number' && !isNaN(currentUser.id) && currentUser?.username) {
@@ -109,7 +111,7 @@ function FeaturesSection() {
 		<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 font-dmSans text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5 md:pb-3'>
 			<div className='flex items-start justify-between gap-2'>
 				<div className='flex items-start gap-1'>
-					<p className='text-[20px] font-semibold text-[#243A57] dark:text-white'>Features</p>
+					<p className='text-[20px] font-semibold text-[#243A57] dark:text-white'>{t('features')}</p>
 					<p className='mt-1 rounded-full bg-[#E5007A] p-1 text-[10px] font-bold text-white'>LIVE</p>
 				</div>
 				<div className='flex gap-2'>
@@ -147,7 +149,9 @@ function FeaturesSection() {
 				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${dmSans?.className} ${dmSans?.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
+				title={
+					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>{t('on_chain_identity')}</span>
+				}
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
@@ -155,7 +159,7 @@ function FeaturesSection() {
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'
 					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
+					<span className='dark:text-white'>{t('please_use_desktop')}</span>
 				</div>
 			</Modal>
 			{onchainIdentitySupportedNetwork?.includes(network) && (

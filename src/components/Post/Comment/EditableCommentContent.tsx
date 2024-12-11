@@ -60,6 +60,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -94,7 +95,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
-
+	const { t } = useTranslation('common');
 	const currentContent = useRef<string>(content);
 
 	const {
@@ -336,7 +337,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		replyForm.setFieldValue('content', '');
 		queueNotification({
 			header: 'Success!',
-			message: 'Your reply was added.',
+			message: t('your_reply_was_added'),
 			status: NotificationStatus.SUCCESS
 		});
 		if (id) {
@@ -353,12 +354,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 
 			if (addCommentError || !data) {
-				setErrorReply('There was an error in saving your reply.');
+				setErrorReply(t('there_was_an_error_in_saving_your_reply'));
 				console.error('Error saving reply: ', addCommentError);
 				setComments(oldComment);
 				queueNotification({
 					header: 'Error!',
-					message: error || 'There was an error in saving your reply.',
+					message: error || t('there_was_an_error_in_saving_your_reply'),
 					status: NotificationStatus.ERROR
 				});
 				setComments((prev) => {
@@ -427,7 +428,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		queueNotification({
 			header: 'Copied!',
-			message: 'Comment link copied to clipboard.',
+			message: t('comment_link_copied_to_clipboard'),
 			status: NotificationStatus.INFO
 		});
 	};
@@ -460,7 +461,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'The comment was deleted.',
+			message: t('the_comment_was_deleted'),
 			status: NotificationStatus.SUCCESS
 		});
 	};
@@ -479,7 +480,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'Your comment was deleted.',
+			message: t('your_comment_was_deleted'),
 			status: NotificationStatus.SUCCESS
 		});
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
@@ -494,7 +495,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			console.error('Error deleting comment: ', deleteCommentError);
 			queueNotification({
 				header: 'Error!',
-				message: deleteCommentError || 'There was an error in deleting your comment.',
+				message: deleteCommentError || t('there_was_an_error_in_deleting_your_comment'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -535,7 +536,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						>
 							<span className='flex items-center'>
 								<EditIcon className='mr-1 text-bodyBlue dark:text-white' />
-								<p className='m-0 -ml-[3px] p-0'>Edit</p>
+								<p className='m-0 -ml-[3px] p-0'>{t('edit')}</p>
 							</span>
 						</div>
 					)
@@ -554,7 +555,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						className='-ml-2 text-2xl'
 						style={{ transform: 'scale(0.6)' }}
 					/>{' '}
-					Copy link
+					{t('copy_link')}
 				</div>
 			)
 		},
@@ -589,7 +590,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 						>
 							<DeleteIcon className='mr-1' />
-							Delete
+							{t('delete')}
 						</div>
 					)
 			  }
@@ -614,17 +615,17 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const handleSentimentText = () => {
 		switch (sentiment) {
 			case 1:
-				return 'Completely Against';
+				return t('completely_against');
 			case 2:
-				return 'Slightly Against';
+				return t('slightly_against');
 			case 3:
-				return 'Neutral';
+				return t('neutral');
 			case 4:
-				return 'Slightly For';
+				return t('slightly_for');
 			case 5:
-				return 'Completely For';
+				return t('completely_for');
 			default:
-				return 'Neutral';
+				return t('neutral');
 		}
 	};
 
@@ -667,7 +668,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						/>
 						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-md rounded-e-md border-0 border-solid bg-gray-100 p-2 dark:border dark:border-[#3B444F] dark:bg-transparent'>
 							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
-								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
+								{t('sentiment')}:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
 							</div>
 							<div className='flex items-center text-transparent'>
 								<div className='flex items-center justify-between gap-[15px] border-solid'>
@@ -745,7 +746,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									)}
 									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
 								>
-									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} {t('reply')}
 								</Button>
 							)}
 							<Dropdown
@@ -764,14 +765,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							{comment.isError && (
 								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>{t('comment_not_posted')}</span>
 									<div
 										onClick={handleRetry}
 										className='retry-container relative flex w-[66px] cursor-pointer px-1'
 										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
 									>
 										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										<span className='relative top-[3px] m-0 p-0'>{t('retry')}</span>
 									</div>
 								</div>
 							)}
@@ -805,14 +806,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											onClick={handleReplyCancel}
 											className='mr-2 flex items-center dark:border-[#3B444F] dark:bg-transparent dark:text-white'
 										>
-											<CloseOutlined /> Cancel
+											<CloseOutlined /> {t('cancel')}
 										</Button>
 										<Button
 											htmlType='submit'
 											disabled={loadingReply}
 											className='flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary'
 										>
-											<CheckOutlined /> Reply
+											<CheckOutlined /> {t('reply')}
 										</Button>
 									</div>
 								</Form.Item>

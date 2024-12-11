@@ -6,6 +6,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { StarFilled } from '@ant-design/icons';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 import { IProgressReport, IRating } from '~src/types';
 
 interface IRatingSuccessModal {
@@ -17,6 +18,7 @@ const RatingSuccessModal: FC<IRatingSuccessModal> = (props) => {
 	const { report_rating } = useProgressReportSelector();
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
+	const { t } = useTranslation('common');
 	const [reportData, setReportData] = useState<IProgressReport>();
 
 	useEffect(() => {
@@ -50,14 +52,14 @@ const RatingSuccessModal: FC<IRatingSuccessModal> = (props) => {
 				imgWrapperClassName='mx-auto relative -top-[152px] left-[150px]'
 			/>
 			<div className='-mt-[136px] flex flex-col items-center justify-center gap-y-4'>
-				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Rated successfully </h1>
+				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>{t('rated_successfully')}</h1>
 				<div className='flex justify-center gap-x-1'>
 					{Array.from({ length: report_rating }).map((_, index) => (
 						<StarFilled
 							key={index}
 							className='text-[40px] text-[#FFBF60]'
 						/>
-					))}{' '}
+					))}
 				</div>
 				<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-icon-dark-inactive'>
 					{reportData?.ratings?.length} user(s) rated and the Average Delivery rating is {averageRating}/5

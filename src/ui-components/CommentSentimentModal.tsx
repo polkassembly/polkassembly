@@ -10,6 +10,7 @@ import { ESentiment } from '~src/types';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;
@@ -23,6 +24,7 @@ interface Props {
 
 const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSentimentPost, className, sentiment, setSentiment }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 
 	const handleClick = () => {
 		// GAEvent for comment creation
@@ -41,17 +43,17 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 	const handleSentimentText = () => {
 		switch (sentiment) {
 			case 1:
-				return 'Completely Against';
+				return t('completely_against');
 			case 2:
-				return 'Slightly Against';
+				return t('slightly_against');
 			case 3:
-				return 'Neutral';
+				return t('neutral');
 			case 4:
-				return 'Slightly For';
+				return t('slightly_for');
 			case 5:
-				return 'Completely For';
+				return t('completely_for');
 			default:
-				return 'Neutral';
+				return t('neutral');
 		}
 	};
 
@@ -76,7 +78,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 						onClick={handleClick}
 						className='t-xs flex items-center border-green-400 bg-green-400 font-medium text-white'
 					>
-						Done
+						{t('done')}
 						<CheckOutlined />
 					</Button>
 				</div>
@@ -86,9 +88,9 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 		>
 			<div className='center-aligned flex flex-col items-center justify-center pl-5 pr-5 text-base font-medium text-[#334D6E]'>
 				<h5 className='mt-3 text-center dark:text-blue-dark-high'>
-					Thank you for commenting on the post.
+					{t('thank_you_for_commenting_on_the_post')}
 					<br />
-					Move the slider to add your sentiment towards the discussion.
+					{t('move_the_slider_to_add_your_sentiment_towards_the_discussion')}
 				</h5>
 				<Slider
 					style={{ width: '100%' }}

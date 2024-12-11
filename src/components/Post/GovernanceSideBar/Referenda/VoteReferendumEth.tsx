@@ -39,6 +39,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -89,6 +90,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
+	const { t } = useTranslation('common');
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -364,7 +366,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			label: (
 				<div className={`ml-1 mr-1 h-[32px] w-full rounded-[4px] text-[#576D8B] ${vote === 'aye' ? 'bg-[#2ED47A] text-white' : ''}`}>
 					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-					<span className='font-medium'>Aye</span>
+					<span className='font-medium'>{t('aye')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -373,7 +375,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			label: (
 				<div className={` ml-1 mr-1 h-[32px] w-full rounded-[4px] text-[#576D8B] ${vote === 'nay' ? 'bg-[#F53C3C] text-white' : ''}`}>
 					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />}
-					<span className='font-medium'>Nay</span>
+					<span className='font-medium'>{t('nay')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -388,7 +390,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='mx-auto mb-8 w-full rounded-xxl p-[26px] font-semibold lg:w-[480px] xl:w-full'
 				onClick={() => setShowModal(true)}
 			>
-				{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
+				{!lastVote ? t('cast_your_vote') : t('cast_vote_again')}
 			</CustomButton>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
@@ -403,7 +405,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<CastVoteIcon className='mt-1' />
-						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('cast_your_vote')}</span>
 					</div>
 				}
 			>
@@ -413,7 +415,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						indicator={<LoadingOutlined />}
 						tip={loadingStatus.message}
 					>
-						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>{t('select_a_wallet')}</div>
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
 							{availableWallets[Wallet.TALISMAN] && (
 								<WalletButton
@@ -447,21 +449,21 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 						{!isTalismanEthereum && (
 							<Alert
-								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('please_use_ethereum_account_via_talisman_wallet')}</span>}
 								type='info'
 							/>
 						)}
 						{isBalanceErr && !loadingStatus.isLoading && wallet && (
 							<Alert
 								type='info'
-								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 								showIcon
 								className='mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 							<Alert
-								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('no_addresses_found_in_the_address_selection_tab')}</span>}
 								showIcon
 								type='info'
 							/>
@@ -484,12 +486,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							/>
 						) : !wallet ? (
 							<Alert
-								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('please_select_a_wallet')}</span>}
 								showIcon
 								type='info'
 							/>
 						) : null}
-						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
+						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>{t('choose_your_vote')}</h3>
 						<Segmented
 							block
 							className={
@@ -520,7 +522,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				</>
 			</Modal>
 			<DelegationSuccessPopup
-				title='Voted Successfully'
+				title={t('voted_successfully')}
 				vote={vote}
 				isVote={true}
 				balance={lockedBalance}

@@ -18,6 +18,7 @@ import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IVoteHistory, IVotesHistoryResponse } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 interface ICouncilVotesProps {
 	address: string;
@@ -30,6 +31,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);
+	const { t } = useTranslation('common');
 	const [count, setCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const { resolvedTheme: theme } = useTheme();
@@ -72,11 +74,11 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 				<>
 					{decision === 'yes' ? (
 						<div className='flex items-center'>
-							<LikeFilled className='text-green_primary' /> <span className='ml-2 text-green_primary'>Aye</span>
+							<LikeFilled className='text-green_primary' /> <span className='ml-2 text-green_primary'>{t('aye')}</span>
 						</div>
 					) : (
 						<div className='flex items-center'>
-							<DislikeFilled className='text-red_primary' /> <span className='ml-2 text-red_primary'>Nay</span>
+							<DislikeFilled className='text-red_primary' /> <span className='ml-2 text-red_primary'>{t('nay')}</span>
 						</div>
 					)}
 				</>

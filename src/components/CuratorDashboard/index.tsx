@@ -12,6 +12,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import BountyActionModal from '../Bounties/bountyProposal/BountyActionModal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -19,6 +20,7 @@ interface Props {
 
 const CuratorDashboard = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { id, loginAddress } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
@@ -43,7 +45,7 @@ const CuratorDashboard = ({ className }: Props) => {
 		<div className={className}>
 			<main className='mx-3 mt-3'>
 				<div className='flex items-center justify-between'>
-					<span className={`text-3xl ${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-bodyBlue dark:text-blue-dark-high`}>Curator Dashboard</span>
+					<span className={`text-3xl ${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-bodyBlue dark:text-blue-dark-high`}>{t('curator_dashboard')}</span>
 					{!isNaN(id || 0) && !!loginAddress?.length && (
 						<CustomButton
 							variant='primary'
@@ -55,7 +57,7 @@ const CuratorDashboard = ({ className }: Props) => {
 								alt='bounty icon'
 								imgClassName=''
 							/>
-							<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-medium text-white`}>Create Bounty Proposal</span>
+							<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-medium text-white`}>{t('create_bounty_proposal')}</span>
 						</CustomButton>
 					)}
 				</div>
@@ -71,22 +73,22 @@ const CuratorDashboard = ({ className }: Props) => {
 								width={320}
 								height={320}
 							/>
-							<p className='p-0 text-xl font-medium text-bodyBlue dark:text-white'>Join Polkassembly to see your Curator Dashboard!</p>
-							<p className='p-0 text-center text-bodyBlue dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
+							<p className='p-0 text-xl font-medium text-bodyBlue dark:text-white'>{t('join_polkassembly_curator_dashboard')}</p>
+							<p className='p-0 text-center text-bodyBlue dark:text-white'>{t('discussion_contribute_get_updates')}</p>
 							<div className='flex flex-col gap-4 pt-3'>
 								<CustomButton
 									variant='primary'
 									onClick={() => setLoginOpen(true)}
 									className='w-full cursor-pointer rounded-md px-4 py-3 text-center text-sm text-white lg:w-[480px]'
 								>
-									Log In
+									{t('log_in')}
 								</CustomButton>
 								<CustomButton
 									variant='default'
 									onClick={() => setLoginOpen(true)}
 									className='w-full cursor-pointer rounded-md border-[1px] border-solid px-4 py-3 text-center text-sm text-pink_primary lg:w-[480px] lg:border'
 								>
-									Sign Up
+									{t('sign_up')}
 								</CustomButton>
 							</div>
 						</div>

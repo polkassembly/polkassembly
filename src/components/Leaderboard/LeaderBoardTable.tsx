@@ -9,11 +9,13 @@ import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
 import { dmSans } from 'pages/_app';
 import _ from 'lodash';
+import { useTranslation } from 'next-i18next';
 
 const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 	const [inputValue, setInputValue] = useState<string>('');
+	const { t } = useTranslation('common');
 
 	// eslint-disable-next-line
 	const debouncedSearch = useCallback(
@@ -41,7 +43,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 		<section className={`${className}`}>
 			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
 				<div className='table-header items-center'>
-					<p className={`${dmSans.className} ${dmSans.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>Top 50 Ranks</p>
+					<p className={`${dmSans.className} ${dmSans.variable} m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white`}>{t('top_50_ranks')}</p>
 					<div className='search-box mr-8 flex'>
 						<Input.Search
 							placeholder='Enter username to search'

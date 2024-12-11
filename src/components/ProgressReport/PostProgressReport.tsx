@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 const { Panel } = Collapse;
 
 interface Props {
@@ -20,6 +21,7 @@ interface Props {
 
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -67,7 +69,7 @@ const PostProgressReport = ({ className }: Props) => {
 								className='mr-1 mt-[2px] scale-125 '
 							/>
 							<p className='m-0 mb-0 ml-1 p-0 text-[14px] font-medium text-blue-light-high dark:text-white md:text-[14px]'>
-								A new Progress Report was added {getRelativeTime(postData?.progress_report?.[0]?.created_at)} for this referenda.
+								{t('a_new_progress_report_was_added')} {getRelativeTime(postData?.progress_report?.[0]?.created_at)} {t('for_this_referenda')}
 							</p>
 						</div>
 					}
@@ -77,7 +79,7 @@ const PostProgressReport = ({ className }: Props) => {
 					<section className='w-full bg-[#F0EEFE] dark:bg-transparent'>
 						{postData?.progress_report?.[0]?.progress_summary && (
 							<div className='-mt-2 flex flex-col gap-y-2'>
-								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Progress Report Summary</h1>
+								<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{t('progress_report_summary')}</h1>
 								<p className='m-0 p-0 text-sm text-bodyBlue'>
 									<Markdown
 										className='post-content m-0 p-0'
@@ -124,7 +126,7 @@ const PostProgressReport = ({ className }: Props) => {
 								});
 							}}
 						>
-							Show more
+							{t('show_more')}
 						</p>
 					</section>
 				</Panel>

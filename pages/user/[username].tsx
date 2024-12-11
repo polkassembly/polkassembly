@@ -21,6 +21,7 @@ import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
 import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface IUserProfileProps {
 	activitiesCounts: {
@@ -93,6 +94,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			error: null
 		};
 	}
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
+
 	const props: IUserProfileProps = {
 		activitiesCounts,
 		network,
@@ -113,7 +116,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				user_id: 0,
 				username: String(username)
 			},
-			error: userProfile.error
+			error: userProfile.error,
+			...translations
 		}
 	};
 	return {

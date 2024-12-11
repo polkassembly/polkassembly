@@ -8,9 +8,11 @@ import { EChildBountyPendingReqSection } from '../types/types';
 import Alert from '~src/basic-components/Alert';
 import CuratorRequests from './PendingRequestTabs/CuratorRequests';
 import CuratorSubmissions from './PendingRequestTabs/CuratorSubmissions';
+import { useTranslation } from 'next-i18next';
 
 const RequestsTabs = () => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const [activeTab, setActiveTab] = useState<EPendingCuratorReqType>(EPendingCuratorReqType.RECEIVED);
 
 	const activeSection = (router?.query?.section as EChildBountyPendingReqSection) || EChildBountyPendingReqSection.CURATOR_REQUESTS;
@@ -30,7 +32,7 @@ const RequestsTabs = () => {
 					}`}
 					onClick={() => handleTabClick(EPendingCuratorReqType.RECEIVED)}
 				>
-					Received Requests
+					{t('received_requests')}
 				</div>
 				<div
 					className={`w-1/2 cursor-pointer py-2 text-center text-sm ${
@@ -40,7 +42,7 @@ const RequestsTabs = () => {
 					}`}
 					onClick={() => handleTabClick(EPendingCuratorReqType.SENT)}
 				>
-					Sent Requests
+					{t('sent_requests')}
 				</div>
 			</div>
 			{activeSection === EChildBountyPendingReqSection.CURATOR_REQUESTS && (

@@ -5,6 +5,7 @@ import { Radio } from 'antd';
 import React from 'react';
 import { EAllowedCommentor } from '~src/types';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -13,12 +14,14 @@ interface Props {
 	isLoading?: boolean;
 }
 const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading, onChange }: Props) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className={className}>
 			<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
-				Who can comment{' '}
+				{t('who_can_comment')}
 				<HelperTooltip
-					text='Choose who can comment and reply to this post'
+					text={t('choose_who_can_comment')}
 					className='font-normal'
 				/>
 				<span className='text-red-500'>*</span>
@@ -35,7 +38,7 @@ const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading
 					disabled={isLoading}
 					className='capitalize text-lightBlue dark:text-white'
 				>
-					All Users
+					{t('all_users')}
 				</Radio>
 				<Radio
 					value={EAllowedCommentor.ONCHAIN_VERIFIED}
@@ -43,7 +46,7 @@ const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading
 					disabled={isLoading}
 					className='capitalize text-lightBlue dark:text-white'
 				>
-					Verified Identities
+					{t('verified_identities')}
 				</Radio>
 				<Radio
 					value={EAllowedCommentor.NONE}
@@ -51,7 +54,7 @@ const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading
 					disabled={isLoading}
 					className='capitalize text-lightBlue dark:text-white'
 				>
-					Disable Comments
+					{t('disable_comments')}
 				</Radio>
 			</Radio.Group>
 		</div>

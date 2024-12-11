@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Image from 'next/image';
 import Link from 'next/link';
 import Submission from './Submission';
+import { useTranslation } from 'next-i18next';
 
 const getGroupBountyData = (bounties: IChildBountySubmission[]) => {
 	const groupedBounties: { [key: number]: { bountyData: any; submissions: IChildBountySubmission[] } } = {};
@@ -44,6 +45,7 @@ interface ReceivedSubmissionsProps {
 
 const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqType }) => {
 	const { theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { loginAddress } = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
@@ -99,7 +101,7 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqT
 									width={350}
 									height={350}
 								/>
-								<span className='-mt-10 text-xl font-semibold text-bodyBlue dark:text-white'>No Submissions Found</span>
+								<span className='-mt-10 text-xl font-semibold text-bodyBlue dark:text-white'>{t('no_submissions_found')}</span>
 								<span className='flex items-center gap-1 pt-3 text-center text-bodyBlue dark:text-white'>
 									<span
 										onClick={() => {
@@ -110,9 +112,9 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqT
 										}}
 										className='cursor-pointer font-semibold text-pink_primary'
 									>
-										Make
+										{t('make')}
 									</span>{' '}
-									or Receive submissions to view them here
+									{t('or_receive_submissions')}
 								</span>
 							</div>
 						) : (
@@ -208,7 +210,7 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqT
 														href={`/bounty/${parentBountyIndex}`}
 														className='cursor-pointer text-[14px] font-medium text-[#1B61FF] hover:text-[#1B61FF]'
 													>
-														Read More
+														{t('read_more')}
 													</Link>
 												</div>
 											</div>
@@ -218,7 +220,7 @@ const CuratorSubmission: React.FC<ReceivedSubmissionsProps> = ({ className, reqT
 													<Divider className='m-0 mb-3 mt-1 border-[1px] border-solid border-[#D2D8E0] dark:border-[#494b4d]' />
 													{requests?.length > 0 && (
 														<span className='text-[20px] font-semibold text-blue-light-high dark:text-lightWhite'>
-															Submissions <span className='text-base font-medium'>({requests?.length})</span>
+															{t('submissions')} <span className='text-base font-medium'>({requests?.length})</span>
 														</span>
 													)}
 													{requests?.map((request, index) => (

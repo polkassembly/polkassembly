@@ -15,10 +15,12 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import DelegationCapitalDetails from './DelegationCapitalDetails';
 import { IDelegationInfo } from './types';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 
 const AnalyticsDelegationTrends = () => {
+	const { t } = useTranslation();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegationInfo, setDelegationInfo] = useState<IDelegationInfo | null>(null);
@@ -92,9 +94,9 @@ const AnalyticsDelegationTrends = () => {
 						<div className='flex items-center gap-2'>
 							<ImageIcon
 								src='/assets/icons/voting-trends.svg'
-								alt='Voting Trends icon'
+								alt={t('voting_trends_icon')}
 							/>
-							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Voting</span>
+							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('voting')}</span>
 						</div>
 					</div>
 				}
@@ -103,7 +105,7 @@ const AnalyticsDelegationTrends = () => {
 				{!loading && !delegationInfo ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>
 						<NoVotesIcon />
-						<p className='text-sm'>Not enough data available</p>
+						<p className='text-sm'>{t('no_data_available')}</p>
 					</div>
 				) : (
 					<>

@@ -26,6 +26,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import ScoreTag from './ScoreTag';
+import { useTranslation } from 'next-i18next';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -72,6 +73,7 @@ const QuickView = ({
 	isW3FDelegate = false,
 	leaderboardAstrals
 }: Props) => {
+	const { t } = useTranslation('common');
 	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
@@ -192,7 +194,7 @@ const QuickView = ({
 						<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
 							{!!profileCreatedAt && (
 								<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
-									Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+									{t('since')}:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 								</span>
 							)}
 							<SocialsHandle
@@ -208,7 +210,7 @@ const QuickView = ({
 				<article className='v mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-high'>
 					<div className='flex items-center gap-1 font-medium text-lightBlue'>
 						<JudgementIcon />
-						<span className='dark:text-[#9E9E9E]'>Judgements:</span>
+						<span className='dark:text-[#9E9E9E]'>{t('judgements')}:</span>
 					</div>
 					<span className='text-bodyBlue dark:text-blue-dark-high'>
 						{judgements
@@ -229,7 +231,7 @@ const QuickView = ({
 						<CustomButton
 							onClick={handleTipping}
 							variant='primary'
-							text='Tip'
+							text={t('tip')}
 							height={32}
 							className={`w-full p-5 ${!id || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}
 						/>

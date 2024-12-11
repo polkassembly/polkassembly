@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
@@ -11,7 +12,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { EmojiOption } from './ActivityFeedPostReactions';
-const COMMENT_LABEL = 'Comment';
 import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
 import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
@@ -32,6 +32,7 @@ import Link from 'next/link';
 import ImageComponent from '../ImageComponent';
 import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 
 export const ActivityFeedPostActions: React.FC<{
 	post: any;
@@ -49,6 +50,7 @@ export const ActivityFeedPostActions: React.FC<{
 	isUserNotAllowedToComment: boolean;
 	setReactionState: React.Dispatch<React.SetStateAction<any>>;
 }) => {
+	const { t } = useTranslation('common');
 	const currentUserdata = useUserDetailsSelector();
 	const { post_id, track_no } = post;
 	const userid = currentUserdata?.id;
@@ -85,7 +87,7 @@ export const ActivityFeedPostActions: React.FC<{
 				))}
 			</div>
 		) : (
-			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>
+			<p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>{t('no_reactions_yet')}</p>
 		);
 	};
 
@@ -317,7 +319,7 @@ export const ActivityFeedPostActions: React.FC<{
 										/>
 									)}
 								</span>
-								<p className='cursor-pointer pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userLiked ? 'Liked' : 'Like'}</p>
+								<p className='cursor-pointer pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{reactionState.userLiked ? t('liked') : t('like')}</p>
 							</div>
 						</Popover>
 					</div>
@@ -362,7 +364,7 @@ export const ActivityFeedPostActions: React.FC<{
 									)}
 								</span>
 								<p className='cursor-pointer pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>
-									{reactionState.userDisliked ? 'Disliked' : 'Dislike'}
+									{reactionState.userDisliked ? t('disliked') : t('dislike')}
 								</p>
 							</div>
 						</Popover>
@@ -390,7 +392,7 @@ export const ActivityFeedPostActions: React.FC<{
 									className='-mt-1 mr-1 h-4 w-4 dark:mr-0 dark:mt-1'
 								/>
 							</span>
-							<p className='pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{COMMENT_LABEL}</p>
+							<p className='pt-3 text-[10px] text-pink_primary dark:text-[#FF4098] md:pt-4 md:text-[12px]'>{t('comment_placeholder')}</p>
 						</div>
 					</div>
 

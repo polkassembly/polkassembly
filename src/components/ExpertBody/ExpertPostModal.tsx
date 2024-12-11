@@ -6,6 +6,7 @@ import Image from 'next/image';
 import React from 'react';
 import ContentForm from '../ContentForm';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 const ExpertPostModal = ({
 	isModalVisible,
@@ -20,6 +21,7 @@ const ExpertPostModal = ({
 	review: string;
 	setReview: (content: string) => void;
 }) => {
+	const { t } = useTranslation('common');
 	return (
 		<div>
 			<Modal
@@ -32,7 +34,7 @@ const ExpertPostModal = ({
 							height={24}
 							className='h-6 w-6'
 						/>
-						<span className='text-xl font-semibold text-[#243A57]'>Add Expert Review</span>
+						<span className='text-xl font-semibold text-[#243A57]'>{t('add_expert_review')}</span>
 					</div>
 				}
 				visible={isModalVisible}
@@ -45,7 +47,7 @@ const ExpertPostModal = ({
 					className='m-0  rounded-sm border-t-2 border-l-[#D3D9E0] p-0 dark:border-[#4B4B4B]'
 				/>
 				<div className='my-3'>
-					<p className='text-sm font-medium text-[#243A57] dark:text-lightWhite'>Please write your views about the proposal below</p>
+					<p className='text-sm font-medium text-[#243A57] dark:text-lightWhite'>{t('please_write_your_views_about_the_proposal_below')}</p>
 					<ContentForm
 						onChange={(content: string) => setReview(content)}
 						value={review}
@@ -62,13 +64,13 @@ const ExpertPostModal = ({
 						onClick={handleCancel}
 						ghost
 					>
-						Cancel
+						{t('cancel')}
 					</Button>
 					<Button
 						className='h-9 w-28 bg-pink_primary text-white'
 						onClick={handleDone}
 					>
-						Done
+						{t('done')}
 					</Button>
 				</div>
 			</Modal>

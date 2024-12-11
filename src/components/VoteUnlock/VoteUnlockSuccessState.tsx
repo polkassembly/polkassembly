@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
 
@@ -34,6 +36,7 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: P
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
 	return (
 		<Modal
 			open={open}
@@ -46,18 +49,18 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: P
 		>
 			<div className='mb-6'>
 				<div className='-mt-[150px] flex items-center justify-center'>
-					{/* <UnlockSuccessIcon /> */}
 					<ImageIcon
 						src='/assets/icons/unlock-success-box.svg'
-						alt='unlock success box icon'
+						alt={t('unlock_success_box_icon')}
 					/>
 				</div>
-				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-tight dark:text-white'>Tokens unlocked successfully</div>
-				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-tight text-pink_primary dark:text-blue-dark-helper'>
+				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>{t('tokens_unlocked_successfully')}</div>
+				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary dark:text-blue-dark-helper'>
 					{formatedBalance((unlockedBalance.toString() || '0').toString(), unit, 2)} {unit}
 				</div>
 			</div>
 		</Modal>
 	);
 };
+
 export default VoteUnlockSuccessState;

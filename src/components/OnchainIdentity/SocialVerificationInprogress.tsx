@@ -13,8 +13,10 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ESetIdentitySteps, IIdentityInProgress } from './types';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 const SocialVerificationInprogress = ({ className, open, close, openPreModal, handleVerify, changeStep }: IIdentityInProgress) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { socials } = useOnchainIdentitySelector();
 	const { email } = socials;
@@ -25,7 +27,6 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	const handleVerified = async () => {
@@ -49,15 +50,14 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 		>
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
-					{/* <SuccessIcon /> */}
 					<ImageIcon
 						src='/assets/icons/identity-success.svg'
 						alt='identity success icon'
 					/>
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
-					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check primary inbox or spam</div>
-					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
-						<span className='flex shrink-0 dark:text-blue-dark-high'>A verification link has been sent to your mail address</span>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('email_verification_in_progress')}</label>
+					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{t('check_inbox_or_spam')}</div>
+					<div className='mt-4 flex w-full flex-col items-center justify-center text-center text-sm tracking-wide '>
+						<span className='flex dark:text-blue-dark-high'>{t('verification_link_sent')}</span>
 						<u className='font-medium text-pink_primary'>
 							<a
 								target='_blank'
@@ -69,7 +69,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 						</u>
 					</div>
 					<div className='mb-2 mt-4 flex w-full items-center justify-center gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Regarding any query Contact us
+						{t('contact_us')}
 						<a href='mailto:hello@polkassembly.io'>
 							<Image
 								width={16}
@@ -91,7 +91,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 					className='mb-2 mt-4 w-full tracking-wide'
 					height={40}
 					variant='primary'
-					text='Verified successfully'
+					text={t('verified_successfully')}
 				/>
 			</>
 		</Modal>

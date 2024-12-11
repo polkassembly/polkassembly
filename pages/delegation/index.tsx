@@ -12,13 +12,14 @@ import { setNetwork } from '~src/redux/network';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const DelegationDashboard = dynamic(() => import('src/components/DelegationDashboard'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -32,7 +33,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 			}
 		};
 	}
-	return { props: { network } };
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
+	return { props: { network, ...translations } };
 };
 
 const Delegation = (props: { network: string }) => {

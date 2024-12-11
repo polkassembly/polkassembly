@@ -10,6 +10,7 @@ import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 function RejectModal({
 	open,
@@ -25,14 +26,14 @@ function RejectModal({
 	comment: string;
 }) {
 	const { loginAddress } = useUserDetailsSelector();
-
+	const { t } = useTranslation('common');
 	return (
 		<div>
 			<Modal
 				className={classNames(dmSans.className, dmSans.variable)}
 				title={
 					<div className='text-bodyBlue dark:text-white'>
-						<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-lg font-bold'>Reject Submission</span>
+						<CloseCircleOutlined className='pr-2 text-lg' /> <span className='text-lg font-bold'>{t('reject_submission')}</span>
 					</div>
 				}
 				open={open}
@@ -46,7 +47,7 @@ function RejectModal({
 							height={30}
 							width={100}
 						>
-							Cancel
+							{t('cancel')}
 						</CustomButton>
 						<CustomButton
 							key='reject'
@@ -57,7 +58,7 @@ function RejectModal({
 							height={30}
 							width={100}
 						>
-							Reject
+							{t('reject')}
 						</CustomButton>
 					</div>
 				}
@@ -71,7 +72,7 @@ function RejectModal({
 						htmlFor='account'
 						className='mb-0.5 block text-sm text-lightBlue dark:text-white'
 					>
-						Account
+						{t('account')}
 					</label>
 					<div className='flex h-10 items-center rounded-sm border-[1px] border-solid  border-section-light-container px-3 dark:border-separatorDark'>
 						<Address

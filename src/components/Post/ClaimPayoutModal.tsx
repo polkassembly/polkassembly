@@ -6,6 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { Modal, Spin } from 'antd';
+import { useTranslation } from 'next-i18next';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -25,7 +26,7 @@ interface Props {
 
 const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
-
+	const { t } = useTranslation('common');
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [availableAccounts, setAvailableAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -126,7 +127,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 			<CustomButton
 				onClick={() => setShowModal(true)}
 				variant='primary'
-				text='Claim Payout'
+				text={t('claim_payout')}
 				className='inline'
 				height={40}
 			/>
@@ -143,7 +144,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 						loading={isLoading}
 						disabled={extensionNotAvailable || !apiReady}
 						variant='primary'
-						text='Sign & Submit'
+						text={t('sign_and_submit')}
 						height={40}
 					/>
 				]}
@@ -162,7 +163,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 						<Alert
 							className='mb-6'
 							type='warning'
-							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension to claim.</span>}
+							message={<span className='dark:text-blue-dark-high'>{t('please_install_polkadotjs_extension_to_claim')}</span>}
 						/>
 					)}
 

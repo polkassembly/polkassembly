@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-/* eslint-disable sort-keys */
-
 import { ResponsiveBar } from '@nivo/bar';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
@@ -18,6 +15,7 @@ import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import Skeleton from '~src/basic-components/Skeleton';
 import { IAnalyticsDelegationSplitGraph } from '../../types';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -48,6 +46,7 @@ const StyledCard = styled(Card)`
 const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }: IAnalyticsDelegationSplitGraph) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -77,8 +76,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 	};
 
 	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
-		index: `${item.index}`,
 		delegated: item.delegated,
+		index: `${item.index}`,
 		solo: item.solo
 	}));
 
@@ -104,15 +103,15 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 			) : (
 				<>
 					<div className='flex items-center justify-between'>
-						<h2 className='text-base font-semibold sm:text-xl'>Delegation Split</h2>
+						<h2 className='text-base font-semibold sm:text-xl'>{t('delegation_split')}</h2>
 						<div className='-mt-2 hidden items-center gap-[14px] sm:flex'>
 							<div className='flex items-center gap-1'>
 								<div className='h-1 w-1 rounded-full bg-[#796EEC]'></div>
-								<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Delegated</div>
+								<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>{t('delegated')}</div>
 							</div>
 							<div className='flex items-center gap-1'>
 								<div className='h-1 w-1 rounded-full bg-[#B6B0FB]'></div>
-								<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Solo</div>
+								<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>{t('solo')}</div>
 							</div>
 						</div>
 					</div>
@@ -124,24 +123,24 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 							margin={{ bottom: 40, left: 50, right: 0, top: 10 }}
 							padding={0.5}
 							valueScale={{ type: 'linear' }}
-							indexScale={{ type: 'band', round: true }}
+							indexScale={{ round: true, type: 'band' }}
 							colors={(bar) => colors[bar.id]}
 							borderRadius={2}
 							borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
 							axisTop={null}
 							axisRight={null}
 							axisBottom={{
-								tickValues: tickValues,
 								tickPadding: 5,
 								tickRotation: 0,
 								tickSize: 5,
+								tickValues: tickValues,
 								truncateTickAt: 0
 							}}
 							axisLeft={{
 								format: (value) => formatUSDWithUnits(value, 1),
-								tickSize: 5,
 								tickPadding: 5,
-								tickRotation: 0
+								tickRotation: 0,
+								tickSize: 5
 							}}
 							enableLabel={false}
 							labelSkipWidth={6}
@@ -192,7 +191,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 								}
 							}}
 							ariaLabel='Nivo bar chart demo'
-							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} ${t('voters')}` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 
@@ -211,7 +210,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 									formatter: (value) => {
 										if (value !== undefined && value >= 0 && value < delegationSplitData.length) {
 											const dataIndex = delegationSplitData[value].index;
-											return `Referenda: ${dataIndex}`;
+											return `${t('referenda')}: ${dataIndex}`;
 										}
 										return '';
 									}

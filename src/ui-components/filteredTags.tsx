@@ -4,6 +4,7 @@
 
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 interface IFilteredTags {
 	statusItem?: any[];
@@ -12,6 +13,7 @@ interface IFilteredTags {
 
 const FilteredTags: FC<IFilteredTags> = (props) => {
 	const { statusItem, count } = props;
+	const { t } = useTranslation('common');
 	const [tags, setTags] = useState<string[]>([]);
 	const router = useRouter();
 
@@ -30,7 +32,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 			{tags.length > 0 ? (
 				<div className='flex flex-wrap items-center sm:pb-4'>
 					<div className='flex h-[30px] items-center rounded-lg bg-[#FDF0F7] px-2 py-1 dark:bg-pink-dark-primary'>
-						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>Tags: &nbsp;</span>
+						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>{t('tags')}: &nbsp;</span>
 						{tags.map((tag, index) => (
 							<div
 								className='traking-2 mr-1 flex h-[22px] items-center rounded-full border-[1px] border-solid border-navBlue px-[14px] text-[10px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'
@@ -46,7 +48,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 			{statusItem && statusItem?.length > 0 ? (
 				<div className='flex flex-wrap items-center sm:pb-4'>
 					<div className='flex h-[30px] items-center rounded bg-[#FDF0F7] px-2 py-1 dark:bg-[#33071E]'>
-						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>Status: &nbsp;</span>
+						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>{t('status')}: &nbsp;</span>
 						<div className='traking-2 mr-1 flex text-[12px] text-bodyBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'>
 							{statusItem.map((status, index) => (
 								<div

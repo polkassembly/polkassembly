@@ -28,6 +28,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -68,6 +69,7 @@ const Calendar = styled(StyledCalendar)`
 `;
 
 const UpcomingEvents = ({ className }: Props) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -469,7 +471,7 @@ const UpcomingEvents = ({ className }: Props) => {
 		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:border-[#29323C] dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
 				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>
-					Upcoming Events
+					{t('upcoming_events')}
 					<CalendarFilled
 						className='ml-2 inline-block scale-90 cursor-pointer lg:hidden'
 						onClick={() => setShowCalendar(!showCalendar)}
@@ -481,7 +483,7 @@ const UpcomingEvents = ({ className }: Props) => {
 			<div className='hidden h-[520px] lg:flex lg:h-[450px] lg:flex-row'>
 				<div className='w-full p-3 lg:w-[55%]'>
 					<CalendarElement />
-					<span className='text-xs text-navBlue dark:text-blue-dark-medium'>*DateTime in UTC</span>
+					<span className='text-xs text-navBlue dark:text-blue-dark-medium'>{t('*DateTime_in_UTC')}</span>
 				</div>
 
 				<div className='ml-4 w-[45%] p-2'>
@@ -494,7 +496,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				{showCalendar ? (
 					<div className='w-full p-3 lg:w-[55%]'>
 						<CalendarElement />
-						<span className='text-xs text-navBlue'>*DateTime in UTC</span>
+						<span className='text-xs text-navBlue'>{t('*DateTime_in_UTC')}</span>
 					</div>
 				) : (
 					<div className='h-[430px] w-full p-2'>

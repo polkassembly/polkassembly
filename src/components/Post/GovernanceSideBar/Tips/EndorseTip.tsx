@@ -20,6 +20,7 @@ import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -41,6 +42,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 	const { api, apiReady } = useApiContext();
 	const { id } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		// it will iterate through all accounts
@@ -128,11 +130,11 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 	const GetAccountsButton = () => (
 		<Form>
 			<Form.Item className='button-container'>
-				<div>Only council members can endorse tips.</div>
+				<div>{t('only_council_members_can_endorse_tips')}</div>
 				<br />
 				<CustomButton
 					onClick={getAccounts}
-					text='Endorse'
+					text={t('endorse')}
 					variant='primary'
 				/>
 			</Form.Item>
@@ -159,13 +161,13 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 				withBalance
 			/>
 			<BalanceInput
-				label={'Value'}
-				helpText={'Allocate a suggested tip amount. With enough endorsements, the suggested values are averaged and sent to the beneficiary.'}
+				label={t('value')}
+				helpText={t('allocate_a_suggested_tip_amount_with_enough_endorsements_the_suggested_values_are_averaged_and_sent_to_the_beneficiary')}
 				placeholder={'123'}
 				onChange={onValueChange}
 			/>
 			<CustomButton
-				text='Endorse'
+				text={t('endorse')}
 				onClick={handleEndorse}
 				variant='primary'
 				disabled={!apiReady}
@@ -175,13 +177,13 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 
 	const NotCouncil = () => (
 		<>
-			<h3 className='dashboard-heading mb-6 dark:text-white'>Endorse with account!</h3>
+			<h3 className='dashboard-heading mb-6 dark:text-white'>{t('endorse_with_account')}</h3>
 			<Alert
 				className='mb-6'
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>
-						<span>No account found from the council</span>
+						<span>{t('no_account_found_from_the_council')}</span>
 						<Image
 							width={25}
 							height={25}
@@ -193,7 +195,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 			/>
 			<CustomButton
 				variant='primary'
-				text='Let me try still'
+				text={t('let_me_try_still')}
 				onClick={() => setForceEndorse(true)}
 			/>
 		</>

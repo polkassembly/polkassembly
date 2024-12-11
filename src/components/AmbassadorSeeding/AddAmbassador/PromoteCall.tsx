@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React, { useEffect, useState } from 'react';
 import { EAmbassadorSeedingRanks, IPromoteCall } from '../types';
 import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -20,8 +19,10 @@ import getCollectiveApi from '../utils/getCollectiveApi';
 import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { useTranslation } from 'next-i18next';
 
 const PromoteCall = ({ className }: IPromoteCall) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -35,6 +36,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	const handleInductAddressChange = (address: string) => {
 		dispatch(ambassadorSeedingActions.updateApplicantAddress(address));
 	};
+
 	const checkDisabled = () => {
 		let check = false;
 		check = !applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady;
@@ -94,7 +96,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 							<label className='text-sm text-bodyBlue dark:text-blue-dark-medium'>
-								Your Address{' '}
+								{t('your_address')}{' '}
 								{/* <HelperTooltip
 									className='ml-1'
 									text='Please note the verification cannot be transferred to another address.'
@@ -119,14 +121,14 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 						</div>
 					</div>
 					<div className='mt-4'>
-						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Applicant Address</div>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>{t('applicant_address')}</div>
 						<div className='flex w-full items-end gap-2 text-sm'>
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
 								defaultAddress={applicantAddress || ''}
 								name={'applicantAddress'}
-								placeholder='Enter Applicant Address'
+								placeholder={t('enter_applicant_address')}
 								iconClassName={'ml-[10px]'}
 								identiconSize={26}
 								onChange={(address) => handleInductAddressChange(getEncodedAddress(address, network) || address)}
@@ -135,7 +137,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 					</div>
 					{/* ambassador ranks */}
 					<div className='mt-4 flex gap-1.5 text-sm text-bodyBlue dark:text-blue-dark-medium'>
-						Promote Rank <HelperTooltip text={<div className='text-xs'>This indicate at what rank you would like to promote yourself</div>} />
+						{t('promote_rank')} <HelperTooltip text={<div className='text-xs'>{t('promote_rank_tooltip')}</div>} />
 					</div>
 
 					<div>
@@ -161,7 +163,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
 							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>
-							Next
+							{t('next')}
 						</Button>
 					</div>
 				</Form>
@@ -169,4 +171,5 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 		</Spin>
 	);
 };
+
 export default PromoteCall;

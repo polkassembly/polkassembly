@@ -1,17 +1,18 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { DesktopOutlined, FileTextOutlined, HomeFilled, PlayCircleFilled, TwitterOutlined, YoutubeFilled } from '@ant-design/icons';
 import { Space } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Tooltip from '~src/basic-components/Tooltip';
 import { NetworkSocials } from '~src/types';
 
-export const socialLinks = (blockchain_socials: NetworkSocials) => {
+export const SocialLinks = ({ blockchain_socials }: { blockchain_socials: NetworkSocials }) => {
+	const { t } = useTranslation('common');
 	if (!blockchain_socials) {
 		return null;
 	}
@@ -21,9 +22,9 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 			size={19}
 			className='flex flex-wrap items-center'
 		>
-			{blockchain_socials.homepage ? (
+			{blockchain_socials.homepage && (
 				<Tooltip
-					title='Homepage'
+					title={t('homepage')}
 					color='#E5007A'
 				>
 					<a
@@ -34,10 +35,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<HomeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.twitter ? (
+			)}
+			{blockchain_socials.twitter && (
 				<Tooltip
-					title='Twitter'
+					title={t('twitter')}
 					color='#E5007A'
 				>
 					<a
@@ -48,10 +49,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<TwitterOutlined className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.discord ? (
+			)}
+			{blockchain_socials.discord && (
 				<Tooltip
-					title='Discord'
+					title={t('discord')}
 					color='#E5007A'
 				>
 					<a
@@ -62,10 +63,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<DiscordIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.github ? (
+			)}
+			{blockchain_socials.github && (
 				<Tooltip
-					title='Github'
+					title={t('github')}
 					color='#E5007A'
 				>
 					<a
@@ -76,10 +77,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<GithubIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.youtube ? (
+			)}
+			{blockchain_socials.youtube && (
 				<Tooltip
-					title='Youtube'
+					title={t('youtube')}
 					color='#E5007A'
 				>
 					<a
@@ -90,10 +91,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<YoutubeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.reddit ? (
+			)}
+			{blockchain_socials.reddit && (
 				<Tooltip
-					title='Reddit'
+					title={t('reddit')}
 					color='#E5007A'
 				>
 					<a
@@ -104,10 +105,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<RedditIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.telegram ? (
+			)}
+			{blockchain_socials.telegram && (
 				<Tooltip
-					title='Telegram'
+					title={t('telegram')}
 					color='#E5007A'
 				>
 					<a
@@ -118,10 +119,10 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<TelegramIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
-			{blockchain_socials.block_explorer ? (
+			)}
+			{blockchain_socials.block_explorer && (
 				<Tooltip
-					title='Block Explorer'
+					title={t('block_explorer')}
 					color='#E5007A'
 				>
 					<a
@@ -132,7 +133,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 						<CubeIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 					</a>
 				</Tooltip>
-			) : null}
+			)}
 		</Space>
 	);
 };
@@ -165,20 +166,22 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	const [showGallery, setShowGallery] = useState(false);
 	const router = useRouter();
+	const { t } = useTranslation('common');
+
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high'>About</h2>
-				{router.pathname !== '/activity-feed' && <div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>}
+				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high'>{t('about')}</h2>
+				{router.pathname !== '/activity-feed' && <div className='hidden lg:inline-block'>{networkSocialsData && <SocialLinks blockchain_socials={networkSocialsData} />}</div>}
 			</div>
 			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
-				Join our Community to discuss, contribute and get regular updates from us!
+				{t('join_community')}
 				{showGallery && showGov2Links && (
 					<span
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(false)}
 					>
-						Minimize Gallery
+						{t('minimize_gallery')}
 					</span>
 				)}
 				{!showGallery && showGov2Links && (
@@ -186,13 +189,13 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(true)}
 					>
-						View Gallery
+						{t('view_gallery')}
 					</span>
 				)}
 			</p>
 
-			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
-			{router.pathname === '/activity-feed' && <div className='mt-3 flex'>{networkSocialsData && socialLinks(networkSocialsData)}</div>}
+			<div className='mt-5 flex lg:hidden'>{networkSocialsData && <SocialLinks blockchain_socials={networkSocialsData} />}</div>
+			{router.pathname === '/activity-feed' && <div className='mt-3 flex'>{networkSocialsData && <SocialLinks blockchain_socials={networkSocialsData} />}</div>}
 			{showGallery && (
 				<div>
 					{showGov2Links && (
@@ -202,8 +205,8 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 								className: 'mr-12 lg:mr-9',
 								icon: <PlayCircleFilled className='text-xl text-white' />,
 								link: 'https://www.youtube.com/watch?v=FhC10CCw9Qg',
-								subText: '1:40 hours',
-								text: "Gavin's keynote @Decoded 2023"
+								subText: t('keynote_duration'),
+								text: t('keynote_title')
 							})}
 
 							{gov2Link({
@@ -211,8 +214,8 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 								className: 'mr-12 lg:mr-9',
 								icon: <DesktopOutlined className='text-xl text-white' />,
 								link: 'https://medium.com/polkadot-network/gov2-polkadots-next-generation-of-decentralised-governance-4d9ef657d11b',
-								subText: '17 min read',
-								text: "Gavin's blog on Medium"
+								subText: t('medium_read_time'),
+								text: t('medium_blog_title')
 							})}
 
 							{gov2Link({
@@ -220,8 +223,8 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 								className: 'mr-12 lg:mr-0',
 								icon: <FileTextOutlined className='text-xl text-white' />,
 								link: 'https://docs.polkassembly.io',
-								subText: 'Wiki',
-								text: 'Polkassembly user guide'
+								subText: t('wiki'),
+								text: t('user_guide')
 							})}
 						</div>
 					)}

@@ -19,6 +19,7 @@ import { ChallengeMessage } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	canEdit?: boolean | '' | undefined;
@@ -41,14 +42,15 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const getProposalStatus = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<NetworkEvent>('api/v1/events/getEventByPostId', {
 			post_id: Number(proposalId)
 		});
 
 		if (error) {
-			console.log('error fetching proposal status', error);
-			setStatus('Not found');
+			console.log(t('error_fetching_proposal_status'), error);
+			setStatus(t('not_found'));
 		}
 
 		if (data) {
@@ -59,6 +61,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 				setDeadlineDate((data.end_time as any)?.toDate() || null);
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposalId]);
 
 	useEffect(() => {
@@ -103,7 +106,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			if (error) {
 				queueNotification({
 					header: 'Error!',
-					message: 'Proposal status was not saved',
+					message: t('proposal_status_was_not_saved'),
 					status: NotificationStatus.ERROR
 				});
 				console.error('Error saving status : ', error);
@@ -112,7 +115,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			if (data && data.message) {
 				queueNotification({
 					header: 'Success!',
-					message: 'Proposal status was saved',
+					message: t('proposal_status_was_saved'),
 					status: NotificationStatus.SUCCESS
 				});
 			}
@@ -125,7 +128,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			if (error) {
 				queueNotification({
 					header: 'Error!',
-					message: 'Proposal status was not updated',
+					message: t('proposal_status_was_not_updated'),
 					status: NotificationStatus.ERROR
 				});
 				console.error('Error updating status : ', error);
@@ -134,7 +137,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			if (data && data.message) {
 				queueNotification({
 					header: 'Success!',
-					message: 'Proposal status was updated',
+					message: t('proposal_status_was_updated'),
 					status: NotificationStatus.SUCCESS
 				});
 			}
@@ -152,7 +155,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 		<>
 			{canEdit && !isUpdate ? (
 				<CustomButton
-					text='Set Deadline Date'
+					text={t('set_deadline_date')}
 					onClick={() => setModalOpen(true)}
 					height={60}
 					className='w-full transition-colors duration-300'
@@ -161,7 +164,9 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			) : canEdit && isUpdate ? (
 				<div className='transition:colors duration:500 edit-icon-wrapper flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
 					<div className='text-center text-[18px] font-medium text-sidebarBlue'>
-						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
+						<>
+							{t('deadline')}: {dayjs(deadlineDate).format('MMM Do YY')}
+						</>
 					</div>
 					<EditOutlined
 						className='edit-icon text-lg text-white'
@@ -171,12 +176,14 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			) : isUpdate ? (
 				<div className='transition:colors duration:500 flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
 					<div className='text-center text-[18px] font-medium text-sidebarBlue'>
-						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
+						<>
+							{t('deadline')}: {dayjs(deadlineDate).format('MMM Do YY')}
+						</>
 					</div>
 				</div>
 			) : (
 				<div className='dark:text-lightblue flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay'>
-					Deadline: Not Set
+					{t('deadline_not_set')}
 				</div>
 			)}
 
@@ -184,7 +191,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={modalOpen}
 				className={`${className} dark:text-lightblue dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				title={<span className='dark:text-white'>Set Deadline Date</span>}
+				title={<span className='dark:text-white'>{t('set_deadline_date')}</span>}
 				centered
 				footer={[
 					<div
@@ -192,14 +199,14 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 						className='flex items-center justify-end gap-x-1'
 					>
 						<CustomButton
-							text='Close'
+							text={t('close')}
 							key='close'
 							onClick={() => setModalOpen(false)}
 							height={40}
 							variant='default'
 						/>
 						<CustomButton
-							text='Save'
+							text={t('save')}
 							key='submit'
 							onClick={handleSave}
 							loading={loading}
@@ -218,7 +225,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					<Form>
 						<Form.Item className='date-input-form-field'>
 							<label className=' text-md flex items-center font-medium text-sidebarBlue'>
-								Deadline Date
+								{t('deadline_date')}
 								<HelperTooltip
 									className='ml-2 align-middle'
 									text='This timeline will be used by the community to track the progress of the proposal. The team will be responsible for delivering the proposed items before the deadline.'
@@ -246,7 +253,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 						</Form.Item>
 
 						<Form.Item className='status-input-form-field'>
-							<label className=' text-md flex items-center font-medium text-sidebarBlue dark:text-sidebarBlue'>Status</label>
+							<label className=' text-md flex items-center font-medium text-sidebarBlue dark:text-sidebarBlue'>{t('status')}</label>
 
 							{canEdit ? (
 								// eslint-disable-next-line sort-keys

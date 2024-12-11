@@ -25,6 +25,7 @@ import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 // import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface IReportButtonProps {
 	type: string;
@@ -50,7 +51,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [error, setError] = useState('');
-
+	const { t } = useTranslation('common');
 	const [form] = Form.useForm();
 
 	const handleReport = async () => {
@@ -200,14 +201,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							<FlagOutlined className={`${className} p-0 text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
 						)}
 						{isDeleteModal ? (
-							<span className={`${className} break-keep text-pink_primary dark:text-icon-dark-inactive`}>Delete</span>
+							<span className={`${className} break-keep text-pink_primary dark:text-icon-dark-inactive`}>{t('delete')}</span>
 						) : (
 							<span
 								className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary ${
 									isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'
 								}`}
 							>
-								Report
+								{t('report')}
 							</span>
 						)}
 					</button>
@@ -217,7 +218,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			<Modal
 				className='dark:[&>.ant-modal-content>.ant-modal-header>.ant-modal-title]:bg-section-dark-overlay dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
-				title={isDeleteModal ? <span className='dark:text-white'>Delete</span> : <span className='dark:text-white'>Report</span>}
+				title={isDeleteModal ? <span className='dark:text-white'>{t('delete')}</span> : <span className='dark:text-white'>{t('report')}</span>}
 				open={showModal}
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}
@@ -233,7 +234,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							key='back'
 							disabled={loading}
 							onClick={() => setShowModal(false)}
-							text='Cancel'
+							text={t('cancel')}
 							variant='default'
 							buttonsize='xs'
 						/>
@@ -247,7 +248,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							variant='primary'
 							buttonsize='xs'
 						>
-							{isDeleteModal ? 'Delete' : 'Report'}
+							{isDeleteModal ? t('delete') : t('report')}
 						</CustomButton>
 					</div>
 				]}

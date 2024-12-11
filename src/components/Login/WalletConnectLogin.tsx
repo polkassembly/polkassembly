@@ -24,6 +24,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -47,6 +48,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 	const dispatch = useDispatch();
 
 	const [error, setError] = useState('');
+	const { t } = useTranslation('common');
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
@@ -399,16 +401,16 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 	return (
 		<div className={className}>
-			<h3>WalletConnect Login</h3>
+			<h3>{t('walletconnect_login')}</h3>
 			{accountsNotFound ? (
 				<div className='card'>
-					<div className='text-muted'>You need at least one account via WalletConnect to login.</div>
-					<div className='text-muted'>Please reload this page after adding accounts.</div>
+					<div className='text-muted'>{t('walletconnect_account_needed')}</div>
+					<div className='text-muted'>{t('walletconnect_reload_prompt')}</div>
 				</div>
 			) : null}
 			{isAccountLoading ? (
 				<div className='loader-cont'>
-					<Loader text={'Requesting accounts'} />
+					<Loader text={t('requesting_accounts')} />
 				</div>
 			) : (
 				accounts.length > 0 && (
@@ -428,7 +430,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 								<div>
 									<AccountSelectionForm
 										isTruncateUsername={false}
-										title='Choose linked account'
+										title={t('choose_linked_account')}
 										accounts={accounts}
 										address={address}
 										onAccountChange={onAccountChange}
@@ -441,7 +443,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 										onClick={handleLogin}
 										variant='primary'
 										buttonsize='xs'
-										text='Login'
+										text={t('login')}
 									/>
 								</div>
 							</>
@@ -450,22 +452,22 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 				)
 			)}
 			<div className='mt-4'>{error && <FilteredError text={error} />}</div>
-			<Divider plain>Or</Divider>
+			<Divider plain>{t('or')}</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
 					disabled={loading}
-					onClick={() => setDisplayWeb2}
-					text='Login with username'
+					onClick={() => setDisplayWeb2()}
+					text={t('login_with_username')}
 					className='border-none'
 					variant='default'
 				/>
 			</div>
-			<Divider plain>Or</Divider>
+			<Divider plain>{t('or')}</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
 					disabled={loading}
 					onClick={() => setPolkadotWallet()}
-					text='Login with polkadot.js'
+					text={t('login_with_polkadot')}
 					className='border-none'
 					variant='default'
 				/>

@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { useNetworkSelector, useTreasuryProposalSelector } from '~src/redux/selectors';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	isDiscussionLinked: boolean;
@@ -50,7 +51,7 @@ const IdentityList = ({ aleredySet, title }: { aleredySet: boolean; title: strin
 						alt='polkasafe'
 						className='mx-1'
 					/>
-					Set identity
+					Set Identity
 				</Link>
 			)}
 		</li>
@@ -58,6 +59,7 @@ const IdentityList = ({ aleredySet, title }: { aleredySet: boolean; title: strin
 };
 const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const { showIdentityInfoCardForBeneficiary, showIdentityInfoCardForProposer, showMultisigInfoCard } = useTreasuryProposalSelector();
 	const [showWarnings, setShowWarning] = useState<boolean>(true);
 	const [showCompletedActions, setShowCompletedActions] = useState<boolean>(true);
@@ -74,7 +76,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 			message={
 				<div className='mt-0.5 text-xs leading-5 dark:text-blue-dark-high'>
 					<span>
-						{leftAction} of {TOTAL_ACTIONS} suggestions regarding proposal creation have not been incorporated. The community will have visibility about this.
+						{leftAction} {t('of')} {TOTAL_ACTIONS} {t('suggestions_regarding_proposal_creation_have_not_been_incorporated_the_community_will_have_visibility_about_this')}
 					</span>
 				</div>
 			}
@@ -86,7 +88,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 								onClick={() => setShowWarning(!showWarnings)}
 								className='flex items-center gap-1 font-medium text-pink_primary'
 							>
-								View warnings
+								{t('view_warnings')}
 								<DownArrowIcon className={`${showWarnings ? 'rotate-180 cursor-pointer' : 'cursor-pointer'} ${theme === 'dark' && 'icon-color'}`} />
 							</span>
 
@@ -95,7 +97,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 									{showMultisigInfoCard && (
 										<li>
 											<div className='flex gap-1'>
-												<span>Beneficiary Address is not a multisig. </span>
+												<span>{t('beneficiary_address_is_not_a_multisig')}. </span>
 												<CanNotChange />
 											</div>
 										</li>
@@ -103,7 +105,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 									{!isDiscussionLinked && (
 										<li>
 											<div className='flex flex-wrap items-start gap-1'>
-												Discussion post was not created to gather feedback before proposal creation
+												{t('discussion_post_was_not_created_to_gather_feedback_before_proposal_creation')}.
 												<CanNotChange />
 											</div>
 										</li>
@@ -131,13 +133,13 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 								onClick={() => setShowCompletedActions(!showCompletedActions)}
 								className='flex items-center gap-1 font-medium text-pink_primary'
 							>
-								Completed Actions
+								{t('completed_actions')}
 								<DownArrowIcon className={`${showCompletedActions ? 'rotate-180 cursor-pointer' : 'cursor-pointer'} ${theme === 'dark' && 'icon-color'}`} />
 							</span>
 							{showCompletedActions && (
 								<ul className='flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
-									{!showMultisigInfoCard && <li>Beneficiary Address is multisig.</li>}
-									{isDiscussionLinked && <li>Discussion post was created to gather feedback before proposal creation.</li>}
+									{!showMultisigInfoCard && <li>{t('beneficiary_address_is_multisig')}.</li>}
+									{isDiscussionLinked && <li>{t('discussion_post_was_created_to_gather_feedback_before_proposal_creation')}.</li>}
 									{onchainIdentitySupportedNetwork.includes(network) && !showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet

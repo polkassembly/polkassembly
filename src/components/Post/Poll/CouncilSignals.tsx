@@ -17,6 +17,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -26,6 +27,7 @@ interface Props {
 const CouncilSignals = ({ className, votes }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const [ayes, setAyes] = useState(0);
 	const [nays, setNays] = useState(0);
@@ -105,7 +107,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 			{councilVotes.length > 0 ? (
 				<GovSidebarCard className={className}>
 					<h3 className='flex items-center'>
-						<span className='dashboard-heading mr-2'>Council Signals</span> <HelperTooltip text='This represents the off-chain votes of council members' />
+						<span className='dashboard-heading mr-2'>{t('council_signals')}</span> <HelperTooltip text={t('this_represents_the_off_chain_votes_of_council_members')} />
 					</h3>
 
 					<div className='mt-6 flex'>
@@ -123,7 +125,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 											<div className='text-pink_primary'>{((nays / (ayes + nays)) * 100).toFixed(1)}%</div>
 										</div>
 									) : (
-										<div className='text-sm'>No Votes</div>
+										<div className='text-sm'>{t('no_votes')}</div>
 									)
 								}
 							/>
@@ -131,12 +133,12 @@ const CouncilSignals = ({ className, votes }: Props) => {
 
 						<div className='ml-12 flex flex-1 flex-col justify-between py-5'>
 							<div className='mb-auto flex items-center'>
-								<div className='mr-auto font-medium text-sidebarBlue'>Aye</div>
+								<div className='mr-auto font-medium text-sidebarBlue'>{t('aye')}</div>
 								<div className='text-navBlue'>{ayes}</div>
 							</div>
 
 							<div className='flex items-center'>
-								<div className='mr-auto font-medium text-sidebarBlue'>Nay</div>
+								<div className='mr-auto font-medium text-sidebarBlue'>{t('nay')}</div>
 								<div className='text-navBlue'>{nays}</div>
 							</div>
 						</div>
@@ -158,14 +160,14 @@ const CouncilSignals = ({ className, votes }: Props) => {
 											<>
 												<div className='flex items-center'>
 													<LikeFilled className='mr-4 text-pink_primary' />
-													Aye
+													{t('aye')}
 												</div>
 											</>
 										) : (
 											<>
 												<div className='flex items-center'>
 													<DislikeFilled className='mr-4 text-green-400' />
-													Nay
+													{t('nay')}
 												</div>
 											</>
 										)}

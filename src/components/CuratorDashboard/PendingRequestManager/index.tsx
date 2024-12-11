@@ -8,9 +8,11 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import { EChildBountyPendingReqSection, RequestCount } from '../types/types';
 import RequestTabs from '../PendingRequestManager/RequestTabs';
+import { useTranslation } from 'react-i18next';
 
 function CuratorPendingRequestManager() {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const { loginAddress } = useUserDetailsSelector();
 	const [selectedTab, setSelectedTab] = useState<EChildBountyPendingReqSection>(EChildBountyPendingReqSection.CURATOR_REQUESTS);
 
@@ -51,7 +53,9 @@ function CuratorPendingRequestManager() {
 		<div
 			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-section-light-container bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
-			<p className='text-2xl font-bold text-bodyBlue dark:text-lightWhite'>Pending Requests ({requestCount?.curator + requestCount.submissions})</p>
+			<p className='text-2xl font-bold text-bodyBlue dark:text-lightWhite'>
+				{t('pending_requests')} ({requestCount?.curator + requestCount.submissions})
+			</p>
 
 			<div className='mt-4 flex gap-1'>
 				{tabs.map((tab) => (

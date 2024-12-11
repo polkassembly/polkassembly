@@ -8,6 +8,7 @@ import Beneficiary from './Beneficiary';
 import { BeneficiaryIcon, BeneficiaryGreyIcon } from '../CustomIcons';
 import { useTheme } from 'next-themes';
 import Popover from '~src/basic-components/Popover';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -18,12 +19,13 @@ interface Props {
 
 const BeneficiariesListing = ({ className, beneficiaries, inPostHeading, assetId = null }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	if (!beneficiaries || beneficiaries.length === 0) return null;
 
 	return (
 		<div className={`${className} beneficiary-container flex flex-wrap items-center gap-1`}>
 			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px]' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
-			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
+			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>{t('beneficiary')}:</span>
 			<Beneficiary
 				beneficiary={beneficiaries[0]}
 				inPostHeading={inPostHeading}
@@ -47,7 +49,9 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading, assetId
 						}
 						trigger='click'
 					>
-						<u className='cursor-pointer text-[#407BFF]'>{beneficiaries.length - 1} more</u>
+						<u className='cursor-pointer text-[#407BFF]'>
+							{beneficiaries.length - 1} {t('more')}
+						</u>
 					</Popover>
 				</span>
 			)}

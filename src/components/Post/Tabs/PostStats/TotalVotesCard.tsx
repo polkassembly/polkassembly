@@ -12,6 +12,7 @@ import { Card } from 'antd';
 import TotalVotesIcon from '~assets/icons/analytics/total-votes.svg';
 import TotalVotesIconDark from '~assets/icons/analytics/total-votes-dark.svg';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 interface ITotalVotesProps {
 	ayeValue?: number;
@@ -25,6 +26,7 @@ interface ITotalVotesProps {
 const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const maxValue = Math.max(Number(ayeValue), Number(nayValue), Number(abstainValue));
 
@@ -55,7 +57,9 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 
 	return (
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TotalVotesIconDark /> : <TotalVotesIcon />} Total Votes Casted</h2>
+			<h2 className='flex items-center gap-1 text-base font-semibold'>
+				{theme === 'dark' ? <TotalVotesIconDark /> : <TotalVotesIcon />} {t('total_votes_casted')}
+			</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}

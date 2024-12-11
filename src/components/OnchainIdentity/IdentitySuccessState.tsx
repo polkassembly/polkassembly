@@ -13,12 +13,14 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ESetIdentitySteps, IIdentitySuccessState } from './types';
+import { useTranslation } from 'next-i18next';
 
 const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep }: IIdentitySuccessState) => {
 	const { network } = useNetworkSelector();
 	const { socials, displayName, identityAddress } = useOnchainIdentitySelector();
 	const { email, web, twitter, matrix } = socials;
 	const { id, username, loginAddress } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		if (!network) return;
@@ -26,7 +28,6 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (
@@ -50,11 +51,11 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 						src='/assets/icons/identity-success.svg'
 						alt='identity success icon'
 					/>
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>On-chain identity registration initiated</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('identity_registration_initiated')}</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{displayName}</div>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex items-center gap-1'>
-							<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Address:</span>
+							<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>{t('address')}:</span>
 							<span>
 								<Address
 									address={identityAddress || loginAddress}
@@ -65,25 +66,25 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 						</span>
 						{email?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Email:</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>{t('email')}:</span>
 								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{email?.value}</span>
 							</span>
 						)}
 						{web?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Web: </span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>{t('web')}:</span>
 								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{web?.value?.slice(0, 15)}...</span>
 							</span>
 						)}
 						{twitter?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Twitter:</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>{t('twitter')}:</span>
 								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{twitter?.value}</span>
 							</span>
 						)}
 						{matrix?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Matrix: </span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>{t('matrix')}:</span>
 								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{matrix?.value}</span>
 							</span>
 						)}
@@ -91,9 +92,8 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 				</div>
 
 				<CustomButton
-					text='Let’s start your verification process'
+					text={t('start_verification_process')}
 					onClick={() => {
-						// GAEvent for Let’s start your verification process button clicked
 						trackEvent('verification_cta_clicked', 'submitted_verification_request', {
 							userId: id || '',
 							userName: username || ''

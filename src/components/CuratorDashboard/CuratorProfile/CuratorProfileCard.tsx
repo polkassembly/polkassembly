@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
 import Address from '~src/ui-components/Address';
@@ -21,10 +22,12 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { CuratorData } from '../types/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddOrEditCuratorBioModal from './AddOrEditCuratorBioModal';
+import { useTranslation } from 'next-i18next';
 
 const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
+	const { t } = useTranslation('common');
 	const { loginAddress, id } = useUserDetailsSelector();
-	const [curatorprofile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);
+	const [curatorProfile, setCuratorProfile] = useState<IGetProfileWithAddressResponse | null>(null);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [openAddOrEditModal, setAddOrEditModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -61,11 +64,12 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const handleCopyAddress = () => {
 		if (getEncodedAddress(loginAddress, network)) {
 			copyToClipboard(getEncodedAddress(loginAddress, network) || loginAddress);
-			message.success('Address copied to clipboard');
+			message.success(t('address_copied'));
 		} else {
-			message.error('No address available to copy');
+			message.error(t('no_address_available'));
 		}
 	};
+
 	const handleEditClick = () => {
 		setAddOrEditModal(true);
 		form.setFieldsValue({
@@ -118,7 +122,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 		<div className='rounded-lg border-[0.7px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
 			<div className='flex gap-5'>
 				<ImageComponent
-					src={curatorprofile?.profile?.image}
+					src={curatorProfile?.profile?.image}
 					alt='profile'
 					className='flex h-[100px] w-[120px] items-center justify-center '
 					iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
@@ -134,7 +138,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								usernameClassName='text-xl'
 								disableTooltip
 								isTruncateUsername={isMobile || false}
-								passedUsername={curatorprofile?.username}
+								passedUsername={curatorProfile?.username}
 							/>
 							<span
 								className='flex cursor-pointer flex-row items-center p-1'
@@ -158,7 +162,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								width={18}
 								height={18}
 							/>
-							{!curatorBio?.length ? 'Add Bio' : 'Edit Bio'}
+							{!curatorBio?.length ? t('add_bio') : t('edit_bio')}
 						</CustomButton>
 					</div>
 					<div className='flex gap-3 text-sm font-bold'>
@@ -175,7 +179,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								width={20}
 								height={20}
 							/>
-							{curatorData?.allBounties?.count} Bounties Curated
+							{t('bounties_curated', { count: curatorData?.allBounties?.count })}
 						</p>
 						<p
 							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} flex items-center rounded-full bg-[#FFEEE0] p-1 px-2 text-[#DB511F] dark:bg-[#DEA38D] dark:bg-opacity-[20%]`}
@@ -190,7 +194,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								width={20}
 								height={20}
 							/>
-							{curatorData?.childBounties?.count} Child Bounties Curated
+							{t('child_bounties_curated', { count: curatorData?.childBounties?.count })}
 						</p>
 					</div>
 
@@ -198,7 +202,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 					<SocialsHandle
 						className='mr-6 mt-3 gap-4'
 						onchainIdentity={onChainIdentity}
-						socials={curatorprofile?.profile?.social_links || []}
+						socials={curatorProfile?.profile?.social_links || []}
 						address={loginAddress}
 						iconSize={18}
 						boxSize={32}

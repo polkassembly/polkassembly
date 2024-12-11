@@ -23,9 +23,11 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const proposalType = ProposalType.CHILD_BOUNTIES;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -38,7 +40,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: id,
 		proposalType
 	});
-	return { props: { error, network, post: data, status } };
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
+	return { props: { error, network, post: data, status, ...translations } };
 };
 
 interface IChildBountyPostProps {
@@ -53,6 +57,7 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { t } = useTranslation('common');
 	const { id } = router.query;
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -73,8 +78,8 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>

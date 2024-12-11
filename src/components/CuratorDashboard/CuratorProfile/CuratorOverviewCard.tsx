@@ -14,6 +14,7 @@ import { CuratorData } from '../types/types';
 import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -28,6 +29,7 @@ const getLastSixMonths = () => {
 const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -72,13 +74,13 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 		<>
 			{curatorData?.allBounties?.count > 0 || curatorData?.childBounties?.count > 0 ? (
 				<div className='mt-5 rounded-lg border-[0.7px] border-solid border-section-light-container bg-white px-5 pt-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]'>
-					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-xl font-bold text-lightBlue dark:text-lightWhite`}>Overview</p>
+					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-xl font-bold text-lightBlue dark:text-lightWhite`}>{t('overview')}</p>
 					<div className='flex items-center justify-between'>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-base font-medium text-bodyBlue dark:text-blue-dark-medium`}>Amount Disbursed</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-base font-medium text-bodyBlue dark:text-blue-dark-medium`}>{t('amount_disbursed')}</p>
 
 						<div className=' rounded-full bg-lightBlue bg-section-light-container bg-opacity-[5%] p-1 px-2 dark:bg-[#262627] dark:text-blue-dark-medium'>
 							<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} p-1 text-sm font-medium text-lightBlue text-opacity-[80%] dark:text-blue-dark-high `}>
-								Last 6 months
+								{t('last_6_months')}
 							</span>
 						</div>
 					</div>
@@ -169,7 +171,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 					</div>
 
 					<div className=' flex items-center justify-between'>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-base font-bold text-lightBlue dark:text-blue-dark-medium`}>Active Bounties</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-base font-bold text-lightBlue dark:text-blue-dark-medium`}>{t('active_bounties')}</p>
 						<p className=' font-pixeboy text-2xl text-lightBlue dark:text-blue-dark-high'>
 							{curatorData?.activeBounties?.count}{' '}
 							<span className='text-base text-lightBlue dark:text-blue-dark-high'>({parseBalance(String(curatorData?.activeBounties?.amount || '0'), 2, true, network)})</span>
@@ -187,7 +189,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								height={20}
 								className={theme == 'dark' ? 'dark-icons' : ''}
 							/>
-							Number of Bounties
+							{t('number_of_bounties')}
 						</p>
 						<p className='font-pixeboy text-2xl text-lightBlue  dark:text-blue-dark-high'>
 							{curatorData?.allBounties?.count}{' '}
@@ -206,7 +208,7 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 								height={20}
 								className={theme == 'dark' ? 'dark-icons' : ''}
 							/>
-							Child Bounties Disbursed
+							{t('child_bounties_disbursed')}
 						</p>
 						<div className='flex gap-2 '>
 							<p className=' font-pixeboy text-2xl text-lightBlue dark:text-blue-dark-high'>
@@ -234,13 +236,13 @@ const CuratorOverviewCard = ({ curatorData }: { curatorData: CuratorData }) => {
 					{' '}
 					<Image
 						src='/assets/Gifs/watering.gif'
-						alt='empty state'
+						alt={t('empty_state')}
 						className='m-0 -mt-16  p-0'
 						width={500}
 						height={500}
 					/>
-					<span className='-mt-28 text-xl font-semibold text-bodyBlue dark:text-white'>Nothing to see here</span>
-					<span className='pt-3 text-center text-bodyBlue dark:text-white'>Curate bounties to view data here</span>
+					<span className='-mt-28 text-xl font-semibold text-bodyBlue dark:text-white'>{t('nothing_to_see')}</span>
+					<span className='pt-3 text-center text-bodyBlue dark:text-white'>{t('curate_bounties_message')}</span>
 				</div>
 			)}
 		</>

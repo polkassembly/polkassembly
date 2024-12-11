@@ -22,12 +22,14 @@ import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
 }
 
 const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
+	const { t } = useTranslation('common');
 	const { bountyId } = props;
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
@@ -81,7 +83,9 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 						alt='child bounty icon'
 						className={theme == 'dark' ? 'dark-icons' : ''}
 					/>
-					<span className='text-base font-medium'>Child Bounties({bountiesRes?.child_bounties_count || 0})</span>
+					<span className='text-base font-medium'>
+						{t('child_bounties')} ({bountiesRes?.child_bounties_count || 0})
+					</span>
 				</div>
 				{bountiesRes?.child_bounties_count
 					? bountiesRes?.child_bounties?.map(

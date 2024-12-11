@@ -21,24 +21,28 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled, { DefaultTheme } from 'styled-components';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const { page = 1, hash_contains } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error } = await getPreimages({
 		hash_contains,
 		listingLimit: LISTING_LIMIT,
 		network,
-		page
+		page,
+		...translations
 	});
 	return { props: { data, error, network } };
 };
@@ -95,6 +99,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const [searchQuery, setSearchQuery] = useState<string | number | readonly string[] | undefined>(router.query.hash_contains || '');
 
@@ -179,7 +184,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 							onClick={handleClick}
 							className='flex cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none  bg-pink_primary px-3 py-1.5 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none sm:-mt-[1px]'
 						>
-							Show All
+							{t('show_all')}
 						</button>
 					)}
 				</div>

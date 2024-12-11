@@ -27,6 +27,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -44,7 +45,9 @@ export enum ETipType {
 	RECEIVED = 'Received'
 }
 const ZERO_BN = new BN(0);
+
 const ProfileTippingCard = ({ className, selectedAddresses, userProfile, addressWithIdentity }: Props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const { id: loginId, username } = useUserDetailsSelector();
@@ -71,7 +74,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 
 	const handleCopyAddress = () => {
 		messageApi.open({
-			content: 'Address copied to clipboard',
+			content: t('address_copied'),
 			duration: 10,
 			type: 'success'
 		});
@@ -134,7 +137,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 							width={24}
 							height={24}
 						/>
-						Tipping
+						{t('tipping')}
 					</span>
 
 					<div className={classNames(theme, 'flex items-center gap-2')}>
@@ -155,11 +158,11 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 									width={20}
 									alt='edit logo'
 								/>
-								<span className=''>Tip User</span>
+								<span>{t('tip_user')}</span>
 							</CustomButton>
 						)}
 						<Segmented
-							options={['Given', 'Received']}
+							options={[t('given'), t('received')]}
 							className={'dark:bg-section-dark-background'}
 							onChange={(e) => setTipType(e as ETipType)}
 							value={tipType}
@@ -207,7 +210,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 							width={20}
 							height={20}
 						/>
-						Custom
+						{t('custom')}
 					</span>
 				</div>
 				{/* Tipping info */}
@@ -252,7 +255,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 											}}
 										>
 											{contextHolder}
-											Copy
+											{t('copy')}
 											<CopyIcon className='cursor-pointer text-xl text-lightBlue dark:text-icon-dark-inactive' />
 										</div>
 									}
@@ -283,7 +286,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 								alt='Empty Icon'
 								imgClassName='w-[225px] h-[225px]'
 							/>
-							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No tip found</h3>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>{t('no_tip_found')}</h3>
 						</div>
 					)}
 				</div>

@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { EActivityFeedTab } from './types/types';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 interface IToggleButtonProps {
 	activeTab: EActivityFeedTab;
@@ -13,6 +14,7 @@ interface IToggleButtonProps {
 const ActivityFeeToggleButton: React.FC<IToggleButtonProps> = ({ activeTab, setActiveTab }) => {
 	const router = useRouter();
 	const { query } = router;
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		if (query.tab === 'subscribed') {
@@ -42,7 +44,7 @@ const ActivityFeeToggleButton: React.FC<IToggleButtonProps> = ({ activeTab, setA
 					activeTab === EActivityFeedTab.EXPLORE ? 'bg-[#FFFFFF] text-pink_primary dark:bg-[#0D0D0D]' : 'text-blue-light-medium dark:text-[#DADADA]'
 				}`}
 			>
-				Explore
+				{t('explore')}
 			</p>
 			<p
 				onClick={() => handleTabClick(EActivityFeedTab.FOLLOWING)}
@@ -50,7 +52,7 @@ const ActivityFeeToggleButton: React.FC<IToggleButtonProps> = ({ activeTab, setA
 					activeTab === EActivityFeedTab.FOLLOWING ? 'bg-[#FFFFFF] text-pink_primary dark:bg-[#0D0D0D]' : 'text-blue-light-medium dark:text-[#DADADA]'
 				}`}
 			>
-				Subscribed
+				{t('subscribed')}
 			</p>
 		</div>
 	);

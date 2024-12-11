@@ -29,6 +29,7 @@ import styled from 'styled-components';
 import { dmSans } from 'pages/_app';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import Popover from '~src/basic-components/Popover';
+import { useTranslation } from 'next-i18next';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -39,6 +40,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
 	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
 	useEffect(() => {
 		setCheckedItems([]);
@@ -159,7 +161,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				className='-mr-2 flex cursor-pointer justify-end p-1 text-[10px] text-pink_primary'
 				onClick={() => handleSortByClick('clear_filter')}
 			>
-				Clear Filter
+				{t('clear_filter')}
 			</div>
 
 			<Divider
@@ -190,7 +192,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			overlayClassName={`w-[250px] dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-				<span className='sm:mr-1 sm:mt-0.5'>Status</span>
+				<span className='sm:mr-1 sm:mt-0.5'>{t('status')}</span>
 				<DropdownGreyIcon />
 			</div>
 		</Popover>

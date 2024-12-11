@@ -5,6 +5,7 @@ import { Divider } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -23,6 +24,8 @@ interface Props {
 const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
+
 	return (
 		<>
 			{!['moonbase', 'polimec', 'rolimec', 'westend', 'laos-sigma'].includes(network) && (
@@ -32,13 +35,13 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 							{theme === 'dark' ? (
 								<ImageIcon
 									src='/assets/icons/CurrentPriceDark.svg'
-									alt='current price dark icon'
+									alt={t('current_price_dark_icon')}
 									imgClassName='lg:hidden'
 								/>
 							) : (
 								<ImageIcon
 									src='/assets/icons/currentprice.svg'
-									alt='current price icon'
+									alt={t('current_price_icon')}
 									imgClassName='lg:hidden'
 								/>
 							)}
@@ -48,13 +51,15 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 								<div className='mb-4'>
 									<div className='my-1 flex items-center'>
 										<span className='mr-2 hidden text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'>
-											Current Price of {chainProperties[network]?.tokenSymbol}
+											{t('current_price_of', { token: chainProperties[network]?.tokenSymbol })}
 										</span>
-										<span className='flex text-xs font-medium text-lightBlue dark:text-blue-dark-medium md:hidden'>Price {chainProperties[network]?.tokenSymbol}</span>
+										<span className='flex text-xs font-medium text-lightBlue dark:text-blue-dark-medium md:hidden'>
+											{t('price_token', { token: chainProperties[network]?.tokenSymbol })}
+										</span>
 									</div>
 									<div className='text-lg font-medium'>
 										{currentTokenPrice.value === 'N/A' ? (
-											<span>N/A</span>
+											<span>{t('na')}</span>
 										) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
 											<>
 												<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
@@ -67,10 +72,10 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
 										{priceWeeklyChange.value === 'N/A' ? (
-											'N/A'
+											t('na')
 										) : priceWeeklyChange.value ? (
 											<>
-												<span className='mr-1 sm:mr-2'>Weekly Change</span>
+												<span className='mr-1 sm:mr-2'>{t('weekly_change')}</span>
 												<div className='flex items-center'>
 													<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
 													{Number(priceWeeklyChange.value) < 0 ? (
@@ -94,13 +99,13 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 						{theme === 'dark' ? (
 							<ImageIcon
 								src='/assets/icons/CurrentPriceDark.svg'
-								alt='current price dark icon'
+								alt={t('current_price_dark_icon')}
 								imgClassName='xs:hidden lg:block w-full'
 							/>
 						) : (
 							<ImageIcon
 								src='/assets/icons/currentprice.svg'
-								alt='current price icon'
+								alt={t('current_price_icon')}
 								imgClassName='xs:hidden lg:block w-full'
 							/>
 						)}

@@ -86,6 +86,7 @@ import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/type
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 import ExpertBodyCard from '~src/components/ExpertBody';
+import { useTranslation } from 'next-i18next';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -143,6 +144,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex, curator } = props;
+	const { t } = useTranslation('common');
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [updateTally, setUpdateTally] = useState<boolean>(false);
 
@@ -740,7 +742,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Your Vote has been Cleared successfully.',
+			message: t('your_vote_has_been_cleared_successfully'),
 			status: NotificationStatus.SUCCESS
 		});
 		setLastVote(null);
@@ -797,7 +799,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				});
 		} else {
 			const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
-			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: t('transactions_failed'), network, onFailed, onSuccess, tx });
 		}
 	};
 	useEffect(() => {
@@ -819,14 +821,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<GovSidebarCard>
 					<div>
 						<div className='mb-1.5 flex items-center justify-between'>
-							<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+							<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>{t('last_vote')}:</span>
 							{!isDelegated && (
 								<Button
 									loading={loading}
 									onClick={handleRemoveVote}
 									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 								>
-									Remove Vote
+									{t('remove_vote')}
 								</Button>
 							)}
 						</div>
@@ -911,13 +913,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			<GovSidebarCard>
 				<div>
 					<div className='mb-1.5 flex items-center justify-between'>
-						<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+						<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{t('last_vote')}:</span>
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
 							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium font-semibold text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 						>
-							Remove Vote
+							{t('remove_vote')}
 						</Button>
 					</div>
 					<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
@@ -930,11 +932,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<span className='h-[25px]'>
 								{decision === EVoteDecisionType.AYE ? (
 									<p>
-										<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
+										<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{t('aye')}</span>
 									</p>
 								) : decision === EVoteDecisionType.NAY ? (
 									<div>
-										<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
+										<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{t('nay')}</span>
 									</div>
 								) : decision === EVoteDecisionType.SPLIT ? (
 									<p>
@@ -942,7 +944,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</p>
 								) : decision === EVoteDecisionType.ABSTAIN ? (
 									<p className='flex justify-center align-middle'>
-										<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
+										<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{t('abstain')}</span>
 									</p>
 								) : null}
 							</span>
@@ -1018,7 +1020,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									showIcon
 									type='info'
-									message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('progress_report_not_added_by_proposer')}</span>}
 								/>
 							)}
 						<ExpertBodyCard />
@@ -1032,8 +1034,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<GovSidebarCard>
 								{accountsNotFound ? (
 									<div className='mb-4'>
-										<p className='mb-4'>You need at least one account in Polkadot-js extension to use this feature.</p>
-										<p className='text-muted m-0'>Please reload this page after adding accounts.</p>
+										<p className='mb-4'>{t('you_need_at_least_one_account_in_polkadot_js_extension_to_use_this_feature')}</p>
+										<p className='text-muted m-0'>{t('please_reload_this_page_after_adding_accounts')}</p>
 									</div>
 								) : null}
 								{extensionNotFound ? <ExtensionNotDetected /> : null}
@@ -1109,7 +1111,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									className='mx-auto w-full rounded-xxl p-7 font-bold lg:w-[480px] xl:w-full'
 									onClick={() => setOpenClaimModal(true)}
 								>
-									Claim payout
+									{t('claim_payout')}
 								</CustomButton>
 							</ClaimAssetPayoutInfo>
 						)}
@@ -1308,7 +1310,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<div>
 									{lastVote != undefined ? (
 										lastVote == null ? (
-											<GovSidebarCard>You haven&apos;t voted yet, vote now and do your bit for the community</GovSidebarCard>
+											<GovSidebarCard>{t('you_havent_voted_yet_vote_now_and_do_your_bit_for_the_community')}</GovSidebarCard>
 										) : (
 											<></>
 										)
@@ -1361,8 +1363,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>
 										<span className='text-sm tracking-wide text-bodyBlue dark:text-blue-dark-high'>
-											This PIP is proposed via
-											{proposalType === ProposalType.TECHNICAL_PIPS ? ' Technical Committee ' : ' Upgrade Committee '}& is not open to community voting
+											{t('this_pip_is_proposed_via')}
+											{proposalType === ProposalType.TECHNICAL_PIPS ? t('technical_committee') : t('upgrade_committee')}
+											{t('is_not_open_to_community_voting')}
 										</span>
 									</div>
 								</GovSidebarCard>

@@ -25,6 +25,7 @@ import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { useRouter } from 'next/router';
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -34,6 +35,7 @@ export interface IRemoveIdentity {
 }
 
 const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { loginAddress, id, username } = useUserDetailsSelector();
@@ -96,12 +98,12 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 	const handleRemoveIdentity = () => {
 		if (!api || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
-		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
+		setLoading({ isLoading: true, message: t('awaiting_confirmation') });
 
 		const onFailed = (message: string) => {
 			queueNotification({
-				header: 'failed!',
-				message: message || 'Transaction failed!',
+				header: t('failed'),
+				message: message || t('transaction_failed'),
 				status: NotificationStatus.ERROR
 			});
 			setLoading({ isLoading: false, message: message });
@@ -114,8 +116,8 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				userName: username || ''
 			});
 			queueNotification({
-				header: 'Success!',
-				message: 'Identity remove successfully!',
+				header: t('success'),
+				message: t('identity_removed_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading({ isLoading: false, message: '' });
@@ -129,7 +131,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			address: address || loginAddress,
 			api: peopleChainApi ?? api,
 			apiReady,
-			errorMessageFallback: 'Error in removing Identity!',
+			errorMessageFallback: t('error_removing_identity'),
 			network,
 			onFailed,
 			onSuccess,
@@ -149,21 +151,20 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 	return (
 		<div className={className}>
-			{/* add custom button TODO */}
 			{withButton && (
 				<div
 					className='ml-1 flex items-center gap-3 text-sm font-medium'
 					onClick={() => (!loginAddress ? dispatch(setOpenRemoveIdentitySelectAddressModal(true)) : dispatch(setOpenRemoveIdentityModal(true)))}
 				>
 					<ClearIdentityOutlinedIcon className='bg-transparent text-lg' />
-					Remove Identity
+					{t('remove_identity')}
 				</div>
 			)}
 			<AddressConnectModal
 				open={openAddressSelectModal}
 				setOpen={() => dispatch(setOpenRemoveIdentitySelectAddressModal(false))}
 				closable
-				accountSelectionFormTitle='Select Address'
+				accountSelectionFormTitle={t('select_address')}
 				onConfirm={(selectedAddr: string) => {
 					dispatch(setOpenRemoveIdentityModal(true));
 					dispatch(setOpenRemoveIdentitySelectAddressModal(false));
@@ -171,8 +172,8 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 					getGasFee(selectedAddr);
 					checkIsIdentityAvailable(selectedAddr);
 				}}
-				walletAlertTitle='Remove Identity'
-				accountAlertTitle='Please install a wallet and create an address to start removing identity.'
+				walletAlertTitle={t('remove_identity')}
+				accountAlertTitle={t('install_wallet_to_remove_identity')}
 				usedInIdentityFlow
 			/>
 
@@ -185,13 +186,13 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 						<ClearIdentityFilledIcon />
-						Remove Identity
+						{t('remove_identity')}
 					</div>
 				}
 				footer={
 					<div className='-mx-6 mt-6 flex  justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
-							text='Cancel'
+							text={t('cancel')}
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
 							variant='default'
 							height={40}
@@ -199,7 +200,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 							disabled={loading.isLoading}
 						/>
 						<CustomButton
-							text='Confirm'
+							text={t('confirm')}
 							onClick={handleRemoveIdentity}
 							variant='primary'
 							height={40}
@@ -215,38 +216,35 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 					tip={loading.message}
 				>
 					<div className='my-6 flex flex-col gap-6'>
-						{/* No identity found error */}
 						{!isIdentityAvailable && (
 							<Alert
 								type='error'
-								message={'No Onchain Identity found for this address'}
+								message={t('no_onchain_identity_found')}
 								className='rounded-[4px]'
 								showIcon
 							/>
 						)}
 
-						{/* Insufficient error */}
 						{isIdentityAvailable && availableBalance.lte(gasFee) && !loading.isLoading && (
 							<Alert
 								type='error'
-								message={'Insufficient available balance'}
+								message={t('insufficient_balance')}
 								className='rounded-[4px]'
 								showIcon
 							/>
 						)}
 
-						{/* Bond free warning */}
 						{isIdentityAvailable && bondFee.gte(ZERO_BN) && (
 							<Alert
 								type='warning'
-								message={`Removing Identity would unlock bond amount of ${parseBalance(bondFee.toString(), 2, true, network)} `}
+								message={`${t('bond_fee_warning', { bond: parseBalance(bondFee.toString(), 2, true, network) })}`}
 								showIcon
 								className='rounded-[4px]'
 							/>
 						)}
 						<div>
 							<div className='flex items-center justify-between'>
-								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address </label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('your_address')}</label>
 								{(!!address || !!loginAddress) && (
 									<Balance
 										address={address || loginAddress}
@@ -267,7 +265,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 									className='font-normal'
 								/>
 								<CustomButton
-									text='Change Wallet'
+									text={t('change_wallet')}
 									onClick={() => {
 										dispatch(setOpenRemoveIdentitySelectAddressModal(true));
 										dispatch(setOpenRemoveIdentityModal(false));
@@ -280,11 +278,10 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 							</div>
 						</div>
 
-						{/* Gas fee info */}
 						{isIdentityAvailable && gasFee.gte(ZERO_BN) && (
 							<Alert
 								type='info'
-								message={`Gas Fees of ${parseBalance(gasFee.toString(), 2, true, network)} will be applied to remove identity for this address. `}
+								message={`${t('gas_fee_info', { gas: parseBalance(gasFee.toString(), 2, true, network) })}`}
 								showIcon
 								className='rounded-[4px]'
 							/>

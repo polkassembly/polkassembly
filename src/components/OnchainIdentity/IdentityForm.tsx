@@ -40,6 +40,7 @@ import PeopleChainTeleport from '../PeopleChainTeleport';
 import _ from 'lodash';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -48,6 +49,7 @@ interface ValueState {
 	okAll: boolean;
 }
 const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -443,7 +445,9 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}
 					>
-						<span className='font-semibold capitalize text-white'>People Chain is now LIVE for {network} network</span>
+						<span className='font-semibold capitalize text-white'>
+							{t('people_chain_is_now_live_for')} {network} {t('network')}
+						</span>
 					</div>
 				)}
 
@@ -471,7 +475,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 							<Alert
 								className='mb-6 rounded-[4px]'
 								type='info'
-								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds for multisig. This may take a few seconds...</p>}
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('teleporting_funds_for_multisig')}</p>}
 							/>
 						)}
 						{!!totalFee.gt(ZERO_BN) &&
@@ -482,7 +486,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									className='mb-6 rounded-[4px]'
 									type='warning'
 									showIcon
-									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance in multisig</p>}
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('insufficient_available_balance_in_multisig')}</p>}
 								/>
 							)}
 						{!!totalFeeForSignatory.gt(ZERO_BN) &&
@@ -507,7 +511,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 							<Alert
 								className='mb-6 rounded-[4px]'
 								type='info'
-								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds for signatory. This may take a few seconds...</p>}
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('teleporting_funds_for_signatory')}</p>}
 							/>
 						)}
 						{!!totalFeeForSignatory.gt(ZERO_BN) &&
@@ -518,7 +522,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									className='mb-6 rounded-[4px]'
 									type='warning'
 									showIcon
-									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance in signatory</p>}
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('insufficient_available_balance_in_signatory')}</p>}
 								/>
 							)}
 					</>
@@ -546,7 +550,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 							<Alert
 								className='mb-6 rounded-[4px]'
 								type='info'
-								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds. This may take a few seconds...</p>}
+								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('teleporting_funds')}</p>}
 							/>
 						)}
 						{!!totalFee.gt(ZERO_BN) &&
@@ -557,7 +561,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									className='mb-6 rounded-[4px]'
 									type='warning'
 									showIcon
-									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
+									message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('insufficient_available_balance')}</p>}
 								/>
 							)}
 					</>
@@ -568,7 +572,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						className='mb-6 rounded-[4px]'
 						type='success'
 						showIcon
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Congratulations, you have been successfully verified by polkassembly!</p>}
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('congratulations_you_have_been_successfully_verified_by_polkassembly')}</p>}
 					/>
 				)}
 				{!!identityInfo?.email &&
@@ -583,14 +587,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 							showIcon
 							message={
 								<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-									This account has already set socials. Kindly{' '}
+									{t('this_account_has_already_set_socials')}{' '}
 									<span
 										className='cursor-pointer font-semibold text-pink_primary'
 										onClick={() => handleSetIdentity(true)}
 									>
-										Request Judgement
+										{t('request_judgement')}
 									</span>{' '}
-									from polkassembly to complete the process
+									{t('from_polkassembly_to_complete_the_process')}
 								</p>
 							}
 						/>
@@ -601,7 +605,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						className='mb-6 rounded-[4px]'
 						type='warning'
 						showIcon
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Please provide your email for request judgement. </p>}
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>{t('please_provide_your_email_for_request_judgement')}</p>}
 					/>
 				)}
 				{isCurrentlyLoggedInUsingMultisig(currentUser) ? (
@@ -609,10 +613,10 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						<div>
 							<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-									Your Multisig Address{' '}
+									{t('your_multisig_address')}{' '}
 									<HelperTooltip
 										className='ml-1'
-										text='Please note the verification cannot be transferred to another address.'
+										text={t('please_note_the_verification_cannot_be_transferred_to_another_address')}
 									/>
 								</label>
 								{(!!identityAddress || !!currentUser.loginAddress) && (
@@ -637,7 +641,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						<div className='mt-4'>
 							<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-									Your Multisig signatory Address{' '}
+									{t('your_multisig_signatory_address')}{' '}
 									<HelperTooltip
 										className='ml-1'
 										text='Please note the verification cannot be transferred to another address.'
@@ -665,7 +669,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					<>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-								Your Address{' '}
+								{t('your_address')}{' '}
 								<HelperTooltip
 									className='ml-1'
 									text='Please note the verification cannot be transferred to another address.'
@@ -713,7 +717,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 										setShowProxyDropdown(!showProxyDropdown);
 									}}
 								>
-									<p className='m-0 mt-1 p-0'>Use proxy address</p>
+									<p className='m-0 mt-1 p-0'>{t('use_proxy_address')}</p>
 								</Checkbox>
 							</div>
 						)}
@@ -736,14 +740,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
 							<div className='mt-2 flex items-center gap-x-1'>
 								<InfoIcon />
-								<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+								<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>{t('proxy_address_does_not_exist_on_selected_wallet')}</p>
 							</div>
 						)}
 					</>
 				) : null}
 				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-						Display Name <span className='text-[#FF3C5F]'>*</span>
+						{t('display_name')} <span className='text-[#FF3C5F]'>*</span>
 					</label>
 					<Form.Item
 						name='displayName'
@@ -778,12 +782,12 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					</Form.Item>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Legal Name</label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('legal_name')}</label>
 					<Form.Item
 						name='legalName'
 						rules={[
 							{
-								message: 'Invalid legal name',
+								message: t('invalid_legal_name'),
 								validator(rule, value, callback) {
 									if (
 										callback &&
@@ -813,10 +817,10 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 				</div>
 				<div>
 					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
-						Socials{' '}
+						{t('socials')}{' '}
 						<HelperTooltip
 							className='ml-1'
-							text='Please add your social handles that require verification.'
+							text={t('please_add_your_social_handles_that_require_verification')}
 						/>
 					</label>
 
@@ -824,7 +828,8 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
-								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
+								{t('email')}
+								<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
 						<Form.Item
@@ -832,7 +837,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 							className='w-full'
 							rules={[
 								{
-									message: 'Invalid email address',
+									message: t('invalid_email_address'),
 									validator(rule, value, callback) {
 										if (
 											callback &&
@@ -865,14 +870,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Twitter</span>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('twitter')}</span>
 						</span>
 						<Form.Item
 							name='twitter'
 							className='w-full'
 							rules={[
 								{
-									message: 'Invalid twitter username',
+									message: t('invalid_twitter_username'),
 									validator(rule, value, callback) {
 										if (
 											callback &&
@@ -907,14 +912,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<MatrixIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Matrix</span>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('matrix')}</span>
 						</span>
 						<Form.Item
 							name='matrix'
 							className='w-full'
 							rules={[
 								{
-									message: 'Invalid matrix address',
+									message: t('invalid_matrix_address'),
 									validator(rule, value, callback) {
 										if (
 											callback &&

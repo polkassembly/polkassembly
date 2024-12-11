@@ -21,11 +21,13 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import TextEditor from '~src/ui-components/TextEditor';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
+	const { t } = useTranslation('common');
 	const [open, setOpen] = useState<boolean>(false);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
@@ -152,8 +154,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						className='-my-7 mx-auto block h-64 w-64'
 					/>
 					<div className='my-4 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
-						<span className='text-xl  font-semibold'>Oops! Looks like you are not an expert!</span>
-						<span className='px-10 pt-2 text-sm'>Become an expert to add your views to various proposals and discussions!</span>
+						<span className='text-xl  font-semibold'>{t('oops_looks_like_you_are_not_an_expert')}</span>
+						<span className='px-10 pt-2 text-sm'>{t('become_an_expert_to_add_your_views_to_various_proposals_and_discussions')}</span>
 					</div>
 					<div className='mt-6 pb-3 text-center'>
 						<Button
@@ -162,7 +164,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								setIsInitial(false);
 							}}
 						>
-							<span className='text-sm font-medium'>Become an Expert!</span>
+							<span className='text-sm font-medium'>{t('become_an_expert')}</span>
 						</Button>
 					</div>
 				</>
@@ -178,8 +180,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						height={327}
 					/>
 					<div className='-mt-5 flex flex-col gap-2 text-[#243A57] dark:text-lightWhite'>
-						<span className='text-center text-2xl font-semibold '>Congratulations!</span>
-						<span className='px-8 text-center'>Your application has been submitted. It may take 3-5 days to review your application!</span>
+						<span className='text-center text-2xl font-semibold '>{t('congratulation')}</span>
+						<span className='px-8 text-center'>{t('your_application_has_been_submitted')}</span>
 					</div>
 					<Divider
 						type='horizontal'
@@ -219,9 +221,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							className='-my-6 mx-auto block h-64 w-64'
 						/>
 						<div className='my-3 flex flex-col gap-1 text-center text-[#243A57] dark:text-lightWhite'>
-							<span className='text-xl font-semibold'>Oops! Your identity is not verified!</span>
+							<span className='text-xl font-semibold'>{t('oops_your_identity_is_not_verified')}</span>
 							<span className='px-10 pt-2 text-sm'>
-								You need to{' '}
+								{t('you_need_to')}
 								<span
 									onClick={(e) => {
 										e.stopPropagation();
@@ -238,9 +240,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 									}}
 									className='cursor-pointer font-semibold text-pink_primary underline'
 								>
-									verify your identity
+									{t('verify_your_identity')}
 								</span>{' '}
-								before applying to become an expert.
+								{t('before_applying_to_become_an_expert')}
 							</span>
 						</div>
 
@@ -261,7 +263,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 									}
 								}}
 							>
-								<span className='text-sm font-medium'>Verify Identity</span>
+								<span className='text-sm font-medium'>{t('verify_identity')}</span>
 							</Button>
 						</div>
 					</>
@@ -269,7 +271,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			} else {
 				return (
 					<>
-						<p className='mt-5 text-sm font-medium text-[#243A57] dark:text-lightWhite'>Why do you want to become an expert?</p>
+						<p className='mt-5 text-sm font-medium text-[#243A57] dark:text-lightWhite'>{t('why_do_you_want_to_become_an_expert')}</p>
 						<Form.Item
 							name='reason'
 							rules={[{ message: 'Please provide a reason', required: true }]}
@@ -281,7 +283,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={150}
 							/>
 						</Form.Item>
-						<p className='text-sm font-medium text-[#243A57]'>Share any relevant contributions you&apos;ve made in the past for the Polkadot ecosystem.</p>
+						<p className='text-sm font-medium text-[#243A57]'>{t('share_any_relevant_contributions_youve_made_in_the_past_for_the_polkadot_ecosystem')}</p>
 						<Form.Item
 							name='contribution'
 							rules={[{ message: 'Please provide a contribution', required: true }]}
@@ -302,13 +304,13 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								className='mr-[8px] h-9 w-28 border-pink_primary text-pink_primary'
 								onClick={handleCancel}
 							>
-								Cancel
+								{t('cancel')}
 							</Button>
 							<Button
 								className='h-9 w-28 bg-pink_primary text-white'
 								onClick={handleContributionSubmit}
 							>
-								Submit
+								{t('submit')}
 							</Button>
 						</div>
 					</>
@@ -340,7 +342,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={24}
 								className='h-6 w-6'
 							/>
-							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>Add Expert Review</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>{t('add_expert_review')}</span>
 						</div>
 					)
 				}
@@ -387,7 +389,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				className={'w-[600px] max-sm:w-full'}
 				title={
 					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:text-lightWhite'>
-						On-chain identity
+						{t('on_chain_identity')}
 					</span>
 				}
 				wrapClassName='dark:bg-modalOverlayDark'
@@ -397,7 +399,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'
 					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
+					<span className='dark:text-white'>{t('please_use_desktop_to_verify_on_chain_identity')}</span>
 				</div>
 			</Modal>
 		</div>

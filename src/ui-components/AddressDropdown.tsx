@@ -16,6 +16,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { userDetailsActions } from '~src/redux/userDetails';
+import { useTranslation } from 'next-i18next';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -59,6 +60,7 @@ const AddressDropdown = ({
 	const currentUser = useUserDetailsSelector();
 	const { addresses } = currentUser;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const { resolvedTheme: theme } = useTheme();
@@ -111,7 +113,7 @@ const AddressDropdown = ({
 					<CustomButton
 						variant='primary'
 						onClick={() => setSwitchModalOpen(true)}
-						text='Switch Wallet'
+						text={t('switch_wallet_text')}
 						className={`w-full ${dmSans.variable} ${dmSans.className}`}
 					/>
 				</div>
@@ -143,7 +145,7 @@ const AddressDropdown = ({
 						color='blue'
 						className='absolute z-10 -ml-2 -mt-4 h-[18px] rounded-xl text-[8px]'
 					>
-						Multi
+						{t('multi')}
 					</Tag>
 				)}
 				<Address

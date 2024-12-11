@@ -23,6 +23,7 @@ import { IChildBounty } from '~src/types';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { useTranslation } from 'next-i18next';
 
 const CreateChildBountyButton = dynamic(() => import('~src/components/ChildBountyCreation/CreateChildBountyButton'), {
 	loading: () => <SkeletonButton active />,
@@ -33,6 +34,7 @@ const ZERO_BN = new BN(0);
 
 const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handleClick }) => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const { loginAddress } = useUserDetailsSelector();
 	const [expandedBountyId, setExpandedBountyId] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
@@ -108,7 +110,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 			className={`${spaceGrotesk.className} ${spaceGrotesk.variable} rounded-lg border-[1px] border-solid border-section-light-container bg-white p-5 dark:border-[#494b4d] dark:bg-[#0d0d0d]`}
 		>
 			<p className='text-2xl font-bold text-lightBlue dark:text-lightWhite'>
-				Bounties Curated {curatedBounties && curatedBounties?.length > 0 ? <>({curatedBounties?.length})</> : <>(0)</>}{' '}
+				{t('bounties_curated')} {curatedBounties && curatedBounties?.length > 0 ? <>({curatedBounties?.length})</> : <>(0)</>}{' '}
 			</p>
 			{loading ? (
 				<>
@@ -228,7 +230,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 																<div className='mt-2 flex items-center justify-center gap-3 rounded-lg border-[1px] border-solid border-[#129F5D] bg-[#E7F6EC] p-1 dark:bg-[#2c3d36]'>
 																	<span className='text-lg font-bold text-[#129F5D]'>{parseBalance(String(childBounty?.reward || '0'), 2, true, network)}</span>
 																	<span className='flex items-center gap-3'>
-																		<span className='font-medium text-lightBlue dark:text-blue-dark-medium'>Claimed By</span>
+																		<span className='font-medium text-lightBlue dark:text-blue-dark-medium'>{t('claimed_by')}</span>
 																		<Address
 																			address={childBounty?.payee || ''}
 																			displayInline
@@ -272,7 +274,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 									width={350}
 									height={350}
 								/>
-								<span className='-mt-10 text-xl font-semibold text-[#243A57] dark:text-white'>No Bounties Curated Yet</span>
+								<span className='-mt-10 text-xl font-semibold text-[#243A57] dark:text-white'>{t('no_bounties_curated_yet')}</span>
 								<span className='pt-3 text-center text-[#243A57] dark:text-white'>
 									<span
 										onClick={() => {
@@ -280,9 +282,9 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 										}}
 										className='cursor-pointer font-semibold text-pink_primary'
 									>
-										Create Bounty Proposals
+										{t('create_bounty_proposals')}
 									</span>{' '}
-									or Receive curator requests to view <br /> them here
+									{t('or_receive_requests')} <br /> {t('them_here')}
 								</span>
 							</div>
 						</>

@@ -20,6 +20,7 @@ import { Wallet } from '~src/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getMultisigAddressDetails } from '../DelegationDashboard/utils/getMultisigAddressDetails';
+import { useTranslation } from 'next-i18next';
 
 interface ICreateBounty {
 	className?: string;
@@ -33,6 +34,7 @@ interface ICreateBounty {
 
 const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, setOpenSuccessModal, handleSuccess, defaultCurator }: ICreateBounty) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginAddress, multisigAssociatedAddress, loginWallet } = useUserDetailsSelector();
@@ -51,21 +53,21 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 		}
 
 		if (!defaultWallet) return;
-		//for setting signer
+
 		await getAccountsFromWallet({ api, apiReady, chosenWallet: defaultWallet || loginWallet, loginAddress: '', network });
 
 		const data = await getMultisigAddressDetails(loginAddress);
 		if (data?.threshold) {
-			const filteredSignaories: string[] = [];
+			const filteredSignatories: string[] = [];
 
 			data?.multi_account_member?.map((addr: { address: string }) => {
 				if (getEncodedAddress(addr?.address || '', network) !== getEncodedAddress(multisigAssociatedAddress || '', network)) {
-					filteredSignaories?.push(addr?.address);
+					filteredSignatories?.push(addr?.address);
 				}
 			});
 
 			setMultisigData({
-				signatories: filteredSignaories,
+				signatories: filteredSignatories,
 				threshold: data?.threshold || 0
 			});
 		}
@@ -87,15 +89,15 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 				footer={false}
 				closeIcon={<CloseIcon />}
 				title={
-					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<Image
-							src={'/assets/openGovProposals/create_proposal.svg'}
+							src='/assets/openGovProposals/create_proposal.svg'
 							height={26}
 							width={26}
-							alt=''
-							className={theme == 'dark' ? 'dark-icons' : '-mt-4'}
+							alt={t('create_child_bounty_icon')}
+							className={theme === 'dark' ? 'dark-icons' : '-mt-4'}
 						/>
-						<span>Create Child Bounty</span>
+						<span>{t('create_child_bounty')}</span>
 					</div>
 				}
 			>
@@ -109,10 +111,10 @@ const ChildBountyCreationForm = ({ className, open, setOpen, openSuccessModal, s
 							labelPlacement='vertical'
 							items={[
 								{
-									title: EChildBountySteps.WRITE_CHILDBOUNTY
+									title: t('write_child_bounty_step')
 								},
 								{
-									title: EChildBountySteps.CREATE_CHILDBOUNTY
+									title: t('create_child_bounty_step')
 								}
 							]}
 						/>

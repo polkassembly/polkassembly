@@ -9,6 +9,7 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 
@@ -21,6 +22,7 @@ interface Props {
 
 const AuditTab = ({ auditData, videoData, className }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		trackEvent('audit_dropdown_clicked', 'clicked_audit_dropdown', {
 			isWeb3Login: currentUser?.web3signup,
@@ -46,7 +48,9 @@ const AuditTab = ({ auditData, videoData, className }: Props) => {
 								src='/assets/icons/auditIcon.svg'
 								alt='auditIcon'
 							/>
-							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Audit</h3>
+							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+								{t('audit')}
+							</h3>
 						</div>
 					}
 					key='1'

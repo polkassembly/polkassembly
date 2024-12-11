@@ -29,6 +29,8 @@ import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import classNames from 'classnames';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
+
 interface Props {
 	className?: string;
 	posts: any[];
@@ -84,6 +86,7 @@ export function capitalizeWords(input: string): string {
 const CONVICTION_VOTES_LOCKED_DAYS = 7;
 
 const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: Props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -201,7 +204,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 					className='cursor-pointer text-sm'
 					onClick={() => router.push('/delegation')}
 				>
-					Dashboard
+					{t('dashboard')}
 				</span>
 				<span className='mt-[-2px]'>
 					<RightOutlined className='text-xs' />

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
 import Image from 'next/image';
@@ -9,8 +8,8 @@ import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import Markdown from 'src/ui-components/Markdown';
-
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -22,6 +21,7 @@ interface Props {
 }
 
 const DiscussionPostCard = ({ className, id, title, username, commentsCount, createdAt }: Props) => {
+	const { t } = useTranslation('common');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [post, setPost] = useState<IPostResponse>();
@@ -52,12 +52,12 @@ const DiscussionPostCard = ({ className, id, title, username, commentsCount, cre
 	return (
 		<div className={`${className} rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}>
 			<h3 className='text-sidebarBlue'>{title || noTitle}</h3>
-			{loading && <p>loading...</p>}
+			{loading && <p>{t('loading')}</p>}
 			{!loading && !error && post && <Markdown md={`${(post.content as string).split(' ').splice(0, 30).join(' ')}...`} />}
 
 			<div>
 				<div className='posted-by mb-3 flex items-center'>
-					<span className='title mr-2 text-sidebarBlue'>Posted by: </span>
+					<span className='title mr-2 text-sidebarBlue'>{t('posted_by')}:</span>
 					<span className='inline-block truncate'>{username}</span>
 				</div>
 
@@ -68,7 +68,7 @@ const DiscussionPostCard = ({ className, id, title, username, commentsCount, cre
 							width='14'
 							height='14'
 							src='/assets/latest-activity-comment.png'
-							alt='Comment'
+							alt={t('comment')}
 						/>
 						{commentsCount || post?.comments?.length || 0}
 					</div>

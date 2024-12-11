@@ -10,6 +10,7 @@ import TagsIcon from '~assets/icons/tags-icon.svg';
 import TagsWhiteIcon from '~assets/icons/tags-white-icon.svg';
 import { useRouter } from 'next/router';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
+import { useTranslation } from 'next-i18next';
 
 interface ITagsModalProps {
 	className?: string;
@@ -21,6 +22,7 @@ interface ITagsModalProps {
 }
 const TagsModal: FC<ITagsModalProps> = (props) => {
 	const { tags, track_name, proposalType, openTagsModal, setOpenTagsModal } = props;
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const handleTagClick = (pathname: string, filterBy: string) => {
@@ -49,7 +51,7 @@ const TagsModal: FC<ITagsModalProps> = (props) => {
 					<>
 						<label className='text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 							{theme === 'dark' ? <TagsWhiteIcon className='mr-2' /> : <TagsIcon className='mr-2' />}
-							Tags
+							{t('tags')}
 						</label>
 						<Divider
 							type='horizontal'

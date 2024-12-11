@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Form, Input, Spin } from 'antd';
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -21,11 +22,13 @@ import { EAmbassadorActions, IAmbassadorProposalCreation } from './types';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
+import { useTranslation } from 'next-i18next';
 
 const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const [form] = Form.useForm();
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
@@ -98,7 +101,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 
 		if (apiError || !data?.post_id) {
 			queueNotification({
-				header: 'Error',
+				header: t('error'),
 				message: apiError,
 				status: NotificationStatus.ERROR
 			});
@@ -111,7 +114,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !proposer) return;
 		const origin: any = { Origins: 'FellowshipAdmin' };
-		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
+		setLoading({ isLoading: true, message: t('awaiting_confirmation') });
 		const tx = api.tx.referenda.submit(origin, { Lookup: { hash: ambassadorPreimage?.hash, len: String(ambassadorPreimage?.length) } }, { After: BN_HUNDRED });
 		const postId = Number(await api.query.referenda.referendumCount());
 
@@ -125,8 +128,8 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 
 		const onFailed = () => {
 			queueNotification({
-				header: 'failed!',
-				message: 'Transaction failed!',
+				header: t('failed'),
+				message: t('transaction_failed'),
 				status: NotificationStatus.ERROR
 			});
 			setLoading({ isLoading: false, message: '' });
@@ -136,7 +139,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 			address: proposer || loginAddress,
 			api,
 			apiReady,
-			errorMessageFallback: 'failed!',
+			errorMessageFallback: t('failed'),
 			network,
 			onFailed,
 			onSuccess: onSuccess,
@@ -156,19 +159,19 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 					onFinish={handleSubmit}
 					disabled={loading.isLoading}
 					initialValues={{ content: discussion?.discussionContent, tags: discussion?.discussionTags || [], title: discussion?.discussionTitle || '' }}
-					validateMessages={{ required: "Please add the '${name}'" }}
+					validateMessages={{ required: t('required_field_message') }}
 				>
 					<div className={classNames('mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high', className)}>
-						<label className='font-medium'>Write a proposal :</label>
+						<label className='font-medium'>{t('write_a_proposal')}:</label>
 						<div className='mt-4'>
 							<label className='mb-0.5'>
-								Title <span className='text-nay_red'>*</span>
+								{t('title')} <span className='text-nay_red'>*</span>
 							</label>
 							<Form.Item
 								name='title'
 								rules={[
 									{
-										message: 'Title should not exceed 150 characters.',
+										message: t('title_max_chars'),
 										validator(rule, value, callback) {
 											if (callback && value?.length > 150) {
 												callback(rule?.message?.toString());
@@ -190,7 +193,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 							</Form.Item>
 						</div>
 						<div className='mt-6'>
-							<label className='mb-0.5'>Add Tags</label>
+							<label className='mb-0.5'>{t('add_tags')}</label>
 							<Form.Item name='tags'>
 								<AddTags
 									tags={discussion.discussionTags}
@@ -200,7 +203,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 						</div>
 						<div className='mt-6'>
 							<label className='mb-0.5'>
-								Description <span className='text-nay_red'>*</span>
+								{t('description')} <span className='text-nay_red'>*</span>
 							</label>
 
 							<Form.Item name='content'>
@@ -224,7 +227,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'
-							text='Create Proposal'
+							text={t('create_proposal')}
 							variant='primary'
 							height={40}
 							width={155}

@@ -11,6 +11,7 @@ import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Spin } from 'antd';
 import { convertGraphPoint, formatHoursAndDays } from '../../Referenda/Curves';
+import { useTranslation } from 'next-i18next';
 
 interface IProgress {
 	approval: number;
@@ -33,6 +34,7 @@ interface IThresholdGraph {
 
 const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 	const { data, progress, curvesError, curvesLoading, setData, forGovSidebar } = props;
+	const { t } = useTranslation('common');
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
@@ -182,7 +184,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
 								>
 									<span className='h-1 w-[32px] border-0 border-t border-solid border-[#E5007A]'></span>
-									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Support</span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>{t('support')}</span>
 								</button>
 								<button
 									onClick={() => {
@@ -191,7 +193,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
 								>
 									<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#E5007A]'></span>
-									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Support</span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>{t('current_support')}</span>
 								</button>
 								<button
 									onClick={() => {
@@ -200,7 +202,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
 								>
 									<span className='h-1 w-[32px] border-0 border-t border-solid border-[#5BC044]'></span>
-									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Approval</span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>{t('approval')}</span>
 								</button>
 								<button
 									onClick={() => {
@@ -209,7 +211,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
 								>
 									<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#5BC044]'></span>
-									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Approval</span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>{t('current_approval')}</span>
 								</button>
 							</article>
 						)}
@@ -221,7 +223,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											<span>
 												<AyeApprovalIcon />
 											</span>
-											Current Approval
+											{t('current_approval')}
 										</span>
 										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>{progress.approval}%</span>
 									</p>
@@ -230,7 +232,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											<span>
 												<AyeThresholdIcon />
 											</span>
-											Threshold
+											{t('threshold')}
 										</span>
 										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%
@@ -243,7 +245,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											<span>
 												<NayApprovalIcon />
 											</span>
-											Current Support
+											{t('current_support')}
 										</span>
 										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>{progress.support}%</span>
 									</p>
@@ -252,7 +254,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											<span>
 												<NayThresholdIcon />
 											</span>
-											Threshold
+											{t('threshold')}
 										</span>
 										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%

@@ -24,12 +24,15 @@ import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.DEMOCRACY_PROPOSALS;
@@ -42,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IProposalsProps {
@@ -55,6 +58,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 	const { data, error, network } = props;
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const [statusItem, setStatusItem] = useState([]);
 
@@ -87,14 +91,13 @@ const Proposals: FC<IProposalsProps> = (props) => {
 			/>
 			<div className='mt-3 flex items-center'>
 				<ProposalsIconListing className='-mt-3.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Proposals</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('on_chain_proposals')}</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
-					them.
+					{t('on_chain_proposals_desc')}
 				</p>
 			</div>
 

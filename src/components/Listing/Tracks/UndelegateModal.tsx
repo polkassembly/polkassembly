@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -44,6 +45,7 @@ interface Props {
 }
 const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const trackName = handleTrack(String(router.query.track));
@@ -168,7 +170,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				title={
 					<div className=' flex items-center border-0 border-b-[1px] border-solid border-section-light-container pb-3  text-[18px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:px-6 sm:pb-4 sm:text-[20px]'>
 						<UndelegateProfileIcon className='mr-2' />
-						Undelegate
+						{t('undelegate')}
 					</div>
 				}
 				open={open}
@@ -179,7 +181,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					<div className='-mx-6 flex items-center justify-evenly gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark sm:justify-end'>
 						<CustomButton
 							key='back'
-							text='Cancel'
+							text={t('cancel')}
 							buttonsize='xs'
 							variant='default'
 							disabled={loading}
@@ -189,7 +191,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<CustomButton
 							htmlType='submit'
 							key='submit'
-							text='Undelegate'
+							text={t('undelegate')}
 							buttonsize='xs'
 							variant='primary'
 							disabled={loading}
@@ -210,7 +212,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							className='mt-1 rounded-[4px] text-sm'
 							message={
 								<span className='text-sm dark:text-blue-dark-high sm:text-base'>
-									An approximate fee of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction
+									{t('an_approximate_fees_of')} {formatBalance(txFee.toNumber(), { forceUnit: unit })} {t('will_be_applied_to_the_transaction')}
 								</span>
 							}
 						/>
@@ -219,7 +221,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							disabled={true}
 						>
 							<div className='mt-4'>
-								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>{t('your_address')}</label>
 								<Address
 									isTruncateUsername={false}
 									address={defaultAddress}
@@ -231,7 +233,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-4'>
-								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
+								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>{t('delegated_to')}</label>
 								<Address
 									isTruncateUsername={false}
 									address={defaultTarget}
@@ -243,7 +245,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-4'>
-								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>Balance </label>
+								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>{t('balance')}</label>
 								<div className='cursor-not-allowed rounded-sm px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high sm:h-10'>{`${formatedBalance(
 									balance.toString(),
 									unit
@@ -252,7 +254,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className=' mt-3 border-solid border-white dark:border-0 sm:mt-4'>
 								<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Conviction
+									{t('conviction')}
 									<span>
 										<HelperTooltip
 											className='ml-2'
@@ -267,7 +269,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								</div>
 							</div>
 							<div className='mt-4 flex items-center justify-start gap-2 sm:mb-4 sm:mt-6'>
-								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue dark:text-blue-dark-medium'>Track:</label>
+								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue dark:text-blue-dark-medium'>{t('track')}:</label>
 								<span className='tracking-medium text-sm text-[#7c899b] dark:text-blue-dark-high'>
 									{trackName} #{trackNum}
 								</span>

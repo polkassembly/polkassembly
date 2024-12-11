@@ -4,6 +4,7 @@
 import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -21,6 +22,7 @@ interface Props {
 const AvailableTreasuryBalance = ({ available }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	return (
 		<>
@@ -83,8 +85,8 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 						{theme === 'dark' ? (
 							<ImageIcon
 								src='/assets/icons/AvailableDark.svg'
-								alt='available dark icon'
-								imgClassName='xs:hidden lg:block w-full'
+								alt={t('available_dark_icon')}
+								imgClassName='lg:hidden'
 							/>
 						) : (
 							// <Available className='xs:hidden lg:block' />

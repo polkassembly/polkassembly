@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Popover } from 'antd';
 import { EGovType } from '~src/types';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	selectedGov: EGovType;
@@ -12,7 +13,9 @@ interface Props {
 	totalCount: number;
 	onConfirm?: (pre: EGovType) => void;
 }
+
 const SelectGovType = ({ selectedGov, setSelectedGov, totalCount, onConfirm }: Props) => {
+	const { t } = useTranslation('common');
 	const [govTypeExpand, setgovTypeExpand] = useState(false);
 
 	const govTypeContent = (
@@ -24,7 +27,7 @@ const SelectGovType = ({ selectedGov, setSelectedGov, totalCount, onConfirm }: P
 					onConfirm?.(EGovType.GOV1);
 				}}
 			>
-				Gov1
+				{t('gov1')}
 			</span>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
@@ -33,10 +36,11 @@ const SelectGovType = ({ selectedGov, setSelectedGov, totalCount, onConfirm }: P
 					onConfirm?.(EGovType.OPEN_GOV);
 				}}
 			>
-				OpenGov
+				{t('open_gov')}
 			</span>
 		</div>
 	);
+
 	return (
 		<div className=''>
 			<Popover
@@ -46,7 +50,7 @@ const SelectGovType = ({ selectedGov, setSelectedGov, totalCount, onConfirm }: P
 				onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
 			>
 				<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-					{selectedGov.split('_').join('')}({totalCount})
+					{t(selectedGov.toLowerCase())} ({totalCount})
 					<span className='flex items-center'>
 						<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
 					</span>

@@ -10,6 +10,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import Address from '~src/ui-components/Address';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 interface IRankCardProps {
 	setLoginOpen: (open: boolean) => void;
@@ -17,6 +18,7 @@ interface IRankCardProps {
 
 const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const username = currentUser?.username;
 	const [profilescore, setProfileScore] = useState<number | null>(null);
@@ -43,7 +45,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 					const userRank = leaderboardData?.data[0]?.rank;
 					setUserRank(userRank);
 				} else {
-					console.log('User rank not found.');
+					console.log(t('user_rank_not_found'));
 				}
 			}
 		} catch (err) {
@@ -55,7 +57,7 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 		if (username) {
 			getUserProfile(username?.toString());
 		} else {
-			console.error('Username is not available');
+			console.error(t('username_not_available'));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, network]);
@@ -63,7 +65,9 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 	return (
 		<div>
 			<div className='relative mt-5 rounded-xxl text-[13px]'>
-				<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>Rank {userRank ?? '#00'}</p>
+				<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-[#243A57]'>
+					{t('rank')} {userRank ?? '#00'}
+				</p>
 				<div className='relative h-full w-full'>
 					<Image
 						src='/assets/rankcard1.svg'
@@ -105,9 +109,9 @@ const ActivityFeedRankCard: React.FC<IRankCardProps> = ({ setLoginOpen }) => {
 										onClick={() => setLoginOpen(true)}
 										className='cursor-pointer text-pink_primary underline'
 									>
-										Login
+										{t('login')}
 									</span>{' '}
-									to see your rank.
+									{t('to_see_your_rank')}.
 								</p>
 							</div>
 						)}

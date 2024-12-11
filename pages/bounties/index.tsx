@@ -26,8 +26,10 @@ import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import { RoundedDollarIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -44,7 +46,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		proposalType,
 		sortBy
 	});
-	return { props: { data, error, network } };
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
+	return { props: { data, error, network, ...translations } };
 };
 
 interface IBountiesProps {
@@ -56,6 +60,7 @@ interface IBountiesProps {
 const Bounties: FC<IBountiesProps> = (props) => {
 	const { data, error, network } = props;
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
 	const { resolvedTheme: theme } = useTheme();
@@ -93,18 +98,20 @@ const Bounties: FC<IBountiesProps> = (props) => {
 			>
 				<div className='flex items-center'>
 					<LeftOutlined className='mr-2 text-xs' />
-					<span className='text-sm font-medium'>Back to Bounties </span>
+					<span className='text-sm font-medium'>{t('back_to_bounties')} </span>
 				</div>
 			</Link>
 			<div className='mt-3 flex sm:items-center'>
 				<RoundedDollarIcon className='text-2xl text-lightBlue dark:text-white xs:mt-1 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Bounties ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					{t('on_chain_bounties')} ({count})
+				</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
 				<p className='w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:mb-4 md:p-8'>
-					This is the place to discuss on-chain bounties. Bounty posts are automatically generated as soon as they are created on-chain. Only the proposer is able to edit them.
+					{t('bounties_desc')}
 				</p>
 			</div>
 

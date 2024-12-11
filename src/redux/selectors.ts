@@ -28,6 +28,7 @@ import { IGlobalStore } from './global/@types';
 import { IChildBountyCreationStore } from './childBountyCreation/@types';
 import { ICommunityTabStore } from './communityTab/@types';
 import { IFollowState } from './follow/@types';
+import { IChatsStore } from './chats/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -124,6 +125,10 @@ const useFollowSelector = () => {
 	return useSelector<TAppState, IFollowState>((state) => state.follow);
 };
 
+const useChatsSelector = () => {
+	return useSelector<TAppState, IChatsStore>((state) => state.chats);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -149,5 +154,6 @@ export {
 	useGlobalSelector,
 	useChildBountyCreationSelector,
 	useCommunityTabSelector,
-	useFollowSelector
+	useFollowSelector,
+	useChatsSelector
 };

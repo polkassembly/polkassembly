@@ -43,7 +43,9 @@ import {
 	AllPostIcon,
 	BatchVotingIcon,
 	SelectedCalendar,
-	CommunityIcon
+	CommunityIcon,
+	BatchVotingIconDark,
+	DelegationSidebarIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -61,17 +63,18 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
-import getUserDropDown, { MenuItem, SidebarFoot1, SidebarFoot2 } from './menuUtils';
+import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
-
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
 import { onchainIdentitySupportedNetwork } from '.';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
+import CreateProposalDropdown from './CreateProposalDropdown';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
+import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
 
 const { Sider } = Layout;
 
@@ -216,10 +219,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '200px')};
-			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px !important')};
+			padding: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '1px 22px 1px 18px' : '1px 12px 1px 18px')} !important;
 			margin: ${(props: any) => {
 				if (isMobile) {
-					return !props.sidebarCollapsed && props.sidedrawer && '5px 10px 5px 25px';
+					return !props.sidebarCollapsed && props.sidedrawer ? '5px 10px 5px 25px' : '';
 				} else {
 					return props.sidebarCollapsed && !props.sidedrawer ? '3px 13px 3px 15px' : '3px 20px 3px 15px';
 				}
@@ -231,24 +234,24 @@ const Sidebar: React.FC<SidebarProps> = ({
 				!props.sidebarCollapsed && props.sidedrawer
 					? isMobile
 						? `
-        padding-left: 18px !important;  /* Adjust mobile-specific values here */
-        border-right-width: 15px;
-        margin-right: 15px;
-        top: 1px;
-		width:205px;
-        padding-right: 15px;
-        margin-left: 15px;
-
-      `
+			  padding-left: 18px !important;  /* Adjust mobile-specific values here */
+			  border-right-width: 15px;
+			  margin-right: 15px;
+			  top: 1px;
+			  width: 205px;
+			  padding-right: 15px;
+			  margin-left: 15px;
+			`
 						: `
-        padding-left: 16px !important; /* Adjust non-mobile values here */
-        border-right-width: 20px;
-        margin-right: 10px;
-        top: 1px;
-        right: 5px;
-        padding-right: 20px;
-        margin-left: 20px;
-        width: 199px;
+			  padding-left: 16px !important; /* Adjust non-mobile values here */
+			  border-right-width: 20px;
+			  margin-right: 10px;
+			  top: 1px;
+			  right: 5px;
+			  padding-right: 20px;
+			  margin-left: 20px;
+			  width: 199px;
+
       `
 					: ''}
 		}
@@ -256,33 +259,40 @@ const Sidebar: React.FC<SidebarProps> = ({
 		.ant-menu-submenu.ant-menu-submenu-inline > .ant-menu-submenu-title {
 			${() => {
 				if (isMobile) {
-					return `padding-left: 16px !important;
-			margin-left: 25px !important;`;
+					return `
+			padding-left: 16px !important;
+			margin-left: 25px !important;
+		  `;
 				} else {
-					return `padding-left: 16px !important;
-			margin-left: 20px !important;`;
+					return `
+			padding-left: 16px !important;
+			margin-left: 20px !important;
+		  `;
 				}
 			}}
 		}
+
 		.ant-menu-item .ant-menu-item-only-child {
 			margin-left: 10px;
 		}
+
 		.sidebar-selected-icon {
 			filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 		}
+
 		.ant-menu-inline .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
 			${(props: any) =>
 				!props.sidebarCollapsed && props.sidedrawer
 					? `
-        padding-left: 6px !important;
-        border-right-width: 20px;
-        margin-right: 10px;
-        top: 1px;
-        right: 5px;
-        padding-right: 20px;
-        margin-left: 20px;
-        width: 199px;
-      `
+			padding-left: 6px !important;
+			border-right-width: 20px;
+			margin-right: 10px;
+			top: 1px;
+			right: 5px;
+			padding-right: 20px;
+			margin-left: 20px;
+			width: 199px;
+		  `
 					: ''}
 		}
 	`;
@@ -425,25 +435,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
-		councilItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Motions
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
-							</span>
-						</div>,
-						'/motions',
-						<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
-			: [],
+		councilItems:
+			chainProperties[network]?.subsquidUrl || [AllNetworks.MYTHOS].includes(network)
+				? [
+						getSiderMenuItem(
+							<div className='flex items-center justify-between'>
+								Motions
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
+								</span>
+							</div>,
+							'/motions',
+							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+				  ]
+				: [],
 
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -690,6 +701,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
+	}
+	if ([AllNetworks.MYTHOS].includes(network)) {
+		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems].slice(1, 2))]);
+		collapsedItems = collapsedItems.concat([...gov1Items.councilItems].slice(1, 2));
 	}
 	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(
@@ -1067,7 +1082,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		!isMobile ? getSiderMenuItem('', '', null) : null,
 
 		getSiderMenuItem(
-			'Overview',
+			'Home',
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
@@ -1127,27 +1142,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 		)
 	];
 
-	if (isOpenGovSupported(network)) {
+	if (delegationSupportedNetworks.includes(network)) {
 		gov2OverviewItems.splice(
-			3,
+			4,
 			0,
 			getSiderMenuItem(
-				<div className='flex w-fit gap-2 text-sm font-medium'>
-					<span>Gov Analytics</span>
-					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
+				<div className='flex w-fit gap-2'>
+					<span className={`${dmSans.className} ${dmSans.variable} text-sm font-medium text-lightBlue dark:text-icon-dark-inactive`}>Delegation</span>
 				</div>,
-				'/gov-analytics',
-				<div className='relative -ml-2'>
-					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							opacity: sidedrawer ? 0 : 1,
-							transition: 'opacity 0.3s ease-in-out'
-						}}
-					>
-						NEW
-					</div>
+				'/delegation',
+				<div className='-ml-2 mt-1'>
+					<DelegationSidebarIcon className='scale-100 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>
 			)
 		);
@@ -1155,16 +1160,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (isOpenGovSupported(network) && ![AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA, AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2OverviewItems.splice(
-			3,
+			5,
 			0,
 			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
-					<span className='text-sm font-normal'>Batch Voting</span>
+				<div className='flex gap-2'>
+					<span>Batch Voting</span>
 					<div className={`${dmSans.className} ${dmSans.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/batch-voting',
 				<div className='relative -ml-2'>
-					<BatchVotingIcon className='text-8xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					{theme == 'light' ? (
+						<BatchVotingIcon className='-mt-[4px] scale-100 pl-0 font-medium text-transparent ' />
+					) : (
+						<BatchVotingIconDark className='-mt-[4px] scale-100 font-medium text-transparent ' />
+					)}
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
@@ -1805,6 +1814,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 			];
 		}
 
+		if (isOpenGovSupported(network)) {
+			const newItem = getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Gov Analytics</span>
+				</div>,
+				'/gov-analytics',
+				<div className='-ml-2'>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				</div>
+			);
+
+			gov2Items.splice(gov2Items.length - 2, 0, newItem);
+		}
+
 		const archivedDropdownContent = (
 			<div className='text-left'>
 				{items.map((item, index) => {
@@ -2016,7 +2039,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
 							{!sidebarCollapsed ? (
-								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-7`}>
+								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-9`}>
 									{onchainIdentitySupportedNetwork.includes(network) && (
 										<div className='activeborderhover group relative'>
 											<div
@@ -2213,9 +2236,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 					)}
 				</div>
 				<div
+					className={
+						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || (network === 'polkadot' && !sidebarCollapsed) ? '' : 'mt-6'
+					}
+				>
+					<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
+				</div>
+				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'
-					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[104px]' : 'mt-2 overflow-y-auto pb-56'}`}
+					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[154px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu
 						theme={theme as any}

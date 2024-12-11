@@ -8,6 +8,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { followsCollRef } from '~src/api-utils/firestore_refs';
+import updateFollowCounts from '~src/api-utils/updateUserFollowCounts';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -47,14 +48,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	const followsRef = followsCollRef();
-	const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).get();
-
-	if (!followsDoc.empty) {
-		await followsDoc.docs[0].ref.update({
-			isFollow: true,
-			updated_at: new Date()
-		});
-		return res.status(200).json({ message: 'User followed' });
+	try {
+		const followsDoc = await followsRef.where('follower_user_id', '==', user.id).where('followed_user_id', '==', userIdToFollow).where('network', '==', network).get();
+		if (!followsDoc.empty) {
+			await followsDoc.docs[0].ref.update({
+				isFollow: true,
+				updated_at: new Date()
+			});
+			res.status(200).json({ message: 'User followed' });
+			await updateFollowCounts({ isFollowing: true, network, targetUserId: userIdToFollow, userId: user.id });
+			return;
+		}
+	} catch (error) {
+		console.error('Error fetching follows document:', error);
+		return res.status(500).json({ message: 'Internal server error' });
 	}
 
 	const newFollowDoc = followsRef.doc();
@@ -74,7 +81,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	//TODO: create activity for the user followed
 	//TODO: send notification to the user followed
 
-	return res.status(200).json({ message: 'User followed' });
+	res.status(200).json({ message: 'User followed' });
+	await updateFollowCounts({ isFollowing: true, network, targetUserId: userIdToFollow, userId: user.id });
+	return;
 }
 
 export default withErrorHandling(handler);

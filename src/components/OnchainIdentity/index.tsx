@@ -79,6 +79,9 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				console.log('Error in unwrapping identity hash');
 			}
 			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			if (!identityAddress) {
+				dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
+			}
 		} catch (err) {
 			console.log(err);
 		}

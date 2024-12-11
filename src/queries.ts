@@ -2583,7 +2583,7 @@ query MyQuery ($trackNo: Int){
 
 export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
   query Rewards {
-    proposals(where: {type_eq: Bounty, status_in: [Proposed, Active, CuratorUnassigned, Extended]}) {
+    proposals(where: {type_eq: Bounty, status_in: [Active, CuratorUnassigned, Extended]}) {
       index
       reward
     }

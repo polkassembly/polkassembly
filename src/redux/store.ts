@@ -34,7 +34,9 @@ import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
 import { communityTabStore } from './communityTab';
+import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
+import { chatsStore } from './chats';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -113,6 +115,7 @@ export const makeStore = () => {
 
 	const rootReducer = combineReducers({
 		[globalStore.name]: globalStore.reducer,
+		[activityFeedSlice.name]: activityFeedSlice.reducer,
 		[networkStore.name]: networkStore.reducer,
 		[userDetailsStore.name]: userDetailsStore.reducer,
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
@@ -136,7 +139,8 @@ export const makeStore = () => {
 		[claimPayoutStore.name]: claimPayoutStore.reducer,
 		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer,
 		[childBountyCreationStore.name]: childBountyCreationStore.reducer,
-		[followStore.name]: followStore.reducer
+		[followStore.name]: followStore.reducer,
+		[chatsStore.name]: chatsStore.reducer
 	});
 
 	if (isServer) {
@@ -166,7 +170,8 @@ export const makeStore = () => {
 				'ambassadorRemoval',
 				'ambassadorReplacement',
 				'claimPayout',
-				'childBountyCreation'
+				'childBountyCreation',
+				'activityFeed'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

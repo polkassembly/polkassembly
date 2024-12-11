@@ -13,12 +13,16 @@ const useAssetHubApi = (network: string) => {
 	const [assethubApiReady, setAssethubApiReady] = useState<boolean>(false);
 	const [assethubValues, setAssethubValues] = useState<{
 		dotValue: BN;
+		dotValueFellowship: BN;
 		usdcValue: BN;
 		usdtValue: BN;
+		usdtValueFellowship: BN;
 	}>({
 		dotValue: ZERO_BN,
+		dotValueFellowship: ZERO_BN,
 		usdcValue: ZERO_BN,
-		usdtValue: ZERO_BN
+		usdtValue: ZERO_BN,
+		usdtValueFellowship: ZERO_BN
 	});
 
 	useEffect(() => {
@@ -63,12 +67,20 @@ const useAssetHubApi = (network: string) => {
 		if (assethubApiReady && chainProperties?.[network]?.assetHubTreasuryAddress) {
 			try {
 				// Fetch balance in DOT
-				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
+				const tokenResult: any = await assethubApi?.query?.system?.account(chainProperties[network].assetHubTreasuryAddress);
 				if (tokenResult?.data?.free) {
 					const freeTokenBalance = tokenResult.data.free.toBigInt();
 					setAssethubValues((values) => ({
 						...values,
 						dotValue: new BN(freeTokenBalance)
+					}));
+				}
+				const tokenResult2: any = await assethubApi?.query?.system?.account(chainProperties[network].assetHubTreasuryAddress2);
+				if (tokenResult2?.data?.free) {
+					const freeTokenBalance = tokenResult2.data.free.toBigInt();
+					setAssethubValues((values) => ({
+						...values,
+						dotValueFellowship: new BN(freeTokenBalance)
 					}));
 				}
 
@@ -106,6 +118,23 @@ const useAssetHubApi = (network: string) => {
 						setAssethubValues((values) => ({
 							...values,
 							usdtValue: new BN(freeUSDTBalance)
+						}));
+					}
+				}
+				if (chainProperties[network]?.supportedAssets?.[1].genralIndex) {
+					const usdtResult = (await assethubApi.query.assets.account(
+						chainProperties[network]?.supportedAssets?.[1].genralIndex,
+						chainProperties[network].assetHubTreasuryAddress3
+					)) as any;
+
+					if (usdtResult.isNone) {
+						console.log('No data found for the USDT assets');
+					} else {
+						const data = usdtResult.unwrap();
+						const freeUSDTBalance = data.balance.toBigInt();
+						setAssethubValues((values) => ({
+							...values,
+							usdtValueFellowship: new BN(freeUSDTBalance)
 						}));
 					}
 				}

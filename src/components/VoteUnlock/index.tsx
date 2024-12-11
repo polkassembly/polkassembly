@@ -46,7 +46,8 @@ export const votesUnlockUnavailableNetworks = [
 	AllNetworks.POLYMESH,
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
-	AllNetworks.MOONBEAM
+	AllNetworks.MOONBEAM,
+	AllNetworks.MYTHOS
 ];
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {

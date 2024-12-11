@@ -50,6 +50,7 @@ import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
 import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
 import CommunitySVG from '~assets/sidebar/community-tab-icon.svg';
+import BatchVotingSVGDark from '~assets/sidebar/batch-voting-dark.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
 import AuctionAdminSVG from '~assets/sidebar/auction.svg';
@@ -116,7 +117,9 @@ import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import profileSVG from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
+import proxyIcon from '~assets/icons/userDropdown/proxy-icon.svg';
 import logoutSVG from '~assets/icons/userDropdown/logout.svg';
+import AccountsSVG from '~assets/icons/userDropdown/accounts.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 // import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
@@ -252,6 +255,12 @@ export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
 		{...props}
 	/>
 );
+export const AccountsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AccountsSVG}
+		{...props}
+	/>
+);
 
 export const ProposalsIconListing = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -284,6 +293,12 @@ export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (
 export const IconSettings = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={settingsIcon}
+		{...props}
+	/>
+);
+export const ProxyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={proxyIcon}
 		{...props}
 	/>
 );
@@ -515,6 +530,12 @@ export const CalendarIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BatchVotingSVG}
+		{...props}
+	/>
+);
+export const BatchVotingIconDark = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BatchVotingSVGDark}
 		{...props}
 	/>
 );

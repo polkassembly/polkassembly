@@ -20,6 +20,7 @@ import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from '~src/types';
 import ProfileFollows from './ProfileFollows';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -112,7 +113,8 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<ClipboardIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
-					Posts<span className='ml-[2px]'>({totals?.posts})</span>
+					Posts
+					<span className='ml-[2px]'>({totals?.posts || userPosts?.gov1_total})</span>
 				</div>
 			)
 		},
@@ -181,7 +183,7 @@ const ProfileTabs = ({
 			)
 		});
 	}
-	if (!votesHistoryUnavailableNetworks.includes(network)) {
+	if (!votesHistoryUnavailableNetworks.includes(network) && !!chainProperties[network]?.subsquidUrl) {
 		tabItems.splice(1, 0, {
 			children: (
 				<VotesHistory

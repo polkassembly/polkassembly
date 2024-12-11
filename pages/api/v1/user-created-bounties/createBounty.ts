@@ -25,7 +25,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim } = req.body;
+		const { title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim, twitterHandle } = req.body;
 
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
@@ -37,6 +37,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		if (!reward || new BN(reward || 0).eq(ZERO_BN)) {
 			return res.status(400).json({ message: 'Invalid reward Amount.' });
+		}
+		if (!twitterHandle?.length) {
+			return res.status(400).json({ message: 'Invalid Twitter Handle Account.' });
 		}
 		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address.' });
@@ -70,13 +73,14 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			id: totalCreatedBountiesCount,
 			maxClaim: maxClaim,
 			network: network,
+			proposalType: ProposalType.BOUNTIES,
 			proposer: getEncodedAddress(proposerAddress, network) || '',
 			reward: reward || '0',
 			status: EUserCreatedBountiesStatuses.ACTIVE,
 			submissionGuidelines: submissionGuidelines || '',
 			tags: tags || [],
 			title: title || '',
-			type: ProposalType.BOUNTIES,
+			twitterHandle: twitterHandle,
 			updatedAt: new Date(),
 			userId: user?.id
 		};

@@ -2209,7 +2209,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
+				<div
+					className={
+						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || (network === 'polkadot' && !sidebarCollapsed) ? '' : 'mt-6'
+					}
+				>
+					<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
+				</div>
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'

@@ -112,7 +112,7 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 
 	if (!Object.values(AllNetworks).includes(network)) {
 		if (network == 'test') {
-			network = 'kusama';
+			network = 'paseo';
 		} else if (network == 'test-polkadot') {
 			network = 'polkadot';
 		} else if (network == 'moonriver-test') {

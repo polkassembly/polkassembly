@@ -57,7 +57,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
 	const [bounties, setBounties] = useState<IUserCreatedBounty[]>(props.bounties);
 	const handleRowClick = (record: IBountyListing) => {
-		router.push(`/bounty/${record?.index}`);
+		router.push(`/user-created-bounty/${record?.index}`);
 	};
 	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);

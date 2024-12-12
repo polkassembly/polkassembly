@@ -110,7 +110,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			deadlineDate: dayjs(values?.deadline).toDate(),
 			maxClaim: Number(values?.claims),
 			proposerAddress: values?.address,
-			reward: newBountyAmount.toString(),
+			reward: newBountyAmount?.toString(),
 			submissionGuidelines: values?.guidelines,
 			tags: values?.categories,
 			title: values?.title,

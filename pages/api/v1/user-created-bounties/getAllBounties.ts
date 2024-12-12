@@ -56,8 +56,8 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 				const data = doc?.data();
 				const payload: IUserCreatedBounty = {
 					content: data?.content,
-					createdAt: data?.createdAt,
-					deadlineDate: data?.deadlineDate,
+					createdAt: data?.createdAt?.toDate ? data?.createdAt?.toDate() : data?.createdAt,
+					deadlineDate: data?.deadlineDate.toDate ? data?.deadlineDate.toDate() : data?.deadlineDate,
 					id: data?.id,
 					maxClaim: data?.maxClaim,
 					proposalType: data?.proposalType,
@@ -69,7 +69,7 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 					tags: data?.tags || [],
 					title: data?.title || '',
 					twitterHandle: data?.twitterHandle,
-					updatedAt: data?.updatedAt,
+					updatedAt: data?.updatedAt.toDate ? data?.updatedAt.toDate() : data?.updatedAt,
 					userId: data?.userId
 				};
 				allBounties?.push(payload);

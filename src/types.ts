@@ -1213,3 +1213,33 @@ export interface IChatsResponse {
 	messages: IChat[];
 	requests: IChat[];
 }
+
+export enum EUserCreatedBountiesStatuses {
+	ACTIVE = 'active',
+	CLOSED = 'closed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled'
+}
+
+export interface IUserCreatedBounty {
+	content: string;
+	createdAt: string;
+	deadlineDate: string;
+	history: IPostHistory[];
+	id: number;
+	maxClaim: number;
+	proposalType: ProposalType;
+	proposer: string;
+	reward: string;
+	status: EUserCreatedBountiesStatuses;
+	submissionGuidelines: string;
+	tags: string[];
+	title: string;
+	network?: string;
+	twitterHandle: string;
+	source: 'polkassembly' | 'twitter';
+	updatedAt: string;
+	userId: number;
+	comments?: string[];
+	index?: number;
+}

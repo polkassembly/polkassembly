@@ -25,7 +25,6 @@ import { IBountyListing } from '~src/components/Bounties/BountiesListing/types/t
 
 interface IOnchainBountiesProps {
 	bounties: IUserCreatedBounty[];
-	loading?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -51,7 +50,6 @@ const Categories = ({ categories }: { categories: string[] }) => {
 };
 
 const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
-	const { loading } = props;
 	const { resolvedTheme: theme = 'light' } = useTheme();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
@@ -109,7 +107,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'w-[20px]',
 			dataIndex: 'id',
 			key: 'id',
-			render: (id: number) => (id ? id : '-'),
+			render: (id: number) => id,
 			title: '#'
 		},
 		{
@@ -257,7 +255,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 
 	return (
 		<StyledTableContainer themeMode={theme}>
-			<Spin spinning={loading}>
+			<div>
 				<Table
 					theme={theme}
 					rowKey={(record) => record.index}
@@ -383,7 +381,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					dataSource={bounties}
 					pagination={false}
 				/>
-			</Spin>
+			</div>
 		</StyledTableContainer>
 	);
 };

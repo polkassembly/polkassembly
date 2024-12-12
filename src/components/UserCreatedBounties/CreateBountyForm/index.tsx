@@ -56,12 +56,13 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/user-created-bounties/createBounty', {
 			content: values?.description,
 			deadlineDate: dayjs(values?.deadline).toDate(),
-			maxClaim: values?.claims,
+			maxClaim: Number(values?.claims),
 			proposerAddress: values?.address,
 			reward: newBountyAmount.toString(),
 			submissionGuidelines: values?.guidelines,
 			tags: values?.categories,
-			title: values?.title
+			title: values?.title,
+			twitterHandle: values?.twitter
 		});
 		if (error) {
 			console.error('error resetting passoword : ', error);
@@ -196,7 +197,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								<BalanceInput
 									theme={theme}
 									balance={newBountyAmount}
-									formItemName='balance'
+									// formItemName='balance'
 									placeholder='Enter an amount for your bounty'
 									inputClassName='dark:text-blue-dark-high text-bodyBlue'
 									noRules
@@ -324,9 +325,9 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 							disabled={loading}
 							buttonsize='sm'
 							htmlType='submit'
-							// loading={loading}
-							// className={`${loading ? 'opacity-60' : ''}`}
-							// disabled={!report_uploaded}
+							onClick={() => {
+								setOpenCreateBountyModal?.(false);
+							}}
 						/>
 					</Form.Item>
 				</div>

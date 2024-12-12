@@ -16,39 +16,41 @@ import { useRouter } from 'next/router';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import CreateBountyBtn from '~src/components/UserCreatedBounties/CreateBountyBtn';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IUserCreatedBounty } from '~src/types';
-import { MessageType } from '~src/auth/types';
 import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
+import { getUserCreatedBounties } from 'pages/api/v1/user-created-bounties/getAllBounties';
 
 interface IUserBountiesListingProps {
 	network: string;
-	status?: string | string[];
-	filterBy?: string | string[];
+	data?: any;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req?.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	// const page = query?.page || 1;
+	const page = query?.page || 1;
 	const filterBy = query?.filterBy ? JSON.parse(decodeURIComponent(String(query?.filterBy))) : [];
 	const status = query?.status ? JSON.parse(decodeURIComponent(String(query?.status))) : '';
 
+	const { data } = await getUserCreatedBounties({
+		filterBy: filterBy,
+		network,
+		page: Number(page),
+		status
+	});
+
 	return {
 		props: {
-			filterBy,
-			network,
-			status
+			data,
+			network
 		}
 	};
 };
 
 const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
-	const { network, status, filterBy } = props;
+	const { network, data } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const [loading, setLoading] = useState<boolean>(true);
 	const [bounties, setBounties] = useState<any>();
 	const { resolvedTheme: theme } = useTheme();
 	const onPaginationChange = (page: number) => {
@@ -61,26 +63,9 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 		});
 	};
 	useEffect(() => {
-		getUserBountyDetails();
+		setBounties(data);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, filterBy]);
-	const getUserBountyDetails = async () => {
-		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IUserCreatedBounty[] | MessageType>('api/v1/user-created-bounties/getAllBounties', {
-			filterBy,
-			page: Number(router?.query?.page) || 1,
-			status
-		});
-		if (error) {
-			console.error('error getting data ', error);
-			setLoading(false);
-		}
-
-		if (data) {
-			setBounties(data);
-			setLoading(false);
-		}
-	};
+	}, [data]);
 
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
@@ -117,10 +102,7 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 						<CreateBountyBtn className='hidden md:block' />
 					</div>
 				</div>
-				<BountiesTabItems
-					bounties={bounties}
-					loading={loading}
-				/>
+				<BountiesTabItems bounties={bounties} />
 
 				<div className='mb-5 mt-3 flex justify-end'>
 					{bounties?.length > BOUNTIES_LISTING_LIMIT && (

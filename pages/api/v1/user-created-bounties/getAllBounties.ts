@@ -9,6 +9,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -56,20 +57,20 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 				const data = doc?.data();
 				const payload: IUserCreatedBounty = {
 					content: data?.content,
-					createdAt: data?.createdAt?.toDate(),
-					deadlineDate: data?.deadlineDate?.toDate(),
+					createdAt: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
+					deadlineDate: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
 					id: data?.id,
 					maxClaim: data?.maxClaim,
-					proposalType: data?.proposalType,
+					proposalType: data?.proposalType || ProposalType.BOUNTIES,
 					proposer: data?.proposer || '',
 					reward: data?.reward || '0',
-					source: data?.source,
+					source: data?.source || 'Polkassembly',
 					status: data?.status,
 					submissionGuidelines: data?.submissionGuidelines || '',
 					tags: data?.tags || [],
 					title: data?.title || '',
-					twitterHandle: data?.twitterHandle,
-					updatedAt: data?.updatedAt?.toDate(),
+					twitterHandle: data?.twitterHandle || '',
+					updatedAt: data?.updatedAt.toDate ? String(data?.updatedAt.toDate()) : data?.updatedAt,
 					userId: data?.userId
 				};
 				allBounties?.push(payload);

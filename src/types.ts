@@ -1225,6 +1225,7 @@ export interface IUserCreatedBounty {
 	content: string;
 	createdAt: string;
 	deadlineDate: string;
+	history: IPostHistory[];
 	id: number;
 	maxClaim: number;
 	proposalType: ProposalType;
@@ -1240,4 +1241,5 @@ export interface IUserCreatedBounty {
 	updatedAt: string;
 	userId: number;
 	index?: number;
+	comments?: string[];
 }

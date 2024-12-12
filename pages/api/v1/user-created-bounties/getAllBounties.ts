@@ -21,7 +21,12 @@ interface Args {
 	network: string;
 }
 
-export async function getUserCreatedBounties({ status, filterBy, page, network }: Args): Promise<IApiResponse<IUserCreatedBounty[] | MessageType>> {
+export async function getUserCreatedBounties({
+	status,
+	filterBy,
+	page,
+	network
+}: Args): Promise<IApiResponse<{ bounties: IUserCreatedBounty[]; totalCount: number } | MessageType>> {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -44,6 +49,8 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('status', '==', status);
 		}
 
+		const totalCreatedBountiesCountSnapshot = await userCreatedBountiesSnapshot.count().get();
+
 		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot
 			.limit(LISTING_LIMIT)
 			.offset((Number(page) - 1) * Number(LISTING_LIMIT))
@@ -59,6 +66,7 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 					content: data?.content,
 					createdAt: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
 					deadlineDate: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
+					history: data?.history || [],
 					id: data?.id,
 					maxClaim: data?.maxClaim,
 					proposalType: data?.proposalType || ProposalType.BOUNTIES,
@@ -78,7 +86,7 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 		});
 
 		return {
-			data: allBounties || [],
+			data: { bounties: allBounties || [], totalCount: totalCreatedBountiesCountSnapshot?.data()?.count || 0 },
 			error: null,
 			status: 200
 		};
@@ -90,7 +98,7 @@ export async function getUserCreatedBounties({ status, filterBy, page, network }
 		};
 	}
 }
-const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ bounties: IUserCreatedBounty[]; totalCount: number } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {

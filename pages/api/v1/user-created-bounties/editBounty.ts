@@ -12,9 +12,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EUserCreatedBountiesStatuses } from '~src/types';
-import { ProposalType } from '~src/global/proposalType';
+import { IPostHistory } from '~src/types';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 const ZERO_BN = new BN(0);
@@ -23,11 +21,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {
-		//TODO: add secret key:
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim, twitterHandle } = req.body;
+		const { title, content, tags, reward, submissionGuidelines, deadlineDate, maxClaim, bountyId } = req.body;
 
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
@@ -40,10 +37,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!reward || new BN(reward || 0).eq(ZERO_BN)) {
 			return res.status(400).json({ message: 'Invalid reward Amount.' });
 		}
-		if (!twitterHandle?.length) {
-			return res.status(400).json({ message: 'Invalid Twitter Handle Account.' });
-		}
-		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
+		if (isNaN(bountyId)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address.' });
 		}
 		if (!firebaseFormatedDeadline) {
@@ -59,37 +53,41 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
 			return res.status(400).json({ message: 'Invalid Tags Assigned.' });
 		}
+		const bountySnapshot = firestore_db
+			.collection('user_created_bounties')
+			.where('network', '==', network)
+			.where('id', '==', Number(bountyId))
+			.where('userId', '==', user?.id)
+			.limit(1);
 
-		const userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties');
+		const bountyDoc = await bountySnapshot?.get();
 
-		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.count().get();
+		if (bountyDoc.empty) {
+			return res.status(400).json({ message: `No bounty found with the id-${bountyId}` });
+		}
+		const bounty = bountyDoc?.docs?.[0]?.data();
 
-		const totalCreatedBountiesCount = totalCreatedBountiesSnapshot?.data()?.count;
+		const newHistory: IPostHistory = {
+			content: bounty?.content,
+			created_at: bounty?.updatedAt,
+			title: bounty?.title
+		};
 
-		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
+		const history = bounty?.history && Array.isArray(bounty?.history) ? [newHistory, ...(bounty?.history || [])] : [];
 
 		const payload = {
 			content,
-			createdAt: new Date(),
 			deadlineDate: new Date(deadlineDate),
-			history: [],
-			id: totalCreatedBountiesCount,
+			history,
 			maxClaim: maxClaim,
-			network: network,
-			proposalType: ProposalType.USER_CREATED_BOUNTIES,
-			proposer: getEncodedAddress(proposerAddress, network) || '',
 			reward: reward || '0',
-			source: 'polkassembly',
-			status: EUserCreatedBountiesStatuses.ACTIVE,
 			submissionGuidelines: submissionGuidelines || '',
 			tags: tags || [],
 			title: title || '',
-			twitterHandle: twitterHandle,
-			updatedAt: new Date(),
-			userId: user?.id
+			updatedAt: new Date()
 		};
 
-		await bountyDoc?.set(payload, { merge: true });
+		await bountyDoc?.docs?.[0]?.ref?.update(payload);
 
 		return res.status(200).json({ message: messages?.SUCCESS });
 	} catch (err) {

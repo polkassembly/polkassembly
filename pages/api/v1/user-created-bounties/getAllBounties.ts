@@ -56,8 +56,8 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 				const data = doc?.data();
 				const payload: IUserCreatedBounty = {
 					content: data?.content,
-					createdAt: data?.createdAt,
-					deadlineDate: data?.deadlineDate,
+					createdAt: data?.createdAt?.toDate(),
+					deadlineDate: data?.deadlineDate?.toDate(),
 					id: data?.id,
 					maxClaim: data?.maxClaim,
 					proposalType: data?.proposalType,
@@ -68,7 +68,7 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 					tags: data?.tags || [],
 					title: data?.title || '',
 					twitterHandle: data?.twitterHandle,
-					updatedAt: data?.updatedAt,
+					updatedAt: data?.updatedAt?.toDate(),
 					userId: data?.userId
 				};
 				allBounties?.push(payload);

@@ -1238,4 +1238,5 @@ export interface IUserCreatedBounty {
 	twitterHandle: string;
 	updatedAt: string;
 	userId: number;
+	index?: number;
 }

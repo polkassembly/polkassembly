@@ -1240,5 +1240,5 @@ export interface IUserCreatedBounty {
 	source: 'polkassembly' | 'twitter';
 	updatedAt: string;
 	userId: number;
-	comments?: string[];
+	comments?: any[];
 }

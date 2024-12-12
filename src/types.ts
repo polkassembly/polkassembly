@@ -1240,6 +1240,6 @@ export interface IUserCreatedBounty {
 	source: 'polkassembly' | 'twitter';
 	updatedAt: string;
 	userId: number;
-	index?: number;
 	comments?: string[];
+	index?: number;
 }

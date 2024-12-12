@@ -29,7 +29,7 @@ query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
 
 export const GET_LATEST_PREIMAGES = `
 query MyQuery($hash_eq: String = "") {
-  preimages(limit: 1, orderBy: createdAt_DESC, where: {status_eq: Noted, hash_eq: $hash_eq}) {
+  preimages(limit: 1, orderBy: createdAt_DESC, where: {status_in: [Noted, Requested], hash_eq: $hash_eq}) {
     hash
     deposit
     createdAtBlock

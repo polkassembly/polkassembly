@@ -18,9 +18,11 @@ import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { ESocials, NotificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';
 import BN from 'bn.js';
+import { IVerificationResponse } from 'pages/api/v1/verification';
+import messages from '~src/auth/utils/messages';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -33,10 +35,13 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [open, setOpen] = useState(false);
 	const { loginAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [startLoading, setStartLoading] = useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>(loginAddress);
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const [tags, setTags] = useState<string[]>([]);
+	const [isTwitterVerified, setIsTwitterVerified] = useState<boolean>(false);
+	const [twitterUrl, setTwitterUrl] = useState<string>('');
 	const [newBountyAmount, setNewBountyAmount] = useState<any>();
 
 	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
@@ -48,6 +53,53 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const disabledDate: RangePickerProps['disabledDate'] = (current: any) => {
 		// Can not select days before today and today
 		return current && current < dayjs().endOf('day');
+	};
+
+	const handleVerify = async (checkingVerified?: boolean) => {
+		const fieldName = ESocials.TWITTER;
+		const account = twitterUrl?.split('@')?.[1] || twitterUrl;
+		setStartLoading(true);
+
+		const { data, error } = await nextApiClientFetch<IVerificationResponse>('api/v1/verification', {
+			account,
+			checkingVerified: Boolean(checkingVerified),
+			type: fieldName
+		});
+
+		if (error) {
+			console.log(error);
+			setIsTwitterVerified(false);
+			if (error === messages.INVALID_JWT)
+				queueNotification({
+					header: 'Error!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
+		}
+		if (data) {
+			setIsTwitterVerified(true);
+		}
+		setStartLoading(false);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	};
+
+	const handleTwitterVerification = async () => {
+		setStartLoading(true);
+		const twitterHandle = twitterUrl?.split('@')?.[1] || twitterUrl;
+		const { data, error } = await nextApiClientFetch<{ url?: string }>(`api/v1/verification/twitter-verification?twitterHandle=${twitterHandle}`);
+
+		if (data && data?.url) {
+			handleVerify();
+			window.open(data?.url, '_blank');
+		} else if (error) {
+			queueNotification({
+				header: 'Error!',
+				message: error,
+				status: NotificationStatus.ERROR
+			});
+			console.log(error);
+		}
+		setStartLoading(false);
 	};
 
 	const handleFormSubmit = async (values: any) => {
@@ -133,14 +185,28 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 							>
 								<Input
 									name='twitter'
+									onChange={(e) => {
+										setTwitterUrl(e?.target?.value);
+									}}
 									suffix={
-										<CustomButton
-											text='Verify'
-											width={80}
-											className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
-											height={24}
-											variant='primary'
-										/>
+										<>
+											{!isTwitterVerified ? (
+												<CustomButton
+													text='Verify'
+													width={80}
+													loading={startLoading}
+													disabled={twitterUrl?.length < 0 || startLoading}
+													onClick={() => {
+														handleTwitterVerification();
+													}}
+													className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
+													height={24}
+													variant='primary'
+												/>
+											) : (
+												<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>(verified)</p>
+											)}
+										</>
 									}
 									placeholder='@YourTwitter (case sensitive)'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}

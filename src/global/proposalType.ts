@@ -24,7 +24,8 @@ export enum ProposalType {
 	TECHNICAL_PIPS = 'technical_pips',
 	UPGRADE_PIPS = 'upgrade_pips',
 	COMMUNITY_PIPS = 'community_pips',
-	ADVISORY_COMMITTEE = 'advisory_committee'
+	ADVISORY_COMMITTEE = 'advisory_committee',
+	USER_CREATED_BOUNTIES = 'user_cerated_bounties'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -81,7 +82,9 @@ export function isValidSubsquidProposalType(type: string) {
 	return validSubsquidProposalTypes.includes(type as TSubsquidProposalType);
 }
 
-export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType {
+export function getSubsquidProposalType(
+	proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS | ProposalType.USER_CREATED_BOUNTIES>
+): TSubsquidProposalType {
 	switch (proposalType) {
 		case ProposalType.DEMOCRACY_PROPOSALS:
 			return 'DemocracyProposal';
@@ -118,7 +121,7 @@ export function getSubsquidProposalType(proposalType: Exclude<ProposalType, Prop
 	}
 }
 
-export function getSubsquidLikeProposalType(proposalType: ProposalType): string {
+export function getSubsquidLikeProposalType(proposalType: Exclude<ProposalType, ProposalType.USER_CREATED_BOUNTIES>): string {
 	if (proposalType === ProposalType.DISCUSSIONS) {
 		return 'Discussions';
 	} else if (proposalType === ProposalType.GRANTS) {

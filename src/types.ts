@@ -1225,6 +1225,7 @@ export interface IUserCreatedBounty {
 	content: string;
 	createdAt: string;
 	deadlineDate: string;
+	history: IPostHistory[];
 	id: number;
 	maxClaim: number;
 	proposalType: ProposalType;
@@ -1239,4 +1240,5 @@ export interface IUserCreatedBounty {
 	source: 'polkassembly' | 'twitter';
 	updatedAt: string;
 	userId: number;
+	comments?: string[];
 }

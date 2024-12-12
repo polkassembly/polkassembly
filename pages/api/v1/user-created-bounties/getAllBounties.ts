@@ -10,35 +10,35 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
+import { EUserCreatedBountiesStatuses, IApiResponse, IUserCreatedBounty } from '~src/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
-const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, res) => {
-	storeApiKeyUsage(req);
+interface Args {
+	status: EUserCreatedBountiesStatuses;
+	filterBy: string[];
+	page: number;
+	network: string;
+}
 
+export async function getUserCreatedBounties({ status, filterBy, page, network }: Args): Promise<IApiResponse<IUserCreatedBounty[] | MessageType>> {
 	try {
-		const network = String(req.headers['x-network']);
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		const { status, filterBy, page } = req.body;
+		if (status && !Object.values(EUserCreatedBountiesStatuses).includes(status)) {
+			throw apiErrorWithStatusCode('Invalid Status Param', 400);
+		}
+		if (filterBy?.length && !!filterBy?.filter((tag: string) => typeof tag !== 'string')?.length) {
+			throw apiErrorWithStatusCode('Invalid Tags in Param', 400);
+		}
+		if (isNaN(page)) {
+			throw apiErrorWithStatusCode('Invalid Page Param', 400);
+		}
 
 		let userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties').where('network', '==', network);
 
-		if (
-			status &&
-			![EUserCreatedBountiesStatuses.ACTIVE, EUserCreatedBountiesStatuses?.CANCELLED, EUserCreatedBountiesStatuses?.CLAIMED, EUserCreatedBountiesStatuses?.CLOSED].includes(status)
-		) {
-			return res.status(400).json({ message: 'Invalid Status Param' });
-		}
-		if (filterBy?.length && !!filterBy?.filter((tag: string) => typeof tag !== 'string')?.length) {
-			return res.status(400).json({ message: 'Invalid Tags Param' });
-		}
-		if (isNaN(page)) {
-			return res.status(400).json({ message: 'Invalid Page Param' });
-		}
 		if (filterBy?.length) {
 			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('tags', 'array-contains-any', filterBy);
 		}
-
 		if (status) {
 			userCreatedBountiesSnapshot = userCreatedBountiesSnapshot.where('status', '==', status);
 		}
@@ -63,6 +63,7 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 					proposalType: data?.proposalType,
 					proposer: data?.proposer || '',
 					reward: data?.reward || '0',
+					source: data?.source,
 					status: data?.status,
 					submissionGuidelines: data?.submissionGuidelines || '',
 					tags: data?.tags || [],
@@ -75,7 +76,40 @@ const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, 
 			}
 		});
 
-		return res.status(200).json(allBounties || []);
+		return {
+			data: allBounties || [],
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error || messages.API_FETCH_ERROR,
+			status: 500
+		};
+	}
+}
+const handler: NextApiHandler<IUserCreatedBounty[] | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
+	try {
+		const network = String(req.headers['x-network']);
+		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+
+		const { status, filterBy, page } = req.body;
+
+		const { data, error } = await getUserCreatedBounties({
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			network: network,
+			page: page || 1,
+			status: status ? JSON.parse(decodeURIComponent(String(status))) : ''
+		});
+
+		if (data) {
+			return res.status(200).json(data || []);
+		} else if (error) {
+			return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+		}
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

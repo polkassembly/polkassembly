@@ -22,6 +22,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {
+		//TODO: add secret key:
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
@@ -76,6 +77,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			proposalType: ProposalType.BOUNTIES,
 			proposer: getEncodedAddress(proposerAddress, network) || '',
 			reward: reward || '0',
+			source: 'polkassembly',
 			status: EUserCreatedBountiesStatuses.ACTIVE,
 			submissionGuidelines: submissionGuidelines || '',
 			tags: tags || [],

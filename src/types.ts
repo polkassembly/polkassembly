@@ -1236,6 +1236,7 @@ export interface IUserCreatedBounty {
 	title: string;
 	network?: string;
 	twitterHandle: string;
+	source: 'polkassembly' | 'twitter';
 	updatedAt: string;
 	userId: number;
 	index?: number;

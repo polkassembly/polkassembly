@@ -59,23 +59,23 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 		const payload: IUserCreatedBounty = {
 			comments: comments || [],
 			content: bountyData?.content,
-			createdAt: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
-			deadlineDate: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
+			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
+			deadline_date: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
 			history: history || [],
-			id: bountyData?.id,
-			maxClaim: bountyData?.maxClaim,
-			postReactions: post_reactions,
-			proposalType: bountyData?.proposalType,
+			max_claim: bountyData?.maxClaim,
+			post_index: bountyData?.id,
+			post_reactions: post_reactions,
+			post_type: bountyData?.proposalType,
 			proposer: bountyData?.proposer || '',
 			reward: bountyData?.reward || '0',
 			source: bountyData?.source,
 			status: bountyData?.status,
-			submissionGuidelines: bountyData?.submissionGuidelines || '',
+			submission_guidelines: bountyData?.submissionGuidelines || '',
 			tags: bountyData?.tags || [],
 			title: bountyData?.title || '',
-			twitterHandle: bountyData?.twitterHandle,
-			updatedAt: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
-			userId: bountyData?.userId
+			twitter_handle: bountyData?.twitterHandle,
+			updated_at: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
+			user_id: bountyData?.userId
 		};
 		return {
 			data: payload,

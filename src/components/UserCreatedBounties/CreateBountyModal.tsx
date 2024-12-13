@@ -14,7 +14,17 @@ const CreateBountyForm = dynamic(() => import('./CreateBountyForm'), {
 	ssr: false
 });
 
-const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: { openCreateBountyModal: boolean; setOpenCreateBountyModal: (pre: boolean) => void }) => {
+const CreateBountyModal = ({
+	openCreateBountyModal,
+	setOpenCreateBountyModal,
+	isUsedForEdit,
+	postInfo
+}: {
+	openCreateBountyModal: boolean;
+	isUsedForEdit: boolean;
+	setOpenCreateBountyModal: (pre: boolean) => void;
+	postInfo?: any;
+}) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Modal
@@ -35,7 +45,7 @@ const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: 
 						height={24}
 						className={theme === 'dark' ? 'dark-icons' : ''}
 					/>
-					Create Bounty
+					{isUsedForEdit ? 'Edit Bounty' : 'Create Bounty'}
 				</div>
 			}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
@@ -43,7 +53,11 @@ const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: 
 				setOpenCreateBountyModal?.(false);
 			}}
 		>
-			<CreateBountyForm setOpenCreateBountyModal={setOpenCreateBountyModal} />
+			<CreateBountyForm
+				setOpenCreateBountyModal={setOpenCreateBountyModal}
+				isUsedForEdit={isUsedForEdit}
+				postInfo={postInfo}
+			/>
 		</Modal>
 	);
 };

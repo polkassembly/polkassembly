@@ -23,15 +23,19 @@ import AddTags from '~src/ui-components/AddTags';
 import BN from 'bn.js';
 import { IVerificationResponse } from 'pages/api/v1/verification';
 import messages from '~src/auth/utils/messages';
+import { usePostDataContext } from '~src/context';
 
 interface ICreateBountyForm {
 	className?: string;
 	theme?: string;
 	setOpenCreateBountyModal: (pre: boolean) => void;
+	isUsedForEdit?: boolean;
+	postInfo?: any;
 }
 
 const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
-	const { className, setOpenCreateBountyModal } = props;
+	const { className, setOpenCreateBountyModal, isUsedForEdit, postInfo } = props;
+	console.log(postInfo);
 	const [open, setOpen] = useState(false);
 	const { loginAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -42,7 +46,8 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [tags, setTags] = useState<string[]>([]);
 	const [isTwitterVerified, setIsTwitterVerified] = useState<boolean>(false);
 	const [twitterUrl, setTwitterUrl] = useState<string>('');
-	const [newBountyAmount, setNewBountyAmount] = useState<any>();
+	const [newBountyAmount, setNewBountyAmount] = useState<BN>();
+	const { setPostData } = usePostDataContext();
 
 	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
 
@@ -130,89 +135,141 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			setLoading(false);
 		}
 	};
+	const handleEditBounty = async (values: any) => {
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/user-created-bounties/editBounty', {
+			bountyId: postInfo?.id,
+			content: values?.description,
+			deadlineDate: dayjs(values?.deadline).toDate(),
+			maxClaim: Number(values?.claims),
+			reward: newBountyAmount?.toString(),
+			submissionGuidelines: values?.guidelines,
+			tags: values?.categories,
+			title: values?.title
+		});
+		if (error) {
+			console.error('error resetting passoword : ', error);
+			setLoading(false);
+		}
+
+		if (data) {
+			setPostData(data?.post);
+			queueNotification({
+				header: 'Success!',
+				message: data.message,
+				status: NotificationStatus.SUCCESS
+			});
+			setLoading(false);
+		}
+	};
 
 	return (
 		<section className={`${className} ${spaceGrotesk.className} ${spaceGrotesk.variable} flex w-full flex-col gap-y-2`}>
 			<Form
 				layout='vertical'
-				onFinish={handleFormSubmit}
+				onFinish={isUsedForEdit ? handleEditBounty : handleFormSubmit}
 				className='mt-4 w-full'
 				form={form}
+				initialValues={{
+					address: postInfo?.proposer || '',
+					balance: Number(postInfo?.reward) / 10 ** 10 || '', // Convert from planck to DOT if necessary
+					claims: postInfo?.maxClaim || '',
+					deadline: postInfo?.deadlineDate ? dayjs(postInfo.deadlineDate) : null,
+					description: postInfo?.content || '',
+					guidelines: postInfo?.submissionGuidelines || '',
+					title: postInfo?.title || ''
+					// categories: postInfo?.tags || [],
+				}}
 			>
 				{/* address and twitter */}
 				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
 					<div className='flex w-full items-center gap-x-2 text-sm'>
 						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Select Account</p>
-							<Form.Item
-								name='address'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please select an address',
-										required: true
-									}
-								]}
-							>
-								<div className='flex h-[40px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-white px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+								{isUsedForEdit ? 'Selected Account' : 'Select Account'}
+							</p>
+							{!isUsedForEdit ? (
+								<Form.Item
+									name='address'
+									className='w-full'
+									rules={[
+										{
+											message: 'Please select an address',
+											required: true
+										}
+									]}
+								>
+									<div className='flex h-[40px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-white px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+										<Address
+											address={selectedAddress}
+											isTruncateUsername={false}
+											displayInline
+										/>
+										<CustomButton
+											text='Change Wallet'
+											onClick={() => setOpen(true)}
+											width={120}
+											className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+											height={24}
+											variant='primary'
+										/>
+									</div>
+								</Form.Item>
+							) : (
+								<div className='mb-6 flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 									<Address
-										address={selectedAddress}
-										isTruncateUsername={false}
+										address={postInfo?.proposer || loginAddress}
 										displayInline
-									/>
-									<CustomButton
-										text='Change Wallet'
-										onClick={() => setOpen(true)}
-										width={120}
-										className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
-										height={24}
-										variant='primary'
+										disableTooltip
+										isTruncateUsername={false}
 									/>
 								</div>
-							</Form.Item>
+							)}
 						</div>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Twitter</p>
-							<Form.Item
-								name='twitter'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please enter your Twitter handle',
-										required: false
-									}
-								]}
-							>
-								<Input
+						{!isUsedForEdit && (
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Twitter</p>
+								<Form.Item
 									name='twitter'
-									onChange={(e) => {
-										setTwitterUrl(e?.target?.value);
-									}}
-									suffix={
-										<>
-											{!isTwitterVerified ? (
-												<CustomButton
-													text='Verify'
-													width={80}
-													loading={startLoading}
-													disabled={twitterUrl?.length < 0 || startLoading}
-													onClick={() => {
-														handleTwitterVerification();
-													}}
-													className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
-													height={24}
-													variant='primary'
-												/>
-											) : (
-												<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>(verified)</p>
-											)}
-										</>
-									}
-									placeholder='@YourTwitter (case sensitive)'
-									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-								/>
-							</Form.Item>
-						</div>
+									className='w-full'
+									rules={[
+										{
+											message: 'Please enter your Twitter handle',
+											required: false
+										}
+									]}
+								>
+									<Input
+										name='twitter'
+										onChange={(e) => {
+											setTwitterUrl(e?.target?.value);
+										}}
+										suffix={
+											<>
+												{!isTwitterVerified ? (
+													<CustomButton
+														text='Verify'
+														width={80}
+														loading={startLoading}
+														disabled={twitterUrl?.length < 0 || startLoading}
+														onClick={() => {
+															handleTwitterVerification();
+														}}
+														className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
+														height={24}
+														variant='primary'
+													/>
+												) : (
+													<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>(verified)</p>
+												)}
+											</>
+										}
+										placeholder='@YourTwitter (case sensitive)'
+										className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+									/>
+								</Form.Item>
+							</div>
+						)}
 					</div>
 				</article>
 				{/* title */}
@@ -232,6 +289,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 							>
 								<Input
 									name='title'
+									value={postInfo?.title || ''}
 									placeholder='Add title for your bounty'
 									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								/>
@@ -386,13 +444,13 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					<Form.Item>
 						<CustomButton
 							variant='primary'
-							text='Create'
+							text={isUsedForEdit ? 'Edit' : 'Create'}
 							loading={loading}
 							disabled={loading}
 							buttonsize='sm'
 							htmlType='submit'
 							onClick={() => {
-								setOpenCreateBountyModal?.(false);
+								// setOpenCreateBountyModal?.(false);
 							}}
 						/>
 					</Form.Item>

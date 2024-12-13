@@ -109,6 +109,7 @@ function formatDuration(duration: any) {
 
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
+	console.log(post?.proposalType);
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
@@ -337,7 +338,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
-						proposalType={proposalType}
+						proposalType={post?.proposalType || proposalType}
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
@@ -494,6 +495,7 @@ const Post: FC<IPostProps> = (props) => {
 						isOnchainPost={isOnchainPost}
 						TrackerButtonComp={TrackerButtonComp}
 						Sidebar={() => <Sidebar />}
+						postInfo={post}
 					/>
 				</>
 			),
@@ -615,37 +617,43 @@ const Post: FC<IPostProps> = (props) => {
 										</>
 									)}
 								</div>
-								<div className='flex items-center'>
-									<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
-									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
-									<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
-								</div>
-								{isSimilarLoading ? (
+								{post?.proposalType !== ProposalType.USER_CREATED_BOUNTIES && (
+									<div className='flex items-center'>
+										<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
+										<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+										<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
+									</div>
+								)}
+								{post?.proposalType !== ProposalType.USER_CREATED_BOUNTIES && (
 									<>
-										<div>
-											<LoadingState />
-										</div>
-									</>
-								) : (
-									<div>
-										{data.length > 0 ? (
-											<div>
-												{/* main content */}
-												<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
-													<TrackListingAllTabContent
-														posts={data}
-														// error={error}
-														count={data?.length || 0}
-														showSimilarPost={true}
-													/>
+										{isSimilarLoading ? (
+											<>
+												<div>
+													<LoadingState />
 												</div>
-											</div>
+											</>
 										) : (
-											<div className={`${className} mt-5`}>
-												<PostEmptyState text='No Active Proposals' />
+											<div>
+												{data.length > 0 ? (
+													<div>
+														{/* main content */}
+														<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
+															<TrackListingAllTabContent
+																posts={data}
+																// error={error}
+																count={data?.length || 0}
+																showSimilarPost={true}
+															/>
+														</div>
+													</div>
+												) : (
+													<div className={`${className} mt-5`}>
+														<PostEmptyState text='No Active Proposals' />
+													</div>
+												)}
 											</div>
 										)}
-									</div>
+									</>
 								)}
 							</div>
 

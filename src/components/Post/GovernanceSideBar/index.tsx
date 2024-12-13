@@ -86,6 +86,7 @@ import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/type
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 import ExpertBodyCard from '~src/components/ExpertBody';
+import SidebarCard from '~src/components/UserCreatedBounties/SidebarCard.tsx';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -143,6 +144,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex, curator } = props;
+	console.log(proposalType);
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [updateTally, setUpdateTally] = useState<boolean>(false);
 
@@ -1372,6 +1374,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
 								<BountyChildBounties bountyId={onchainId} />
+								{getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status || '') && !!getEncodedAddress(curator, network) && <Submissions bountyId={onchainId} />}
+							</>
+						)}
+						{proposalType === ProposalType.USER_CREATED_BOUNTIES && (
+							<>
+								<SidebarCard post={post} />
 								{getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(status || '') && !!getEncodedAddress(curator, network) && <Submissions bountyId={onchainId} />}
 							</>
 						)}

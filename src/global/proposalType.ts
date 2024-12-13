@@ -25,7 +25,7 @@ export enum ProposalType {
 	UPGRADE_PIPS = 'upgrade_pips',
 	COMMUNITY_PIPS = 'community_pips',
 	ADVISORY_COMMITTEE = 'advisory_committee',
-	USER_CREATED_BOUNTIES = 'user_cerated_bounties'
+	USER_CREATED_BOUNTIES = 'user_created_bounties'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',

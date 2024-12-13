@@ -8,7 +8,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
+// import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -17,7 +17,7 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 const ZERO_BN = new BN(0);
 
-const handler: NextApiHandler<MessageType> = async (req, res) => {
+const handler: NextApiHandler<any> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {
@@ -88,8 +88,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		};
 
 		await bountyDoc?.docs?.[0]?.ref?.update(payload);
+		const updatedBountyDoc = await bountySnapshot?.get();
+		const updatedBounty = updatedBountyDoc?.docs?.[0]?.data();
 
-		return res.status(200).json({ message: messages?.SUCCESS });
+		return res.status(200).json({ message: messages?.SUCCESS, post: updatedBounty });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

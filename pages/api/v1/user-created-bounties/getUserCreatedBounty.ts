@@ -48,7 +48,7 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 		const payload: IUserCreatedBounty = {
 			comments: comments || [],
 			content: bountyData?.content,
-			createdAt: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
+			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
 			deadlineDate: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
 			history: bountyData?.history || [],
 			id: bountyData?.id,
@@ -62,7 +62,7 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			tags: bountyData?.tags || [],
 			title: bountyData?.title || '',
 			twitterHandle: bountyData?.twitterHandle,
-			updatedAt: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
+			updated_at: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
 			userId: bountyData?.userId
 		};
 		return {

@@ -1223,7 +1223,7 @@ export enum EUserCreatedBountiesStatuses {
 
 export interface IUserCreatedBounty {
 	content: string;
-	createdAt: string;
+	created_at: string;
 	deadlineDate: string;
 	history: IPostHistory[];
 	id: number;
@@ -1238,7 +1238,7 @@ export interface IUserCreatedBounty {
 	network?: string;
 	twitterHandle: string;
 	source: 'polkassembly' | 'twitter';
-	updatedAt: string;
+	updated_at: string;
 	userId: number;
 	comments?: string[];
 	index?: number;

@@ -49,6 +49,7 @@ interface IBountyPostProps {
 }
 const BountyPost: FC<IBountyPostProps> = (props) => {
 	const { post, error, network, status } = props;
+	console.log('checking postdata here: ', post);
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();

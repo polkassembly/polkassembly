@@ -1224,24 +1224,24 @@ export enum EUserCreatedBountiesStatuses {
 
 export interface IUserCreatedBounty {
 	content: string;
-	createdAt: string;
-	deadlineDate: string;
+	created_at: string;
+	deadline_date: string;
 	history: IPostHistory[];
-	id: number;
-	maxClaim: number;
-	proposalType: ProposalType;
+	post_index: number;
+	max_claim: number;
+	post_type: ProposalType;
 	proposer: string;
 	reward: string;
 	status: EUserCreatedBountiesStatuses;
-	submissionGuidelines: string;
+	submission_guidelines: string;
 	tags: string[];
 	title: string;
 	network?: string;
-	twitterHandle: string;
+	twitter_handle: string;
 	source: 'polkassembly' | 'twitter';
-	postReactions?: IReactions;
-	updatedAt: string;
-	userId: number;
-	comments?: string[];
+	post_reactions?: IReactions;
+	updated_at: string;
+	user_id: number;
+	comments?: any[];
 	index?: number;
 }

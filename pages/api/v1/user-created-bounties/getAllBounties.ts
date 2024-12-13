@@ -64,22 +64,22 @@ export async function getUserCreatedBounties({
 				const data = doc?.data();
 				const payload: IUserCreatedBounty = {
 					content: data?.content,
-					createdAt: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
-					deadlineDate: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
+					created_at: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
+					deadline_date: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
 					history: data?.history || [],
-					id: data?.id,
-					maxClaim: data?.maxClaim,
-					proposalType: data?.proposalType || ProposalType.BOUNTIES,
+					max_claim: data?.maxClaim,
+					post_index: data?.id,
+					post_type: data?.proposalType,
 					proposer: data?.proposer || '',
 					reward: data?.reward || '0',
 					source: data?.source || 'Polkassembly',
 					status: data?.status,
-					submissionGuidelines: data?.submissionGuidelines || '',
+					submission_guidelines: data?.submissionGuidelines || '',
 					tags: data?.tags || [],
 					title: data?.title || '',
-					twitterHandle: data?.twitterHandle || '',
-					updatedAt: data?.updatedAt.toDate ? String(data?.updatedAt.toDate()) : data?.updatedAt,
-					userId: data?.userId
+					twitter_handle: data?.twitterHandle,
+					updated_at: data?.updatedAt.toDate ? String(data?.updatedAt.toDate()) : data?.updatedAt,
+					user_id: data?.userId
 				};
 				allBounties?.push(payload);
 			}

@@ -1097,6 +1097,12 @@ export enum EChildbountySubmissionStatus {
 	OUTDATED = 'outdated',
 	DELETED = 'deleted'
 }
+export enum EUserCreatedBountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	DELETED = 'deleted'
+}
 
 export enum EPendingCuratorReqType {
 	SENT = 'sent',
@@ -1243,4 +1249,9 @@ export interface IUserCreatedBounty {
 	updated_at: string;
 	user_id: number;
 	comments?: any[];
+}
+export enum EUserCreatedBountyActions {
+	EDIT = 'edit',
+	DELETE = 'delete',
+	APPROVE = 'approve'
 }

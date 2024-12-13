@@ -37,9 +37,9 @@ export const getUpdatedAt = (data: any) => {
 	let updated_at: Date | string | undefined;
 	if (data) {
 		if (data.last_edited_at) {
-			updated_at = data.last_edited_at?.toDate ? data.last_edited_at.toDate() : data.last_edited_at;
+			updated_at = data.last_edited_at?.toDate ? String(data.last_edited_at.toDate()) : data.last_edited_at;
 		} else if (data.updated_at) {
-			updated_at = data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
+			updated_at = data.updated_at?.toDate ? String(data.updated_at?.toDate()) : data.updated_at;
 		}
 	}
 	return updated_at;

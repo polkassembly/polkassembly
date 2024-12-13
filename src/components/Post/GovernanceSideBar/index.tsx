@@ -1023,13 +1023,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
 								/>
 							)}
-						<ExpertBodyCard />
-						<RHSCardSlides
-							showDecisionDeposit={showDecisionDeposit}
-							canEdit={canEdit}
-							trackName={String(trackName)}
-							toggleEdit={toggleEdit}
-						/>
+						{proposalType !== ProposalType.USER_CREATED_BOUNTIES && <ExpertBodyCard />}
+						{proposalType !== ProposalType.USER_CREATED_BOUNTIES && (
+							<RHSCardSlides
+								showDecisionDeposit={showDecisionDeposit}
+								canEdit={canEdit}
+								trackName={String(trackName)}
+								toggleEdit={toggleEdit}
+							/>
+						)}
 						{accountsNotFound || extensionNotFound ? (
 							<GovSidebarCard>
 								{accountsNotFound ? (

@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 
 declare global {
 	interface Window {
@@ -1238,6 +1239,7 @@ export interface IUserCreatedBounty {
 	network?: string;
 	twitterHandle: string;
 	source: 'polkassembly' | 'twitter';
+	postReactions?: IReactions;
 	updatedAt: string;
 	userId: number;
 	comments?: any[];

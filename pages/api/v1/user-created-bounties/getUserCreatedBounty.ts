@@ -11,7 +11,7 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { getComments } from '../posts/on-chain-post';
+import { getComments, getReactions } from '../posts/on-chain-post';
 import { ProposalType } from '~src/global/proposalType';
 
 interface Args {
@@ -35,6 +35,7 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 
 		//TODO: pie graph percentage acc to submission count
 		//TODO: submissions needs to be added
+		//TODO: subscribers
 
 		const bountyDoc = userCreatedBountiesSnapshot?.docs?.[0];
 
@@ -45,14 +46,25 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 		//replies
 		const comments = await getComments(commentRefs, bountyDoc.ref, network, ProposalType.USER_CREATED_BOUNTIES, bountyId, false);
 
+		//post Reactions
+		const postReactionsQuerySnapshot = await bountyDoc?.ref.collection('post_reactions').get();
+		const post_reactions = getReactions(postReactionsQuerySnapshot);
+
+		const history = bountyData?.history
+			? bountyData.history.map((item: any) => {
+					return { ...item, created_at: item?.created_at?.toDate ? String(item?.created_at.toDate()) : item?.created_at };
+			  })
+			: [];
+
 		const payload: IUserCreatedBounty = {
 			comments: comments || [],
 			content: bountyData?.content,
 			createdAt: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
 			deadlineDate: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
-			history: bountyData?.history || [],
+			history: history || [],
 			id: bountyData?.id,
 			maxClaim: bountyData?.maxClaim,
+			postReactions: post_reactions,
 			proposalType: bountyData?.proposalType,
 			proposer: bountyData?.proposer || '',
 			reward: bountyData?.reward || '0',

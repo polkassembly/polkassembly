@@ -35,7 +35,7 @@ const AccountsMain = () => {
 								width={18}
 								priority={true}
 							/>
-							<span className={' text-sm font-medium'}>Add Proxy</span>
+							<span className={' text-sm font-medium'}>Create Proxy</span>
 						</div>
 					</CustomButton>
 				)}

@@ -457,7 +457,7 @@ const Address = (props: Props) => {
 											title={mainDisplay || encodedAddr}
 											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} `}
+											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} ${isUsedInAccountsPage ? 'sm:text-xl' : ''}`}
 										>
 											{!!addressPrefix && (
 												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -561,7 +561,13 @@ const Address = (props: Props) => {
 													isUsedInDelegationProfile && 'gap-2'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
+												{!!addressPrefix && (
+													<span
+														className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'} ${isUsedInAccountsPage ? 'ml-3 sm:text-xl' : ''}`}
+													>
+														{addressPrefix}
+													</span>
+												)}
 												{isUsedInDelegationProfile && (!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 											</div>
 										</Space>

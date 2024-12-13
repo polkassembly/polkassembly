@@ -67,6 +67,7 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 								isTruncateUsername={false}
 								destroyTooltipOnHide
 								isUsedInAccountsPage={true}
+								isProfileView
 							/>
 							<div className='gap-1 md:mt-[2px] md:flex'>
 								<div className='flex gap-1'>
@@ -77,13 +78,13 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 											success();
 										}}
 									>
-										<CopyIcon className='-ml-2 text-xl text-lightBlue dark:text-icon-dark-inactive md:mt-0' />
+										<CopyIcon className='-ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive md:mt-0' />
 									</div>
 									<Link
 										href={`https://${network}.subscan.io/address/${address}`}
 										passHref
 									>
-										<SubscanIcon className='-ml-1 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
+										<SubscanIcon className='-ml-[6px] scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 									</Link>
 								</div>
 								<div className='hidden gap-2 md:flex'>

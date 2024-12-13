@@ -394,7 +394,7 @@ export async function getComments(
 			const data = doc.data();
 			const history = data?.history
 				? data.history.map((item: any) => {
-						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+						return { ...item, created_at: item?.created_at?.toDate ? String(item?.created_at.toDate()) : item?.created_at };
 				  })
 				: [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
@@ -476,7 +476,7 @@ export async function getComments(
 						}
 						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
 						comment.replies.push({
-							comment_id,
+							comment_id: comment_id || doc?.id,
 							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? String(created_at.toDate()) : created_at,
 							id: id,

@@ -60,22 +60,22 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			comments: comments || [],
 			content: bountyData?.content,
 			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
-			deadlineDate: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
+			deadline_date: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
 			history: history || [],
-			id: bountyData?.id,
-			maxClaim: bountyData?.maxClaim,
-			postReactions: post_reactions,
-			proposalType: bountyData?.proposalType,
+			max_claim: bountyData?.maxClaim,
+			post_index: bountyData?.id,
+			post_reactions: post_reactions,
+			post_type: bountyData?.proposalType,
 			proposer: bountyData?.proposer || '',
 			reward: bountyData?.reward || '0',
 			source: bountyData?.source,
 			status: bountyData?.status,
-			submissionGuidelines: bountyData?.submissionGuidelines || '',
+			submission_guidelines: bountyData?.submissionGuidelines || '',
 			tags: bountyData?.tags || [],
 			title: bountyData?.title || '',
-			twitterHandle: bountyData?.twitterHandle,
+			twitter_handle: bountyData?.twitterHandle,
 			updated_at: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
-			userId: bountyData?.userId
+			user_id: bountyData?.userId
 		};
 		return {
 			data: payload,
@@ -107,10 +107,10 @@ const handler: NextApiHandler<IUserCreatedBounty | MessageType> = async (req, re
 		if (data) {
 			return res.status(200).json(data);
 		} else if (error) {
-			return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+			return res.status(500).json({ message: String(error) || messages.API_FETCH_ERROR });
 		}
 	} catch (err) {
-		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
+		return res.status(500).json({ message: String(err) || messages.API_FETCH_ERROR });
 	}
 };
 

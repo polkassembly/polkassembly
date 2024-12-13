@@ -109,7 +109,7 @@ function formatDuration(duration: any) {
 
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
-	console.log(post?.proposalType);
+	console.log(post);
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
@@ -338,7 +338,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
-						proposalType={post?.proposalType || proposalType}
+						proposalType={post?.post_type || proposalType}
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
@@ -524,8 +524,8 @@ const Post: FC<IPostProps> = (props) => {
 					identityId: post?.identity || null,
 					last_edited_at: post?.last_edited_at,
 					marketMetadata: post?.marketMetadata || null,
-					postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
-					postType: proposalType,
+					postIndex: post?.post_index || proposalType === ProposalType.TIPS ? post.hash : post.post_id,
+					postType: post?.post_type || proposalType,
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',

@@ -61,7 +61,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
-	console.log(postInfo);
 	const currentUser = useUserDetailsSelector();
 	const { allowed_roles } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -226,7 +225,10 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						<Popover
 							content={
 								<div className='px-4'>
-									<CommentsContainer id={id} />
+									<CommentsContainer
+										postInfo={postInfo}
+										id={postInfo?.post_index || id || postIndex}
+									/>
 								</div>
 							}
 							title={<p className='font-semiBold m-0 p-0 px-4 py-2 text-xl text-bodyBlue dark:text-white'>Comments</p>}

@@ -31,12 +31,12 @@ const SidebarCard: FC<ISidebarCardProps> = (props) => {
 				<p className='m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Deadline: </p>
 				<span className={'m-0 flex items-center gap-x-1 p-0 font-medium text-bodyBlue dark:text-white'}>
 					<ClockCircleOutlined />
-					{dayjs(new Date(post?.deadlineDate)).format('DD MMM YYYY')}
+					{dayjs(new Date(post?.deadline_date)).format('DD MMM YYYY')}
 				</span>
 			</div>
 			<div className='flex items-start justify-start gap-x-2 rounded-[10px] border border-solid border-[#D2D8E0] px-3 py-3 dark:border-separatorDark'>
 				<p className='m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Submission Guidelines: </p>
-				<span className={'m-0 flex items-center gap-x-1 p-0 font-medium text-bodyBlue dark:text-white'}>{post?.submissionGuidelines}</span>
+				<span className={'m-0 flex items-center gap-x-1 p-0 font-medium text-bodyBlue dark:text-white'}>{post?.submission_guidelines}</span>
 			</div>
 			<div className='flex h-[46px] items-center justify-start gap-x-2 rounded-[10px] border border-solid border-[#D2D8E0] px-3 py-2 dark:border-separatorDark'>
 				<p className='m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Social: </p>
@@ -47,7 +47,7 @@ const SidebarCard: FC<ISidebarCardProps> = (props) => {
 						width={24}
 						height={24}
 					/>{' '}
-					{post?.twitterHandle}
+					{post?.twitter_handle}
 				</span>
 			</div>
 			<div className='flex h-[46px] items-center justify-start gap-x-2 rounded-[10px] border border-solid border-[#D2D8E0] px-3 py-2 dark:border-separatorDark'>
@@ -56,7 +56,7 @@ const SidebarCard: FC<ISidebarCardProps> = (props) => {
 			</div>
 			<div className='flex h-[46px] items-center justify-start gap-x-2 rounded-[10px] border border-solid border-[#D2D8E0] px-3 py-2 dark:border-separatorDark'>
 				<p className='m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Max no of claims: </p>
-				<span className={'m-0 flex items-center gap-x-1 p-0 font-medium text-bodyBlue dark:text-white'}>{post?.maxClaim}</span>
+				<span className={'m-0 flex items-center gap-x-1 p-0 font-medium text-bodyBlue dark:text-white'}>{post?.max_claim}</span>
 			</div>
 		</GovSidebarCard>
 	);

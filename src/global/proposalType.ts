@@ -121,11 +121,13 @@ export function getSubsquidProposalType(
 	}
 }
 
-export function getSubsquidLikeProposalType(proposalType: Exclude<ProposalType, ProposalType.USER_CREATED_BOUNTIES>): string {
+export function getSubsquidLikeProposalType(proposalType: ProposalType): string {
 	if (proposalType === ProposalType.DISCUSSIONS) {
 		return 'Discussions';
 	} else if (proposalType === ProposalType.GRANTS) {
 		return 'Grants';
+	} else if (proposalType === ProposalType.USER_CREATED_BOUNTIES) {
+		return 'UserCreatedBounties';
 	}
 	const postType = getSubsquidProposalType(proposalType);
 	return postType || '';
@@ -169,6 +171,8 @@ export function getFirestoreProposalType(proposalType: string): string {
 			return 'upgrade_pips';
 		case 'AdvisoryCommittee':
 			return 'advisory_committee';
+		case 'UserCreatedBounties':
+			return 'user_created_bounties';
 	}
 	return '';
 }
@@ -292,9 +296,10 @@ export const proposalTypes = [
 	'technical_pips',
 	'community_pips',
 	'upgrade_pips',
-	'advisory_committee'
+	'advisory_committee',
+	'user_created_bounties'
 ];
-export const offChainProposalTypes = ['discussions', 'grants'];
+export const offChainProposalTypes = ['discussions', 'grants', 'user_created_bounties'];
 
 export const checkIsOnChainPost = (proposalType: string) => {
 	return !offChainProposalTypes.includes(proposalType);

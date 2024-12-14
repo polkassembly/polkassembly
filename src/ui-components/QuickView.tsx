@@ -26,6 +26,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import ScoreTag from './ScoreTag';
+import { IIdentityInfo } from '~src/types';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -42,7 +43,7 @@ export const TippingUnavailableNetworks = [
 interface Props {
 	className?: string;
 	address: string;
-	identity?: DeriveAccountRegistration | null;
+	identity?: DeriveAccountRegistration | IIdentityInfo | null;
 	polkassemblyUsername?: string;
 	username: string;
 	imgUrl?: string;
@@ -157,7 +158,7 @@ const QuickView = ({
 							<ShareScreenIcon />
 						</a>
 					</div>
-					<div className={`flex gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
+					<div className={`flex gap-1.5 ${profileCreatedAt || !!(identity as any)?.parentProxyTitle?.length ? 'flex-col' : 'justify-between'}`}>
 						{!!address && (
 							<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 								<Address

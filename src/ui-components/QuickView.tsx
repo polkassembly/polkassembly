@@ -26,7 +26,6 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import ScoreTag from './ScoreTag';
-import { IIdentityInfo } from '~src/types';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -43,7 +42,7 @@ export const TippingUnavailableNetworks = [
 interface Props {
 	className?: string;
 	address: string;
-	identity?: DeriveAccountRegistration | IIdentityInfo | null;
+	identity?: DeriveAccountRegistration | null;
 	polkassemblyUsername?: string;
 	username: string;
 	imgUrl?: string;

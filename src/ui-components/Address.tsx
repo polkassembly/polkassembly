@@ -134,7 +134,7 @@ const ParentProxyTitle = ({
 					className='font-medium text-[#407BFF]'
 					title={title}
 				>
-					{title?.length > 6 ? (truncate ? `${title?.slice(0, 6)}...` : title) : title}
+					{title?.length > 10 || truncate ? `${title?.slice(0, 10)}...` : title}
 				</span>
 				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
 					<Image

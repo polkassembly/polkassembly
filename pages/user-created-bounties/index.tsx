@@ -102,7 +102,7 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 						<CreateBountyBtn className='hidden md:block' />
 					</div>
 				</div>
-				<BountiesTabItems bounties={bounties} />
+				<BountiesTabItems bounties={data?.bounties} />
 
 				<div className='mb-5 mt-3 flex justify-end'>
 					{bounties?.length > BOUNTIES_LISTING_LIMIT && (

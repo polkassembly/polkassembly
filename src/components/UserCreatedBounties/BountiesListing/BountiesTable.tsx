@@ -57,7 +57,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
 	const [bounties, setBounties] = useState<IUserCreatedBounty[]>(props.bounties);
 	const handleRowClick = (record: IBountyListing) => {
-		router.push(`/user-created-bounty/${record?.index}`);
+		router.push(`/user-created-bounty/${record?.post_index}`);
 	};
 	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
@@ -105,9 +105,9 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const columns: TableColumnsType<IBountyListing> = [
 		{
 			className: 'w-[20px]',
-			dataIndex: 'id',
-			key: 'id',
-			render: (id: number) => id,
+			dataIndex: 'post_index',
+			key: 'post_index',
+			render: (post_index: number) => post_index,
 			title: '#'
 		},
 		{
@@ -133,9 +133,9 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		},
 		{
 			className: 'w-[150px]',
-			dataIndex: 'maxClaim',
-			key: 'maxClaim',
-			render: (maxClaim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{maxClaim}</p>,
+			dataIndex: 'max_claim',
+			key: 'max_claim',
+			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{max_claim}</p>,
 			title: 'Max no of claims'
 		},
 		{
@@ -192,15 +192,15 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		},
 		{
 			className: 'w-[120px]',
-			dataIndex: 'createdAt',
-			key: 'createdAt',
-			render: (createdAt: string) => {
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (created_at: string) => {
 				return (
 					<>
-						{createdAt ? (
+						{created_at ? (
 							<span className='flex gap-1 text-blue-light-medium  dark:text-icon-dark-inactive'>
 								<ClockCircleOutlined className='text-blue-light-medium dark:text-icon-dark-inactive' />
-								<span className=' whitespace-nowrap'>{dayjs(createdAt).format('DD MMM YYYY')}</span>
+								<span className=' whitespace-nowrap'>{dayjs(created_at).format('DD MMM YYYY')}</span>
 							</span>
 						) : (
 							'-'
@@ -227,9 +227,9 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		},
 		{
 			className: 'w-[150px]',
-			dataIndex: 'maxClaim',
-			key: 'maxClaim',
-			render: (maxClaim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{maxClaim}</p>,
+			dataIndex: 'max_claim',
+			key: 'max_claim',
+			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{max_claim}</p>,
 			title: 'Max no of claims'
 		},
 		{

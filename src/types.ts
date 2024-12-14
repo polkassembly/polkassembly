@@ -1226,7 +1226,7 @@ export interface IUserCreatedBounty {
 	content: string;
 	created_at: string;
 	deadline_date: string;
-	history: IPostHistory[];
+	history?: IPostHistory[];
 	post_index: number;
 	max_claim: number;
 	post_type: ProposalType;

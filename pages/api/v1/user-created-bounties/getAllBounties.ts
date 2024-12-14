@@ -9,7 +9,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { ProposalType } from '~src/global/proposalType';
+// import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -66,7 +66,7 @@ export async function getUserCreatedBounties({
 					content: data?.content,
 					created_at: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
 					deadline_date: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
-					history: data?.history || [],
+					// history: data?.history || [],
 					max_claim: data?.maxClaim,
 					post_index: data?.id,
 					post_type: data?.proposalType,

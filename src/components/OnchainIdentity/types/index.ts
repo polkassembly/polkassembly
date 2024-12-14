@@ -117,6 +117,7 @@ export interface IVerificationSuccessState {
 	socialHandle?: string;
 	social: string;
 	open: boolean;
+	isUserCreatedBounty?: boolean | undefined;
 	onClose: (pre: boolean) => void;
 }
 

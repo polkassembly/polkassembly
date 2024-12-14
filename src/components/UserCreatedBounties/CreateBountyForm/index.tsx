@@ -91,7 +91,10 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const handleTwitterVerification = async () => {
 		setStartLoading(true);
 		const twitterHandle = twitterUrl?.split('@')?.[1] || twitterUrl;
-		const { data, error } = await nextApiClientFetch<{ url?: string }>(`api/v1/verification/twitter-verification?twitterHandle=${twitterHandle}`);
+		const isUserCreatedBounty: boolean = true;
+		const { data, error } = await nextApiClientFetch<{ url?: string }>(
+			`api/v1/verification/twitter-verification?twitterHandle=${twitterHandle}&isUserCreatedBounty=${isUserCreatedBounty}`
+		);
 
 		if (data && data?.url) {
 			handleVerify();
@@ -133,6 +136,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
+			setOpenCreateBountyModal?.(false);
 		}
 	};
 	const handleEditBounty = async (values: any) => {

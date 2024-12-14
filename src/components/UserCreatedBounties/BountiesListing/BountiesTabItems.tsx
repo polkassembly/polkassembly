@@ -17,7 +17,6 @@ interface IBountiesTabItemsProps {
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	console.log('user bounties: ', props.bounties);
 
 	const bountyStatuses = [
 		{ key: 'all', label: 'All' },

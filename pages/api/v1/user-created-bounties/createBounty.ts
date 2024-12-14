@@ -19,15 +19,38 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 const ZERO_BN = new BN(0);
 
+const checkIsTwitterHandleVerified = async (twitterHandle: string, userId: number) => {
+	const twitterVerificationDoc = await firestore_db.collection('twitter_verification_tokens').doc(String(userId)).get();
+
+	if (!twitterVerificationDoc.exists) return false;
+
+	const twitterData = twitterVerificationDoc.data();
+
+	if (`${twitterData?.twitter_handle}`.toLowerCase() !== `${twitterHandle}`.toLowerCase()) return false;
+
+	if (twitterData?.verified && twitterData?.user_id === userId) {
+		return true;
+	}
+	return false;
+};
+
+const modifyTwitterHandle = (handle: string) => {
+	if (handle?.[0] == '@') {
+		return handle?.slice(1, handle?.length);
+	}
+	return handle;
+};
+
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {
-		//TODO: add secret key:
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim, twitterHandle } = req.body;
+
+		const modifiedTwitterHandle = modifyTwitterHandle(twitterHandle);
 
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
@@ -40,7 +63,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!reward || new BN(reward || 0).eq(ZERO_BN)) {
 			return res.status(400).json({ message: 'Invalid reward Amount.' });
 		}
-		if (!twitterHandle?.length) {
+		if (!modifiedTwitterHandle?.length) {
 			return res.status(400).json({ message: 'Invalid Twitter Handle Account.' });
 		}
 		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
@@ -58,6 +81,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 		if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
 			return res.status(400).json({ message: 'Invalid Tags Assigned.' });
+		}
+
+		const isTwitterVerified = await checkIsTwitterHandleVerified(modifiedTwitterHandle, user?.id);
+
+		if (!isTwitterVerified) {
+			return res.status(400).json({ message: 'Twitter handle is not verified.' });
 		}
 
 		const userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties');
@@ -84,7 +113,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			submissionGuidelines: submissionGuidelines || '',
 			tags: tags || [],
 			title: title || '',
-			twitterHandle: twitterHandle,
+			twitterHandle: modifiedTwitterHandle,
 			updatedAt: new Date(),
 			userId: user?.id
 		};

@@ -12,6 +12,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
 
 interface Args {
 	status: EUserCreatedBountiesStatuses;
@@ -57,11 +58,13 @@ export async function getUserCreatedBounties({
 
 		const allBounties: IUserCreatedBounty[] = [];
 
-		//TODO: pie graph percentage acc to submission count
-		totalCreatedBountiesSnapshot?.docs?.map((doc) => {
+		const promises = totalCreatedBountiesSnapshot?.docs?.map(async (doc) => {
 			if (doc?.exists) {
 				const data = doc?.data();
+				const claimedSubmissionsPercentage = await getClaimedSubmissionsPercentage(doc?.ref, data?.reward || '0');
+
 				const payload: IUserCreatedBounty = {
+					claimed_percentage: claimedSubmissionsPercentage || 0,
 					content: data?.content,
 					created_at: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
 					deadline_date: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
@@ -83,6 +86,8 @@ export async function getUserCreatedBounties({
 				allBounties?.push(payload);
 			}
 		});
+
+		await Promise.allSettled(promises);
 
 		return {
 			data: { bounties: allBounties || [], totalCount: totalCreatedBountiesCountSnapshot?.data()?.count || 0 },

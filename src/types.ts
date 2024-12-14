@@ -1240,6 +1240,7 @@ export interface IUserCreatedBounty {
 	reward: string;
 	status: EUserCreatedBountiesStatuses;
 	submission_guidelines: string;
+	claimed_percentage: number;
 	tags: string[];
 	title: string;
 	network?: string;

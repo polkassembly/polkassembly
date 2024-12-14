@@ -6,9 +6,7 @@ import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
-import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IChildBountySubmission } from '~src/types';
@@ -21,19 +19,13 @@ const handler: NextApiHandler<{ submissions: IChildBountySubmission[]; totalCoun
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { parentBountyIndex, page } = req.body;
+		const { parentBountyIndex = 3, page = 1 } = req.body;
 		if (isNaN(parentBountyIndex)) {
 			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
 		}
-		if (isNaN(page)) {
+		if (isNaN(page) || !page) {
 			return res.status(400).json({ message: 'Invalid Page Param' });
 		}
-
-		const token = getTokenFromReq(req);
-		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
-
-		const user = await authServiceInstance.GetUser(token);
-		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
 		const userCreatedBountySnapshot = await firestore_db.collection('user_created_bounties').where('network', '==', network).where('id', '==', parentBountyIndex).limit(1).get();
 

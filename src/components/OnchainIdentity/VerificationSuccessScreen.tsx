@@ -10,7 +10,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { IVerificationSuccessState } from './types';
 
-const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose }: IVerificationSuccessState) => {
+const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose, isUserCreatedBounty }: IVerificationSuccessState) => {
 	const router = useRouter();
 	const [loading, setLoading] = useState<boolean>(false);
 	return (
@@ -36,11 +36,15 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<CustomButton
 					onClick={() => {
-						setLoading(true);
-						router.push(`/?identityVerification=${true}`);
+						if (isUserCreatedBounty) {
+							window.close();
+						} else {
+							setLoading(true);
+							router.push(`/?identityVerification=${true}`);
+						}
 					}}
 					loading={loading}
-					text='Continue verification'
+					text={isUserCreatedBounty ? 'Done' : 'Continue verification'}
 					className='mt-6'
 					variant='primary'
 					height={40}

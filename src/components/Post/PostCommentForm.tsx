@@ -14,7 +14,7 @@ import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EVoteDecisionType, NotificationStatus } from '~src/types';
+import { EVoteDecisionType, IUserCreatedBounty, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import { v4 } from 'uuid';
@@ -42,6 +42,7 @@ interface IPostCommentFormProps {
 	setCurrentState?: (postId: string, type: string, comment: IComment) => void;
 	posted?: boolean;
 	voteReason?: boolean;
+	postInfo?: IUserCreatedBounty;
 	setPosted?: (pre: boolean) => void;
 }
 
@@ -58,7 +59,7 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted } = props;
+	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted, postInfo } = props;
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -220,12 +221,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			user_id: id as any,
 			username: username || ''
 		};
-		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		setCurrentState && setCurrentState(postIndex?.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				postId: postIndex,
-				postType: postType,
+				postId: postInfo?.post_index || postIndex,
+				postType: postInfo?.post_type || postType,
 				sentiment: isSentimentPost ? sentiment : 0,
 				trackNumber: track_number,
 				userId: id

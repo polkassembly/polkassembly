@@ -296,9 +296,10 @@ export const proposalTypes = [
 	'technical_pips',
 	'community_pips',
 	'upgrade_pips',
-	'advisory_committee'
+	'advisory_committee',
+	'user_created_bounties'
 ];
-export const offChainProposalTypes = ['discussions', 'grants'];
+export const offChainProposalTypes = ['discussions', 'grants', 'user_created_bounties'];
 
 export const checkIsOnChainPost = (proposalType: string) => {
 	return !offChainProposalTypes.includes(proposalType);

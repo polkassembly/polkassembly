@@ -3,18 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { WarningOutlined } from '@ant-design/icons';
-import { Row } from 'antd';
+import { Row, Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+const VerificationSuccessScreen = dynamic(() => import('~src/components/OnchainIdentity/VerificationSuccessScreen'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -22,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { oauth_verifier: oauthVerifier, oauth_token: oauthRequestToken } = query;
+	const { oauth_verifier: oauthVerifier, oauth_token: oauthRequestToken, isUserCreatedBounty } = query;
 	const { data, error } = await getTwitterCallback({
 		network,
 		oauthRequestToken: String(oauthRequestToken),
@@ -30,12 +34,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	});
 
 	if (data) {
-		return { props: { network, twitterHandle: data } };
+		return { props: { isUserCreatedBounty, network, twitterHandle: data } };
 	}
 	return { props: { error: error || 'Error in getting twitter handle', network } };
 };
 
-const TwitterCallback = ({ error, network, twitterHandle }: { network: string; error?: null | any; twitterHandle?: string }) => {
+const TwitterCallback = ({
+	error,
+	network,
+	twitterHandle,
+	isUserCreatedBounty
+}: {
+	network: string;
+	error?: null | any;
+	twitterHandle?: string;
+	isUserCreatedBounty?: boolean;
+}) => {
 	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(!error);
 
@@ -70,6 +84,7 @@ const TwitterCallback = ({ error, network, twitterHandle }: { network: string; e
 			</Row>
 			<VerificationSuccessScreen
 				open={identityEmailSuccess}
+				isUserCreatedBounty={isUserCreatedBounty}
 				social='Twitter'
 				socialHandle={twitterHandle}
 				onClose={() => setIdentityEmailSuccess(false)}

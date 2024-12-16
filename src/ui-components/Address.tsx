@@ -109,17 +109,19 @@ const ParentProxyTitle = ({
 			className={className}
 			title={
 				<div className='flex flex-col items-start justify-start gap-1 text-xs'>
-					<span>Sub-account: On-chain Identity derived </span>
-					<div className='flex items-center justify-start gap-1'>
+					<span>Sub-account: On-chain Identity derived</span>
+					<div className='flex flex-shrink-0 items-center justify-start gap-1'>
 						from the parent-{' '}
 						<Address
 							address={parentProxyAddress || ''}
 							displayInline
 							disableTooltip
 							usernameClassName='text-blue-dark-high text-xs'
-							className='text-xs'
+							className='flex items-center text-xs'
 							disableParentProxyAddressTitle
 							iconSize={14}
+							isTruncateUsername
+							usernameMaxLength={10}
 						/>
 					</div>
 				</div>
@@ -390,7 +392,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className='flex items-center'>
+		<div className='flex w-full items-center'>
 			<Tooltip
 				arrow
 				color='#fff'

@@ -21,6 +21,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import TextEditor from '~src/ui-components/TextEditor';
+import classNames from 'classnames';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -338,7 +339,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								alt={'Expert Image'}
 								width={24}
 								height={24}
-								className='h-6 w-6'
+								className={classNames('h-6 w-6', theme == 'dark' ? 'dark-icons' : '')}
 							/>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>Add Expert Review</span>
 						</div>

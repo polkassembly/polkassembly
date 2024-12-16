@@ -9,11 +9,12 @@ import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { Post } from '~src/types';
+import { Post, IProgressReport } from '~src/types';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { redisDel } from '~src/auth/redis';
+import { Timestamp } from 'firebase-admin/firestore';
 
-const handler: NextApiHandler<{ message: string; progress_report?: object }> = async (req, res) => {
+const handler: NextApiHandler<{ message: string; progress_report?: IProgressReport[] }> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
@@ -36,14 +37,14 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 			return res.status(401).json({ message: messages.UNAUTHORISED });
 		}
 
-		const { postId, proposalType, summary } = req.body;
+		const { postId, proposalType, summary, reportId } = req.body;
 
-		if (!postId || !proposalType || !summary) {
-			return res.status(401).json({ message: messages.INVALID_PARAMS });
+		if (!postId || !proposalType || !reportId) {
+			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
 		if (isNaN(postId) || !isProposalTypeValid(proposalType)) {
-			return res.status(401).json({ message: messages.INVALID_PARAMS });
+			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
 
 		const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
@@ -55,34 +56,35 @@ const handler: NextApiHandler<{ message: string; progress_report?: object }> = a
 
 		const existingPost = postDoc.data() as Post;
 
-		if (!existingPost.progress_report) {
-			return res.status(400).json({ message: 'No progress report found for the specified post.' });
+		if (!existingPost.progress_report || !Array.isArray(existingPost.progress_report)) {
+			return res.status(400).json({ message: 'No progress reports found for the specified post.' });
 		}
 
-		const updatedProgressReport = {
-			...existingPost.progress_report,
-			isEdited: true,
-			progress_summary: summary
-		};
+		const updatedProgressReports = existingPost.progress_report.map((report) => ({
+			...report,
+			created_at: report.created_at instanceof Timestamp ? report.created_at.toDate() : report.created_at,
+			isEdited: report.id === reportId ? true : report.isEdited || false,
+			progress_summary: report.id === reportId ? summary : report.progress_summary
+		}));
 
-		await postDocRef.update({ progress_report: updatedProgressReport }).catch((error) => {
+		await postDocRef.update({ progress_report: updatedProgressReports }).catch((error) => {
 			console.error('Error updating the post document:', error);
 			throw new Error('Failed to update the post document.');
 		});
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType);
-		if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
+		if (proposalType === ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED === '1') {
 			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
 			await redisDel(referendumDetailsKey);
 		}
 
 		return res.status(200).json({
 			message: 'Progress summary updated successfully.',
-			progress_report: updatedProgressReport
+			progress_report: updatedProgressReports
 		});
 	} catch (error) {
 		console.error('Error in updating progress summary:', error);
-		return res.status(500).json({ message: error || 'An error occurred while processing the request.' });
+		return res.status(500).json({ message: error.message || 'An error occurred while processing the request.' });
 	}
 };
 

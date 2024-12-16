@@ -5,7 +5,7 @@
 import { Modal, Spin } from 'antd';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import { useEffect, useState } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -68,7 +68,7 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 						{!curatorInitialBio?.length ? 'Add' : 'Edit'} Curator Bio
 					</div>
 				}
-				className={`${poppins.className} ${poppins.variable}`}
+				className={`${dmSans.className} ${dmSans.variable}`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} gov1proposal`}
 				footer={false}

@@ -219,6 +219,9 @@ export default function CreateReferendaForm({
 		}
 		await setSigner(api, loginWallet);
 
+		if (!preimageHash || !preimageLength) {
+			return;
+		}
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
 			const origin = { Origins: selectedTrack };
@@ -537,7 +540,7 @@ export default function CreateReferendaForm({
 									onChange={(e) => handlePreimageHash(e.target.value)}
 								/>
 							</Form.Item>
-							{invalidPreimageHash() && !loadingStatus.isLoading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
+							{invalidPreimageHash() && !loadingStatus.isLoading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash . Please enter valid preimage</span>}
 						</div>
 						<div className='mt-6'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
@@ -825,7 +828,7 @@ export default function CreateReferendaForm({
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
 						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={(!methodCall || !selectedTrack) && Boolean(!isPreimage)}
+						disabled={Boolean(((!methodCall || !selectedTrack) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
 					>
 						Create Referendum
 					</CustomButton>

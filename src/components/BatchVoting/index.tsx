@@ -37,7 +37,7 @@ const BatchVotingWeb = () => {
 					src={theme === 'dark' ? '/assets/icons/star-icon-white.svg' : '/assets/icons/star-icon.svg'}
 					alt='batch-voting'
 				/>
-				<h1 className='m-0 p-0 text-[28px] text-bodyBlue dark:text-white'>Batch Voting</h1>
+				<h1 className='flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Batch Voting</h1>
 			</header>
 			<article className='flex h-[64px] w-full items-center justify-start gap-x-3  rounded-xl bg-white px-6 dark:bg-black'>
 				<div

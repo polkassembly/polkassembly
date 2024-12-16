@@ -4,7 +4,7 @@
 
 import { Modal } from 'antd';
 import Signup from 'pages/signup';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useState } from 'react';
@@ -30,7 +30,7 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			closable={closable}
 			maskClosable={closable}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.variable} ${poppins.className} ${
+			className={`${dmSans.variable} ${dmSans.className} ${
 				isClosable ? '' : 'hide-close-button'
 			} padding-0 w-[605px] max-w-full shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {

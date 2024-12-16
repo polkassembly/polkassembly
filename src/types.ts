@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 
 declare global {
 	interface Window {
@@ -142,8 +143,12 @@ export interface ChainProps {
 	gTag: string | null;
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
+	assetHubTreasuryAddress2?: string;
+	assetHubTreasuryAddress3?: string;
+	assetHubTreasuryAddress4?: string;
 	supportedAssets?: IAssets[];
 	hydrationTreasuryAddress?: string;
+	hydrationTreasuryAddress2?: string;
 	hydrationEndpoints?: string[];
 	hydrationAssets?: Asset[];
 }
@@ -314,6 +319,7 @@ export interface PostComment {
 	sentiment: number | 0;
 	username: string;
 	user_profile_img: string;
+	isExpertComment?: boolean;
 }
 
 export interface IPollVote {
@@ -371,7 +377,6 @@ export enum EAllowedCommentor {
 	ONCHAIN_VERIFIED = 'onchain_verified',
 	NONE = 'none'
 }
-
 export interface Post {
 	user_id: number;
 	content: string;
@@ -395,7 +400,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
-	progress_report?: IProgressReport;
+	progress_report?: IProgressReport[];
 	link?: string;
 	updated_at?: Date;
 }
@@ -599,11 +604,14 @@ export interface IRating {
 	user_id: string;
 }
 export interface IProgressReport {
+	id?: string;
 	created_at?: Date;
+	isEdited?: boolean;
 	progress_file?: string;
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	isFromOgtracker?: boolean;
 }
 
 export interface IVotesCount {
@@ -990,7 +998,7 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
-	identityInfo?: { display: string; leagal: string } | null;
+	identityInfo?: IIdentityInfo | null;
 }
 
 export enum EDelegationAddressFilters {
@@ -1013,6 +1021,42 @@ export interface ICommentsSummary {
 	summary_neutral: string;
 }
 
+interface IProxyAccount {
+	account_display: {
+		address: string;
+	};
+	proxy_type: string;
+}
+
+interface IProxy {
+	proxy_account: IProxyAccount[];
+	real_account: IProxyAccount[];
+}
+
+interface IMultisigAccount {
+	address: string;
+}
+
+interface IMultiAccountMember {
+	address: string;
+}
+
+interface IMultisig {
+	multi_account: IMultisigAccount[];
+	multi_account_member: IMultiAccountMember[];
+	threshold: number;
+}
+
+export interface IAccountData {
+	address: string;
+	balance: string;
+	balance_lock: string;
+	lock: string;
+	multisig: IMultisig;
+	proxy: IProxy;
+	nft_amount: string;
+	nonce: number;
+}
 export interface INetworkWalletErr {
 	message: string;
 	description: string;
@@ -1086,4 +1130,86 @@ export interface IFollowEntry {
 	followed_user_id: number;
 	updated_at: Date;
 	isFollow: boolean;
+}
+
+export enum EExpertReqStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
+export enum LinkProxyType {
+	MULTISIG = 'MULTISIG',
+	PROXY = 'PROXY',
+	PUREPROXY = 'PUREPROXY'
+}
+export interface IIdentityInfo {
+	display: string;
+	legal: string;
+	email: string;
+	twitter: string;
+	web: string;
+	github: string;
+	discord: string;
+	matrix: string;
+	displayParent: string;
+	nickname: string;
+	isIdentitySet: boolean;
+	isVerified: boolean;
+	isGood: boolean;
+	judgements: RegistrationJudgement[];
+	verifiedByPolkassembly: boolean;
+	parentProxyTitle: string | null;
+	parentProxyAddress: string;
+}
+
+export interface IMessage {
+	id: string;
+	content: string;
+	created_at: Date;
+	updated_at: Date;
+	senderAddress: string;
+	receiverAddress: string;
+	senderImage?: string;
+	senderUsername?: string;
+	viewed_by: string[];
+}
+
+export enum EChatRequestStatus {
+	ACCEPTED = 'accepted',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
+export enum EChatFilter {
+	ALL = 'all',
+	UNREAD = 'unread',
+	READ = 'read'
+}
+
+export enum EChatTab {
+	MESSAGES = 'messages',
+	REQUESTS = 'requests'
+}
+
+export interface IChatRecipient {
+	username?: string;
+	address: string;
+	image?: string;
+}
+
+export interface IChat {
+	chatId: string;
+	participants: string[];
+	chatInitiatedBy: string;
+	created_at: Date;
+	updated_at: Date;
+	requestStatus: EChatRequestStatus;
+	latestMessage: IMessage;
+	recipientProfile: IChatRecipient | null;
+}
+
+export interface IChatsResponse {
+	messages: IChat[];
+	requests: IChat[];
 }

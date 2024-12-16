@@ -4,7 +4,7 @@
 import { Modal, Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { CalenderIcon, CapitalIcon, CloseIcon, ConvictionIcon, EmailIconNew, SubscanIcon, VoterIcon } from './CustomIcons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import Address from './Address';
 import dayjs from 'dayjs';
 import { IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
@@ -40,7 +40,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 			maskClosable={false}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-			className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${dmSans.variable} ${dmSans.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			title={
 				<div className='-mx-6 mb-6 flex items-center gap-4 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>

@@ -92,7 +92,7 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
-					Latest Discussion
+					Discussion
 				</div>
 			</div>
 			<div className='mt-3 w-full rounded-xxl bg-white px-4 py-2 shadow-md dark:bg-section-dark-overlay md:px-8 md:py-4'>

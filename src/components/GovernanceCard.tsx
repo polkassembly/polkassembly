@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Modal } from 'antd';
+import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -18,17 +18,17 @@ import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import { useApiContext, usePostDataContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { useRouter } from 'next/router';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod, IProgressReport, IVotesHistoryResponse, NotificationStatus } from '~src/types';
+import { IPeriod, IProgressReport, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
-import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -45,13 +45,10 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import classNames from 'classnames';
 import TrackTag from '~src/ui-components/TrackTag';
 import { StarFilled } from '@ant-design/icons';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useDispatch } from 'react-redux';
-import { progressReportActions } from '~src/redux/progressReport';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import queueNotification from '~src/ui-components/QueueNotification';
-import ProgressReportRatingModal from './ProgressReport/RatingModal';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
+import RateModal from '~src/ui-components/RateModal';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -117,7 +114,6 @@ interface IGovernanceProps {
 	childBountyAmount?: any;
 	parentBounty?: number;
 	allChildBounties?: any[];
-	progress_report?: IProgressReport;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -157,14 +153,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		childBountyAmount,
 		parentBounty,
 		allChildBounties,
-		assetId,
-		progress_report
+		assetId
 	} = props;
 
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const [progressReport, setProgressReport] = useState<IProgressReport[]>();
+	const [isLoadingReport, setIsLoadingReport] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	let titleString = title || method || tipReason || noTitle;
@@ -186,18 +183,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const [rateModal, setRateModal] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
 
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const content = description;
 
-	const dispatch = useDispatch();
-	const { open_rating_modal, report_rating } = useProgressReportSelector();
-	const { setPostData } = usePostDataContext();
-
 	const [showMore, setShowMore] = useState(false);
 
 	const { loginAddress, defaultAddress } = useUserDetailsSelector();
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const [userVotesData, setUserVotesData] = useState<IUserVotesProps | null>(null);
 
@@ -238,42 +233,28 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 	};
 	const isAllRefPage = router.pathname.includes('all-posts');
-	const addUserRating = async () => {
-		setLoading(true);
-		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/progressReport/addReportRating', {
-			postId: index,
-			proposalType: proposalType,
-			rating: report_rating
+
+	const getProgressReport = async () => {
+		setIsLoadingReport(true);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/progressReport/getProgressReport', {
+			postId: onchainId,
+			type: proposalType
 		});
-		if (editError || !data) {
-			setLoading(false);
-			console.error('Error saving rating', editError);
-			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your rating.',
-				status: NotificationStatus.ERROR
-			});
+
+		if (error || !data) {
+			setProgressReport([]);
 		}
 
 		if (data) {
-			setLoading(false);
-			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
-			queueNotification({
-				header: 'Success!',
-				message: 'Your rating is now added',
-				status: NotificationStatus.SUCCESS
-			});
-			dispatch(progressReportActions.setOpenRatingModal(false));
-
-			const { progress_report } = data;
-			setPostData((prev) => ({
-				...prev,
-				progress_report
-			}));
-		} else {
-			console.log('failed to save rating');
+			setProgressReport(data?.progress_report);
 		}
+		setIsLoadingReport(false);
 	};
+
+	useEffect(() => {
+		getProgressReport();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onchainId]);
 
 	useEffect(() => {
 		if (!api) {
@@ -381,13 +362,34 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
-							{status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progress_report?.progress_file && (
+							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && progressReport?.length > 0 && (
 								<Tooltip
 									color='#363636'
-									title='Rate Progress Report'
+									title={
+										<p
+											className='m-0 whitespace-nowrap p-0 text-xs font-normal text-white'
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+										>
+											Progress Report Added, <span className='m-0 cursor-pointer p-0 text-yellowColor'>Rate Delivery</span>
+										</p>
+									}
 								>
 									<div className='ml-1 flex h-[20x] w-[20px] items-center justify-center rounded-full bg-[#FFEEB4A6] dark:bg-transparent'>
-										<StarFilled className='text-[14px] text-[#FFBF60]' />
+										<StarFilled
+											className='text-[14px] text-[#FFBF60]'
+											onClick={(e) => {
+												if (loginAddress) {
+													e.preventDefault();
+													e.stopPropagation();
+													setRateModal(true);
+												} else {
+													setLoginOpen(true);
+												}
+											}}
+										/>
 									</div>
 								</Tooltip>
 							)}
@@ -483,7 +485,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-xs font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -538,7 +540,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${poppins.className} ${poppins.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}
@@ -579,7 +581,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackTag
 										theme={theme as any}
-										className='sm:mt-0'
+										className='font-semibold sm:mt-0'
 										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
 									/>
 								</>
@@ -821,52 +823,31 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 			</div>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
+			<RateModal
+				index={onchainId}
+				open={rateModal}
+				setRateModal={setRateModal}
+				proposalType={proposalType}
+				reports={progressReport}
+			/>
 			<TagsModal
 				tags={tags}
 				proposalType={proposalType}
 				openTagsModal={tagsModal}
 				setOpenTagsModal={setTagsModal}
 			/>
-			<Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
-				open={open_rating_modal}
-				footer={
-					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
-						<CustomButton
-							variant='default'
-							text='Cancel'
-							buttonsize='sm'
-							disabled={loading}
-							onClick={() => {
-								dispatch(progressReportActions.setOpenRatingModal(false));
-							}}
-						/>
-						<CustomButton
-							variant='primary'
-							text='Rate'
-							buttonsize='sm'
-							disabled={loading}
-							onClick={() => {
-								addUserRating();
-							}}
-						/>
-					</div>
-				}
-				maskClosable={false}
-				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
-				onCancel={() => {
-					dispatch(progressReportActions.setOpenRatingModal(false));
-				}}
-				title={
-					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						<StarFilled className='mr-2' />
-						Rate Delivery of Progress Report
-					</div>
-				}
-			>
-				<ProgressReportRatingModal />
-			</Modal>
 		</>
 	);
 };

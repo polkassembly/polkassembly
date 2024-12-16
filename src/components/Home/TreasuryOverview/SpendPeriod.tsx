@@ -9,7 +9,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { LoadingOutlined } from '@ant-design/icons';
-import { poppins } from 'pages/_app';
+import { dmSans } from 'pages/_app';
 
 interface Props {
 	spendPeriod: {
@@ -31,7 +31,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 	return (
 		<>
-			{!['polymesh', 'polymesh-test'].includes(network) && (
+			{!['polymesh', 'polymesh-test', 'mythos'].includes(network) && (
 				<>
 					{!inTreasuryProposals && (
 						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
@@ -101,7 +101,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 														size='small'
 														showInfo={false}
 													/>
-													<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+													<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 														{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 													</span>
 												</span>

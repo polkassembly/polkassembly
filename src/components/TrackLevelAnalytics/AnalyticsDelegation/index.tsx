@@ -15,11 +15,13 @@ import { useDispatch } from 'react-redux';
 import { setTrackLevelDelegationAnalyticsData } from '~src/redux/trackLevelAnalytics';
 import { IDelegationAnalytics } from '~src/redux/trackLevelAnalytics/@types';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
+import { useTranslation } from 'next-i18next';
 
 const { Panel } = Collapse;
 
 const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const [noData, setNoData] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -66,9 +68,9 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 					<div className='flex items-center gap-2'>
 						<ImageIcon
 							src='/assets/icons/delegate-green-icon.svg'
-							alt='Delegate icon'
+							alt={t('delegate_icon')}
 						/>
-						<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Delegation</span>
+						<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>{t('delegation')}</span>
 					</div>
 				}
 				key='2'
@@ -78,7 +80,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 					{noData ? (
 						<div className='flex flex-col items-center justify-center gap-5 p-10'>
 							<NoVotesIcon />
-							<p className='text-sm'>Not enough data available</p>
+							<p className='text-sm'>{t('not_enough_data')}</p>
 						</div>
 					) : (
 						<>

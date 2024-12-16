@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Modal } from 'antd';
+import { useTranslation } from 'next-i18next';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -26,6 +27,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 
 	const {
 		postData: { postType: proposalType, postIndex, timeline, tags: oldTags },
@@ -51,20 +53,20 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 		});
 
 		if (editError || !data) {
-			console.error('Error saving post', editError);
+			console.error(t('error_saving_post'), editError);
 			queueNotification({
-				header: 'Error!',
-				message: 'Error in saving your post.',
+				header: t('error'),
+				message: t('error_in_saving_your_post'),
 				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
-			setError(editError || 'Error in saving post');
+			setError(editError || t('error_in_saving_post'));
 		}
 
 		if (data) {
 			queueNotification({
-				header: 'Success!',
-				message: 'Your post is now edited',
+				header: t('success'),
+				message: t('your_post_is_now_edited'),
 				status: NotificationStatus.SUCCESS
 			});
 
@@ -100,14 +102,14 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 						disabled={formDisabled}
 						onClick={() => form.submit()}
 						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-						text='Save'
+						text={t('save')}
 					/>
 				</div>
 			]}
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 		>
 			<section className='flex flex-col'>
-				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>Proposal Details</h2>
+				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>{t('proposal_details')}</h2>
 				<Form
 					form={form}
 					name='edit-post-form'
@@ -118,7 +120,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('title')}</span>}
 						rules={[
 							{
 								required: true
@@ -134,11 +136,11 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('description')}</label>
 						<ContentForm />
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>{t('tags')}</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}

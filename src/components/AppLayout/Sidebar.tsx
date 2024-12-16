@@ -72,6 +72,7 @@ import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constan
 import Image from 'next/image';
 import { GlobalActions } from '~src/redux/global';
 import CreateProposalDropdown from './CreateProposalDropdown';
+import { useTranslation } from 'next-i18next';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
 
@@ -109,6 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	setIdentityOpen
 }) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { username, picture, loginAddress } = currentUser;
 	const router = useRouter();
@@ -1655,6 +1657,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
+		t: t,
 		username: username || ''
 	});
 

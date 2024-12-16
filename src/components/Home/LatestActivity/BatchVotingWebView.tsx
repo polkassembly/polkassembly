@@ -4,6 +4,7 @@
 import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -11,6 +12,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 
 const BatchVotingWebView = () => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	const { id } = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
@@ -34,7 +36,7 @@ const BatchVotingWebView = () => {
 						}
 					}}
 				>
-					Lets Begin
+					{t('lets_begin')}
 				</Button>
 			</section>
 			<SignupPopup

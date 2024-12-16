@@ -23,6 +23,7 @@ import UploadReport from './ProgressReport/UploadReport';
 import { showProgressReportUploadFlow } from './ProgressReport/utils';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { useTranslation } from 'next-i18next';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -42,6 +43,7 @@ enum cardTags {
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
@@ -98,7 +100,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Refund successully proccessed',
+				message: t('refund_success'),
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
@@ -106,8 +108,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		};
 		const onFailed = () => {
 			queueNotification({
-				header: 'failed!',
-				message: 'Transaction failed!',
+				header: 'Failed!',
+				message: t('transaction_failed'),
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
@@ -116,7 +118,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			address: loginAddress,
 			api,
 			apiReady,
-			errorMessageFallback: 'failed.',
+			errorMessageFallback: t('transaction_failed'),
 			network,
 			onFailed,
 			onSuccess,
@@ -157,7 +159,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => handleRefundDepositClick(),
-					description: 'Click here to refund the deposit for this proposal',
+					description: t('refund_description'),
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.REFUND_DEPOSIT,
 					title: 'Refund Deposit'
@@ -176,7 +178,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => setOpenDecisionDeposit(true),
-					description: 'Place refundable deposit within 14 days to prevent proposal from timing out.',
+					description: t('decision_deposit_description'),
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'
@@ -197,7 +199,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 							setLoginOpen(true);
 						}
 					},
-					description: 'Your proposal is past the deadline, pls add a progress report.',
+					description: t('progress_report_description'),
 					icon: '/assets/icons/progressReport.svg',
 					tag: cardTags.ADD_PROGRESS_REPORT,
 					title: 'Add Progress Report'
@@ -219,7 +221,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					clickHandler: () => {
 						toggleEdit && toggleEdit();
 					},
-					description: 'Please include relevant tags to enhance post discoverability.',
+					description: t('add_tags_description'),
 					icon: '/assets/icons/rhs-card-icons/Plus.png',
 					tag: cardTags.ADD_TAGS,
 					title: 'Add Tags'
@@ -243,7 +245,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 							setOpenLinkCta(true);
 							setCurrentIndex(0);
 						},
-						description: 'Please add contextual info for voters to make an informed decision',
+						description: t('link_discussion_description'),
 						icon: '/assets/icons/rhs-card-icons/Doc.png',
 						tag: cardTags.LINK_DISCUSSION,
 						title: 'Link Discussion'
@@ -256,7 +258,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						});
 						newCards.push({
 							clickHandler: () => setLinkingAndEditingOpen(true),
-							description: 'Please add contextual info for voters to make an informed decision',
+							description: t('add_description_description'),
 							icon: '/assets/icons/rhs-card-icons/Doc.png',
 							tag: cardTags.ADD_DESCRIPTION,
 							title: 'Add Description'
@@ -338,7 +340,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 														window.open('https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum', '_blank');
 													}}
 												>
-													Details
+													{t('details')}
 													<Image
 														src='/assets/icons/redirect.svg'
 														alt='redirection-icon'

@@ -16,10 +16,12 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageComponent from '../ImageComponent';
+import { useTranslation } from 'next-i18next';
 
 export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUserdata = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const [form] = Form.useForm();
 	const commentKey = () => `comment:${typeof window !== 'undefined' ? window.location.href : ''}`;
 	const [content, setContent] = useState(typeof window !== 'undefined' ? window.localStorage.getItem(commentKey()) || '' : '');
@@ -35,12 +37,6 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		handleSave();
 	};
 	const [loading, setLoading] = useState(false);
-
-	// const createSubscription = async (postId: number | string) => {
-	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
-	// if (error) console.error('Error subscribing to post', error);
-	// if (data) console.log(data.message);
-	// };
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -74,7 +70,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 			} else {
 				queueNotification({
 					header: 'Success!',
-					message: 'Comment created successfully.',
+					message: t('comment_created_successfully'),
 					status: NotificationStatus.SUCCESS
 				});
 			}
@@ -104,7 +100,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 					content
 				}}
 				disabled={loading}
-				validateMessages={{ required: "Please add the  '${name}'" }}
+				validateMessages={{ required: t('please_add_name') }}
 			>
 				<div className='flex gap-4 pt-4 font-dmSans md:pt-0'>
 					<div className='flex flex-col items-center gap-2   '>
@@ -133,7 +129,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 								truncateUsername={true}
 								usernameClassName='text-xs text-ellipsis overflow-hidden'
 							/>
-							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>in</span>
+							<span className='xl:text-md text-[12px] text-blue-light-medium dark:text-[#9E9E9E]'>{t('in')}</span>
 							<TopicTag
 								topic={post?.topic?.name}
 								className='m-0 p-0 text-[10px]'
@@ -143,16 +139,16 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 							<div className='flex gap-[2px]'>
 								<ImageIcon
 									src={`${theme === 'dark' ? '/assets/activityfeed/darktimer.svg' : '/assets/icons/timer.svg'}`}
-									alt='timer'
+									alt={t('timer')}
 									className=' h-4 w-4 pt-1 text-blue-light-medium dark:text-[#9E9E9E] md:pt-[8px] xl:h-5 xl:w-5'
 								/>
 								<p className='whitespace-nowrap pt-2 text-[10px] text-blue-light-medium dark:text-[#9E9E9E] md:pt-3 xl:text-[12px]'>{getRelativeCreatedAt(post?.created_at)}</p>
 							</div>
 						</div>
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
-							#{post?.post_id} {post?.title || 'Untitled Post'}
+							#{post?.post_id} {post?.title || t('untitled_post')}
 						</span>
-						<p className='font-dmSans text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
+						<p className='font-dmSans text-[12px]  font-medium text-pink_primary'>{t('commenting_on_proposal')}</p>
 						<div className='w-[250px] md:w-[500px]  md:flex-1'>
 							<ContentForm
 								onChange={(content: any) => onContentChange(content)}
@@ -174,7 +170,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 										!content ? 'opacity-50' : ''
 									}`}
 								>
-									Post
+									{t('post')}
 								</Button>
 							</div>
 						</div>

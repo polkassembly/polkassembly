@@ -21,6 +21,7 @@ import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ISteps } from '../OpenGovTreasuryProposal';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -37,6 +38,7 @@ export default function CancelOrKillReferendaForm({
 	handleClose: () => void;
 	afterProposalCreated: (postId: number) => Promise<void>;
 }) {
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginWallet } = useUserDetailsSelector();
@@ -63,7 +65,7 @@ export default function CancelOrKillReferendaForm({
 		}
 		await setSigner(api, loginWallet);
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		setLoadingStatus({ isLoading: true, message: t('waiting_for_signature') });
 		try {
 			const proposal = type === EKillOrCancel.CANCEL ? api.tx.referenda.cancel(Number(postData.index)) : api.tx.referenda.kill(Number(postData.index));
 			const proposalPreImage = createPreImage(api, proposal);
@@ -75,8 +77,8 @@ export default function CancelOrKillReferendaForm({
 			const onSuccess = async () => {
 				afterProposalCreated(post_id);
 				queueNotification({
-					header: 'Success!',
-					message: `Proposal #${post_id} successful.`,
+					header: t('success'),
+					message: t('proposal_successful', { id: post_id }),
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
@@ -87,7 +89,7 @@ export default function CancelOrKillReferendaForm({
 			const onFailed = (message: string) => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				queueNotification({
-					header: 'Failed!',
+					header: t('failed'),
 					message,
 					status: NotificationStatus.ERROR
 				});
@@ -96,9 +98,9 @@ export default function CancelOrKillReferendaForm({
 				address,
 				api,
 				apiReady,
-				errorMessageFallback: 'Transaction failed.',
+				errorMessageFallback: t('transaction_failed'),
 				network,
-				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+				onBroadcast: () => setLoadingStatus({ isLoading: true, message: t('broadcasting_vote') }),
 				onFailed,
 				onSuccess,
 				tx: mainTx
@@ -108,7 +110,7 @@ export default function CancelOrKillReferendaForm({
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
 			queueNotification({
-				header: 'Failed!',
+				header: t('failed'),
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});
@@ -121,7 +123,7 @@ export default function CancelOrKillReferendaForm({
 			console.log('invalid index');
 			return;
 		}
-		setLoadingStatus({ isLoading: true, message: 'fetching proposal details' });
+		setLoadingStatus({ isLoading: true, message: t('fetching_proposal_details') });
 		try {
 			const { data }: any = await nextApiClientFetch('api/v1/getTitleAndContent', { index });
 			if (data.message) {
@@ -164,13 +166,13 @@ export default function CancelOrKillReferendaForm({
 						showIcon
 						message={
 							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
+								{t('maintain_minimum_balance', { balance: formatedBalance(String(submissionDeposite.toString()), unit), unit })}
 							</span>
 						}
 						description={
 							<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
 								<li className='mt-0 flex w-full justify-between'>
-									<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+									<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>{t('proposal_submission')}</div>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
 									</span>
@@ -187,10 +189,10 @@ export default function CancelOrKillReferendaForm({
 					<div className='mt-3 flex flex-col gap-1'>
 						<div className='flex gap-1'>
 							<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-								<span className='flex items-center'>Referenda Index</span>
+								<span className='flex items-center'>{t('referenda_index')}</span>
 							</label>
 							<HelperTooltip
-								text={type === EKillOrCancel.CANCEL ? 'Enter referendum number you want to cancel' : 'Enter referendum number you want to kill'}
+								text={type === EKillOrCancel.CANCEL ? t('enter_referendum_to_cancel') : t('enter_referendum_to_kill')}
 								className='dark:text-blue-dark-medium'
 							/>
 						</div>
@@ -198,7 +200,7 @@ export default function CancelOrKillReferendaForm({
 							name='referenda-index'
 							rules={[
 								{
-									message: 'Please enter referenda index',
+									message: t('enter_referenda_index'),
 									required: true
 								},
 								{
@@ -206,7 +208,7 @@ export default function CancelOrKillReferendaForm({
 										if (!value || (value && Number(value) > -1)) {
 											return Promise.resolve();
 										}
-										return Promise.reject(new Error('Please enter a positive number'));
+										return Promise.reject(new Error(t('enter_positive_number')));
 									}
 								}
 							]}
@@ -214,7 +216,7 @@ export default function CancelOrKillReferendaForm({
 							<Input
 								type='number'
 								className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-								placeholder='Enter Referenda Index'
+								placeholder={t('enter_referenda_index')}
 								onChange={(e) => handleDebounceData(e.target.value)}
 							/>
 						</Form.Item>
@@ -223,7 +225,6 @@ export default function CancelOrKillReferendaForm({
 
 				{loadingStatus.isLoading && (
 					<div className='flex flex-col items-center justify-center'>
-						{/* <Loader /> */}
 						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
 					</div>
 				)}
@@ -237,7 +238,7 @@ export default function CancelOrKillReferendaForm({
 						>
 							<div className='flex flex-col gap-1'>
 								<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-									<span className='flex items-center'>Title</span>
+									<span className='flex items-center'>{t('title')}</span>
 								</label>
 								<Form.Item name='title'>
 									<Input
@@ -250,12 +251,11 @@ export default function CancelOrKillReferendaForm({
 							</div>
 							<div className='flex flex-col gap-1'>
 								<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-									<span className='flex items-center'>Content</span>
+									<span className='flex items-center'>{t('content')}</span>
 								</label>
 								<Markdown
 									imgHidden
-									className='post-content cursor-not-allowed rounded-md border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 opacity-70 dark:border-[#3B444F] dark:bg-section-dark-overlay
-								dark:text-blue-dark-high '
+									className='post-content cursor-not-allowed rounded-md border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 opacity-70 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'
 									md={postData.content}
 								/>
 							</div>
@@ -265,7 +265,7 @@ export default function CancelOrKillReferendaForm({
 								onClick={() => setSteps({ percent: 100, step: 0 })}
 								className=' h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
 							>
-								Back
+								{t('back')}
 							</Button>
 							<CustomButton
 								variant='primary'
@@ -275,7 +275,7 @@ export default function CancelOrKillReferendaForm({
 								className='w-min'
 								disabled={new BN(availableBalance || '0').lte(submissionDeposite)}
 							>
-								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} Referendum
+								{type === EKillOrCancel.CANCEL ? t('cancel_referendum') : t('kill_referendum')}
 							</CustomButton>
 						</div>
 					</>

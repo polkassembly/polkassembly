@@ -21,6 +21,8 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -28,13 +30,15 @@ interface IGrantsProps {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
@@ -58,7 +62,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		props: {
 			data,
 			error,
-			network
+			network,
+			...translations
 		}
 	};
 };
@@ -66,6 +71,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Grants: FC<IGrantsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
+
 	const [openModal, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -95,7 +102,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 				network={network}
 			/>
 			<div className='flex w-full flex-col sm:flex-row sm:items-center'>
-				<h1 className='dashboard-heading mb-4 flex-1 dark:text-white sm:mb-0'>Grants Discussion</h1>
+				<h1 className='dashboard-heading mb-4 flex-1 dark:text-white sm:mb-0'>{t('grants_discussion')}</h1>
 				<CustomButton
 					text='New Grant post'
 					onClick={handleClick}
@@ -109,14 +116,14 @@ const Grants: FC<IGrantsProps> = (props) => {
 			{/* Intro and Create Post Button */}
 			<div className='mt-8 flex flex-col md:flex-row'>
 				<p className='dark:text-blue-dark-hight mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay dark:text-white md:p-8 md:text-base'>
-					This is the place to discuss grants for {network}. Anyone can start a new grants discussion.{' '}
+					{t('this_is_the_place_to_discuss_grants_for')} {network}. {t('anyone_can_start_a_new_grants_discussion')}{' '}
 					<a
 						className='text-pink_primary'
 						href='https://github.com/moonbeam-foundation/grants/blob/main/interim/interim_grant_proposal.md'
 						target='_blank'
 						rel='noreferrer'
 					>
-						Guidelines of the Interim Grants Program.
+						{t('guidelines_of_the_interim_grants_program')}
 					</a>
 				</p>
 			</div>

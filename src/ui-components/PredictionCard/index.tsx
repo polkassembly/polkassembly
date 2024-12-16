@@ -8,6 +8,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { InfoIcon } from '../CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 const Container = styled.div`
 	border-radius: 14px;
@@ -51,6 +52,7 @@ const Container = styled.div`
 
 const PredictionCard = () => {
 	const currentUser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 
 	const [YesPercentage, setYesPercentage] = useState(0);
 	const [predictCount, setPredictCount] = useState(0);
@@ -139,7 +141,7 @@ const PredictionCard = () => {
 		<Container aria-expanded={isFixed}>
 			<div className='flex items-center justify-between font-dmSans'>
 				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
-					Prediction
+					{t('prediction')}
 					<Tooltip
 						color='#243A57'
 						title='Will this proposal pass or fail?'
@@ -159,13 +161,13 @@ const PredictionCard = () => {
 						})
 					}
 				>
-					Predict
+					{t('predict')}
 				</a>
 			</div>
 			<div className='w-full'>
 				<div className='relative h-5 w-full bg-white/40 transition-all'>
 					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-bodyBlue'>
-						<span>yes</span>
+						<span> {t('yes')}</span>
 						<span className='transition-all'>{YesPercentage}%</span>
 					</div>
 					<div
@@ -201,7 +203,7 @@ const PredictionCard = () => {
 							}}
 						></Avatar>
 					</Avatar.Group>
-					{predictCount} predictions
+					{predictCount} {t('predictions')}
 				</p>
 			</div>
 		</Container>

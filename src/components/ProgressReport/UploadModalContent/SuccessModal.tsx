@@ -8,11 +8,13 @@ import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useRouter } from 'next/router';
 import { usePostDataContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 const SuccessModal = () => {
 	const dispatch = useDispatch();
 	const { postData } = usePostDataContext();
 	const router = useRouter();
+	const { t } = useTranslation('common');
 
 	return (
 		<section className='h-[150px] p-6'>
@@ -22,7 +24,7 @@ const SuccessModal = () => {
 				imgWrapperClassName='mx-auto relative -top-[152px] left-[150px]'
 			/>
 			<div className='-mt-[136px] flex flex-col items-center justify-center'>
-				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Progress Report Successfully Added</h1>
+				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>{t('progress_report_added')}</h1>
 				<p
 					className='m-0 mb-4 mt-1 cursor-pointer p-0 text-sm font-normal text-pink_primary'
 					onClick={() => {
@@ -32,7 +34,7 @@ const SuccessModal = () => {
 						}
 					}}
 				>
-					View on Proposal Page <ExportOutlined className='m-0 p-0' />
+					{t('view_on_proposal_page')} <ExportOutlined className='m-0 p-0' />
 				</p>
 			</div>
 		</section>

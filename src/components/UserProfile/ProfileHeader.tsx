@@ -18,11 +18,13 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import { useTranslation } from 'next-i18next';
 import FollowButton from './Follow/FollowButton';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
 });
+
 interface Props {
 	className?: string;
 	addressWithIdentity?: string;
@@ -34,6 +36,7 @@ interface Props {
 
 const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetails, addressWithIdentity }: Props) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const { username, id } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const [openTipModal, setOpenTipModal] = useState<boolean>(false);
@@ -77,7 +80,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 								>
 									<div className='flex items-center gap-1.5'>
 										<DollarIcon className='text-lg' />
-										<span className='max-md:hidden'>Tip User</span>
+										<span className='max-md:hidden'>{t('tip_user')}</span>
 									</div>
 								</CustomButton>
 							)}
@@ -99,9 +102,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 										className='mr-1 rounded-full'
 										height={20}
 										width={20}
-										alt='edit logo'
+										alt={t('delegate_logo')}
 									/>
-									<span className='max-md:hidden'>Delegate</span>
+									<span className='max-md:hidden'>{t('delegate')}</span>
 								</CustomButton>
 							)}
 							<FollowButton userId={userProfile.user_id} />

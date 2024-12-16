@@ -35,6 +35,8 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -52,7 +54,7 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -198,10 +200,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
 	const responseArr = await Promise.all(Object.values(fetches));
+
+	const translations = await serverSideTranslations(locale || '', ['common']);
+
 	const props: IHomeProps = {
 		latestPosts: {},
 		network,
-		networkSocialsData
+		networkSocialsData,
+		...translations
 	};
 
 	Object.keys(fetches).forEach((key, index) => {
@@ -221,6 +227,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const dispatch = useDispatch();
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -257,7 +264,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			/>
 			<main>
 				<div className='mr-2 flex justify-between'>
-					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{t('overview')}</h1>
 				</div>
 				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (

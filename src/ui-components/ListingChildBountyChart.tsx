@@ -6,6 +6,7 @@ import SkeletonButton from 'antd/es/skeleton/Button';
 import { BN } from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';
@@ -27,6 +28,7 @@ const ListingChildBountyChart: FC<IListingChildBountyChart> = (props) => {
 	const [amountDisbursed, setAmountDisbursed] = useState<any>('');
 	const [remainingAmount, setRemainingAmount] = useState<any>('');
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const handleChildBounties = (data: any[]) => {
 		let totalAmount = ZERO_BN;
@@ -135,11 +137,11 @@ const ListingChildBountyChart: FC<IListingChildBountyChart> = (props) => {
 						return (
 							<div className={'w-[228px] rounded-md bg-[#363636] px-4 py-3 text-sm capitalize text-white dark:bg-[#1E2126]'}>
 								<span className='text-xs font-semibold'>
-									Disbursed: {parseFloat(formatedBalance(amountDisbursed.toString(), network).replace(/,/g, ''))} {unit}
+									{t('disbursed')}: {parseFloat(formatedBalance(amountDisbursed.toString(), network).replace(/,/g, ''))} {unit}
 								</span>
 								<br />
 								<span className='text-xs font-semibold'>
-									Remaining: {parseFloat(formatedBalance(remainingAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
+									{t('remaining')}: {parseFloat(formatedBalance(remainingAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
 								</span>
 							</div>
 						);

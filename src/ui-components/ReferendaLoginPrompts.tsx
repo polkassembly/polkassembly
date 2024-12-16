@@ -11,6 +11,7 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	image: String;
@@ -25,6 +26,7 @@ interface Props {
 const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }: Props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const { t } = useTranslation('common');
 
 	const handleClick = (path: String) => {
 		if (path === 'login') {
@@ -48,14 +50,14 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 				footer={
 					<div className='center-aligned mt-[32px] flex flex-col items-center justify-center gap-4 pb-8'>
 						<CustomButton
-							text='Login'
+							text={t('login')}
 							onClick={() => handleClick('login')}
 							variant='primary'
 							className='ml-2 w-[360px] p-5'
 							height={40}
 						/>
 						<CustomButton
-							text='Signup'
+							text={t('signup')}
 							onClick={() => handleClick('signup')}
 							variant='default'
 							className='w-[360px] p-5'

@@ -23,6 +23,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { InfoIcon } from '~src/ui-components/CustomIcons';
+import { useTranslation } from 'next-i18next';
 
 interface IGeneralSignalsProps {
 	className?: string;
@@ -34,6 +35,7 @@ interface IGeneralSignalsProps {
 }
 
 const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId, canEdit, proposalType, votes }) => {
+	const { t } = useTranslation('common');
 	const { id } = useUserDetailsSelector();
 	const [error, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -194,9 +196,9 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 				indicator={<LoadingOutlined />}
 			>
 				<h3 className='flex items-center'>
-					<span className='dashboard-heading mr-2 dark:text-white'>Poll Signals</span>{' '}
+					<span className='dashboard-heading mr-2 dark:text-white'>{t('poll_signals')}</span>{' '}
 					<Tooltip
-						title='This represents the off-chain votes of Polkassembly users including council members'
+						title={t('this_represents_the_off_chain_votes_of_polkassembly_users_including_council_members')}
 						color='#E5007A'
 					>
 						<InfoIcon className='scale-90 text-2xl text-lightBlue dark:text-icon-dark-inactive' />
@@ -224,12 +226,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 
 					<div className='ml-12 flex flex-1 flex-col justify-between py-12'>
 						<div className='mb-auto flex items-center'>
-							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Aye</div>
+							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('aye')}</div>
 							<div className='mr-12 text-navBlue dark:text-white'>{ayes}</div>
 						</div>
 
 						<div className='flex items-center'>
-							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Nay</div>
+							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>{t('nay')}</div>
 							<div className='mr-12 text-navBlue dark:text-white'>{nays}</div>
 						</div>
 					</div>
@@ -248,11 +250,11 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 					<div className='mt-6 flex  items-center justify-items-start '>
 						{canVote ? (
 							<span className='mr-5'>
-								Poll ends in <BlockCountdown endBlock={endBlock} />
+								{t('poll_ends_in')} <BlockCountdown endBlock={endBlock} />
 							</span>
 						) : (
 							<span className='mr-5'>
-								Poll ended.{' '}
+								{t('poll_ended')}.{' '}
 								{canEdit ? (
 									<CustomButton
 										onClick={extendsPoll}
@@ -273,7 +275,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 									className='info text-muted cancelVoteLink'
 									variant='primary'
 								>
-									Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
+									{t('cancel')} <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> {t('vote')}
 								</CustomButton>
 							)}
 						</div>

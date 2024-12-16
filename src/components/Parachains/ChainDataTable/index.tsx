@@ -18,6 +18,7 @@ import Cards from './Cards';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	chain: string;
@@ -61,187 +62,190 @@ const Table = styled(AntdTable)`
 	}
 `;
 
-const columns: ColumnsType<any> = [
-	{
-		dataIndex: 'index',
-		fixed: 'left',
-		key: 'index',
-		render: (index) => <div className='text-blue-light-high dark:text-blue-dark-high'>#{index}</div>,
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Index</p>,
-		width: 75
-	},
-	{
-		dataIndex: 'project',
-		fixed: 'left',
-		key: 'project',
-		render: (name, { badgeArray, logoURL }) => (
-			<div style={{ alignItems: 'center', display: 'flex' }}>
-				<Image
-					style={{ marginRight: '16px' }}
-					src={logoURL}
-					height={34}
-					width={34}
-					alt={`${name} logo`}
-				/>
-				<div
-					className='text-blue-light-high dark:text-blue-dark-high'
-					style={{ marginRight: '16px' }}
-				>
-					{name}
-				</div>
-				{badgeArray.map((item: any) => (
+const ChainDataTable = ({ chain, data }: Props) => {
+	const [chainData, setChainData] = useState<any>(null);
+	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
+
+	const columns: ColumnsType<any> = [
+		{
+			dataIndex: 'index',
+			fixed: 'left',
+			key: 'index',
+			render: (index) => <div className='text-blue-light-high dark:text-blue-dark-high'>#{index}</div>,
+			title: t('index'),
+			width: 75
+		},
+		{
+			dataIndex: 'project',
+			fixed: 'left',
+			key: 'project',
+			render: (name, { badgeArray, logoURL }) => (
+				<div style={{ alignItems: 'center', display: 'flex' }}>
+					<Image
+						style={{ marginRight: '16px' }}
+						src={logoURL}
+						height={34}
+						width={34}
+						alt={`${name} ${t('logo')}`}
+					/>
 					<div
-						key={item}
-						className='bg-pink_light text-[12px] text-white'
-						style={{ borderRadius: '48px', marginRight: '10px', padding: '4px 10px' }}
+						className='text-blue-light-high dark:text-blue-dark-high'
+						style={{ marginRight: '16px' }}
 					>
-						{item}
+						{name}
 					</div>
-				))}
-			</div>
-		),
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Projects</p>,
-		width: 420
-	},
-	{
-		dataIndex: 'status',
-		key: 'status',
-		render: (status) => (
-			<>
-				{status.search('auction') !== -1 ? (
-					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
-						<Image
-							src={auctionIcon}
-							height={16}
-							width={16}
-							alt='Auction Icon'
-						/>{' '}
-						In Auction
-					</span>
-				) : status.search('Testing') !== -1 ? (
-					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
-						<Image
-							src={testingIcon}
-							height={16}
-							width={16}
-							alt='Testing Icon'
-						/>{' '}
-						Testing
-					</span>
-				) : status.search('announced') !== -1 ? (
-					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
-						<Image
-							src={announcedIcon}
-							height={16}
-							width={16}
-							alt='Announced Icon'
-						/>{' '}
-						Announced
-					</span>
-				) : status.search('live') !== -1 ? (
-					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
-						<Image
-							src={liveIcon}
-							height={16}
-							width={16}
-							alt='Live Icon'
-						/>{' '}
-						Live
-					</span>
-				) : null}
-			</>
-		),
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Status</p>
-	},
-	{
-		dataIndex: 'token',
-		key: 'token',
-		render: (token) => <div className='text-blue-light-high dark:text-blue-dark-high'>{token}</div>,
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Token</p>
-	},
-	{
-		dataIndex: 'w3fGrant',
-		key: 'w3fGrant',
-		render: (w3fGrant) => {
-			function toTitleCase(str: string): string {
-				return str.replace(/\w\S*/g, function (txt) {
-					return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-				});
-			}
-
-			const grantTooltip = () => {
-				let content = '';
-				if (w3fGrant) {
-					if (w3fGrant.terminated) {
-						content = toTitleCase(`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`);
-					} else if (w3fGrant.milestoneText) {
-						content = toTitleCase(`${w3fGrant.received} W3F grant(s) received, ${w3fGrant.milestoneText}`);
-					} else {
-						content = toTitleCase(`${w3fGrant.received} received, ${w3fGrant.completed} completed`);
-					}
-				} else {
-					content = '';
-				}
-				return content;
-			};
-
-			const title = grantTooltip();
-
-			return (
+					{badgeArray.map((item: any) => (
+						<div
+							key={item}
+							className='bg-pink_light text-[12px] text-white'
+							style={{ borderRadius: '48px', marginRight: '10px', padding: '4px 10px' }}
+						>
+							{item}
+						</div>
+					))}
+				</div>
+			),
+			title: t('project'),
+			width: 420
+		},
+		{
+			dataIndex: 'status',
+			key: 'status',
+			render: (status) => (
 				<>
-					{title ? (
-						<Tooltip title={title}>
+					{status.search('auction') !== -1 ? (
+						<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
+							<Image
+								src={auctionIcon}
+								height={16}
+								width={16}
+								alt={t('auction_icon')}
+							/>{' '}
+							{t('in_auction')}
+						</span>
+					) : status.search('Testing') !== -1 ? (
+						<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
+							<Image
+								src={testingIcon}
+								height={16}
+								width={16}
+								alt={t('testing_icon')}
+							/>{' '}
+							{t('testing')}
+						</span>
+					) : status.search('announced') !== -1 ? (
+						<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
+							<Image
+								src={announcedIcon}
+								height={16}
+								width={16}
+								alt={t('announced_icon')}
+							/>{' '}
+							{t('announced')}
+						</span>
+					) : status.search('live') !== -1 ? (
+						<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
+							<Image
+								src={liveIcon}
+								height={16}
+								width={16}
+								alt={t('live_icon')}
+							/>{' '}
+							{t('live')}
+						</span>
+					) : null}
+				</>
+			),
+			title: t('status')
+		},
+		{
+			dataIndex: 'token',
+			key: 'token',
+			render: (token) => <div className='text-blue-light-high dark:text-blue-dark-high'>{token}</div>,
+			title: t('token')
+		},
+		{
+			dataIndex: 'w3fGrant',
+			key: 'w3fGrant',
+			render: (w3fGrant) => {
+				function toTitleCase(str: string): string {
+					return str.replace(/\w\S*/g, function (txt) {
+						return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+					});
+				}
+
+				const grantTooltip = () => {
+					let content = '';
+					if (w3fGrant) {
+						if (w3fGrant.terminated) {
+							content = toTitleCase(t('w3f_grant_terminated', { reason: w3fGrant.terminationReason }));
+						} else if (w3fGrant.milestoneText) {
+							// eslint-disable-next-line sort-keys
+							content = toTitleCase(t('w3f_grant_received_milestone', { received: w3fGrant.received, milestone: w3fGrant.milestoneText }));
+						} else {
+							// eslint-disable-next-line sort-keys
+							content = toTitleCase(t('w3f_grant_received_completed', { received: w3fGrant.received, completed: w3fGrant.completed }));
+						}
+					} else {
+						content = '';
+					}
+					return content;
+				};
+
+				const title = grantTooltip();
+
+				return (
+					<>
+						{title ? (
+							<Tooltip title={title}>
+								<Image
+									src={w3fGrant?.terminated ? w3fRedLogo : w3fGrant?.milestoneText ? w3fBlackLogo : w3fGreenLogo}
+									height={34}
+									width={34}
+									alt={t('w3f_logo')}
+								/>
+							</Tooltip>
+						) : (
 							<Image
 								src={w3fGrant?.terminated ? w3fRedLogo : w3fGrant?.milestoneText ? w3fBlackLogo : w3fGreenLogo}
 								height={34}
 								width={34}
-								alt='W3F Logo'
+								alt={t('w3f_logo')}
 							/>
-						</Tooltip>
-					) : (
-						<Image
-							src={w3fGrant?.terminated ? w3fRedLogo : w3fGrant?.milestoneText ? w3fBlackLogo : w3fGreenLogo}
-							height={34}
-							width={34}
-							alt='W3F Logo'
-						/>
-					)}
-				</>
-			);
+						)}
+					</>
+				);
+			},
+			title: t('w3f')
 		},
-		title: 'W3F'
-	},
-	{
-		dataIndex: 'investors',
-		key: 'investors',
-		render: (investors) => <div className='text-blue-light-high dark:text-blue-dark-high'>{!!investors && investors}</div>,
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Investors</p>,
-		width: 'auto'
-	},
-	{
-		dataIndex: 'githubLink',
-		key: 'githubLink',
-		render: (githubLink) => (
-			<a
-				href={githubLink}
-				target='_blank'
-				rel='noreferrer'
-			>
-				<Image
-					src={githubLogo}
-					height={34}
-					width={34}
-					alt='github logo'
-				/>
-			</a>
-		),
-		title: <p className='m-0 p-0 text-lightBlue dark:text-white'>Github</p>
-	}
-];
-
-const ChainDataTable = ({ chain, data }: Props) => {
-	const [chainData, setChainData] = useState<any>(null);
-	const { resolvedTheme: theme } = useTheme();
+		{
+			dataIndex: 'investors',
+			key: 'investors',
+			render: (investors) => <div className='text-blue-light-high dark:text-blue-dark-high'>{!!investors && investors}</div>,
+			title: t('investors'),
+			width: 'auto'
+		},
+		{
+			dataIndex: 'githubLink',
+			key: 'githubLink',
+			render: (githubLink) => (
+				<a
+					href={githubLink}
+					target='_blank'
+					rel='noreferrer'
+				>
+					<Image
+						src={githubLogo}
+						height={34}
+						width={34}
+						alt={t('github_logo')}
+					/>
+				</a>
+			),
+			title: t('github')
+		}
+	];
 
 	useEffect(() => {
 		const filteredData: any = data.filter((project: any) => {

@@ -24,6 +24,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dmSans } from 'pages/_app';
 import { capitalizeWords, handleTrack } from './DashboardTrack';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -43,6 +44,7 @@ export interface ITrackDataType {
 }
 
 const DashboardTrackListing = ({ className }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
@@ -135,7 +137,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					active_proposals: track?.active_proposals_count,
 					delegated_by: track?.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)
 						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) === getEncodedAddress(delegationDashboardAddress, network))
-						: null, //rece
+						: null,
 					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED)
 						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) !== getEncodedAddress(delegationDashboardAddress, network))
 						: null,
@@ -175,7 +177,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 									value={key}
 									className='text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'
 								>
-									{key.charAt(0).toUpperCase() + key.slice(1).toLowerCase().split('_').join(' ')} ({value})
+									{t(key)} ({value})
 								</Radio>
 							</Menu.Item>
 						) : null
@@ -199,7 +201,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					showTable && 'sm:border-b-[1px] sm:border-solid sm:border-[#e7ebf0] sm:dark:border-separatorDark sm:dark:text-blue-dark-high'
 				} max-sm:px-4 max-sm:py-5`}
 			>
-				<span className={`${dmSans.className} ${dmSans.variable} font-semibold text-bodyBlue dark:text-blue-dark-high max-sm:text-xl `}>Tracks</span>
+				<span className={`${dmSans.className} ${dmSans.variable} font-semibold text-bodyBlue dark:text-blue-dark-high max-sm:text-xl `}>{t('tracks')}</span>
 				<Radio.Group
 					buttonStyle='solid'
 					defaultValue={ETrackDelegationStatus.ALL}
@@ -218,7 +220,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${key === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'}`}
 							value={key as ETrackDelegationStatus}
 						>
-							{key.charAt(0).toUpperCase() + key.split('_').join(' ').slice(1, key.length)} ({value})
+							{t(key)} ({value})
 						</Radio>
 					))}
 				</Radio.Group>
@@ -238,7 +240,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 								className=''
 							></Radio>
 							<span className='mr-[6px] flex items-center text-xs font-semibold text-blue-light-high dark:text-blue-dark-high'>
-								{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().split('_').join(' ') : 'Unknown'} ({statusCounts[status] || 0})
+								{status ? t(status) : 'Unknown'} ({statusCounts[status] || 0})
 							</span>
 							<Image
 								src={'/assets/delegation-tracks/down-arrow.svg'}
@@ -294,15 +296,12 @@ const DashboardTrackListing = ({ className }: Props) => {
 														: 'bg-gray-100 text-gray-800'
 												} ${status === ETrackDelegationStatus.RECEIVED_DELEGATION && item.status && item.status.length > 1 ? 'w-[95px] truncate' : ''}`}
 											>
-												{/* Conditional Text Rendering */}
-												{status === ETrackDelegationStatus.RECEIVED_DELEGATION
-													? "Recv'd Delegation"
-													: status.split('_').join(' ').charAt(0).toUpperCase() + status.split('_').join(' ').slice(1)}
+												{status === ETrackDelegationStatus.RECEIVED_DELEGATION ? t('received_delegation') : t(status)}
 											</span>
 										))}
 									</div>
 									<span className={`${dmSans.className} ${dmSans.variable} text-[10px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
-										{item.active_proposals} Active proposal(s)
+										{item.active_proposals} {t('active_proposals')}
 									</span>
 								</div>
 
@@ -324,9 +323,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-24 text-[258px] dark:bg-section-dark-overlay'>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<DelegateDelegationIcon />
-						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
+						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>{t('no_delegated_tracks')}</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
-							You can see a track here once it has been delegated
+							{t('no_undelegated_tracks_description')}
 							<CustomButton
 								className={`ml-[16px] border-none dark:bg-transparent max-md:mt-[10px] ${!api || (!apiReady && 'opacity-50')}`}
 								disabled={!api || !apiReady}
@@ -338,7 +337,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 								}}
 							>
 								<DelegatedProfileIcon className='mr-[7px]' />
-								<span className='mt-[-1px]'>Delegate</span>
+								<span className='mt-[-1px]'>{t('delegate')}</span>
 							</CustomButton>
 						</div>
 					</div>
@@ -353,11 +352,11 @@ const DashboardTrackListing = ({ className }: Props) => {
 						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
 					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
-						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>{status === ETrackDelegationStatus.UNDELEGATED ? 'No Undelegated Tracks' : 'No Delegation Received'}</h4>
+						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>
+							{status === ETrackDelegationStatus.UNDELEGATED ? t('no_undelegated_tracks') : t('no_received_delegation')}
+						</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
-							{status === ETrackDelegationStatus.UNDELEGATED
-								? 'All tracks have been delegated. Undelegate a track to view here'
-								: 'You have not received delegations for any of the tracks'}
+							{status === ETrackDelegationStatus.UNDELEGATED ? t('no_undelegated_tracks_description') : t('no_received_delegation_description')}
 						</div>
 					</div>
 				</div>
@@ -365,6 +364,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 		</div>
 	);
 };
+
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
 		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;

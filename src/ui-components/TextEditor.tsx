@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import { useQuoteCommentContext } from '~src/context';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import { EditorEvent } from 'tinymce';
+import { useTranslation } from 'next-i18next';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -121,6 +122,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { quotedText, setQuotedText } = useQuoteCommentContext();
 	const pasteRef = useRef<string>('');
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -166,7 +168,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					wrapClassName='dark:bg-modalOverlayDark'
 					open={isModalVisible}
 					onCancel={() => setIsModalVisible(false)}
-					title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
+					title={<div className='dark:text-blue-dark-high'>{t('select_gifs')}</div>}
 					footer={null}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'

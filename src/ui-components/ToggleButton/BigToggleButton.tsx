@@ -9,10 +9,12 @@ import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
 import classNames from 'classnames';
 import { trackEvent } from 'analytics';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTranslation } from 'next-i18next';
 
 const BigToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 	const currentUser = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 
 	return (
 		<div className='flex w-full items-center justify-center'>
@@ -35,7 +37,7 @@ const BigToggleButton = () => {
 			>
 				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}
 				<p className='m-0 flex items-center justify-center gap-x-1'>
-					<span className='text-xs font-normal tracking-[0.24px] text-bodyBlue dark:text-white'>Switch to</span>
+					<span className='text-xs font-normal tracking-[0.24px] text-bodyBlue dark:text-white'>{t('switch_to')}</span>
 					<span className='text-xs font-semibold tracking-[0.24px] text-bodyBlue dark:text-white'>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
 				</p>
 			</button>

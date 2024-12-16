@@ -13,6 +13,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatBalance } from '@polkadot/util';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -25,6 +26,7 @@ interface Props {
 
 const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setExpandViewVote, delegatorsLoading }: Props) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;
@@ -70,7 +72,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 						<div className='mt-4 border-0 border-t-[1px] border-dashed border-[#DCDFE3] pb-6 pt-4 text-sm text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium max-md:bg-transparent'>
 							<div className='flex flex-col gap-4'>
 								<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
-									<label className='flex items-center gap-2 font-medium'>Vote Details:</label>
+									<label className='flex items-center gap-2 font-medium'>{t('vote_details')}:</label>
 									{!!expandViewVote?.isDelegatedVote && (
 										<Address
 											address={expandViewVote?.voter}
@@ -83,7 +85,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 								{!!expandViewVote?.isDelegatedVote && (
 									<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
 										<label className='flex items-center gap-2 font-medium'>
-											Delegator:
+											{t('delegator')}:
 											<Address
 												address={expandViewVote?.voter}
 												iconSize={18}
@@ -92,7 +94,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											/>
 										</label>
 										<label className='flex items-center gap-2 font-medium'>
-											Vote Casted by:
+											{t('vote_casted_by')}:
 											<Address
 												address={expandViewVote?.delegatedTo || ''}
 												iconSize={18}
@@ -104,11 +106,11 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 								)}
 								<div className='flex justify-between max-md:flex-col max-md:gap-2'>
 									<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] dark:border-separatorDark max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
-										<label className='font-semibold'>Self Votes</label>
+										<label className='font-semibold'>{t('self_votes')}</label>
 										<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
+													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('voting_power')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{Number(formatedBalance((expandViewVote?.balance?.toString() || '0').toString(), unit, 2).replaceAll(',', '')) *
@@ -118,7 +120,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> Conviction
+													<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('conviction')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{expandViewVote?.lockPeriod || 0.1}x{expandViewVote?.isDelegatedVote && '/d'}
@@ -126,7 +128,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.balance?.toString() || '0').toString(), unit, 2)} {unit}
@@ -135,11 +137,11 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 										</div>
 									</div>
 									<div className='w-[50%] justify-start max-md:w-[100%] md:pl-6'>
-										<label className='font-semibold'>Delegation Votes</label>
+										<label className='font-semibold'>{t('delegation_votes')}</label>
 										<div className='mt-2 flex flex-col gap-2 lg:pr-4'>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Votes
+													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('votes')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.delegatedVotingPower || '0')?.toString(), unit, 2)} {unit}
@@ -147,13 +149,13 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> Delegators
+													<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> {t('delegators')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{expandViewVote?.delegatorsCount || 0}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
+													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> {t('capital')}
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.delegateCapital || '0')?.toString(), unit, 2)} {unit}
@@ -164,7 +166,9 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 								</div>
 							</div>
 						</div>
-						<p className='m-0 mb-4 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+						<p className='m-0 mb-4 text-xs text-bodyBlue dark:text-blue-dark-high'>
+							d: {t('delegation')} s: {t('split')} sa: {t('split_abstain')}
+						</p>
 					</div>
 				)}
 			</Spin>

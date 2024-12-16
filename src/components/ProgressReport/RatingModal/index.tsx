@@ -12,6 +12,7 @@ import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { IProgressReport } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
@@ -21,6 +22,7 @@ interface IProgressReportRatingModal {
 
 const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 	const { reportId } = props;
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
@@ -53,7 +55,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 	return (
 		<>
 			<section className='flex flex-col gap-y-1'>
-				{reportData?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>Summary of Progress Report</h1>}
+				{reportData?.progress_summary && <h1 className='text-normal m-0 p-0 text-lg text-bodyBlue dark:text-white'>{t('summary_of_progress_report')}</h1>}
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 					<Markdown
 						className='post-content m-0 p-0 dark:text-blue-dark-medium'
@@ -68,7 +70,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 						dispatch(progressReportActions.setOpenRatingModal(false));
 					}}
 				>
-					View Progress Report in detail
+					{t('view_progress_report_in_detail')}
 				</p>
 				{reportData?.progress_summary && (
 					<Divider
@@ -77,7 +79,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 					/>
 				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
+					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>{t('rate_delivery')}</h1>
 					<>
 						<Rate
 							tooltips={desc}
@@ -100,7 +102,9 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 						)}
 					</>
 					{reportData?.ratings && reportData?.ratings?.length > 0 && (
-						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>{reportData?.ratings?.length} users have already rated the progress report.</p>
+						<p className='m-0 -mb-4 mt-3 p-0 text-xs text-sidebarBlue dark:text-blue-dark-medium'>
+							{reportData?.ratings?.length} {t('users_have_already_rated_the_progress_report')}
+						</p>
 					)}
 				</div>
 			</section>

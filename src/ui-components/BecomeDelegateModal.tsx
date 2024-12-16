@@ -16,6 +16,7 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
 import ContentForm from '~src/components/ContentForm';
+import { useTranslation } from 'next-i18next';
 
 interface IDetailsState {
 	userId: number | null;
@@ -41,6 +42,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [newBio, setNewBio] = useState<string>(userBio || '');
+	const { t } = useTranslation('common');
 
 	const handleSubmit = async () => {
 		setLoading(true);
@@ -105,7 +107,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			>
 				<AuthForm onSubmit={handleSubmit}>
 					<div className='mt-3 px-4 sm:mt-6 sm:px-5'>
-						<label className='text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>Your Address</label>
+						<label className='text-xs text-lightBlue dark:text-blue-dark-medium sm:text-sm'>{t('your_address')}</label>
 						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px] dark:border-separatorDark'>
 							<Address
 								address={defaultAddress || delegationDashboardAddress}
@@ -145,7 +147,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							onClick={handleSubmit}
 							disabled={!newBio || loading}
 						>
-							<span className='text-white'>{isEditMode ? 'Edit' : 'Confirm'}</span>
+							<span className='text-white'>{isEditMode ? t('edit') : t('confirm')}</span>
 						</Button>
 					</div>
 				</AuthForm>

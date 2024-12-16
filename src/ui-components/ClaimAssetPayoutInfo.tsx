@@ -23,6 +23,7 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
+import { useTranslation } from 'next-i18next';
 
 interface IProps {
 	className?: string;
@@ -37,6 +38,7 @@ const ZERO_BN = new BN(0);
 const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPage = false }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const { loginAddress, addresses } = useUserDetailsSelector();
 	const { payouts: allPayouts } = useClaimPayoutSelector();
 	const { postData } = usePostDataContext();
@@ -72,7 +74,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	const onFailed = (error: string) => {
 		queueNotification({
 			header: 'failed!',
-			message: error || 'Transaction failed!',
+			message: error || t('transaction_failed'),
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
@@ -80,17 +82,17 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Transaction Successfull!',
+			message: t('transaction_successful'),
 			status: NotificationStatus.SUCCESS
 		});
 		setOpen(false);
 		setUpdateAvailableBalance(!updateAvailableBalance);
-		setLoading({ isLoading: false, message: 'Success!' });
+		setLoading({ isLoading: false, message: t('success') });
 	};
 
 	const handleSubmitTx = async () => {
 		if (!api || !apiReady || !loginAddress || !payouts?.length) return;
-		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
+		setLoading({ isLoading: true, message: t('awaiting_confirmation') });
 
 		const batchData = payouts?.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
 		const tx = batchData.length > 1 ? api.tx.utility.batch(batchData) : batchData[0];
@@ -158,7 +160,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 						wrapClassName={'dark:bg-modalOverlayDark'}
 						title={
 							<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-								Claim Payouts
+								{t('claim_payouts')}
 							</div>
 						}
 						footer={
@@ -170,7 +172,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 									}}
 									disabled={loading.isLoading}
 									className={classNames('text-xm rounded-[4px] tracking-wide', loading.isLoading ? 'opacity-50' : '')}
-									text='Cancel'
+									text={t('cancel')}
 									variant='default'
 									width={120}
 									height={38}
@@ -178,7 +180,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 								<CustomButton
 									onClick={() => handleSubmitTx()}
 									className={classNames('rounded-[4px] text-xs tracking-wide', loading.isLoading || availableBalance?.lt(txFee) ? 'opacity-50' : '')}
-									text='Claim'
+									text={t('claim')}
 									variant='primary'
 									width={120}
 									height={38}
@@ -197,13 +199,13 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 										className='my-2 rounded-[4px]'
 										type='warning'
 										showIcon
-										message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
+										message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'> {t('insufficient_available_balance')}</p>}
 									/>
 								)}
 								<div>
 									<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 										<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-											Your Address{' '}
+											{t('your_address')}{' '}
 											<HelperTooltip
 												className='ml-1'
 												text='Please note the verification cannot be transferred to another address.'
@@ -235,17 +237,17 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 												height={21}
 												variant='primary'
 											>
-												<span className='text-[10px]'>Change Wallet</span>
+												<span className='text-[10px]'>{t('change_wallet')}</span>
 											</CustomButton>
 										</div>
 									</div>
 								</div>
 
 								<div className='mt-4 flex justify-between rounded-lg border-[1px] border-solid border-section-light-container px-4 py-2 text-sm font-medium text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-									<span>Index</span>
-									<span>Beneficiary</span>
-									<span>Amount</span>
-									<span>Expire In</span>
+									<span>{t('index')}</span>
+									<span>{t('beneficiary')}</span>
+									<span>{t('amount')}</span>
+									<span>{t('expire_in')}</span>
 								</div>
 								{payouts.map((payout) => {
 									return (
@@ -269,7 +271,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 								{txFee.gt(ZERO_BN) && (
 									<Alert
 										type='info'
-										message={`Gas fee of ${parseBalance(txFee.toString(), 2, true, network)} will be required.`}
+										message={`${t('gas_fee_of')} ${parseBalance(txFee.toString(), 2, true, network)} ${t('will_be_required')}`}
 										showIcon
 										className='mt-4 rounded-[4px]'
 									/>
@@ -280,7 +282,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 					<AddressConnectModal
 						open={openAddressSelectModal}
 						setOpen={setOpenAddressSelectModal}
-						walletAlertTitle='Claim Payout'
+						walletAlertTitle={t('claim_payout')}
 						onConfirm={(address: string) => {
 							setAddress(address);
 							setOpen(true);

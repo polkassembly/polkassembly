@@ -24,6 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
+import { useTranslation } from 'next-i18next';
 
 interface ITokenPrice {
 	value: string;
@@ -38,6 +39,7 @@ interface IPriceWeeklyChange {
 const ActivityFeedSidebar = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { t } = useTranslation('common');
 	const dispatch = useDispatch();
 	const [available, setAvailable] = useState({ isLoading: true, value: '', valueUSD: '' });
 	const [nextBurn, setNextBurn] = useState({ isLoading: true, value: '', valueUSD: '' });
@@ -292,7 +294,7 @@ const ActivityFeedSidebar = () => {
 								<div className='mb-2 justify-between sm:flex'>
 									<div>
 										<div className='my-1 flex items-center gap-x-[6px]'>
-											<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('treasury')}</span>
 											<HelperTooltip
 												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
 												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
@@ -396,7 +398,9 @@ const ActivityFeedSidebar = () => {
 					/>
 				</div>
 				<div className={`${dmSans.className} ${dmSans.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
-					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
+					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>
+						{chainProperties[network]?.tokenSymbol} {t('price')}
+					</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>
 							{currentTokenPrice?.value === 'N/A' ? (
@@ -430,7 +434,7 @@ const ActivityFeedSidebar = () => {
 									<div className='mt-2  h-12'>
 										<div className={`${dmSans.className} ${dmSans.variable} flex flex-col text-xs`}>
 											<div className=' flex items-center gap-x-[6px]'>
-												<span className=' p-0 text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
+												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{t('next_burn')}</span>
 												<HelperTooltip
 													text=''
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'

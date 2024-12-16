@@ -24,6 +24,7 @@ import ActivityFeedCommentSection from './ActivityFeedCommentSection';
 import ActivityFeedPostContent from './ActivityFeedPostContent';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import styled from 'styled-components';
+import { useTranslation } from 'next-i18next';
 
 const ZERO = new BN(0);
 
@@ -32,12 +33,11 @@ const VoteReferendumModal = dynamic(() => import('../Post/GovernanceSideBar/Refe
 	ssr: false
 });
 
-const NO_CONTENT_FALLBACK = 'No content available for this post.';
-
 const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
+	const { t } = useTranslation('common');
 	const currentUserdata = useUserDetailsSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-	const fullContent = post?.summary || NO_CONTENT_FALLBACK;
+	const fullContent = post?.summary || t('no_content_fallback');
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [updateTally, setUpdateTally] = useState<boolean>(false);
@@ -233,7 +233,7 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 						className='m-0 mt-3 flex cursor-pointer items-center justify-center gap-1 rounded-lg border-[1px] border-solid  border-[#E5007A] p-0 px-3 text-pink_primary'
 					>
 						<VoteIcon className=' mt-[1px]' />
-						<p className='cursor-pointer pt-3 font-medium'> {!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
+						<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? t('cast_vote') : t('cast_vote_again')}</p>
 					</div>
 				)}
 				{showModal && (
@@ -255,8 +255,8 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 					modalOpen={modalOpen}
 					setModalOpen={setModalOpen}
 					image='/assets/Gifs/login-vote.gif'
-					title={'Join Polkassembly to Vote on this proposal.'}
-					subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+					title={t('join_polkassembly_to_vote')}
+					subtitle={t('discuss_contribute_get_updates')}
 				/>
 			</>
 		</div>

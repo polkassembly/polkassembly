@@ -4,6 +4,7 @@
 
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 import Loader from '~src/ui-components/Loader';
 
@@ -13,6 +14,7 @@ interface INewsProps {
 
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [prevTheme, setPrevTheme] = useState(theme);
@@ -34,7 +36,7 @@ const News: FC<INewsProps> = (props) => {
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
-			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>News</h2>
+			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>{t('news')}</h2>
 			<div className='overflow-hidden rounded-[10px]'>
 				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
 				<TwitterTimelineEmbed

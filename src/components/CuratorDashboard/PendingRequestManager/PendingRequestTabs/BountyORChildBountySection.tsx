@@ -25,6 +25,7 @@ import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getMultisigAddressDetails } from '~src/components/DelegationDashboard/utils/getMultisigAddressDetails';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	proposalType: ProposalType.BOUNTIES | ProposalType.CHILD_BOUNTIES;
@@ -33,6 +34,7 @@ interface Props {
 }
 const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet, multisigAssociatedAddress } = useUserDetailsSelector();
@@ -245,14 +247,14 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 													onClick={() => handleAcceptCuratorReq(item)}
 													variant='primary'
 													loading={item?.loading}
-													text='Accept'
+													text={t('accept')}
 													height={30}
 													width={100}
 													className='text-xs tracking-wide'
 												/>
 											) : (
 												<span className='whitespace-nowrap rounded-md bg-[#E0F7E5] px-6 py-1 text-center text-xs font-medium text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'>
-													<CheckCircleOutlined /> Accepted
+													<CheckCircleOutlined /> {t('accepted')}
 												</span>
 											)
 										) : (
@@ -264,7 +266,7 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 												<span>
 													<ExclamationCircleOutlined />
 												</span>
-												<span> Pending</span>
+												<span> {t('pending')}</span>
 											</div>
 										)}
 										{item?.content && (
@@ -304,7 +306,7 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 											target='_blank'
 											className='text-pink_primary'
 										>
-											Read More
+											{t('read_more')}
 										</Link>
 									</div>
 								)}

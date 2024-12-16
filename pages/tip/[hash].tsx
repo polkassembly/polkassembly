@@ -25,22 +25,25 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const proposalType = ProposalType.TIPS;
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
 	const { hash } = query;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: hash,
 		proposalType
 	});
-	return { props: { data, error, network, status } };
+	return { props: { data, error, network, status, ...translations } };
 };
 
 interface ITipPostProps {
@@ -57,6 +60,7 @@ const TipPost: FC<ITipPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { hash } = router.query;
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -77,8 +81,8 @@ const TipPost: FC<ITipPostProps> = (props) => {
 			<PostEmptyState
 				description={
 					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
+						<b className='my-4 text-xl'>{t('waiting_for_block_confirmation')}</b>
+						<p>{t('usually_its_done_within_a_few_seconds')}</p>
 					</div>
 				}
 			/>

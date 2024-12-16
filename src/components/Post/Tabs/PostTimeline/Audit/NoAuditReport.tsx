@@ -5,8 +5,10 @@
 import React from 'react';
 // import NoDataFound from '~assets/no-audits.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 const NoAuditReport = () => {
+	const { t } = useTranslation('common');
 	return (
 		<div className='flex flex-col items-center justify-center gap-y-6'>
 			<div className='mt-[75px]'>
@@ -15,7 +17,7 @@ const NoAuditReport = () => {
 					alt='no audits icon'
 				/>
 			</div>
-			<p className='m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-blue-light-high dark:text-blue-dark-high'>No audit reports available</p>
+			<p className='m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-blue-light-high dark:text-blue-dark-high'>{t('no_audit_reports_available')}</p>
 		</div>
 	);
 };

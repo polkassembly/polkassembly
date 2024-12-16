@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
@@ -46,6 +45,7 @@ import classNames from 'classnames';
 import TrackTag from '~src/ui-components/TrackTag';
 import { StarFilled } from '@ant-design/icons';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useTranslation } from 'next-i18next';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
@@ -156,6 +156,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		assetId
 	} = props;
 
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -197,9 +198,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [userVotesData, setUserVotesData] = useState<IUserVotesProps | null>(null);
 
 	const decisionType = {
-		abstain: 'ABSTAIN',
-		no: 'NAY',
-		yes: 'AYE'
+		abstain: t('abstain'),
+		no: t('nay'),
+		yes: t('aye')
 	};
 
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -353,13 +354,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									color='#363636'
 									title={
 										<span className='break-all text-xs'>
-											{userVotesData.decision === 'ABSTAIN'
-												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+											{userVotesData.decision === t('abstain')
+												? `${t('voted')} ${userVotesData.decision} ${t('with')} ${userVotesData.amount}`
+												: `${t('voted')} ${userVotesData.decision} ${t('with')} ${userVotesData.amount}, ${userVotesData.conviction}x ${t('conviction')}`}
 										</span>
 									}
 								>
-									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
+									<VoteIcon className={`mx-2 ${userVotesData.decision === t('nay') ? 'fill-red-600' : userVotesData.decision === t('aye') ? 'fill-green-700' : 'fill-blue-400'}`} />
 								</Tooltip>
 							)}
 							{!isLoadingReport && status && [gov2ReferendumStatus.EXECUTED || gov2ReferendumStatus.CONFIRMED].includes(status) && progressReport && progressReport?.length > 0 && (
@@ -444,7 +445,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								}}
 								className='m-0 p-0 text-xs text-pink_primary'
 							>
-								See More
+								{t('see_more')}
 							</p>
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
@@ -540,7 +541,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Tooltip
 										overlayClassName='max-w-none'
 										title={
-											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+											<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`${t('deciding_ends_in')} ${remainingTime} ${
 												decidingBlock !== 0 ? `#${decidingBlock}` : ''
 											}`}</div>
 										}
@@ -631,11 +632,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' />
 								{end > currentBlock ? (
 									<span>
-										<BlockCountdown endBlock={end} /> remaining
+										<BlockCountdown endBlock={end} /> {t('remaining')}
 									</span>
 								) : (
 									<span>
-										ended <BlockCountdown endBlock={end} />
+										{t('ended')} <BlockCountdown endBlock={end} />
 									</span>
 								)}
 							</div>
@@ -678,7 +679,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<div className='flex items-center justify-center'>
 								<Tooltip
 									color='#E5007A'
-									title='This post could be a spam.'
+									title={t('spam_warning')}
 								>
 									<WarningMessageIcon className='text-xl text-[#FFA012]' />
 								</Tooltip>
@@ -770,7 +771,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									}}
 									className='m-0 p-0 text-xs text-pink_primary'
 								>
-									See More
+									{t('see_more')}
 								</p>
 								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 							</div>

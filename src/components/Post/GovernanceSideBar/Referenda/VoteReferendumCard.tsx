@@ -35,6 +35,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import Input from '~src/basic-components/Input';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+import { useTranslation } from 'next-i18next';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -112,6 +113,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	const { vote } = useBatchVotesSelector();
 	const { loginAddress } = useUserDetailsSelector();
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+	const { t } = useTranslation('common');
 
 	const getDelegateData = async () => {
 		if (!loginAddress.length || proposalType !== ProposalType.REFERENDUM_V2) return;
@@ -194,7 +196,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 					) : (
 						<LikeGray className='mb-[3px] mr-1' />
 					)}
-					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('aye')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -213,7 +215,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 					) : (
 						<DislikeGray className='-mb-[3px] mr-1' />
 					)}
-					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('nay')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -231,7 +233,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							}`}
 						>
 							<StopOutlined className={`mr-1 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
-							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('abstain')}</span>
 						</div>
 					),
 					value: 'abstain'
@@ -241,7 +243,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 
 	const VoteUI = (
 		<>
-			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
+			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>{t('choose_your_vote')}</h3>
 			<Segmented
 				block
 				className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white pt-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
@@ -258,7 +260,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				<div className='mb-5 mt-6 flex flex-col gap-0.5 text-sm'>
 					<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
 						{' '}
-						Delegated power <HelperTooltip text='Total amount of voting power' />
+						{t('delegated_power')} <HelperTooltip text={t('total_amount_of_voting_power')} />
 					</span>
 					<Input
 						value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}

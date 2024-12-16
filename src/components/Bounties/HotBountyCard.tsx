@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { dmSans, spaceGrotesk } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';
-// import { BountyCriteriaIcon, CuratorIcon } from '~src/ui-components/CustomIcons';
 import { CuratorIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
@@ -26,6 +25,7 @@ import { getFormattedValue } from './utils/formatBalanceUsd';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
 import { removeSymbols } from '~src/util/htmlDiff';
+import { useTranslation } from 'next-i18next';
 
 const CardHeader = styled.div`
 	&:after {
@@ -44,6 +44,7 @@ const CardHeader = styled.div`
 const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGraph'), { ssr: false });
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
+	const { t } = useTranslation();
 	const { network } = useNetworkSelector();
 	const { post_id, title, content, tags, reward, user_id, curator, proposer, description } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
@@ -165,7 +166,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 										width={44}
 										height={44}
-										alt='redirect link'
+										alt={t('hot_bounty_card.redirect')}
 										className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black dark:bg-white'
 									/>
 								</Link>
@@ -181,7 +182,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-image.svg'
-										alt='bounty icon'
+										alt={t('hot_bounty_card.bounty_icon')}
 										imgClassName='mt-5 mb-3 w-full'
 										imgWrapperClassName=''
 									/>
@@ -218,7 +219,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 												target='_blank'
 											>
 												<ImageComponent
-													alt='user img'
+													alt={t('hot_bounty_card.user_image')}
 													src={profileDetails.image}
 													className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
 												/>
@@ -240,7 +241,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 													<button
 														className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
 													>
-														Curator
+														{t('hot_bounty_card.curator')}
 													</button>
 												</div>
 											</Popover>
@@ -259,9 +260,9 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										src={'/assets/bounty-icons/child-bounty-icon.svg'}
 										width={16}
 										height={16}
-										alt='curator'
+										alt={t('hot_bounty_card.child_bounty_icon')}
 									/>
-									<span className='text-[13px] font-medium text-white'>Child Bounties:</span>
+									<span className='text-[13px] font-medium text-white'>{t('hot_bounty_card.child_bounties')}:</span>
 									<span className='text-[13px] font-medium text-white'>{childBountiesCount}</span>
 								</div>
 								<div className='cursor-pointer '>
@@ -269,7 +270,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										src={'/assets/bounty-icons/arrow-icon.svg'}
 										width={16}
 										height={16}
-										alt='arrow'
+										alt={t('hot_bounty_card.arrow')}
 									/>
 								</div>
 							</Link>

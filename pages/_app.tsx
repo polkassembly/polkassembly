@@ -29,6 +29,7 @@ import { ThemeProvider } from 'next-themes';
 import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
+import { appWithTranslation } from 'next-i18next';
 
 export const dmSans = DM_Sans({
 	adjustFontFallback: false,
@@ -152,4 +153,4 @@ function App({ Component, pageProps }: AppProps) {
 	);
 }
 
-export default wrapper.withRedux(App);
+export default appWithTranslation(wrapper.withRedux(App)) as any;

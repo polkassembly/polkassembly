@@ -18,12 +18,14 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
 	setStep: (pre: number) => void;
 }
 const WriteProposal = ({ setStep, className }: Props) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const gov1ProposalData = useGov1treasuryProposal();
 	const dispatch = useDispatch();
@@ -71,8 +73,8 @@ const WriteProposal = ({ setStep, className }: Props) => {
 			setLoading(false);
 		} else if (error) {
 			queueNotification({
-				header: 'Failed!',
-				message: 'Unable to fetch data for this discussion number.',
+				header: t('notification_failed'),
+				message: t('notification_fetch_failed'),
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
@@ -95,7 +97,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 		<>
 			<Spin spinning={loading}>
 				<div className={classNames(className, 'write-proposal my-8 flex flex-col')}>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Have you initiated a discussion post for your proposal already? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>{t('initiate_discussion')}</label>
 					<Radio.Group
 						disabled={loading}
 						onChange={(e) => {
@@ -114,13 +116,13 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							value={true}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							Yes
+							{t('yes')}
 						</Radio>
 						<Radio
 							value={false}
 							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							No
+							{t('no')}
 						</Radio>
 					</Radio.Group>
 				</div>
@@ -129,16 +131,16 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					onFinish={handleSubmit}
 					disabled={loading}
 					initialValues={{ content, discussion_link: discussionLink, tags, title }}
-					validateMessages={{ required: "Please add the '${name}'" }}
+					validateMessages={{ required: t('required_field') }}
 				>
 					{isDiscussionLinked && (
 						<>
-							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Link Discussion Post</label>
+							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>{t('link_discussion_post')}</label>
 							<Form.Item
 								name='discussion_link'
 								rules={[
 									{
-										message: `Please add a valid discussion link for ${network} Network`,
+										message: t('invalid_discussion_link', { network }),
 										validator(rule, value, callback) {
 											if (callback && isDiscussionLinkedValid(value)) {
 												callback(rule?.message?.toString());
@@ -166,14 +168,14 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							showIcon
 							message={
 								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>
-									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
+									{t('discussion_info')}
 									<a
 										className='ml-1 text-xs font-semibold text-pink_primary'
 										target='_blank'
 										rel='noreferrer'
 										href={'/post/create'}
 									>
-										Create Discussion Post
+										{t('create_discussion')}
 									</a>
 								</span>
 							}
@@ -181,10 +183,10 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					)}
 					{isDiscussionLinked !== null && (isDiscussionLinked ? !!discussionLink && !isDiscussionLinkedValid(discussionLink) : true) && (
 						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
-							<label className='font-medium'>Write a proposal :</label>
+							<label className='font-medium'>{t('write_proposal')}</label>
 							<div className='mt-4'>
 								<label className='mb-0.5'>
-									Title <span className='text-nay_red'>*</span>
+									{t('title')} <span className='text-nay_red'>*</span>
 								</label>
 								<Form.Item
 									name='title'
@@ -193,7 +195,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 											? []
 											: [
 													{
-														message: 'Title should not exceed 150 characters.',
+														message: t('title_length_exceeded'),
 														validator(rule, value, callback) {
 															if (callback && value?.length > 150) {
 																callback(rule?.message?.toString());
@@ -217,7 +219,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								</Form.Item>
 							</div>
 							<div className='mt-6'>
-								<label className='mb-0.5'>{isDiscussionLinked ? 'Tags' : 'Add Tags'}</label>
+								<label className='mb-0.5'>{isDiscussionLinked ? t('tags') : t('add_tags')}</label>
 								<Form.Item name='tags'>
 									<AddTags
 										tags={tags}
@@ -228,7 +230,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							</div>
 							<div className='mt-6'>
 								<label className='mb-0.5'>
-									Description <span className='text-nay_red'>*</span>
+									{t('description')} <span className='text-nay_red'>*</span>
 								</label>
 
 								{isDiscussionLinked ? (
@@ -251,7 +253,6 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							</div>
 						</div>
 					)}
-					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
 						className={isDiscussionLinked ? 'mt-6 ' : '-mt-8'}
 						onChange={(value) => dispatch(gov1TreasuryProposalActions.setAllowedCommentors(value as EAllowedCommentor))}
@@ -261,7 +262,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'
-							text='Next'
+							text={t('next')}
 							variant='primary'
 							height={40}
 							width={155}

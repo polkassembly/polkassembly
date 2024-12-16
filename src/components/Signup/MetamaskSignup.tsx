@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -54,6 +55,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -77,7 +79,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 				network
 			});
 		} catch (error) {
-			setErr(error?.message || 'Something went wrong');
+			setErr(error?.message || t('something_went_wrong'));
 			setIsAccountLoading(false);
 			return;
 		}
@@ -120,14 +122,14 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
 			if (error || !data) {
-				setErr(error || 'Something went wrong');
+				setErr(error || t('something_went_wrong'));
 				setLoading(false);
 				return;
 			}
 
 			const signMessage = data?.signMessage;
 			if (!signMessage) {
-				setErr('Challenge message not found');
+				setErr(t('challenge_message_not_found'));
 				setLoading(false);
 				return;
 			}
@@ -158,7 +160,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 					});
 
 					if (confirmError || !confirmData) {
-						setErr(confirmError || 'Something went wrong');
+						setErr(confirmError || t('something_went_wrong'));
 						setLoading(false);
 						return;
 					}
@@ -176,7 +178,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						}
 						router.back();
 					} else {
-						throw new Error('Web3 Login failed');
+						throw new Error(t('web3_login_failed'));
 					}
 				}
 			);
@@ -195,7 +197,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 		<article className='flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay'>
 			<div className='mb-1 mt-1 flex items-center'>
 				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Sign Up</h3>
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{t('sign_up')}</h3>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -209,20 +211,18 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						</span>
 						<span className='mt-1 text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
 					</div>
-					<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
-						For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-					</p>
+					<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>{t('fetching_addresses_message')}</p>
 					<Divider
 						style={{ background: '#D2D8E0', flexGrow: 1 }}
 						className='m-0 mt-5 p-0 dark:bg-separatorDark'
 					/>
 					<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
-						<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Already have an account?</label>
+						<label className='text-base text-bodyBlue dark:text-blue-dark-high'>{t('already_have_account')}</label>
 						<div
 							onClick={handleClick}
 							className='cursor-pointer text-base text-pink_primary'
 						>
-							Login
+							{t('login')}
 						</div>
 					</div>
 					<Divider
@@ -231,7 +231,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 					/>
 					<div className='flex justify-end'>
 						<CustomButton
-							text='Go Back'
+							text={t('go_back')}
 							variant='default'
 							className='mt-3 px-7 py-5'
 							buttonsize='sm'
@@ -243,7 +243,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 							icon={<CheckOutlined />}
 							variant='primary'
 							className='px-7 py-5'
-							text='Got it!'
+							text={t('got_it')}
 							onClick={() => {
 								getAccounts()
 									.then(() => {
@@ -270,8 +270,8 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						{accountsNotFound && (
 							<div className='my-5 flex items-center justify-center'>
 								<Alert
-									message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
-									description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
+									message={<span className='dark:text-blue-dark-high'>{t('need_at_least_one_account')}</span>}
+									description={<span className='dark:text-blue-dark-high'>{t('reload_after_adding_accounts')}</span>}
 									type='info'
 									showIcon
 								/>
@@ -282,7 +282,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 								<Loader
 									size='large'
 									timeout={3000}
-									text='Requesting Web3 accounts'
+									text={t('requesting_web3_accounts')}
 								/>
 							</div>
 						) : (
@@ -302,7 +302,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 									</h3>
 									<div className='-mt-2 flex items-center justify-center px-8'>
 										<AccountSelectionForm
-											title='Choose linked account'
+											title={t('choose_linked_account')}
 											accounts={accounts}
 											address={address}
 											onAccountChange={onAccountChange}
@@ -312,14 +312,14 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 									</div>
 									<div className='mb-6 flex items-center justify-center gap-x-2'>
 										<CustomButton
-											text='Go Back'
+											text={t('go_back')}
 											variant='default'
 											className='mt-3 px-8 py-5'
 											buttonsize='sm'
 											onClick={() => handleBackToLogin()}
 										/>
 										<CustomButton
-											text='Sign-up'
+											text={t('sign_up')}
 											variant='primary'
 											className='mt-3 px-8 py-5'
 											buttonsize='sm'
@@ -335,7 +335,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 					{!!chosenWallet && !accounts.length && (
 						<div className='my-6 flex items-center justify-center'>
 							<CustomButton
-								text='Go Back'
+								text={t('go_back')}
 								variant='default'
 								className='mt-3 px-8 py-5'
 								buttonsize='sm'

@@ -4,6 +4,7 @@
 import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -28,7 +29,9 @@ interface Props {
 const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
+
 	return (
 		<>
 			{!['polymesh', 'polymesh-test', 'mythos'].includes(network) && (
@@ -40,13 +43,13 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 									{theme === 'dark' ? (
 										<ImageIcon
 											src='/assets/icons/SpendPeriodDark.svg'
-											alt='spend period dark icon'
+											alt={t('spend_period_dark_icon')}
 											imgClassName='lg:hidden'
 										/>
 									) : (
 										<ImageIcon
 											src='/assets/icons/spendperiod.svg'
-											alt='spend period icon'
+											alt={t('spend_period_icon')}
 											imgClassName='lg:hidden'
 										/>
 									)}
@@ -55,10 +58,9 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 									<>
 										<div className='mb-5 sm:mb-4'>
 											<div className='my-1 flex items-center'>
-												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period</span>
-
+												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>{t('spend_period')}</span>
 												<HelperTooltip
-													text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
+													text={t('spend_period_tooltip')}
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 												/>
 											</div>
@@ -69,44 +71,44 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 														{spendPeriod.value?.days ? (
 															<>
 																<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
-																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>days&nbsp;</span>
+																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{t('days')}&nbsp;</span>
 															</>
 														) : null}
 														<>
 															<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
-															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>hrs&nbsp;</span>
+															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{t('hours_short')}&nbsp;</span>
 														</>
 														{!spendPeriod.value?.days ? (
 															<>
 																<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
-																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
+																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{t('minutes_short')}&nbsp;</span>
 															</>
 														) : null}
-														<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
+														<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>
+															/ {spendPeriod.value.total} {t('days')}
+														</span>
 													</>
 												) : (
-													'N/A'
+													t('na')
 												)}
 											</div>
 										</div>
-										{
-											<div className='flex flex-col justify-center gap-y-3 font-medium'>
-												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-												<span className='flex items-center gap-2'>
-													<ProgressBar
-														className='m-0 flex items-center p-0'
-														percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
-														trailColor={trailColor}
-														strokeColor='#E5007A'
-														size='small'
-														showInfo={false}
-													/>
-													<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
-														{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
-													</span>
+										<div className='flex flex-col justify-center gap-y-3 font-medium'>
+											<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+											<span className='flex items-center gap-2'>
+												<ProgressBar
+													className='m-0 flex items-center p-0'
+													percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
+													trailColor={trailColor}
+													strokeColor='#E5007A'
+													size='small'
+													showInfo={false}
+												/>
+												<span className={`${dmSans.className} ${dmSans.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+													{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 												</span>
-											</div>
-										}
+											</span>
+										</div>
 									</>
 								) : (
 									<div className='flex min-h-[89px] w-full items-center justify-center'>
@@ -118,13 +120,13 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 								{theme === 'dark' ? (
 									<ImageIcon
 										src='/assets/icons/SpendPeriodDark.svg'
-										alt='spend period dark icon'
+										alt={t('spend_period_dark_icon')}
 										imgClassName='mt-2 xs:hidden lg:block w-full'
 									/>
 								) : (
 									<ImageIcon
 										src='/assets/icons/spendperiod.svg'
-										alt='spend period icon'
+										alt={t('spend_period_icon')}
 										imgClassName='mt-2 xs:hidden lg:block w-full'
 									/>
 								)}

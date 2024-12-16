@@ -45,6 +45,7 @@ import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -100,7 +101,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setAvailableWallets(injectedWindow.injectedWeb3);
@@ -440,7 +441,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-1 mr-2' /> : theme === 'dark' ? <DarkLikeGray className='mb-1 mr-2' /> : <LikeGray className='mb-1 mr-2' />}
-					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('aye')}</span>
 				</div>
 			),
 			value: 'aye'
@@ -459,7 +460,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					) : (
 						<DislikeGray className='-mb-1 mr-2' />
 					)}
-					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('nay')}</span>
 				</div>
 			),
 			value: 'nay'
@@ -478,7 +479,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						>
 							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
-							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('split')}</span>
 						</div>
 					),
 					value: 'split'
@@ -491,7 +492,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							}`}
 						>
 							<StopOutlined className={`mb-1 mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
-							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>{t('abstain')}</span>
 						</div>
 					),
 					value: 'abstain'
@@ -507,7 +508,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 				onClick={openModal}
 			>
-				{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
+				{!lastVote ? t('cast_your_vote') : t('cast_vote_again')}
 			</CustomButton>
 			<Modal
 				open={showModal}
@@ -522,7 +523,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				title={
 					<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center justify-center gap-2 rounded-t-sm border-0 border-b-[1.2px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
-						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>{t('cast_your_vote')}</span>
 					</div>
 				}
 			>
@@ -533,7 +534,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						indicator={<LoadingOutlined />}
 						tip={loadingStatus.message}
 					>
-						<div className='text-light mt-3 flex items-center justify-center text-sm font-normal'>Select a wallet</div>
+						<div className='text-light mt-3 flex items-center justify-center text-sm font-normal'>{t('select_a_wallet')}</div>
 
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
 							{availableWallets[Wallet.TALISMAN] && (
@@ -595,7 +596,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						</div>
 						{!isTalismanEthereum && (
 							<Alert
-								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('please_use_ethereum_account_via_talisman_wallet')}</span>}
 								type='info'
 								className='-mt-2 mb-2'
 								showIcon
@@ -605,14 +606,14 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						{isBalanceErr && !loadingStatus.isLoading && wallet && (
 							<Alert
 								type='info'
-								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('insufficient_balance')}</span>}
 								showIcon
 								className='mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 							<Alert
-								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('no_addresses_found_in_the_address_selection_tab')}</span>}
 								showIcon
 								type='info'
 							/>
@@ -636,13 +637,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						) : !wallet ? (
 							<Alert
 								type='info'
-								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+								message={<span className='dark:text-blue-dark-high'>{t('please_select_a_wallet')}</span>}
 								className='rounded-[4px]'
 								showIcon
 							/>
 						) : null}
 
-						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
+						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>{t('choose_your_vote')}</h3>
 						<Segmented
 							block
 							className={`${className}  mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white px-0 py-0 hover:bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}

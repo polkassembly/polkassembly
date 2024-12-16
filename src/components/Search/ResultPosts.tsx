@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import { trackEvent } from 'analytics';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -37,7 +38,9 @@ interface Props {
 	searchInput?: string;
 	theme?: string;
 }
+
 const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
+	const { t } = useTranslation('common');
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme } = useTheme();
 
@@ -179,14 +182,14 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 											<Image
 												className='h-4 w-4 rounded-full object-contain'
 												src={chainProperties[post?.network]?.logo ? chainProperties[post?.network].logo : chainLogo}
-												alt='Logo'
+												alt={t('logo')}
 											/>
 										</div>
 									)}
 									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium'>
-										in{' '}
+										{t('in')}{' '}
 										<span className='capitalize text-pink_primary'>
-											{post?.post_type === 'referendums_v2' ? 'Opengov referenda' : (post?.post_type as ProposalType)?.split('_')?.join(' ')}
+											{post?.post_type === 'referendums_v2' ? t('opengov_referenda') : (post?.post_type as ProposalType)?.split('_')?.join(' ')}
 										</span>
 									</div>
 								</div>
@@ -213,6 +216,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 		</>
 	) : null;
 };
+
 export default styled(ResultPosts)`
 	.expand-content {
 		display: -webkit-box;

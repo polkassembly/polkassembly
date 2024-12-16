@@ -2,8 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import classNames from 'classnames';
-// import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ChildBountyCreationForm from '.';
@@ -11,6 +9,7 @@ import { ReactNode, useState } from 'react';
 import classNames from 'classnames';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'next-i18next';
 
 const CreateChildBountyButton = ({
 	className,
@@ -24,11 +23,12 @@ const CreateChildBountyButton = ({
 	defaultCurator?: string;
 }) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 	const [openModal, setOpenModal] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	return (
-		<div className={classNames(className, 'flex items-center justify-center ')}>
+		<div className={classNames(className, 'flex items-center justify-center')}>
 			<CustomButton
 				type='primary'
 				className='w-full cursor-pointer text-pink_primary'
@@ -43,10 +43,10 @@ const CreateChildBountyButton = ({
 							src='/assets/icons/child-bounty-icon.svg'
 							height={14}
 							width={14}
-							alt='child_bounties'
-							className={'pink-icons'}
+							alt={t('child_bounty_icon')}
+							className='pink-icons'
 						/>
-						<span className='text-sm font-semibold text-pink_primary'>Create Child Bounty</span>
+						<span className='text-sm font-semibold text-pink_primary'>{t('create_child_bounty')}</span>
 					</div>
 				)}
 			</CustomButton>

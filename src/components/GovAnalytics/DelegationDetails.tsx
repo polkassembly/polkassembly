@@ -5,10 +5,10 @@ import { ResponsiveBar } from '@nivo/bar';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { FC, useState, useEffect } from 'react';
-
 import styled from 'styled-components';
 import { IDelegationDetails } from './types';
 import Slider from '~src/ui-components/Slider';
+import { useTranslation } from 'next-i18next';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -39,6 +39,7 @@ const StyledCard = styled(Card)`
 const DelegationDetails: FC<IDelegationDetails> = (props) => {
 	const { delegationData } = props;
 	const { resolvedTheme: theme } = useTheme();
+	const { t } = useTranslation('common');
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	// State for selected range in slider
@@ -120,16 +121,16 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 			} w-full flex-1 rounded-xxl border-section-light-container bg-white text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-base font-semibold sm:text-xl'>Delegation Split</h2>
+				<h2 className='text-base font-semibold sm:text-xl'>{t('delegation_split')}</h2>
 				{!isMobile && (
 					<div className='flex gap-x-4'>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Delegator</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('delegator')}</p>
 						</div>
 						<div className='flex items-center gap-x-1'>
 							<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
-							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Delegatee</p>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('delegatee')}</p>
 						</div>
 					</div>
 				)}
@@ -144,14 +145,16 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					indexBy='trackName'
 					margin={{ bottom: 60, left: 10, right: 40, top: 50 }}
 					padding={0.6}
-					enableGridY={isMobile ? false : true}
+					enableGridY={!isMobile}
 					enableLabel={false}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
 					colors={({ id, data }) => (id === 'Delegator' ? data.DelegatorColor : data.DelegateeColor)}
 					tooltip={({ id, value, indexValue }) => (
 						<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
-							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda {indexValue}</div>
+							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
+								{t('referenda')} {indexValue}
+							</div>
 							<div className='flex items-end gap-x-1 text-xl font-medium dark:text-blue-dark-high'>
 								{value} <p className='m-0 p-0 text-sm capitalize text-lightBlue dark:text-blue-dark-high'>{id}</p>
 							</div>
@@ -177,11 +180,11 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 				<div className='flex justify-center gap-x-4'>
 					<div className='flex items-center gap-x-1'>
 						<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
-						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Delegator</p>
+						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('delegator')}</p>
 					</div>
 					<div className='flex items-center gap-x-1'>
 						<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
-						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Delegatee</p>
+						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>{t('delegatee')}</p>
 					</div>
 				</div>
 			)}
@@ -198,7 +201,7 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 							formatter: (value) => {
 								if (value !== undefined && value >= 0 && value < Object.keys(delegationData).length) {
 									const dataIndex = Object.keys(delegationData)[value];
-									return `Referenda: ${dataIndex}`;
+									return `${t('referenda')}: ${dataIndex}`;
 								}
 								return '';
 							}

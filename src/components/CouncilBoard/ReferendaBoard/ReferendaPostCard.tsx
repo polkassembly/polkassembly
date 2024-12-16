@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -9,10 +8,10 @@ import React, { useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import Markdown from 'src/ui-components/Markdown';
 import StatusTag from 'src/ui-components/StatusTag';
-
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -21,13 +20,13 @@ interface Props {
 	postStatus: string | undefined;
 	createdAt?: any;
 	referendumId: number;
-
 	content?: string | null;
 	username?: string;
 	commentsCount?: number | null;
 }
 
 const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, title, method }: Props) => {
+	const { t } = useTranslation('common');
 	const { defaultAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -66,14 +65,14 @@ const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, tit
 								<div className='algin-middle height-[2.5rem] inline-block w-[2.5rem] text-center text-[1.5rem] text-green_primary'>
 									<LikeOutlined />
 								</div>{' '}
-								Aye
+								{t('aye')}
 							</>
 						) : (
 							<>
 								<div className='algin-middle height-[2.5rem] inline-block w-[2.5rem] text-center text-[1.5rem] text-red_primary'>
 									<DislikeOutlined />
 								</div>{' '}
-								Nay
+								{t('nay')}
 							</>
 						)}
 					</>
@@ -81,7 +80,7 @@ const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, tit
 			</div>
 
 			<h3 className='text-sidebarBlue'>{title || method || noTitle}</h3>
-			{loading && <p>loading...</p>}
+			{loading && <p>{t('loading')}</p>}
 			{!loading && !error && post && <Markdown md={`${(post.content as string).split(' ').splice(0, 30).join(' ')}...`} />}
 
 			<div className='flex items-center justify-between'>

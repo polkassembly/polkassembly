@@ -4,8 +4,10 @@
 import { WarningOutlined } from '@ant-design/icons';
 import { Form, Row } from 'antd';
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import AuthForm from 'src/ui-components/AuthForm';
 import messages from 'src/util/messages';
@@ -33,11 +35,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(context.locale || '', ['common']);
 
 	const props: Props = {
 		network,
 		token: context.query.token ? String(context.query.token) : '',
-		userId: context.query.userId ? String(context.query.userId) : ''
+		userId: context.query.userId ? String(context.query.userId) : '',
+		...translations
 	};
 
 	return { props };
@@ -45,6 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -94,7 +99,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						{token && userId ? (
 							<>
-								<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>Set new password</h3>
+								<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>{t('set_new_password')}</h3>
 								<AuthForm
 									onSubmit={handleSubmitForm}
 									className='flex flex-col gap-y-6'
@@ -104,7 +109,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 											htmlFor='password'
 											className='text-base font-medium text-sidebarBlue'
 										>
-											New Password
+											{t('new_password')}
 										</label>
 										<Form.Item
 											name='password'
@@ -144,7 +149,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 						) : (
 							<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 								<WarningOutlined />
-								<span> Password reset token and/or userId missing </span>
+								<span> {t('password_reset_token_and_or_userId_missing')} </span>
 							</h2>
 						)}
 					</article>

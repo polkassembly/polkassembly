@@ -4,8 +4,10 @@
 
 import { Form, Row } from 'antd';
 import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import AuthForm from 'src/ui-components/AuthForm';
 import messages from 'src/util/messages';
@@ -27,17 +29,19 @@ interface Props {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const RequestResetPassword: FC<Props> = (props) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -82,7 +86,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 				className='-mt-16 h-full'
 			>
 				<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
-					<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>Request Password Reset</h3>
+					<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>{t('request_password_reset')}</h3>
 					<AuthForm
 						onSubmit={handleSubmitForm}
 						className='flex flex-col gap-y-6'
@@ -92,7 +96,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 								htmlFor='email'
 								className='text-base font-medium text-sidebarBlue'
 							>
-								Email
+								{t('email')}
 							</label>
 							<Form.Item
 								name='email'

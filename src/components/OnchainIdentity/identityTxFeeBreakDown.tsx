@@ -10,6 +10,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { ITxFee } from './types';
 import { chainProperties } from '~src/global/networkConstants';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 
@@ -19,6 +20,7 @@ interface IIdentityTxBreakdown {
 }
 
 const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
+	const { t } = useTranslation('common');
 	const { network } = useNetworkSelector();
 	const { identityInfo } = useOnchainIdentitySelector();
 	const { registerarFee, minDeposite, gasFee } = txFee;
@@ -36,12 +38,12 @@ const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
 						showIcon
 						message={
 							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
+								{t('transaction_fee_required', { amount: formatedBalance(totalFee.toString(), unit, 2), unit })}
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
 									onClick={() => setHideDetails(!hideDetails)}
 								>
-									{hideDetails ? 'Show Details' : 'Hide Details'}
+									{hideDetails ? t('show_details') : t('hide_details')}
 								</span>
 							</span>
 						}
@@ -51,11 +53,11 @@ const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
 							) : (
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium '>
-											Min. Deposit (Refundable){' '}
+										<span className='text-lightBlue dark:text-blue-dark-medium'>
+											{t('min_deposit_refundable')}
 											<HelperTooltip
 												className='ml-1'
-												text='Deposit is refundable and can be redeemed once verification is removed'
+												text={t('deposit_tooltip')}
 											/>
 										</span>
 										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -63,16 +65,16 @@ const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>{t('gas_fee')}</span>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>
-											Registrar fees{' '}
+											{t('registrar_fee')}
 											<HelperTooltip
-												text='Fee charged for on chain verification by registrar.'
+												text={t('registrar_fee_tooltip')}
 												className='ml-1'
 											/>
 										</span>
@@ -81,7 +83,7 @@ const IdentityTxBreakdown = ({ txFee, loading }: IIdentityTxBreakdown) => {
 										</span>
 									</span>
 									<span className='text-md mt-1 flex justify-between'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>{t('total')}</span>
 										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>

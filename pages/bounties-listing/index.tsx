@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 import CuratorDashboardButton from '~src/components/CuratorDashboard/CuratorDashboardButton';
 
 interface IBountiesListingProps {
@@ -30,8 +32,8 @@ interface IBountiesListingProps {
 	error?: string;
 	network: string;
 }
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req?.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query, locale }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -45,11 +47,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		page: Number(page),
 		status
 	});
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
 	return {
 		props: {
 			data,
-			network
+			network,
+			...translations
 		}
 	};
 };
@@ -59,6 +63,8 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
+	const { t } = useTranslation('common');
+
 	const onPaginationChange = (page: number) => {
 		router?.push({
 			pathname: router?.pathname,
@@ -96,13 +102,13 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 							className='mr-2 text-xs'
 							aria-hidden='true'
 						/>
-						<span className='text-sm font-medium'>Back to Bounty Dashboard</span>
+						<span className='text-sm font-medium'>{t('back_to_bounty_dashboard')}</span>
 					</div>
 				</Link>
 
 				<div className='flex items-center justify-between pt-4'>
 					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
-						On-chain Bounties
+						{t('on_chain_bounties')}
 					</span>
 					<div className='flex gap-2'>
 						<BountyProposalActionButton className='hidden md:block' />

@@ -4,6 +4,7 @@
 
 import { dayjs } from 'dayjs-init';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import styled from 'styled-components';
 import Tooltip from '~src/basic-components/Tooltip';
 
@@ -15,6 +16,8 @@ interface Props {
 }
 
 const UpdateLabel = ({ className, created_at, updated_at, isHistory }: Props) => {
+	const { t } = useTranslation('common');
+
 	if (!updated_at) return null;
 	const defaultTime = 'a few minutes ago';
 	const title = dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow() !== 'NaN years ago' ? dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow() : defaultTime;
@@ -24,7 +27,7 @@ const UpdateLabel = ({ className, created_at, updated_at, isHistory }: Props) =>
 				color='#E5007A'
 				title={title}
 			>
-				<span className={`text-xs leading-4 text-navBlue ${isHistory && 'text-pink_primary'}`}>(Edited)</span>
+				<span className={`text-xs leading-4 text-navBlue ${isHistory && 'text-pink_primary'}`}>({t('edited')})</span>
 			</Tooltip>
 		</span>
 	);

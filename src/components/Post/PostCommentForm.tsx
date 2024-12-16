@@ -33,6 +33,7 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import { useQuoteCommentContext } from '~src/context';
+import { useTranslation } from 'next-i18next';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -62,7 +63,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
@@ -232,7 +233,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			});
 			if (error || !data) {
 				console.error('API call failed:', error);
-				setError(error || 'No data returned from the saving comment query');
+				setError(error || t('no_data_returned_from_the_saving_comment_query'));
 				setComments((prev) => {
 					const comments: any = Object.assign({}, prev);
 					for (const key of Object.keys(comments)) {
@@ -263,7 +264,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			} else if (data) {
 				queueNotification({
 					header: 'Success!',
-					message: 'Comment created successfully.',
+					message: t('comment_created_successfully'),
 					status: NotificationStatus.SUCCESS
 				});
 				if (isUsedInSuccessModal) {
@@ -295,7 +296,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			}
 		} catch (error) {
 			console.error('Error while saving comment:', error);
-			setError('An unexpected error occurred.');
+			setError(t('an_unexpected_error_occurred'));
 		} finally {
 			setLoading(false);
 			setIsComment(false);
@@ -309,7 +310,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isComment]);
 
-	if (!id) return <div>You must log in to comment.</div>;
+	if (!id) return <div>{t('you_must_log_in_to_comment')}</div>;
 
 	return (
 		<div className={className}>
@@ -324,7 +325,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>
 						<p className='truncate text-lightBlue dark:text-blue-dark-medium'>&apos;{formContent}&apos;</p>
 					</div>
-					<div className='-mt-[4px] mb-5 ml-[140px] text-green-600'>Comment posted successfully.</div>
+					<div className='-mt-[4px] mb-5 ml-[140px] text-green-600'>{t('comment_posted_successfully')}</div>
 				</div>
 			) : (
 				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem] dark:bg-section-dark-overlay'}>
@@ -467,7 +468,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														!content ? 'opacity-50' : ''
 													}`}
 												>
-													Post
+													{t('post')}
 												</Button>
 											</div>
 										</div>
@@ -478,7 +479,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											htmlType='submit'
 											className={`my-0 mt-3 flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
 										>
-											<CheckOutlined /> Comment
+											<CheckOutlined /> {t('comment')}
 										</Button>
 									)}
 								</div>

@@ -5,9 +5,11 @@
 import { Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
+	const { t } = useTranslation('common');
 	return (
 		<div>
 			<Modal
@@ -25,8 +27,8 @@ const PendingExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: 
 					height={327}
 				/>
 				<div className='-mt-16 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
-					<span className='text-center text-2xl font-semibold '>Application under Review</span>
-					<span className='px-8 pt-1 text-center'>Your application is being thoroughly checked by our team! Please wait while we get back to you! </span>
+					<span className='text-center text-2xl font-semibold '>{t('application_under_review')}</span>
+					<span className='px-8 pt-1 text-center'>{t('your_application_is_being_thoroughly_checked_by_our_team')}</span>
 				</div>
 			</Modal>
 		</div>

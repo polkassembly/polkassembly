@@ -10,14 +10,17 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	const translations = await serverSideTranslations(locale || '', ['common']);
 
-	return { props: { network } };
+	return { props: { network, ...translations } };
 };
 
 const Wrapper = styled.div`
@@ -48,7 +51,7 @@ const TermAndCondition = (props: any) => {
 	const { network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-
+	const { t } = useTranslation('common');
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,26 +60,17 @@ const TermAndCondition = (props: any) => {
 	return (
 		<div className='flex flex-col gap-6'>
 			<Wrapper theme={theme as any}>
-				<CustomHeading className='mb-4'> Polkassembly End User Agreement</CustomHeading>
+				<CustomHeading className='mb-4'> {t('polkassembly_end_user_agreement')}</CustomHeading>
 				<p>
-					Premiurly OÜ is a company registered in Estonia under company number 16162207 with its registered office at Tornimäe tn 7, Kesklinna linnaosa, Tallinn,Harju maakond,
-					10145 (the <strong>Company</strong>). The Company operates Polkassembly (the <strong>Forum</strong>) on https://${network}
-					.polkassembly.io (the <strong>Website</strong>).
+					{t('company_registration')} ({t('the')} <strong>{t('company')}</strong>). {t('the_company_operates_polkassembly_the')} <strong>{t('forum')}</strong> on https://${network}
+					.polkassembly.io (the <strong>{t('website')}</strong>).
 				</p>
 			</Wrapper>
 			<Wrapper theme={theme as any}>
-				<CustomHeading className='mb-4'>1. Understanding these terms</CustomHeading>
+				<CustomHeading className='mb-4'>1. {t('understanding_these_terms')}</CustomHeading>
 				<StyledParagraph>
-					<p className='mb-[2px]'>
-						1. This end user agreement (the **Terms**) describes how you may access and use the Forum and any services made available through the Forum via the Website,any mobile
-						applications made available by the Company and any other distribution channels made available by the Company (the **Services**). By accessing the Forum, these Terms
-						will apply to you and you agree to the Terms. You should therefore read the terms carefully before using the forum.
-					</p>
-					<p className='mb-[2px]'>
-						2. When certain words and phrases are used in these Terms, they have specific meanings (these are known as **defined terms**). You can identify these defined terms
-						because they start with capital letters (even if they are not at the start of a sentence). Where a defined term is used, it has the meaning given to it in the section
-						of these Terms where it was defined (you can find these meanings by looking at the sentence where the defined term is included in brackets and speech marks).
-					</p>
+					<p className='mb-[2px]'>1. {t('point_one')}</p>
+					<p className='mb-[2px]'>2. {t('point_two')}</p>
 					<p className='mb-[2px]'>
 						3. In this document, when we refer to we, us or our, we mean the Company; and when we refer to you or your we mean the person accessing or using the person accessing or
 						using the Forum.

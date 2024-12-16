@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import React, { useState } from 'react';
 import { Button, MenuProps } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
@@ -15,6 +14,7 @@ import RemoveIcon from '~assets/icons/cancel-referendum-icon.svg';
 import ReplaceIcon from '~assets/icons/kill-referendum-icon.svg';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
+import { useTranslation } from 'next-i18next';
 
 const AddAmbassador = dynamic(() => import('./AddAmbassador'), {
 	ssr: false
@@ -25,11 +25,13 @@ const RemoveAmbassador = dynamic(() => import('./RemoveAmbassador'), {
 const ReplaceAmbassador = dynamic(() => import('./ReplaceAmbassador'), {
 	ssr: false
 });
+
 interface Props {
 	className?: string;
 }
 
 const AmbassadorActionButtons = ({ className }: Props) => {
+	const { t } = useTranslation('common');
 	const { resolvedTheme: theme } = useTheme();
 	const { loginAddress } = useUserDetailsSelector();
 	const [isDropdownActive, setIsDropdownActive] = useState(false);
@@ -59,8 +61,8 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 				>
 					<RemoveIcon />
 					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
-						<span className='text-sm font-medium '>Remove Ambassador</span>
-						<span className='text-xs font-normal '>Remove a current Head Ambassador</span>
+						<span className='text-sm font-medium '>{t('remove_ambassador')}</span>
+						<span className='text-xs font-normal '>{t('remove_ambassador_description')}</span>
 					</div>
 				</div>
 			)
@@ -74,8 +76,8 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 				>
 					<ReplaceIcon />
 					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
-						<span className='text-sm font-medium '>Replace Ambassador</span>
-						<span className='text-xs font-normal '>Replace a current Head Ambassador</span>
+						<span className='text-sm font-medium '>{t('replace_ambassador')}</span>
+						<span className='text-xs font-normal '>{t('replace_ambassador_description')}</span>
 					</div>
 				</div>
 			)
@@ -90,7 +92,7 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 					onClick={() => setOpenAmbassadorModal({ action: EAmbassadorActions.ADD_AMBASSADOR, open: true })}
 				>
 					<CreateIcon className='mr-2' />
-					Create Ambassador Application
+					{t('create_ambassador_application')}
 				</Button>
 			</div>
 			<div>

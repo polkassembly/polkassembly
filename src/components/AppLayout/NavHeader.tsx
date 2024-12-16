@@ -51,6 +51,7 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import LanguageSwitcher from './LanguageSwitcher';
 import ProxyMain from '../createProxy';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
@@ -418,6 +419,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</div>
 
 				<div className=' flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
+					<LanguageSwitcher />
 					<SearchBar
 						className='searchbar-container'
 						setSidedrawer={setSidedrawer}

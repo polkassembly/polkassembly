@@ -4,12 +4,15 @@
 import React from 'react';
 import ActivityFeedPostItem from './ActivityFeedPostItem';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 interface IPostListProps {
 	postData: any;
 }
 
 const ActivityFeedPostList: React.FC<IPostListProps> = ({ postData }) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className='hide-scrollbar space-y-5 lg:max-h-[1078px] lg:overflow-y-auto'>
 			{postData?.length === 0 ? (
@@ -18,17 +21,17 @@ const ActivityFeedPostList: React.FC<IPostListProps> = ({ postData }) => {
 				>
 					<Image
 						src='/assets/Gifs/login-like.gif'
-						alt='empty state'
+						alt={t('empty_state_alt')}
 						className='h-80 w-80 p-0'
 						width={320}
 						height={320}
 					/>
-					<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>You&apos;re all caught up!</p>
+					<p className='p-0 text-xl font-medium text-[#243A57] dark:text-white'>{t('youre_all_caught_up')}</p>
 					<p
 						className='p-0 text-center text-[#243A57] dark:text-white'
 						style={{ lineHeight: '1.8' }}
 					>
-						Why not explore other categories or topics?
+						{t('explore_other_categories')}
 					</p>
 				</div>
 			) : (

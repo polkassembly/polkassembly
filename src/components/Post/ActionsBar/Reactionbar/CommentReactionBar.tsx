@@ -7,6 +7,7 @@ import React, { FC, useState } from 'react';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 import ReactionButton from './ReactionButton';
+import { useTranslation } from 'next-i18next';
 
 interface ICommentReactionBarProps {
 	className?: string;
@@ -19,6 +20,7 @@ interface ICommentReactionBarProps {
 
 const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, className, replyId, comment_reactions, commentId, importedReactions = false }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState(false);
+	const { t } = useTranslation('common');
 	const [reactions, setReactions] = useState<IReactions>(comment_reactions);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
 	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
@@ -48,16 +50,16 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, c
 				modalOpen={openLikeModal}
 				setModalOpen={setLikeModalOpen}
 				image='/assets/Gifs/login-like.gif'
-				title='Join Polkassembly to Like this proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly_to_like_this_proposal')}
+				subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 			/>
 
 			<ReferendaLoginPrompts
 				modalOpen={openDislikeModal}
 				setModalOpen={setDislikeModalOpen}
 				image='/assets/Gifs/login-dislike.gif'
-				title='Join Polkassembly to Dislike this proposal.'
-				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				title={t('join_polkassembly_to_dislike_this_proposal')}
+				subtitle={t('discuss_contribute_and_get_regular_updates_from_polkassembly')}
 			/>
 		</div>
 	);

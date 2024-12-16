@@ -22,6 +22,7 @@ import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import BecomeDelegateSmall from './smallScreenComponents/BecomeDelegateSmall';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
 	className?: string;
@@ -33,6 +34,7 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 });
 
 const DelegationDashboardHome = ({ className }: Props) => {
+	const { t } = useTranslation('common');
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
@@ -84,14 +86,14 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		<div className={`${className} delegation-dashboard`}>
 			{isLoggedOut || !userDetails.loginAddress ? (
 				<div className='wallet-info-board min-sm:absolute min-sm:left-0 min-sm:top-20 mt-[-25px] hidden h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-6 sm:flex'>
-					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
+					<span className='text-sm font-medium text-white'>{t('get_started_with_delegation')}</span>
 					<Button
 						onClick={() => {
 							setOpenLoginModal(true);
 						}}
 						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium font-semibold text-white'
 					>
-						Connect wallet
+						{t('connect_wallet')}
 					</Button>
 				</div>
 			) : (
@@ -103,7 +105,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{(isLoggedOut || !userDetails.loginAddress) && (
 				<div className='hidden sm:block'>
-					<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high md:mb-5'>Delegation </h2>
+					<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high md:mb-5'>{t('delegation')}</h2>
 				</div>
 			)}
 

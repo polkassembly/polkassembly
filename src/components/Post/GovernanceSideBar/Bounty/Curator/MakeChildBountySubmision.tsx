@@ -21,6 +21,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { IChildBountySubmission, NotificationStatus } from '~src/types';
+import { useTranslation } from 'next-i18next';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -36,6 +37,7 @@ const ZERO_BN = new BN(0);
 
 const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
+	const { t } = useTranslation('common');
 	const { bountyId, ModalTitle, open, setOpen, editing = false, submission, onSubmissionCreated } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const [title, setTitle] = useState<string>('');
@@ -61,7 +63,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 		if (data?.message) {
 			queueNotification({
 				header: 'Success!',
-				message: data?.message || 'Child Bounty Sumbission added successfully',
+				message: data?.message || t('child_bounty_submission_added_successfully'),
 				status: NotificationStatus.SUCCESS
 			});
 			onSubmissionCreated?.({
@@ -77,7 +79,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 		if (error) {
 			queueNotification({
 				header: 'Error!',
-				message: error || 'Error in saving your submission',
+				message: error || t('error_in_saving_your_submission'),
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -118,7 +120,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{ModalTitle || 'Make Submission'}
+						{ModalTitle || t('make_submission')}
 					</div>
 				}
 			>
@@ -130,7 +132,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 					>
 						<Form.Item name='proposer'>
 							<div className=' flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Proposer Address </label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>{t('proposer_address')}</label>
 								{!!loginAddress && <Balance address={loginAddress} />}
 							</div>
 							<div className='flex w-full items-end gap-2 text-sm '>
@@ -145,13 +147,13 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 						</Form.Item>
 						<div>
 							<label className='mb-0.5 '>
-								Title <span className='text-nay_red'>*</span>
+								{t('title')} <span className='text-nay_red'>*</span>
 							</label>
 							<Form.Item
 								name='title'
 								rules={[
 									{
-										message: 'Title should not exceed 150 characters.',
+										message: t('title_should_not_exceed_150_characters'),
 										validator(rule, value, callback) {
 											if (callback && value?.length > 150) {
 												callback(rule?.message?.toString());
@@ -179,7 +181,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 								placeholder='Enter Amount'
 								label={
 									<label className='mb-0.5 dark:text-white'>
-										Request Amount <span className='text-nay_red'>*</span>
+										{t('request_amount')} <span className='text-nay_red'>*</span>
 									</label>
 								}
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
@@ -190,7 +192,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 
 						<section>
 							<label className='mb-0.5 '>
-								Link <span className='text-nay_red'>*</span>
+								{t('link')} <span className='text-nay_red'>*</span>
 							</label>
 							<Form.Item name='link'>
 								<Input
@@ -205,7 +207,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 						</section>
 
 						<section className='mt-6'>
-							<label className='mb-0.5'>Categories</label>
+							<label className='mb-0.5'>{t('categories')}</label>
 							<Form.Item name='tags'>
 								<AddTags
 									tags={tags}
@@ -215,7 +217,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 						</section>
 						<section className='mt-6'>
 							<label className='mb-0.5'>
-								Description <span className='text-nay_red'>*</span>
+								{t('description')} <span className='text-nay_red'>*</span>
 							</label>
 							<Form.Item name='content'>
 								<ContentForm
@@ -230,14 +232,14 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 					</Form>
 					<div className='-mx-6 mt-6 flex justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
-							text='Back'
+							text={t('back')}
 							variant='default'
 							height={40}
 							width={155}
 							onClick={() => setOpen(false)}
 						/>
 						<CustomButton
-							text='Send'
+							text={t('send')}
 							variant='primary'
 							onClick={() => handleSubmit()}
 							height={40}

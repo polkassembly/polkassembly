@@ -21,6 +21,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
 import ImageIcon from './ImageIcon';
+import { useTranslation } from 'next-i18next';
 
 const ZERO_BN = new BN(0);
 interface IProfileData {
@@ -30,6 +31,7 @@ interface IProfileData {
 
 const ProfileData = ({ address, className }: IProfileData) => {
 	const { network } = useNetworkSelector();
+	const { t } = useTranslation('common');
 	const { api, apiReady } = useApiContext();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
@@ -147,7 +149,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 						</div>
 					) : (
 						<div className='mt-3'>
-							<p className='m-0 p-0 text-sm font-normal text-textGreyColor dark:text-lightGreyTextColor'>No bio added</p>
+							<p className='m-0 p-0 text-sm font-normal text-textGreyColor dark:text-lightGreyTextColor'>{t('no_bio_added')}</p>
 						</div>
 					)}
 					<div className='mt-3'>
@@ -186,7 +188,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							className='icon-container'
 						/>
 						<div className='content-container -mt-1'>
-							<p className='m-0 whitespace-nowrap p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
+							<p className='m-0 whitespace-nowrap p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>{t('account_since')}</p>
 							<span className='m-0 whitespace-nowrap p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
 								{dayjs(profileData?.created_at as unknown as string).format('DD MMM YYYY')}
 							</span>
@@ -207,7 +209,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 						className='icon-container'
 					/>
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>{t('proposals')}</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}</span>
 					</div>
 				</div>
@@ -223,7 +225,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 						className='icon-container'
 					/>
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>{t('discussions')}</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}</span>
 					</div>
 				</div>
@@ -239,7 +241,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 						className='icon-container'
 					/>
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>{t('voting_power')}</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
 							{formatedBalance((transferableBalance.toString() || '0').toString(), unit, 2)} {unit}
 						</span>

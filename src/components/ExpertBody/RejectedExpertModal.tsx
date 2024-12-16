@@ -5,9 +5,11 @@
 import { Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
+	const { t } = useTranslation('common');
 	return (
 		<div>
 			<Modal
@@ -25,10 +27,8 @@ const RejectedExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible:
 					height={327}
 				/>
 				<div className='-mt-8 flex flex-col gap-2 pb-5 text-[#243A57] dark:text-lightWhite'>
-					<span className='text-center text-2xl font-semibold '>Application Rejected!</span>
-					<span className='px-8 text-center'>
-						We regret to inform you that your application to become an Expert was rejected by our Team! Don’t worry, you can apply again in 30 days!
-					</span>
+					<span className='text-center text-2xl font-semibold '>{t('application_rejected')}</span>
+					<span className='px-8 text-center'>{t('we_regret_to_inform_you_that_your_application_to_become_an_expert_was_rejected_by_our_team')}</span>
 				</div>
 			</Modal>
 		</div>

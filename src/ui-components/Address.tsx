@@ -392,7 +392,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className='flex w-full items-center'>
+		<div className={classNames('w-full', identity?.parentProxyTitle?.length && !displayInline ? 'flex items-center' : '')}>
 			<Tooltip
 				arrow
 				color='#fff'

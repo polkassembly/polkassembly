@@ -13,7 +13,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
-		const { network, postId, govType: govTypeQuery, postType, password } = req.query;
+		const { network = 'polkadot', postId = 1328, govType: govTypeQuery = 'OpenGov', postType = 'referendum_v2', password = '018ecc85-41d1-7e8e-8e3c-47c982813818' } = req.query;
 
 		if (!network || !String(postId) || !postType || !password) {
 			return res.status(400).json({ message: 'Invalid parameters' });

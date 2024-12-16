@@ -6,6 +6,8 @@ import Image from 'next/image';
 import React from 'react';
 import ContentForm from '../ContentForm';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
+import classNames from 'classnames';
 
 const ExpertPostModal = ({
 	isModalVisible,
@@ -20,6 +22,7 @@ const ExpertPostModal = ({
 	review: string;
 	setReview: (content: string) => void;
 }) => {
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<div>
 			<Modal
@@ -30,9 +33,9 @@ const ExpertPostModal = ({
 							alt={'Expert Image'}
 							width={24}
 							height={24}
-							className='h-6 w-6'
+							className={classNames('h-6 w-6', theme == 'dark' ? 'dark-icons' : '')}
 						/>
-						<span className='text-xl font-semibold text-[#243A57]'>Add Expert Review</span>
+						<span className={'text-xl font-semibold text-[#243A57] dark:text-blue-dark-high'}>Add Expert Review</span>
 					</div>
 				}
 				visible={isModalVisible}

@@ -336,11 +336,12 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						<div className='flex items-center gap-2'>
 							<Image
 								src='/assets/icons/mentoring.svg'
-								alt='Expert Image'
+								alt={'Expert Image'}
 								width={24}
 								height={24}
-								className={classNames('h-6 w-6', theme === 'dark' ? 'brightness-0 invert' : '')}
+								className={classNames('h-6 w-6', theme == 'dark' ? 'dark-icons' : '')}
 							/>
+
 							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>Add Expert Review</span>
 						</div>
 					)

@@ -49,6 +49,7 @@ import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
 import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
 import BatchVotingSVG from '~assets/sidebar/batch-voting.svg';
+import CommunitySVG from '~assets/sidebar/community-tab-icon.svg';
 import BatchVotingSVGDark from '~assets/sidebar/batch-voting-dark.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
@@ -535,6 +536,13 @@ export const BatchVotingIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BatchVotingIconDark = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BatchVotingSVGDark}
+		{...props}
+	/>
+);
+
+export const CommunityIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CommunitySVG}
 		{...props}
 	/>
 );

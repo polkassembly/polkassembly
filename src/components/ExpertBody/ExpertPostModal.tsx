@@ -30,10 +30,10 @@ const ExpertPostModal = ({
 					<div className='flex items-center gap-2 dark:text-lightWhite'>
 						<Image
 							src='/assets/icons/mentoring.svg'
-							alt={'Expert Image'}
+							alt='Expert Image'
 							width={24}
 							height={24}
-							className={classNames('h-6 w-6', theme == 'dark' ? 'dark-icons' : '')}
+							className={classNames('h-6 w-6', theme === 'dark' ? 'brightness-0 invert' : '')}
 						/>
 						<span className={'text-xl font-semibold text-[#243A57] dark:text-blue-dark-high'}>Add Expert Review</span>
 					</div>

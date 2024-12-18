@@ -17,6 +17,10 @@ export default function useCurrentBlock() {
 
 		let unsubscribe: () => void;
 
+		if (!api.derive || !api.derive.chain) {
+			return;
+		}
+
 		api?.derive?.chain
 			.bestNumber((number) => {
 				setCurrentBlock(number);

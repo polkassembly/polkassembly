@@ -77,6 +77,7 @@ interface Props {
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
 }
+export const isCreateProxySupportedNetwork = ['polkadot', 'paseo', 'westend'];
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();
@@ -232,7 +233,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		...(['paseo', 'westend'].includes(network)
+		...(isCreateProxySupportedNetwork.includes(network)
 			? [
 					{
 						key: 'accounts',
@@ -280,7 +281,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
-	if (['paseo', 'westend'].includes(network)) {
+	if (isCreateProxySupportedNetwork.includes(network)) {
 		dropdownMenuItems.splice(1, 0, {
 			key: 'create proxy',
 			label: (

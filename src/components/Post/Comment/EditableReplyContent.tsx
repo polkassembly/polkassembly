@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -19,7 +19,8 @@ import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
-
+import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
@@ -559,15 +560,15 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					)
 			  }
 			: null,
-		id === userId
+		id == userId
 			? {
 					key: 2,
 					label: (
 						<button
-							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'}
 							onClick={deleteReply}
 						>
-							<DeleteOutlined />
+							{theme == 'light' ? <DeleteIcon className='mr-[2px]' /> : <DeleteIconDark className='mr-[2px]' />}
 							<span className='m-0 p-1'>Delete</span>
 						</button>
 					)
@@ -585,6 +586,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							commentId={commentId}
 							replyId={replyId}
 							postId={(reply.post_index as any) || postIndex}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -600,6 +603,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							commentId={commentId}
 							type='reply'
 							replyId={replyId}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -652,78 +657,109 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					<>
 						<Markdown
 							theme={theme}
-							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							className='rounded-b-md pt-2 text-sm '
 							md={content}
 							isUsedInComments={true}
 						/>
-						<div className=' flex flex-wrap items-center gap-1'>
-							<CommentReactionBar
-								className='reactions mr-0'
-								commentId={commentId}
-								comment_reactions={reply.reply_reactions}
-								importedReactions={isSubsquareUser}
-								replyId={replyId}
-								isReactionOnReply={isReactionOnReply}
-							/>
-							<div className='item-center flex flex-wrap gap-3'>
-								{id ? (
-									reply.reply_source === 'subsquare' ? (
-										<Tooltip
-											title='Reply are disabled for imported comments.'
-											color='#E5007A'
-										>
-											<Button
-												disabled={!isCommentAllowed}
-												className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
-													reply.reply_source ? 'disabled-reply' : ''
-												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
+						<div className=' flex flex-wrap items-center  justify-between gap-1'>
+							<div className='flex items-center gap-1'>
+								<CommentReactionBar
+									className='reactions mr-0'
+									commentId={commentId}
+									comment_reactions={reply.reply_reactions}
+									importedReactions={isSubsquareUser}
+									replyId={replyId}
+									isReactionOnReply={isReactionOnReply}
+								/>
+								<div className='item-center flex flex-wrap gap-3'>
+									{id ? (
+										reply.reply_source == 'subsquare' ? (
+											<Tooltip
+												title='Reply are disabled for imported comments.'
+												color='#E5007A'
 											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
-											</Button>
-										</Tooltip>
-									) : (
-										!isReplying && (
-											<Button
-												disabled={!isCommentAllowed}
-												className={`flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
-													!isCommentAllowed ? 'opacity-50' : ''
-												}`}
-												onClick={() => setIsReplying(!isReplying)}
-											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
-												Reply
-											</Button>
+												<Button
+													disabled={!isCommentAllowed}
+													className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs font-medium text-[#485F7DCC] shadow-none dark:text-[#9E9E9ECC] ${
+														reply.reply_source ? 'disabled-reply' : ''
+													} ${!isCommentAllowed ? 'opacity-50' : ''}`}
+												>
+													{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 ' />} Reply
+												</Button>
+											</Tooltip>
+										) : (
+											!isReplying && (
+												<Button
+													disabled={!isCommentAllowed}
+													className={`-mt-[2px] flex items-center border-none p-0 text-xs font-medium text-[#485F7DCC] shadow-none dark:text-[#9E9E9ECC] ${
+														!isCommentAllowed ? 'opacity-50' : ''
+													}`}
+													onClick={() => setIsReplying(!isReplying)}
+												>
+													{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
+													Reply
+												</Button>
+											)
 										)
-									)
-								) : null}
-							</div>
-							<Dropdown
-								theme={theme}
-								className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown z-[1056]'
-								placement='bottomRight'
-								menu={{ items }}
-							>
-								{theme === 'dark' ? (
-									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								) : (
-									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
-								)}
-							</Dropdown>
-							{reply.isReplyError && (
-								<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
-									<div
-										onClick={handleRetry}
-										className='retry-container relative flex w-[66px] cursor-pointer px-1'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-									>
-										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
-									</div>
+									) : null}
 								</div>
-							)}
+								<Dropdown
+									theme={theme}
+									className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
+									overlayClassName='sentiment-dropdown z-[1056]'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									{theme === 'dark' ? (
+										<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									) : (
+										<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									)}
+								</Dropdown>
+								{reply.isReplyError && (
+									<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
+									</div>
+								)}
+							</div>
+							<div>
+								<Dropdown
+									theme={theme}
+									className={`${dmSans.variable} ${dmSans.className} dropdown flex cursor-pointer`}
+									overlayClassName='sentiment-dropdown z-[1056]'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									{theme === 'dark' ? (
+										<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									) : (
+										<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+									)}
+								</Dropdown>
+								{reply.isReplyError && (
+									<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
+									</div>
+								)}
+							</div>
 						</div>
 						{isReplying && (
 							<Form

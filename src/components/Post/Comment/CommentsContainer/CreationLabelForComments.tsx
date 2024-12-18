@@ -31,6 +31,7 @@ interface ICreationLabelProps {
 	vote?: string | null;
 	votesArr?: any;
 	isRow?: boolean;
+	isLinkedAddressUsed?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -47,7 +48,8 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 		vote,
 		votesArr = [],
 		isRow = true,
-		children
+		children,
+		isLinkedAddressUsed
 	} = props;
 	const { postData } = usePostDataContext();
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -78,6 +80,7 @@ const CreationLabelForComments: FC<ICreationLabelProps> = (props) => {
 					truncateUsername={isMobile ? true : false}
 					disableAddressClick={commentSource !== 'polkassembly'}
 					usernameClassName='text-xs text-ellipsis overflow-hidden'
+					isLinkedAddressUsed={isLinkedAddressUsed}
 				/>
 				<div className='flex flex-shrink-0 items-baseline gap-1 text-lightBlue dark:text-blue-dark-medium'>
 					{vote && (

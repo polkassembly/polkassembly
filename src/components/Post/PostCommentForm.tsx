@@ -196,6 +196,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
 		// postIndex && createSubscription(postIndex);
+		const isLinkedAddressUsed = linkedAddress !== loginAddress;
+
 		const commentId = v4();
 		const comment = {
 			comment_reactions: {
@@ -227,6 +229,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
+				isLinkedAddressUsed,
 				postId: postIndex,
 				postType: postType,
 				sentiment: isSentimentPost ? sentiment : 0,

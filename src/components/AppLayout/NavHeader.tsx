@@ -52,6 +52,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import ProxyMain from '../createProxy';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -232,7 +233,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
-		...(['paseo', 'westend'].includes(network)
+		...([AllNetworks.PASEO, AllNetworks.WESTEND, AllNetworks.POLKADOT].includes(network)
 			? [
 					{
 						key: 'accounts',
@@ -280,7 +281,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
-	if (['paseo', 'westend'].includes(network)) {
+	if ([AllNetworks.PASEO, AllNetworks.WESTEND, AllNetworks.POLKADOT].includes(network)) {
 		dropdownMenuItems.splice(1, 0, {
 			key: 'create proxy',
 			label: (

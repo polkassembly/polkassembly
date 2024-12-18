@@ -392,7 +392,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className={classNames('w-full', identity?.parentProxyTitle?.length ? 'flex items-center' : '')}>
+		<div className={classNames(addressOtherTextType ? 'w-full' : ' myAddress', identity?.parentProxyTitle?.length ? 'flex items-center' : 'items-start')}>
 			<Tooltip
 				arrow
 				color='#fff'

@@ -324,7 +324,10 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 			ref={markdownRef}
 			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
 		>
-			<HighlightMenu markdownRef={markdownRef} />
+			<HighlightMenu
+				markdownRef={markdownRef}
+				isUsedInComments={isUsedInComments}
+			/>
 			<StyledMarkdown
 				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isUsedInComments && 'comments-image'} ${disableQuote && 'hide-blockquote'} ${
 					isAutoComplete && 'mde-autocomplete-content'

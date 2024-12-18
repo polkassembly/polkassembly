@@ -109,17 +109,19 @@ const ParentProxyTitle = ({
 			className={className}
 			title={
 				<div className='flex flex-col items-start justify-start gap-1 text-xs'>
-					<span>Sub-account: On-chain Identity derived </span>
-					<div className='flex items-center justify-start gap-1'>
+					<span>Sub-account: On-chain Identity derived</span>
+					<div className='flex flex-shrink-0 items-center justify-start gap-1'>
 						from the parent-{' '}
 						<Address
 							address={parentProxyAddress || ''}
 							displayInline
 							disableTooltip
 							usernameClassName='text-blue-dark-high text-xs'
-							className='text-xs'
+							className='flex items-center text-xs'
 							disableParentProxyAddressTitle
 							iconSize={14}
+							isTruncateUsername
+							usernameMaxLength={10}
 						/>
 					</div>
 				</div>
@@ -134,7 +136,7 @@ const ParentProxyTitle = ({
 					className='font-medium text-[#407BFF]'
 					title={title}
 				>
-					{title?.length > 6 ? (truncate ? `${title?.slice(0, 6)}...` : title) : title}
+					{title?.length > 10 || truncate ? `${title?.slice(0, 10)}...` : title}
 				</span>
 				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
 					<Image
@@ -390,7 +392,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className='flex items-center'>
+		<div className={classNames(addressOtherTextType ? 'w-full' : ' myAddress', identity?.parentProxyTitle?.length ? 'flex items-center' : 'items-start')}>
 			<Tooltip
 				arrow
 				color='#fff'

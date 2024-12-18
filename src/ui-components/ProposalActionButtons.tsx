@@ -12,25 +12,12 @@ import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
-import dynamic from 'next/dynamic';
-import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/router';
 import CreateProposalsFabIcon from '~assets/icons/create-proposals-fab.svg';
 import CreateProposalsFabIconDark from '~assets/icons/create-proposals-fab-dark.svg';
 import { isActivityFeedSupportedNetwork } from '~src/components/ActivityFeed/utils/ActivityFeedSupportedNetwork';
 import { dmSans } from 'pages/_app';
-
-const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
-	loading: () => (
-		<SkeletonButton
-			className='w-[100%]'
-			active
-		/>
-	),
-	ssr: false
-});
 
 interface Props {
 	isUsedInHomePage?: boolean;
@@ -52,7 +39,6 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
-	const router = useRouter();
 	const isRelevantPath = ['/activity-feed', '/opengov'].includes(pathname);
 
 	const handleClick = (num: number) => {
@@ -152,30 +138,6 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
 			{isUsedInHomePage && (
 				<div className='flex justify-between space-x-2 sm:space-x-4'>
-					{router.pathname === '/activity-feed' ? (
-						<CustomButton
-							className='hidden w-min max-sm:p-1.5 xl:block'
-							height={32}
-							variant='primary'
-						>
-							<OpenGovTreasuryProposal
-								theme={theme}
-								isUsedInReferedumComponent={true}
-							/>
-						</CustomButton>
-					) : (
-						<CustomButton
-							className='  w-min max-sm:p-1.5 '
-							height={32}
-							variant='primary'
-						>
-							<OpenGovTreasuryProposal
-								theme={theme}
-								isUsedInReferedumComponent={true}
-							/>
-						</CustomButton>
-					)}
-
 					<div className='-mt-1'>
 						<Dropdown
 							theme={theme}

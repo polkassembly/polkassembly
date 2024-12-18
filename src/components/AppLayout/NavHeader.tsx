@@ -52,6 +52,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import ProxyMain from '../createProxy';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -77,7 +78,7 @@ interface Props {
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
 }
-export const isCreateProxySupportedNetwork = ['polkadot', 'paseo', 'westend'];
+export const isCreateProxySupportedNetwork = [AllNetworks.PASEO, AllNetworks.WESTEND, AllNetworks.POLKADOT];
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();

@@ -211,15 +211,15 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													) : null}
 												</div>
 												{priceWeeklyChange.value !== 'N/A' && (
-													<div className='-mb-1 flex items-center'>
+													<div className='-mb-[2px] flex items-center'>
 														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
 															{Math.abs(Number(priceWeeklyChange.value))}%
 														</span>
 														<span>
 															{Number(priceWeeklyChange.value) < 0 ? (
-																<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
+																<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
 															) : (
-																<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
+																<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
 															)}
 														</span>
 													</div>

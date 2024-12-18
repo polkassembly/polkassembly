@@ -22,8 +22,8 @@ const ZERO_BN = new BN(0);
 
 function updateTransferableBal(data: { free: BN; frozen: BN; reserved: BN }, existentialDeposit: string) {
 	const { free, frozen, reserved } = data;
-	const frozenReserveDif = frozen.sub(reserved);
-	const noZeroConsidered = (free || 0).sub(BN.max(frozenReserveDif, new BN(existentialDeposit))).toString();
+	const frozenReserveDif = frozen.sub(reserved) || ZERO_BN;
+	const noZeroConsidered = (free || ZERO_BN).sub(BN.max(frozenReserveDif, new BN(existentialDeposit))).toString();
 
 	return BN.max(new BN(noZeroConsidered), ZERO_BN).toString();
 }

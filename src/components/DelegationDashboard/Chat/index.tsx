@@ -2,12 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Drawer, Button, Tooltip } from 'antd';
+import { Drawer, Button, Tooltip, Badge } from 'antd';
 import { dmSans } from 'pages/_app';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import UserChats from './UserChats';
 import ChatHeader from './ChatHeader';
+import { useDispatch } from 'react-redux';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { chatsActions } from '~src/redux/chats';
+import { useChatsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -24,6 +28,9 @@ const ChatWithDelegates = ({ className }: Props) => {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isNewChat, setIsNewChat] = useState(false);
+
+	const dispatch = useDispatch();
+	const { unreadChatCount } = useChatsSelector();
 
 	const openChat = () => {
 		setIsModalOpen(true);
@@ -53,20 +60,47 @@ const ChatWithDelegates = ({ className }: Props) => {
 		}
 	];
 
+	const fetchUnreadChatCount = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<{ unreadCount: number }>('api/v1/delegate-chat/get-unread-chat-count');
+			if (data) {
+				dispatch(chatsActions.setUnreadChatCount(data.unreadCount));
+			} else if (error) {
+				console.error('Error fetching unread chat count:', error);
+			}
+		} catch (error) {
+			console.error('Error fetching unread chat count:', error);
+		}
+	};
+
+	useEffect(() => {
+		fetchUnreadChatCount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<Tooltip title='Messages'>
-				<Button
-					onClick={openChat}
-					className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
+				<Badge
+					count={unreadChatCount}
+					overflowCount={99}
+					offset={[-2, 2]}
+					size='small'
+					style={{ backgroundColor: 'var(--pink_primary)' }}
+					className='[&_.ant-badge-count]:shadow-[0_0_0_2px_rgba(255,255,255,1)] [&_.ant-badge-count]:dark:shadow-[0_0_0_2px_rgba(0,0,0,1)]'
 				>
-					<Image
-						src={'/assets/icons/delegation-chat/message-icon.svg'}
-						height={20}
-						width={20}
-						alt='message icon'
-					/>
-				</Button>
+					<Button
+						onClick={openChat}
+						className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
+					>
+						<Image
+							src={'/assets/icons/delegation-chat/message-icon.svg'}
+							height={20}
+							width={20}
+							alt='message icon'
+						/>
+					</Button>
+				</Badge>
 			</Tooltip>
 			<Drawer
 				title={<ChatHeader actions={chatHeaderActions} />}

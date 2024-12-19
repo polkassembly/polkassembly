@@ -53,6 +53,7 @@ const ChatCard = ({ chat }: Props) => {
 					chatId: chat.chatId
 				})
 			);
+			dispatch(chatsActions.markChatAsRead({ address: substrateAddress!, chatId: chat.chatId }));
 		} else if (error) {
 			console.log(error);
 		}

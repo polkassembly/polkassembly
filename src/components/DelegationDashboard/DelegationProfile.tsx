@@ -154,7 +154,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 
 				{!isSearch && (
 					<div className='hidden items-start justify-start gap-2.5 text-pink_primary sm:flex'>
-						<span className='flex items-center gap-2'>
+						<span className='flex items-center gap-6'>
 							<ChatWithDelegates />
 							{userBio || bio ? (
 								<div className='flex space-x-2'>

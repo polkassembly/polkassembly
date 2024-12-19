@@ -43,16 +43,13 @@ const RenderChats = ({ className, handleOpenChat, chats, handleNewChat }: Props)
 			/>
 			<div className='relative -mt-5 text-center text-bodyBlue dark:text-blue-dark-high'>
 				<h2 className='my-0 p-0 text-xl font-bold'>No Message Found</h2>
-				<p className='flex items-center justify-center gap-1 p-0'>
-					<Button
-						type='text'
-						className='cursor-pointer border-none p-0 font-semibold text-pink_primary'
-						onClick={handleNewChat}
-					>
-						Add
-					</Button>
-					New Message
-				</p>
+				<Button
+					type='text'
+					className='m-0 cursor-pointer border-none p-0 font-semibold text-pink_primary'
+					onClick={handleNewChat}
+				>
+					Add <span className='ml-1 font-thin text-bodyBlue dark:text-blue-dark-high'>New Message</span>
+				</Button>
 			</div>
 		</div>
 	);

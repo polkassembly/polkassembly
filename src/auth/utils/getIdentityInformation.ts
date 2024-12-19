@@ -55,7 +55,7 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 
 	const parentProxyInfo = await getParentProxyInfo({ address: encodedQueryAddress, api: api, apiReady: !!api?.isReady, network });
 
-	const encodedAddress = parentProxyInfo ? getEncodedAddress(parentProxyInfo?.address, network) : encodedQueryAddress;
+	const encodedAddress = !!parentProxyInfo && !!parentProxyInfo?.address ? getEncodedAddress(parentProxyInfo?.address, network) : encodedQueryAddress;
 
 	const identityInfo: any = await api?.query.identity?.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
 

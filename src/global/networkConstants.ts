@@ -65,6 +65,7 @@ import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 
 export const network = {
 	POLKADOT: 'polkadot',
+	PASEO: 'paseo',
 	KUSAMA: 'kusama',
 	ACALA: 'acala',
 	ACUITY: 'acuity',
@@ -186,7 +187,8 @@ export const tokenSymbol = {
 	KPGT: 'KPGT',
 	CGT: 'CGT',
 	SIGMA: 'SIGMA',
-	MYTH: 'MYTH'
+	MYTH: 'MYTH',
+	PAS: 'PAS'
 };
 
 export const treasuryAssets = {
@@ -210,6 +212,9 @@ export const chainProperties: types.ChainPropType = {
 		preImageBaseDeposit: '400000000000',
 		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
 		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
+		assetHubTreasuryAddress2: '16VcQSRcMFy6ZHVjBvosKmo7FKqTb8ZATChDYo8ibutzLnos',
+		assetHubTreasuryAddress3: '13w7NdvSR1Af8xsQTArDtZmVvjE8XhWNdL4yed3iFHrUNCnS',
+		assetHubTreasuryAddress4: '13gYFscwJFJFqFMNnttzuTtMrApUEmcUARtgFubbChU9g6mh',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -271,6 +276,7 @@ export const chainProperties: types.ChainPropType = {
 		],
 		hydrationEndpoints: ['wss://hydradx-rpc.dwellir.com', 'wss://rpc.hydradx.cloud', 'wss://rpc.helikon.io/hydradx', 'wss://hydradx.paras.ibp.network'],
 		hydrationTreasuryAddress: '7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV',
+		hydrationTreasuryAddress2: '7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY',
 		hydrationAssets: [
 			{
 				label: 'DOT',
@@ -2010,6 +2016,34 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via Parity',
 				key: 'wss://polkadot-mythos-rpc.polkadot.io'
 			}
+		]
+	},
+	[network.PASEO]: {
+		preImageBaseDeposit: '0',
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://paseo.dotters.network',
+		ss58Format: 42,
+		subsquidUrl: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.PAS,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://paseo.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Parity',
+				key: 'wss://rococo-rpc.polkadot.io'
+			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
 		]
 	}
 };

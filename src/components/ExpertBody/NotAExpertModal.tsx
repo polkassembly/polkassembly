@@ -341,6 +341,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={24}
 								className={classNames('h-6 w-6', theme == 'dark' ? 'dark-icons' : '')}
 							/>
+
 							<span className='text-xl font-semibold text-blue-light-high dark:text-lightWhite'>Add Expert Review</span>
 						</div>
 					)

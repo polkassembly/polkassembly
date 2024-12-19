@@ -27,8 +27,8 @@ import { IComment } from './Comment';
 
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
-import DeleteIcon from '~assets/icons/delete.svg';
-import EditIcon from '~assets/icons/edit-i.svg';
+import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
 import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import {
@@ -42,7 +42,8 @@ import {
 	NeutralUnfilledIcon,
 	SlightlyForUnfilledIcon,
 	ForUnfilledIcon,
-	CopyIcon
+	CopyIcon,
+	EditPencilIcon
 } from '~src/ui-components/CustomIcons';
 
 import { dmSans } from 'pages/_app';
@@ -533,10 +534,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								});
 							}}
 						>
-							<span className='flex items-center'>
-								<EditIcon className='mr-1 text-bodyBlue dark:text-white' />
-								<p className='m-0 -ml-[3px] p-0'>Edit</p>
-							</span>
+							<EditPencilIcon className='-ml-[2px] mr-1 text-xl ' />
+							Edit
 						</div>
 					)
 			  }
@@ -550,11 +549,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						copyLink();
 					}}
 				>
-					<CopyIcon
-						className='-ml-2 text-2xl'
-						style={{ transform: 'scale(0.6)' }}
-					/>{' '}
-					Copy link
+					<CopyIcon className='-ml-1 mr-[2px] text-xl text-blue-light-medium dark:text-blue-dark-medium' /> Copy link
 				</div>
 			)
 		},
@@ -569,6 +564,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							commentId={commentId}
 							postId={postIndex}
 							isButtonOnComment={true}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -588,7 +585,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								});
 							}}
 						>
-							<DeleteIcon className='mr-1' />
+							{theme == 'light' ? <DeleteIcon className='mr-[2px]' /> : <DeleteIconDark className='mr-[2px]' />}
 							Delete
 						</div>
 					)
@@ -605,6 +602,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							onSuccess={removeCommentContent}
 							commentId={commentId}
 							postId={(comment.post_index as any) || postIndex}
+							isUsedInDescription={true}
+							isUsedInComments={true}
 						/>
 					)
 			  }
@@ -640,14 +639,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	return (
 		<>
 			<div className={className}>
-				{error && (
+				{error ? (
 					<div>
 						<ErrorAlert
 							errorMsg={error}
 							className='mb-4'
 						/>
 					</div>
-				)}
+				) : null}
 				{isEditing ? (
 					<Form
 						form={form}
@@ -725,7 +724,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<Markdown
 							theme={theme}
 							md={content}
-							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							className='rounded-b-md text-sm '
 							isUsedInComments={true}
 						/>
 

@@ -3,13 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef } from 'react';
-import CreationLabel from 'src/ui-components/CreationLabel';
-import UserAvatar from 'src/ui-components/UserAvatar';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
 import { IComment } from './Comment';
+import CreationLabelForComments from './CommentsContainer/CreationLabelForComments';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import ImageIcon from '~src/ui-components/ImageIcon';
 interface Props {
 	className?: string;
 	reply: any;
@@ -24,6 +26,32 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
+	const [profileDetails, setProfileDetails] = useState({
+		image: '',
+		username: ''
+	});
+
+	const getData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${proposer}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				image: data?.profile?.image || '',
+				username: data?.username
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (proposer) return;
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [proposer]);
+
 	useEffect(() => {
 		if (typeof window !== undefined) return;
 		const hashArr = asPath.split('#');
@@ -42,25 +70,27 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 			ref={replyRef}
 			className={`${className} flex gap-x-4`}
 		>
-			<UserAvatar
-				className='mt-1 hidden md:inline-block'
-				username={username}
-				size='large'
-				id={id}
-			/>
 			<div className='comment-box'>
-				<CreationLabel
-					className='reply-user-container -mt-1 rounded-t-md px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
-					created_at={created_at}
-					defaultAddress={proposer}
-					username={username}
-					spam_users_count={reply.spam_users_count}
-					commentSource={reply.reply_source}
-					isRow={true}
-				></CreationLabel>
+				<div className='flex items-center gap-2'>
+					<ImageIcon
+						alt='user'
+						src={profileDetails?.image ? profileDetails.image : '/assets/icons/user-profile.png'}
+						imgClassName='h-8 w-8 rounded-full'
+						imgWrapperClassName='rounded-full h-8 w-8 mr-[2px]'
+					/>
+					<CreationLabelForComments
+						className=' rounded-t-md'
+						created_at={created_at}
+						defaultAddress={proposer}
+						username={username}
+						spam_users_count={reply.spam_users_count}
+						commentSource={reply.reply_source}
+						isRow={true}
+					></CreationLabelForComments>
+				</div>
 				<EditableReplyContent
 					userId={user_id}
-					className='rounded-md'
+					className='ml-10 rounded-md'
 					commentId={commentId}
 					reply={reply}
 					replyId={id}
@@ -85,7 +115,7 @@ export default styled(Reply)`
 		border-radius: 3px;
 		box-shadow: box_shadow_card;
 		margin-bottom: 1rem;
-		width: calc(100% - 60px);
+		width: calc(100%);
 		word-break: break-word;
 
 		@media only screen and (max-width: 576px) {

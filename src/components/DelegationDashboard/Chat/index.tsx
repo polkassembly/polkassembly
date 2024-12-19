@@ -28,6 +28,9 @@ const ChatWithDelegates = ({ className }: Props) => {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isNewChat, setIsNewChat] = useState(false);
+	const [isTooltipOpen, setIsTooltipOpen] = useState(() => {
+		return !localStorage.getItem('chatTooltipSeen');
+	});
 
 	const dispatch = useDispatch();
 	const { unreadChatCount } = useChatsSelector();
@@ -35,6 +38,8 @@ const ChatWithDelegates = ({ className }: Props) => {
 	const openChat = () => {
 		setIsModalOpen(true);
 		setIsMinimized(false);
+		localStorage.setItem('chatTooltipSeen', 'true');
+		setIsTooltipOpen(false);
 	};
 
 	const startNewChat = () => {
@@ -80,7 +85,20 @@ const ChatWithDelegates = ({ className }: Props) => {
 
 	return (
 		<>
-			<Tooltip title='Messages'>
+			<Tooltip
+				title={
+					<div>
+						<div className='flex items-center gap-2 font-semibold'>
+							<span className='rounded-md bg-white px-2 py-0.5 text-xs text-bodyBlue'>NEW</span>
+							<h4 className='m-0 p-0 text-sm text-white'>Chat With Delegates</h4>
+						</div>
+						<p className='m-0 mt-1 p-0 text-xs font-normal text-white'>Engage, network, and make every conversation count with Delegates!</p>
+					</div>
+				}
+				placement='left'
+				open={isTooltipOpen}
+				color='#2D80FF'
+			>
 				<Badge
 					count={unreadChatCount}
 					overflowCount={99}

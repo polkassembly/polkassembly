@@ -24,7 +24,7 @@ const getSourceIcon = (source: string) => {
 		case 'polkassembly':
 			return {
 				altText: 'polkassembly logo',
-				iconSrc: '/assets/icon/pa-logo-sm.svg'
+				iconSrc: '/assets/icons/pa-logo-sm.svg'
 			};
 		case 'parity':
 			return {

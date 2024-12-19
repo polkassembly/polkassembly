@@ -180,7 +180,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 		};
 
-		fetchInitialBalance();
+		openModal && fetchInitialBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address, loginAddress]);
 
@@ -669,7 +669,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								type='info'
 								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
 								showIcon
-								description={<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>Insufficient Balance</div>}
+								description={
+									<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>
+										<span>Insufficient Balance</span>
+										<span>
+											Minimum required balance: {formatedBalance(gasFee.add(baseDepositValue).toString(), unit, 3)} {unit}
+										</span>
+									</div>
+								}
 							/>
 						)}
 

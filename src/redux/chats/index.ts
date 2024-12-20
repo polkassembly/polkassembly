@@ -105,6 +105,9 @@ export const chatsStore = createSlice({
 			if (chatIndex !== -1) {
 				const chat = state.messages[chatIndex];
 				const latestMessage = { ...chat.latestMessage };
+				if (!latestMessage.viewed_by) {
+					latestMessage.viewed_by = [];
+				}
 				if (!latestMessage.viewed_by.includes(address)) {
 					latestMessage.viewed_by.push(address);
 					state.messages[chatIndex] = { ...chat, latestMessage };

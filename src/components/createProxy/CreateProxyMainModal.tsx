@@ -70,6 +70,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [depositFactor, setDepositFactor] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
@@ -124,26 +125,40 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	const calculateGasFee = async () => {
 		if (!api || !apiReady) return;
+		try {
+			const values = form.getFieldsValue();
+			if (!values.proxyType) return;
 
-		const values = form.getFieldsValue();
-		if (!values.proxyType) return;
+			const proxyTx = values.createPureProxy
+				? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
+				: values.proxyAddress
+				? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
+				: null;
 
-		const proxyTx = values.createPureProxy
-			? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
-			: values.proxyAddress
-			? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
-			: null;
-
-		if (proxyTx) {
-			const accountData = await api?.query?.system?.account(address);
-			const availableBalance = new BN(accountData?.data?.free.toString() || '0');
-			setAvailableBalance(availableBalance);
-			const baseDeposit = api?.consts?.proxy?.proxyDepositBase;
-			setBaseDepositValue(new BN(baseDeposit));
-			const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
-			setGasFee(new BN(gasFee));
+			if (proxyTx) {
+				const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+				setGasFee(new BN(gasFee));
+			}
+		} catch (error) {
+			console.error('Gas fee calculation failed:', error);
 		}
 	};
+	useEffect(() => {
+		if (!api || !apiReady) return;
+
+		const fetchBaseDeposit = async () => {
+			try {
+				const baseDeposit = api?.consts?.proxy?.proxyDepositBase || ZERO_BN;
+				const depositFactor = api?.consts?.proxy?.proxyDepositFactor || ZERO_BN;
+				setBaseDepositValue(new BN(baseDeposit.toString()));
+				setDepositFactor(new BN(depositFactor.toString()));
+			} catch (error) {
+				console.error('Failed to fetch base deposit or deposit factor value:', error);
+			}
+		};
+
+		fetchBaseDeposit();
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -154,7 +169,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				const balance = new BN(accountData.data.free.toString() || '0');
 				setAvailableBalance(balance);
 
-				if (balance.lt(gasFee.add(baseDepositValue))) {
+				if (balance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
 					queueNotification({
 						header: 'Insufficient Balance',
 						message: `Your balance (${formatedBalance(balance.toString(), unit)} ${unit}) is insufficient to cover the gas fees and deposit .`,
@@ -168,15 +183,26 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 		};
 
-		fetchInitialBalance();
+		openModal && fetchInitialBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address, loginAddress]);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
-		calculateGasFee();
+		if (availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
+			setShowBalanceAlert(true);
+		} else {
+			setShowBalanceAlert(false);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
+	}, [availableBalance, gasFee, baseDepositValue]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		if (form.getFieldValue('proxyType') && apiReady) {
+			calculateGasFee();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form.getFieldValue('proxyType'), form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -208,7 +234,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		const hasValidationErrors =
 			(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 			getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-			availableBalance.lt(gasFee.add(baseDepositValue));
+			availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
 
 		if (hasValidationErrors) {
 			setShowError(true);
@@ -282,6 +308,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		[ProxyTypeEnum.NominationPools]: 'For transactions involving nomination pools'
 	};
 
+	const isCreateProxyDisabled =
+		loadingStatus.isLoading ||
+		form.getFieldsError().some((field) => field.errors.length > 0) ||
+		(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
+		getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+		availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
+
 	return (
 		<Modal
 			title={
@@ -310,26 +343,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={
-							loadingStatus.isLoading ||
-							form.getFieldsError().some((field) => field.errors.length > 0) ||
-							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
-							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))
-						}
+						disabled={isCreateProxyDisabled}
 						height={40}
 						width={145}
 						text='Create Proxy'
 						variant='primary'
-						className={
-							loadingStatus.isLoading ||
-							form.getFieldsError().some((field) => field.errors.length > 0) ||
-							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
-							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))
-								? 'opacity-50'
-								: ''
-						}
+						className={isCreateProxyDisabled ? 'opacity-50' : ''}
 					/>
 				</div>
 			}
@@ -468,6 +487,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										isTruncateUsername
 										iconSize={32}
 										usernameClassName='font-semibold'
+										disableAddressClick={true}
 									/>
 								</div>
 							)}
@@ -640,7 +660,9 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								showIcon
 								description={
 									<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
-										Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
+										Gas Fees: {formatedBalance(String(gasFee.toString()), unit)} {unit} <br />
+										Base Deposit: {formatedBalance(String(baseDepositValue.toString()), unit, 3)} {unit} <br />
+										Deposit Factor: {formatedBalance(String(depositFactor.toString()), unit)} {unit}
 									</div>
 								}
 							/>

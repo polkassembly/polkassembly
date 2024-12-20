@@ -116,7 +116,7 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 						onClick={toggleDropdown}
 					>
 						<span className={` ${dmSans.className} ${dmSans.variable} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Total Amount Required</span>
-						<span className={` ${dmSans.className} ${dmSans.variable} text-base font-semibold text-blue-light-medium dark:text-blue-dark-medium`}>
+						<span className={` ${dmSans.className} ${dmSans.variable} text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 							{formatedBalance(baseDeposit.add(depositFactor).toString(), unit, 3)} {unit}
 							<ArrowDownIcon className={`ml-3 text-xs transition-transform duration-200 max-sm:ml-2 ${dropdownVisible ? 'rotate-180' : ''}`} />
 						</span>
@@ -127,13 +127,13 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 							<div className='mt-2 space-y-2 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
 								<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
 									<span>Deposit Base</span>
-									<span>
+									<span className='text-blue-light-high dark:text-blue-dark-high'>
 										{formatedBalance(baseDeposit.toString(), unit, 3)} {unit}
 									</span>
 								</div>
 								<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
 									<span>Deposit Factor</span>
-									<span>
+									<span className='text-blue-light-high dark:text-blue-dark-high'>
 										{formatedBalance(depositFactor.toString(), unit, 3)} {unit}
 									</span>
 								</div>

@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
+import Popover from '~src/basic-components/Popover';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -262,18 +263,51 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{requestedAmt && (
+					{!!beneficiaries?.length && !!requestedAmt && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							<BeneficiaryAmoutTooltip
-								assetId={assetId}
-								requestedAmt={requestedAmt.toString()}
-								className={classNames(className, 'flex')}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-								usedInPostPage
-							/>
+							{beneficiaries &&
+								beneficiaries?.slice(0, 1)?.map((beneficiary) => {
+									return (
+										<BeneficiaryAmoutTooltip
+											key={beneficiary?.address}
+											assetId={beneficiary?.genralIndex || null}
+											requestedAmt={beneficiary?.amount.toString()}
+											className={classNames(className, 'flex')}
+											postId={onchainId ? Number(onchainId) : (onchainId as any)}
+											proposalCreatedAt={created_at as any}
+											timeline={timeline || []}
+											usedInPostPage
+										/>
+									);
+								})}
+							{beneficiaries && beneficiaries?.length > 1 && (
+								<>
+									<Popover
+										trigger='hover'
+										content={
+											<div className='flex flex-col items-start gap-1'>
+												{beneficiaries?.slice(1, beneficiaries?.length)?.map((beneficiary) => {
+													return (
+														<BeneficiaryAmoutTooltip
+															key={beneficiary?.address}
+															assetId={beneficiary?.genralIndex || null}
+															requestedAmt={beneficiary?.amount.toString()}
+															className={'flex items-center text-xs'}
+															postId={onchainId ? Number(onchainId) : (onchainId as any)}
+															proposalCreatedAt={created_at as any}
+															timeline={timeline || []}
+															usedInPostPage
+														/>
+													);
+												})}
+											</div>
+										}
+									>
+										<div className='mt-0.5 cursor-pointer text-xs text-[#407BFF]'> & {beneficiaries?.length - 1} more</div>
+									</Popover>
+								</>
+							)}
 						</div>
 					)}
 				</div>

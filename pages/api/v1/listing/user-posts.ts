@@ -22,6 +22,7 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { getTimeline } from '~src/util/getTimeline';
 import { getIsSwapStatus } from '~src/util/getIsSwapStatus';
 import { chainProperties } from '~src/global/networkConstants';
+import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 	return {
@@ -181,6 +182,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 				const onChainPostsPromise = edges?.map(async (edge) => {
 					if (edge && edge.node) {
 						const { type, hash, index, createdAt, description, proposalArguments, proposer, preimage, trackNumber, tally, status: resultStatus, statusHistory, group } = edge.node;
+
 						let proposalTimeline;
 						let status = resultStatus;
 						const isSwap: boolean = getIsSwapStatus(statusHistory);
@@ -211,34 +213,17 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 							proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
 						}
 
-						let requested = BigInt(0);
-						let args = preimage?.proposedCall?.args;
-						let assetId: null | string = null;
+						const proposedCall = preimage?.proposedCall || edge?.node?.proposalArguments?.args;
 
-						if (args) {
-							if (args?.assetKind?.assetId?.value?.interior) {
-								const call = args?.assetKind?.assetId?.value?.interior?.value;
-								assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-							}
-							args = convertAnyHexToASCII(args, network);
-							if (args?.amount) {
-								requested = args.amount;
-							} else {
-								const calls = args.calls;
-								if (calls && Array.isArray(calls) && calls.length > 0) {
-									calls.forEach((call) => {
-										if (call && (call.amount || call?.value?.amount)) {
-											requested += BigInt(call.amount || call?.value?.amount);
-										}
-									});
-								}
-							}
-						}
+						proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
+
+						const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 
 						const proposalType = getFirestoreProposalType(type);
 						const id = type === 'Tip' ? hash : index;
 						const newData: IUserPost = {
-							assetId: assetId || null,
+							assetId: beneficiariesInfo?.assetId || null,
+							beneficiaries: beneficiariesInfo?.beneficiaries || [],
 							content: description || (proposalArguments && proposalArguments.description ? proposalArguments.description : ''),
 							created_at: createdAt || null,
 							id: id,
@@ -247,7 +232,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 								'👎': 0
 							},
 							proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
-							requestedAmount: requested ? requested.toString() : null,
+							requestedAmount: beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : null,
 							status: status || '',
 							status_history: statusHistory || null,
 							tally: tally || null,

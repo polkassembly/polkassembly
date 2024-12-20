@@ -1152,8 +1152,10 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         createdAt
         proposer
         preimage {
+        method
           proposer
           proposedCall{
+          method
             args
           }
         }
@@ -1175,6 +1177,7 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
           proposer
            proposedCall{
             args
+            method
           }
         }
         description
@@ -2629,6 +2632,7 @@ query BountyProposals($status_in: [ProposalStatus!] = []) {
     preimage {
       proposedCall {
         args
+        method
       }
     }
   }
@@ -2648,6 +2652,7 @@ export const GET_ALL_BOUNTIES = `query BountyProposals ($limit: Int! =10, $offse
     preimage {
       proposedCall {
         args
+        method
       }
     }
       payee
@@ -2680,6 +2685,7 @@ export const GET_ALL_BOUNTIES_WITHOUT_PAGINATION = `query BountyProposals ($stat
     preimage {
       proposedCall {
         args
+        method
       }
     }
       payee

@@ -597,6 +597,7 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+	genralIndex?: string | null;
 }
 
 export interface IRating {
@@ -786,6 +787,7 @@ export interface IChildBountiesResponse {
 
 export interface IUserPost {
 	assetId?: null | string;
+	beneficiaries?: IBeneficiary[];
 	content: string;
 	created_at: Date;
 	id: string;

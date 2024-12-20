@@ -18,13 +18,14 @@ import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import { IPostHistory } from '~src/types';
+import { IBeneficiary, IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from '../../Post/utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
+import Popover from '~src/basic-components/Popover';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -247,18 +248,51 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{post?.requested && (
+					{!!post?.beneficiaries?.length && post?.requested && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							<BeneficiaryAmoutTooltip
-								assetId={assetId}
-								requestedAmt={post?.requested?.toString()}
-								className={classNames(className, 'flex')}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-								usedInPostPage
-							/>
+							{post?.beneficiaries &&
+								post?.beneficiaries?.slice(0, 1)?.map((beneficiary: IBeneficiary) => {
+									return (
+										<BeneficiaryAmoutTooltip
+											key={beneficiary?.address}
+											assetId={beneficiary?.genralIndex || null}
+											requestedAmt={beneficiary?.amount.toString()}
+											className={classNames(className, 'flex')}
+											postId={onchainId ? Number(onchainId) : (onchainId as any)}
+											proposalCreatedAt={created_at as any}
+											timeline={timeline || []}
+											usedInPostPage
+										/>
+									);
+								})}
+							{post?.beneficiaries && post?.beneficiaries?.length > 1 && (
+								<>
+									<Popover
+										trigger='hover'
+										content={
+											<div className='flex flex-col items-start gap-1'>
+												{post?.beneficiaries?.slice(1, post?.beneficiaries?.length)?.map((beneficiary: IBeneficiary) => {
+													return (
+														<BeneficiaryAmoutTooltip
+															key={beneficiary?.address}
+															assetId={beneficiary?.genralIndex || null}
+															requestedAmt={beneficiary?.amount.toString()}
+															className={'flex items-center text-xs'}
+															postId={onchainId ? Number(onchainId) : (onchainId as any)}
+															proposalCreatedAt={created_at as any}
+															timeline={timeline || []}
+															usedInPostPage
+														/>
+													);
+												})}
+											</div>
+										}
+									>
+										<div className='mt-0.5 cursor-pointer text-xs text-[#407BFF]'> & {post?.beneficiaries?.length - 1} more</div>
+									</Popover>
+								</>
+							)}
 						</div>
 					)}
 				</div>

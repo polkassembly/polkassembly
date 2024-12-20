@@ -248,10 +248,10 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{!!post?.beneficiaries?.length && post?.requested && (
+					{!!post?.requested && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							{post?.beneficiaries &&
+							{post?.beneficiaries?.length ? (
 								post?.beneficiaries?.slice(0, 1)?.map((beneficiary: IBeneficiary) => {
 									return (
 										<BeneficiaryAmoutTooltip
@@ -265,7 +265,18 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 											usedInPostPage
 										/>
 									);
-								})}
+								})
+							) : (
+								<BeneficiaryAmoutTooltip
+									assetId={null}
+									requestedAmt={post?.requested.toString()}
+									className={'flex items-center text-xs'}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+									usedInPostPage
+								/>
+							)}
 							{post?.beneficiaries && post?.beneficiaries?.length > 1 && (
 								<>
 									<Popover

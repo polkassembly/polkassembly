@@ -263,10 +263,10 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{!!beneficiaries?.length && !!requestedAmt && (
+					{!!requestedAmt && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							{beneficiaries &&
+							{beneficiaries?.length ? (
 								beneficiaries?.slice(0, 1)?.map((beneficiary) => {
 									return (
 										<BeneficiaryAmoutTooltip
@@ -280,7 +280,18 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 											usedInPostPage
 										/>
 									);
-								})}
+								})
+							) : (
+								<BeneficiaryAmoutTooltip
+									assetId={null}
+									requestedAmt={requestedAmt.toString()}
+									className={'flex items-center text-xs'}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+									usedInPostPage
+								/>
+							)}
 							{beneficiaries && beneficiaries?.length > 1 && (
 								<>
 									<Popover

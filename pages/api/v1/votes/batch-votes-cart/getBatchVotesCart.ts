@@ -174,7 +174,9 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 						const proposedCall = preimage?.proposedCall || null;
 						const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData || null;
 
-						proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
+						if (proposalArguments?.args) {
+							proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network);
+						}
 
 						const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 
@@ -191,7 +193,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 							preimageHash: preimage?.hash || '',
 							proposedCall: proposedCall || null,
 							proposer: subsquidPost?.proposer || '',
-							requested: beneficiariesInfo?.requested?.toString() || '0',
+							requested: beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 							status: subsquidPost?.status,
 							statusHistory: subsquidPost?.statusHistory || [],
 							summary: '',

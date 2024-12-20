@@ -71,6 +71,9 @@ const handleBatchCall = (args: any, network: string) => {
 };
 
 const preimageToBeneficiaries = (onchainCall: any, network: string) => {
+	if (!onchainCall?.args) {
+		return { assetId: null, beneficiaries: [], remark: '', requested: undefined };
+	}
 	console.log({ onchainCall });
 	const method = onchainCall?.method;
 	let value: { beneficiaries: IBeneficiary[]; requested: string; remark?: string; assetId?: any | null } = { beneficiaries: [], requested: '0' };

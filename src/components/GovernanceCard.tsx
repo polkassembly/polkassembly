@@ -417,9 +417,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{!!requestedAmount && !!beneficiaries?.length && (
+						{!!requestedAmount && (
 							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]', 'flex items-center gap-1')}>
-								{beneficiaries &&
+								{beneficiaries?.length ? (
 									beneficiaries?.slice(0, 1)?.map((beneficiary: IBeneficiary) => {
 										return (
 											<BeneficiaryAmoutTooltip
@@ -433,7 +433,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 												usedInPostPage
 											/>
 										);
-									})}
+									})
+								) : (
+									<BeneficiaryAmoutTooltip
+										assetId={null}
+										requestedAmt={requestedAmount.toString()}
+										className={'flex items-center text-xs'}
+										postId={onchainId ? Number(onchainId) : (onchainId as any)}
+										proposalCreatedAt={created_at as any}
+										timeline={timeline || []}
+										usedInPostPage
+									/>
+								)}
 								{beneficiaries && beneficiaries?.length > 1 && (
 									<>
 										<Popover

@@ -866,7 +866,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
 		const proposedCall = preimage?.proposedCall || postData?.proposalArguments?.args;
 
-		proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
+		if (proposalArguments?.args) {
+			proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network);
+		}
 
 		const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 

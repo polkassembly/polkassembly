@@ -3,11 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Modal } from 'antd';
 import { dmSans } from 'pages/_app';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
+import { ArrowDownIcon, CloseIcon, ProxyIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	openModal: boolean;
@@ -17,6 +22,37 @@ interface Props {
 }
 
 const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMainModal }: Props) => {
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const [baseDeposit, setBaseDeposit] = useState<BN>(new BN(0));
+	const [depositFactor, setDepositFactor] = useState<BN>(new BN(0));
+	const [dropdownVisible, setDropdownVisible] = useState(false);
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	const fetchBaseDeposit = async (api: any) => {
+		try {
+			const baseDeposit = api?.consts?.proxy?.proxyDepositBase || new BN(0);
+			const depositFactor = api?.consts?.proxy?.proxyDepositFactor || new BN(0);
+			return { baseDeposit: new BN(baseDeposit.toString()), depositFactor: new BN(depositFactor.toString()) };
+		} catch (error) {
+			console.error('Failed to fetch base deposit value:', error);
+			return { baseDeposit: new BN(0), depositFactor: new BN(0) };
+		}
+	};
+
+	useEffect(() => {
+		if (api && apiReady) {
+			fetchBaseDeposit(api).then(({ baseDeposit, depositFactor }) => {
+				setBaseDeposit(baseDeposit);
+				setDepositFactor(depositFactor);
+			});
+		}
+	}, [api, apiReady]);
+
+	const toggleDropdown = () => {
+		setDropdownVisible((prev) => !prev);
+	};
+
 	return (
 		<Modal
 			title={
@@ -73,6 +109,37 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 						<div className='mt-2 h-1 w-[6px] rounded-full bg-blue-light-high dark:bg-blue-dark-high'></div>{' '}
 						<span>Rather than using funds in a single account, smaller accounts with unique roles can complete tasks on behalf of the main stash account.</span>
 					</div>
+				</div>
+				<div className='mt-6 w-full rounded-md  bg-[#F6F7F9] p-4 dark:bg-[#29323C33]'>
+					<div
+						className='flex cursor-pointer items-center justify-between'
+						onClick={toggleDropdown}
+					>
+						<span className={` ${dmSans.className} ${dmSans.variable} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Total Amount Required</span>
+						<span className={` ${dmSans.className} ${dmSans.variable} text-base font-semibold text-blue-light-medium dark:text-blue-dark-medium`}>
+							{formatedBalance(baseDeposit.add(depositFactor).toString(), unit, 3)} {unit}
+							<ArrowDownIcon className={`ml-3 text-xs transition-transform duration-200 max-sm:ml-2 ${dropdownVisible ? 'rotate-180' : ''}`} />
+						</span>
+					</div>
+					{dropdownVisible && (
+						<>
+							<Divider className='border-l-1 my-3 border-[#D2D8E0] dark:border-icon-dark-inactive max-sm:hidden' />
+							<div className='mt-2 space-y-2 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
+								<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
+									<span>Deposit Base</span>
+									<span>
+										{formatedBalance(baseDeposit.toString(), unit, 3)} {unit}
+									</span>
+								</div>
+								<div className={`${dmSans.className} ${dmSans.variable} flex items-center justify-between text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>
+									<span>Deposit Factor</span>
+									<span>
+										{formatedBalance(depositFactor.toString(), unit, 3)} {unit}
+									</span>
+								</div>
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		</Modal>

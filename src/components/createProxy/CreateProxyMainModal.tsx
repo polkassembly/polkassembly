@@ -70,6 +70,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [depositFactor, setDepositFactor] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
@@ -147,10 +148,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 		const fetchBaseDeposit = async () => {
 			try {
-				const baseDeposit = api.consts.proxy?.proxyDepositBase || ZERO_BN;
+				const baseDeposit = api?.consts?.proxy?.proxyDepositBase || ZERO_BN;
+				const depositFactor = api?.consts?.proxy?.proxyDepositFactor || ZERO_BN;
 				setBaseDepositValue(new BN(baseDeposit.toString()));
+				setDepositFactor(new BN(depositFactor.toString()));
 			} catch (error) {
-				console.error('Failed to fetch base deposit value:', error);
+				console.error('Failed to fetch base deposit or deposit factor value:', error);
 			}
 		};
 
@@ -166,7 +169,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				const balance = new BN(accountData.data.free.toString() || '0');
 				setAvailableBalance(balance);
 
-				if (balance.lt(gasFee.add(baseDepositValue))) {
+				if (balance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
 					queueNotification({
 						header: 'Insufficient Balance',
 						message: `Your balance (${formatedBalance(balance.toString(), unit)} ${unit}) is insufficient to cover the gas fees and deposit .`,
@@ -185,7 +188,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	}, [api, apiReady, address, loginAddress]);
 
 	useEffect(() => {
-		if (availableBalance.lt(gasFee.add(baseDepositValue))) {
+		if (availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
 			setShowBalanceAlert(true);
 		} else {
 			setShowBalanceAlert(false);
@@ -231,7 +234,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		const hasValidationErrors =
 			(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 			getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-			availableBalance.lt(gasFee.add(baseDepositValue));
+			availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
 
 		if (hasValidationErrors) {
 			setShowError(true);
@@ -310,7 +313,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		form.getFieldsError().some((field) => field.errors.length > 0) ||
 		(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 		getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-		availableBalance.lt(gasFee.add(baseDepositValue));
+		availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
 
 	return (
 		<Modal
@@ -657,7 +660,9 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								showIcon
 								description={
 									<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
-										Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
+										Gas Fees: {formatedBalance(String(gasFee.toString()), unit)} {unit} <br />
+										Base Deposit: {formatedBalance(String(baseDepositValue.toString()), unit, 3)} {unit} <br />
+										Deposit Factor: {formatedBalance(String(depositFactor.toString()), unit)} {unit}
 									</div>
 								}
 							/>
@@ -669,14 +674,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								type='info'
 								className='mt-6 rounded-[4px] px-4 py-2 text-bodyBlue'
 								showIcon
-								description={
-									<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>
-										<span>Insufficient Balance</span>
-										<span>
-											Minimum required balance: {formatedBalance(gasFee.add(baseDepositValue).toString(), unit, 3)} {unit}
-										</span>
-									</div>
-								}
+								description={<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>Insufficient Balance</div>}
 							/>
 						)}
 

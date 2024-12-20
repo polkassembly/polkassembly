@@ -53,10 +53,13 @@ const ChatCard = ({ chat }: Props) => {
 					chatId: chat.chatId
 				})
 			);
+			dispatch(chatsActions.markChatAsRead({ address: substrateAddress!, chatId: chat.chatId }));
 		} else if (error) {
 			console.log(error);
 		}
 	};
+
+	const chatRecipientAddress = chat?.recipientProfile?.address;
 
 	const renderUserImage = useMemo(() => {
 		if (chat?.recipientProfile?.image) {
@@ -69,23 +72,23 @@ const ChatCard = ({ chat }: Props) => {
 					className='overflow-hidden rounded-full'
 				/>
 			);
-		} else if (chat?.recipientProfile?.address?.startsWith('0x')) {
+		} else if (chatRecipientAddress?.startsWith('0x')) {
 			return (
 				<EthIdenticon
 					size={32}
-					address={chat.recipientProfile?.address || ''}
+					address={chatRecipientAddress || ''}
 				/>
 			);
 		} else {
 			return (
 				<Identicon
-					value={chat?.recipientProfile?.address || ''}
+					value={chatRecipientAddress || ''}
 					size={32}
 					theme={'polkadot'}
 				/>
 			);
 		}
-	}, [chat.recipientProfile]);
+	}, [chatRecipientAddress, chat?.recipientProfile]);
 
 	return (
 		<Card

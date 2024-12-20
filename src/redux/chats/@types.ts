@@ -14,4 +14,5 @@ export interface IChatsStore {
 	openedChat: IChat | null;
 	isChatOpen: boolean;
 	tempRecipient: string | null;
+	unreadChatCount: number;
 }

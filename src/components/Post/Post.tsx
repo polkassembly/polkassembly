@@ -46,7 +46,6 @@ import { EAllowedCommentor } from '~src/types';
 import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
 import CommentsContainerCard from './Comment/CommentsContainerCard';
-
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false

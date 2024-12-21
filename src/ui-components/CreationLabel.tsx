@@ -134,9 +134,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<div
 				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
 					inPostHeading && !beneficiaries?.length ? 'flex' : ''
-				} gap-y-3 max-sm:gap-1 md:flex-row md:items-center`}
+				} flex-wrap gap-y-3 max-sm:gap-1 md:flex-row md:items-center`}
 			>
-				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+				<div className={'-mr-[6px] flex items-center max-md:flex-wrap min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
 						<NameLabel

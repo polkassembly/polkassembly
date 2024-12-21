@@ -461,7 +461,7 @@ const Address = (props: Props) => {
 											title={mainDisplay || encodedAddr}
 											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} `}
+											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} ${isUsedInAccountsPage ? 'sm:text-xl' : ''}`}
 										>
 											{!!addressPrefix && (
 												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -566,32 +566,50 @@ const Address = (props: Props) => {
 													isUsedInDelegationProfile && 'gap-2'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
+												{!!addressPrefix && (
+													<span
+														className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'} ${isUsedInAccountsPage ? 'ml-3 sm:text-xl' : ''}`}
+													>
+														{addressPrefix}
+													</span>
+												)}
 												{isUsedInDelegationProfile && (!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 											</div>
 										</Space>
 									</div>
 								</div>
 							)}
-							<div
-								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
-									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
-								onClick={(e) => handleClick(e)}
-							>
-								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
-								{isUsedInDelegationProfile && (
-									<span
-										className='flex cursor-pointer items-center text-base'
-										onClick={() => {
-											copyLink(encodedAddr || '');
-											success();
-										}}
-									>
-										<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
-									</span>
-								)}
-							</div>
+							{isUsedInAccountsPage && username && (
+								<div
+									className={`${!addressClassName ? 'text-sm' : addressClassName} ${
+										!disableAddressClick && 'cursor-pointer hover:underline'
+									} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
+									onClick={(e) => handleClick(e)}
+								>
+									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+								</div>
+							)}
+							{!isUsedInAccountsPage && (
+								<div
+									className={`${!addressClassName ? 'text-sm' : addressClassName} ${
+										!disableAddressClick && 'cursor-pointer hover:underline'
+									} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
+									onClick={(e) => handleClick(e)}
+								>
+									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+									{isUsedInDelegationProfile && (
+										<span
+											className='flex cursor-pointer items-center text-base'
+											onClick={() => {
+												copyLink(encodedAddr || '');
+												success();
+											}}
+										>
+											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+										</span>
+									)}
+								</div>
+							)}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (

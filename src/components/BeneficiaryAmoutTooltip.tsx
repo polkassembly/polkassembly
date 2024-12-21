@@ -27,7 +27,7 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
-const BeneficiaryAmoutTooltip = ({ className, assetId, requestedAmt, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
+const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;

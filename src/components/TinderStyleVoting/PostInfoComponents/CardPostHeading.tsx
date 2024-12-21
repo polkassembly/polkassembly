@@ -18,14 +18,13 @@ import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import { IBeneficiary, IPostHistory } from '~src/types';
+import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from '../../Post/utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import classNames from 'classnames';
-import Popover from '~src/basic-components/Popover';
+import MultipleBeneficiariesAmount from '~src/components/MultipleBeneficiariesAmount';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -248,60 +247,28 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{!!post?.requested && (
+					{(!!post?.requested || !!post?.beneficiaries?.length) && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							{post?.beneficiaries?.length ? (
-								post?.beneficiaries?.slice(0, 1)?.map((beneficiary: IBeneficiary) => {
-									return (
-										<BeneficiaryAmoutTooltip
-											key={beneficiary?.address}
-											assetId={beneficiary?.genralIndex || null}
-											requestedAmt={beneficiary?.amount.toString()}
-											className={classNames(className, 'flex')}
-											postId={onchainId ? Number(onchainId) : (onchainId as any)}
-											proposalCreatedAt={created_at as any}
-											timeline={timeline || []}
-											usedInPostPage
-										/>
-									);
-								})
-							) : (
-								<BeneficiaryAmoutTooltip
-									assetId={null}
-									requestedAmt={post?.requested.toString()}
-									className={'flex items-center text-xs'}
+							{post?.beneficiaries?.length > 1 ? (
+								<MultipleBeneficiariesAmount
+									beneficiaries={post?.beneficiaries || []}
 									postId={onchainId ? Number(onchainId) : (onchainId as any)}
 									proposalCreatedAt={created_at as any}
 									timeline={timeline || []}
-									usedInPostPage
 								/>
-							)}
-							{post?.beneficiaries && post?.beneficiaries?.length > 1 && (
+							) : (
 								<>
-									<Popover
-										trigger='hover'
-										content={
-											<div className='flex flex-col items-start gap-1'>
-												{post?.beneficiaries?.slice(1, post?.beneficiaries?.length)?.map((beneficiary: IBeneficiary) => {
-													return (
-														<BeneficiaryAmoutTooltip
-															key={beneficiary?.address}
-															assetId={beneficiary?.genralIndex || null}
-															requestedAmt={beneficiary?.amount.toString()}
-															className={'flex items-center text-xs'}
-															postId={onchainId ? Number(onchainId) : (onchainId as any)}
-															proposalCreatedAt={created_at as any}
-															timeline={timeline || []}
-															usedInPostPage
-														/>
-													);
-												})}
-											</div>
-										}
-									>
-										<div className='mt-0.5 cursor-pointer text-xs text-[#407BFF]'> & {post?.beneficiaries?.length - 1} more</div>
-									</Popover>
+									<BeneficiaryAmoutTooltip
+										assetId={post?.beneficiaries ? post?.beneficiaries?.[0]?.genralIndex || null : null}
+										requestedAmt={post?.requested?.toString() || (!!post?.beneficiaries && post?.beneficiaries?.[0]?.amount.toString()) || '0'}
+										className={'flex items-center justify-center text-xs'}
+										postId={onchainId ? Number(onchainId) : (onchainId as any)}
+										proposalCreatedAt={created_at as any}
+										timeline={timeline || []}
+										key={onchainId ? Number(onchainId) : (onchainId as any)}
+										usedInPostPage
+									/>
 								</>
 							)}
 						</div>

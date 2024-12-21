@@ -49,7 +49,7 @@ import { gov2ReferendumStatus } from '~src/global/statuses';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
-import Popover from '~src/basic-components/Popover';
+import MultipleBeneficiariesAmount from './MultipleBeneficiariesAmount';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -417,59 +417,26 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{!!requestedAmount && (
-							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]', 'flex items-center gap-1')}>
-								{beneficiaries?.length ? (
-									beneficiaries?.slice(0, 1)?.map((beneficiary: IBeneficiary) => {
-										return (
-											<BeneficiaryAmoutTooltip
-												key={beneficiary?.address}
-												assetId={beneficiary?.genralIndex || null}
-												requestedAmt={beneficiary?.amount.toString()}
-												className={classNames(className, 'flex')}
-												postId={onchainId ? Number(onchainId) : (onchainId as any)}
-												proposalCreatedAt={created_at as any}
-												timeline={timeline || []}
-												usedInPostPage
-											/>
-										);
-									})
-								) : (
-									<BeneficiaryAmoutTooltip
-										assetId={null}
-										requestedAmt={requestedAmount.toString()}
-										className={'flex items-center text-xs'}
+						{(!!requestedAmount || !!beneficiaries?.length) && (
+							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								{beneficiaries && beneficiaries?.length > 1 ? (
+									<MultipleBeneficiariesAmount
+										beneficiaries={beneficiaries || []}
 										postId={onchainId ? Number(onchainId) : (onchainId as any)}
 										proposalCreatedAt={created_at as any}
 										timeline={timeline || []}
-										usedInPostPage
 									/>
-								)}
-								{beneficiaries && beneficiaries?.length > 1 && (
+								) : (
 									<>
-										<Popover
-											trigger='hover'
-											content={
-												<div className='flex flex-col items-start gap-1'>
-													{beneficiaries?.slice(1, beneficiaries?.length)?.map((beneficiary: IBeneficiary) => {
-														return (
-															<BeneficiaryAmoutTooltip
-																key={beneficiary?.address}
-																assetId={beneficiary?.genralIndex || null}
-																requestedAmt={beneficiary?.amount.toString()}
-																className={'flex items-center text-xs'}
-																postId={onchainId ? Number(onchainId) : (onchainId as any)}
-																proposalCreatedAt={created_at as any}
-																timeline={timeline || []}
-																usedInPostPage
-															/>
-														);
-													})}
-												</div>
-											}
-										>
-											<div className='mt-0.5 cursor-pointer text-xs text-[#407BFF]'> & {beneficiaries?.length - 1} more</div>
-										</Popover>
+										<BeneficiaryAmoutTooltip
+											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
+											requestedAmt={requestedAmount?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || '0'}
+											className={'flex items-center justify-center'}
+											postId={onchainId ? Number(onchainId) : (onchainId as any)}
+											proposalCreatedAt={created_at as any}
+											timeline={timeline || []}
+											key={onchainId ? Number(onchainId) : (onchainId as any)}
+										/>
 									</>
 								)}
 							</div>

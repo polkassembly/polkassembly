@@ -4,4 +4,8 @@
 
 export interface IGlobalStore {
 	is_sidebar_collapsed: boolean;
+	is_bio_changed: boolean;
+	is_profile_changed: boolean;
+	is_title_changed: boolean;
+	is_tag_changed: boolean;
 }

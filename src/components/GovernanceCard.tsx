@@ -417,7 +417,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{console.log(requestedAmount, onchainId)}
 						{(!!requestedAmount || !!beneficiaries?.length) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
 								{beneficiaries && beneficiaries?.length > 1 ? (

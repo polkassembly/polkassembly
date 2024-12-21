@@ -417,6 +417,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
+						{console.log(requestedAmount, onchainId)}
 						{(!!requestedAmount || !!beneficiaries?.length) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
 								{beneficiaries && beneficiaries?.length > 1 ? (
@@ -430,7 +431,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<>
 										<BeneficiaryAmoutTooltip
 											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-											requestedAmt={requestedAmount?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || null}
+											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
 											className={'flex items-center justify-center'}
 											postId={onchainId ? Number(onchainId) : (onchainId as any)}
 											proposalCreatedAt={created_at as any}

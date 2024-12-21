@@ -18,7 +18,7 @@ import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAsset
 
 interface Args {
 	className?: string;
-	requestedAmt: string;
+	requestedAmt: string | null;
 	assetId: string | null;
 	proposalCreatedAt: Date | null;
 	timeline: any[];

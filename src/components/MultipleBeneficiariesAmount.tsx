@@ -57,7 +57,6 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
 	const requestedAmountFormatted = totalAmountInChainSymbol ? new BN(totalAmountInChainSymbol).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 
@@ -89,12 +88,10 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 		});
 
 		if (data) {
-			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : currentTokenPrice, network, false);
 			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
 			setUsdValueOnCreation(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : null);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
-			setBnUsdValueOnCreation(bnCreation);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -146,9 +143,13 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 
 	useEffect(() => {
 		handleBeneficiaryAmount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, beneficiaries, currentTokenPrice, dedTokenUsdPrice]);
+
+	useEffect(() => {
 		fetchUSDValue();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, beneficiaries]);
+	}, [proposalCreatedAt, timeline, postId]);
 
 	if (!beneficiaries?.length || beneficiaries?.length == 1) return null;
 	return (
@@ -247,7 +248,13 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 									<div className='flex items-center gap-1 text-blue-dark-high'>
 										<span className='font-normal'>Value on day of creation:</span>
 										<span className='font-mediumtext-blue-dark-high'>
-											{parseBalance(requestedAmountFormatted?.mul(bnUsdValueOnCreation)?.toString() || '0', 0, false, network)} USD{' '}
+											{parseBalance(
+												requestedAmountFormatted?.mul(new BN(Number(usdValueOnCreation) * 10 ** chainProperties[network]?.tokenDecimals))?.toString() || '0',
+												0,
+												false,
+												network
+											)}{' '}
+											USD{' '}
 										</span>
 									</div>
 								</div>

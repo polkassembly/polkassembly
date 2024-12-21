@@ -430,7 +430,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<>
 										<BeneficiaryAmoutTooltip
 											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-											requestedAmt={requestedAmount?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || '0'}
+											requestedAmt={requestedAmount?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || null}
 											className={'flex items-center justify-center'}
 											postId={onchainId ? Number(onchainId) : (onchainId as any)}
 											proposalCreatedAt={created_at as any}

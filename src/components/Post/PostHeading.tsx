@@ -276,7 +276,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								<>
 									<BeneficiaryAmoutTooltip
 										assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-										requestedAmt={requestedAmt?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || '0'}
+										requestedAmt={requestedAmt?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || null}
 										className={'flex items-center justify-center text-xs'}
 										postId={onchainId ? Number(onchainId) : (onchainId as any)}
 										proposalCreatedAt={created_at as any}

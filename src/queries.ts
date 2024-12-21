@@ -3364,3 +3364,14 @@ bounties:proposalsConnection(where: {AND:{proposer_eq: $address, OR: {curator_eq
 }
 }
 `;
+
+export const GET_CURATORS_DATA = `query GET_CURATORS_DATA {
+  proposals(where: {AND:{type_eq:Bounty, OR: {type_eq: ChildBounty}}, curator_isNull:false}){
+    curator
+    status
+    type
+    reward
+		proposer
+  }
+}
+`;

@@ -27,8 +27,9 @@ interface Props {
 	address: string;
 	boxSize?: number;
 	iconSize?: number;
+	isUsedInCommunityTab?: boolean;
 }
-const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize = 24, iconSize = 14 }: Props) => {
+const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize = 24, iconSize = 14, isUsedInCommunityTab }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const isGood = onchainIdentity?.isGood;
@@ -154,7 +155,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 	}, [onchainIdentity]);
 
 	return (
-		<div className={classNames(className, 'flex items-center gap-1.5')}>
+		<div className={classNames(className, `flex items-center ${isUsedInCommunityTab ? 'gap-x-3' : 'gap-1.5'}`)}>
 			{!!onchainIdentity?.web && (
 				<Link
 					target='_blank'

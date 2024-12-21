@@ -37,10 +37,11 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 								iconSize={isMobile ? 24 : 90}
 								isUsedInAccountsPage={true}
 								isTruncateUsername={false}
+								isProfileView
 							/>
 						</div>
 					)}
-					<div className='flex items-center gap-2'>
+					<div className='mr-7 flex items-center gap-2'>
 						{accountData?.address && (
 							<AddressActionDropdown
 								type={null}

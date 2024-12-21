@@ -271,6 +271,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 												assetId={post?.assetId || null}
 												truncateUsername={false}
 												requestedAmount={(post.requestedAmount || null) as any}
+												beneficiaries={post?.beneficiaries || []}
 											/>
 										</Link>
 									}

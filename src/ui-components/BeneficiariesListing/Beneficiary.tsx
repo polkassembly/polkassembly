@@ -26,7 +26,8 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 		<div className={`${className} flex items-center gap-1`}>
 			<Address
 				displayInline
-				iconSize={20}
+				iconSize={16}
+				disableTooltip
 				address={
 					typeof beneficiary.address === 'string'
 						? beneficiary.address
@@ -36,7 +37,7 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 				}
 				inPostHeading={inPostHeading}
 			/>
-			<span className='text-blue-light-high dark:text-blue-dark-high'>
+			<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>
 				(
 				{assetId
 					? isProposalCreationFlow

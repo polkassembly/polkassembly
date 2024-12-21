@@ -18,7 +18,7 @@ import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAsset
 
 interface Args {
 	className?: string;
-	requestedAmt: string;
+	requestedAmt: string | null;
 	assetId: string | null;
 	proposalCreatedAt: Date | null;
 	timeline: any[];
@@ -112,7 +112,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											<span className='flex'>Value on day of creation:</span>
 											<span>
 												{getUsdValueFromAsset({
-													currentTokenPrice: usdValueOnCreation || '0',
+													currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
 													dedTokenUsdPrice: dedTokenUsdPrice || '0',
 													generalIndex: assetId,
 													inputAmountValue:

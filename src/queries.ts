@@ -1152,8 +1152,10 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         createdAt
         proposer
         preimage {
+        method
           proposer
           proposedCall{
+          method
             args
           }
         }
@@ -1175,6 +1177,7 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
           proposer
            proposedCall{
             args
+            method
           }
         }
         description

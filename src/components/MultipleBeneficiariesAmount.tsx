@@ -249,7 +249,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 										<span className='font-normal'>Value on day of creation:</span>
 										<span className='font-mediumtext-blue-dark-high'>
 											{parseBalance(
-												requestedAmountFormatted?.mul(new BN(Number(usdValueOnCreation) * 10 ** chainProperties[network]?.tokenDecimals))?.toString() || '0',
+												requestedAmountFormatted?.mul(new BN(Number(usdValueOnCreation || currentTokenPrice) * 10 ** chainProperties[network]?.tokenDecimals))?.toString() || '0',
 												0,
 												false,
 												network

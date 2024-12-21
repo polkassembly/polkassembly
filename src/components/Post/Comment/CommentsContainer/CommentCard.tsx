@@ -40,6 +40,7 @@ export interface IComment {
 	votes?: any[];
 	isRow?: boolean;
 	isDeleted?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 interface ICommentProps {
@@ -148,6 +149,7 @@ const CommentCard: FC<ICommentProps> = (props) => {
 						vote={vote}
 						votesArr={comment?.votes}
 						isRow={true}
+						isLinkedAddressUsed={comment?.isLinkedAddressUsed}
 					>
 						{history && history.length > 0 && (
 							<div

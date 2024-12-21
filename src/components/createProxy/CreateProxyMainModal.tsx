@@ -393,10 +393,15 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								linkAddressTextDisabled
 								theme={theme}
 								isVoting
+								isUsedInProxy={true}
 							/>
 						</Form.Item>
 
 						{/* Proxy Address */}
+						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>
+							{' '}
+							Proxy Address <span className='text-lg font-medium text-[#FF3C5F]'>*</span>
+						</span>
 						<Form.Item
 							name='proxyAddress'
 							className={`mb-0 ${!form.getFieldValue('proxyAddress') ? 'proxy-address' : ''}`}

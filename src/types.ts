@@ -320,6 +320,7 @@ export interface PostComment {
 	username: string;
 	user_profile_img: string;
 	isExpertComment?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 export interface IPollVote {
@@ -1161,4 +1162,55 @@ export interface IIdentityInfo {
 	verifiedByPolkassembly: boolean;
 	parentProxyTitle: string | null;
 	parentProxyAddress: string;
+}
+
+export interface IMessage {
+	id: string;
+	content: string;
+	created_at: Date;
+	updated_at: Date;
+	senderAddress: string;
+	receiverAddress: string;
+	senderImage?: string;
+	senderUsername?: string;
+	viewed_by: string[];
+}
+
+export enum EChatRequestStatus {
+	ACCEPTED = 'accepted',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
+export enum EChatFilter {
+	ALL = 'all',
+	UNREAD = 'unread',
+	READ = 'read'
+}
+
+export enum EChatTab {
+	MESSAGES = 'messages',
+	REQUESTS = 'requests'
+}
+
+export interface IChatRecipient {
+	username?: string;
+	address: string;
+	image?: string;
+}
+
+export interface IChat {
+	chatId: string;
+	participants: string[];
+	chatInitiatedBy: string;
+	created_at: Date;
+	updated_at: Date;
+	requestStatus: EChatRequestStatus;
+	latestMessage: IMessage;
+	recipientProfile: IChatRecipient | null;
+}
+
+export interface IChatsResponse {
+	messages: IChat[];
+	requests: IChat[];
 }

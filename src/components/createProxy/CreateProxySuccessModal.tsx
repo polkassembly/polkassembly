@@ -101,7 +101,7 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 								priority={true}
 							/>
 						</div>
-						<h2 className={`${dmSans.className} ${dmSans.variable} -mt-2 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+						<h2 className={`${dmSans.className} ${dmSans.variable} -mt-6 text-center text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 							Proxy created successfully
 						</h2>
 						<div className='ml-16 mt-4 flex flex-col items-start gap-1'>

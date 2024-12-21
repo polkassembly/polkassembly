@@ -81,6 +81,7 @@ interface Props {
 	isUsedInDelegationProfile?: boolean;
 	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -109,17 +110,19 @@ const ParentProxyTitle = ({
 			className={className}
 			title={
 				<div className='flex flex-col items-start justify-start gap-1 text-xs'>
-					<span>Sub-account: On-chain Identity derived </span>
-					<div className='flex items-center justify-start gap-1'>
+					<span>Sub-account: On-chain Identity derived</span>
+					<div className='flex flex-shrink-0 items-center justify-start gap-1'>
 						from the parent-{' '}
 						<Address
 							address={parentProxyAddress || ''}
 							displayInline
 							disableTooltip
 							usernameClassName='text-blue-dark-high text-xs'
-							className='text-xs'
+							className='flex items-center text-xs'
 							disableParentProxyAddressTitle
 							iconSize={14}
+							isTruncateUsername
+							usernameMaxLength={10}
 						/>
 					</div>
 				</div>
@@ -134,7 +137,7 @@ const ParentProxyTitle = ({
 					className='font-medium text-[#407BFF]'
 					title={title}
 				>
-					{title?.length > 6 ? (truncate ? `${title?.slice(0, 6)}...` : title) : title}
+					{title?.length > 10 || truncate ? `${title?.slice(0, 10)}...` : title}
 				</span>
 				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
 					<Image
@@ -179,7 +182,8 @@ const Address = (props: Props) => {
 		isUsedIndelegationNudge = false,
 		isUsedInDelegationProfile = false,
 		isUsedInAccountsPage = false,
-		disableParentProxyAddressTitle = false
+		disableParentProxyAddressTitle = false,
+		isLinkedAddressUsed = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -390,7 +394,7 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className='flex items-center'>
+		<div className={classNames(addressOtherTextType ? 'w-full' : ' myAddress', identity?.parentProxyTitle?.length ? 'flex items-center' : 'items-start')}>
 			<Tooltip
 				arrow
 				color='#fff'
@@ -457,7 +461,7 @@ const Address = (props: Props) => {
 											title={mainDisplay || encodedAddr}
 											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} `}
+											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} ${isUsedInAccountsPage ? 'sm:text-xl' : ''}`}
 										>
 											{!!addressPrefix && (
 												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -465,6 +469,7 @@ const Address = (props: Props) => {
 												</span>
 											)}
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+											{isLinkedAddressUsed && <span className='text-[12px] font-normal text-bodyBlue dark:text-blue-dark-high'>({shortenAddress(encodedAddr, 4)})</span>}
 										</div>
 									</div>
 								</div>
@@ -561,32 +566,50 @@ const Address = (props: Props) => {
 													isUsedInDelegationProfile && 'gap-2'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
+												{!!addressPrefix && (
+													<span
+														className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'} ${isUsedInAccountsPage ? 'ml-3 sm:text-xl' : ''}`}
+													>
+														{addressPrefix}
+													</span>
+												)}
 												{isUsedInDelegationProfile && (!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 											</div>
 										</Space>
 									</div>
 								</div>
 							)}
-							<div
-								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
-									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
-								onClick={(e) => handleClick(e)}
-							>
-								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
-								{isUsedInDelegationProfile && (
-									<span
-										className='flex cursor-pointer items-center text-base'
-										onClick={() => {
-											copyLink(encodedAddr || '');
-											success();
-										}}
-									>
-										<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
-									</span>
-								)}
-							</div>
+							{isUsedInAccountsPage && username && (
+								<div
+									className={`${!addressClassName ? 'text-sm' : addressClassName} ${
+										!disableAddressClick && 'cursor-pointer hover:underline'
+									} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
+									onClick={(e) => handleClick(e)}
+								>
+									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+								</div>
+							)}
+							{!isUsedInAccountsPage && (
+								<div
+									className={`${!addressClassName ? 'text-sm' : addressClassName} ${
+										!disableAddressClick && 'cursor-pointer hover:underline'
+									} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
+									onClick={(e) => handleClick(e)}
+								>
+									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+									{isUsedInDelegationProfile && (
+										<span
+											className='flex cursor-pointer items-center text-base'
+											onClick={() => {
+												copyLink(encodedAddr || '');
+												success();
+											}}
+										>
+											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+										</span>
+									)}
+								</div>
+							)}
 							<div className='flex items-center gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (

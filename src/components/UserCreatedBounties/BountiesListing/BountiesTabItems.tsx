@@ -11,13 +11,16 @@ import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 
 interface IBountiesTabItemsProps {
-	bounties: IUserCreatedBounty[];
+	bountiesDetails: { bounties: IUserCreatedBounty[]; totalCount: number };
 }
 
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	console.log('user bounties: ', props.bounties);
+	const {
+		bountiesDetails: { totalCount, bounties }
+	} = props;
+	console.log('user bounties: ', props?.bountiesDetails);
 
 	const bountyStatuses = [
 		{ key: 'all', label: 'All' },
@@ -27,7 +30,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 		}))
 	];
 	const tabItems = bountyStatuses.map((status) => ({
-		children: <BountiesTable bounties={props.bounties?.length > 0 ? (props.bounties as IUserCreatedBounty[]) : []} />,
+		children: <BountiesTable bounties={totalCount ? (bounties as IUserCreatedBounty[]) : []} />,
 		key: status.key,
 		label: <p>{status.label}</p>
 	}));

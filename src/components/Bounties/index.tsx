@@ -15,7 +15,6 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
-import { useRouter } from 'next/router';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -25,7 +24,6 @@ interface IBountiesContainer {
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
-	const router = useRouter();
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;

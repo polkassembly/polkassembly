@@ -3,9 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
-import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { FrownOutlined } from '@ant-design/icons';
@@ -24,6 +22,8 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { getUserCreatedBountyById } from 'pages/api/v1/user-created-bounties/getUserCreatedBounty';
+import UserBountyPage from '~src/components/UserCreatedBounties/UserBountyPage';
+import { IUserCreatedBounty } from '~src/types';
 
 const proposalType = ProposalType.BOUNTIES;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 interface IBountyPostProps {
-	post: IPostResponse;
+	post: IUserCreatedBounty;
 	error?: string;
 	network: string;
 	status?: number;
@@ -96,10 +96,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 						network={network}
 					/>
 					<div className='mt-6'>
-						<Post
-							post={post}
-							proposalType={proposalType}
-						/>
+						<UserBountyPage post={post} />
 					</div>
 				</div>
 			</>

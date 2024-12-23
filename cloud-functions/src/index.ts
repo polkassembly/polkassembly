@@ -404,7 +404,7 @@ async function saveTwitterBounties() {
 	logger.info('# of Tweets fetched :', tweetsIds.length);
 
 	// check if already replied to tweet (only exists in db if already replied to)
-	const bountiesTweetIds: string[] = (await firestoreDB.collection('bounties').where('source_id', 'in', tweetsIds).where('source', '==', EBountySource.TWITTER).get()).docs.map(
+	const bountiesTweetIds: string[] = (await firestoreDB.collection('user_created_bounties').where('source_id', 'in', tweetsIds).where('source', '==', EBountySource.TWITTER).get()).docs.map(
 		(doc) => doc.data()?.source_id || ''
 	);
 
@@ -439,7 +439,7 @@ async function saveTwitterBounties() {
 			continue;
 		}
 
-		const bountyRef = firestoreDB.collection('bounties').doc();
+		const bountyRef = firestoreDB.collection('user_created_bounties').doc();
 
 		const bounty: IBounty = {
 			id: bountyRef.id,
@@ -491,7 +491,7 @@ async function resolveOverdueTwitterBounties() {
 	logger.info('bountiesLastClosedAt :', bountiesLastClosedAt);
 
 	const bounties = (
-		await firestoreDB.collection('bounties').where('deadline', '<=', new Date()).where('deadline', '>', bountiesLastClosedAt).where('source', '==', EBountySource.TWITTER).get()
+		await firestoreDB.collection('user_created_bounties').where('deadline', '<=', new Date()).where('deadline', '>', bountiesLastClosedAt).where('source', '==', EBountySource.TWITTER).get()
 	).docs.map((doc) => {
 		const data = doc.data();
 		return {
@@ -544,7 +544,7 @@ async function resolveOverdueTwitterBounties() {
 			}
 
 			// get all replies from db to ignore duplicates
-			const savedReplies = (await firestoreDB.collection('bounties').doc(bounty.id).collection('replies').get()).docs.map((doc) => (doc.data().id as string) || '') || [];
+			const savedReplies = (await firestoreDB.collection('user_created_bounties').doc(bounty.id).collection('replies').get()).docs.map((doc) => (doc.data().id as string) || '') || [];
 
 			for (const reply of replies.data.data) {
 				if (savedReplies.includes(reply.id)) {
@@ -552,7 +552,7 @@ async function resolveOverdueTwitterBounties() {
 					continue;
 				}
 
-				const replyRef = firestoreDB.collection('bounties').doc(bounty.id).collection('replies').doc();
+				const replyRef = firestoreDB.collection('user_created_bounties').doc(bounty.id).collection('replies').doc();
 
 				if (!reply.author_id) continue;
 
@@ -575,7 +575,7 @@ async function resolveOverdueTwitterBounties() {
 		}
 
 		// close bounty
-		const bountyRef = firestoreDB.collection('bounties').doc(bounty.id);
+		const bountyRef = firestoreDB.collection('user_created_bounties').doc(bounty.id);
 		await bountyRef.update({
 			status: BountyStatus.CLOSED,
 			updated_at: new Date()

@@ -19,6 +19,28 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 const ZERO_BN = new BN(0);
 
+const checkIsTwitterHandleVerified = async (twitterHandle: string, userId: number) => {
+	const twitterVerificationDoc = await firestore_db.collection('twitter_verification_tokens').doc(String(userId)).get();
+
+	if (!twitterVerificationDoc.exists) return false;
+
+	const twitterData = twitterVerificationDoc.data();
+
+	if (`${twitterData?.twitter_handle}`.toLowerCase() !== `${twitterHandle}`.toLowerCase()) return false;
+
+	if (twitterData?.verified && twitterData?.user_id === userId) {
+		return true;
+	}
+	return false;
+};
+
+const modifyTwitterHandle = (handle: string) => {
+	if (handle?.[0] == '@') {
+		return handle?.slice(1, handle?.length);
+	}
+	return handle;
+};
+
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
@@ -28,6 +50,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim, twitterHandle } = req.body;
+
+		const modifiedTwitterHandle = modifyTwitterHandle(twitterHandle);
 
 		const token = getTokenFromReq(req);
 		if (!token) return res.status(401).json({ message: messages?.INVALID_JWT });
@@ -41,57 +65,65 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: 'Invalid reward Amount.' });
 		}
 		if (!twitterHandle?.length) {
-			return res.status(400).json({ message: 'Invalid Twitter Handle Account.' });
+			if (!modifiedTwitterHandle?.length) {
+				return res.status(400).json({ message: 'Invalid Twitter Handle Account.' });
+			}
+			if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
+				return res.status(400).json({ message: 'Invalid Proposer Address.' });
+			}
+			if (!firebaseFormatedDeadline) {
+				return res.status(400).json({ message: 'Invalid Deadline Date.' });
+			}
+
+			if (!title?.length || !content?.length || isContentBlacklisted(content)) {
+				return res.status(400).json({ message: 'Title or Content is Missing or Invalid in request body.' });
+			}
+			if (isNaN(maxClaim) || !maxClaim) {
+				return res.status(400).json({ message: 'Invalid Max Claim Count.' });
+			}
+			if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
+				return res.status(400).json({ message: 'Invalid Tags Assigned.' });
+			}
+
+			const isTwitterVerified = await checkIsTwitterHandleVerified(modifiedTwitterHandle, user?.id);
+
+			if (!isTwitterVerified) {
+				return res.status(400).json({ message: 'Twitter handle is not verified.' });
+			}
+
+			const userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties');
+
+			const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.count().get();
+
+			const totalCreatedBountiesCount = totalCreatedBountiesSnapshot?.data()?.count;
+
+			const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
+
+			const payload = {
+				content,
+				createdAt: new Date(),
+				deadlineDate: new Date(deadlineDate),
+				history: [],
+				id: totalCreatedBountiesCount,
+				maxClaim: maxClaim,
+				network: network,
+				proposalType: ProposalType.USER_CREATED_BOUNTIES,
+				proposer: getEncodedAddress(proposerAddress, network) || '',
+				reward: reward || '0',
+				source: 'polkassembly',
+				status: EUserCreatedBountiesStatuses.ACTIVE,
+				submissionGuidelines: submissionGuidelines || '',
+				tags: tags || [],
+				title: title || '',
+				twitterHandle: modifiedTwitterHandle,
+				updatedAt: new Date(),
+				userId: user?.id
+			};
+
+			await bountyDoc?.set(payload, { merge: true });
+
+			return res.status(200).json({ message: messages?.SUCCESS });
 		}
-		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
-			return res.status(400).json({ message: 'Invalid Proposer Address.' });
-		}
-		if (!firebaseFormatedDeadline) {
-			return res.status(400).json({ message: 'Invalid Deadline Date.' });
-		}
-
-		if (!title?.length || !content?.length || isContentBlacklisted(content)) {
-			return res.status(400).json({ message: 'Title or Content is Missing or Invalid in request body.' });
-		}
-		if (isNaN(maxClaim) || !maxClaim) {
-			return res.status(400).json({ message: 'Invalid Max Claim Count.' });
-		}
-		if (tags?.length && !!tags?.filter((tag: string) => typeof tag !== 'string')?.length) {
-			return res.status(400).json({ message: 'Invalid Tags Assigned.' });
-		}
-
-		const userCreatedBountiesSnapshot = firestore_db.collection('user_created_bounties');
-
-		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.count().get();
-
-		const totalCreatedBountiesCount = totalCreatedBountiesSnapshot?.data()?.count;
-
-		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
-
-		const payload = {
-			content,
-			createdAt: new Date(),
-			deadlineDate: new Date(deadlineDate),
-			history: [],
-			id: totalCreatedBountiesCount,
-			maxClaim: maxClaim,
-			network: network,
-			proposalType: ProposalType.USER_CREATED_BOUNTIES,
-			proposer: getEncodedAddress(proposerAddress, network) || '',
-			reward: reward || '0',
-			source: 'polkassembly',
-			status: EUserCreatedBountiesStatuses.ACTIVE,
-			submissionGuidelines: submissionGuidelines || '',
-			tags: tags || [],
-			title: title || '',
-			twitterHandle: twitterHandle,
-			updatedAt: new Date(),
-			userId: user?.id
-		};
-
-		await bountyDoc?.set(payload, { merge: true });
-
-		return res.status(200).json({ message: messages?.SUCCESS });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

@@ -13,6 +13,7 @@ import { IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { getComments, getReactions } from '../posts/on-chain-post';
 import { ProposalType } from '~src/global/proposalType';
+import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
 
 interface Args {
 	bountyId: number;
@@ -56,7 +57,10 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			  })
 			: [];
 
+		const claimedSubmissionsPercentage = await getClaimedSubmissionsPercentage(bountyDoc.ref, bountyData?.reward || '0');
+
 		const payload: IUserCreatedBounty = {
+			claimed_percentage: claimedSubmissionsPercentage || 0,
 			comments: comments || [],
 			content: bountyData?.content,
 			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,

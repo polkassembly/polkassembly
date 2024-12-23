@@ -417,7 +417,7 @@ export async function getComments(
 						comment_reactions: getDefaultReactionObj(),
 						comment_source: 'polkassembly',
 						content: '[Deleted]',
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						created_at: data.created_at?.toDate ? String(data.created_at.toDate()) : data.created_at,
 						history: [],
 						id: data.id,
 						isExpertComment: data?.isisExpertComment || false,

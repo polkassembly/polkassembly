@@ -41,17 +41,13 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 	};
 
 	useEffect(() => {
-		if (api && apiReady) {
-			fetchBaseDeposit(api).then(({ baseDeposit, depositFactor }) => {
-				setBaseDeposit(baseDeposit);
-				setDepositFactor(depositFactor);
-			});
-		}
-	}, [api, apiReady]);
+		if (!api && !apiReady) return;
 
-	const toggleDropdown = () => {
-		setDropdownVisible((prev) => !prev);
-	};
+		fetchBaseDeposit(api).then(({ baseDeposit, depositFactor }) => {
+			setBaseDeposit(baseDeposit);
+			setDepositFactor(depositFactor);
+		});
+	}, [api, apiReady]);
 
 	return (
 		<Modal
@@ -113,7 +109,7 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 				<div className='mt-6 w-full rounded-md  bg-[#F6F7F9] p-4 dark:bg-[#29323C33]'>
 					<div
 						className='flex cursor-pointer items-center justify-between'
-						onClick={toggleDropdown}
+						onClick={() => setDropdownVisible((prev) => !prev)}
 					>
 						<span className={` ${dmSans.className} ${dmSans.variable} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Total Amount Required</span>
 						<span className={` ${dmSans.className} ${dmSans.variable} text-base font-semibold text-blue-light-high dark:text-blue-dark-high`}>

@@ -143,20 +143,20 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			console.error('Gas fee calculation failed:', error);
 		}
 	};
+
+	const fetchBaseDeposit = async () => {
+		try {
+			const baseDeposit = api?.consts?.proxy?.proxyDepositBase || ZERO_BN;
+			const depositFactor = api?.consts?.proxy?.proxyDepositFactor || ZERO_BN;
+			setBaseDepositValue(new BN(baseDeposit.toString()));
+			setDepositFactor(new BN(depositFactor.toString()));
+		} catch (error) {
+			console.error('Failed to fetch base deposit or deposit factor value:', error);
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
-		const fetchBaseDeposit = async () => {
-			try {
-				const baseDeposit = api?.consts?.proxy?.proxyDepositBase || ZERO_BN;
-				const depositFactor = api?.consts?.proxy?.proxyDepositFactor || ZERO_BN;
-				setBaseDepositValue(new BN(baseDeposit.toString()));
-				setDepositFactor(new BN(depositFactor.toString()));
-			} catch (error) {
-				console.error('Failed to fetch base deposit or deposit factor value:', error);
-			}
-		};
-
 		fetchBaseDeposit();
 	}, [api, apiReady]);
 

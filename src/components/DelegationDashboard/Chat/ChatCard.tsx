@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import Image from 'next/image';
+import { Card, Image } from 'antd';
 import React, { useMemo } from 'react';
 import { EChatRequestStatus, IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -11,7 +11,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import dayjs from 'dayjs';
-import { Card } from 'antd';
 import PendingRequestTab from './PendingRequestTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useDispatch } from 'react-redux';

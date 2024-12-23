@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import dayjs from 'dayjs';
 import { EUserCreatedBountySubmissionStatus } from '~src/types';
 
 const checkIsUserCreatedBountySubmissionValid = async (
@@ -13,6 +14,9 @@ const checkIsUserCreatedBountySubmissionValid = async (
 
 	const submissionSnapshot = bountyRef.collection('submissions');
 
+	//deadline date ended
+	const deadlineDate = bountyData?.deadlineDate?.toDate ? String(bountyData?.deadlineDate?.toDate()) : bountyData?.deadlineDate;
+
 	//maxClaim count;
 	const claimedSubmissionsCountRef = await submissionSnapshot?.where('status', '==', EUserCreatedBountySubmissionStatus.APPROVED).count().get();
 	const claimedSubmissionsCount = claimedSubmissionsCountRef.data().count;
@@ -22,6 +26,7 @@ const checkIsUserCreatedBountySubmissionValid = async (
 
 	return {
 		claimedSubmissionsCount: claimedSubmissionsCount,
+		deadlineDateExpired: dayjs(new Date()).isAfter(deadlineDate),
 		maxClaimReached: Number(bountyData?.maxClaim) <= claimedSubmissionsCount,
 		submissionAlreadyExists: !existsSubmissionRef?.empty
 	};

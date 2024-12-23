@@ -74,10 +74,17 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const submissionsRef = userCreatedBountySnapshot?.docs?.[0]?.ref?.collection('submissions');
 
-		const { submissionAlreadyExists } = await checkIsUserCreatedBountySubmissionValid(userCreatedBountySnapshot?.docs?.[0]?.ref, Number(user?.id), encodedProposerAddress);
+		const { submissionAlreadyExists, deadlineDateExpired } = await checkIsUserCreatedBountySubmissionValid(
+			userCreatedBountySnapshot?.docs?.[0]?.ref,
+			Number(user?.id),
+			encodedProposerAddress
+		);
 
 		if (!submissionAlreadyExists) {
 			return res.status(400).json({ message: `Submission does not exists for bounty id-${parentBountyIndex}` });
+		}
+		if (deadlineDateExpired) {
+			return res.status(400).json({ message: "You can't edit or delete your submission after deadline date." });
 		}
 
 		const submissionDocRef = submissionsRef?.doc(submissionId);

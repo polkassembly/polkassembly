@@ -64,12 +64,15 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 		const submissionsRef = userCreatedBountySnapshot?.docs?.[0]?.ref?.collection('submissions');
 
-		const { maxClaimReached, submissionAlreadyExists } = await checkIsUserCreatedBountySubmissionValid(
+		const { maxClaimReached, submissionAlreadyExists, deadlineDateExpired } = await checkIsUserCreatedBountySubmissionValid(
 			userCreatedBountySnapshot?.docs?.[0]?.ref,
 			Number(user?.id),
 			encodedProposerAddress
 		);
 
+		if (deadlineDateExpired) {
+			return res.status(400).json({ message: "You can't edit or delete your submission after deadline date." });
+		}
 		if (maxClaimReached) {
 			return res.status(400).json({ message: `Max number of claimed reached for bounty id-${parentBountyIndex}` });
 		}

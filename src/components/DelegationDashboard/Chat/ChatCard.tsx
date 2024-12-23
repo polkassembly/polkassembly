@@ -101,13 +101,13 @@ const ChatCard = ({ chat }: Props) => {
 		>
 			{renderUserImage}
 			<div className='flex w-full flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
-				<div className='flex w-full items-center gap-2'>
+				<div className='flex w-full items-center gap-1'>
 					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{renderUsername}</span>
 					<Image
 						src='/assets/icons/timer.svg'
 						height={12}
 						width={12}
-						className='dark:grayscale dark:invert dark:filter'
+						className='ml-1 dark:grayscale dark:invert dark:filter'
 						alt='timer icon'
 					/>
 					<span className='text-xs text-blue-light-medium dark:text-[#9e9e9e]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>

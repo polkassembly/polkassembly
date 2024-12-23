@@ -24,7 +24,8 @@ export enum ProposalType {
 	TECHNICAL_PIPS = 'technical_pips',
 	UPGRADE_PIPS = 'upgrade_pips',
 	COMMUNITY_PIPS = 'community_pips',
-	ADVISORY_COMMITTEE = 'advisory_committee'
+	ADVISORY_COMMITTEE = 'advisory_committee',
+	USER_CREATED_BOUNTIES = 'user_created_bounties'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -81,7 +82,9 @@ export function isValidSubsquidProposalType(type: string) {
 	return validSubsquidProposalTypes.includes(type as TSubsquidProposalType);
 }
 
-export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType {
+export function getSubsquidProposalType(
+	proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS | ProposalType.USER_CREATED_BOUNTIES>
+): TSubsquidProposalType {
 	switch (proposalType) {
 		case ProposalType.DEMOCRACY_PROPOSALS:
 			return 'DemocracyProposal';
@@ -123,6 +126,8 @@ export function getSubsquidLikeProposalType(proposalType: ProposalType): string 
 		return 'Discussions';
 	} else if (proposalType === ProposalType.GRANTS) {
 		return 'Grants';
+	} else if (proposalType === ProposalType.USER_CREATED_BOUNTIES) {
+		return 'UserCreatedBounties';
 	}
 	const postType = getSubsquidProposalType(proposalType);
 	return postType || '';
@@ -166,6 +171,8 @@ export function getFirestoreProposalType(proposalType: string): string {
 			return 'upgrade_pips';
 		case 'AdvisoryCommittee':
 			return 'advisory_committee';
+		case 'UserCreatedBounties':
+			return 'user_created_bounties';
 	}
 	return '';
 }

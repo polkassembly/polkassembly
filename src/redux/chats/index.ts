@@ -5,7 +5,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IChatsStore } from './@types';
-import { EChatRequestStatus, EChatTab, IChat } from '~src/types';
+import { EChatRequestStatus, EChatTab, IChat, IMessage } from '~src/types';
 /* eslint-disable sort-keys */
 
 const initialState: IChatsStore = {
@@ -115,6 +115,14 @@ export const chatsStore = createSlice({
 						state.unreadChatCount -= 1;
 					}
 				}
+			}
+		},
+		updateLatestMessage: (state, action: PayloadAction<{ chatId: string; message: IMessage }>) => {
+			const { chatId, message } = action.payload;
+			const chatIndex = state.messages.findIndex((chat) => chat.chatId === chatId);
+			if (chatIndex !== -1) {
+				state.messages[chatIndex].latestMessage = message;
+				state.filteredMessages[chatIndex].latestMessage = message;
 			}
 		}
 	},

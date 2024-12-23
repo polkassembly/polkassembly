@@ -1101,7 +1101,8 @@ export enum EUserCreatedBountySubmissionStatus {
 	APPROVED = 'approved',
 	REJECTED = 'rejected',
 	PENDING = 'pending',
-	DELETED = 'deleted'
+	DELETED = 'deleted',
+	PAID = 'paid'
 }
 
 export enum EPendingCuratorReqType {

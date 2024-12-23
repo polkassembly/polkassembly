@@ -26,7 +26,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const encodedParentBountyProposerAddress = getEncodedAddress(parentBountyProposerAddress, network);
 		const encodedSubmissionProposerAddress = getEncodedAddress(submissionProposerAddress, network);
 
-		if (![EUserCreatedBountySubmissionStatus.APPROVED, EUserCreatedBountySubmissionStatus.REJECTED].includes(updatedStatus)) {
+		if (![EUserCreatedBountySubmissionStatus.APPROVED, EUserCreatedBountySubmissionStatus.REJECTED, EUserCreatedBountySubmissionStatus.PAID].includes(updatedStatus)) {
 			return res.status(400).json({ message: 'Invalid Updated Status Param' });
 		}
 		if (!parentBountyProposerAddress?.length || !encodedParentBountyProposerAddress) {

@@ -1,0 +1,171 @@
+[
+	{
+			"address": "F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ",
+			"name": "Polkassembly",
+			"image": "https://raw.githubusercontent.com/polkassembly/opengov-delegate-registry/master/images/polkassemblylogo192.png",
+			"shortDescription": "Governance platform for polkadot ecosystem",
+			"longDescription": "We are building governance platform for Polkadot & Kusama ecosystem",
+			"isOrganization": true
+	},
+	{
+			"address": "H3cSNjAW86NfTecufGPhxutea8KrEcZdPa4XgVKfhTMugej",
+			"name": "Novasama Technologies",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/novasama_technologies.png",
+			"shortDescription": "Company behind Nova Wallet",
+			"longDescription": "We are building high quality and community-oriented apps for Polkadot & Kusama ecosystem",
+			"isOrganization": true
+	},
+	{
+			"address": "DCZyhphXsRLcW84G9WmWEXtAA8DKGtVGSFZLJYty8Ajjyfa",
+			"name": "ChaosDAO",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/chaosdao.png",
+			"shortDescription": "Community org with a dedicated internal voting process and multisig for OpenGov referenda",
+			"longDescription": "## About us\nChaosDAO is a curated community of Polkadot & Kusama natives. Our members are involved with every aspect of the ecosystem as developers, community organizers, [Twitter](https://twitter.com/ChaosDAO) and YouTube educators, and as ordinary retail investors.\n\n## Voting Process\nAs part of our own organization’s evolution we have developed a robust [internal governance mechanism](https://github.com/ChaosDAO-org/ChaosDAO_docs/blob/main/governance/OpenGov.md) to determine how our community will publicly vote on referenda. By voting on behalf of the long-time Dotsama community we strive to ensure that all votes we cast reflect the true best interests of our native ecosystem.\n\n![ChaosDAO Manifesto image](https://raw.githubusercontent.com/ChaosDAO-org/ChaosDAO_docs/main/.gitbook/assets/ChaosDAO_Manifesto_600px.jpg)",
+			"isOrganization": true
+	},
+	{
+			"address": "Day71GSJAxUUiFic8bVaWoAczR3Ue3jNonBZthVHp2BKzyJ",
+			"name": "Anton Khvorov",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/day_7.jpg",
+			"shortDescription": "CEO @ Novasama Technologies",
+			"longDescription": "## About me\nMy name is Anton Khvorov, I'm CEO of [Novasama Technologies](https://novasama.io) & Head of Engineering @ [Nova Wallet](https://novawallet.io).\nPassionate to build new innovative & amazing\nproducts, with a mindset to make the world a better place.\n\n## Voting strategy \n\nI do support referendums focused on the core values of Polkadot (decentralization, democracy, interoperability, reliability), as well as referendums that are focused on brining the power of Polkadot to mass adoption (products with great UX, open source, etc). \n\nI do not support entities that are active against any of these values and/or human rights. \n\nI often express my opinion on Polkassembly, especially in the case of controversial referendums.\n\n## Incentives\nEach month I’m going to mint & send NFT with my cat to each of my fellow delegators! 🐊\n\n![](https://i.ibb.co/5YtW1hn/Pelmeshka-small.jpg)\n\n## Stay in touch!\nIf you have any questions regarding my votes, feel free to contact me via email: anton@novawallet.io",
+			"isOrganization": false
+	},
+	{
+			"address": "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn",
+			"name": "Will | Paradox | ParaNodes.io",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/paradox.png",
+			"shortDescription": "Kusama Council & Validator Operator at ParaNodes.io",
+			"longDescription": "## About me\nMy name is Will and I'm a member of Kusama's outgoing council.  My council experience allows me to better understand the technical aspects of governance and appreciate the general 'values' of the chain.\n\nI am also a well known within the validator community and operate validators under the moniker [ParaNodes.io](https://paranodes.io).\n\nIf you'll like to hear my thoughts on governance, please tune in to [AAG](https://www.youtube.com/playlist?list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV) I make live appearances on the first Monday of each month.",
+			"isOrganization": false
+	},
+	{
+			"address": "EcRZnQmd7NHLRYNFnHiiWHm1Xd1VSEZufB7ZviGTX25xoDh",
+			"name": "😐 ghost | 🪬",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/ghost-192.png",
+			"shortDescription": "COO @ 🪬",
+			"longDescription": "I am who I am because of the choices I made yesterday.\n– First Lady Eleanor Roosevelt\n\nFor Polkadot to succeed, we need to take stewardship of the ecosystem seriously and work to build processes and conventions that enable us to make decisions that benefit users. Growth is enabled by superior technology, but that is not sufficient; it will require that we successfully navigate the needs of stakeholders in the real world, including technologists, businesses, organizations, governments, and, ultimately, regular citizens worldwide.",
+			"isOrganization": false
+	},
+	{
+			"address": "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
+			"name": "Adam Clay Steeber",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/adam_clay_steeber_nova.png",
+			"shortDescription": "My name is Adam. I have a Bacholor of Science degree in economics from the University of Minnesota Twin Cities. I operate a Kusama validator node, build dApps, and mint NFTs.",
+			"longDescription": "[**History of my votes here.**](https://docs.google.com/spreadsheets/d/1zxyKnwo7arFT7vloHbBzykNDfhrAuIhhz5rNSp0A4OU/edit?usp=sharing)\n\nI have been an active member of the Kusama ecosystem since April 2021 and started my web3 career in November of 2021. My primary focus is on Kusama and its parachains and my main goal in web3 is to bring revolutionary technology to my sphere of influence and educate as many individuals as possible about the web3 paradigm.\n\nI approach governance referenda with some simple questions:\n\n- Does the referendum uphold the values of innovation, integrity, and transparency?\n\n- Does the referendum bring value to the ecosystem as a whole?\n\n- Has the proposer shown competence in whatever project or on-chain action they are proposing?\n\n- If the referendum is a Treasury spend, has the proposer shown financial competence and have they meticulously budgeted their ask?\n\n- Did the proposer actively engage with the community and earnestly implement feedback before submitting their referendum on chain? Is the proposer actively engaging with the community after they have submitted their referendum on chain?\n\n- Does the proposer show competence in submitting on chain referendum successfully (i.e. are they avoiding spamming governance tracks)?\n\n- Has the proposer been modest in submitting referenda before?\n\nLearn more about me and my projects: [Twitter](https://www.twitter.com/adamsteeber1) | [Website](https://www.steebersolutions.com) | [Project Gweihir](http://www.gweihir.io) | [Green Bay Dollar](https://www.greenbaydollar.com) | [RMRK DAO](https://rmrkdao.app)",
+			"isOrganization": false
+	},
+	{
+			"address": "GU77syTfPXdzKCuqASura9ZKgxmD2rEDhj89c9TGL6vc9Qw",
+			"name": "Math Crypto",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/mathcrypto.png",
+			"shortDescription": "Active OpenGov contributor | 1kv validator",
+			"longDescription": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content.",
+			"isOrganization": false
+	},
+	{
+			"address": "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD",
+			"name": "Leemo",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/Leemo.png",
+			"shortDescription": "Hi I'm Leemo! A frequent governance enjoyoooor and active Polkadot ecosystem community member.",
+			"longDescription": "## About Me\n\n😻 Chief Nice Officer at Nova Wallet\n\n🤖 Doing cool shit with Robonomics\n\n☯️ Co-founder of ChaosDAO\n\n🌅 Co-founder of GmOrDie\n\n🐍 Councillor at HydraDX & Basilisk\n\nI'm an active Polkadot ecosystem governance participator, and often share my insights over at [my Twitter](https://twitter.com/LeemoXD), within various communities such as ChaosDAO, Polkahaus, and the Polkadot/Kusama directions channel.\n\nI frequent the weekly episodic podcast [Attempts at Governance](https://www.youtube.com/watch?v=hboOYAmindk&list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV), where I often give updates about governance topics and participate in discussion.\n\nI'm often looking for new ways for communities to excel in Governance and have lead the implementation and continued operations of ChaosDAO's governance participation. You can find out more about this setup [in this video](https://www.youtube.com/watch?v=MqY6yU-YLO0).\n\n## Voting Methodology\nI typically have been delegating most of my voting power to ChaosDAO – however, depending on the interest of the community to delegate to me, I will vote independently also, and will likely follow a similar direction to that of ChaosDAO.",
+			"isOrganization": false
+	},
+	{
+			"address": "HERTWZK4ZpmuXsEgW3UfL5x27XCdT5fE9x4QRbyNWifafdU",
+			"name": "Stake.Plus",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/stakeplus.png",
+			"shortDescription": "Validation, Collation and Infrastructure Services",
+			"longDescription": "We are committed to providing quality infrastructure services for the Polkadot ecosystem on owned hardware powered by renewable energy.",
+			"isOrganization": true
+	},
+	{
+			"address": "GCMGu8sjEuEZuMZavo5PLvAhr8fJXAty76jDV1YPquG9erp",
+			"name": "CoinStudio",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/coinstudio.png",
+			"shortDescription": "Kusama and Polkadot Validator, Governance participant  ",
+			"longDescription": "Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431",
+			"isOrganization": true
+	},
+	{
+			"address": "HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r",
+			"name": "Sik | crifferent.de",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/sik-crifferent.png",
+			"shortDescription": "DotSama native node operator and community supporter",
+			"longDescription": "## About Sik\nFounder of [Crifferent Staking Services](https://crifferent.de) \n\nDeveloper for [Staking Facilities](https://stakingfacilities.com) \n\nMember of [DOT Validator Alliance DAO](https://dotvalidators.org) \n\nTeam member @[HydraDX](https://hydradx.io)/[Basilisk](https://bsx.fi) \n\nRPC provider @[UnitedBloc](https://unitedbloc.com/) \n\nMember of the [Infrastructure Builders Program](https://ibp.network/)\n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02",
+			"isOrganization": false
+	},
+	{
+			"address": "HBtJ7Poz9ya9pzS8AXK16tAqJ1qxXbVspkM9E6p57BJ1hJs",
+			"name": "Abdulbee",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/Abdulbee_Nova.jpg",
+			"shortDescription": "Polkadot Community Moderator, Anti-Scam executive team member, Head ambassador for content, a Rust afficionado",
+			"longDescription": "## About Abdulbee\n\nMy name is Abdulbasit (Abdulbee), a Rust afficionado/technical writer who currently contributes full-time in the ecosystem as a Polkadot head ambassador for content, an executive team member of the Polkadot anti-scam team, a community moderator of Polkadot’s official channels, and a QA officer at Dot.alert().\n\nI also currently curate two bounties (the anti-scam bounty and the community moderation team bounty).\n\nMy ecosystem philosophy is that good reputation (within or outside the ecosystem) is a good internal incentive for successful deliveries and that a key criteria to take into consideration when making governance decisions is the reputation of teams/individuals who submit proposals via governance. \n\nYou can reach me on discord (abdulbee#4681) or matrix (abdulbee:matrix.org). \n\nThank you!",
+			"isOrganization": false
+	 },
+	 {
+			"address": "FLKBjcL1hXtX7PHF5zrVwQTWQSKg7PCMQ5w6ZU7qvQGsvZR",
+			"name": "KRYPTOSCHAIN",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/KryptosChain_Logo.png",
+			"shortDescription": "Polkadot and Kusama Content Creator",
+			"longDescription": "Content Creator for the Polkadot & Kusama ecosystems since late 2020 (soon after launch) and a Crypto Content Creator since 2018 : https://www.youtube.com/c/kryptoschain and on Twitter: https://twitter.com/KryptosChain I'm also an active contributor to Open Governance.",
+			"isOrganization": false
+	 },
+	 {
+			 "address": "Hf8C626KBAjitMV7w8AhQWDCiPgUU47htEwbomq5mDMKeyL",
+			 "name": "bLd",
+			 "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/bLd.png",
+			 "shortDescription": "Web3 buildooor @ Astar Network & validator",
+			 "longDescription": "## About bLd\n\nDevops engineer at [Astar Network](https://astar.network) \n\nValidator at [bLd Nodes](https://bldnodes.org) \n\nMember of [DOT Validator Alliance DAO](https://dotvalidators.org) \n\nOrganizer at [ParisDotComm](https://parisdotcomm.org) \n\nCurator for [IBP program](https://ibp.network) \n\n---\n\nVoting constantly with conviction, I believe governance is the affair of everyone and public blockchain is a common good.\nMy votes represent my personal opinions, not in any case the views of any of my organisations.\nI happily explain my votes to anyone reaching and change my vote when I'm proved mistaken.  \n\n## Contact \n\n@[Twitter](https://twitter.com/bLd77) @bLd77 \n\n@[Telegram](https://t.me/bLd759) @bLd759 \n\n@[Github](https://github.com/bLd75) @bLd75",
+			 "isOrganization": false
+	 },
+	 {
+			"address": "H1tAQMm3eizGcmpAhL9aA9gR844kZpQfkU7pkmMiLx9jSzE",
+			"name": "TurboFlakes",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/turboflakes.png",
+			"shortDescription": "We Validate, Collate, Build and Vote for the Polkadot future",
+			"longDescription": "## About us\n\nTurboFlakes builds end-user tooling and provides validators and collators for the Polkadot ecosystem since 2021. We also provide RPC infrastructure powered by 100% renewable energy for the common good.\n\nWe believe in the Web3 vision of a decentralized web. We love experimentation and ideation.\n\nIn Open Governance we participate and support proposals that overall would bring joy, evolution and success to the Polkadot ecosystem.\n\nRead more about us at https://turboflakes.io",
+			"isOrganization": true
+	 },
+	 {
+			"address": "JA9TjkzZzsJnBC8igbnLZ2WYvgsYHd6fu54QJAViqnADoZq",
+			"name": "DOZENODES",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/dozenodes.png",
+			"shortDescription": "Kusama Validator Operator www.dozenodes.com",
+			"longDescription": "## About me\n\nMy name is Marcin and I'm the main technical guy behind dozenodes.com.\n\nI'm an active memeber of communities for multiple project in dotsama ecosytem\n\n I have vast technical expirience which allows me to properly assess proposed changes.\n\n Feel free to contact me via contact section of dozenodes.com.",
+			"isOrganization": false
+	},
+	{
+			"address": "FSRywMqAT92LJ8ihaQ7w1N8dXvLau53nEQx3EmNdGns2QAY",
+			"name": "Kobredabre",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/KobreDabre.jpg",
+			"shortDescription": "Missed referenda? Not an option",
+			"longDescription": "Member of Kusama ecosystem for more than a year, not a single missed referendum vote during that time (Gov1 or Gov2). Dedicated voter and voting with understanding. ",
+			"isOrganization": false
+	},
+	{
+			"address": "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
+			"name": "Decent Partners",
+			"image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/decent_partners_logo_black_background.png",
+			"shortDescription": "A creative conspiracy - we deliver network services to on-chain governed blockchains through the applied research & development of tools, processes and projects that release the creative potential of connected minds.",
+			"longDescription": "We provide network services to public blockchains - sourcing, developing and supporting creative talent both inside and outside the Kusama ecosystem - check out website [here](https://decent.partners). We have kickstarted, coordinated and delivered over 25 on-chain projects in [Edgeware](https://forum.polkadot.network/t/re-introducing-edgeware-substrates-most-chaotic-governance-experiment-and-second-oldest-mainnet/500), Substrate's second oldest mainnet including the development of [Kabocha](https://kabocha.network) the _media lab of Kusama_ that was created entirely through interlinked on-chain proposals. Our experience is rooted in building global on-line communities across early, mid and late state social networks, co-founding [Copa90](https://copa90.com), leading [Guardian Media Group](https://www.theguardian.com/gmg), [Comic Relief](https://www.comicrelief.com/) and [Virgin Unite](https://unite.virgin.com/), running largescale crypto-currency mining operations and listed companies alongside working with clients such as BBC, Channel 4, Nike, Red Bull, Spotify and Apple Music",
+			"isOrganization": true
+	},
+	{
+			"address": "DG8Q1VmFkmDwuKDN9ZqdB78W6BiXTX5Z33XzZNAykuB5nFh",
+			"name": "DrCAO | Web3 Education And Investment",
+			"image": "https://github.com/ahjxcrz/opengov-delegate-registry/blob/master/images/logo_WEAI.png",
+			"shortDescription": "DrCAO - Dotsama Content Creator",
+			"longDescription": "Content creator for dotsama and long term supporter: https://www.youtube.com/channel/UCi8YP0VB_gfOLtmp0sgLYew and on Twitter: https://twitter.com/cao_lab. I am mod/CM in few parachain projects.",
+			"isOrganization": false
+	 },
+	 {
+			"address": "HPD6vbDL87yEFkKcpzLKuTbkQrvQXWMwbEzegvKvYDHVcT2",
+			"name": "AIWeb3 community",
+			"image": "https://github.com/ahjxcrz/opengov-delegate-registry/blob/master/images/logo_aiweb3_192_192.png",
+			"shortDescription": "AIWeb3 Chinese community",
+			"longDescription": "The mission of the AIWeb3 Chinese community is to continue building the Dotsama community, supporting Chinese content creators to focus on content creation related to Dotsama, establishing connections with different parachain projects, and providing the latest information about Dotsama. Chinese content creators can focus on researching and producing high-quality content, including dubbing, translation, and original content within Dotsama. Additionally, we will allocate more resources to support early stage content creators, helping them establish their audience and brand.",
+			"isOrganization": true
+	 }    
+	
+]

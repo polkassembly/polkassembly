@@ -42,7 +42,7 @@ function ExpertBodyCard() {
 			const substrateAddress = getSubstrateAddress(address);
 			try {
 				const { data } = await nextApiClientFetch<ExpertStatusResponse>('api/v1/expertBody/getExpertStatus', { userAddress: substrateAddress });
-				if (data?.status !== undefined) {
+				if (data?.status) {
 					setIsExpert(data?.status);
 				} else {
 					console.error('Failed to fetch expert status:', data);

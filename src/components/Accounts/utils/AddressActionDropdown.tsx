@@ -53,14 +53,31 @@ const AddressActionDropdown = ({
 				type
 			});
 
-			if (error) {
+			if (error && error === 'Document updated successfully') {
+				const linkMsg = isLinked ? 'Address has been successfully unlinked.' : 'Address has been successfully linked.';
+				queueNotification({
+					header: 'Success!',
+					message: linkMsg,
+					status: NotificationStatus.SUCCESS
+				});
+				setState((prevState) => ({
+					...prevState,
+					loading: false
+				}));
+				window.location.reload();
+				return;
+			}
+
+			if (error && error != 'Document updated successfully') {
 				throw new Error(error);
 			}
+
+			const linkMsg = isLinked ? 'Address has been successfully unlinked.' : 'Address has been successfully linked.';
 
 			if (data) {
 				queueNotification({
 					header: 'Success!',
-					message: isLinked ? 'Address has been successfully unlinked.' : 'Address has been successfully linked.',
+					message: linkMsg,
 					status: NotificationStatus.SUCCESS
 				});
 				setState((prevState) => ({
@@ -109,7 +126,7 @@ const AddressActionDropdown = ({
 								onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
 								className='mt-1 flex items-center space-x-2'
 							>
-								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Add Proxy</span>
+								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Proxy</span>
 							</div>
 						)
 					}

@@ -153,8 +153,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		payee,
 		statusHistory,
 		version,
-		marketMetadata,
-		assetId
+		marketMetadata
 	} = onChainInfo;
 	const blockNumber = getBlockNumber(statusHistory);
 
@@ -557,7 +556,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									{beneficiaries.map((beneficiary, index) => (
 										<Beneficiary
 											key={index}
-											assetId={assetId}
+											assetId={beneficiary?.genralIndex}
 											beneficiary={beneficiary}
 										/>
 									))}

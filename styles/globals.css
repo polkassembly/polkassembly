@@ -1011,3 +1011,6 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
 		font-weight: 600 !important;
 }
+.ant-popover {
+  --antd-arrow-background-color: #363636 !important;
+}

@@ -79,6 +79,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 		};
 
 		loadBalance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginAddress]);
 
 	const handleSubmit = async () => {
@@ -133,6 +134,8 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 			console.log(error);
 		}
 	};
+
+	console.log('availableBalance', availableBalance);
 
 	return (
 		<Modal

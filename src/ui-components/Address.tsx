@@ -81,6 +81,7 @@ interface Props {
 	isUsedInDelegationProfile?: boolean;
 	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -181,7 +182,8 @@ const Address = (props: Props) => {
 		isUsedIndelegationNudge = false,
 		isUsedInDelegationProfile = false,
 		isUsedInAccountsPage = false,
-		disableParentProxyAddressTitle = false
+		disableParentProxyAddressTitle = false,
+		isLinkedAddressUsed = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -467,6 +469,7 @@ const Address = (props: Props) => {
 												</span>
 											)}
 											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+											{isLinkedAddressUsed && <span className='text-[12px] font-normal text-bodyBlue dark:text-blue-dark-high'>({shortenAddress(encodedAddr, 4)})</span>}
 										</div>
 									</div>
 								</div>

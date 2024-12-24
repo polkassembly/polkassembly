@@ -43,40 +43,41 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
 
+	const loadBalance = async () => {
+		if (!api || !apiReady) return;
+		try {
+			setLoadingStatus({ isLoading: true, message: 'Fetching balance' });
+
+			const accountData = await api.query.system.account(loginAddress);
+			const accountsData = await getAccountsFromWallet({
+				api,
+				apiReady,
+				chosenWallet: loginWallet || (localStorage.getItem('loginWallet') as Wallet),
+				loginAddress,
+				network
+			});
+			setAccounts(accountsData?.accounts || []);
+			const balance = new BN(accountData.data.free.toString() || '0');
+			setAvailableBalance(balance);
+
+			if (balance.lt(ZERO_BN)) {
+				queueNotification({
+					header: 'Insufficient Balance',
+					message: 'Your balance is insufficient.',
+					status: NotificationStatus.ERROR
+				});
+				setShowBalanceAlert(true);
+			}
+			setShowBalanceAlert(false);
+		} catch (error) {
+			console.error('Failed to fetch balance:', error);
+		} finally {
+			setLoadingStatus({ isLoading: false, message: '' });
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
-		const loadBalance = async () => {
-			try {
-				setLoadingStatus({ isLoading: true, message: 'Fetching balance' });
-
-				const accountData = await api.query.system.account(loginAddress);
-				const accountsData = await getAccountsFromWallet({
-					api,
-					apiReady,
-					chosenWallet: loginWallet || (localStorage.getItem('loginWallet') as Wallet),
-					loginAddress,
-					network
-				});
-				setAccounts(accountsData?.accounts || []);
-				const balance = new BN(accountData.data.free.toString() || '0');
-				setAvailableBalance(balance);
-
-				if (balance.lt(ZERO_BN)) {
-					queueNotification({
-						header: 'Insufficient Balance',
-						message: 'Your balance is insufficient.',
-						status: NotificationStatus.ERROR
-					});
-					setShowBalanceAlert(true);
-				}
-				setShowBalanceAlert(false);
-			} catch (error) {
-				console.error('Failed to fetch balance:', error);
-			} finally {
-				setLoadingStatus({ isLoading: false, message: '' });
-			}
-		};
 
 		loadBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

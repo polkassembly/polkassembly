@@ -29,4 +29,5 @@ export interface IBountyListing {
 	categories: string[];
 	children?: IBountyListing;
 	childBounties?: IChildBounty[];
+	post_index?: any;
 }

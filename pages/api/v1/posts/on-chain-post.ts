@@ -394,7 +394,7 @@ export async function getComments(
 			const data = doc.data();
 			const history = data?.history
 				? data.history.map((item: any) => {
-						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+						return { ...item, created_at: item?.created_at?.toDate ? String(item?.created_at.toDate()) : item?.created_at };
 				  })
 				: [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
@@ -417,7 +417,7 @@ export async function getComments(
 						comment_reactions: getDefaultReactionObj(),
 						comment_source: 'polkassembly',
 						content: '[Deleted]',
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						created_at: data.created_at?.toDate ? String(data.created_at.toDate()) : data.created_at,
 						history: [],
 						id: data.id,
 						isExpertComment: data?.isisExpertComment || false,
@@ -438,7 +438,7 @@ export async function getComments(
 						comment_reactions: comment_reactions,
 						comment_source: data.comment_source || 'polkassembly',
 						content: data.content,
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						created_at: data.created_at?.toDate ? String(data.created_at.toDate()) : data.created_at,
 						history: history,
 						id: data.id,
 						isExpertComment: data?.isExpertComment || false,
@@ -476,9 +476,9 @@ export async function getComments(
 						}
 						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
 						comment.replies.push({
-							comment_id,
+							comment_id: comment_id || doc?.id,
 							content: data.isDeleted ? '[Deleted]' : content,
-							created_at: created_at?.toDate ? created_at.toDate() : created_at,
+							created_at: created_at?.toDate ? String(created_at.toDate()) : created_at,
 							id: id,
 							isDeleted: data.isDeleted || false,
 							is_custom_username: false,

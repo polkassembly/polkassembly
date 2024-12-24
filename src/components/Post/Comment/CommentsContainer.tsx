@@ -35,7 +35,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary } from '~src/types';
+import { ESentiments, ICommentsSummary, IUserCreatedBounty } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -75,6 +75,7 @@ export function getStatus(type: string) {
 interface ICommentsContainerProps {
 	className?: string;
 	id: number | null | undefined;
+	postInfo?: IUserCreatedBounty;
 }
 
 export interface ITimeline {
@@ -104,7 +105,7 @@ export const getSortedComments = (comments: { [index: string]: Array<IComment> }
 };
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
-	const { className, id } = props;
+	const { className, id, postInfo } = props;
 	const { loginAddress, isUserOnchainVerified, addresses } = useUserDetailsSelector();
 	const {
 		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
@@ -119,7 +120,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
-	let allComments = Object.values(comments)?.flat() || [];
+	let allComments = Object.values(postInfo?.comments || comments)?.flat() || [];
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
@@ -364,6 +365,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					) : (
 						<PostCommentForm
 							className='mb-2'
+							postInfo={postInfo}
 							setCurrentState={handleCurrentCommentAndTimeline}
 						/>
 					)}

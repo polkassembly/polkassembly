@@ -151,7 +151,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					created_at={created_at}
 					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]'}`}
 					comment={comment}
-					commentId={id}
+					commentId={comment?.id || id}
 					content={modifiedContent || content}
 					postId={postIndex}
 					proposalType={postType}

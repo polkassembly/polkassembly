@@ -95,6 +95,7 @@ const SubmissionComponent = ({ submissions, bountyProposer }: { submissions: ICh
 							openModal={openModal}
 							setOpenModal={setOpenModal}
 							submission={submission}
+							bountyProposer={bountyProposer}
 						/>
 					</div>
 				);

@@ -417,7 +417,7 @@ export async function getComments(
 						comment_reactions: getDefaultReactionObj(),
 						comment_source: 'polkassembly',
 						content: '[Deleted]',
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						created_at: data.created_at?.toDate ? String(data.created_at.toDate()) : data.created_at,
 						history: [],
 						id: data.id,
 						isExpertComment: data?.isisExpertComment || false,
@@ -476,7 +476,7 @@ export async function getComments(
 						}
 						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
 						comment.replies.push({
-							comment_id,
+							comment_id: comment_id || doc?.id,
 							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,

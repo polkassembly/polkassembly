@@ -214,6 +214,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			)}
 
 			{/* Footer */}
+
 			<div className='mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
 				<Image
 					src={'assets/bounty-icons/bounty-coming-soon.svg'}
@@ -221,6 +222,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					alt='curator'
 					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
 				/>
+
 				<BountyActivities />
 			</div>
 			<div className='sticky bottom-0 z-20 -ml-4 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black md:hidden'>

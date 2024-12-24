@@ -91,7 +91,7 @@ const SubmissionDetailModal = ({ openModal, setOpenModal, submission }: Props) =
 				{link && (
 					<div className='flex w-min items-center gap-4 rounded-[10px] border border-solid border-[#D2D8E0B2] px-3 py-2 dark:border-separatorDark'>
 						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Link:</span>
-						<span className='text-[13px] text-blue-light-high dark:text-blue-dark-high'>{link}</span>
+						<span className='whitespace-nowrap text-[13px] text-blue-light-high dark:text-blue-dark-high'>{link}</span>
 					</div>
 				)}
 			</div>

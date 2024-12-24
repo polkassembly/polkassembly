@@ -14,7 +14,7 @@ const UserBountyPage = ({ post }: { post: IUserCreatedBounty }) => {
 				<BountyPost post={post} />
 				<BountyDetails post={post} />
 			</div>
-			<BountySubmission />
+			<BountySubmission post={post} />
 		</section>
 	);
 };

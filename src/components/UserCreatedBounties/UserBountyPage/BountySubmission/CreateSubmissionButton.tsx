@@ -4,9 +4,12 @@
 import React from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
-const CreateSubmissionButton = () => {
+const CreateSubmissionButton = ({ setOpenModal }: { setOpenModal: (pre: boolean) => void }) => {
 	return (
-		<div className='flex cursor-pointer items-center gap-[6px] rounded-md bg-[#E5007A] px-3 py-[5px]'>
+		<div
+			className='flex cursor-pointer items-center gap-[6px] rounded-md bg-[#E5007A] px-3 py-[5px]'
+			onClick={() => setOpenModal(true)}
+		>
 			<ImageIcon
 				alt='icon'
 				src='/assets/icons/user-bounties/submission-white-icon.svg'

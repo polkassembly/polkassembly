@@ -175,7 +175,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 				Join our Community to discuss, contribute and get regular updates from us!
 				{showGallery && showGov2Links && (
 					<span
-						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
+						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary dark:text-blue-dark-helper'}
 						onClick={() => setShowGallery(false)}
 					>
 						Minimize Gallery
@@ -183,7 +183,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 				)}
 				{!showGallery && showGov2Links && (
 					<span
-						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
+						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary dark:text-blue-dark-helper'}
 						onClick={() => setShowGallery(true)}
 					>
 						View Gallery

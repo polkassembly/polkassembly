@@ -51,7 +51,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 							</h3>
 						</div>
 					}
-					key='1'
+					key='userInfoTab'
 				>
 					<div>
 						{postAddr?.map((addr: any, index: number) => (

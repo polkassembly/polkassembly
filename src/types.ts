@@ -1097,6 +1097,13 @@ export enum EChildbountySubmissionStatus {
 	OUTDATED = 'outdated',
 	DELETED = 'deleted'
 }
+export enum EUserCreatedBountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	DELETED = 'deleted',
+	PAID = 'paid'
+}
 
 export enum EPendingCuratorReqType {
 	SENT = 'sent',
@@ -1234,6 +1241,7 @@ export interface IUserCreatedBounty {
 	reward: string;
 	status: EUserCreatedBountiesStatuses;
 	submission_guidelines: string;
+	claimed_percentage: number;
 	tags: string[];
 	title: string;
 	network?: string;
@@ -1244,4 +1252,9 @@ export interface IUserCreatedBounty {
 	user_id: number;
 	comments?: any[];
 	index?: number;
+}
+export enum EUserCreatedBountyActions {
+	EDIT = 'edit',
+	DELETE = 'delete',
+	APPROVE = 'approve'
 }

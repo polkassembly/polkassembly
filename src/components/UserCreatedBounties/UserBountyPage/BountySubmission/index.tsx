@@ -110,7 +110,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 								src='/assets/icons/user-bounties/submission-icon.svg'
 							/>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Submissions</span>
-							<span className=' text-base text-[#334D6E]'>(0)</span>
+							<span className=' text-base text-[#334D6E]'>({`${submissions.length}`})</span>
 						</div>
 						<CreateSubmissionButton setOpenModal={setOpenModal} />
 					</div>
@@ -118,6 +118,11 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					<SubmissionComponent
 						submissions={submissions}
 						bountyProposer={post?.proposer}
+					/>
+					<CreateSubmissionForm
+						openModal={openModal}
+						setOpenModal={setOpenModal}
+						parentBountyIndex={post?.post_index}
 					/>
 				</div>
 			</Spin>

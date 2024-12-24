@@ -41,7 +41,11 @@ const SubmissionDetailModal = ({ openModal, setOpenModal, submission }: Props) =
 			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
 			className={` ${dmSans.variable} ${dmSans.className} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setOpenModal(false)}
-			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
+			closeIcon={
+				<span onClick={() => setOpenModal(false)}>
+					<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />
+				</span>
+			}
 		>
 			<div>
 				<div className='flex items-center gap-1 rounded-full'>

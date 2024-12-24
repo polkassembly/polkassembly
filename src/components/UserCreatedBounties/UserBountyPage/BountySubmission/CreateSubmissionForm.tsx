@@ -131,6 +131,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
 			setOpenModal(false);
+			window.location.reload();
 		} catch (error) {
 			console.log(error);
 		}

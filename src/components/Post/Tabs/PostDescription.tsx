@@ -27,7 +27,6 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import { MenuProps, Popover } from 'antd';
 import ExpandableMarkdown from './ExpandableMarkdown';
 import Image from 'next/image';
-import CreateBountyModal from '~src/components/UserCreatedBounties/CreateBountyModal';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 
@@ -35,10 +34,14 @@ const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), 
 	loading: () => (
 		<div>
 			<Skeleton active />
-			<Skeleton
-				className='mt-12'
-				active
-			/>
+		</div>
+	),
+	ssr: false
+});
+const CreateBountyModal = dynamic(() => import('~src/components/UserCreatedBounties/CreateBountyModal'), {
+	loading: () => (
+		<div>
+			<Skeleton active />
 		</div>
 	),
 	ssr: false

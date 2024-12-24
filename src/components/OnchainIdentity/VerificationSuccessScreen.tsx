@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { IVerificationSuccessState } from './types';
+import classNames from 'classnames';
 
 const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose, isUserCreatedBounty }: IVerificationSuccessState) => {
 	const router = useRouter();
@@ -45,11 +46,11 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 					}}
 					loading={loading}
 					text={isUserCreatedBounty ? 'Done' : 'Continue verification'}
-					className='mt-6'
+					className={classNames('mt-6', isUserCreatedBounty ? 'rounded-md px-10' : '')}
 					variant='primary'
-					height={40}
+					height={isUserCreatedBounty ? 32 : 40}
 				/>
-				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-[18px] w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
+				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-3 w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
 			</div>
 		</Modal>
 	);

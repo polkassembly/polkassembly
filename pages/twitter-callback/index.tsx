@@ -74,7 +74,7 @@ const TwitterCallback = ({
 					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
-							{/* TODO: Check error message from BE when email already verified */}
+							{/* TODO: Check error message from BE when twitter already verified */}
 							<FilteredError text={error?.message || error} />
 						</h2>
 					</article>

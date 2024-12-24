@@ -93,7 +93,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.count().get();
 
-		const totalCreatedBountiesCount = totalCreatedBountiesSnapshot?.data()?.count;
+		const totalCreatedBountiesCount = (totalCreatedBountiesSnapshot?.data()?.count || 0) + 1;
 
 		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
 

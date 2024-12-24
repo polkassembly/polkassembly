@@ -20,7 +20,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
-import FollowersAndFollowing from './Follow/FollowersAndFollowing';
+import FollowersAndFollowing from '../Follow/FollowersAndFollowing';
 
 interface Props {
 	className?: string;

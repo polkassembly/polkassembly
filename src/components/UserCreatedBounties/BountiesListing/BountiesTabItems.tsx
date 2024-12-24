@@ -6,17 +6,16 @@ import { useTheme } from 'next-themes';
 import React, { FC } from 'react';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import { Tabs } from '~src/ui-components/Tabs';
-import { useRouter } from 'next/router';
 import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
+	onTabChange: (key: string) => void;
 }
 
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const router = useRouter();
 
 	const bountyStatuses = [
 		{ key: 'all', label: 'All' },
@@ -25,34 +24,24 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 			label: value?.[0].toUpperCase() + value?.slice(1)
 		}))
 	];
+
 	const tabItems = bountyStatuses.map((status) => ({
 		children: <BountiesTable bounties={props.bounties?.length > 0 ? (props.bounties as IUserCreatedBounty[]) : []} />,
 		key: status.key,
 		label: <p>{status.label}</p>
 	}));
 
-	const onTabChange = (key: string) => {
-		const status = key === 'all' ? '' : key.toLowerCase();
-		router.push({
-			pathname: router.pathname,
-			query: {
-				...router.query,
-				page: 1,
-				status: encodeURIComponent(JSON.stringify(status))
-			}
-		});
-	};
 	return (
 		<div className='relative mt-5 md:mt-0'>
 			<div className='absolute -top-2 right-5 z-50 md:top-8'>
-				<FilterByTags />
+				<FilterByTags isUsedInBountyPage={true} />
 			</div>
 
 			<div>
 				<Tabs
 					theme={theme}
 					type='card'
-					onChange={onTabChange}
+					onChange={props.onTabChange}
 					className='ant-tabs-tab-bg-white pt-5 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
 					items={tabItems}
 				/>

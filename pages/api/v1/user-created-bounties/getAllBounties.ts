@@ -16,7 +16,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
 
 interface Args {
-	status: EUserCreatedBountiesStatuses;
+	status: EUserCreatedBountiesStatuses | undefined;
 	filterBy: string[];
 	page: number;
 	network: string;

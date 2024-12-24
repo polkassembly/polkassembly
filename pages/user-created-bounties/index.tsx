@@ -18,6 +18,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import CreateBountyBtn from '~src/components/UserCreatedBounties/CreateBountyBtn';
 import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
 import { getUserCreatedBounties } from 'pages/api/v1/user-created-bounties/getAllBounties';
+import { EUserCreatedBountiesStatuses } from '~src/types';
 
 interface IUserBountiesListingProps {
 	network: string;
@@ -30,13 +31,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const page = query?.page || 1;
 	const filterBy = query?.filterBy ? JSON.parse(decodeURIComponent(String(query?.filterBy))) : [];
-	const status = query?.status ? JSON.parse(decodeURIComponent(String(query?.status))) : '';
+	const status = query?.status && query?.status !== '' ? (query?.status as EUserCreatedBountiesStatuses) : undefined;
 
 	const { data } = await getUserCreatedBounties({
 		filterBy: filterBy,
 		network,
 		page: Number(page),
-		status
+		status: status || undefined
 	});
 
 	return {
@@ -72,6 +73,18 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props?.network]);
 
+	const onTabChange = (key: string) => {
+		const status = key === 'all' ? undefined : key.toLowerCase();
+		router.push({
+			pathname: router.pathname,
+			query: {
+				...router.query,
+				page: 1,
+				...(status === undefined ? { status: undefined } : { status: encodeURIComponent(status) })
+			}
+		});
+	};
+
 	return (
 		<div>
 			<SEOHead
@@ -102,7 +115,11 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 						<CreateBountyBtn className='hidden md:block' />
 					</div>
 				</div>
-				<BountiesTabItems bounties={data?.bounties} />
+
+				<BountiesTabItems
+					bounties={data?.bounties}
+					onTabChange={onTabChange}
+				/>
 
 				<div className='mb-5 mt-3 flex justify-end'>
 					{bounties?.length > BOUNTIES_LISTING_LIMIT && (

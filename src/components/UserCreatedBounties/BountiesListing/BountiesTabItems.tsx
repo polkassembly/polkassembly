@@ -61,7 +61,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 				query: {
 					...router.query,
 					page: 1,
-					status: key.toUpperCase()
+					status: key.toLowerCase()
 				}
 			});
 		}

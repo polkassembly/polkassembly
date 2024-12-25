@@ -34,8 +34,6 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			throw apiErrorWithStatusCode(`No bounty found with id-${bountyId}`, 400);
 		}
 
-		//TODO: pie graph percentage acc to submission count
-		//TODO: submissions needs to be added
 		//TODO: subscribers
 
 		const bountyDoc = userCreatedBountiesSnapshot?.docs?.[0];

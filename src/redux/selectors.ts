@@ -28,6 +28,7 @@ import { IGlobalStore } from './global/@types';
 import { IChildBountyCreationStore } from './childBountyCreation/@types';
 import { IFollowState } from './follow/@types';
 import { IChatsStore } from './chats/@types';
+import { ICreateBountyFormState } from './createBountyForm/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -123,6 +124,9 @@ const useFollowSelector = () => {
 const useChatsSelector = () => {
 	return useSelector<TAppState, IChatsStore>((state) => state.chats);
 };
+const useCreateBountyFormSelector = () => {
+	return useSelector<TAppState, ICreateBountyFormState>((state) => state.createBountyForm);
+};
 
 export {
 	useNetworkSelector,
@@ -149,5 +153,6 @@ export {
 	useGlobalSelector,
 	useChildBountyCreationSelector,
 	useFollowSelector,
-	useChatsSelector
+	useChatsSelector,
+	useCreateBountyFormSelector
 };

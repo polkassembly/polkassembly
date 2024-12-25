@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import React, { useState, useEffect, FC, useCallback } from 'react';
 import { spaceGrotesk } from 'pages/_app';
 import { Form, DatePicker } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { useTheme } from 'next-themes';
@@ -25,6 +26,9 @@ import { IVerificationResponse } from 'pages/api/v1/verification';
 import { usePostDataContext } from '~src/context';
 import _ from 'lodash';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { setFormField, resetForm } from '~src/redux/createBountyForm';
+import { useDispatch } from 'react-redux';
+import { ICreateBountyFormState } from '~src/redux/createBountyForm/@types';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -40,6 +44,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const { className, setOpenCreateBountyModal, isUsedForEdit, postInfo } = props;
 	const { setPostData } = usePostDataContext();
 	const { loginAddress } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [startLoading, setStartLoading] = useState<boolean>(false);
@@ -52,6 +57,32 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [newBountyAmount, setNewBountyAmount] = useState<BN>(ZERO_BN);
 	const [clickedVerifyBtn, setClickedVerifiedBtn] = useState<boolean>(false);
 
+	const createBountyFormState = useCreateBountyFormSelector();
+
+	useEffect(() => {
+		form.setFieldsValue({
+			address: createBountyFormState.address,
+			balance: createBountyFormState.balance,
+			claims: createBountyFormState.claims,
+			deadline: createBountyFormState.deadline ? dayjs(createBountyFormState.deadline) : null,
+			description: createBountyFormState.description,
+			guidelines: createBountyFormState.guidelines,
+			title: createBountyFormState.title,
+			twitter: createBountyFormState.twitter,
+			categories: createBountyFormState.categories
+		});
+	}, [createBountyFormState, form]);
+
+	useEffect(() => {
+		form.setFieldsValue({ address: selectedAddress });
+	}, [selectedAddress, form]);
+
+	const handleFormValueChange = (changedValues: Partial<ICreateBountyFormState>) => {
+		Object.keys(changedValues).forEach((key) => {
+			const typedKey = key as keyof ICreateBountyFormState;
+			dispatch(setFormField(typedKey, changedValues[typedKey]));
+		});
+	};
 	const allowCreateBounty = () => {
 		const formValues = form?.getFieldsValue(['title', 'content', 'address', 'claims', 'deadline', 'twitter']);
 
@@ -96,7 +127,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		}
 
 		setStartLoading(false);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,9 +164,13 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		}
 	};
 
+	const handleReset = () => {
+		dispatch(resetForm() as any);
+		form.resetFields();
+	};
+
 	const handleFormSubmit = async (values: any) => {
 		setLoading(true);
-		// title, content, tags, reward, proposerAddress, submissionGuidelines, deadlineDate, maxClaim
 		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/user-created-bounties/createBounty', {
 			content: values?.content,
 			deadlineDate: dayjs(values?.deadline).toDate(),
@@ -161,6 +195,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			});
 			setLoading(false);
 			setOpenCreateBountyModal?.(false);
+			handleReset();
 		}
 	};
 	const handleEditBounty = async (values: any) => {
@@ -206,8 +241,8 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					description: postInfo?.content || '',
 					guidelines: postInfo?.submissionGuidelines || '',
 					title: postInfo?.title || ''
-					// categories: postInfo?.tags || [],
 				}}
+				onValuesChange={handleFormValueChange}
 			>
 				{/* address and twitter */}
 				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>

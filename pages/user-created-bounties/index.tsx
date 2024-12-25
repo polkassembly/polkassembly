@@ -31,7 +31,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const page = query?.page || 1;
 	const filterBy = query?.filterBy ? JSON.parse(decodeURIComponent(String(query?.filterBy))) : [];
-	const status = query?.status && query?.status !== '' ? (query?.status as EUserCreatedBountiesStatuses) : undefined;
+
+	let status: EUserCreatedBountiesStatuses | undefined = undefined;
+	if (query?.status && query?.status !== '') {
+		try {
+			status = decodeURIComponent(String(query?.status)).toLowerCase() as EUserCreatedBountiesStatuses;
+		} catch (err) {
+			console.error('Error decoding status:', err);
+		}
+	}
 
 	const { data } = await getUserCreatedBounties({
 		filterBy: filterBy,

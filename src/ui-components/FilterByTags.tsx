@@ -91,6 +91,21 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		}
 	};
 
+	const handleFilterByClickinBounty = (key: string[]) => {
+		const queryParams = { ...router.query };
+
+		delete queryParams.filterBy;
+
+		if (key.length > 0) {
+			queryParams.filterBy = encodeURIComponent(JSON.stringify(key));
+		}
+
+		router.push({
+			pathname: router.pathname,
+			query: queryParams
+		});
+	};
+
 	const handleExits = (value: string) => {
 		value = value.toLowerCase();
 		const isExits = tags.filter((tag) => tag === value);
@@ -142,7 +157,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 							className='flex cursor-pointer justify-center text-[10px] font-normal text-pink_primary'
 							onClick={() => {
 								setTags([]);
-								!isSearch && handleFilterByClick([]);
+								!isSearch && isUsedInBountyPage ? handleFilterByClickinBounty([]) : handleFilterByClick([]);
 								setSearchInput('');
 							}}
 						>

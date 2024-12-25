@@ -118,6 +118,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					<SubmissionComponent
 						submissions={submissions}
 						bountyProposer={post?.proposer}
+						bountyIndex={post?.post_index}
 					/>
 					<CreateSubmissionForm
 						openModal={openModal}

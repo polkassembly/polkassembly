@@ -5,8 +5,8 @@ import { Divider, Modal } from 'antd';
 import { dmSans } from 'pages/_app';
 import React from 'react';
 import { styled } from 'styled-components';
-import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { IChildBountySubmission } from '~src/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import NameLabel from '~src/ui-components/NameLabel';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -21,9 +21,22 @@ interface Props {
 	showReactionButtons: boolean;
 	setOpenModal: (pre: boolean) => void;
 	submission: IChildBountySubmission;
+	submissionProposerAddress: string;
+	parentBountyProposerAddress: string;
+	submissionId: string;
+	parentBountyIndex: number;
 }
 
-const SubmissionDetailModal = ({ openModal, setOpenModal, submission, showReactionButtons }: Props) => {
+const SubmissionDetailModal = ({
+	openModal,
+	setOpenModal,
+	submission,
+	showReactionButtons,
+	parentBountyProposerAddress,
+	submissionProposerAddress,
+	parentBountyIndex,
+	submissionId
+}: Props) => {
 	const { title, proposer, createdAt, reqAmount, content, link } = submission;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
@@ -96,7 +109,16 @@ const SubmissionDetailModal = ({ openModal, setOpenModal, submission, showReacti
 						<span className='whitespace-nowrap text-[13px] text-blue-light-high dark:text-blue-dark-high'>{link}</span>
 					</div>
 				)}
-				{showReactionButtons && <SubmissionReactionButton isUsedinModal={true} />}
+				{showReactionButtons && (
+					<SubmissionReactionButton
+						isUsedinModal={true}
+						parentBountyProposerAddress={parentBountyProposerAddress}
+						submissionProposerAddress={submissionProposerAddress}
+						parentBountyIndex={parentBountyIndex}
+						submissionId={submissionId}
+						setOpenModal={setOpenModal}
+					/>
+				)}
 			</div>
 		</Modal>
 	);

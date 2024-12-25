@@ -16,7 +16,7 @@ const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
 });
 
-const SubmissionComponent = ({ submissions, bountyProposer }: { submissions: IChildBountySubmission[]; bountyProposer: string }) => {
+const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { submissions: IChildBountySubmission[]; bountyProposer: string; bountyIndex: number }) => {
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
@@ -85,13 +85,25 @@ const SubmissionComponent = ({ submissions, bountyProposer }: { submissions: ICh
 							<div className='mt-1'>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
-							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && <SubmissionReactionButton />}
+							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
+								<SubmissionReactionButton
+									parentBountyProposerAddress={bountyProposer}
+									submissionProposerAddress={submission.proposer}
+									parentBountyIndex={bountyIndex}
+									submissionId={submission.id}
+									setOpenModal={setOpenModal}
+								/>
+							)}
 						</div>
 						<SubmissionDetailModal
 							openModal={openModal}
 							setOpenModal={setOpenModal}
 							submission={submission}
-							showReactionButtons={true}
+							showReactionButtons={status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress}
+							parentBountyProposerAddress={bountyProposer}
+							submissionProposerAddress={submission.proposer}
+							parentBountyIndex={bountyIndex}
+							submissionId={submission.id}
 						/>
 					</div>
 				);

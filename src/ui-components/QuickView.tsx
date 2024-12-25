@@ -248,7 +248,7 @@ const QuickView = ({
 										<Image
 											src='/assets/profile/white-dollar.svg'
 											className='pink-color mr-1 rounded-full'
-											style={theme == 'dark' ? { filter: 'invert(44%) sepia(98%) saturate(3203%) hue-rotate(309deg) brightness(101%) contrast(101%)' } : {}}
+											style={theme == 'dark' ? { filter: 'invert(44%) sepia(98%) saturate(3203%) hue-rotate(309deg) brightness(101%) contrast(101%)' } : {filter: 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)'}}
 											height={20}
 											width={20}
 											alt='edit logo'

@@ -55,7 +55,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
-	const [bounties, setBounties] = useState<IUserCreatedBounty[]>(props.bounties);
+	const [bounties, setBounties] = useState<IUserCreatedBounty[]>([]);
 	const handleRowClick = (record: IBountyListing) => {
 		router.push(`/user-created-bounty/${record?.post_index}`);
 	};
@@ -101,6 +101,11 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 
 		return data?.child_bounties || [];
 	};
+
+	useEffect(() => {
+		const sortedBounties = props.bounties.sort((a, b) => b.post_index - a.post_index); // Sorting in descending order
+		setBounties(sortedBounties);
+	}, [props.bounties]);
 
 	const columns: TableColumnsType<IBountyListing> = [
 		{

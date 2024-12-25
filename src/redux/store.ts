@@ -33,6 +33,7 @@ import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 import { progressReportStore } from './progressReport';
 import { globalStore } from './global';
 import { childBountyCreationStore } from './childBountyCreation';
+import { communityTabStore } from './communityTab';
 import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
 import { chatsStore } from './chats';
@@ -131,6 +132,7 @@ export const makeStore = () => {
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
 		[batchVoteStore.name]: batchVoteStore.reducer,
+		[communityTabStore.name]: communityTabStore.reducer,
 		[progressReportStore.name]: progressReportStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,

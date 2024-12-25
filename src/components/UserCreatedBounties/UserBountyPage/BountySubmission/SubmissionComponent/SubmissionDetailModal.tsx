@@ -14,18 +14,18 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
+import SubmissionReactionButton from './SubmissionReactionButton';
 
 interface Props {
 	openModal: boolean;
+	showReactionButtons: boolean;
 	setOpenModal: (pre: boolean) => void;
 	submission: IChildBountySubmission;
-	bountyProposer: string;
 }
 
-const SubmissionDetailModal = ({ openModal, setOpenModal, submission, bountyProposer }: Props) => {
+const SubmissionDetailModal = ({ openModal, setOpenModal, submission, showReactionButtons }: Props) => {
 	const { title, proposer, createdAt, reqAmount, content, link } = submission;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const { loginAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const date = new Date(createdAt);
@@ -96,15 +96,7 @@ const SubmissionDetailModal = ({ openModal, setOpenModal, submission, bountyProp
 						<span className='whitespace-nowrap text-[13px] text-blue-light-high dark:text-blue-dark-high'>{link}</span>
 					</div>
 				)}
-				{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
-					<>
-						<Divider className='border-l-1 my-4 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
-						<div className=' flex justify-end gap-4'>
-							<button className='w-[156px] rounded-[4px] border border-solid border-[#E5007A] bg-transparent px-4 py-2 text-sm font-medium text-[#E5007A]'>Reject</button>
-							<button className='w-[156px] rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'>Approve</button>
-						</div>
-					</>
-				)}
+				{showReactionButtons && <SubmissionReactionButton isUsedinModal={true} />}
 			</div>
 		</Modal>
 	);

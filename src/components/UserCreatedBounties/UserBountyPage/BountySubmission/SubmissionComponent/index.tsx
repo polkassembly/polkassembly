@@ -10,6 +10,7 @@ import { Divider } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
+import SubmissionReactionButton from './SubmissionReactionButton';
 
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
@@ -84,18 +85,13 @@ const SubmissionComponent = ({ submissions, bountyProposer }: { submissions: ICh
 							<div className='mt-1'>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
-							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
-								<div className='mt-2 flex gap-4'>
-									<button className='w-full rounded-[4px] border border-solid border-[#E5007A] bg-transparent px-4 py-2 text-sm font-medium text-[#E5007A]'>Reject</button>
-									<button className='w-full rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'>Approve</button>
-								</div>
-							)}
+							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && <SubmissionReactionButton />}
 						</div>
 						<SubmissionDetailModal
 							openModal={openModal}
 							setOpenModal={setOpenModal}
 							submission={submission}
-							bountyProposer={bountyProposer}
+							showReactionButtons={true}
 						/>
 					</div>
 				);

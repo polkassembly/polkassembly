@@ -47,8 +47,6 @@ const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profi
 			}
 			if (data?.followingIds) {
 				const ids = data.followingIds;
-				console.log('ids', ids);
-
 				dispatch(setFollowingIds(ids));
 			}
 		} catch (err) {

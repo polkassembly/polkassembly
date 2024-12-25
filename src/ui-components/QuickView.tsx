@@ -261,7 +261,7 @@ const QuickView = ({
 					)}
 					{loginUserId && !isNaN(loginUserId) && (
 						<FollowButton
-							userId={loginUserId}
+							userId={userId as any}
 							buttonClassName='w-1/2 h-8'
 						/>
 					)}

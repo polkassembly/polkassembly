@@ -27,6 +27,7 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, userId));
 
 	const handleFollowClick = () => {
+		if (!userId) return;
 		if (isUserFollowing) {
 			dispatch(removeFollowingId(userId));
 			unfollowUser(userId);
@@ -53,7 +54,7 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 				<CustomButton
 					shape='circle'
 					variant='primary'
-					className={`${buttonClass} ${!id && 'opacity-50'}`}
+					className={`${buttonClass} ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}
 					height={buttonHeight}
@@ -71,7 +72,7 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 				<CustomButton
 					shape='circle'
 					variant='link'
-					className={`w-min px-2 text-xs font-normal ${!id && 'opacity-50'}`}
+					className={`w-min px-2 text-xs font-normal ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}
 					height={20}

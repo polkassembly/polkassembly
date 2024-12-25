@@ -205,7 +205,7 @@ const QuickView = ({
 								<article className='flex items-center justify-center gap-1 text-xs text-bodyBlue dark:border-[#5A5A5A] '>
 									<div className='flex items-center gap-1 font-medium text-lightBlue'>
 										<JudgementIcon />
-										<span className='dark:text-[#595959]'>Judgements:</span>
+										<span className='dark:text-[#595959] text-[#9aa7b9]'>Judgements:</span>
 									</div>
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{judgements

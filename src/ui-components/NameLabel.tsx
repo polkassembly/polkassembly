@@ -48,17 +48,21 @@ const NameLabel = ({
 	const [address, setAddress] = useState<string>('');
 	const [leaderboardAstrals, setLeaderboardAstrals] = useState<number | null | undefined>(null);
 	const [userImage, setUserImage] = useState<string | null | undefined>(null);
+	const [proposerUserId, setProposerUserId] = useState<number | null>(null);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 		if (data) {
 			setSocials(data?.social_links || []);
 			setProfileCreatedAt(data?.created_at || null);
+			setProposerUserId(data?.user_id || null);
 			if (data?.addresses) {
 				setAddress(data?.addresses[0]);
 			}
 			setLeaderboardAstrals(data?.profile_score);
 			setUserImage(data?.image);
+		} else {
+			setProposerUserId(null);
 		}
 	};
 	useEffect(() => {
@@ -86,6 +90,7 @@ const NameLabel = ({
 								setOpen={setOpen}
 								profileCreatedAt={profileCreatedAt}
 								username={username || ''}
+								userId={proposerUserId}
 								polkassemblyUsername={username}
 								enableTipping={!!address}
 								setOpenAddressChangeModal={setOpenAddressChangeModal}

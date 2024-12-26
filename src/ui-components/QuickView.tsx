@@ -218,8 +218,13 @@ const QuickView = ({
 						</div>
 					</div>
 				</div>
-				<div className={loginUserId && !isNaN(loginUserId) ? 'flex justify-between' : 'flex justify-start'}>
-					{loginUserId && !isNaN(loginUserId) && <FollowersAndFollowing userId={loginUserId} />}
+				<div className={userId && !isNaN(userId) ? 'flex justify-between' : 'flex justify-start'}>
+					{!!userId && !isNaN(userId) && (
+						<FollowersAndFollowing
+							disableTooltip
+							userId={userId}
+						/>
+					)}
 					<SocialsHandle
 						address={address}
 						onchainIdentity={identity || null}
@@ -227,7 +232,7 @@ const QuickView = ({
 					/>
 				</div>
 			</div>
-			{loginUserId != userId && (
+			{loginUserId != userId && !!loginUserId && (
 				<div className='mt-2 flex justify-between gap-2'>
 					{!TippingUnavailableNetworks.includes(network) && (
 						<Tooltip
@@ -263,7 +268,7 @@ const QuickView = ({
 							</div>
 						</Tooltip>
 					)}
-					{loginUserId && !isNaN(loginUserId) && (
+					{!!loginUserId && !isNaN(loginUserId) && (
 						<FollowButton
 							userId={userId as any}
 							buttonClassName='w-1/2 h-8'

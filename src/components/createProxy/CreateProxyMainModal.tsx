@@ -333,7 +333,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 			open={openModal}
 			footer={
-				<div className='my-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+				<div className='mb-6 mt-3 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						buttonsize='sm'
@@ -379,10 +379,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						}}
 						disabled={loadingStatus.isLoading}
 						onFinish={handleSubmit}
+						className=''
 					>
 						{/* Address */}
 						<Form.Item
 							name='loginAddress'
+							className='mb-2'
 							rules={[
 								{ required: true, message: 'Address is required' },
 								{
@@ -495,7 +497,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						<Form.Item
-							className='mt-0 pt-0'
+							className='mb-3 pt-0'
 							name='createPureProxy'
 							valuePropName='checked'
 							rules={[
@@ -552,6 +554,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									}
 								}
 							]}
+							className='-mt-[2px] mb-0'
 						>
 							<Select
 								className='flex w-full items-center rounded-[4px] py-1'
@@ -574,7 +577,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 						{/* Advanced Details */}
 						<div
-							className='mt-6 flex cursor-pointer items-center gap-2'
+							className='mt-4 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
 							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
@@ -591,7 +594,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										className='ml-1'
 									/>
 								</label>
-								<Form.Item name='enactment'>
+								<Form.Item
+									name='enactment'
+									className='mb-0'
+								>
 									<Radio.Group
 										className='enactment mt-1 flex flex-col gap-2'
 										value={enactment.key}

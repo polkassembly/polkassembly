@@ -26,6 +26,9 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import ScoreTag from './ScoreTag';
+import FollowersAndFollowing from '../components/Follow/FollowersAndFollowing';
+import FollowButton from '~src/components/Follow/FollowButton';
+import { useTheme } from 'next-themes';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -47,6 +50,7 @@ interface Props {
 	username: string;
 	imgUrl?: string;
 	profileCreatedAt?: Date | null;
+	userId?: number | null;
 	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
 	setOpenTipping: (pre: boolean) => void;
@@ -64,6 +68,7 @@ const QuickView = ({
 	polkassemblyUsername,
 	imgUrl,
 	profileCreatedAt,
+	userId,
 	setOpen,
 	setOpenTipping,
 	socials,
@@ -72,13 +77,14 @@ const QuickView = ({
 	isW3FDelegate = false,
 	leaderboardAstrals
 }: Props) => {
-	const { id, loginAddress } = useUserDetailsSelector();
+	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
+	const { id: loginUserId, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
 	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
-	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const substrateAddress = getEncodedAddress(address, network);
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
@@ -91,7 +97,7 @@ const QuickView = ({
 	};
 
 	const handleTipping = () => {
-		if (!id || !enableTipping) return;
+		if (!loginUserId || !enableTipping) return;
 		if (!loginAddress || !address) {
 			setOpenAddressChangeModal?.(true);
 		} else {
@@ -152,7 +158,6 @@ const QuickView = ({
 								e.preventDefault();
 								window.open(getUserRedirection(polkassemblyUsername || '', address) || '', '_blank');
 							}}
-							// href={`${getUserRedirection(polkassemblyUsername || '', address)}` || ''}
 						>
 							<ShareScreenIcon />
 						</a>
@@ -189,52 +194,82 @@ const QuickView = ({
 								iconWrapperClassName='mt-[5.5px]'
 							/>
 						)}
-						<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
+						<div className={classNames('mt-0.5 flex items-center gap-1 border-solid dark:border-none', profileCreatedAt ? 'justify-between' : 'justify-start')}>
 							{!!profileCreatedAt && (
 								<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
 									Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 								</span>
 							)}
-							<SocialsHandle
-								address={address}
-								onchainIdentity={identity || null}
-								socials={socials || []}
-							/>
+
+							{!!judgements && (
+								<article className='flex items-center justify-center gap-1 text-xs text-bodyBlue dark:border-[#5A5A5A] '>
+									<div className='flex items-center gap-1 font-medium text-lightBlue'>
+										<JudgementIcon />
+										<span className='text-[#9aa7b9] dark:text-[#595959]'>Judgements:</span>
+									</div>
+									<span className='text-bodyBlue dark:text-blue-dark-high'>
+										{judgements
+											?.map(([, jud]) => jud.toString())
+											.join(', ')
+											?.split(',')?.[0] || 'None'}
+									</span>
+								</article>
+							)}
 						</div>
 					</div>
 				</div>
+				<div className={loginUserId && !isNaN(loginUserId) ? 'flex justify-between' : 'flex justify-start'}>
+					{loginUserId && !isNaN(loginUserId) && <FollowersAndFollowing userId={loginUserId} />}
+					<SocialsHandle
+						address={address}
+						onchainIdentity={identity || null}
+						socials={socials || []}
+					/>
+				</div>
 			</div>
-			{!!judgements && (
-				<article className='v mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-high'>
-					<div className='flex items-center gap-1 font-medium text-lightBlue'>
-						<JudgementIcon />
-						<span className='dark:text-[#9E9E9E]'>Judgements:</span>
-					</div>
-					<span className='text-bodyBlue dark:text-blue-dark-high'>
-						{judgements
-							?.map(([, jud]) => jud.toString())
-							.join(', ')
-							?.split(',')?.[0] || 'None'}
-					</span>
-				</article>
-			)}
-			{!TippingUnavailableNetworks.includes(network) && (
-				<Tooltip
-					color='#E5007A'
-					open={!id || !enableTipping ? openTooltip : false}
-					onOpenChange={(e) => setOpenTooltip(e)}
-					title={!id ? 'Login to tip' : 'No Web3 Wallet Detected'}
-				>
-					<div className='flex w-full items-center'>
-						<CustomButton
-							onClick={handleTipping}
-							variant='primary'
-							text='Tip'
-							height={32}
-							className={`w-full p-5 ${!id || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}
+			{loginUserId != userId && (
+				<div className='mt-2 flex justify-between gap-2'>
+					{!TippingUnavailableNetworks.includes(network) && (
+						<Tooltip
+							color='#E5007A'
+							open={!loginUserId || !enableTipping ? openTooltip : false}
+							onOpenChange={(e) => setOpenTooltip(e)}
+							title={!loginUserId ? 'Login to tip' : 'No Web3 Wallet Detected'}
+						>
+							<div className='flex w-1/2 items-center'>
+								<CustomButton
+									onClick={handleTipping}
+									variant={theme == 'dark' ? 'link' : 'default'}
+									shape='circle'
+									height={32}
+									className={`w-full rounded-full p-5 dark:border-[#FF4098] dark:text-[#FF4098]  ${!loginUserId || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}
+								>
+									<div className='flex gap-1 text-sm'>
+										<Image
+											src='/assets/profile/white-dollar.svg'
+											className='pink-color mr-1 rounded-full'
+											style={
+												theme == 'dark'
+													? { filter: 'invert(44%) sepia(98%) saturate(3203%) hue-rotate(309deg) brightness(101%) contrast(101%)' }
+													: { filter: 'brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%)' }
+											}
+											height={20}
+											width={20}
+											alt='edit logo'
+										/>
+										Tip{' '}
+									</div>
+								</CustomButton>
+							</div>
+						</Tooltip>
+					)}
+					{loginUserId && !isNaN(loginUserId) && (
+						<FollowButton
+							userId={userId as any}
+							buttonClassName='w-1/2 h-8'
 						/>
-					</div>
-				</Tooltip>
+					)}
+				</div>
 			)}
 		</div>
 	);

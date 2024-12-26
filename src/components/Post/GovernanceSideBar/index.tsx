@@ -477,9 +477,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					}
 					if (newAPI) {
 						const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
-						const totalIssuance = await newAPI.query.balances.totalIssuance();
+						const totalIssuance = await newAPI.query.balances?.totalIssuance();
 						const issuanceInfo = totalIssuance.sub(inactiveIssuance);
-						const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
+						const referendaInfo = await newAPI?.query?.referenda?.referendumInfoFor(onchainId);
 						const referendaInfoData = referendaInfo.toJSON() as any;
 						if (referendaInfoData?.ongoing?.tally) {
 							const ayesInfo = referendaInfoData.ongoing.tally.ayes;

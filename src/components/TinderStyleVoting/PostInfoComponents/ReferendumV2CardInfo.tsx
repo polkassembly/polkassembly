@@ -94,7 +94,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 			setIsLoading(false);
 			return;
 		}
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(post?.id);
+		const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(post?.id);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
 			setTallyData({
@@ -125,11 +125,11 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 		if (!api || !apiReady) return;
 		(async () => {
 			if (network === 'picasso') {
-				const totalIssuance = await api.query.openGovBalances.totalIssuance();
+				const totalIssuance = await api.query.openGovBalances?.totalIssuance();
 				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
 				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
 			} else {
-				const totalIssuance = await api.query.balances.totalIssuance();
+				const totalIssuance = await api.query.balances?.totalIssuance();
 				const inactiveIssuance = await api.query.balances.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance) as any);
 			}

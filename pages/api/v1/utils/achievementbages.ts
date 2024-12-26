@@ -17,7 +17,7 @@ export async function getTotalSupply(network: string): Promise<BN> {
 	const api = await ApiPromise.create({ provider: wsProvider });
 
 	try {
-		const totalIssuance = await api?.query?.balances?.totalIssuance();
+		const totalIssuance = await api?.query?.balances??.totalIssuance();
 		const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
 		return new BN(totalIssuance.toString()).sub(new BN(inactiveIssuance.toString()));
 	} catch (error) {

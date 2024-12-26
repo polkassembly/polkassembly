@@ -205,6 +205,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form.getFieldValue('proxyType'), form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
 
+	useEffect(() => {
+		if (form.getFieldValue('createPureProxy')) {
+			form.setFieldsValue({ proxyType: ProxyTypeEnum.Any });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form.getFieldValue('createPureProxy')]);
+
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
 		try {
@@ -530,7 +537,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						{/* Proxy Type Selection */}
-						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 						<Form.Item
 							name='proxyType'
 							rules={[
@@ -543,8 +549,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										if (!value) {
 											return Promise.reject(new Error('Please select a Proxy Type'));
 										}
-
-										// Call calculateGasFee when a valid proxy type is selected
 										try {
 											await calculateGasFee();
 											return Promise.resolve();
@@ -572,6 +576,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									),
 									value: key
 								}))}
+								disabled={form.getFieldValue('createPureProxy')} // Disable selection when createPureProxy is true
 							/>
 						</Form.Item>
 

@@ -16,6 +16,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { userDetailsActions } from '~src/redux/userDetails';
+import classNames from 'classnames';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -156,7 +157,7 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
+					addressClassName={classNames('text-lightBlue text-xs dark:text-blue-dark-medium', isSwitchButton?'text-white':'')}
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip

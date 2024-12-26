@@ -121,25 +121,32 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
 									{loading ? (
 										<SkeletonInput active />
-									) : (
-										pureProxyAddress && (
+									) : pureProxyAddress ? (
+										<span className='flex items-center gap-1'>
+											<Address
+												displayInline
+												iconSize={18}
+												isTruncateUsername={false}
+												address={pureProxyAddress}
+												destroyTooltipOnHide
+												disableTooltip
+											/>
 											<span
 												onClick={() => {
 													handleCopylink(pureProxyAddress);
 												}}
-												className='flex items-center gap-1'
+												className='mt-1 cursor-pointer'
 											>
-												<Address
-													displayInline
-													iconSize={18}
-													isTruncateUsername={false}
-													address={pureProxyAddress}
-													destroyTooltipOnHide
-													disableTooltip
-												/>
-												<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+												{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}
 											</span>
-										)
+										</span>
+									) : (
+										<button
+											onClick={fetchProxyAddress}
+											className='ml-2 cursor-pointer rounded border-none bg-blue-500 px-2 py-1 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50'
+										>
+											Refresh
+										</button>
 									)}
 								</div>
 							)}

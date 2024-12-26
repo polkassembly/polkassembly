@@ -158,6 +158,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		fetchBaseDeposit();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	useEffect(() => {
@@ -527,6 +528,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						{/* Proxy Type Selection */}
+						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 						<Form.Item
 							name='proxyType'
 							rules={[
@@ -551,7 +553,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								}
 							]}
 						>
-							<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 							<Select
 								className='flex w-full items-center rounded-[4px] py-1'
 								style={{ width: '100%', textAlign: 'center' }}

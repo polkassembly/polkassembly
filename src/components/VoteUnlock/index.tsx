@@ -234,7 +234,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 			: null;
 
 		const data = customizeReferenda ? getAllLockData(api, customizeVotes as any[], customizeReferenda as [BN, any][]) : null;
-		const currentBlockNumber = await api.derive.chain.bestNumber();
+		const currentBlockNumber = await api?.derive?.chain?.bestNumber();
 		await handleLockUnlockData(data, currentBlockNumber);
 		setLoadingStatus({ isLoading: false, message: '' });
 	};

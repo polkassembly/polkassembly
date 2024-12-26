@@ -622,15 +622,15 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									className='mb-0'
 								>
 									<Radio.Group
-										className='enactment mt-1 flex flex-col gap-2'
+										className='enactment mt-1 flex flex-col'
 										value={enactment.key}
 										onChange={(e) => setEnactment({ ...enactment, key: e.target.value })}
 									>
 										<Radio
 											value={EEnactment.At_Block_No}
-											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+											className='py-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										>
-											<div className='flex h-10 items-center gap-4'>
+											<div className='flex h-10 items-center '>
 												<span>
 													At Block no.
 													<HelperTooltip
@@ -641,10 +641,11 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 												{enactment.key === EEnactment.At_Block_No && (
 													<Form.Item
 														name='at_block'
+														className='mt-0 pt-0'
 														rules={[{ required: true, message: 'Invalid Block no.' }]}
 													>
 														<Input
-															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															className='mt-0 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 														/>
 													</Form.Item>
@@ -654,7 +655,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 										<Radio
 											value={EEnactment.After_No_Of_Blocks}
-											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+											className='mb-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										>
 											<div className='flex h-[30px] items-center gap-2'>
 												<span className='w-[150px]'>

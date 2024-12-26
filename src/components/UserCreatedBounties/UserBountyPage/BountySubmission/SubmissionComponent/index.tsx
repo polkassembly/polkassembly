@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import NameLabel from '~src/ui-components/NameLabel';
@@ -67,14 +67,14 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									)}
 								</div>
 								<div>
-									{status === EUserCreatedBountySubmissionStatus.REJECTED && (
+									{status === EChildbountySubmissionStatus.REJECTED && (
 										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#FF52521A] px-[6px] py-1'>
 											<div className='h-[6px] w-[6px] rounded-full bg-[#DF0000]'></div>
 											<span className=' text-xs font-medium text-[#DF0000]'>REJECTED</span>
 										</div>
 									)}
 
-									{status === EUserCreatedBountySubmissionStatus.APPROVED && (
+									{status === EChildbountySubmissionStatus.APPROVED && (
 										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#11C7001A] px-[6px] py-1'>
 											<div className='h-[6px] w-[6px] rounded-full bg-[#0B8A00]'></div>
 											<span className='text-xs font-medium text-[#0B8A00]'>APPROVED</span>
@@ -85,7 +85,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							<div className='mt-1'>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
-							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
+							{status === EChildbountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
 								<SubmissionReactionButton
 									parentBountyProposerAddress={bountyProposer}
 									submissionProposerAddress={submission.proposer}
@@ -99,7 +99,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							openModal={openModal}
 							setOpenModal={setOpenModal}
 							submission={submission}
-							showReactionButtons={status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress}
+							showReactionButtons={status === EChildbountySubmissionStatus.PENDING && bountyProposer == loginAddress}
 							parentBountyProposerAddress={bountyProposer}
 							submissionProposerAddress={submission.proposer}
 							parentBountyIndex={bountyIndex}

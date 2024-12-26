@@ -306,6 +306,19 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		});
 	};
 
+	const handleOnBalanceChange = async (balanceStr: string) => {
+		if (!api || !apiReady) {
+			return;
+		}
+		let balance = ZERO_BN;
+		try {
+			balance = new BN(balanceStr);
+			setAvailableBalance(balance);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const proxyTypeDescriptions = {
 		[ProxyTypeEnum.Any]: 'Allows all transactions, including balance transfers',
 		[ProxyTypeEnum.NonTransfer]: 'Allows all transactions except balance transfers',
@@ -413,12 +426,17 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								title='Your Address'
 								isTruncateUsername={false}
 								accounts={accounts}
-								address={loginAddress}
-								withBalance={false}
-								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
+								address={form.getFieldValue('loginAddress') || address || loginAddress}
+								withBalance={true}
+								onAccountChange={(address) => {
+									setAddress(address);
+									form.setFieldsValue({ loginAddress: address });
+								}}
+								onBalanceChange={handleOnBalanceChange}
 								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
+								isBalanceUpdated={true}
 								linkAddressTextDisabled
 								theme={theme}
 								isVoting

@@ -561,7 +561,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							className='-mt-[2px] mb-0'
 						>
 							<Select
-								className='flex w-full items-center rounded-[4px] py-1'
+								className='flex w-full items-center rounded-[4px] py-1 text-center'
 								style={{ width: '100%', textAlign: 'center' }}
 								value={form.getFieldValue('proxyType')}
 								size='large'
@@ -569,7 +569,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
 								options={Object.entries(proxyTypeDescriptions).map(([key, description], index) => ({
 									label: (
-										<div className={`${index === 0 ? 'mt-[7px]' : ''} items-center gap-1 sm:flex`}>
+										<div className={`${index === 0 ? 'mt-[7px]' : ''} mt-2 items-center gap-1 sm:flex`}>
 											<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>{key}</span>
 											<span className='text-sm italic text-blue-light-medium dark:text-blue-dark-medium'>({description})</span>
 										</div>

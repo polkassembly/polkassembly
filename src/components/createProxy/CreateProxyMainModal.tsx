@@ -555,6 +555,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						{/* Proxy Type Selection */}
+						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'> Proxy Type</span>
 						<Form.Item
 							name='proxyType'
 							rules={[

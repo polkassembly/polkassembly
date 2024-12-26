@@ -157,7 +157,7 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName={classNames('text-lightBlue text-xs dark:text-blue-dark-medium', isSwitchButton?'text-white':'')}
+					addressClassName={classNames('text-lightBlue text-xs dark:text-blue-dark-medium', isSwitchButton ? 'text-white' : '')}
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip

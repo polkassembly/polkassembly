@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import dynamic from 'next/dynamic';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { usePostDataContext } from '~src/context';
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
@@ -24,24 +24,17 @@ import EditIconDark from '~assets/icons/reactions/EditIconDark.svg';
 import ThreeDots from '~assets/icons/reactions/ThreeDots.svg';
 import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { MenuProps, Popover } from 'antd';
+import { MenuProps } from 'antd';
 import ExpandableMarkdown from './ExpandableMarkdown';
-import Image from 'next/image';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
 		<div>
 			<Skeleton active />
-		</div>
-	),
-	ssr: false
-});
-const CreateBountyModal = dynamic(() => import('~src/components/UserCreatedBounties/CreateBountyModal'), {
-	loading: () => (
-		<div>
-			<Skeleton active />
+			<Skeleton
+				className='mt-12'
+				active
+			/>
 		</div>
 	),
 	ssr: false
@@ -55,12 +48,11 @@ interface IPostDescriptionProps {
 	isOnchainPost: boolean;
 	toggleEdit?: () => void;
 	TrackerButtonComp?: JSX.Element;
-	postInfo?: any;
 	Sidebar: ({ className }: { className?: string | undefined }) => JSX.Element;
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, postInfo } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar } = props;
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
@@ -69,10 +61,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
-	const [openCreateBountyModal, setOpenCreateBountyModal] = useState<boolean>(false);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	const { loginAddress } = useUserDetailsSelector();
 
 	const isOffchainPost: Boolean = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 
@@ -183,22 +171,14 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 							<button
 								className='cursor-pointer rounded-md border-none bg-transparent shadow-none'
 								onClick={() => {
-									if (postInfo?.proposalType === ProposalType.USER_CREATED_BOUNTIES) {
-										if (loginAddress) {
-											setOpenCreateBountyModal(true);
-										} else {
-											setLoginOpen(true);
-										}
-									} else {
-										toggleEdit?.();
-										trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
-											postIndex: postIndex,
-											postType: postType,
-											title: title,
-											userId: currentUser?.id || '',
-											userName: currentUser?.username || ''
-										});
-									}
+									toggleEdit?.();
+									trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
+										postIndex: postIndex,
+										postType: postType,
+										title: title,
+										userId: currentUser?.id || '',
+										userName: currentUser?.username || ''
+									});
 								}}
 							>
 								<span className='flex items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
@@ -225,30 +205,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 								{theme == 'dark' ? <ThreeDotsDark /> : <ThreeDots />}
 							</div>
 						</Dropdown>
-						<Popover
-							content={
-								<div className='px-4'>
-									<CommentsContainer
-										postInfo={postInfo}
-										id={postInfo?.post_index || id || postIndex}
-									/>
-								</div>
-							}
-							title={<p className='font-semiBold m-0 p-0 px-4 py-2 text-xl text-bodyBlue dark:text-white'>Comments</p>}
-							trigger='hover'
-							className='dark:bg-black'
-						>
-							<div className='flex cursor-pointer items-center justify-center gap-x-1 rounded-md bg-[#F4F6F8] p-[6px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
-								<Image
-									src='/assets/icons/Comments-icon.svg'
-									alt='comments-icon'
-									width={16}
-									height={16}
-									className={theme === 'dark' ? 'dark-icons' : ''}
-								/>
-								{/* <p className=''>{comments}</p> */}
-							</div>
-						</Popover>
 					</div>
 				</div>
 				{/* <div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div> */}
@@ -259,24 +215,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					<Sidebar />
 				</div>
 			)}
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
-			/>
-			<CreateBountyModal
-				openCreateBountyModal={openCreateBountyModal}
-				setOpenCreateBountyModal={setOpenCreateBountyModal}
-				isUsedForEdit={true}
-				postInfo={postInfo}
-			/>
+			<CommentsContainer id={id} />
 		</div>
 	);
 };

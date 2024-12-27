@@ -109,7 +109,6 @@ function formatDuration(duration: any) {
 
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
-	console.log(post);
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
@@ -338,7 +337,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
-						proposalType={post?.post_type || proposalType}
+						proposalType={proposalType}
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
@@ -495,7 +494,6 @@ const Post: FC<IPostProps> = (props) => {
 						isOnchainPost={isOnchainPost}
 						TrackerButtonComp={TrackerButtonComp}
 						Sidebar={() => <Sidebar />}
-						postInfo={post}
 					/>
 				</>
 			),
@@ -524,8 +522,8 @@ const Post: FC<IPostProps> = (props) => {
 					identityId: post?.identity || null,
 					last_edited_at: post?.last_edited_at,
 					marketMetadata: post?.marketMetadata || null,
-					postIndex: post?.post_index || proposalType === ProposalType.TIPS ? post.hash : post.post_id,
-					postType: post?.post_type || proposalType,
+					postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
+					postType: proposalType,
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',
@@ -617,43 +615,37 @@ const Post: FC<IPostProps> = (props) => {
 										</>
 									)}
 								</div>
-								{post?.proposalType !== ProposalType.USER_CREATED_BOUNTIES && (
-									<div className='flex items-center'>
-										<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
-										<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
-										<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
-									</div>
-								)}
-								{post?.proposalType !== ProposalType.USER_CREATED_BOUNTIES && (
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
+								</div>
+								{isSimilarLoading ? (
 									<>
-										{isSimilarLoading ? (
-											<>
-												<div>
-													<LoadingState />
-												</div>
-											</>
-										) : (
+										<div>
+											<LoadingState />
+										</div>
+									</>
+								) : (
+									<div>
+										{data.length > 0 ? (
 											<div>
-												{data.length > 0 ? (
-													<div>
-														{/* main content */}
-														<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
-															<TrackListingAllTabContent
-																posts={data}
-																// error={error}
-																count={data?.length || 0}
-																showSimilarPost={true}
-															/>
-														</div>
-													</div>
-												) : (
-													<div className={`${className} mt-5`}>
-														<PostEmptyState text='No Active Proposals' />
-													</div>
-												)}
+												{/* main content */}
+												<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
+													<TrackListingAllTabContent
+														posts={data}
+														// error={error}
+														count={data?.length || 0}
+														showSimilarPost={true}
+													/>
+												</div>
+											</div>
+										) : (
+											<div className={`${className} mt-5`}>
+												<PostEmptyState text='No Active Proposals' />
 											</div>
 										)}
-									</>
+									</div>
 								)}
 							</div>
 

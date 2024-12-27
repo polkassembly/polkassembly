@@ -237,7 +237,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const handleRetry = async () => {
 		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
-			commentId: comment?.id || commentId,
+			commentId: commentId,
 			content: comment.content,
 			postId: props.postId,
 			postType: props.proposalType,

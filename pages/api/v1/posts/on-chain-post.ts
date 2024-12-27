@@ -476,7 +476,7 @@ export async function getComments(
 						}
 						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
 						comment.replies.push({
-							comment_id,
+							comment_id: comment_id || doc?.id,
 							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,

@@ -12,11 +12,10 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { getBountyInfo } from '../../getBountyInfoFromIndex';
-import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
-import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EChildbountySubmissionStatus } from '~src/types';
+import { EChildbountySubmissionStatus, EUserCreatedBountiesStatuses } from '~src/types';
+import checkIsUserCreatedBountySubmissionValid from '~src/util/userCreatedBounties/checkIsUserCreatedBountySubmissionValid';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -28,6 +27,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, link, reqAmount, proposerAddress, parentBountyIndex } = req.body;
+		const substrateProposerAddr = getSubstrateAddress(proposerAddress);
 
 		if (!reqAmount || new BN(reqAmount || 0).eq(ZERO_BN)) {
 			return res.status(400).json({ message: 'Invalid Requested Amount' });
@@ -52,45 +52,53 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user = await authServiceInstance.GetUser(token);
 		if (!user) return res.status(401).json({ message: messages.UNAUTHORISED });
 
-		const { data } = await getBountyInfo({
-			bountyIndex: parentBountyIndex,
-			network: network
-		});
+		const userCreatedBountySnapshot = await firestore_db.collection('user_created_bounties').where('network', '==', network).where('id', '==', parentBountyIndex).limit(1).get();
 
-		if (!getBountiesCustomStatuses(EBountiesStatuses.ACTIVE).includes(data?.status || '')) {
-			return res.status(400).json({ message: messages?.PARENT_BOUNTY_IS_NOT_ACTIVE });
+		if (userCreatedBountySnapshot?.empty) {
+			return res.status(400).json({ message: `No bounty found with id-${parentBountyIndex}` });
 		}
 
-		const submissionSnapshot = firestore_db.collection('curator_submissions');
+		if (userCreatedBountySnapshot?.docs?.[0]?.data()?.status !== EUserCreatedBountiesStatuses.ACTIVE) {
+			return res.status(400).json({ message: `Bounty-${parentBountyIndex} is not active for submissions` });
+		}
+		const submissionsRef = userCreatedBountySnapshot?.docs?.[0]?.ref?.collection('submissions');
 
-		const submissionDocs = await submissionSnapshot
-			?.where('proposer', '==', getEncodedAddress(proposerAddress, network))
-			.where('parent_bounty_index', '==', parentBountyIndex)
-			.where('status', '==', EChildbountySubmissionStatus.PENDING)
-			.where('user_id', '==', user?.id)
-			.limit(1)
-			.get();
+		const { maxClaimReached, submissionAlreadyExists, deadlineDateExpired } = await checkIsUserCreatedBountySubmissionValid(
+			userCreatedBountySnapshot?.docs?.[0]?.ref,
+			Number(user?.id),
+			substrateProposerAddr || proposerAddress
+		);
 
-		if (submissionDocs?.empty) {
-			return res.status(404).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_NOT_EXISTS });
+		if (deadlineDateExpired) {
+			return res.status(400).json({ message: "You can't edit or delete your submission after deadline date." });
+		}
+		if (maxClaimReached) {
+			return res.status(400).json({ message: `Max number of claimed reached for bounty id-${parentBountyIndex}` });
+		}
+		if (submissionAlreadyExists) {
+			return res.status(400).json({ message: `Submission already exists for bounty id-${parentBountyIndex}` });
 		}
 
-		const submissionDocRef = submissionDocs?.docs[0].ref;
+		const submissionDocRef = submissionsRef?.doc();
 
 		const payload = {
 			content,
+			created_at: new Date(),
+			id: submissionDocRef?.id,
 			link: link || '',
 			parent_bounty_index: parentBountyIndex,
-			proposer: getEncodedAddress(proposerAddress, network) || '',
+			proposer: substrateProposerAddr || '',
 			req_amount: reqAmount || '0',
+			status: EChildbountySubmissionStatus.PENDING,
 			tags: tags || [],
 			title: title || '',
-			updated_at: new Date()
+			updated_at: new Date(),
+			user_id: user?.id
 		};
 
-		await submissionDocRef?.update(payload);
+		await submissionDocRef?.set(payload, { merge: true });
 
-		return res.status(200).json({ message: messages?.CHILD_BOUNTY_SUBMISSION_EDITED_SUCCESSFULLY });
+		return res.status(200).json({ message: messages?.SUCCESS });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

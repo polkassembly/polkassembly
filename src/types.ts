@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 
 declare global {
 	interface Window {
@@ -1096,6 +1097,13 @@ export enum EChildbountySubmissionStatus {
 	OUTDATED = 'outdated',
 	DELETED = 'deleted'
 }
+export enum EUserCreatedBountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	DELETED = 'deleted',
+	PAID = 'paid'
+}
 
 export enum EPendingCuratorReqType {
 	SENT = 'sent',
@@ -1212,4 +1220,40 @@ export interface IChat {
 export interface IChatsResponse {
 	messages: IChat[];
 	requests: IChat[];
+}
+
+export enum EUserCreatedBountiesStatuses {
+	ACTIVE = 'active',
+	CLOSED = 'closed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled'
+}
+
+export interface IUserCreatedBounty {
+	content: string;
+	created_at: Date;
+	deadline_date: Date;
+	history: IPostHistory[];
+	post_index: number;
+	max_claim: number;
+	post_type: ProposalType;
+	proposer: string;
+	reward: string;
+	status: EUserCreatedBountiesStatuses;
+	submission_guidelines: string;
+	claimed_percentage: number;
+	tags: string[];
+	title: string;
+	network?: string;
+	twitter_handle: string;
+	source: 'polkassembly' | 'twitter';
+	post_reactions?: IReactions;
+	updated_at: Date;
+	user_id: number;
+	comments?: any[];
+}
+export enum EUserCreatedBountyActions {
+	EDIT = 'edit',
+	DELETE = 'delete',
+	APPROVE = 'approve'
 }

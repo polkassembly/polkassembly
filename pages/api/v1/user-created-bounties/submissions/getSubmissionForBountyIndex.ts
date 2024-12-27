@@ -27,7 +27,13 @@ const handler: NextApiHandler<{ submissions: IChildBountySubmission[]; totalCoun
 			return res.status(400).json({ message: 'Invalid Page Param' });
 		}
 
-		const userCreatedBountySnapshot = await firestore_db.collection('user_created_bounties').where('network', '==', network).where('id', '==', parentBountyIndex).orderBy('id', 'desc').limit(1).get();
+		const userCreatedBountySnapshot = await firestore_db
+			.collection('user_created_bounties')
+			.where('network', '==', network)
+			.where('id', '==', parentBountyIndex)
+			.orderBy('id', 'desc')
+			.limit(1)
+			.get();
 
 		if (userCreatedBountySnapshot?.empty) {
 			return res.status(400).json({ message: `No bounty found with id-${parentBountyIndex}` });

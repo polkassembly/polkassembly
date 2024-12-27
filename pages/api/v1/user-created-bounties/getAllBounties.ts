@@ -15,7 +15,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
 
 interface Args {
-	status: EUserCreatedBountiesStatuses;
+	status: EUserCreatedBountiesStatuses | null;
 	filterBy: string[];
 	page: number;
 	network: string;
@@ -75,7 +75,7 @@ export async function getUserCreatedBounties({
 					post_type: data?.proposalType,
 					proposer: data?.proposer || '',
 					reward: data?.reward || '0',
-					source: data?.source,
+					source: data?.source || 'polkassembly',
 					status: data?.status,
 					submission_guidelines: data?.submissionGuidelines || '',
 					tags: data?.tags || [],

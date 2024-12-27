@@ -36,6 +36,7 @@ import { childBountyCreationStore } from './childBountyCreation';
 import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
 import { chatsStore } from './chats';
+import { userCreatedBountyFormStore } from './createBountyForm';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -138,7 +139,8 @@ export const makeStore = () => {
 		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer,
 		[childBountyCreationStore.name]: childBountyCreationStore.reducer,
 		[followStore.name]: followStore.reducer,
-		[chatsStore.name]: chatsStore.reducer
+		[chatsStore.name]: chatsStore.reducer,
+		[userCreatedBountyFormStore.name]: userCreatedBountyFormStore.reducer
 	});
 
 	if (isServer) {
@@ -169,7 +171,8 @@ export const makeStore = () => {
 				'ambassadorReplacement',
 				'claimPayout',
 				'childBountyCreation',
-				'activityFeed'
+				'activityFeed',
+				'createBountyForm'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

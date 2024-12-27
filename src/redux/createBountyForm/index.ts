@@ -22,7 +22,7 @@ const initialState: ICreateBountyFormState = {
 	twitterUrl: ''
 };
 
-export const createBountyFormStore = createSlice({
+export const userCreatedBountyFormStore = createSlice({
 	initialState,
 	name: 'createBountyForm',
 	reducers: {
@@ -46,7 +46,7 @@ export const createBountyFormStore = createSlice({
 	}
 });
 
-const CreateBountyFormActions = createBountyFormStore.actions;
+const CreateBountyFormActions = userCreatedBountyFormStore.actions;
 
 export const setFormField = (field: keyof ICreateBountyFormState, value: any): PayloadAction<{ field: keyof ICreateBountyFormState; value: any }> => {
 	return CreateBountyFormActions.setFormField({ field, value });
@@ -60,4 +60,4 @@ export const resetForm = () => {
 	return CreateBountyFormActions.resetForm();
 };
 
-export default createBountyFormStore.reducer;
+export default userCreatedBountyFormStore.reducer;

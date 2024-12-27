@@ -6,7 +6,7 @@ import BountiesHeader from './BountiesHeader';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Image from 'next/image';
 import BountyActivities from './BountyActivities';
-import { Button, Carousel } from 'antd';
+import { Carousel } from 'antd';
 import { spaceGrotesk } from 'pages/_app';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import HotBountyCard from './HotBountyCard';
@@ -15,7 +15,6 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
-import { useRouter } from 'next/router';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -25,7 +24,6 @@ interface IBountiesContainer {
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
-	const router = useRouter();
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
@@ -223,22 +221,25 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					alt='curator'
 					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
 				/>
-				<Button
-					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[466px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[40px] text-2xl font-bold text-white`}
-					style={{
-						background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
-					}}
-					onClick={() => {
-						router.push('/user-created-bounties');
-					}}
+				<Link
+					href='/user-created-bounties'
+					passHref
 				>
-					View All
-					<ImageIcon
-						src='assets/bounty-icons/redirect-white-icon.svg'
-						alt='arrow right'
-						className=''
-					/>
-				</Button>
+					<a
+						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[466px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[40px] text-2xl font-bold text-white`}
+						style={{
+							background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
+						}}
+					>
+						View All
+						<ImageIcon
+							src='assets/bounty-icons/redirect-white-icon.svg'
+							alt='arrow right'
+							className=''
+						/>
+					</a>
+				</Link>
+
 				<BountyActivities />
 			</div>
 			<div className='sticky bottom-0 z-20 -ml-4 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black md:hidden'>

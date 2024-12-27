@@ -9,14 +9,13 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-// import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EUserCreatedBountiesStatuses, IApiResponse, IUserCreatedBounty } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
 
 interface Args {
-	status: EUserCreatedBountiesStatuses | undefined;
+	status: EUserCreatedBountiesStatuses | null;
 	filterBy: string[];
 	page: number;
 	network: string;
@@ -76,7 +75,7 @@ export async function getUserCreatedBounties({
 					post_type: data?.proposalType,
 					proposer: data?.proposer || '',
 					reward: data?.reward || '0',
-					source: data?.source || 'Polkassembly',
+					source: data?.source || 'polkassembly',
 					status: data?.status,
 					submission_guidelines: data?.submissionGuidelines || '',
 					tags: data?.tags || [],

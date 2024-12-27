@@ -124,7 +124,7 @@ const useFollowSelector = () => {
 const useChatsSelector = () => {
 	return useSelector<TAppState, IChatsStore>((state) => state.chats);
 };
-const useCreateBountyFormSelector = () => {
+const useUserCreateBountyFormSelector = () => {
 	return useSelector<TAppState, ICreateBountyFormState>((state) => state.createBountyForm);
 };
 
@@ -154,5 +154,5 @@ export {
 	useChildBountyCreationSelector,
 	useFollowSelector,
 	useChatsSelector,
-	useCreateBountyFormSelector
+	useUserCreateBountyFormSelector
 };

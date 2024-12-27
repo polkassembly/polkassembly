@@ -7,7 +7,7 @@ import { spaceGrotesk } from 'pages/_app';
 import { Form, DatePicker } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
-import { useCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { useTheme } from 'next-themes';
@@ -57,7 +57,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [newBountyAmount, setNewBountyAmount] = useState<BN>(ZERO_BN);
 	const [clickedVerifyBtn, setClickedVerifiedBtn] = useState<boolean>(false);
 
-	const createBountyFormState = useCreateBountyFormSelector();
+	const createBountyFormState = useUserCreateBountyFormSelector();
 
 	useEffect(() => {
 		form.setFieldsValue({

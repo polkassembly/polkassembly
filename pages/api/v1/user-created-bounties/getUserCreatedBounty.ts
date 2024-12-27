@@ -112,7 +112,7 @@ const handler: NextApiHandler<IUserCreatedBounty | MessageType> = async (req, re
 			return res.status(500).json({ message: String(error) || messages.API_FETCH_ERROR });
 		}
 	} catch (err) {
-		return res.status(500).json({ message: String(err) || messages.API_FETCH_ERROR });
+		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}
 };
 

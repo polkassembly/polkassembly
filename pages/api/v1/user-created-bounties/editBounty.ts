@@ -88,10 +88,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		};
 
 		await bountyDoc?.docs?.[0]?.ref?.update(payload);
-		const updatedBountyDoc = await bountySnapshot?.get();
-		const updatedBounty = updatedBountyDoc?.docs?.[0]?.data();
 
-		return res.status(200).json({ message: messages?.SUCCESS, post: updatedBounty });
+		return res.status(200).json({ message: messages?.SUCCESS });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

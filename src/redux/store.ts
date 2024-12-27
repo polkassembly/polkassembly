@@ -36,7 +36,7 @@ import { childBountyCreationStore } from './childBountyCreation';
 import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
 import { chatsStore } from './chats';
-import { userCreatedBountyFormStore } from './createBountyForm';
+import { userCreatedBountyFormStore } from './userCreateBountyForm';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.

@@ -26,9 +26,9 @@ import { IVerificationResponse } from 'pages/api/v1/verification';
 import { usePostDataContext } from '~src/context';
 import _ from 'lodash';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { setFormField, resetForm } from '~src/redux/createBountyForm';
 import { useDispatch } from 'react-redux';
-import { ICreateBountyFormState } from '~src/redux/createBountyForm/@types';
+import { ICreateBountyFormState } from '~src/redux/userCreateBountyForm/@types';
+import { resetForm, setFormField } from '~src/redux/userCreateBountyForm';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -61,7 +61,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 
 	useEffect(() => {
 		form.setFieldsValue({
-			address: createBountyFormState.address,
+			address: createBountyFormState,
 			balance: createBountyFormState.balance,
 			claims: createBountyFormState.claims,
 			deadline: createBountyFormState.deadline ? dayjs(createBountyFormState.deadline) : null,

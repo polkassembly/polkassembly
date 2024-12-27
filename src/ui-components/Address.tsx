@@ -225,6 +225,7 @@ const Address = (props: Props) => {
 	};
 
 	useEffect(() => {
+		if (!api || !apiReady || !address) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, apiReady, address]);
@@ -348,6 +349,7 @@ const Address = (props: Props) => {
 	};
 
 	useEffect(() => {
+		if (!api || !apiReady) return;
 		if (!address) return;
 
 		try {

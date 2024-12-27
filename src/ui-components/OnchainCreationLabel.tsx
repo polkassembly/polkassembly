@@ -35,15 +35,19 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [profileAddress, setAddress] = useState<string>('');
+	const [proposerUserId, setProposerUserId] = useState<number | null>(null);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 		if (data) {
 			setSocials(data?.social_links || []);
 			setProfileCreatedAt(data?.created_at || null);
+			setProposerUserId(data?.user_id || null);
 			if (data?.addresses) {
 				setAddress(data?.addresses[0]);
 			}
+		} else {
+			setProposerUserId(null);
 		}
 	};
 	useEffect(() => {
@@ -75,6 +79,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 								title={
 									<QuickView
 										address={profileAddress}
+										userId={proposerUserId}
 										socials={socials}
 										setOpen={setOpen}
 										profileCreatedAt={profileCreatedAt}

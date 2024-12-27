@@ -15,6 +15,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EUserCreatedBountiesStatuses, EUserCreatedBountyActions } from '~src/types';
 import checkIsUserCreatedBountySubmissionValid from '~src/util/userCreatedBounties/checkIsUserCreatedBountySubmissionValid';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -26,12 +27,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, link, reqAmount, proposerAddress, parentBountyIndex, submissionId, action } = req.body;
-		const encodedProposerAddress = getEncodedAddress(proposerAddress, network);
+		const substrateProposerAddr = getSubstrateAddress(proposerAddress);
 
 		if (![EUserCreatedBountyActions.EDIT, EUserCreatedBountyActions.DELETE].includes(action)) {
 			return res.status(400).json({ message: 'Invalid Action Param' });
 		}
-		if (!proposerAddress?.length || !encodedProposerAddress) {
+		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address' });
 		}
 
@@ -77,7 +78,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const { submissionAlreadyExists, deadlineDateExpired } = await checkIsUserCreatedBountySubmissionValid(
 			userCreatedBountySnapshot?.docs?.[0]?.ref,
 			Number(user?.id),
-			encodedProposerAddress
+			substrateProposerAddr || proposerAddress
 		);
 
 		if (!submissionAlreadyExists) {

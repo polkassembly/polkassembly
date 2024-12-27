@@ -1251,6 +1251,7 @@ export interface IUserCreatedBounty {
 	updated_at: Date;
 	user_id: number;
 	comments?: any[];
+	index?: number;
 }
 export enum EUserCreatedBountyActions {
 	EDIT = 'edit',

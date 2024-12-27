@@ -53,6 +53,7 @@ export async function getUserCreatedBounties({
 
 		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot
 			.limit(LISTING_LIMIT)
+			.orderBy('id', 'desc')
 			.offset((Number(page) - 1) * Number(LISTING_LIMIT))
 			.get();
 

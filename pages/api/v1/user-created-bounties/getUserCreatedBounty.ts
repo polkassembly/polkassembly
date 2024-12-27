@@ -61,8 +61,8 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			claimed_percentage: claimedSubmissionsPercentage || 0,
 			comments: comments || [],
 			content: bountyData?.content,
-			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
-			deadline_date: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
+			created_at: bountyData?.createdAt?.toDate ? bountyData?.createdAt?.toDate() : bountyData?.createdAt,
+			deadline_date: bountyData?.deadlineDate.toDate ? bountyData?.deadlineDate.toDate() : bountyData?.deadlineDate,
 			history: history || [],
 			max_claim: bountyData?.maxClaim,
 			post_index: bountyData?.id,
@@ -76,11 +76,11 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			tags: bountyData?.tags || [],
 			title: bountyData?.title || '',
 			twitter_handle: bountyData?.twitterHandle,
-			updated_at: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
+			updated_at: bountyData?.updatedAt.toDate ? bountyData?.updatedAt.toDate() : bountyData?.updatedAt,
 			user_id: bountyData?.userId
 		};
 		return {
-			data: payload,
+			data: JSON.parse(JSON.stringify(payload)),
 			error: null,
 			status: 200
 		};

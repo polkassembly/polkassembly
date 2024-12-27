@@ -67,9 +67,9 @@ export async function getUserCreatedBounties({
 				const payload: IUserCreatedBounty = {
 					claimed_percentage: claimedSubmissionsPercentage || 0,
 					content: data?.content,
-					created_at: data?.createdAt?.toDate ? String(data?.createdAt?.toDate()) : data?.createdAt,
-					deadline_date: data?.deadlineDate.toDate ? String(data?.deadlineDate.toDate()) : data?.deadlineDate,
-					// history: data?.history || [],
+					created_at: data?.createdAt?.toDate ? data?.createdAt?.toDate() : data?.createdAt,
+					deadline_date: data?.deadlineDate.toDate ? data?.deadlineDate.toDate() : data?.deadlineDate,
+					history: data?.history || [],
 					max_claim: data?.maxClaim,
 					post_index: data?.id,
 					post_type: data?.proposalType,
@@ -81,7 +81,7 @@ export async function getUserCreatedBounties({
 					tags: data?.tags || [],
 					title: data?.title || '',
 					twitter_handle: data?.twitterHandle,
-					updated_at: data?.updatedAt.toDate ? String(data?.updatedAt.toDate()) : data?.updatedAt,
+					updated_at: data?.updatedAt.toDate ? data?.updatedAt.toDate() : data?.updatedAt,
 					user_id: data?.userId
 				};
 				allBounties?.push(payload);
@@ -91,7 +91,7 @@ export async function getUserCreatedBounties({
 		await Promise.allSettled(promises);
 
 		return {
-			data: { bounties: allBounties || [], totalCount: totalCreatedBountiesCountSnapshot?.data()?.count || 0 },
+			data: JSON.parse(JSON.stringify({ bounties: allBounties || [], totalCount: totalCreatedBountiesCountSnapshot?.data()?.count || 0 })),
 			error: null,
 			status: 200
 		};

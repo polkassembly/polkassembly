@@ -155,6 +155,12 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 					);
 				}
 				setMessages([...messages, data]);
+				dispatch(
+					chatsActions.updateLatestMessage({
+						chatId: chat?.chatId || '',
+						message: data
+					})
+				);
 				queueNotification({
 					header: 'Success!',
 					message: 'Message sent successfully',

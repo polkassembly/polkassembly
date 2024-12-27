@@ -1231,9 +1231,9 @@ export enum EUserCreatedBountiesStatuses {
 
 export interface IUserCreatedBounty {
 	content: string;
-	created_at: string;
-	deadline_date: string;
-	history?: IPostHistory[];
+	created_at: Date;
+	deadline_date: Date;
+	history: IPostHistory[];
 	post_index: number;
 	max_claim: number;
 	post_type: ProposalType;
@@ -1248,7 +1248,7 @@ export interface IUserCreatedBounty {
 	twitter_handle: string;
 	source: 'polkassembly' | 'twitter';
 	post_reactions?: IReactions;
-	updated_at: string;
+	updated_at: Date;
 	user_id: number;
 	comments?: any[];
 	index?: number;

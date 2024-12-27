@@ -3,9 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ICreateBountyFormState } from './@types';
-import BN from 'bn.js';
-
-const ZERO_BN = new BN(0);
 
 const initialState: ICreateBountyFormState = {
 	address: '',
@@ -16,7 +13,7 @@ const initialState: ICreateBountyFormState = {
 	description: '',
 	guidelines: '',
 	isTwitterVerified: false,
-	newBountyAmount: ZERO_BN,
+	newBountyAmount: '',
 	title: '',
 	twitter: '',
 	twitterUrl: ''
@@ -31,7 +28,7 @@ export const userCreatedBountyFormStore = createSlice({
 			const { field, value } = action.payload;
 			switch (field) {
 				case 'newBountyAmount':
-					state[field] = new BN(value);
+					state[field] = String(value);
 					break;
 				case 'isTwitterVerified':
 					state[field] = Boolean(value);

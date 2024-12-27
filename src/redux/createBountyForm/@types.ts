@@ -15,5 +15,5 @@ export interface ICreateBountyFormState {
 	categories: string[];
 	isTwitterVerified: boolean;
 	twitterUrl: string;
-	newBountyAmount: BN;
+	newBountyAmount: string;
 }

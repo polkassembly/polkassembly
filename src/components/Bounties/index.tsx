@@ -224,20 +224,20 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				<Link
 					href='/user-created-bounties'
 					passHref
+					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[466px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[40px] text-2xl font-bold text-white`}
+					style={{
+						background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
+					}}
 				>
-					<a
-						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[466px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[40px] text-2xl font-bold text-white`}
-						style={{
-							background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
-						}}
-					>
+					{' '}
+					<div className='flex items-center gap-[6px]'>
 						View All
 						<ImageIcon
 							src='assets/bounty-icons/redirect-white-icon.svg'
 							alt='arrow right'
 							className=''
 						/>
-					</a>
+					</div>
 				</Link>
 
 				<BountyActivities />

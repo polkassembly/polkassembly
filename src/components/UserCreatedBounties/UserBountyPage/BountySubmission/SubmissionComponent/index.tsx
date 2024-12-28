@@ -11,6 +11,7 @@ import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector
 import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
 import SubmissionReactionButton from './SubmissionReactionButton';
+import Tipping from '~src/components/Tipping';
 
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
@@ -19,8 +20,10 @@ const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { submissions: IChildBountySubmission[]; bountyProposer: string; bountyIndex: number }) => {
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, username } = useUserDetailsSelector();
 	const [openModal, setOpenModal] = useState(false);
+	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	return (
 		<section className='mt-5 flex flex-col gap-4'>
@@ -29,11 +32,11 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 				const date = new Date(createdAt);
 				return (
 					<div key={id}>
-						<div
-							className='cursor-pointer rounded-[8px] border border-solid border-[#D2D8E0] p-3 dark:border-separatorDark'
-							onClick={() => setOpenModal(true)}
-						>
-							<div className='flex items-center justify-between'>
+						<div className='cursor-pointer rounded-[8px] border border-solid border-[#D2D8E0] p-3 dark:border-separatorDark'>
+							<div
+								className='flex items-center justify-between'
+								onClick={() => setOpenModal(true)}
+							>
 								<div className='flex items-center gap-1 rounded-full'>
 									<NameLabel
 										defaultAddress={proposer}
@@ -82,7 +85,10 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									)}
 								</div>
 							</div>
-							<div className='mt-1'>
+							<div
+								className='mt-1'
+								onClick={() => setOpenModal(true)}
+							>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
 							{status === EChildbountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
@@ -93,6 +99,15 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									submissionId={submission.id}
 									setOpenModal={setOpenModal}
 								/>
+							)}
+							{/* {status !== EChildbountySubmissionStatus.APPROVED && bountyProposer == loginAddress && ( */}
+							{status !== EChildbountySubmissionStatus.APPROVED && (
+								<button
+									onClick={() => setOpenTipping(true)}
+									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
+								>
+									Pay
+								</button>
 							)}
 						</div>
 						<SubmissionDetailModal
@@ -105,6 +120,19 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							parentBountyIndex={bountyIndex}
 							submissionId={submission.id}
 						/>
+						{loginAddress && (
+							<Tipping
+								username={username || ''}
+								open={openTipping}
+								setOpen={setOpenTipping}
+								key={loginAddress}
+								paUsername={username as any}
+								setOpenAddressChangeModal={setOpenAddressChangeModal}
+								openAddressChangeModal={openAddressChangeModal}
+								isUsedInSubmissionPage={true}
+								submissionProposer={proposer}
+							/>
+						)}
 					</div>
 				);
 			})}

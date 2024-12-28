@@ -11,9 +11,11 @@ import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector
 import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
 import SubmissionReactionButton from './SubmissionReactionButton';
-import Tipping from '~src/components/Tipping';
 
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
+	ssr: false
+});
+const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
 });
 

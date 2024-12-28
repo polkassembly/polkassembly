@@ -575,8 +575,10 @@ export default styled(CreateBountyForm)`
 	}
 	.ant-input-number .ant-input-number-input:placeholder-shown {
 		height: 38px !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 	}
 	.ant-input-number .ant-input-number-input {
 		height: 38px !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 	}
 `;

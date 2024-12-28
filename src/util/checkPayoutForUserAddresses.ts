@@ -21,7 +21,7 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 
 	if (!api || !apiReady || !network || !isMultiassetSupportedNetwork(network)) return data;
 
-	const values = await api.query.treasury.spends.entries();
+	const values = await api?.query?.treasury?.spends?.entries();
 	values.map((value) => {
 		const payoutIndex = Number((value?.[0].toHuman() as any)?.[0]);
 		const payoutData = convertAnyHexToASCII(value?.[1].toHuman(), network);

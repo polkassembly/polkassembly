@@ -41,9 +41,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!title?.length || !content?.length) {
 			return res.status(400).json({ message: 'Title or Content is Missing in request body' });
 		}
-		if (isNaN(parentBountyIndex)) {
-			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
-		}
+
 		if ((link?.length && !(link as string)?.startsWith('https:')) || (tags?.length && !!tags?.some((tag: string) => typeof tag !== 'string'))) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}

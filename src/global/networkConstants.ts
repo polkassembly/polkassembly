@@ -223,7 +223,7 @@ export const chainProperties: types.ChainPropType = {
 		peopleChainRpcEndpoint: 'wss://polkadot-people-rpc.polkadot.io',
 		logo: polkadotLogo,
 		palletInstance: '50',
-		rpcEndpoint: 'wss://polkadot.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://rpc.polkadot.io',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,

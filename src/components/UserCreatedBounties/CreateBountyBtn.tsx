@@ -4,10 +4,16 @@
 import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { spaceGrotesk } from 'pages/_app';
-import CreateBountyModal from './CreateBountyModal';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { Skeleton } from 'antd';
+import dynamic from 'next/dynamic';
+
+const CreateBountyModal = dynamic(() => import('~src/components/UserCreatedBounties/CreateBountyModal'), {
+	loading: () => <Skeleton.Button active />,
+	ssr: false
+});
 
 interface ICreateBountyBtnProps {
 	className?: string;

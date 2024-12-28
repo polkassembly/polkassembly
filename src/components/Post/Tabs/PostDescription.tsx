@@ -61,6 +61,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
+
 	const isOffchainPost: Boolean = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 
 	//write a function which redirects to the proposalType page
@@ -145,6 +146,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			)
 		}
 	];
+
 	return (
 		<div className={`${className} mt-4`}>
 			{content && (

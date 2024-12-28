@@ -13,7 +13,7 @@ import { useFollowSelector, useUserDetailsSelector } from '~src/redux/selectors'
 import { useDispatch } from 'react-redux';
 import { setFollowingIds } from '~src/redux/follow';
 
-const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profileSince: Date | null | undefined }) => {
+const FollowersAndFollowing = ({ userId, profileSince, disableTooltip }: { userId: number; profileSince?: Date | null; disableTooltip?: boolean }) => {
 	const { id } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState<{ loading: boolean; error: string | null }>({
@@ -47,8 +47,6 @@ const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profi
 			}
 			if (data?.followingIds) {
 				const ids = data.followingIds;
-				console.log('ids', ids);
-
 				dispatch(setFollowingIds(ids));
 			}
 		} catch (err) {
@@ -103,13 +101,15 @@ const FollowersAndFollowing = ({ userId, profileSince }: { userId: number; profi
 							<Popover
 								placement='bottomLeft'
 								content={
-									<FollowTooltip
-										users={data.followers}
-										isLoading={isLoading.loading}
-										isUsedInFollowers={true}
-										addToFollowing={addToFollowing}
-										removeFromFollowing={removeFromFollowing}
-									/>
+									disableTooltip ? null : (
+										<FollowTooltip
+											users={data.followers}
+											isLoading={isLoading.loading}
+											isUsedInFollowers={true}
+											addToFollowing={addToFollowing}
+											removeFromFollowing={removeFromFollowing}
+										/>
+									)
 								}
 							>
 								<span className='cursor-pointer font-medium text-pink_primary hover:underline'>{data?.followers?.length ?? 0}</span>

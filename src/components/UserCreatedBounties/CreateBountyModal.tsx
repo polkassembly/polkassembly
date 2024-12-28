@@ -1,20 +1,26 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Skeleton } from 'antd';
+import { Modal } from 'antd';
 import classNames from 'classnames';
 import { dmSans, spaceGrotesk } from 'pages/_app';
 import React from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import dynamic from 'next/dynamic';
-const CreateBountyForm = dynamic(() => import('./CreateBountyForm'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+import CreateBountyForm from './CreateBountyForm';
 
-const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: { openCreateBountyModal: boolean; setOpenCreateBountyModal: (pre: boolean) => void }) => {
+const CreateBountyModal = ({
+	openCreateBountyModal,
+	setOpenCreateBountyModal,
+	isUsedForEdit,
+	postInfo
+}: {
+	openCreateBountyModal: boolean;
+	isUsedForEdit?: boolean;
+	setOpenCreateBountyModal: (pre: boolean) => void;
+	postInfo?: any;
+}) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Modal
@@ -35,7 +41,7 @@ const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: 
 						height={24}
 						className={theme === 'dark' ? 'dark-icons' : ''}
 					/>
-					Create Bounty
+					{isUsedForEdit ? 'Edit Bounty' : 'Create Bounty'}
 				</div>
 			}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
@@ -43,7 +49,12 @@ const CreateBountyModal = ({ openCreateBountyModal, setOpenCreateBountyModal }: 
 				setOpenCreateBountyModal?.(false);
 			}}
 		>
-			<CreateBountyForm setOpenCreateBountyModal={setOpenCreateBountyModal} />
+			<CreateBountyForm
+				setOpenCreateBountyModal={setOpenCreateBountyModal}
+				isUsedForEdit={isUsedForEdit}
+				postInfo={postInfo}
+				theme={theme}
+			/>
 		</Modal>
 	);
 };

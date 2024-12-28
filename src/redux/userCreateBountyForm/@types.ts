@@ -4,14 +4,13 @@
 export interface ICreateBountyFormState {
 	address: string;
 	balance: string;
-	claims: string;
-	deadline: any;
-	description: string;
+	claims: number;
+	deadline: string | null;
+	content: string;
 	guidelines: string;
 	title: string;
 	twitter: string;
 	categories: string[];
 	isTwitterVerified: boolean;
-	twitterUrl: string;
 	newBountyAmount: string;
 }

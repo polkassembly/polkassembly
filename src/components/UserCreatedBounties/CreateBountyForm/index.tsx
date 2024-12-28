@@ -4,10 +4,10 @@
 /* eslint-disable sort-keys */
 import React, { useState, useEffect, FC, useCallback } from 'react';
 import { spaceGrotesk } from 'pages/_app';
-import { Form, DatePicker } from 'antd';
+import { Form, DatePicker, InputNumber, Spin } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
-import { useUserCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { useTheme } from 'next-themes';
@@ -29,6 +29,8 @@ import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useDispatch } from 'react-redux';
 import { ICreateBountyFormState } from '~src/redux/userCreateBountyForm/@types';
 import { resetForm, setFormField } from '~src/redux/userCreateBountyForm';
+import { inputToBn } from '~src/util/inputToBn';
+import { useRouter } from 'next/router';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -42,8 +44,11 @@ const ZERO_BN = new BN(0);
 
 const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const { className, setOpenCreateBountyModal, isUsedForEdit, postInfo } = props;
+	const { network } = useNetworkSelector();
+	const router = useRouter();
 	const { setPostData } = usePostDataContext();
 	const { loginAddress } = useUserDetailsSelector();
+	const createBountyFormState = useUserCreateBountyFormSelector();
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -57,30 +62,42 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [newBountyAmount, setNewBountyAmount] = useState<BN>(ZERO_BN);
 	const [clickedVerifyBtn, setClickedVerifiedBtn] = useState<boolean>(false);
 
-	const createBountyFormState = useUserCreateBountyFormSelector();
-
 	useEffect(() => {
 		form.setFieldsValue({
-			address: createBountyFormState,
-			balance: createBountyFormState.balance,
+			address: createBountyFormState.address || selectedAddress || loginAddress,
+			balance: createBountyFormState.balance || '0',
+			content: createBountyFormState.content || '',
 			claims: createBountyFormState.claims,
 			deadline: createBountyFormState.deadline ? dayjs(createBountyFormState.deadline) : null,
-			description: createBountyFormState.description,
 			guidelines: createBountyFormState.guidelines,
 			title: createBountyFormState.title,
 			twitter: createBountyFormState.twitter,
 			categories: createBountyFormState.categories
 		});
-	}, [createBountyFormState, form]);
+		setSelectedAddress(createBountyFormState.address || selectedAddress || loginAddress);
+
+		if (createBountyFormState?.twitter) {
+			handleVerify(createBountyFormState?.twitter || '');
+		}
+
+		if (createBountyFormState?.balance) {
+			const [balance, isValid] = inputToBn(createBountyFormState?.balance || '0', network, false);
+			if (isValid) {
+				setNewBountyAmount(balance);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
-		form.setFieldsValue({ address: selectedAddress });
-	}, [selectedAddress, form]);
+		form.setFieldsValue({ address: selectedAddress || loginAddress });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedAddress]);
 
 	const handleFormValueChange = (changedValues: Partial<ICreateBountyFormState>) => {
 		Object.keys(changedValues).forEach((key) => {
 			const typedKey = key as keyof ICreateBountyFormState;
-			dispatch(setFormField(typedKey, changedValues[typedKey]));
+			dispatch(setFormField(typedKey, typedKey == 'deadline' ? (changedValues[typedKey] ? String(changedValues[typedKey]) : '') : changedValues[typedKey]));
 		});
 	};
 	const allowCreateBounty = () => {
@@ -95,12 +112,9 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			!!formValues?.twitter &&
 			!!isTwitterVerified &&
 			newBountyAmount.gt(ZERO_BN);
+
 		return allow;
 	};
-
-	useEffect(() => {
-		form.setFieldsValue({ address: selectedAddress });
-	}, [selectedAddress, form]);
 
 	const disabledDate: RangePickerProps['disabledDate'] = (current: any) => {
 		// Can not select days before today and today
@@ -194,6 +208,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
+			router.reload();
 			setOpenCreateBountyModal?.(false);
 			handleReset();
 		}
@@ -202,7 +217,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/user-created-bounties/editBounty', {
 			bountyId: postInfo?.id,
-			content: values?.description,
+			content: values?.content,
 			deadlineDate: dayjs(values?.deadline).toDate(),
 			maxClaim: Number(values?.claims),
 			reward: newBountyAmount?.toString(),
@@ -238,271 +253,289 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					balance: Number(postInfo?.reward) / 10 ** 10 || '', // Convert from planck to DOT if necessary
 					claims: postInfo?.maxClaim || '',
 					deadline: postInfo?.deadlineDate ? dayjs(postInfo.deadlineDate) : null,
-					description: postInfo?.content || '',
+					content: postInfo?.content || '',
 					guidelines: postInfo?.submissionGuidelines || '',
 					title: postInfo?.title || ''
 				}}
 				onValuesChange={handleFormValueChange}
 			>
-				{/* address and twitter */}
-				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
-								{isUsedForEdit ? 'Selected Account' : 'Select Account'}*
-							</p>
-							{!isUsedForEdit ? (
+				<Spin spinning={loading}>
+					{/* address and twitter */}
+					<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									{isUsedForEdit ? 'Selected Account' : 'Select Account'}
+									<span className='text-[#FF3C5F]'>*</span>
+								</p>
+								{!isUsedForEdit ? (
+									<Form.Item
+										name='address'
+										className='w-full'
+										rules={[
+											{
+												message: 'Please select an address',
+												required: true
+											}
+										]}
+									>
+										<div className='flex h-[40px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-white px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+											<Address
+												address={selectedAddress}
+												isTruncateUsername={false}
+												displayInline
+											/>
+											<CustomButton
+												text='Change Wallet'
+												onClick={() => setOpen(true)}
+												width={120}
+												className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+												height={24}
+												variant='primary'
+											/>
+										</div>
+									</Form.Item>
+								) : (
+									<div className='mb-6 flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+										<Address
+											address={postInfo?.proposer || loginAddress}
+											displayInline
+											disableTooltip
+											isTruncateUsername={false}
+										/>
+									</div>
+								)}
+							</div>
+							{!isUsedForEdit && (
+								<div className='flex w-full flex-col gap-y-1'>
+									<p className={`m-0 flex gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium items-center${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+										Twitter<span className='text-[#FF3C5F]'>*</span>
+									</p>
+									<Form.Item
+										name='twitter'
+										className='w-full'
+										rules={[
+											{
+												message: 'Please enter your Twitter handle',
+												required: false
+											}
+										]}
+									>
+										<Input
+											name='twitter'
+											onChange={(e) => {
+												setTwitterUrl(e?.target?.value);
+												setIsTwitterVerified(false);
+												setClickedVerifiedBtn(false);
+												debouncedHandleVerify(e.target?.value);
+											}}
+											suffix={
+												<>
+													{!isTwitterVerified ? (
+														<CustomButton
+															text={clickedVerifyBtn ? 'Confirm' : 'Verify'}
+															width={85}
+															loading={startLoading}
+															disabled={twitterUrl?.length < 0 || startLoading}
+															onClick={() => {
+																handleTwitterVerification();
+															}}
+															className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
+															height={24}
+															variant='primary'
+														/>
+													) : (
+														<span className='flex items-center justify-center gap-1 text-xs text-[#8d99a9]'>
+															<VerifiedIcon className='text-lg' />
+															Verified
+														</span>
+													)}
+												</>
+											}
+											placeholder='@YourTwitter (case sensitive)'
+											className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+										/>
+									</Form.Item>
+								</div>
+							)}
+						</div>
+					</article>
+					{/* title */}
+					<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									Title<span className='text-[#FF3C5F]'>*</span>
+								</p>
 								<Form.Item
-									name='address'
+									name='title'
 									className='w-full'
 									rules={[
 										{
-											message: 'Please select an address',
+											message: 'Please enter your bounty title handle',
 											required: true
 										}
 									]}
 								>
-									<div className='flex h-[40px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-white px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-										<Address
-											address={selectedAddress}
-											isTruncateUsername={false}
-											displayInline
-										/>
-										<CustomButton
-											text='Change Wallet'
-											onClick={() => setOpen(true)}
-											width={120}
-											className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
-											height={24}
-											variant='primary'
-										/>
-									</div>
-								</Form.Item>
-							) : (
-								<div className='mb-6 flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-									<Address
-										address={postInfo?.proposer || loginAddress}
-										displayInline
-										disableTooltip
-										isTruncateUsername={false}
+									<Input
+										name='title'
+										value={postInfo?.title || ''}
+										placeholder='Add title for your bounty'
+										className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 									/>
-								</div>
-							)}
+								</Form.Item>
+							</div>
 						</div>
-						{!isUsedForEdit && (
+					</article>
+					{/* amount balance */}
+					<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
 							<div className='flex w-full flex-col gap-y-1'>
-								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Twitter*</p>
+								<BalanceInput
+									label={
+										<p className={`item m-0 flex gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+											Amount<span className='text-[#FF3C5F]'>*</span>
+										</p>
+									}
+									placeholder='Enter Amount'
+									onChange={(tip) => setNewBountyAmount(tip)}
+									isBalanceUpdated={open}
+									className='mt-0'
+									noRules
+									theme={theme}
+								/>{' '}
+							</div>
+						</div>
+					</article>
+					{/* Submission Guidelines */}
+					<article className='mt-2 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Submission Guidelines</p>
 								<Form.Item
-									name='twitter'
+									name='guidelines'
 									className='w-full'
 									rules={[
 										{
-											message: 'Please enter your Twitter handle',
 											required: false
 										}
 									]}
 								>
 									<Input
-										name='twitter'
-										onChange={(e) => {
-											setTwitterUrl(e?.target?.value);
-											setIsTwitterVerified(false);
-											setClickedVerifiedBtn(false);
-											debouncedHandleVerify(e.target?.value);
-										}}
-										suffix={
-											<>
-												{!isTwitterVerified ? (
-													<CustomButton
-														text={clickedVerifyBtn ? 'Confirm' : 'Verify'}
-														width={85}
-														loading={startLoading}
-														disabled={twitterUrl?.length < 0 || startLoading}
-														onClick={() => {
-															handleTwitterVerification();
-														}}
-														className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
-														height={24}
-														variant='primary'
-													/>
-												) : (
-													<span className='flex items-center justify-center gap-1 text-xs text-[#8d99a9]'>
-														<VerifiedIcon className='text-lg' />
-														Verified
-													</span>
-												)}
-											</>
-										}
-										placeholder='@YourTwitter (case sensitive)'
+										name='guidelines'
+										placeholder='Add more context for submissions'
 										className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 									/>
 								</Form.Item>
 							</div>
-						)}
-					</div>
-				</article>
-				{/* title */}
-				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Title*</p>
-							<Form.Item
-								name='title'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please enter your bounty title handle',
-										required: true
-									}
-								]}
-							>
-								<Input
-									name='title'
-									value={postInfo?.title || ''}
-									placeholder='Add title for your bounty'
-									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-								/>
-							</Form.Item>
 						</div>
-					</div>
-				</article>
-				{/* amount balance */}
-				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<BalanceInput
-								label={<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Amount*</p>}
-								placeholder='Enter Amount'
-								onChange={(tip) => setNewBountyAmount(tip)}
-								isBalanceUpdated={open}
-								className='mt-0'
-								noRules
-								theme={theme}
-							/>{' '}
-						</div>
-					</div>
-				</article>
-				{/* Submission Guidelines */}
-				<article className='mt-2 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Submission Guidelines</p>
-							<Form.Item
-								name='guidelines'
-								className='w-full'
-								rules={[
-									{
-										required: false
-									}
-								]}
-							>
-								<Input
-									name='guidelines'
-									placeholder='Add more context for submissions'
-									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-								/>
-							</Form.Item>
-						</div>
-					</div>
-				</article>
-				{/* date and claims */}
-				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Deadline*</p>
-							<Form.Item
-								name='deadline'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please select deadline',
-										required: true
-									}
-								]}
-							>
-								<DatePicker
-									className={className}
-									disabledDate={disabledDate}
-									clearIcon={false}
-								/>
-							</Form.Item>
-						</div>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Max no of claims*</p>
-							<Form.Item
-								name='claims'
-								className='w-full'
-								rules={[
-									{
-										message: 'Please enter max claims',
-										required: true
-									}
-								]}
-							>
-								<Input
+					</article>
+					{/* date and claims */}
+					<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									Deadline<span className='text-[#FF3C5F]'>*</span>
+								</p>
+								<Form.Item
+									name='deadline'
+									className='w-full'
+									rules={[
+										{
+											message: 'Please select deadline',
+											required: true
+										}
+									]}
+								>
+									<DatePicker
+										className={className}
+										disabledDate={disabledDate}
+										clearIcon={false}
+									/>
+								</Form.Item>
+							</div>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									Max no of claims<span className='text-[#FF3C5F]'>*</span>
+								</p>
+								<Form.Item
 									name='claims'
-									placeholder='Enter maximum number of requests'
-									className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
-								/>
-							</Form.Item>
+									className='w-full'
+									rules={[
+										{
+											message: 'Please enter max claims',
+											required: true
+										}
+									]}
+								>
+									<InputNumber
+										name='claims'
+										type='number'
+										placeholder='Enter maximum number of requests'
+										className={`h-10 w-full rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
+									/>
+								</Form.Item>
+							</div>
 						</div>
-					</div>
-				</article>
-				{/* categories */}
-				<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Categories</p>
-							<Form.Item name='categories'>
-								<AddTags
-									tags={tags}
-									setTags={setTags}
-								/>
-							</Form.Item>
+					</article>
+					{/* categories */}
+					<article className='flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Categories</p>
+								<Form.Item name='categories'>
+									<AddTags
+										tags={tags}
+										setTags={setTags}
+									/>
+								</Form.Item>
+							</div>
 						</div>
-					</div>
-				</article>
-				{/* description */}
-				<article className='-mb-6 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-					<div className='mb-4 flex w-full items-center gap-x-2 text-sm'>
-						<div className='flex w-full flex-col gap-y-1'>
-							<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Description*</p>
-							<ContentForm
-								value={form.getFieldValue('content')}
-								height={250}
+					</article>
+					{/* content */}
+					<article className='-mb-6 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
+						<div className='mb-4 flex w-full items-center gap-x-2 text-sm'>
+							<div className='flex w-full flex-col gap-y-1'>
+								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									Description<span className='text-[#FF3C5F]'>*</span>
+								</p>
+								<ContentForm
+									value={form.getFieldValue('content')}
+									height={250}
+								/>
+							</div>
+						</div>
+					</article>
+					{/* footer buttons */}
+					<div className='-mx-6 flex items-center justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-separatorDark'>
+						<Form.Item>
+							<CustomButton
+								variant='default'
+								text='Cancel'
+								disabled={loading}
+								htmlType='reset'
+								buttonsize='sm'
+								onClick={() => {
+									setOpenCreateBountyModal?.(false);
+								}}
 							/>
-						</div>
+						</Form.Item>
+						<Form.Item>
+							<CustomButton
+								variant='primary'
+								text={isUsedForEdit ? 'Edit' : 'Create'}
+								loading={loading}
+								disabled={loading || !allowCreateBounty()}
+								buttonsize='sm'
+								htmlType='submit'
+								className={allowCreateBounty() ? '' : ' opacity-50'}
+								onClick={() => {
+									allowCreateBounty();
+								}}
+							/>
+						</Form.Item>
 					</div>
-				</article>
-				{/* footer buttons */}
-				<div className='-mx-6 flex items-center justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-separatorDark'>
-					<Form.Item>
-						<CustomButton
-							variant='default'
-							text='Cancel'
-							disabled={loading}
-							htmlType='reset'
-							buttonsize='sm'
-							onClick={() => {
-								setOpenCreateBountyModal?.(false);
-							}}
-						/>
-					</Form.Item>
-					<Form.Item>
-						<CustomButton
-							variant='primary'
-							text={isUsedForEdit ? 'Edit' : 'Create'}
-							loading={loading}
-							disabled={loading || !allowCreateBounty()}
-							buttonsize='sm'
-							htmlType='submit'
-							className={allowCreateBounty() ? '' : ' opacity-50'}
-							onClick={() => {
-								allowCreateBounty();
-							}}
-						/>
-					</Form.Item>
-				</div>
+				</Spin>
 			</Form>
 			<AddressConnectModal
 				open={open}
@@ -539,5 +572,11 @@ export default styled(CreateBountyForm)`
 	.ant-input {
 		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
 		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
+	}
+	.ant-input-number .ant-input-number-input:placeholder-shown {
+		height: 38px !important;
+	}
+	.ant-input-number .ant-input-number-input {
+		height: 38px !important;
 	}
 `;

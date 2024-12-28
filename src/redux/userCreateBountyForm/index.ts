@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ICreateBountyFormState } from './@types';
 
@@ -8,15 +9,14 @@ const initialState: ICreateBountyFormState = {
 	address: '',
 	balance: '',
 	categories: [],
-	claims: '',
+	claims: 0,
+	content: '',
 	deadline: null,
-	description: '',
 	guidelines: '',
 	isTwitterVerified: false,
 	newBountyAmount: '',
 	title: '',
-	twitter: '',
-	twitterUrl: ''
+	twitter: ''
 };
 
 export const userCreatedBountyFormStore = createSlice({
@@ -34,7 +34,15 @@ export const userCreatedBountyFormStore = createSlice({
 					state[field] = Boolean(value);
 					break;
 				default:
-					state[field] = value;
+					if (field === 'balance' || field === 'content' || field === 'guidelines' || field === 'title' || field === 'twitter' || field === 'address') {
+						state[field] = String(value);
+					} else if (field === 'claims') {
+						state[field] = Number(value);
+					} else if (field === 'categories') {
+						state[field] = value as string[];
+					} else if (field === 'deadline') {
+						state[field] = value as string | null;
+					}
 			}
 		},
 		setMultipleFormFields: (state, action: PayloadAction<Partial<ICreateBountyFormState>>) => {

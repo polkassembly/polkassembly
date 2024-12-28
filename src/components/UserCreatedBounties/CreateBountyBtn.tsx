@@ -4,11 +4,11 @@
 import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { spaceGrotesk } from 'pages/_app';
-import SignupPopup from '~src/ui-components/SignupPopup';
-import LoginPopup from '~src/ui-components/loginPopup';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import classNames from 'classnames';
 
 const CreateBountyModal = dynamic(() => import('~src/components/UserCreatedBounties/CreateBountyModal'), {
 	loading: () => <Skeleton.Button active />,
@@ -21,21 +21,22 @@ interface ICreateBountyBtnProps {
 
 const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
 	const [openCreateBountyModal, setOpenCreateBountyModal] = useState<boolean>(false);
-	const [openLogin, setLoginOpen] = useState<boolean>(false);
-	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const { loginAddress } = useUserDetailsSelector();
 
 	return (
 		<div className={className}>
-			<button
+			<CustomButton
+				disabled={!loginAddress}
 				onClick={() => {
-					if (loginAddress) {
-						setOpenCreateBountyModal(true);
-					} else {
-						setLoginOpen(true);
-					}
+					setOpenCreateBountyModal(true);
 				}}
-				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[14px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
+				shape='circle'
+				style={{ background: 'linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%)' }}
+				className={classNames(
+					' flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-2xl border-none px-6 py-3 md:w-auto md:justify-normal',
+					!loginAddress ? 'opacity-50' : ''
+				)}
+				height={46}
 			>
 				<ImageIcon
 					src='/assets/bounty-icons/proposal-icon.svg'
@@ -43,20 +44,7 @@ const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
 					imgClassName=''
 				/>
 				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty</span>
-			</button>
-
-			<SignupPopup
-				setLoginOpen={setLoginOpen}
-				modalOpen={openSignup}
-				setModalOpen={setSignupOpen}
-				isModal={true}
-			/>
-			<LoginPopup
-				setSignupOpen={setSignupOpen}
-				modalOpen={openLogin}
-				setModalOpen={setLoginOpen}
-				isModal={true}
-			/>
+			</CustomButton>
 			<CreateBountyModal
 				openCreateBountyModal={openCreateBountyModal}
 				setOpenCreateBountyModal={setOpenCreateBountyModal}

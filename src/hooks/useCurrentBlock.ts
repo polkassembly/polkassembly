@@ -18,13 +18,13 @@ export default function useCurrentBlock() {
 
 		(async () => {
 			try {
-				await api.isReady;
+				await api?.isReady;
 
-				if (!api.derive || !api.derive.chain) {
+				if (!api?.derive || !api?.derive?.chain) {
 					return;
 				}
 
-				unsubscribe = await api.derive.chain.bestNumber((number) => {
+				unsubscribe = await api?.derive?.chain?.bestNumber((number) => {
 					setCurrentBlock(number);
 				});
 			} catch (error) {

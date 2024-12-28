@@ -8,7 +8,11 @@ import React from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import CreateBountyForm from './CreateBountyForm';
+import dynamic from 'next/dynamic';
+
+const CreateBountyForm = dynamic(() => import('./CreateBountyForm'), {
+	ssr: false
+});
 
 const CreateBountyModal = ({
 	openCreateBountyModal,

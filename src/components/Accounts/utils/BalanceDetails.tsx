@@ -33,9 +33,9 @@ const BalanceDetails = ({ address }: { address: string }) => {
 			const allBalances = await userProfileBalances({ address: address || loginAddress, api, apiReady, network });
 			setBalances({
 				freeBalance: allBalances?.freeBalance || ZERO_BN,
-				lockedBalance: allBalances?.transferableBalance || ZERO_BN,
+				lockedBalance: allBalances?.lockedBalance || ZERO_BN,
 				total: allBalances?.totalBalance || ZERO_BN,
-				transferableBalance: allBalances?.lockedBalance || ZERO_BN
+				transferableBalance: allBalances?.transferableBalance || ZERO_BN
 			});
 		})();
 	}, [address, network, loginAddress, api, apiReady]);

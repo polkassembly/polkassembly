@@ -5,7 +5,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IChatsStore } from './@types';
-import { EChatRequestStatus, EChatTab, IChat } from '~src/types';
+import { EChatRequestStatus, EChatTab, IChat, IMessage } from '~src/types';
 /* eslint-disable sort-keys */
 
 const initialState: IChatsStore = {
@@ -18,7 +18,8 @@ const initialState: IChatsStore = {
 	error: null,
 	openedChat: null,
 	isChatOpen: false,
-	tempRecipient: null
+	tempRecipient: null,
+	unreadChatCount: 0
 };
 
 export const chatsStore = createSlice({
@@ -93,6 +94,35 @@ export const chatsStore = createSlice({
 					latestMessage.viewed_by = [...latestMessage.viewed_by, address];
 				}
 				state.messages[chatIndex] = { ...chat, latestMessage };
+			}
+		},
+		setUnreadChatCount: (state, action: PayloadAction<number>) => {
+			state.unreadChatCount = action.payload;
+		},
+		markChatAsRead: (state, action: PayloadAction<{ chatId: string; address: string }>) => {
+			const { chatId, address } = action.payload;
+			const chatIndex = state.messages.findIndex((chat) => chat.chatId === chatId);
+			if (chatIndex !== -1) {
+				const chat = state.messages[chatIndex];
+				const latestMessage = { ...chat.latestMessage };
+				if (!latestMessage.viewed_by) {
+					latestMessage.viewed_by = [];
+				}
+				if (!latestMessage.viewed_by.includes(address)) {
+					latestMessage.viewed_by.push(address);
+					state.messages[chatIndex] = { ...chat, latestMessage };
+					if (state.unreadChatCount > 0) {
+						state.unreadChatCount -= 1;
+					}
+				}
+			}
+		},
+		updateLatestMessage: (state, action: PayloadAction<{ chatId: string; message: IMessage }>) => {
+			const { chatId, message } = action.payload;
+			const chatIndex = state.messages.findIndex((chat) => chat.chatId === chatId);
+			if (chatIndex !== -1) {
+				state.messages[chatIndex].latestMessage = message;
+				state.filteredMessages[chatIndex].latestMessage = message;
 			}
 		}
 	},

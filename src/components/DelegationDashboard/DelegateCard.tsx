@@ -245,7 +245,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</Button>
 				</div>
 				<div className={`${dmSans.variable} ${dmSans.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
-					<p className='inline text-[12px]'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
+					<p className='inline text-xs'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
 					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(!openReadMore)}
@@ -321,12 +321,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<span className='text-sm font-medium text-pink_primary max-sm:hidden'>Delegate</span>
 					</Button>
 				</div>
-				<div className={'mb-4 mt-2  flex h-10 gap-1 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
-					<p className='bio w-4/5'>
+				<div className={'mb-4 mt-2 flex h-12 flex-col gap-0 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+					<p className='bio w-full'>
 						{delegate?.bio ? (
 							<Markdown
 								className='post-content'
-								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 50)}...`}
+								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 60)}...`}
 								isPreview={true}
 								imgHidden
 							/>
@@ -334,10 +334,10 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							'No Bio'
 						)}
 					</p>
-					{delegate?.bio?.length > 50 && (
+					{delegate?.bio?.length > 60 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
-							className='mt-1 flex cursor-pointer items-center justify-center text-[10px] font-medium leading-3 text-[#1B61FF]'
+							className='leading-2 flex cursor-pointer items-start justify-start text-xs font-medium text-[#1B61FF]'
 						>
 							Read more
 						</span>

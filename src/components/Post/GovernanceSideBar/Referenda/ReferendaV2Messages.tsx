@@ -122,7 +122,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		if (isTreasuryProposal) {
 			if (!api || !apiReady) return;
 			(async () => {
-				const currentBlock = await api.derive.chain.bestNumber();
+				const currentBlock = await api?.derive?.chain?.bestNumber();
 				const spendPeriodConst = api.consts.treasury ? api.consts.treasury.spendPeriod : new BN(0);
 				const spendPeriod = spendPeriodConst.toNumber();
 				const goneBlocks = currentBlock.toNumber() % spendPeriod;

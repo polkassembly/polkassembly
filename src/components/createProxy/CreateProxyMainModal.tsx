@@ -70,6 +70,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [depositFactor, setDepositFactor] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
@@ -124,26 +125,41 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 	const calculateGasFee = async () => {
 		if (!api || !apiReady) return;
+		try {
+			const values = form.getFieldsValue();
+			if (!values.proxyType) return;
 
-		const values = form.getFieldsValue();
-		if (!values.proxyType) return;
+			const proxyTx = values.createPureProxy
+				? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
+				: values.proxyAddress
+				? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
+				: null;
 
-		const proxyTx = values.createPureProxy
-			? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
-			: values.proxyAddress
-			? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
-			: null;
-
-		if (proxyTx) {
-			const accountData = await api?.query?.system?.account(address);
-			const availableBalance = new BN(accountData?.data?.free.toString() || '0');
-			setAvailableBalance(availableBalance);
-			const baseDeposit = api?.consts?.proxy?.proxyDepositBase;
-			setBaseDepositValue(new BN(baseDeposit));
-			const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
-			setGasFee(new BN(gasFee));
+			if (proxyTx) {
+				const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+				setGasFee(new BN(gasFee));
+			}
+		} catch (error) {
+			console.error('Gas fee calculation failed:', error);
 		}
 	};
+
+	const fetchBaseDeposit = async () => {
+		try {
+			const baseDeposit = api?.consts?.proxy?.proxyDepositBase || ZERO_BN;
+			const depositFactor = api?.consts?.proxy?.proxyDepositFactor || ZERO_BN;
+			setBaseDepositValue(new BN(baseDeposit.toString()));
+			setDepositFactor(new BN(depositFactor.toString()));
+		} catch (error) {
+			console.error('Failed to fetch base deposit or deposit factor value:', error);
+		}
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		fetchBaseDeposit();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -154,7 +170,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				const balance = new BN(accountData.data.free.toString() || '0');
 				setAvailableBalance(balance);
 
-				if (balance.lt(gasFee.add(baseDepositValue))) {
+				if (balance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
 					queueNotification({
 						header: 'Insufficient Balance',
 						message: `Your balance (${formatedBalance(balance.toString(), unit)} ${unit}) is insufficient to cover the gas fees and deposit .`,
@@ -168,15 +184,33 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 		};
 
-		fetchInitialBalance();
+		openModal && fetchInitialBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address, loginAddress]);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
-		calculateGasFee();
+		if (availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor))) {
+			setShowBalanceAlert(true);
+		} else {
+			setShowBalanceAlert(false);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
+	}, [availableBalance, gasFee, baseDepositValue]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		if (form.getFieldValue('proxyType') && apiReady) {
+			calculateGasFee();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form.getFieldValue('proxyType'), form.getFieldValue('proxyAddress'), form.getFieldValue('createPureProxy')]);
+
+	useEffect(() => {
+		if (form.getFieldValue('createPureProxy')) {
+			form.setFieldsValue({ proxyType: ProxyTypeEnum.Any });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form.getFieldValue('createPureProxy')]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -208,7 +242,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		const hasValidationErrors =
 			(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
 			getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-			availableBalance.lt(gasFee.add(baseDepositValue));
+			availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
 
 		if (hasValidationErrors) {
 			setShowError(true);
@@ -272,6 +306,19 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		});
 	};
 
+	const handleOnBalanceChange = async (balanceStr: string) => {
+		if (!api || !apiReady) {
+			return;
+		}
+		let balance = ZERO_BN;
+		try {
+			balance = new BN(balanceStr);
+			setAvailableBalance(balance);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const proxyTypeDescriptions = {
 		[ProxyTypeEnum.Any]: 'Allows all transactions, including balance transfers',
 		[ProxyTypeEnum.NonTransfer]: 'Allows all transactions except balance transfers',
@@ -281,6 +328,13 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		[ProxyTypeEnum.Auction]: 'For transactions related to auctions and crowdloans',
 		[ProxyTypeEnum.NominationPools]: 'For transactions involving nomination pools'
 	};
+
+	const isCreateProxyDisabled =
+		loadingStatus.isLoading ||
+		form.getFieldsError().some((field) => field.errors.length > 0) ||
+		(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
+		getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
+		availableBalance.lt(gasFee.add(baseDepositValue).add(depositFactor));
 
 	return (
 		<Modal
@@ -299,7 +353,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			}
 			open={openModal}
 			footer={
-				<div className='my-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+				<div className='mb-6 mt-3 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						buttonsize='sm'
@@ -310,26 +364,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						disabled={
-							loadingStatus.isLoading ||
-							form.getFieldsError().some((field) => field.errors.length > 0) ||
-							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
-							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))
-						}
+						disabled={isCreateProxyDisabled}
 						height={40}
 						width={145}
 						text='Create Proxy'
 						variant='primary'
-						className={
-							loadingStatus.isLoading ||
-							form.getFieldsError().some((field) => field.errors.length > 0) ||
-							(!form.getFieldValue('createPureProxy') && !form.getFieldValue('proxyAddress')) ||
-							getSubstrateAddress(address || loginAddress) === getSubstrateAddress(form.getFieldValue('proxyAddress')) ||
-							availableBalance.lt(gasFee.add(baseDepositValue))
-								? 'opacity-50'
-								: ''
-						}
+						className={isCreateProxyDisabled ? 'opacity-50' : ''}
 					/>
 				</div>
 			}
@@ -359,10 +399,12 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						}}
 						disabled={loadingStatus.isLoading}
 						onFinish={handleSubmit}
+						className=''
 					>
 						{/* Address */}
 						<Form.Item
 							name='loginAddress'
+							className='mb-2'
 							rules={[
 								{ required: true, message: 'Address is required' },
 								{
@@ -384,12 +426,17 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								title='Your Address'
 								isTruncateUsername={false}
 								accounts={accounts}
-								address={loginAddress}
-								withBalance={false}
-								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
+								address={form.getFieldValue('loginAddress') || address || loginAddress}
+								withBalance={true}
+								onAccountChange={(address) => {
+									setAddress(address);
+									form.setFieldsValue({ loginAddress: address });
+								}}
+								onBalanceChange={handleOnBalanceChange}
 								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 								inputClassName='rounded-[4px] px-3 py-1'
 								withoutInfo={true}
+								isBalanceUpdated={true}
 								linkAddressTextDisabled
 								theme={theme}
 								isVoting
@@ -398,7 +445,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						{/* Proxy Address */}
-						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>
+						<span className={`${dmSans.className} ${dmSans.variable} text-sm tracking-tight text-blue-light-medium dark:text-blue-dark-medium`}>
 							{' '}
 							Proxy Address <span className='text-lg font-medium text-[#FF3C5F]'>*</span>
 						</span>
@@ -468,13 +515,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										isTruncateUsername
 										iconSize={32}
 										usernameClassName='font-semibold'
+										disableAddressClick={true}
 									/>
 								</div>
 							)}
 						</Form.Item>
 
 						<Form.Item
-							className='mt-0 pt-0'
+							className='mb-3 pt-0'
 							name='createPureProxy'
 							valuePropName='checked'
 							rules={[
@@ -507,6 +555,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						</Form.Item>
 
 						{/* Proxy Type Selection */}
+						<span className='text-sm tracking-tight text-blue-light-medium dark:text-blue-dark-medium'> Proxy Type</span>
 						<Form.Item
 							name='proxyType'
 							rules={[
@@ -519,8 +568,6 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										if (!value) {
 											return Promise.reject(new Error('Please select a Proxy Type'));
 										}
-
-										// Call calculateGasFee when a valid proxy type is selected
 										try {
 											await calculateGasFee();
 											return Promise.resolve();
@@ -530,10 +577,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									}
 								}
 							]}
+							className='-mt-[2px] mb-0'
 						>
-							<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Proxy Type</span>
 							<Select
-								className='flex w-full items-center rounded-[4px] py-1'
+								className='flex w-full items-center rounded-[4px] py-1 text-center'
 								style={{ width: '100%', textAlign: 'center' }}
 								value={form.getFieldValue('proxyType')}
 								size='large'
@@ -541,19 +588,20 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
 								options={Object.entries(proxyTypeDescriptions).map(([key, description], index) => ({
 									label: (
-										<div className={`${index === 0 ? 'mt-[7px]' : ''} items-center gap-1 sm:flex`}>
+										<div className={`${index === 0 ? 'mt-[7px]' : ''} mt-2 items-center gap-1 sm:flex`}>
 											<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>{key}</span>
 											<span className='text-sm italic text-blue-light-medium dark:text-blue-dark-medium'>({description})</span>
 										</div>
 									),
 									value: key
 								}))}
+								disabled={form.getFieldValue('createPureProxy')} // Disable selection when createPureProxy is true
 							/>
 						</Form.Item>
 
 						{/* Advanced Details */}
 						<div
-							className='mt-6 flex cursor-pointer items-center gap-2'
+							className='mt-4 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
 							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
@@ -570,17 +618,20 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										className='ml-1'
 									/>
 								</label>
-								<Form.Item name='enactment'>
+								<Form.Item
+									name='enactment'
+									className='mb-0'
+								>
 									<Radio.Group
-										className='enactment mt-1 flex flex-col gap-2'
+										className='enactment mt-1 flex flex-col'
 										value={enactment.key}
 										onChange={(e) => setEnactment({ ...enactment, key: e.target.value })}
 									>
 										<Radio
 											value={EEnactment.At_Block_No}
-											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+											className='py-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										>
-											<div className='flex h-10 items-center gap-4'>
+											<div className='flex h-10 items-center '>
 												<span>
 													At Block no.
 													<HelperTooltip
@@ -591,10 +642,11 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 												{enactment.key === EEnactment.At_Block_No && (
 													<Form.Item
 														name='at_block'
+														className='mt-0 pt-0'
 														rules={[{ required: true, message: 'Invalid Block no.' }]}
 													>
 														<Input
-															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															className='mt-0 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 														/>
 													</Form.Item>
@@ -604,7 +656,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 
 										<Radio
 											value={EEnactment.After_No_Of_Blocks}
-											className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+											className='mb-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										>
 											<div className='flex h-[30px] items-center gap-2'>
 												<span className='w-[150px]'>
@@ -640,7 +692,9 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								showIcon
 								description={
 									<div className='mt-1 p-0 text-xs dark:text-blue-dark-high'>
-										Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied for this transaction.
+										Gas Fees: {formatedBalance(String(gasFee.toString()), unit)} {unit} <br />
+										Base Deposit: {formatedBalance(String(baseDepositValue.toString()), unit, 3)} {unit} <br />
+										Deposit Factor: {formatedBalance(String(depositFactor.toString()), unit)} {unit}
 									</div>
 								}
 							/>

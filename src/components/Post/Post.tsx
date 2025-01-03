@@ -45,6 +45,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
+import CommentsContainerCard from './Comment/CommentsContainerCard';
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -615,6 +616,7 @@ const Post: FC<IPostProps> = (props) => {
 										</>
 									)}
 								</div>
+								<CommentsContainerCard className='' />
 								<div className='flex items-center'>
 									<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
 									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>

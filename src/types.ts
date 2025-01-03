@@ -321,6 +321,7 @@ export interface PostComment {
 	username: string;
 	user_profile_img: string;
 	isExpertComment?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 export interface IPollVote {

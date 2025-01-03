@@ -198,8 +198,8 @@ import AstralSVG from '~assets/sidebar/astral-points.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
+import EditIconSVG from '~assets/icons/edit-i.svg';
 import DetailsIconSVG from '~assets/icons/details-icons.svg';
-
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkasafeWhiteIconSVG}
@@ -1483,6 +1483,12 @@ export const AnalyticsSVGIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
+export const EditPencilIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={EditIconSVG}
+		{...props}
+	/>
+);
 export const DetailsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={DetailsIconSVG}

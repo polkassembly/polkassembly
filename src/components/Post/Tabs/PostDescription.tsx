@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import { usePostDataContext } from '~src/context';
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
@@ -18,7 +17,6 @@ import { dmSans } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import Skeleton from '~src/basic-components/Skeleton';
 import EditIcon from '~assets/icons/reactions/EditIcon.svg';
 import EditIconDark from '~assets/icons/reactions/EditIconDark.svg';
 import ThreeDots from '~assets/icons/reactions/ThreeDots.svg';
@@ -26,19 +24,6 @@ import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { MenuProps } from 'antd';
 import ExpandableMarkdown from './ExpandableMarkdown';
-
-const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
-	loading: () => (
-		<div>
-			<Skeleton active />
-			<Skeleton
-				className='mt-12'
-				active
-			/>
-		</div>
-	),
-	ssr: false
-});
 
 interface IPostDescriptionProps {
 	className?: string;
@@ -215,7 +200,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					<Sidebar />
 				</div>
 			)}
-			<CommentsContainer id={id} />
+			{/* <CommentsContainer id={id} /> */}
 		</div>
 	);
 };

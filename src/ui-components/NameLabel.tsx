@@ -27,6 +27,7 @@ interface Props {
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
 	isUsedInLeadership?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 const NameLabel = ({
 	className,
@@ -37,7 +38,8 @@ const NameLabel = ({
 	disableAddressClick = false,
 	truncateUsername,
 	usernameMaxLength,
-	isUsedInLeadership
+	isUsedInLeadership,
+	isLinkedAddressUsed
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -132,6 +134,7 @@ const NameLabel = ({
 						isTruncateUsername={truncateUsername || false}
 						isSubVisible={false}
 						usernameMaxLength={usernameMaxLength}
+						isLinkedAddressUsed={isLinkedAddressUsed}
 					/>
 				)}
 			</div>

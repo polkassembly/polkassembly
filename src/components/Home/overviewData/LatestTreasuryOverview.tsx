@@ -28,7 +28,7 @@ import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
-const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
+const LatestTreasuryOverview = React.memo(({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
@@ -518,6 +518,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 			/>
 		</div>
 	);
-};
+});
 
 export default LatestTreasuryOverview;

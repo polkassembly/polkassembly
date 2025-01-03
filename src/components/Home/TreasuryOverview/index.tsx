@@ -35,7 +35,7 @@ interface ITreasuryOverviewProps {
 	theme?: string;
 }
 
-const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
+const TreasuryOverview: FC<ITreasuryOverviewProps> = React.memo((props) => {
 	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -367,7 +367,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			)}
 		</section>
 	);
-};
+});
 
 export default styled(TreasuryOverview)`
 	.ant-progress-text {

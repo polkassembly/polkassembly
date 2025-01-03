@@ -12,6 +12,10 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
 import SubmissionReactionButton from './SubmissionReactionButton';
 
+const CreateSubmissionForm = dynamic(() => import('../CreateSubmissionForm'), {
+	ssr: false
+});
+
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
 });
@@ -24,6 +28,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 	const { network } = useNetworkSelector();
 	const { loginAddress, username } = useUserDetailsSelector();
 	const [openModal, setOpenModal] = useState(false);
+	const [openEditSubmissionModal, setOpenEditSubmissionModal] = useState(false);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
@@ -102,13 +107,20 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									setOpenModal={setOpenModal}
 								/>
 							)}
-							{/* {status !== EChildbountySubmissionStatus.APPROVED && bountyProposer == loginAddress && ( */}
-							{status !== EChildbountySubmissionStatus.APPROVED && (
+							{status !== EChildbountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (
 								<button
 									onClick={() => setOpenTipping(true)}
 									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
 								>
 									Pay
+								</button>
+							)}
+							{status !== EChildbountySubmissionStatus.APPROVED && submission?.proposer == loginAddress && (
+								<button
+									onClick={() => setOpenEditSubmissionModal(true)}
+									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
+								>
+									Edit
 								</button>
 							)}
 						</div>
@@ -135,6 +147,14 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 								submissionProposer={proposer}
 							/>
 						)}
+
+						<CreateSubmissionForm
+							openModal={openEditSubmissionModal}
+							setOpenModal={setOpenEditSubmissionModal}
+							parentBountyIndex={bountyIndex}
+							submission={submission}
+							isEditing={true}
+						/>
 					</div>
 				);
 			})}

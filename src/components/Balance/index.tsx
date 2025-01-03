@@ -51,17 +51,17 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 		setLoading(true);
 
 		(async () => {
-			const { freeBalance, transferableBalance } = await userProfileBalances({
-				address: address,
+			const { transferableBalance, totalBalance, freeBalance } = await userProfileBalances({
+				address: address || '',
 				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
 				apiReady: usedInIdentityFlow ? peopleChainApiReady ?? apiReady : apiReady,
 				network
 			});
 
 			if ((isReferendum && isVoting) || isDelegating) {
-				setAvailableBalance?.(freeBalance.toString());
-				setBalance?.(freeBalance.toString());
-				onChange?.(freeBalance.toString());
+				setAvailableBalance?.(isDelegating ? freeBalance?.toString() : totalBalance.toString());
+				setBalance?.(isDelegating ? freeBalance?.toString() : totalBalance.toString());
+				onChange?.(isDelegating ? freeBalance?.toString() : totalBalance.toString());
 			} else {
 				setAvailableBalance?.(transferableBalance?.toString());
 				setBalance?.(transferableBalance?.toString());

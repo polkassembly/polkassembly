@@ -5,9 +5,9 @@ import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import { Tabs } from '~src/ui-components/Tabs';
+import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 import { useRouter } from 'next/router';
-import BountiesTable from '~src/components/Bounties/BountiesListing/BountiesTable';
 
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
@@ -39,7 +39,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	];
 
 	const tabItems = bountyStatuses.map((status) => ({
-		children: <BountiesTable bounties={props.bounties?.length > 0 ? (props.bounties as any[]) : []} />,
+		children: <BountiesTable bounties={props.bounties?.length > 0 ? (props.bounties as IUserCreatedBounty[]) : []} />,
 		key: status.key,
 		label: <p>{status.label}</p>
 	}));

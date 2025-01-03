@@ -332,10 +332,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
-	console.log(dataSource, currentUserDataSource);
-
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
-	console.log('combined: ', combinedDataSource);
 
 	return (
 		<Spin spinning={loading || loadingCurrentUser}>

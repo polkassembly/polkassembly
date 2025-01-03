@@ -1258,3 +1258,9 @@ export enum EUserCreatedBountyActions {
 	DELETE = 'delete',
 	APPROVE = 'approve'
 }
+
+export enum ETabBountyStatuses {
+	ALL = 'all',
+	APPROVED = 'approved',
+	REJECTED = 'rejected'
+}

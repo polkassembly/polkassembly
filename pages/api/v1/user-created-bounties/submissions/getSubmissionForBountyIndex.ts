@@ -19,7 +19,7 @@ const handler: NextApiHandler<{ submissions: IChildBountySubmission[]; totalCoun
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		const { parentBountyIndex = 3, page = 1 } = req.body;
+		const { parentBountyIndex, page = 1 } = req.body;
 		if (isNaN(parentBountyIndex)) {
 			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
 		}

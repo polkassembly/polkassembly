@@ -126,7 +126,7 @@ const AddressActionDropdown = ({
 								onClick={() => setState((prevState) => ({ ...prevState, openProxyModal: true }))}
 								className='mt-1 flex items-center space-x-2'
 							>
-								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Proxy</span>
+								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Add Proxy</span>
 							</div>
 						)
 					}

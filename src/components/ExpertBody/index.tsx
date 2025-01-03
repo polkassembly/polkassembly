@@ -172,12 +172,14 @@ function ExpertBodyCard() {
 					</span>
 				</span>
 			</div>
-			<div className='absolute right-2 top-11 z-50'>
-				<ArrowRightOutlined
-					onClick={() => setIsModalVisible(true)}
-					className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'
-				/>
-			</div>
+			{reviewsCount > 0 && (
+				<div className='absolute right-2 top-11 z-50'>
+					<ArrowRightOutlined
+						onClick={() => setIsModalVisible(true)}
+						className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'
+					/>
+				</div>
+			)}
 
 			{isModalVisible &&
 				(expertStatus === EExpertReqStatus.APPROVED ? (

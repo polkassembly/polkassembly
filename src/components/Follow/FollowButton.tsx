@@ -10,27 +10,24 @@ import { FollowUserData } from 'pages/api/v1/fetch-follows/followersAndFollowing
 import { useDispatch, useSelector } from 'react-redux';
 import { addFollowingId, isFollowing, removeFollowingId } from '~src/redux/follow';
 
-const FollowButton = ({
-	userId,
-	isUsedInProfileTab,
-	isUsedInProfileHeaders,
-	addToFollowing,
-	removeFromFollowing,
-	user
-}: {
+interface FollowButtonProps {
 	userId: number;
 	isUsedInProfileTab?: boolean;
 	isUsedInProfileHeaders?: boolean;
 	addToFollowing?: (user: FollowUserData) => void;
 	removeFromFollowing?: (userId: number) => void;
 	user?: FollowUserData;
-}) => {
+	buttonClassName?: string;
+}
+
+const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addToFollowing, removeFromFollowing, user, buttonClassName }: FollowButtonProps) => {
 	const { id } = useUserDetailsSelector();
 	const { loading, followUser, unfollowUser, setIsFollowing } = useFollowStatus(userId);
 	const dispatch = useDispatch();
 	const isUserFollowing = useSelector((state: any) => isFollowing(state.follow, userId));
 
 	const handleFollowClick = () => {
+		if (!userId) return;
 		if (isUserFollowing) {
 			dispatch(removeFollowingId(userId));
 			unfollowUser(userId);
@@ -43,7 +40,11 @@ const FollowButton = ({
 		setIsFollowing(!isFollowing);
 	};
 
-	const buttonClass = isUsedInProfileTab ? 'rounded-md border-none px-3 py-0 text-xs text-white' : 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
+	const buttonClass = buttonClassName
+		? buttonClassName
+		: isUsedInProfileTab
+		? 'rounded-md border-none px-3 py-0 text-xs text-white'
+		: 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
 	const buttonHeight = isUsedInProfileTab ? 28 : undefined;
 	const buttonText = isUserFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
 
@@ -53,7 +54,7 @@ const FollowButton = ({
 				<CustomButton
 					shape='circle'
 					variant='primary'
-					className={`${buttonClass} ${!id && 'opacity-50'}`}
+					className={`${buttonClass} ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}
 					height={buttonHeight}
@@ -71,7 +72,7 @@ const FollowButton = ({
 				<CustomButton
 					shape='circle'
 					variant='link'
-					className={`w-min px-2 text-xs font-normal ${!id && 'opacity-50'}`}
+					className={`w-min px-2 text-xs font-normal ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}
 					height={20}

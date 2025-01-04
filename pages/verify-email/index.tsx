@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { WarningOutlined } from '@ant-design/icons';
-import { Row } from 'antd';
+import { Row, Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,7 +13,6 @@ import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ChangeResponseType } from '~src/auth/types';
-import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -22,6 +22,10 @@ import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+const VerificationSuccessScreen = dynamic(() => import('~src/components/OnchainIdentity/VerificationSuccessScreen'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

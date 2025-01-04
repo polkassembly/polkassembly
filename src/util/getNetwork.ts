@@ -34,7 +34,7 @@ export default function getNetwork(): Network {
 	const possibleNetworks = Object.values(networkConstants);
 
 	if (network == 'test') {
-		network = 'kusama';
+		network = 'paseo';
 	} else if (network == 'test-polkadot') {
 		network = 'polkadot';
 	} else if (network == 'moonriver-test') {

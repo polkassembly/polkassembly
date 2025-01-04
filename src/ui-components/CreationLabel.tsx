@@ -84,6 +84,7 @@ interface ICreationLabelProps {
 	inPostHeading?: boolean;
 	assetId?: null | string;
 	expertComment?: boolean;
+	isLinkedAddressUsed?: boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -107,7 +108,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		voterAddress,
 		inPostHeading,
 		assetId,
-		expertComment
+		expertComment,
+		isLinkedAddressUsed
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
@@ -143,6 +145,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
 							usernameClassName='text-xs text-ellipsis overflow-hidden'
+							isLinkedAddressUsed={isLinkedAddressUsed}
 						/>
 						{text}&nbsp;
 						{topic && (

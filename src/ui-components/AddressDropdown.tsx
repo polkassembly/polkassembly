@@ -36,6 +36,7 @@ interface Props {
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
 	showProxyDropdown?: boolean;
+	isUsedInProxy?: boolean;
 }
 
 const AddressDropdown = ({
@@ -51,7 +52,8 @@ const AddressDropdown = ({
 	linkAddressTextDisabled = false,
 	addressTextClassName,
 	isTruncateUsername = true,
-	showProxyDropdown
+	showProxyDropdown,
+	isUsedInProxy = false
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
@@ -161,6 +163,7 @@ const AddressDropdown = ({
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip
+					iconSize={isUsedInProxy ? 24 : 26}
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

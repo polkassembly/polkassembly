@@ -433,8 +433,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									form.setFieldsValue({ loginAddress: address });
 								}}
 								onBalanceChange={handleOnBalanceChange}
-								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
+								className={`${dmSans.className} ${dmSans.variable} rounded-[4px] border text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] h-10 px-3 py-1 border'
 								withoutInfo={true}
 								isBalanceUpdated={true}
 								linkAddressTextDisabled
@@ -492,7 +492,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									style={{
 										width: '100%',
 										height: '40px',
-										borderRadius: '6px'
+										borderRadius: '4px'
 									}}
 									placeholder='Select an address for proxy'
 									onChange={(value) => {
@@ -577,10 +577,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									}
 								}
 							]}
-							className='-mt-[2px] mb-0'
+							className='mb-0 mt-[2px] rounded-[4px]'
 						>
 							<Select
-								className='flex w-full items-center rounded-[4px] py-1 text-center'
+								className='custom-select'
 								style={{ width: '100%', textAlign: 'center' }}
 								value={form.getFieldValue('proxyType')}
 								size='large'
@@ -588,14 +588,15 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
 								options={Object.entries(proxyTypeDescriptions).map(([key, description], index) => ({
 									label: (
-										<div className={`${index === 0 ? 'mt-[7px]' : ''} mt-2 items-center gap-1 sm:flex`}>
+										<div className={`${index === 0 ? 'mt-2' : ''} mt-2 items-center gap-1 sm:flex`}>
 											<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>{key}</span>
 											<span className='text-sm italic text-blue-light-medium dark:text-blue-dark-medium'>({description})</span>
 										</div>
 									),
 									value: key
 								}))}
-								disabled={form.getFieldValue('createPureProxy')} // Disable selection when createPureProxy is true
+								disabled={form.getFieldValue('createPureProxy')}
+								popupClassName='custom-select-dropdown'
 							/>
 						</Form.Item>
 
@@ -737,6 +738,22 @@ export default styled(CreateProxyMainModal)`
 	.ant-modal-content {
 		padding: 0px !important;
 		border-radius: 14px;
+	}
+
+	.custom-select .ant-select-selector {
+		border-radius: 4px !important;
+	}
+
+	.custom-select .ant-select {
+		border-radius: 4px !important;
+	}
+
+	.custom-select-dropdown .ant-select-item {
+		border-radius: 4px !important;
+	}
+
+	.custom-select .ant-select-arrow {
+		margin-top: -9px;
 	}
 
 	.proxy-address {

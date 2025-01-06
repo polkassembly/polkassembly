@@ -13,6 +13,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
 import { LinkProxyType } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	address: string;
@@ -118,6 +119,18 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 						/>
 					</div>
 				</div>
+				{isPureProxy && (
+					<Alert
+						message={
+							<div className='py-1 text-sm text-blue-light-high dark:text-blue-dark-high'>
+								Balance of <span className='text-sm font-medium'>{'>1.00 DOT'}</span> (Existential deposit) is required to maintain account
+							</div>
+						}
+						type='info'
+						showIcon
+						className='mt-3 py-1'
+					/>
+				)}
 			</div>
 		</>
 	);

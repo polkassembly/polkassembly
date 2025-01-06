@@ -81,6 +81,7 @@ interface Props {
 	isUsedInDelegationProfile?: boolean;
 	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
+	showCopyIcon?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -181,7 +182,8 @@ const Address = (props: Props) => {
 		isUsedIndelegationNudge = false,
 		isUsedInDelegationProfile = false,
 		isUsedInAccountsPage = false,
-		disableParentProxyAddressTitle = false
+		disableParentProxyAddressTitle = false,
+		showCopyIcon = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -584,13 +586,26 @@ const Address = (props: Props) => {
 								</div>
 							)}
 							{isUsedInAccountsPage && username && (
-								<div
-									className={` ${!disableAddressClick && 'cursor-pointer hover:underline'} font-medium dark:text-blue-dark-medium sm:text-xl ${
-										isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal sm:text-xl'
-									}`}
-									onClick={(e) => handleClick(e)}
-								>
-									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+								<div className='flex items-center gap-[6px]'>
+									<div
+										className={` ${!disableAddressClick && 'cursor-pointer hover:underline'} font-medium dark:text-blue-dark-medium sm:text-xl ${
+											isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal sm:text-xl'
+										}`}
+										onClick={(e) => handleClick(e)}
+									>
+										({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
+									</div>
+									{showCopyIcon && (
+										<span
+											className='flex cursor-pointer items-center text-base'
+											onClick={() => {
+												copyLink(encodedAddr || '');
+												success();
+											}}
+										>
+											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+										</span>
+									)}
 								</div>
 							)}
 							{!isUsedInAccountsPage && (

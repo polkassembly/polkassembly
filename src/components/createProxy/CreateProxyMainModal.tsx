@@ -447,7 +447,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						{/* Proxy Address */}
 						<span className={`${dmSans.className} ${dmSans.variable} text-sm tracking-tight text-blue-light-medium dark:text-blue-dark-medium`}>
 							{' '}
-							Proxy Address <span className='text-lg font-medium text-[#FF3C5F]'>*</span>
+							Proxy Address <span className='text-lg font-medium text-red-light-medium'>*</span>
 						</span>
 						<Form.Item
 							name='proxyAddress'
@@ -604,7 +604,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							className='mt-4 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
-							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<span className='text-sm font-medium text-pink_primary dark:text-[#FF4098] '>Advanced Details</span>
 							<DownArrow className='down-icon' />
 						</div>
 
@@ -629,7 +629,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									>
 										<Radio
 											value={EEnactment.At_Block_No}
-											className='py-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+											className='py-0 text-sm font-normal text-bodyBlue dark:bg-black dark:text-blue-dark-high'
 										>
 											<div className='flex h-10 items-center '>
 												<span>

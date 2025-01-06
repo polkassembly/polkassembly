@@ -75,6 +75,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
+	const [isPureProxy, setIsPureProxy] = useState(false);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -499,7 +500,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 										form.setFieldsValue({ proxyAddress: value });
 									}}
 									className='h-10 rounded-[6px] text-blue-light-high dark:text-blue-dark-high'
-									disabled={form.getFieldValue('createPureProxy')}
+									disabled={isPureProxy}
 									popupClassName='dark:bg-section-dark-garyBackground'
 									filterOption={(inputValue, option) => option?.value.toLowerCase().includes(inputValue.toLowerCase()) ?? false}
 								/>
@@ -540,10 +541,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						>
 							<Checkbox
 								onChange={(e) => {
-									form.setFieldsValue({ createPureProxy: e.target.checked });
-									if (e.target.checked) {
-										form.setFieldsValue({ proxyAddress: '' });
-									}
+									setIsPureProxy(e.target.checked);
+									form.setFieldsValue({
+										proxyAddress: e.target.checked ? '' : undefined
+									});
 								}}
 							>
 								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Pure Proxy</span>
@@ -595,7 +596,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									),
 									value: key
 								}))}
-								disabled={form.getFieldValue('createPureProxy')}
+								disabled={isPureProxy}
 								popupClassName='custom-select-dropdown'
 							/>
 						</Form.Item>

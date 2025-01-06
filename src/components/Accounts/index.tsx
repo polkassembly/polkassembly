@@ -8,36 +8,44 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import Image from 'next/image';
 import ProxyMain from '~src/components/createProxy';
 import { dmSans } from 'pages/_app';
+import AddressActionDropdown from './utils/AddressActionDropdown';
 
 const AccountsMain = () => {
-	const { id } = useUserDetailsSelector();
+	const { id, loginAddress } = useUserDetailsSelector();
 	const [openProxyModal, setOpenProxyModal] = useState<boolean>(false);
 	return (
 		<div>
 			<div className='flex items-center justify-between'>
 				<h2 className={`${dmSans.className} ${dmSans.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
 				{id && (
-					<CustomButton
-						variant='link'
-						className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
-						onClick={() => setOpenProxyModal(true)}
-						disabled={!id}
-						height={42}
-						width={178}
-						buttonsize={'14'}
-					>
-						<div className='flex items-center gap-[6px]'>
-							<Image
-								src={'/assets/icons/proxy-main.svg'}
-								alt='search-icon'
-								className=''
-								height={18}
-								width={18}
-								priority={true}
-							/>
-							<span className={' text-sm font-medium'}>Create Proxy</span>
-						</div>
-					</CustomButton>
+					<div className='item-center flex gap-4'>
+						<AddressActionDropdown
+							address={loginAddress}
+							type={null}
+							isUsedInLandingPage={true}
+						/>
+						<CustomButton
+							variant='link'
+							className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
+							onClick={() => setOpenProxyModal(true)}
+							disabled={!id}
+							height={42}
+							width={178}
+							buttonsize={'14'}
+						>
+							<div className='flex items-center gap-[6px]'>
+								<Image
+									src={'/assets/icons/proxy-main.svg'}
+									alt='search-icon'
+									className=''
+									height={18}
+									width={18}
+									priority={true}
+								/>
+								<span className={' text-sm font-medium'}>Create Proxy</span>
+							</div>
+						</CustomButton>
+					</div>
 				)}
 			</div>
 			{/* <Alert

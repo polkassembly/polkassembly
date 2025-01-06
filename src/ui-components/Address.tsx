@@ -585,9 +585,9 @@ const Address = (props: Props) => {
 							)}
 							{isUsedInAccountsPage && username && (
 								<div
-									className={`${!addressClassName ? 'text-sm' : addressClassName} ${
-										!disableAddressClick && 'cursor-pointer hover:underline'
-									} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal'}`}
+									className={` ${!disableAddressClick && 'cursor-pointer hover:underline'} font-medium dark:text-blue-dark-medium sm:text-xl ${
+										isUsedInDelegationProfile && 'mt-[10px] flex gap-2 text-base font-normal sm:text-xl'
+									}`}
 									onClick={(e) => handleClick(e)}
 								>
 									({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})

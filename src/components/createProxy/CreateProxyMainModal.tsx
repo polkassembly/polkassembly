@@ -630,7 +630,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									>
 										<Radio
 											value={EEnactment.At_Block_No}
-											className='py-0 text-sm font-normal text-bodyBlue dark:bg-black dark:text-blue-dark-high'
+											className='py-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										>
 											<div className='flex h-10 items-center '>
 												<span>
@@ -673,7 +673,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 														rules={[{ required: true, message: 'Invalid no. of Blocks' }]}
 													>
 														<Input
-															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															className='mt-3 w-[100px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
 														/>
 													</Form.Item>

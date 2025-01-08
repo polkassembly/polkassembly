@@ -106,10 +106,10 @@ const ChatCard = ({ chat }: Props) => {
 						src='/assets/icons/timer.svg'
 						height={12}
 						width={12}
-						className='ml-1 dark:grayscale dark:invert dark:filter'
+						className='ml-1 flex items-center dark:grayscale dark:invert dark:filter'
 						alt='timer icon'
 					/>
-					<span className='text-xs text-blue-light-medium dark:text-[#9e9e9e]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
+					<span className='ml-0.5 text-xs text-blue-light-medium dark:text-[#f0d2d2]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
 					{isRejectedRequest ? (
 						<div className='ml-auto flex items-center gap-1.5'>
 							<span className='h-2 w-2 rounded-full bg-[#FB123C]'></span>

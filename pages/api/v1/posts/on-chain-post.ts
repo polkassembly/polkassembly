@@ -41,6 +41,7 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { getTimeline } from '~src/util/getTimeline';
+import console_pretty from '~src/api-utils/console_pretty';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -789,10 +790,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				variables: postVariables
 			});
 
+			console_pretty(subsquidRes?.data);
+
 			if (!subsquidRes?.data?.proposals?.length) {
 				console.log('Failed to fetch from subsquid, fetching from subsquare instead');
 				// this will make the control flow to the catch block to fetch from subsquare
-				throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
+				return {
+					data: null,
+					error: `The Post with index "${postId}" is not found.`,
+					status: 404
+				};
 			}
 		} catch (error) {
 			const data = await fetchSubsquare(network, strPostId);
@@ -848,7 +855,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		// Post
 		const subsquidData = subsquidRes?.data;
 		if (!isDataExist(subsquidData)) {
-			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
+			return {
+				data: null,
+				error: `The Post with index "${postId}" is not found.`,
+				status: 404
+			};
 		}
 		const postData = subsquidData.proposals?.[0] || subsquidData.announcements?.[0];
 

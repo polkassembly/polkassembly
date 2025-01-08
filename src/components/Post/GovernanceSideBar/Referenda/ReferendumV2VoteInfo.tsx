@@ -56,7 +56,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		setIsLoading(true);
 
 		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
-			'/api/v1/votes/ayeNayTotalCount',
+			'api/v1/votes/ayeNayTotalCount',
 			{
 				postId: postIndex,
 				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)

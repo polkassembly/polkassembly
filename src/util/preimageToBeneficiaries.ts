@@ -6,17 +6,29 @@ import { IBeneficiary } from '~src/types';
 import { containsBinaryData, convertAnyHexToASCII } from './decodingOnChainInfo';
 import BN from 'bn.js';
 
+interface IRes {
+	beneficiaries: IBeneficiary[];
+	requested: string | undefined;
+	remark?: string;
+	assetId?: any | null;
+}
+interface IMethodHandlers {
+	[key: string]: (args: any, network: string) => IRes;
+}
+
 const ZERO_BN = new BN(0);
+
+function extractGeneralIndex(call: any) {
+	const interiorAssetId = call?.assetKind?.assetId || null;
+	if (!interiorAssetId) return null;
+	const assetCall = interiorAssetId?.value?.interior?.value || interiorAssetId?.interior?.value;
+	return assetCall?.find((item: any) => item.__kind === 'GeneralIndex')?.value || null;
+}
 
 const handleSpendCall = (call: any, network: string) => {
 	const beneficiaries: IBeneficiary[] = [];
 	const requested = new BN(call?.amount || 0)?.toString();
-	let assetId = null;
-
-	if (call?.assetKind?.assetId?.value?.interior || call?.assetKind?.assetId?.interior?.value) {
-		const assetCall = call?.assetKind?.assetId?.value?.interior?.value || call?.assetKind?.assetId?.interior?.value;
-		assetId = (assetCall?.length ? assetCall?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-	}
+	const assetId = extractGeneralIndex(call) || null;
 
 	const beneficiary = {
 		address: convertAnyHexToASCII(((call?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.beneficiary as any)?.value?.interior?.value?.[0]?.id, network) || '',
@@ -36,12 +48,15 @@ const handleSpenLocalCall = (call: any, network: string) => {
 	if (call.beneficiary) {
 		beneficiaries.push({
 			address:
-				convertAnyHexToASCII((call?.beneficiary?.value as string) || (call.beneficiary as string), network) || (call?.beneficiary?.value as string) || (call.beneficiary as string),
+				convertAnyHexToASCII((call?.beneficiary?.value as string) || (call.beneficiary as string), network) ||
+				(call?.beneficiary?.value as string) ||
+				(call.beneficiary as string) ||
+				'',
 			amount: call.amount || '0',
 			genralIndex: null
 		});
 	}
-	return { beneficiaries, requested };
+	return { assetId: null, beneficiaries, requested };
 };
 
 const handleBatchCall = (args: any, network: string) => {
@@ -58,12 +73,12 @@ const handleBatchCall = (args: any, network: string) => {
 			if (call?.__kind == 'spend_local') {
 				const { requested, beneficiaries } = handleSpenLocalCall(call, network);
 				requestedAmt = requestedAmt?.add(new BN(requested));
-				allBeneficiaries.push(...(beneficiaries || []));
+				allBeneficiaries.concat(beneficiaries || []);
 			}
 
 			if (call?.__kind == 'spend') {
 				const { beneficiaries } = handleSpendCall(call, network);
-				allBeneficiaries.push(...(beneficiaries || []));
+				allBeneficiaries.concat(beneficiaries || []);
 			}
 		}
 	});
@@ -71,27 +86,22 @@ const handleBatchCall = (args: any, network: string) => {
 	return { beneficiaries: allBeneficiaries || [], remark, requested: requestedAmt.toString() };
 };
 
-const preimageToBeneficiaries = (onchainCall: any, network: string) => {
-	if (!onchainCall?.args) {
+const preimageToBeneficiaries = (onchainCall: any, network: string): IRes => {
+	const methodHandlers: IMethodHandlers = {
+		batch: handleBatchCall,
+		batch_all: handleBatchCall,
+		spend: handleSpendCall,
+		spend_local: handleSpenLocalCall
+	};
+
+	const method = onchainCall?.method || null;
+	if (!onchainCall?.args || !method || !methodHandlers?.[method]) {
 		return { assetId: null, beneficiaries: [], remark: '', requested: undefined };
 	}
-	const method = onchainCall?.method;
-	let value: { beneficiaries: IBeneficiary[]; requested: string; remark?: string; assetId?: any | null } = { beneficiaries: [], requested: '0' };
-	switch (method) {
-		case 'batch_all':
-			value = handleBatchCall(onchainCall?.args, network);
-			break;
-		case 'batch':
-			value = handleBatchCall(onchainCall?.args, network);
-			break;
-		case 'spend_local':
-			value = handleSpenLocalCall(onchainCall?.args, network);
-			break;
-		case 'spend':
-			value = handleSpendCall(onchainCall?.args, network);
-			break;
-	}
-	return { ...value, assetId: method == 'spend' ? value?.assetId || null : null };
+
+	const data = methodHandlers?.[method]?.(onchainCall?.args, network);
+
+	return { ...data, assetId: method == 'spend' ? data?.assetId || null : null };
 };
 
 export default preimageToBeneficiaries;

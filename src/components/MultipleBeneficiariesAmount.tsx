@@ -27,7 +27,7 @@ interface Props {
 	beneficiaries: IBeneficiary[];
 	proposalCreatedAt: Date | null;
 	timeline: any[];
-	postId: number;
+	postId: number | null;
 }
 const ZERO_BN = new BN(0);
 
@@ -70,7 +70,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	};
 
 	const fetchUSDValue = async () => {
-		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
+		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs()) || (postId && isNaN(postId))) return;
 		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;

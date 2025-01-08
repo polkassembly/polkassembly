@@ -234,7 +234,11 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 								'👎': 0
 							},
 							proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
-							requestedAmount: beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length ? beneficiariesInfo?.requested.toString() : undefined,
+							requestedAmount: beneficiariesInfo?.requested
+								? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length
+									? beneficiariesInfo?.requested.toString()
+									: undefined
+								: undefined,
 							status: status || '',
 							status_history: statusHistory || null,
 							tally: tally || null,

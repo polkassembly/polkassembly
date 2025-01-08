@@ -422,8 +422,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								{beneficiaries && beneficiaries?.length > 1 ? (
 									<MultipleBeneficiariesAmount
 										beneficiaries={beneficiaries || []}
-										postId={onchainId ? Number(onchainId) : (onchainId as any)}
-										proposalCreatedAt={created_at as any}
+										postId={onchainId ? Number(onchainId) : null}
+										proposalCreatedAt={created_at as Date}
 										timeline={timeline || []}
 									/>
 								) : (
@@ -432,8 +432,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
 											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
 											className={'flex items-center justify-center'}
-											postId={onchainId ? Number(onchainId) : (onchainId as any)}
-											proposalCreatedAt={created_at as any}
+											postId={onchainId ? Number(onchainId) : null}
+											proposalCreatedAt={created_at as Date}
 											timeline={timeline || []}
 											key={onchainId ? Number(onchainId) : (onchainId as any)}
 										/>

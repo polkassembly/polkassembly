@@ -22,7 +22,7 @@ interface Args {
 	assetId: string | null;
 	proposalCreatedAt: Date | null;
 	timeline: any[];
-	postId: number;
+	postId: number | null;
 	usedInPostPage?: boolean;
 }
 const ZERO_BN = new BN(0);
@@ -41,7 +41,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
 	const fetchUSDValue = async () => {
-		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
+		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs()) || (postId && isNaN(postId))) return;
 		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;

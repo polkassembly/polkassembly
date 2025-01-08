@@ -24,14 +24,15 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 		<div className={`${className} beneficiary-container flex flex-wrap items-center gap-1`}>
 			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px]' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
 			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
-			{beneficiaries?.slice(0, 1).map((beneficiary, index) => (
-				<Beneficiary
-					key={index}
-					beneficiary={beneficiary}
-					inPostHeading={inPostHeading}
-					assetId={beneficiary?.genralIndex || null}
-				/>
-			))}
+			{!!beneficiaries?.length &&
+				beneficiaries?.slice(0, 1).map((beneficiary, index) => (
+					<Beneficiary
+						key={index}
+						beneficiary={beneficiary}
+						inPostHeading={inPostHeading}
+						assetId={beneficiary?.genralIndex || null}
+					/>
+				))}
 			{beneficiaries.length > 1 && (
 				<span className='flex items-center gap-1'>
 					&amp;

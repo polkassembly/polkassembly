@@ -976,7 +976,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								post_reactions,
 								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-								requestedAmount: beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length ? beneficiariesInfo?.requested.toString() : undefined,
+								requestedAmount: beneficiariesInfo?.requested
+									? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length
+										? beneficiariesInfo?.requested.toString()
+										: undefined
+									: undefined,
 								reward,
 								spam_users_count:
 									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -1033,7 +1037,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-						requestedAmount: beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries?.length ? beneficiariesInfo?.requested.toString() : undefined,
+						requestedAmount: beneficiariesInfo
+							? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries?.length
+								? beneficiariesInfo?.requested.toString()
+								: undefined
+							: undefined,
 						reward,
 						status: status,
 						status_history: statusHistory || [],

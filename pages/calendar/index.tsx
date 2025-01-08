@@ -96,12 +96,20 @@ const StyledCalendar: any = styled(Calendar)`
 
 		.rbc-header {
 			font-size: 16px;
-			font-weight: 400 !important;
+			font-weight: 800 !important;
 			border: none !important;
-			text-align: left;
+			text-align: center;
 			margin-left: 2px;
+
+			span {
+				font-size: 14px;
+				font-weight: 600 !important;
+				text-transform: uppercase;
+				color: ${(props: any) => (props.theme === 'dark' ? '#9e9e9e' : 'var(--bodyBlue)')} !important;
+			}
 		}
 	}
+
 	.rbc-date-cell {
 		text-align: center !important;
 
@@ -117,6 +125,17 @@ const StyledCalendar: any = styled(Calendar)`
 			&:hover {
 				background: #e8e8e8;
 				border: 1px solid #e8e8e8;
+			}
+		}
+
+		&.rbc-current {
+			button {
+				background-color: #e6007a;
+				color: #fff;
+				border: 1px solid #e6007a;
+				border-radius: 50%;
+				height: 30px;
+				width: 30px;
 			}
 		}
 
@@ -427,15 +446,6 @@ export default styled(CalendarView)`
 
 		.rbc-month-header {
 			margin-bottom: 8px;
-		}
-
-		.rbc-header {
-			span {
-				font-size: 12px;
-				font-weight: 400 !important;
-				text-transform: uppercase;
-				color: #bbb;
-			}
 		}
 
 		.custom-event-wrapper {

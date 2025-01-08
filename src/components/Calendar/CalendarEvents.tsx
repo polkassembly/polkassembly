@@ -145,7 +145,7 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 					<span className='mt-0.5 text-lg font-normal'>({dayjs(selectedDate).format('MMM DD, YYYY')})</span>
 				</main>
 
-				<div className='mt-4 flex flex-col gap-4'>
+				<div className='min-h-40 mt-4 flex flex-col gap-4'>
 					{formatedEvents && Object.keys(formatedEvents)?.length
 						? Object.entries(formatedEvents).map(([key, value], index) => {
 								return (

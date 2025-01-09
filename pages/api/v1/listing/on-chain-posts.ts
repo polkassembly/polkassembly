@@ -36,6 +36,7 @@ import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChil
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -110,6 +111,7 @@ export interface IPostListing {
 	reward?: string;
 	content?: string;
 	includeContent?: boolean;
+	markdownContent: string;
 	isVoted?: boolean;
 	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }
@@ -431,6 +433,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							identity,
 							isSpam: data?.isSpam || false,
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
+							markdownContent: convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || '',
 							method: subsquidPost?.preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -478,6 +481,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					end: end,
 					hash: hash || null,
 					identity,
+					markdownContent: convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || '',
 					method: subsquidPost?.preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -1005,6 +1009,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								identity,
 								isSpam: data?.isSpam || false,
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
+								markdownContent: convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || '',
 								method: subsquidPost?.preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -1062,6 +1067,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						end: end,
 						hash: hash || null,
 						identity,
+						markdownContent: convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || '',
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						parent_bounty_requested_amount: parentBountyRequestedAmount,

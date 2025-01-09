@@ -42,6 +42,7 @@ import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { getTimeline } from '~src/util/getTimeline';
 import console_pretty from '~src/api-utils/console_pretty';
+import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -101,6 +102,7 @@ export interface IPostResponse {
 	comments: any;
 	currentTimeline?: any;
 	content: string;
+	markdownContent: string;
 	end?: number;
 	delay?: number;
 	vote_threshold?: any;
@@ -1009,6 +1011,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
+			markdownContent: '',
 			marketMetadata: postData?.marketMetadata || null,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
@@ -1207,6 +1210,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
+				post.markdownContent = convertHtmlToMarkdown(data.content) || '';
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
@@ -1261,6 +1265,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
+				post.markdownContent = convertHtmlToMarkdown(res.content) || '';
 				post.title = res.title;
 
 				if (res.title || res.content) {

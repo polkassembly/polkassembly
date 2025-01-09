@@ -646,7 +646,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 												{enactment.key === EEnactment.At_Block_No && (
 													<Form.Item
 														name='at_block'
-														className='mt-0 pt-0'
+														className='mt-2 pl-3 pt-1'
 														rules={[{ required: true, message: 'Invalid Block no.' }]}
 													>
 														<Input

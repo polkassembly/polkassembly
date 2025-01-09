@@ -111,7 +111,7 @@ export interface IPostListing {
 	reward?: string;
 	content?: string;
 	includeContent?: boolean;
-	markdownContent: string;
+	markdownContent?: string;
 	isVoted?: boolean;
 	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }

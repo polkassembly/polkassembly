@@ -102,7 +102,7 @@ export interface IPostResponse {
 	comments: any;
 	currentTimeline?: any;
 	content: string;
-	markdownContent: string;
+	markdownContent?: string;
 	end?: number;
 	delay?: number;
 	vote_threshold?: any;

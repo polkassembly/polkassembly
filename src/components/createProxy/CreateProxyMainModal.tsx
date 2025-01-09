@@ -162,12 +162,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		const fetchInitialBalance = async () => {
-			try {
-				const accountData = await api?.query?.system?.account(address || loginAddress);
+	const fetchInitialBalance = async () => {
+		try {
+			const accountData = await api?.query?.system?.account(address || loginAddress);
+			if (accountData) {
 				const balance = new BN(accountData.data.free.toString() || '0');
 				setAvailableBalance(balance);
 
@@ -180,10 +178,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					setShowBalanceAlert(true);
 				}
 				setShowBalanceAlert(false);
-			} catch (error) {
-				console.error('Failed to fetch initial balance:', error);
 			}
-		};
+		} catch (error) {
+			console.error('Failed to fetch initial balance:', error);
+		}
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
 
 		openModal && fetchInitialBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

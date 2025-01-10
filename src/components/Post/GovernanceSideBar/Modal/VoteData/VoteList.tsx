@@ -183,7 +183,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			}
 		}
 		if (isReferendum2) {
-			const referendumInfoOf = await newAPI.query.referenda.referendumInfoFor(referendumId);
+			const referendumInfoOf = await newAPI.query?.referenda?.referendumInfoFor(referendumId);
 			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({

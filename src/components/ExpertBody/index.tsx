@@ -173,13 +173,12 @@ function ExpertBodyCard() {
 				</span>
 			</div>
 			{reviewsCount > 0 && (
-				<div className='absolute right-2 top-11 z-50'>
-					<span onClick={() => setIsModalVisible(true)}>
-						<ArrowRightOutlined
-							className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'
-						/>
-					</span>
-				</div>
+				<span
+					onClick={() => setIsModalVisible(true)}
+					className='absolute right-2 top-11 z-50'
+				>
+					<ArrowRightOutlined className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white' />
+				</span>
 			)}
 
 			{isModalVisible &&

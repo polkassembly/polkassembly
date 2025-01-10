@@ -90,7 +90,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				}
 			/>
 			<span>:</span>
-			<span className='ml-2 text-pink_primary'>
+			<span className='ml-2 text-pink_primary dark:text-[#FF4098] '>
 				{loading ? <SkeletonButton className='mr-0 h-4 w-[20px] p-0' /> : formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
 			</span>
 		</div>

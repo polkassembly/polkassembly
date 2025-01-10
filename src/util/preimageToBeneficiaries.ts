@@ -18,13 +18,15 @@ interface IMethodHandlers {
 
 const ZERO_BN = new BN(0);
 
-function extractGeneralIndex(call: any) {
+//extract general index from args;
+const extractGeneralIndex = (call: any) => {
 	const interiorAssetId = call?.assetKind?.assetId || null;
 	if (!interiorAssetId) return null;
 	const assetCall = interiorAssetId?.value?.interior?.value || interiorAssetId?.interior?.value;
 	return assetCall?.find((item: any) => item.__kind === 'GeneralIndex')?.value || null;
-}
+};
 
+//handle single call with general index;
 const handleSpendCall = (call: any, network: string) => {
 	const beneficiaries: IBeneficiary[] = [];
 	const requested = new BN(call?.amount || 0)?.toString();
@@ -40,6 +42,7 @@ const handleSpendCall = (call: any, network: string) => {
 	return { assetId, beneficiaries, requested };
 };
 
+//handle single call without general index;
 const handleSpenLocalCall = (call: any, network: string) => {
 	const beneficiaries: IBeneficiary[] = [];
 
@@ -59,6 +62,7 @@ const handleSpenLocalCall = (call: any, network: string) => {
 	return { assetId: null, beneficiaries, requested };
 };
 
+//handle multiple call case
 const handleBatchCall = (args: any, network: string) => {
 	if (!args) return { beneficiaries: [], remark: '', requested: '0' };
 	let remark = '';

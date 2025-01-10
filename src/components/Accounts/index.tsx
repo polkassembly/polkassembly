@@ -8,10 +8,9 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import Image from 'next/image';
 import ProxyMain from '~src/components/createProxy';
 import { dmSans } from 'pages/_app';
-import AddressActionDropdown from './utils/AddressActionDropdown';
 
 const AccountsMain = () => {
-	const { id, loginAddress } = useUserDetailsSelector();
+	const { id } = useUserDetailsSelector();
 	const [openProxyModal, setOpenProxyModal] = useState<boolean>(false);
 	return (
 		<div>
@@ -19,11 +18,6 @@ const AccountsMain = () => {
 				<h2 className={`${dmSans.className} ${dmSans.variable} text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high md:text-[28px]`}>Accounts</h2>{' '}
 				{id && (
 					<div className='item-center flex gap-4'>
-						<AddressActionDropdown
-							address={loginAddress}
-							type={null}
-							isUsedInLandingPage={true}
-						/>
 						<CustomButton
 							variant='link'
 							className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}

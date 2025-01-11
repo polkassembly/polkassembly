@@ -93,12 +93,13 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={`border-solid border-section-light-container dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] dark:bg-transparent' : ''}`}
+				className={`border border-solid border-section-light-container dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] dark:bg-transparent' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
 				isTruncateUsername={isTruncateUsername}
 				showProxyDropdown={showProxyDropdown}
+				isUsedInProxy={isUsedInProxy}
 			/>
 		</article>
 	);

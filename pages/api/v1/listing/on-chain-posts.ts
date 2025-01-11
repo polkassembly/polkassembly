@@ -337,7 +337,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 					}
 
-					args = convertAnyHexToASCII(args, network);
+					args = convertAnyHexToASCII(args, network) || args;
 					if (args?.amount) {
 						requested = args.amount;
 					} else {
@@ -928,7 +928,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					const proposedCall = subsquidPost?.preimage?.proposedCall;
 
-					proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
+					proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network) || proposedCall?.args;
 
 					const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 
@@ -976,11 +976,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								post_reactions,
 								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-								requestedAmount: beneficiariesInfo?.requested
-									? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length
-										? beneficiariesInfo?.requested.toString()
-										: undefined
-									: undefined,
+								requestedAmount: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
 								reward,
 								spam_users_count:
 									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -1037,11 +1033,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-						requestedAmount: beneficiariesInfo
-							? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries?.length
-								? beneficiariesInfo?.requested.toString()
-								: undefined
-							: undefined,
+						requestedAmount: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
 						reward,
 						status: status,
 						status_history: statusHistory || [],

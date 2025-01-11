@@ -155,7 +155,6 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	return (
 		<div className={className}>
 			<Popover
-				open
 				overlayClassName={classNames(dmSans?.className, dmSans?.variable, 'track-popover')}
 				content={
 					<div className='flex flex-col gap-2 rounded-md bg-[#363636] p-2 pr-4'>

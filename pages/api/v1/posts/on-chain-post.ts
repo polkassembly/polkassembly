@@ -875,7 +875,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const proposedCall = preimage?.proposedCall || postData?.proposalArguments?.args;
 
 		if (proposalArguments?.args) {
-			proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network);
+			proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network) || proposalArguments?.args;
 		}
 
 		const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
@@ -948,11 +948,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: beneficiariesInfo?.requested
-				? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length
-					? beneficiariesInfo?.requested.toString()
-					: undefined
-				: undefined,
+			requested: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,

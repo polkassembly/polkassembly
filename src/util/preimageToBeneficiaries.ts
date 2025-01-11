@@ -77,12 +77,12 @@ const handleBatchCall = (args: any, network: string) => {
 			if (call?.__kind == 'spend_local') {
 				const { requested, beneficiaries } = handleSpenLocalCall(call, network);
 				requestedAmt = requestedAmt?.add(new BN(requested));
-				allBeneficiaries.concat(beneficiaries || []);
+				allBeneficiaries.push(...(beneficiaries || []));
 			}
 
 			if (call?.__kind == 'spend') {
 				const { beneficiaries } = handleSpendCall(call, network);
-				allBeneficiaries.concat(beneficiaries || []);
+				allBeneficiaries.push(...(beneficiaries || []));
 			}
 		}
 	});

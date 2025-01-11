@@ -197,7 +197,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					)
 				);
 			})}
-			{address && (
+			{!!address && (
 				<Link
 					target='_blank'
 					onClick={(e) => {
@@ -213,7 +213,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					<PolkaverseIcon />
 				</Link>
 			)}
-			{network?.includes('kilt') && (
+			{network?.includes('kilt') && !!address && (
 				<Link
 					target='_blank'
 					onClick={(e) => {
@@ -229,7 +229,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					<UserOutlined />
 				</Link>
 			)}
-			{isSubscanSupport(network) && (
+			{isSubscanSupport(network) && !!address && (
 				<Link
 					target='_blank'
 					onClick={(e) => {

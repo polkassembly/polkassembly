@@ -216,7 +216,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						const proposedCall = preimage?.proposedCall || edge?.node?.proposalArguments?.args;
 
 						if (proposalArguments?.args) {
-							proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network);
+							proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network) || proposalArguments.args;
 						}
 
 						const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
@@ -234,11 +234,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 								'👎': 0
 							},
 							proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
-							requestedAmount: beneficiariesInfo?.requested
-								? beneficiariesInfo?.requested && beneficiariesInfo?.beneficiaries.length
-									? beneficiariesInfo?.requested.toString()
-									: undefined
-								: undefined,
+							requestedAmount: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
 							status: status || '',
 							status_history: statusHistory || null,
 							tally: tally || null,

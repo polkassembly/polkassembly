@@ -18,11 +18,11 @@ import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAsset
 
 interface Args {
 	className?: string;
-	requestedAmt: string;
+	requestedAmt: string | null;
 	assetId: string | null;
 	proposalCreatedAt: Date | null;
 	timeline: any[];
-	postId: number;
+	postId: number | null;
 	usedInPostPage?: boolean;
 }
 const ZERO_BN = new BN(0);
@@ -41,7 +41,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 
 	const fetchUSDValue = async () => {
-		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
+		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs()) || (postId && isNaN(postId))) return;
 		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;
@@ -112,7 +112,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											<span className='flex'>Value on day of creation:</span>
 											<span>
 												{getUsdValueFromAsset({
-													currentTokenPrice: usdValueOnCreation || '0',
+													currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
 													dedTokenUsdPrice: dedTokenUsdPrice || '0',
 													generalIndex: assetId,
 													inputAmountValue:

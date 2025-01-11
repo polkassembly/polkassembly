@@ -42,6 +42,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 								topic={''}
 								created_at={post.created_at}
 								username={post.username}
+								beneficiaries={post?.beneficiaries || []}
 							/>
 						</Link>
 					);

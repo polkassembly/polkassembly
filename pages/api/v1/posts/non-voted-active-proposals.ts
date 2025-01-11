@@ -16,8 +16,6 @@ import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
-import { IBeneficiary } from '~src/types';
-import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { IPostResponse } from './on-chain-post';
@@ -26,6 +24,8 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
+import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 interface Args {
 	network: string;
@@ -152,50 +152,16 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 				const preimage = subsquidPost?.preimage || null;
 				const proposedCall = preimage?.proposedCall || null;
 				const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData || null;
-				let requested = BigInt(0);
-				const beneficiaries: IBeneficiary[] = [];
-				let assetId: null | string = null;
 
-				if (proposedCall?.args) {
-					if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-						const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
-						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-					}
-					proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-
-					if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
-						proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
-					}
-
-					if (proposedCall.args.amount) {
-						requested = proposedCall.args.amount;
-						if (proposedCall.args.beneficiary) {
-							beneficiaries.push({
-								address: proposedCall.args.beneficiary as string,
-								amount: proposedCall.args.amount
-							});
-						}
-					} else {
-						const calls = proposedCall.args.calls;
-						if (calls && Array.isArray(calls) && calls?.length > 0) {
-							calls.forEach((call) => {
-								if (call && call.amount) {
-									requested += BigInt(call.amount);
-									if (call.beneficiary) {
-										beneficiaries.push({
-											address: call.beneficiary as string,
-											amount: call.amount
-										});
-									}
-								}
-							});
-						}
-					}
+				if (proposalArguments?.args) {
+					proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network) || proposalArguments?.args;
 				}
 
+				const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
+
 				const payload: any = {
-					assetId: assetId || null,
-					beneficiaries: beneficiaries || [],
+					assetId: beneficiariesInfo?.assetId || null,
+					beneficiaries: beneficiariesInfo?.beneficiaries || [],
 					comments: [],
 					content: '',
 					created_at: subsquidPost?.createdAt,
@@ -206,7 +172,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					preimageHash: preimage?.hash || '',
 					proposedCall: proposedCall || null,
 					proposer: subsquidPost?.proposer || '',
-					requested: requested.toString() || '0',
+					requested: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
 					status: subsquidPost?.status,
 					statusHistory: subsquidPost?.statusHistory || [],
 					summary: '',

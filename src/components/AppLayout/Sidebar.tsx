@@ -1985,7 +1985,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div
 								className={` ${
 									sidedrawer ? '-ml-20 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block fixed mt-1 flex h-[70px] items-center justify-center bg-transparent`}
+								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>

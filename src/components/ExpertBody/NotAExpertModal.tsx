@@ -28,7 +28,6 @@ const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 });
 const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boolean; handleCancel: () => void }) => {
 	const [open, setOpen] = useState<boolean>(false);
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
@@ -127,18 +126,13 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			});
 	};
 
-	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
 	const renderContent = () => {
@@ -378,29 +372,6 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-
-			<Modal
-				zIndex={100}
-				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-[#485F7D]  dark:text-icon-dark-inactive' />}
-				onCancel={() => setIdentityMobileModal(false)}
-				className={'w-[600px] max-sm:w-full'}
-				title={
-					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:text-lightWhite'>
-						On-chain identity
-					</span>
-				}
-				wrapClassName='dark:bg-modalOverlayDark'
-			>
-				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<ImageIcon
-						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
-					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
-				</div>
-			</Modal>
 		</div>
 	);
 };

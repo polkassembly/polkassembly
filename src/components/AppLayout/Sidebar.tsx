@@ -87,7 +87,6 @@ interface SidebarProps {
 	isIdentityUnverified: boolean;
 	sidedrawer: boolean;
 	setOpenAddressLinkedModal: (open: boolean) => void;
-	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
 	setLoginOpen: (open: boolean) => void;
 	setIdentityOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -101,7 +100,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	mainDisplay,
 	isIdentitySet,
 	setSidedrawer,
-	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
 	setOpenAddressLinkedModal,
@@ -322,19 +320,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 			setSidedrawer(false);
 		}
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+			localStorage.setItem('identityAddress', currentUser?.loginAddress);
+			setIdentityOpen(true);
+			return;
+		}
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
-				localStorage.setItem('identityAddress', currentUser?.loginAddress);
-				setIdentityOpen(true);
-				return;
-			}
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
 	const gov1Items: { [x: string]: ItemType[] } = {

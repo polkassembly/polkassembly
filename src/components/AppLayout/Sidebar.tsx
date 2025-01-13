@@ -5,8 +5,6 @@ import { Layout, Menu as AntdMenu, MenuProps, Tooltip } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import XmasLogo from '~assets/xmas-logo.png';
-import XmasLogoDark from '~assets/xmas-logo-dark.png';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	BountiesIcon,
@@ -1984,17 +1982,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 					/>
 					{!isMobile && (
 						<>
-							<div className={` ${sidedrawer ? '' : 'mt-2'} svgLogo logo-container logo-display-block fixed flex items-center justify-center bg-transparent`}>
+							<div
+								className={` ${
+									sidedrawer ? '-ml-20 w-[300px]' : 'mt-0'
+								} svgLogo logo-container logo-display-block fixed mt-1 flex h-[70px] items-center justify-center bg-transparent`}
+							>
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<div className='flex h-full items-center justify-center'>
+											<div className='ml-16 flex h-full items-center justify-center'>
 												<Image
-													// src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-													src={theme === 'dark' ? XmasLogoDark : XmasLogo}
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
-													width={229}
-													height={55}
+													width={150}
+													height={50}
 												/>
 											</div>
 										) : (
@@ -2003,7 +2004,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											</div>
 										)}
 									</Link>
-									<div className={`${sidedrawer ? 'hidden' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 								</div>
 							</div>
 						</>

@@ -1984,8 +1984,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<>
 							<div
 								className={` ${
-									sidedrawer ? '-ml-20 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
+									sidedrawer ? '-ml-20 mt-[2px] w-[300px]' : 'mt-0'
+								} svgLogo logo-container logo-display-block fixed  flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
@@ -1995,16 +1995,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
 													width={150}
-													height={50}
+													height={46}
 												/>
 											</div>
 										) : (
-											<div className='ml-5 h-full'>
+											<div className='my-1 ml-5 h-full'>
 												<PaLogo sidedrawer={sidedrawer} />
 											</div>
 										)}
 									</Link>
-									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-1 dark:border-separatorDark`}></div>
 								</div>
 							</div>
 						</>

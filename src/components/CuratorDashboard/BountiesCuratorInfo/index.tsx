@@ -120,7 +120,7 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 						<>
 							{curatedBounties?.map((bounty) => {
 								const claimedBn = new BN(bounty?.claimedAmount || '0');
-								const rewardBn = new BN(bounty?.reward || '0');
+								const rewardBn = new BN(bounty?.totalChildBountiesCount || '0');
 
 								const percentage = !rewardBn?.eq(ZERO_BN) ? claimedBn?.mul(new BN('100'))?.div(rewardBn) : ZERO_BN;
 

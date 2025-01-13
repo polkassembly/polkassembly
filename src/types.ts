@@ -1260,3 +1260,17 @@ export enum EUserCreatedBountyActions {
 	DELETE = 'delete',
 	APPROVE = 'approve'
 }
+
+export interface ICalendarEvent {
+	createdAt: Date;
+	index: number;
+	proposalType: ProposalType;
+	parentBountyIndex?: number;
+	proposer: string;
+	source: 'polkasembly' | 'subsquare';
+	status: string;
+	statusHistory: { status: string; timestamp: Date; block: number }[];
+	title: string;
+	trackNo?: number;
+	blockNo?: number;
+}

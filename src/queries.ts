@@ -3367,3 +3367,21 @@ bounties:proposalsConnection(where: {AND:{proposer_eq: $address, OR: {curator_eq
 }
 }
 `;
+
+export const GET_CALENDAR_EVENTS_BY_BLOCK = `query GET_CALENDAR_EVENTS_BY_BLOCK ( $block_gte:Int!, $block_lt:Int!){
+  proposals(where:{statusHistory_some:{block_gte: $block_gte, block_lt:$block_lt }}, orderBy: createdAt_DESC){
+    index
+    status
+    createdAt
+    trackNumber
+    parentBountyIndex
+    type
+    proposer
+    statusHistory {
+      status
+      block
+      timestamp
+    }
+  }
+}
+`;

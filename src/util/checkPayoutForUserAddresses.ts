@@ -5,7 +5,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { IPayout } from '~src/types';
 import { convertAnyHexToASCII } from './decodingOnChainInfo';
-import blockToSeconds from './test';
+import blockToSeconds from './blockToSeconds';
 import getEncodedAddress from './getEncodedAddress';
 import isMultiassetSupportedNetwork from './isMultiassetSupportedNetwork';
 

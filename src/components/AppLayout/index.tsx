@@ -237,7 +237,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									setLoginOpen={setLoginOpen}
 									setIdentityOpen={setOpen}
 								/>
-								<div className={`fixed  ${is_sidebar_collapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
+								<div className={`fixed ${is_sidebar_collapsed ? 'left-16' : 'left-[212px]'} top-11 z-[102]`}>
 									{is_sidebar_collapsed ? (
 										<div
 											onClick={() => {

@@ -167,7 +167,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			key: 'claimed',
 			render: (claimed: string, record: IBountyListing) => {
 				const claimedBn = new BN(claimed || '0');
-				const rewardBn = new BN(record?.reward || '0');
+				const rewardBn = new BN(record?.totalChildBountiesAmt || '0');
 
 				const percentage = !rewardBn.eq(ZERO_BN) ? claimedBn.mul(new BN('100')).div(rewardBn) : ZERO_BN;
 

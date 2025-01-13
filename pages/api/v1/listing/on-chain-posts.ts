@@ -928,7 +928,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					const proposedCall = subsquidPost?.preimage?.proposedCall;
 
-					proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network) || proposedCall?.args;
+					if (proposedCall.args) {
+						proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network) || proposedCall?.args;
+					}
 
 					const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 

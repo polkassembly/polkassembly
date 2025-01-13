@@ -172,7 +172,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					preimageHash: preimage?.hash || '',
 					proposedCall: proposedCall || null,
 					proposer: subsquidPost?.proposer || '',
-					requested: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
+					requested: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 					status: subsquidPost?.status,
 					statusHistory: subsquidPost?.statusHistory || [],
 					summary: '',

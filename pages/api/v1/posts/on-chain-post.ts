@@ -948,7 +948,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: Array.isArray(beneficiariesInfo?.requested) ? beneficiariesInfo?.requested.toString() : undefined,
+			requested: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,

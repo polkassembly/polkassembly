@@ -146,6 +146,24 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		</div><br><br>`
 		: '';
 
+	const handleMergeQuoteWithValue = () => {
+		if (!value || !quotedText) return '';
+		const htmlString1 = value || '';
+		const htmlString2 = quoteBox;
+
+		const parser = new DOMParser();
+
+		const doc1 = parser.parseFromString(htmlString1, 'text/html');
+		const doc2 = parser.parseFromString(htmlString2, 'text/html');
+
+		const mergedDiv = document.createElement('div');
+
+		if (doc1.body.firstChild) mergedDiv.appendChild(doc1.body.firstChild);
+		if (doc2.body.firstChild) mergedDiv.appendChild(doc2.body.firstChild);
+
+		return mergedDiv?.outerHTML || '';
+	};
+
 	return (
 		<>
 			<div
@@ -207,7 +225,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								pasteRef.current = '';
 							}}
 							textareaName={name}
-							value={converter.makeHtml(value || quoteBox || '')}
+							value={converter.makeHtml(handleMergeQuoteWithValue() || value || quoteBox || '')}
 							ref={ref}
 							disabled={isDisabled}
 							onEditorChange={(content) => {

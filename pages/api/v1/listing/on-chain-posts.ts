@@ -38,7 +38,6 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
-import console_pretty from '~src/api-utils/console_pretty';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -307,8 +306,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
 					parentBountyIndexes[parentBountyIndex] = 1;
 				}
-
-				console_pretty({ parentBountyIndexes });
 
 				let parentBountyRequestedAmount = '0';
 
@@ -634,7 +631,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidPosts: any[] = proposalType === ProposalType.ANNOUNCEMENT ? subsquidData?.announcements : subsquidData?.proposals;
 			let postsPromise;
 			let posts: any[];
-			console_pretty(subsquidData[0]);
 			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
 				if (proposalType === ProposalType.ANNOUNCEMENT) {
 					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
@@ -843,8 +839,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
 						parentBountyIndexes[parentBountyIndex] = 1;
 					}
-
-					console_pretty({ parentBountyIndexes });
 
 					let parentBountyRequestedAmount = '0';
 

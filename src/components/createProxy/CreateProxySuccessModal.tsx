@@ -18,6 +18,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import copyToClipboard from '~src/util/copyToClipboard';
 import CopyContentIcon from '~assets/icons/content_copy_small.svg';
 import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
+import RefreshIcon from '~assets/icons/refresh-icon.svg';
 import { useTheme } from 'next-themes';
 
 interface Props {
@@ -121,25 +122,32 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 									<span className='w-[104px] text-blue-light-medium dark:text-blue-dark-medium'>Proxy Address:</span>
 									{loading ? (
 										<SkeletonInput active />
-									) : (
-										pureProxyAddress && (
+									) : pureProxyAddress ? (
+										<span className='flex items-center gap-1'>
+											<Address
+												displayInline
+												iconSize={18}
+												isTruncateUsername={false}
+												address={pureProxyAddress}
+												destroyTooltipOnHide
+												disableTooltip
+											/>
 											<span
 												onClick={() => {
 													handleCopylink(pureProxyAddress);
 												}}
-												className='flex items-center gap-1'
+												className='mt-1 cursor-pointer'
 											>
-												<Address
-													displayInline
-													iconSize={18}
-													isTruncateUsername={false}
-													address={pureProxyAddress}
-													destroyTooltipOnHide
-													disableTooltip
-												/>
-												<span className='mt-1 cursor-pointer'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+												{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}
 											</span>
-										)
+										</span>
+									) : (
+										<button
+											onClick={fetchProxyAddress}
+											className='ml-2 flex cursor-pointer items-center gap-1 rounded border-none bg-blue-500 px-2 py-1 text-xs font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50'
+										>
+											{theme === 'dark' ? <RefreshIcon /> : <RefreshIcon />} Refresh to fetch address
+										</button>
 									)}
 								</div>
 							)}
@@ -176,8 +184,12 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 							Visit{' '}
 							<Link
 								href='/accounts'
-								className='cursor-pointer font-medium text-pink_primary'
-								onClick={() => setOpenModal(false)}
+								className='cursor-pointer font-medium text-pink_primary dark:text-[#FF4098]'
+								onClick={(e) => {
+									e.preventDefault();
+									setOpenModal(false);
+									window.location.href = '/accounts';
+								}}
 							>
 								Accounts
 							</Link>{' '}
@@ -185,14 +197,6 @@ const CreateProxySuccessModal = ({ openModal, setOpenModal, className, address, 
 						</span>
 					}
 				/>
-				{error && (
-					<Alert
-						type='error'
-						className={`mx-10 h-10 rounded-[4px] text-bodyBlue ${dmSans.className} ${dmSans.variable}`}
-						showIcon
-						message={<span className='dark:text-blue-dark-high'>{error}</span>}
-					/>
-				)}
 			</div>
 		</Modal>
 	);

@@ -6,7 +6,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 import React, { useEffect } from 'react';
 
 function CustomToolbarMini(props: any) {
@@ -16,28 +15,24 @@ function CustomToolbarMini(props: any) {
 		if (date.getDate() != d) {
 			date.setDate(0);
 		}
-
-		// setSelectedMonth(date.getMonth());
 		return date;
 	}
 
 	const goToBack = () => {
 		props.onNavigate('prev', addMonths(props.date, -1));
+		props.date.setYear(props.date?.getFullYear());
+		props.setSelectedDate(props?.date);
 	};
 
 	const goToNext = () => {
 		props.onNavigate('next', addMonths(props.date, +1));
-	};
-
-	const goToToday = () => {
-		props.setCalendarToToday();
+		props.date.setYear(props.date?.getFullYear());
+		props.setSelectedDate(props?.date);
 	};
 
 	useEffect(() => {
-		// setSelectedMonth(props.date.getMonth());
-		const now = new Date();
 		props.date.setMonth(props.date.getMonth());
-		props.date.setYear(now.getFullYear());
+		props.date.setYear(props.date.getFullYear());
 		props.onNavigate('current');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -50,20 +45,12 @@ function CustomToolbarMini(props: any) {
 						onClick={goToBack}
 						className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue dark:text-icon-dark-inactive'
 					/>
-					<span className=' mx-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>{dayjs(props.date).format('MMMM YYYY')}</span>
+					<span className=' mx-3 text-xl font-semibold text-sidebarBlue dark:text-blue-dark-medium'>{dayjs(props.date).format('MMMM YYYY')}</span>
 					<RightOutlined
 						onClick={goToNext}
 						className='text-md cursor-pointer font-medium hover:font-bold  hover:text-sidebarBlue dark:text-icon-dark-inactive'
 					/>
 				</div>
-
-				<CustomButton
-					text='Today'
-					className='ml-auto dark:bg-section-dark-overlay dark:text-white'
-					onClick={goToToday}
-					buttonsize='xs'
-					variant='default'
-				/>
 			</div>
 		)
 	);

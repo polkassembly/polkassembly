@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import Image from 'next/image';
+import { Card, Image } from 'antd';
 import React, { useMemo } from 'react';
 import { EChatRequestStatus, IChat } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -11,7 +11,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import shortenAddress from '~src/util/shortenAddress';
 import dayjs from 'dayjs';
-import { Card } from 'antd';
 import PendingRequestTab from './PendingRequestTab';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useDispatch } from 'react-redux';
@@ -53,10 +52,13 @@ const ChatCard = ({ chat }: Props) => {
 					chatId: chat.chatId
 				})
 			);
+			dispatch(chatsActions.markChatAsRead({ address: substrateAddress!, chatId: chat.chatId }));
 		} else if (error) {
 			console.log(error);
 		}
 	};
+
+	const chatRecipientAddress = chat?.recipientProfile?.address;
 
 	const renderUserImage = useMemo(() => {
 		if (chat?.recipientProfile?.image) {
@@ -69,23 +71,23 @@ const ChatCard = ({ chat }: Props) => {
 					className='overflow-hidden rounded-full'
 				/>
 			);
-		} else if (chat?.recipientProfile?.address?.startsWith('0x')) {
+		} else if (chatRecipientAddress?.startsWith('0x')) {
 			return (
 				<EthIdenticon
 					size={32}
-					address={chat.recipientProfile?.address || ''}
+					address={chatRecipientAddress || ''}
 				/>
 			);
 		} else {
 			return (
 				<Identicon
-					value={chat?.recipientProfile?.address || ''}
+					value={chatRecipientAddress || ''}
 					size={32}
 					theme={'polkadot'}
 				/>
 			);
 		}
-	}, [chat.recipientProfile]);
+	}, [chatRecipientAddress, chat?.recipientProfile]);
 
 	return (
 		<Card
@@ -98,16 +100,16 @@ const ChatCard = ({ chat }: Props) => {
 		>
 			{renderUserImage}
 			<div className='flex w-full flex-col items-start gap-2 text-blue-light-medium dark:text-blue-dark-medium'>
-				<div className='flex w-full items-center gap-2'>
+				<div className='flex w-full items-center gap-1'>
 					<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{renderUsername}</span>
 					<Image
 						src='/assets/icons/timer.svg'
 						height={12}
 						width={12}
-						className='dark:grayscale dark:invert dark:filter'
+						className='ml-1 flex items-center dark:grayscale dark:invert dark:filter'
 						alt='timer icon'
 					/>
-					<span className='text-xs text-blue-light-medium dark:text-[#9e9e9e]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
+					<span className='ml-0.5 text-xs text-blue-light-medium dark:text-[#f0d2d2]'>{dayjs(latestMessage?.created_at).format('DD MMM YYYY')}</span>
 					{isRejectedRequest ? (
 						<div className='ml-auto flex items-center gap-1.5'>
 							<span className='h-2 w-2 rounded-full bg-[#FB123C]'></span>

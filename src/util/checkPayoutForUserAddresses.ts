@@ -5,7 +5,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { IPayout } from '~src/types';
 import { convertAnyHexToASCII } from './decodingOnChainInfo';
-import blockToSeconds from './test';
+import blockToSeconds from './blockToSeconds';
 import getEncodedAddress from './getEncodedAddress';
 import isMultiassetSupportedNetwork from './isMultiassetSupportedNetwork';
 
@@ -21,8 +21,8 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 
 	if (!api || !apiReady || !network || !isMultiassetSupportedNetwork(network)) return data;
 
-	const values = await api.query.treasury.spends.entries();
-	values.map((value) => {
+	const values = await api?.query?.treasury?.spends?.entries();
+	values?.map((value) => {
 		const payoutIndex = Number((value?.[0].toHuman() as any)?.[0]);
 		const payoutData = convertAnyHexToASCII(value?.[1].toHuman(), network);
 		const beneficiary =

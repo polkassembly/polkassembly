@@ -14,6 +14,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EUserCreatedBountiesStatuses, EUserCreatedBountySubmissionStatus } from '~src/types';
 import checkIsUserCreatedBountySubmissionValid from '~src/util/userCreatedBounties/checkIsUserCreatedBountySubmissionValid';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -23,16 +24,16 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { parentBountyProposerAddress, submissionProposerAddress, parentBountyIndex, submissionId, updatedStatus } = req.body;
-		const encodedParentBountyProposerAddress = getEncodedAddress(parentBountyProposerAddress, network);
-		const encodedSubmissionProposerAddress = getEncodedAddress(submissionProposerAddress, network);
+		const substrateParentBountyProposerAddress = getSubstrateAddress(parentBountyProposerAddress);
+		const substrateSubmissionProposerAddress = getSubstrateAddress(submissionProposerAddress);
 
 		if (![EUserCreatedBountySubmissionStatus.APPROVED, EUserCreatedBountySubmissionStatus.REJECTED, EUserCreatedBountySubmissionStatus.PAID].includes(updatedStatus)) {
 			return res.status(400).json({ message: 'Invalid Updated Status Param' });
 		}
-		if (!parentBountyProposerAddress?.length || !encodedParentBountyProposerAddress) {
+		if (!parentBountyProposerAddress?.length || !getEncodedAddress(parentBountyProposerAddress, network)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address' });
 		}
-		if (!submissionProposerAddress?.length || !encodedSubmissionProposerAddress) {
+		if (!submissionProposerAddress?.length || !getEncodedAddress(submissionProposerAddress, network)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address' });
 		}
 
@@ -61,14 +62,14 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		//isOwner check
-		if (parentBountyData?.proposer !== encodedParentBountyProposerAddress) {
+		if (parentBountyData?.proposer !== substrateParentBountyProposerAddress) {
 			return res.status(400).json({ message: messages?.UNAUTHORISED });
 		}
 
 		const { maxClaimReached, submissionAlreadyExists, claimedSubmissionsCount } = await checkIsUserCreatedBountySubmissionValid(
 			userCreatedBountySnapshot?.docs?.[0]?.ref,
 			Number(user?.id),
-			encodedSubmissionProposerAddress
+			substrateSubmissionProposerAddress || submissionProposerAddress
 		);
 
 		if (!submissionAlreadyExists) {

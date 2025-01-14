@@ -87,7 +87,6 @@ interface SidebarProps {
 	isIdentityUnverified: boolean;
 	sidedrawer: boolean;
 	setOpenAddressLinkedModal: (open: boolean) => void;
-	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
 	setLoginOpen: (open: boolean) => void;
 	setIdentityOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -101,7 +100,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	mainDisplay,
 	isIdentitySet,
 	setSidedrawer,
-	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
 	setOpenAddressLinkedModal,
@@ -322,19 +320,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 			setSidedrawer(false);
 		}
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+			localStorage.setItem('identityAddress', currentUser?.loginAddress);
+			setIdentityOpen(true);
+			return;
+		}
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
-				localStorage.setItem('identityAddress', currentUser?.loginAddress);
-				setIdentityOpen(true);
-				return;
-			}
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
 	const gov1Items: { [x: string]: ItemType[] } = {
@@ -1984,8 +1979,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<>
 							<div
 								className={` ${
-									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
+									sidedrawer ? '-ml-20 mt-[2px] w-[300px]' : 'mt-0'
+								} svgLogo logo-container logo-display-block fixed  flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
@@ -1995,16 +1990,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
 													width={150}
-													height={50}
+													height={46}
 												/>
 											</div>
 										) : (
-											<div className='ml-5 h-full'>
+											<div className='my-1 ml-5 h-full'>
 												<PaLogo sidedrawer={sidedrawer} />
 											</div>
 										)}
 									</Link>
-									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-1 dark:border-separatorDark`}></div>
 								</div>
 							</div>
 						</>
@@ -2013,7 +2008,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
 							{!sidebarCollapsed ? (
-								<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'} gap-2 md:mt-9`}>
+								<div className={'flex justify-center gap-2 md:mt-7'}>
 									{onchainIdentitySupportedNetwork.includes(network) && (
 										<div className='activeborderhover group relative'>
 											<div

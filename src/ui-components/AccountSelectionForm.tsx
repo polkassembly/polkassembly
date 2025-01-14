@@ -67,7 +67,9 @@ const AccountSelectionForm = ({
 	return (
 		<article className={`flex w-full flex-col ${className}`}>
 			<div className='mb-1 ml-[-6px] flex flex-wrap items-center gap-x-2'>
-				<h3 className={`inner-headings ml-1 text-xs dark:text-blue-dark-medium sm:ml-1.5 ${isUsedInProxy ? 'mb-0 sm:text-sm' : 'mb-[1px] sm:text-base'}`}>{title}</h3>
+				<h3 className={`inner-headings ml-1 text-xs dark:text-blue-dark-medium sm:ml-1.5 ${isUsedInProxy ? 'mb-0 tracking-tight sm:text-sm' : 'mb-[1px] sm:text-base'}`}>
+					{title}
+				</h3>
 				{!withoutInfo && (
 					<HelperTooltip
 						className='-mt-1 dark:text-grey_primary'
@@ -91,12 +93,13 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={`border-solid border-section-light-container dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] dark:bg-transparent' : ''}`}
+				className={`border border-solid border-section-light-container dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] dark:bg-transparent' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
 				isTruncateUsername={isTruncateUsername}
 				showProxyDropdown={showProxyDropdown}
+				isUsedInProxy={isUsedInProxy}
 			/>
 		</article>
 	);

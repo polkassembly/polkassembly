@@ -16,6 +16,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EUserCreatedBountiesStatuses } from '~src/types';
 import { ProposalType } from '~src/global/proposalType';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -93,7 +94,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const totalCreatedBountiesSnapshot = await userCreatedBountiesSnapshot.count().get();
 
-		const totalCreatedBountiesCount = totalCreatedBountiesSnapshot?.data()?.count;
+		const totalCreatedBountiesCount = (totalCreatedBountiesSnapshot?.data()?.count || 0) + 1;
 
 		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
 
@@ -106,7 +107,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			maxClaim: maxClaim,
 			network: network,
 			proposalType: ProposalType.USER_CREATED_BOUNTIES,
-			proposer: getEncodedAddress(proposerAddress, network) || '',
+			proposer: getSubstrateAddress(proposerAddress) || '',
 			reward: reward || '0',
 			source: 'polkassembly',
 			status: EUserCreatedBountiesStatuses.ACTIVE,

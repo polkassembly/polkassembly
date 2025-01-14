@@ -18,7 +18,7 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
-import FollowButton from './Follow/FollowButton';
+import FollowButton from '../Follow/FollowButton';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false

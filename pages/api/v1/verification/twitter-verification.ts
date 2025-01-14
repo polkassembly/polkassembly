@@ -15,8 +15,8 @@ import getOauthConsumer from '~src/util/getOauthConsumer';
 
 const firestore = firebaseAdmin.firestore();
 
-async function getOAuthRequestToken(network: string): Promise<any> {
-	const oauthConsumer = getOauthConsumer(network);
+async function getOAuthRequestToken(network: string, isUserCreatedBounty: boolean): Promise<any> {
+	const oauthConsumer = getOauthConsumer(network, isUserCreatedBounty);
 	// Wrap the callback-based function in a promise
 	const tokenDetails = await new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthRequestToken((error, oauthRequestToken, oauthRequestTokenSecret, results) => {
@@ -36,7 +36,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 
 	const network = String(req.headers['x-network']);
 
-	const { twitterHandle } = req.query;
+	const { twitterHandle, isUserCreatedBounty = false } = req.query;
 	try {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
@@ -50,7 +50,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 
 		if (!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		const { oauthRequestToken, oauthRequestTokenSecret } = await getOAuthRequestToken(network);
+		const { oauthRequestToken, oauthRequestTokenSecret } = await getOAuthRequestToken(network, !!isUserCreatedBounty);
 
 		const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(String(userId));
 		await twitterVerificationRef.set({
@@ -64,7 +64,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 		const authorizationUrl = `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthRequestToken}`;
 		return res.status(200).json({ url: authorizationUrl });
 	} catch (err) {
-		return res.status(500).json({ message: 'Internal server error' });
+		return res.status(500).json({ message: err || 'Internal server error' });
 	}
 };
 export default withErrorHandling(handler);

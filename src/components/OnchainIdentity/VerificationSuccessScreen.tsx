@@ -9,8 +9,9 @@ import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { IVerificationSuccessState } from './types';
+import classNames from 'classnames';
 
-const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose }: IVerificationSuccessState) => {
+const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose, isUserCreatedBounty }: IVerificationSuccessState) => {
 	const router = useRouter();
 	const [loading, setLoading] = useState<boolean>(false);
 	return (
@@ -36,16 +37,20 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<CustomButton
 					onClick={() => {
-						setLoading(true);
-						router.push(`/?identityVerification=${true}`);
+						if (isUserCreatedBounty) {
+							window.close();
+						} else {
+							setLoading(true);
+							router.push(`/?identityVerification=${true}`);
+						}
 					}}
 					loading={loading}
-					text='Continue verification'
-					className='mt-6'
+					text={isUserCreatedBounty ? 'Done' : 'Continue verification'}
+					className={classNames('mt-6', isUserCreatedBounty ? 'rounded-md px-10' : '')}
 					variant='primary'
-					height={40}
+					height={isUserCreatedBounty ? 32 : 40}
 				/>
-				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-[18px] w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
+				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-3 w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
 			</div>
 		</Modal>
 	);

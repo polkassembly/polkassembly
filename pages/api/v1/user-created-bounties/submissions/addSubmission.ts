@@ -15,6 +15,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EChildbountySubmissionStatus, EUserCreatedBountiesStatuses } from '~src/types';
 import checkIsUserCreatedBountySubmissionValid from '~src/util/userCreatedBounties/checkIsUserCreatedBountySubmissionValid';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -26,12 +27,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { title, content, tags, link, reqAmount, proposerAddress, parentBountyIndex } = req.body;
-		const encodedProposerAddress = getEncodedAddress(proposerAddress, network);
+		const substrateProposerAddr = getSubstrateAddress(proposerAddress);
 
 		if (!reqAmount || new BN(reqAmount || 0).eq(ZERO_BN)) {
 			return res.status(400).json({ message: 'Invalid Requested Amount' });
 		}
-		if (!proposerAddress?.length || !encodedProposerAddress) {
+		if (!proposerAddress?.length || !getEncodedAddress(proposerAddress, network)) {
 			return res.status(400).json({ message: 'Invalid Proposer Address' });
 		}
 		if (isNaN(parentBountyIndex)) {
@@ -40,9 +41,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		if (!title?.length || !content?.length) {
 			return res.status(400).json({ message: 'Title or Content is Missing in request body' });
 		}
-		if (isNaN(parentBountyIndex)) {
-			return res.status(400).json({ message: 'Invalid Parent Bounty Index' });
-		}
+
 		if ((link?.length && !(link as string)?.startsWith('https:')) || (tags?.length && !!tags?.some((tag: string) => typeof tag !== 'string'))) {
 			return res.status(400).json({ message: messages.INVALID_PARAMS });
 		}
@@ -67,7 +66,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const { maxClaimReached, submissionAlreadyExists, deadlineDateExpired } = await checkIsUserCreatedBountySubmissionValid(
 			userCreatedBountySnapshot?.docs?.[0]?.ref,
 			Number(user?.id),
-			encodedProposerAddress
+			substrateProposerAddr || proposerAddress
 		);
 
 		if (deadlineDateExpired) {
@@ -88,7 +87,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			id: submissionDocRef?.id,
 			link: link || '',
 			parent_bounty_index: parentBountyIndex,
-			proposer: encodedProposerAddress || '',
+			proposer: substrateProposerAddr || '',
 			req_amount: reqAmount || '0',
 			status: EChildbountySubmissionStatus.PENDING,
 			tags: tags || [],

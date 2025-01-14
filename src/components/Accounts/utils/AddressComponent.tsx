@@ -13,6 +13,10 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
 import { LinkProxyType } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import Alert from '~src/basic-components/Alert';
+import { useApiContext } from '~src/context';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
 	address: string;
@@ -24,8 +28,12 @@ interface Props {
 
 const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses }: Props) => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const [messageApi, contextHolder] = message.useMessage();
+	const [existentialDeposit, setExistentialDeposit] = useState<string | null>(null);
 	const substrateAddr = getSubstrateAddress(address);
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
 	const success = () => {
 		messageApi.open({
 			content: 'Address copied to clipboard',
@@ -47,6 +55,23 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
+
+	const fetchExistentialDeposit = async () => {
+		if (!api && !apiReady) return;
+		try {
+			const deposit = await api?.consts?.balances?.existentialDeposit?.toString();
+			deposit && setExistentialDeposit(deposit);
+		} catch (error) {
+			console.error('Error fetching existential deposit:', error);
+			setExistentialDeposit(null);
+		}
+	};
+
+	useEffect(() => {
+		if (!api && !apiReady) return;
+		fetchExistentialDeposit();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	const getType = (): LinkProxyType | null => {
 		if (isMultisigAddress) return LinkProxyType.MULTISIG;
@@ -118,6 +143,19 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 						/>
 					</div>
 				</div>
+				{isPureProxy && existentialDeposit && (
+					<Alert
+						message={
+							<div className='py-1 text-sm text-blue-light-high dark:text-blue-dark-high'>
+								Balance of <span className='text-sm font-medium'>{existentialDeposit ? `>${formatedBalance(existentialDeposit.toString(), unit)} ${unit}` : 'Loading...'}</span>{' '}
+								(Existential deposit) is required to maintain account
+							</div>
+						}
+						type='info'
+						showIcon
+						className='mt-3 py-1'
+					/>
+				)}
 			</div>
 		</>
 	);

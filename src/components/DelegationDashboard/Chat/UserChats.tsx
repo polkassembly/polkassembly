@@ -111,7 +111,7 @@ const UserChats = ({ className, isNewChat, setIsNewChat, handleNewChat }: Props)
 					onFilterChange={handleFilterChange}
 					selectedChatTab={selectedChatTab}
 				/>
-				<div className='flex flex-col gap-2 p-5 pt-3'>
+				<div className='flex flex-col gap-2 px-5 pb-4 pt-3'>
 					<ChatTab
 						selectedChatTab={selectedChatTab}
 						messagesCount={filteredMessages?.length || 0}

@@ -84,7 +84,7 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 		} else {
 			const existentialDeposit = await api?.consts?.balances?.existentialDeposit;
 
-			if (!api.derive || !api.derive.balances || !api.derive.balances.all) {
+			if (!api?.derive || !api?.derive?.balances || !api?.derive?.balances?.all) {
 				return {
 					freeBalance,
 					lockedBalance,

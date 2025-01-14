@@ -3385,3 +3385,13 @@ export const GET_CALENDAR_EVENTS_BY_BLOCK = `query GET_CALENDAR_EVENTS_BY_BLOCK 
   }
 }
 `;
+
+export const GET_PARENT_BOUNTY_DETAILS = `
+query MyQuery ($index_in: [Int!] , $type: ProposalType ){
+  proposals(where: {index_in:$index_in, type_eq:  $type}){
+    curator
+    proposer
+    index
+  }
+}
+`;

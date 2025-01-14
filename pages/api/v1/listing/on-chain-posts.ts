@@ -12,6 +12,7 @@ import { sortValues } from '~src/global/sortOptions';
 import {
 	GET_ALLIANCE_ANNOUNCEMENTS,
 	GET_BOUNTY_REWARDS_BY_IDS,
+	GET_PARENT_BOUNTY_DETAILS,
 	GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY,
 	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSALS_LISTING_BY_TYPE,
@@ -472,6 +473,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
 
+			const parentBountyDetails: any = {};
+
 			if (Object.keys(parentBountyIndexes)?.length) {
 				for (const index of Object.keys(parentBountyIndexes)) {
 					const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
@@ -479,12 +482,24 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parentBountyIndexes[index] = data?.child_bounties;
 					}
 				}
+				const parentBountyIndexesNum = Object.keys(parentBountyIndexes)?.map((index) => Number(index));
+				const parentBountiesSubsquidRes = await fetchSubsquid({
+					network,
+					query: GET_PARENT_BOUNTY_DETAILS,
+					variables: { index_in: parentBountyIndexesNum, type: getSubsquidProposalType(ProposalType.BOUNTIES) }
+				});
+				const parentBountiesSubsquidDetails = parentBountiesSubsquidRes?.['data']?.proposals || [];
+				if (parentBountiesSubsquidDetails?.length) {
+					parentBountiesSubsquidDetails?.map((item: { index: number; curator: string }) => {
+						parentBountyDetails[item?.index] = item?.curator || '';
+					});
+				}
 			}
 
 			if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length) {
 				subsquidDataPost.map((post) => {
 					if (typeof post?.parent_bounty_index === 'number') {
-						return { ...post, allChildBounties: parentBountyIndexes[post?.parent_bounty_index] };
+						return { ...post, allChildBounties: parentBountyIndexes[post?.parent_bounty_index], proposer: post?.proposer || parentBountyDetails[post?.parent_bounty_index] || '' };
 					}
 					return post;
 				});
@@ -587,7 +602,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			} catch (error) {
 				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
 
-				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+				if (data?.items && Array.isArray(data.items)) {
 					subsquidRes['data'] = {
 						proposals: data.items.map((item: any) => {
 							return {
@@ -1022,6 +1037,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 				const postsResults = await Promise.allSettled(postsPromise);
 
+				const parentBountyDetails: any = {};
+
 				if (Object.keys(parentBountyIndexes)?.length) {
 					for (const index of Object.keys(parentBountyIndexes)) {
 						const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
@@ -1029,12 +1046,29 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							parentBountyIndexes[index] = data?.child_bounties;
 						}
 					}
+
+					const parentBountyIndexesNum = Object.keys(parentBountyIndexes)?.map((index) => Number(index));
+					const parentBountiesSubsquidRes = await fetchSubsquid({
+						network,
+						query: GET_PARENT_BOUNTY_DETAILS,
+						variables: { index_in: parentBountyIndexesNum, type: getSubsquidProposalType(ProposalType.BOUNTIES) }
+					});
+					const parentBountiesSubsquidDetails = parentBountiesSubsquidRes?.['data']?.proposals || [];
+					if (parentBountiesSubsquidDetails?.length) {
+						parentBountiesSubsquidDetails?.map((item: { index: number; curator: string }) => {
+							parentBountyDetails[item?.index] = item?.curator || '';
+						});
+					}
 				}
 
 				posts = postsResults?.reduce((prev, post) => {
 					if (post && post.status === 'fulfilled') {
 						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
-							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });
+							prev.push({
+								...post?.value,
+								allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index],
+								proposer: post?.value?.proposer || parentBountyDetails[post?.value?.parent_bounty_index] || ''
+							});
 						} else {
 							prev.push(post.value);
 						}

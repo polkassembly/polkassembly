@@ -19,7 +19,7 @@ import CreateBountyBtn from '~src/components/UserCreatedBounties/CreateBountyBtn
 import { getUserCreatedBounties } from 'pages/api/v1/user-created-bounties/getAllBounties';
 import { EUserCreatedBountiesStatuses } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
-import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
+import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
 
 interface IUserBountiesListingProps {
 	network: string;
@@ -67,6 +67,8 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 			}
 		});
 	};
+
+	console.log('data?.bounties', data?.bounties);
 
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));

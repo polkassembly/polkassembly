@@ -10,6 +10,7 @@ import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
+import { IComment } from './components/Post/Comment/Comment';
 
 declare global {
 	interface Window {
@@ -1252,7 +1253,9 @@ export interface IUserCreatedBounty {
 	post_reactions?: IReactions;
 	updated_at: Date;
 	user_id: number;
-	comments?: any[];
+	comments?: {
+		[index: string]: IComment[];
+	};
 	index?: number;
 }
 export enum EUserCreatedBountyActions {

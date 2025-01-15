@@ -22,6 +22,7 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
 import { isSpamDetected } from '~src/util/getPostContentAiSummary';
 import { sendSpamNotificationEmail } from '~src/auth/email';
+import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -61,6 +62,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id != Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	if (BLACKLISTED_USER_IDS.includes(Number(user.id))) return res.status(400).json({ message: messages.BLACKLISTED_USER_ERROR });
 
 	const lastPostQuerySnapshot = await postsByTypeRef(network, strProposalType as ProposalType)
 		.orderBy('id', 'desc')

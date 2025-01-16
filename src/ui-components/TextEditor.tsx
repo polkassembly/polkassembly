@@ -120,16 +120,42 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const { quotedText, setQuotedText } = useQuoteCommentContext();
+	const [initialValue, setInitialValue] = useState<string>('');
 	const pasteRef = useRef<string>('');
+
+	const handleRemoveQuoteBox = () => {
+		if (!quoteBox) return;
+		setQuotedText('');
+
+		if (value || value?.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value?.startsWith('<p><a href="../address/') || value?.includes(initialValue)) {
+			onChange(initialValue || '');
+		} else {
+			if (value?.includes(quoteBox)) {
+				onChange(value?.replace(quoteBox, ''));
+			} else {
+				onChange('');
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
+		setInitialValue(value);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
 			return;
+
+		setInitialValue(value);
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
+
 	useEffect(() => {}, [theme]);
 
 	useEffect(() => {
@@ -145,6 +171,34 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		</p>
 		</div><br><br>`
 		: '';
+
+	const handleMergeQuoteWithValue = () => {
+		if (!value || !quotedText || value?.includes(quotedText)) {
+			return '';
+		}
+		const htmlString1 = converter.makeHtml(initialValue) || '';
+		const htmlString2 = quoteBox;
+
+		const parser = new DOMParser();
+
+		const doc2 = parser.parseFromString(htmlString2, 'text/html');
+
+		const mergedDiv = document.createElement('div');
+
+		if (initialValue) {
+			const newDiv = document.createElement('div');
+			newDiv.innerHTML = htmlString1;
+			mergedDiv.appendChild(newDiv);
+		}
+
+		if (doc2.body.firstChild) {
+			const newDiv = document.createElement('div');
+			newDiv.innerHTML = quoteBox;
+			mergedDiv.appendChild(newDiv);
+		}
+
+		return mergedDiv?.outerHTML || '';
+	};
 
 	return (
 		<>
@@ -189,12 +243,11 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					className={classNames('w-full flex-1', className, { invisible: loading })}
 				>
 					<div className={`${loading && 'invisible'} relative`}>
-						{quoteBox && (
+						{!!quoteBox && (
 							<span
-								className='absolute right-4 top-[60px] z-10 cursor-pointer md:right-[30px]'
+								className={classNames('absolute right-4 z-10 cursor-pointer md:right-[30px]', initialValue ? 'top-[100px]' : 'top-[60px]')}
 								onClick={() => {
-									setQuotedText('');
-									onChange('');
+									handleRemoveQuoteBox();
 								}}
 							>
 								<CloseIcon className='text-blue-light-medium dark:text-white' />
@@ -207,7 +260,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								pasteRef.current = '';
 							}}
 							textareaName={name}
-							value={converter.makeHtml(value || quoteBox || '')}
+							value={converter.makeHtml(handleMergeQuoteWithValue() || value || quoteBox || '')}
 							ref={ref}
 							disabled={isDisabled}
 							onEditorChange={(content) => {

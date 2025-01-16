@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { spaceGrotesk } from 'pages/_app';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { LeftOutlined } from '@ant-design/icons';
@@ -16,11 +16,14 @@ import { useRouter } from 'next/router';
 import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import CreateBountyBtn from '~src/components/UserCreatedBounties/CreateBountyBtn';
-import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
 import { getUserCreatedBounties } from 'pages/api/v1/user-created-bounties/getAllBounties';
+import { EUserCreatedBountiesStatuses } from '~src/types';
+import { ErrorState } from '~src/ui-components/UIStates';
+import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
 
 interface IUserBountiesListingProps {
 	network: string;
+	error: string;
 	data?: any;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -30,9 +33,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const page = query?.page || 1;
 	const filterBy = query?.filterBy ? JSON.parse(decodeURIComponent(String(query?.filterBy))) : [];
-	const status = query?.status ? JSON.parse(decodeURIComponent(String(query?.status))) : '';
 
-	const { data } = await getUserCreatedBounties({
+	const status: EUserCreatedBountiesStatuses | null =
+		query?.status && query?.status !== '' ? (decodeURIComponent(String(query?.status)).toLowerCase() as EUserCreatedBountiesStatuses) : null;
+
+	const { data, error } = await getUserCreatedBounties({
 		filterBy: filterBy,
 		network,
 		page: Number(page),
@@ -42,16 +47,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	return {
 		props: {
 			data,
+			error,
 			network
 		}
 	};
 };
 
 const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
-	const { network, data } = props;
+	const { network, data, error } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const [bounties, setBounties] = useState<any>();
 	const { resolvedTheme: theme } = useTheme();
 	const onPaginationChange = (page: number) => {
 		router?.push({
@@ -62,15 +67,27 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 			}
 		});
 	};
-	useEffect(() => {
-		setBounties(data);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data]);
+
+	console.log('data?.bounties', data?.bounties);
 
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props?.network]);
+
+	// const onTabChange = (key: string) => {
+	// const status = key === 'all' ? null : key.toLowerCase();
+	// router.push({
+	// pathname: router.pathname,
+	// query: {
+	// ...router.query,
+	// page: 1,
+	// ...(status === null ? { status: null } : { status: encodeURIComponent(status) })
+	// }
+	// });
+	// };
+
+	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
 		<div>
@@ -102,14 +119,15 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 						<CreateBountyBtn className='hidden md:block' />
 					</div>
 				</div>
-				<BountiesTabItems bounties={bounties} />
+
+				<BountiesTabItems bounties={data?.bounties} />
 
 				<div className='mb-5 mt-3 flex justify-end'>
-					{bounties?.length > BOUNTIES_LISTING_LIMIT && (
+					{data?.totalCount > BOUNTIES_LISTING_LIMIT && (
 						<Pagination
 							pageSize={BOUNTIES_LISTING_LIMIT}
 							current={Number(router?.query?.page) || 1}
-							total={bounties?.length}
+							total={data?.totalCount}
 							showSizeChanger={false}
 							hideOnSinglePage={true}
 							onChange={onPaginationChange}

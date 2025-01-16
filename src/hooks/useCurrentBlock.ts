@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import BN from 'bn.js';
 import { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
@@ -15,22 +14,29 @@ export default function useCurrentBlock() {
 			return;
 		}
 
-		let unsubscribe: () => void;
+		let unsubscribe: (() => void) | undefined;
 
-		if (!api.derive || !api.derive.chain) {
-			return;
-		}
+		(async () => {
+			try {
+				await api?.isReady;
 
-		api?.derive?.chain
-			.bestNumber((number) => {
-				setCurrentBlock(number);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
+				if (!api?.derive || !api?.derive?.chain) {
+					return;
+				}
 
-		return () => unsubscribe && unsubscribe();
+				unsubscribe = await api?.derive?.chain?.bestNumber((number) => {
+					setCurrentBlock(number);
+				});
+			} catch (error) {
+				console.error('Error initializing current block:', error);
+			}
+		})();
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe();
+			}
+		};
 	}, [api, apiReady]);
 
 	return currentBlock;

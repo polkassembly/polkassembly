@@ -14,6 +14,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
 import TagsModal from '~src/ui-components/TagsModal';
+import BountyPostReactionBar from './BountyPostReactions';
+import BountyPostComments from './BountyPostReactions/BountyPostComments';
 
 const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 	const { title, post_index, created_at, tags, proposer, content, status, reward } = post;
@@ -108,6 +110,13 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 					disableQuote={true}
 				/>
 			)}
+			<div className='flex items-center'>
+				<BountyPostReactionBar
+					post_reactions={post?.post_reactions}
+					postIndex={post?.post_index}
+				/>
+				<BountyPostComments comments={post?.comments || {}} />
+			</div>
 		</section>
 	);
 };

@@ -55,9 +55,9 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 	const [loadingChildBounties, setLoadingChildBounties] = useState<{ [key: string]: boolean }>({});
-	const [bounties, setBounties] = useState<IUserCreatedBounty[]>(props.bounties);
+	const [bounties, setBounties] = useState<IUserCreatedBounty[]>([]);
 	const handleRowClick = (record: IBountyListing) => {
-		router.push(`/user-created-bounty/${record?.index}`);
+		router.push(`/user-created-bounty/${record?.post_index}`);
 	};
 	const handleExpand = async (expanded: boolean, record: IBountyListing) => {
 		const newExpandedRowKeys = expanded ? [...expandedRowKeys, record.index] : expandedRowKeys.filter((key) => key !== record.index);
@@ -102,20 +102,25 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 		return data?.child_bounties || [];
 	};
 
+	useEffect(() => {
+		const sortedBounties = props.bounties.sort((a, b) => b.post_index - a.post_index); // Sorting in descending order
+		setBounties(sortedBounties);
+	}, [props.bounties]);
+
 	const columns: TableColumnsType<IBountyListing> = [
 		{
-			className: 'w-[20px]',
-			dataIndex: 'id',
-			key: 'id',
-			render: (id: number) => id,
+			className: 'w-[20px] pl-0',
+			dataIndex: 'post_index',
+			key: 'post_index',
+			render: (post_index: number) => <div className='p-0'>{post_index}</div>,
 			title: '#'
 		},
 		{
-			className: 'w-[117px]',
+			className: 'w-[117px] pr-0',
 			dataIndex: 'proposer',
 			key: 'proposer',
 			render: (proposer: string) => (
-				<div>
+				<div className='px-0'>
 					{proposer ? (
 						<Address
 							iconSize={22}
@@ -132,14 +137,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			title: 'Proposer'
 		},
 		{
-			className: 'w-[150px]',
-			dataIndex: 'maxClaim',
-			key: 'maxClaim',
-			render: (maxClaim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{maxClaim}</p>,
+			className: 'w-[100px] p-0 text-center',
+			dataIndex: 'max_claim',
+			key: 'max_claim',
+			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{max_claim}</p>,
 			title: 'Max no of claims'
 		},
 		{
-			className: 'max-w-[227px] w-[227px] m-0 p-0 px-5',
+			className: 'w-[225px] m-0 py-1',
 			dataIndex: 'title',
 			key: 'title',
 			render: (title: string) => {
@@ -154,16 +159,15 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Title',
-			width: 227
+			title: 'Title'
 		},
 		{
-			className: 'w-[120px] min-w-[120px]',
+			className: 'w-[80px] min-w-[80px] px-1',
 			dataIndex: 'claimedAmount',
 			key: 'claimed',
 			render: (claimed: string, record: IBountyListing) => {
 				const claimedBn = new BN(claimed || '0');
-				const rewardBn = new BN(record?.reward || '0');
+				const rewardBn = new BN(record?.totalChildBountiesAmt || '0');
 
 				const percentage = !rewardBn.eq(ZERO_BN) ? claimedBn.mul(new BN('100')).div(rewardBn) : ZERO_BN;
 
@@ -187,20 +191,19 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Claimed',
-			width: 120
+			title: 'Claimed'
 		},
 		{
-			className: 'w-[120px]',
-			dataIndex: 'createdAt',
-			key: 'createdAt',
-			render: (createdAt: string) => {
+			className: 'w-[120px] px-1',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (created_at: string) => {
 				return (
 					<>
-						{createdAt ? (
+						{created_at ? (
 							<span className='flex gap-1 text-blue-light-medium  dark:text-icon-dark-inactive'>
 								<ClockCircleOutlined className='text-blue-light-medium dark:text-icon-dark-inactive' />
-								<span className=' whitespace-nowrap'>{dayjs(createdAt).format('DD MMM YYYY')}</span>
+								<span className='whitespace-nowrap text-sm'>{dayjs(created_at).format('DD MMM YYYY')}</span>
 							</span>
 						) : (
 							'-'
@@ -210,30 +213,19 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			},
 			title: 'Date'
 		},
-
 		{
+			className: 'w-[80px] px-1',
 			dataIndex: 'status',
 			key: 'status',
-			render: (status: string) => <div>{status ? <StatusTag status={status} /> : '-'}</div>,
+			render: (status: string) => {
+				const capitalizedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1) : '-';
+				return <div>{capitalizedStatus ? <StatusTag status={capitalizedStatus} /> : '-'}</div>;
+			},
 			title: 'Status'
 		},
+
 		{
-			dataIndex: 'tags',
-			key: 'tags',
-			render: (tags: string[]) => {
-				return <Categories categories={tags || []} />;
-			},
-			title: 'Categories'
-		},
-		{
-			className: 'w-[150px]',
-			dataIndex: 'maxClaim',
-			key: 'maxClaim',
-			render: (maxClaim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{maxClaim}</p>,
-			title: 'Max no of claims'
-		},
-		{
-			className: 'w-[126px] min-w-[126px]',
+			className: 'w-[80px] min-w-[80px] px-0',
 			dataIndex: 'reward',
 			key: 'reward',
 			render: (reward: string) =>
@@ -244,8 +236,16 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				) : (
 					'-'
 				),
-			title: 'Reward',
-			width: 126
+			title: 'Reward'
+		},
+		{
+			className: 'px-0 pl-0 ml-0 max-w-[140px] overflow-auto scroll-hidden',
+			dataIndex: 'tags',
+			key: 'tags',
+			render: (tags: string[]) => {
+				return <Categories categories={tags || []} />;
+			},
+			title: 'Categories'
 		}
 	];
 

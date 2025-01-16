@@ -24,7 +24,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod, IProgressReport, IVotesHistoryResponse } from '~src/types';
+import { IBeneficiary, IPeriod, IProgressReport, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -49,6 +49,7 @@ import { gov2ReferendumStatus } from '~src/global/statuses';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
+import MultipleBeneficiariesAmount from './MultipleBeneficiariesAmount';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -83,6 +84,7 @@ interface IGovernanceProps {
 	username?: string;
 	className?: string;
 	commentsCount: number;
+	beneficiaries?: IBeneficiary[];
 	created_at?: Date;
 	end?: number;
 	method?: string;
@@ -153,6 +155,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		childBountyAmount,
 		parentBounty,
 		allChildBounties,
+		beneficiaries,
 		assetId
 	} = props;
 
@@ -414,16 +417,28 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{!!requestedAmount && (
-							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								<BeneficiaryAmoutTooltip
-									assetId={assetId || null}
-									requestedAmt={requestedAmount.toString()}
-									className='flex items-center justify-center'
-									proposalCreatedAt={created_at || null}
-									timeline={timeline || []}
-									postId={onchainId as any}
-								/>
+						{(!!requestedAmount || !!beneficiaries?.length) && (
+							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								{beneficiaries && beneficiaries?.length > 1 ? (
+									<MultipleBeneficiariesAmount
+										beneficiaries={beneficiaries || []}
+										postId={onchainId ? Number(onchainId) : null}
+										proposalCreatedAt={created_at as Date}
+										timeline={timeline || []}
+									/>
+								) : (
+									<>
+										<BeneficiaryAmoutTooltip
+											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
+											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
+											className={'flex items-center justify-center'}
+											postId={onchainId ? Number(onchainId) : null}
+											proposalCreatedAt={created_at as Date}
+											timeline={timeline || []}
+											key={onchainId ? Number(onchainId) : (onchainId as any)}
+										/>
+									</>
+								)}
 							</div>
 						)}
 					</div>

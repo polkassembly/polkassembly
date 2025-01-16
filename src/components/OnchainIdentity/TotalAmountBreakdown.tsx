@@ -32,48 +32,60 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const [buttonLoading, setButtonLoading] = useState(false);
 
 	const handleRequestJudgement = async () => {
 		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
-		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
-			userId: currentUser?.id || '',
-			userName: currentUser?.username || ''
-		});
-		if (identityInfo.isIdentitySet && !!identityInfo?.email) {
-			const registrarIndex = getIdentityRegistrarIndex({ network: network });
-
-			if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
-
-			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-
-			const onSuccess = async () => {
-				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
-				setStartLoading({ isLoading: false, message: 'Success!' });
-			};
-			const onFailed = (error: string) => {
-				queueNotification({
-					header: 'failed!',
-					message: error || 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setStartLoading({ isLoading: false, message: error || 'Failed' });
-			};
-
-			await executeTx({
-				address: identityAddress,
-				api: peopleChainApi ?? api,
-				apiReady,
-				errorMessageFallback: 'failed.',
-				network,
-				onFailed,
-				onSuccess,
-				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
-				tx: requestedJudgementTx
+		setButtonLoading(true);
+		try {
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
 			});
-		} else {
-			setShowAlert(true);
+			if (identityInfo.isIdentitySet && !!identityInfo?.email) {
+				const registrarIndex = getIdentityRegistrarIndex({ network });
+
+				if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
+
+				setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
+				const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+
+				const onSuccess = async () => {
+					changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
+					setStartLoading({ isLoading: false, message: 'Success!' });
+				};
+				const onFailed = (error: string) => {
+					queueNotification({
+						header: 'Failed!',
+						message: error || 'Transaction failed!',
+						status: NotificationStatus.ERROR
+					});
+					setStartLoading({ isLoading: false, message: error || 'Failed' });
+				};
+
+				await executeTx({
+					address: identityAddress,
+					api: peopleChainApi ?? api,
+					apiReady,
+					errorMessageFallback: 'Failed.',
+					network,
+					onFailed,
+					onSuccess,
+					setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+					tx: requestedJudgementTx
+				});
+			} else {
+				setShowAlert(true);
+			}
+		} catch (error) {
+			queueNotification({
+				header: 'Error',
+				message: error.message || 'Something went wrong!',
+				status: NotificationStatus.ERROR
+			});
+		} finally {
+			setButtonLoading(false);
 		}
 	};
 
@@ -177,6 +189,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 					variant='primary'
 				/>
 				<button
+					disabled={buttonLoading}
 					onClick={handleRequestJudgement}
 					className={classNames('mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay')}
 				>

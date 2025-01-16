@@ -886,11 +886,6 @@ z-index: 105 !important;
 .pink-icons{
   filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
-
-.bounty-button {
-  background: linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%);
-}
-
 .ant-slider .ant-slider-mark-text {
   color: #777b80 !important;
 }
@@ -1010,4 +1005,7 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
 .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
 		font-weight: 600 !important;
+}
+.ant-popover {
+  --antd-arrow-background-color: #363636 !important;
 }

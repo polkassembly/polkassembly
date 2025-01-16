@@ -10,6 +10,7 @@ import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
+import { IComment } from './components/Post/Comment/Comment';
 
 declare global {
 	interface Window {
@@ -598,6 +599,7 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+	genralIndex?: string | null;
 }
 
 export interface IRating {
@@ -787,6 +789,7 @@ export interface IChildBountiesResponse {
 
 export interface IUserPost {
 	assetId?: null | string;
+	beneficiaries?: IBeneficiary[];
 	content: string;
 	created_at: Date;
 	id: string;
@@ -1231,8 +1234,8 @@ export enum EUserCreatedBountiesStatuses {
 
 export interface IUserCreatedBounty {
 	content: string;
-	created_at: string;
-	deadline_date: string;
+	created_at: Date;
+	deadline_date: Date;
 	history: IPostHistory[];
 	post_index: number;
 	max_claim: number;
@@ -1248,9 +1251,11 @@ export interface IUserCreatedBounty {
 	twitter_handle: string;
 	source: 'polkassembly' | 'twitter';
 	post_reactions?: IReactions;
-	updated_at: string;
+	updated_at: Date;
 	user_id: number;
-	comments?: any[];
+	comments?: {
+		[index: string]: IComment[];
+	};
 	index?: number;
 }
 export enum EUserCreatedBountyActions {
@@ -1263,4 +1268,17 @@ export enum ETabBountyStatuses {
 	ALL = 'all',
 	APPROVED = 'approved',
 	REJECTED = 'rejected'
+}
+export interface ICalendarEvent {
+	createdAt: Date;
+	index: number;
+	proposalType: ProposalType;
+	parentBountyIndex?: number;
+	proposer: string;
+	source: 'polkasembly' | 'subsquare';
+	status: string;
+	statusHistory: { status: string; timestamp: Date; block: number }[];
+	title: string;
+	trackNo?: number;
+	blockNo?: number;
 }

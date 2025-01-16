@@ -87,7 +87,7 @@ export interface ITimeline {
 	type: string;
 }
 
-interface ISentimentsPercentage {
+export interface ISentimentsPercentage {
 	against: ESentiments | 0;
 	for: ESentiments | 0;
 	neutral: ESentiments | 0;

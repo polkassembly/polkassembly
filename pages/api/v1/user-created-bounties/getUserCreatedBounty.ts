@@ -14,6 +14,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { getComments, getReactions } from '../posts/on-chain-post';
 import { ProposalType } from '~src/global/proposalType';
 import getClaimedSubmissionsPercentage from '~src/util/getClaimedSubmissionsPercentage';
+import { IComment } from '~src/components/Post/Comment/Comment';
 
 interface Args {
 	bountyId: number;
@@ -34,20 +35,20 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			throw apiErrorWithStatusCode(`No bounty found with id-${bountyId}`, 400);
 		}
 
-		//TODO: pie graph percentage acc to submission count
-		//TODO: submissions needs to be added
-		//TODO: subscribers
-
 		const bountyDoc = userCreatedBountiesSnapshot?.docs?.[0];
-
 		const bountyData = bountyDoc?.data();
 		const commentRefs = await bountyDoc?.ref.collection('comments').get();
 
-		//comments
-		//replies
-		const comments = await getComments(commentRefs, bountyDoc.ref, network, ProposalType.USER_CREATED_BOUNTIES, bountyId, false);
+		const comments: { [index: string]: IComment[] } = {};
+		const postIndex = bountyData?.id;
+		const postType = bountyData?.proposalType;
 
-		//post Reactions
+		if (postIndex && postType) {
+			const commentsKey = `${postIndex}_${postType}`;
+			comments[commentsKey] = await getComments(commentRefs, bountyDoc.ref, network, ProposalType.USER_CREATED_BOUNTIES, bountyId, false);
+		}
+
+		// Reactions
 		const postReactionsQuerySnapshot = await bountyDoc?.ref.collection('post_reactions').get();
 		const post_reactions = getReactions(postReactionsQuerySnapshot);
 
@@ -61,10 +62,10 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 
 		const payload: IUserCreatedBounty = {
 			claimed_percentage: claimedSubmissionsPercentage || 0,
-			comments: comments || [],
+			comments: comments || {}, // Updated to the correct structure
 			content: bountyData?.content,
-			created_at: bountyData?.createdAt?.toDate ? String(bountyData?.createdAt?.toDate()) : bountyData?.createdAt,
-			deadline_date: bountyData?.deadlineDate.toDate ? String(bountyData?.deadlineDate.toDate()) : bountyData?.deadlineDate,
+			created_at: bountyData?.createdAt?.toDate ? bountyData?.createdAt?.toDate() : bountyData?.createdAt,
+			deadline_date: bountyData?.deadlineDate.toDate ? bountyData?.deadlineDate.toDate() : bountyData?.deadlineDate,
 			history: history || [],
 			max_claim: bountyData?.maxClaim,
 			post_index: bountyData?.id,
@@ -78,11 +79,11 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 			tags: bountyData?.tags || [],
 			title: bountyData?.title || '',
 			twitter_handle: bountyData?.twitterHandle,
-			updated_at: bountyData?.updatedAt.toDate ? String(bountyData?.updatedAt.toDate()) : bountyData?.updatedAt,
+			updated_at: bountyData?.updatedAt.toDate ? bountyData?.updatedAt.toDate() : bountyData?.updatedAt,
 			user_id: bountyData?.userId
 		};
 		return {
-			data: payload,
+			data: JSON.parse(JSON.stringify(payload)),
 			error: null,
 			status: 200
 		};
@@ -111,7 +112,7 @@ const handler: NextApiHandler<IUserCreatedBounty | MessageType> = async (req, re
 		if (data) {
 			return res.status(200).json(data);
 		} else if (error) {
-			return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+			return res.status(500).json({ message: String(error) || messages.API_FETCH_ERROR });
 		}
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });

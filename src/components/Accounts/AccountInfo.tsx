@@ -38,6 +38,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 								isUsedInAccountsPage={true}
 								isTruncateUsername={false}
 								isProfileView
+								showCopyIcon={true}
 							/>
 						</div>
 					)}

@@ -19,7 +19,7 @@ const checkIsUserCreatedBountySubmissionValid = async (
 
 	//maxClaim count;
 	const claimedSubmissionsCountRef = await submissionSnapshot?.where('status', '==', EUserCreatedBountySubmissionStatus.APPROVED).count().get();
-	const claimedSubmissionsCount = claimedSubmissionsCountRef.data().count;
+	const claimedSubmissionsCount = claimedSubmissionsCountRef.data().count ?? 0;
 
 	//check is submission already exists for the user:
 	const existsSubmissionRef = await submissionSnapshot?.where('user_id', '==', userId).where('proposer', '==', userAddress).get();

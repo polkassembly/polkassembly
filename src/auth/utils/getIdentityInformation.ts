@@ -6,6 +6,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { hexToString, isHex } from '@polkadot/util';
 import { IIdentityInfo } from '~src/types';
+import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 
 interface Args {
 	api?: ApiPromise;
@@ -34,10 +35,9 @@ const result: IIdentityInfo = {
 };
 
 const getParentProxyInfo = async ({ address, api, apiReady, network }: { address: string; api: ApiPromise; apiReady: boolean; network: string }) => {
-	if (!api || !apiReady) return { address: '', title: null };
-	const encodedAddress = getEncodedAddress(address, network) || address;
+	if (!api || !apiReady || !address) return { address: '', title: null };
 
-	const proxyInfo = await api?.query?.identity?.superOf(encodedAddress);
+	const proxyInfo = await api?.query?.identity?.superOf(address);
 	const formatedProxyInfo: any = proxyInfo?.toHuman();
 	if (formatedProxyInfo && formatedProxyInfo?.[0] && getEncodedAddress(formatedProxyInfo?.[0] || '', network)) {
 		return { address: formatedProxyInfo?.[0], title: formatedProxyInfo?.[1]?.Raw || null };
@@ -46,7 +46,7 @@ const getParentProxyInfo = async ({ address, api, apiReady, network }: { address
 };
 
 const getIdentityInformation = async ({ api, address, network }: Args): Promise<IIdentityInfo> => {
-	if (!api || !address) return result;
+	if (!api || !address || !onchainIdentitySupportedNetwork.includes(network)) return result;
 
 	await api?.isReady;
 	if (!api?.isReady) return result;

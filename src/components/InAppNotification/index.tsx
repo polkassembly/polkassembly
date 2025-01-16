@@ -20,7 +20,6 @@ import { useApiContext } from '~src/context';
 import checkPayoutForUserAddresses from '~src/util/checkPayoutForUserAddresses';
 import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
-import { IPayout } from '~src/types';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { GlobalActions } from '~src/redux/global';
 
@@ -49,11 +48,7 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 		if (currentBlock) {
 			(async () => {
 				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
-				const usersPayouts: IPayout[] = [];
-				payoutsData?.map((payout: IPayout) => {
-					usersPayouts.push(payout);
-				});
-				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!usersPayouts?.length, payouts: usersPayouts }));
+				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!payoutsData?.length, payouts: payoutsData }));
 			})();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

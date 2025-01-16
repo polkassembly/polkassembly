@@ -5,8 +5,6 @@ import { Layout, Menu as AntdMenu, MenuProps, Tooltip } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import XmasLogo from '~assets/xmas-logo.png';
-import XmasLogoDark from '~assets/xmas-logo-dark.png';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	BountiesIcon,
@@ -89,7 +87,6 @@ interface SidebarProps {
 	isIdentityUnverified: boolean;
 	sidedrawer: boolean;
 	setOpenAddressLinkedModal: (open: boolean) => void;
-	setIdentityMobileModal: (open: boolean) => void;
 	setSidedrawer: (open: boolean) => void;
 	setLoginOpen: (open: boolean) => void;
 	setIdentityOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -103,7 +100,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	mainDisplay,
 	isIdentitySet,
 	setSidedrawer,
-	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
 	setOpenAddressLinkedModal,
@@ -324,19 +320,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 			setSidedrawer(false);
 		}
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
+			localStorage.setItem('identityAddress', currentUser?.loginAddress);
+			setIdentityOpen(true);
+			return;
+		}
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (isCurrentlyLoggedInUsingMultisig(currentUser)) {
-				localStorage.setItem('identityAddress', currentUser?.loginAddress);
-				setIdentityOpen(true);
-				return;
-			}
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
 	const gov1Items: { [x: string]: ItemType[] } = {
@@ -1984,26 +1977,29 @@ const Sidebar: React.FC<SidebarProps> = ({
 					/>
 					{!isMobile && (
 						<>
-							<div className={` ${sidedrawer ? '' : 'mt-2'} svgLogo logo-container logo-display-block fixed flex items-center justify-center bg-transparent`}>
+							<div
+								className={` ${
+									sidedrawer ? '-ml-20 mt-[2px] w-[300px]' : 'mt-0'
+								} svgLogo logo-container logo-display-block fixed  flex h-[70px] items-center justify-center bg-transparent`}
+							>
 								<div>
 									<Link href={`${isOpenGovSupported(network) ? '/opengov' : '/'}`}>
 										{sidedrawer ? (
-											<div className='flex h-full items-center justify-center'>
+											<div className='ml-16 flex h-full items-center justify-center'>
 												<Image
-													// src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
-													src={theme === 'dark' ? XmasLogoDark : XmasLogo}
+													src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
 													alt='polkassembly logo'
-													width={229}
-													height={55}
+													width={150}
+													height={46}
 												/>
 											</div>
 										) : (
-											<div className='ml-5 h-full'>
+											<div className='my-1 ml-5 h-full'>
 												<PaLogo sidedrawer={sidedrawer} />
 											</div>
 										)}
 									</Link>
-									<div className={`${sidedrawer ? 'hidden' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+									<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-1 dark:border-separatorDark`}></div>
 								</div>
 							</div>
 						</>

@@ -220,7 +220,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			user_id: id as any,
 			username: username || ''
 		};
-		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		setCurrentState && setCurrentState(postIndex?.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,

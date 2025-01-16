@@ -114,7 +114,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	const StatusDiv = ({ status }: { status: string }) => {
 		return (
-			<div className='status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white'>
+			<div className={`${isCollapsed ? 'hidden' : ''} status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white`}>
 				<StatusTag
 					theme={theme}
 					className='max-w-[86px] overflow-hidden text-ellipsis text-white md:max-w-full'

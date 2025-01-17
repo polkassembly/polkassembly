@@ -123,11 +123,16 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [initialValue, setInitialValue] = useState<string>('');
 	const pasteRef = useRef<string>('');
 
+	const isUserOrAddressLink = (): boolean => {
+		if (!value) return false;
+		return value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/');
+	};
+
 	const handleRemoveQuoteBox = () => {
 		if (!quoteBox) return;
 		setQuotedText('');
 
-		if (value || value?.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value?.startsWith('<p><a href="../address/') || value?.includes(initialValue)) {
+		if (isUserOrAddressLink() || value?.includes(initialValue)) {
 			onChange(initialValue || '');
 		} else {
 			if (value?.includes(quoteBox)) {
@@ -139,21 +144,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
-			return;
+		if (!value || !isUserOrAddressLink() || !value.endsWith('</a>&nbsp;</p>')) return;
 		setInitialValue(value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
-			return;
+		if (!value || !isUserOrAddressLink() || !value.endsWith('</a>&nbsp;</p>')) return;
 
 		setInitialValue(value);
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [value]);
 
 	useEffect(() => {}, [theme]);
@@ -176,22 +180,17 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		if (!value || !quotedText || value?.includes(quotedText)) {
 			return '';
 		}
-		const htmlString1 = converter.makeHtml(initialValue) || '';
-		const htmlString2 = quoteBox;
-
-		const parser = new DOMParser();
-
-		const doc2 = parser.parseFromString(htmlString2, 'text/html');
+		const initialValueHtmlString = converter.makeHtml(initialValue) || '';
 
 		const mergedDiv = document.createElement('div');
 
 		if (initialValue) {
 			const newDiv = document.createElement('div');
-			newDiv.innerHTML = htmlString1;
+			newDiv.innerHTML = initialValueHtmlString;
 			mergedDiv.appendChild(newDiv);
 		}
 
-		if (doc2.body.firstChild) {
+		if (quoteBox) {
 			const newDiv = document.createElement('div');
 			newDiv.innerHTML = quoteBox;
 			mergedDiv.appendChild(newDiv);

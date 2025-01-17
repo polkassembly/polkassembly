@@ -4,7 +4,6 @@
 
 /* eslint-disable sort-keys */
 import React, { useEffect, useState } from 'react';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import CreateSubmissionButton from './CreateSubmissionButton';
 import CustomTabs from './CustomTabs';
 import Image from 'next/image';

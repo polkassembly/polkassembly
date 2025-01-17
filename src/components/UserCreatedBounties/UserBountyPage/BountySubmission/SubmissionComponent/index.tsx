@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import NameLabel from '~src/ui-components/NameLabel';
@@ -72,14 +72,14 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									)}
 								</div>
 								<div>
-									{status === EChildbountySubmissionStatus.REJECTED && (
+									{status === EUserCreatedBountySubmissionStatus.REJECTED && (
 										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#FF52521A] px-[6px] py-1'>
 											<div className='h-[6px] w-[6px] rounded-full bg-[#DF0000]'></div>
 											<span className=' text-xs font-medium text-[#DF0000]'>REJECTED</span>
 										</div>
 									)}
 
-									{status === EChildbountySubmissionStatus.APPROVED && (
+									{status === EUserCreatedBountySubmissionStatus.APPROVED && (
 										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#11C7001A] px-[6px] py-1'>
 											<div className='h-[6px] w-[6px] rounded-full bg-[#0B8A00]'></div>
 											<span className='text-xs font-medium text-[#0B8A00]'>APPROVED</span>
@@ -93,7 +93,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
-							{status === EChildbountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
+							{status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress && (
 								<SubmissionReactionButton
 									parentBountyProposerAddress={bountyProposer}
 									submissionProposerAddress={submission.proposer}
@@ -102,8 +102,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									setOpenModal={setOpenModal}
 								/>
 							)}
-							{/* {status !== EChildbountySubmissionStatus.APPROVED && bountyProposer == loginAddress && ( */}
-							{status !== EChildbountySubmissionStatus.APPROVED && (
+							{status === EUserCreatedBountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (
 								<button
 									onClick={() => setOpenTipping(true)}
 									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
@@ -116,7 +115,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							openModal={openModal}
 							setOpenModal={setOpenModal}
 							submission={submission}
-							showReactionButtons={status === EChildbountySubmissionStatus.PENDING && bountyProposer == loginAddress}
+							showReactionButtons={status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress}
 							parentBountyProposerAddress={bountyProposer}
 							submissionProposerAddress={submission.proposer}
 							parentBountyIndex={bountyIndex}

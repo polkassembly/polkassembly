@@ -67,8 +67,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 					status: NotificationStatus.ERROR
 				});
 				setShowBalanceAlert(true);
-			}
-			setShowBalanceAlert(false);
+			} else setShowBalanceAlert(false);
 		} catch (error) {
 			console.error('Failed to fetch balance:', error);
 		} finally {

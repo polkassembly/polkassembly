@@ -36,6 +36,7 @@ const SubmissionReactionButton = ({
 			});
 			if (error || !data) {
 				console.log('error in submission modal', error);
+				setLoading(false);
 				return;
 			}
 			if (data) {

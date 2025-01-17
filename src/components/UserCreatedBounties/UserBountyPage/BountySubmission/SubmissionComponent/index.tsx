@@ -23,7 +23,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
 	const { loginAddress, username } = useUserDetailsSelector();
-	const [openModal, setOpenModal] = useState(false);
+	const [openModalId, setOpenModalId] = useState<string | null>(null);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
@@ -37,7 +37,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 						<div className='cursor-pointer rounded-[8px] border border-solid border-[#D2D8E0] p-3 dark:border-separatorDark'>
 							<div
 								className='flex items-center justify-between'
-								onClick={() => setOpenModal(true)}
+								onClick={() => setOpenModalId(id)}
 							>
 								<div className='flex items-center gap-1 rounded-full'>
 									<NameLabel
@@ -47,7 +47,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 										isUsedInBountyPage={true}
 									/>
 
-									{createdAt && (
+									{!!createdAt && (
 										<>
 											<Divider
 												type='vertical'
@@ -59,7 +59,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 											</div>
 										</>
 									)}
-									{reqAmount && (
+									{!!reqAmount && (
 										<>
 											<Divider
 												type='vertical'
@@ -89,7 +89,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							</div>
 							<div
 								className='mt-1'
-								onClick={() => setOpenModal(true)}
+								onClick={() => setOpenModalId(id)}
 							>
 								<span className='text-base font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high '>{title}</span>
 							</div>
@@ -99,7 +99,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									submissionProposerAddress={submission.proposer}
 									parentBountyIndex={bountyIndex}
 									submissionId={submission.id}
-									setOpenModal={setOpenModal}
+									setOpenModal={(open) => setOpenModalId(open ? id : null)}
 								/>
 							)}
 							{status === EUserCreatedBountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (
@@ -112,8 +112,8 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							)}
 						</div>
 						<SubmissionDetailModal
-							openModal={openModal}
-							setOpenModal={setOpenModal}
+							openModal={openModalId === id}
+							setOpenModal={(open) => setOpenModalId(open ? id : null)}
 							submission={submission}
 							showReactionButtons={status === EUserCreatedBountySubmissionStatus.PENDING && bountyProposer == loginAddress}
 							parentBountyProposerAddress={bountyProposer}
@@ -121,7 +121,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							parentBountyIndex={bountyIndex}
 							submissionId={submission.id}
 						/>
-						{loginAddress && (
+						{!!loginAddress && (
 							<Tipping
 								username={username || ''}
 								open={openTipping}

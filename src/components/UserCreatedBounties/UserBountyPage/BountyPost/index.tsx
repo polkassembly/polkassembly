@@ -42,9 +42,11 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 							Requested: ${Number(currentTokenPrice) * Number(formatBnBalance(String(reward), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network))}
 						</span>
 					)}
-					<span className='rounded-md bg-[#F3F4F6] px-[6px] py-1 text-xs font-medium text-blue-light-medium dark:bg-[#272727] dark:text-blue-dark-medium'>
-						{formatBnBalance(String(reward), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network)} {unit}
-					</span>
+					{reward && (
+						<span className='rounded-md bg-[#F3F4F6] px-[6px] py-1 text-xs font-medium text-blue-light-medium dark:bg-[#272727] dark:text-blue-dark-medium'>
+							{formatBnBalance(String(reward), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network)} {unit}
+						</span>
+					)}
 				</div>
 			</div>
 
@@ -64,7 +66,7 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 					type='vertical'
 					className='border-l-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block'
 				/>
-				{created_at && (
+				{!!created_at && (
 					<>
 						<div className='items-center text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 							<ClockCircleOutlined className='mr-[2px]' /> <span></span>

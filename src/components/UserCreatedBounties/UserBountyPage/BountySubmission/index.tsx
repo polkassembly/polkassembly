@@ -52,6 +52,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 	};
 
 	useEffect(() => {
+		if (!post?.post_index) return;
 		if (post?.post_index) {
 			fetchSubmissions();
 		}
@@ -60,7 +61,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 
 	const isDeadlinePassed = post?.deadline_date ? new Date(post.deadline_date) < new Date() : false;
 
-	if (!loadingStatus.isLoading && submissions.length < 1) {
+	if (!loadingStatus.isLoading && (!submissions || submissions.length < 1)) {
 		return (
 			<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
 				<div className='flex items-center justify-between'>

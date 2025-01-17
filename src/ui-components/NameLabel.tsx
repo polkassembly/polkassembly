@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
 import Tooltip from '~src/basic-components/Tooltip';
+import classNames from 'classnames';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -126,7 +127,7 @@ const NameLabel = ({
 					<Address
 						passedUsername={username}
 						address={defaultAddress}
-						className={`${isUsedInBountyPage && '-mt-1'} text-sm`}
+						className={classNames(isUsedInBountyPage ? '-mt-1' : '', 'text-sm')}
 						displayInline
 						usernameClassName={usernameClassName}
 						disableIdenticon={disableIdenticon}

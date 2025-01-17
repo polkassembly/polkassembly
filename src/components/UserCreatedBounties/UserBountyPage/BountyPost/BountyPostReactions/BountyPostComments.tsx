@@ -26,19 +26,18 @@ const BountyPostComments = ({ comments }: { comments: { [index: string]: ICommen
 		</div>;
 	}
 
-	const content = (
-		<BountyCommentsContainer
-			id={id}
-			className=''
-			comments={comments}
-		/>
-	);
 	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 
 	return (
 		<div>
 			<Popover
-				content={content}
+				content={
+					<BountyCommentsContainer
+						id={id}
+						className=''
+						comments={comments}
+					/>
+				}
 				// title='Comments'
 				trigger='click'
 			>

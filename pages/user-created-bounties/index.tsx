@@ -68,24 +68,10 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 		});
 	};
 
-	console.log('data?.bounties', data?.bounties);
-
 	useEffect(() => {
 		dispatch(setNetwork(props?.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props?.network]);
-
-	// const onTabChange = (key: string) => {
-	// const status = key === 'all' ? null : key.toLowerCase();
-	// router.push({
-	// pathname: router.pathname,
-	// query: {
-	// ...router.query,
-	// page: 1,
-	// ...(status === null ? { status: null } : { status: encodeURIComponent(status) })
-	// }
-	// });
-	// };
 
 	if (error) return <ErrorState errorMessage={error} />;
 

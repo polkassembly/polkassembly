@@ -99,24 +99,24 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
 
 		const payload = {
-			content,
-			createdAt: new Date(),
-			deadlineDate: new Date(deadlineDate),
+			content: content || '',
+			created_at: new Date(),
+			deadline_date: firebaseFormatedDeadline,
 			history: [],
-			id: totalCreatedBountiesCount,
-			maxClaim: maxClaim,
+			max_claim: maxClaim,
 			network: network,
-			proposalType: ProposalType.USER_CREATED_BOUNTIES,
+			post_index: totalCreatedBountiesCount,
+			post_type: ProposalType.USER_CREATED_BOUNTIES,
 			proposer: getSubstrateAddress(proposerAddress) || '',
 			reward: reward || '0',
 			source: 'polkassembly',
 			status: EUserCreatedBountiesStatuses.ACTIVE,
-			submissionGuidelines: submissionGuidelines || '',
+			submission_guidelines: submissionGuidelines || '',
 			tags: tags || [],
 			title: title || '',
-			twitterHandle: modifiedTwitterHandle,
-			updatedAt: new Date(),
-			userId: user?.id
+			twitter_handle: modifiedTwitterHandle,
+			updated_at: new Date(),
+			user_id: user?.id
 		};
 
 		await bountyDoc?.set(payload, { merge: true });

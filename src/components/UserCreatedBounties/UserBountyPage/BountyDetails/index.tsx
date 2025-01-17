@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 const ClaimedAmountPieGraph = dynamic(() => import('~src/components/Bounties/utils/ClaimedAmountPieGraph'), { ssr: false });
 
 const DetailRow = ({ label, children, className = '' }: { label: string; children: React.ReactNode; className?: string }) => (
-	<div className={`flex gap-1 rounded-[10px] border border-solid border-[#D2D8E0B2] p-3 dark:border-separatorDark ${className}`}>
+	<div className={`flex items-center gap-1 rounded-[10px] border border-solid border-[#D2D8E0B2] p-3 dark:border-separatorDark ${className}`}>
 		<span className='text-sm font-medium tracking-wide text-blue-light-medium dark:text-blue-dark-medium'>{label}:</span>
 		<div className='ml-1 flex items-center gap-1 text-[13px] text-blue-light-high dark:text-blue-dark-high'>{children}</div>
 	</div>
@@ -39,14 +39,23 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 				<DetailRow label='Submission Guidelines'>{submission_guidelines}</DetailRow>
 
 				{/* Social Row */}
-				<DetailRow label='Social'>
-					<ImageIcon
-						alt='twitter'
-						src='/assets/icons/user-bounties/twitter-icon.svg'
-						imgClassName='ml-1 '
-					/>
-					<span className='text-sm text-blue-light-high dark:text-blue-dark-high'> {twitter_handle}</span>
-				</DetailRow>
+				{twitter_handle && (
+					<DetailRow label='Social'>
+						<ImageIcon
+							alt='twitter'
+							src='/assets/icons/user-bounties/twitter-icon.svg'
+							imgClassName='ml-1 -mt-[1.5px]'
+						/>
+						<a
+							href={`https://twitter.com/${twitter_handle}`}
+							target='_blank'
+							rel='noopener noreferrer'
+							className='text-sm text-blue-light-high hover:underline dark:text-blue-dark-high'
+						>
+							{twitter_handle}
+						</a>
+					</DetailRow>
+				)}
 
 				{/* Claimed/Unclaimed Row */}
 				<div className='flex justify-between gap-1 rounded-[10px] border border-solid border-[#D2D8E0B2] p-3 dark:border-separatorDark'>

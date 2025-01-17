@@ -14,12 +14,14 @@ import { IChildBountySubmission, IUserCreatedBounty } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SubmissionComponent from './SubmissionComponent';
 import { Spin } from 'antd';
+import { useTheme } from 'next-themes';
 
 const CreateSubmissionForm = dynamic(() => import('./CreateSubmissionForm'), {
 	ssr: false
 });
 
 const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState(false);
 	const [submissions, setSubmissions] = useState<IChildBountySubmission[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<{ isLoading: boolean; message: string }>({
@@ -57,19 +59,27 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post?.post_index]);
 
+	const isDeadlinePassed = post?.deadline_date ? new Date(post.deadline_date) < new Date() : false;
+
 	if (!loadingStatus.isLoading && submissions.length < 1) {
 		return (
 			<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
 				<div className='flex items-center justify-between'>
 					<div className='flex items-center gap-1'>
-						<ImageIcon
+						<Image
+							src={'/assets/icons/user-bounties/submission-icon.svg'}
 							alt='icon'
-							src='/assets/icons/user-bounties/submission-icon.svg'
+							width={20}
+							height={21}
+							className={`${theme === 'dark' ? 'dark-icons' : ''} mt-[2px]`}
 						/>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Submissions</span>
 						<span className=' text-base text-[#334D6E]'>(0)</span>
 					</div>
-					<CreateSubmissionButton setOpenModal={setOpenModal} />
+					<CreateSubmissionButton
+						setOpenModal={setOpenModal}
+						disabled={isDeadlinePassed}
+					/>
 				</div>
 				<div className={`flex h-[500px] flex-col ${dmSans.className} ${dmSans.variable} items-center rounded-xl  px-5   `}>
 					<Image
@@ -105,16 +115,22 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 				<div>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center gap-1'>
-							<ImageIcon
+							<Image
+								src={'/assets/icons/user-bounties/submission-icon.svg'}
 								alt='icon'
-								src='/assets/icons/user-bounties/submission-icon.svg'
+								width={20}
+								height={21}
+								className={`${theme === 'dark' ? 'dark-icons' : ''} mt-[2px]`}
 							/>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Submissions</span>
-							<span className=' text-base text-[#334D6E]'>({`${submissions.length}`})</span>
+							<span className=' text-base text-blue-light-medium dark:text-blue-dark-medium'>({`${submissions.length}`})</span>
 						</div>
-						<CreateSubmissionButton setOpenModal={setOpenModal} />
+						<CreateSubmissionButton
+							setOpenModal={setOpenModal}
+							disabled={isDeadlinePassed}
+						/>
 					</div>
-					<CustomTabs />
+					{!loadingStatus.isLoading && <CustomTabs />}
 					<SubmissionComponent
 						submissions={submissions}
 						bountyProposer={post?.proposer}

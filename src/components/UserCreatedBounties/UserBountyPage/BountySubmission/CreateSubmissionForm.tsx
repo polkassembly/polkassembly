@@ -142,6 +142,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 	return (
 		<Modal
 			open={openModal}
+			wrapClassName='dark:bg-modalOverlayDark'
 			onCancel={() => setOpenModal(false)}
 			title={
 				<div className={`${dmSans.className} ${dmSans.variable}`}>
@@ -200,6 +201,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 									}
 								}
 							]}
+							className='mb-3'
 						>
 							<AccountSelectionForm
 								title='Select Account'
@@ -208,8 +210,8 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 								address={loginAddress}
 								withBalance={false}
 								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
-								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
+								className={`${dmSans.className} ${dmSans.variable}  text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-[7px]'
 								withoutInfo={true}
 								linkAddressTextDisabled
 								theme={theme}
@@ -226,10 +228,11 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='title'
 							rules={[{ required: true, message: 'Please input the title of your request!' }]}
+							className='mb-3'
 						>
 							<Input
 								placeholder='Add title for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
@@ -241,19 +244,23 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='requestAmount'
 							rules={[{ required: true, message: 'Please input the requested amount!' }]}
+							className='mb-3'
 						>
 							<Input
 								placeholder='Enter an amount for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
 						{/* Links */}
 						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'> Links</span>
-						<Form.Item name='links'>
+						<Form.Item
+							name='links'
+							className='mb-3'
+						>
 							<Input
 								placeholder='Add more context for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
@@ -264,10 +271,10 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='description'
 							rules={[{ required: true, message: 'Please input the description of your request!' }]}
-							className='h-min'
+							className='mb-0 h-min'
 						>
 							<ContentForm
-								className='h-min'
+								className='h-min text-blue-light-high dark:text-blue-dark-high'
 								height={200}
 							/>
 						</Form.Item>

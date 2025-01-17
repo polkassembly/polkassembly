@@ -92,7 +92,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 				/>
 				<div className={'transition-opacity duration-500'}>
 					<BackToListingView
-						postCategory={PostCategory.BOUNTY}
+						postCategory={PostCategory.USER_CREATED_BOUNTIES}
 						network={network}
 					/>
 					<div className='mt-6'>

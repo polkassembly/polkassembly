@@ -274,7 +274,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								}
 								onChange(content);
 							}}
-							apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+							apiKey={process.env.NEXT_PUBLIC_TINY_MCE_DEV_KEY}
 							cloudChannel='5'
 							onInit={() => setLoading(false)}
 							onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}

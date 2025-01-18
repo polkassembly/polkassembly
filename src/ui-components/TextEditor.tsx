@@ -123,16 +123,11 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [initialValue, setInitialValue] = useState<string>('');
 	const pasteRef = useRef<string>('');
 
-	const isUserOrAddressLink = (): boolean => {
-		if (!value) return false;
-		return value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/');
-	};
-
 	const handleRemoveQuoteBox = () => {
 		if (!quoteBox) return;
 		setQuotedText('');
 
-		if (isUserOrAddressLink() || value?.includes(initialValue)) {
+		if (value || value?.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value?.startsWith('<p><a href="../address/') || value?.includes(initialValue)) {
 			onChange(initialValue || '');
 		} else {
 			if (value?.includes(quoteBox)) {
@@ -144,20 +139,21 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (!value || !isUserOrAddressLink() || !value.endsWith('</a>&nbsp;</p>')) return;
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
 		setInitialValue(value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value || !isUserOrAddressLink() || !value.endsWith('</a>&nbsp;</p>')) return;
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || !value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
 
 		setInitialValue(value);
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [value]);
 
 	useEffect(() => {}, [theme]);

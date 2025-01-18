@@ -7,6 +7,8 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { IUserCreatedBounty } from '~src/types';
 import dynamic from 'next/dynamic';
+import formatBnBalance from '~src/util/formatBnBalance';
+import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 
 const ClaimedAmountPieGraph = dynamic(() => import('~src/components/Bounties/utils/ClaimedAmountPieGraph'), { ssr: false });
 
@@ -18,8 +20,15 @@ const DetailRow = ({ label, children, className = '' }: { label: string; childre
 );
 
 const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
-	const { deadline_date, max_claim, twitter_handle, submission_guidelines, claimed_percentage } = post;
+	const { deadline_date, max_claim, twitter_handle, submission_guidelines, claimed_percentage, reward } = post;
+	const { network } = useNetworkSelector();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const date = new Date(deadline_date);
+	const unclaimedPercentage = 100 - (claimed_percentage || 0);
+	const rewardAmount = formatBnBalance(String(reward), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
+	const unclaimedAmount = (unclaimedPercentage / 100) * Number(rewardAmount);
+
+	console.log('rewardAmount', { rewardAmount, unclaimedPercentage, unclaimedAmount });
 
 	return (
 		<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[30%] lg:p-6'>
@@ -67,7 +76,7 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 						/>
 						<span className='ml-[2px] text-[13px] text-blue-light-high dark:text-blue-dark-high'>{claimed_percentage}%</span>
 					</div>
-					<span className='rounded-lg bg-[#FF3C5F] px-[6px] py-1 text-xs tracking-wide text-white'>Unclaimed: $1</span>
+					<span className='rounded-lg bg-[#FF3C5F] px-[6px] py-1 text-xs tracking-wide text-white'>Unclaimed: ${Number(currentTokenPrice) * Number(unclaimedAmount)}</span>
 				</div>
 
 				{/* Max Claims Row */}

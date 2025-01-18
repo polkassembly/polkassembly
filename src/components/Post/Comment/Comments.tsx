@@ -9,6 +9,8 @@ interface ICommentsProps {
 	className?: string;
 	disableEdit?: boolean;
 	comments: IComment[];
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 const handleUniqueReplies = (repliesArr: any[]) => {
 	if (repliesArr.length < 2) return repliesArr;
@@ -22,7 +24,7 @@ const handleUniqueReplies = (repliesArr: any[]) => {
 };
 
 const Comments: FC<ICommentsProps> = (props) => {
-	const { className, comments } = props;
+	const { className, comments, BountyPostIndex, isUsedInBounty } = props;
 	const uniqueComments: Array<IComment> = Object.values(
 		comments.reduce((acc: any, obj) => {
 			const repliesArr = handleUniqueReplies([...(obj?.replies || []), ...(acc?.[obj?.id]?.replies || [])]) || [];
@@ -38,6 +40,8 @@ const Comments: FC<ICommentsProps> = (props) => {
 					disableEdit={props.disableEdit}
 					comment={comment}
 					key={comment.id}
+					BountyPostIndex={BountyPostIndex}
+					isUsedInBounty={isUsedInBounty}
 				/>
 			))}
 		</div>

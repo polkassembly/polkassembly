@@ -117,7 +117,10 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 					post_reactions={post?.post_reactions}
 					postIndex={post?.post_index}
 				/>
-				<BountyPostComments comments={post?.comments || {}} />
+				<BountyPostComments
+					comments={post?.comments || {}}
+					postIndex={post?.post_index}
+				/>
 			</div>
 		</section>
 	);

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EUserCreatedBountyActions, EUserCreatedBountySubmissionStatus, IChildBountySubmission, NotificationStatus } from '~src/types';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import NameLabel from '~src/ui-components/NameLabel';
@@ -11,11 +11,16 @@ import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector
 import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
 import SubmissionReactionButton from './SubmissionReactionButton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
 });
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
+	ssr: false
+});
+const CreateSubmissionForm = dynamic(() => import('../CreateSubmissionForm'), {
 	ssr: false
 });
 
@@ -25,6 +30,8 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 	const { loginAddress, username } = useUserDetailsSelector();
 	const [openModalId, setOpenModalId] = useState<string | null>(null);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [openEditSubmissionModal, setOpenEditSubmissionModal] = useState<boolean>(false);
+	const [editingSubmission, setEditingSubmission] = useState<IChildBountySubmission | null>(null);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	return (
@@ -110,7 +117,65 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 									Pay
 								</button>
 							)}
+							{status === EUserCreatedBountySubmissionStatus.PENDING && proposer == loginAddress && (
+								<div className='flex items-center gap-3'>
+									<button
+										onClick={async () => {
+											const confirmDelete = window.confirm('Are you sure you want to delete this submission?');
+											if (confirmDelete) {
+												try {
+													const requestBody = {
+														proposerAddress: loginAddress,
+														parentBountyIndex: bountyIndex,
+														submissionId: submission.id,
+														action: EUserCreatedBountyActions.DELETE
+													};
+													const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/submissions/editOrDeleteSubmission', requestBody);
+													if (error || !data) {
+														console.error('Failed to delete submission:', error);
+														queueNotification({
+															header: 'Error',
+															message: 'Failed to delete submission.',
+															status: NotificationStatus.ERROR
+														});
+													} else {
+														queueNotification({
+															header: 'Success!',
+															message: 'Submission deleted successfully.',
+															status: NotificationStatus.SUCCESS
+														});
+														window.location.reload();
+													}
+												} catch (err) {
+													console.error(err);
+												}
+											}
+										}}
+										className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-transparent px-4 py-2 text-sm font-medium text-pink_primary'
+									>
+										Delete
+									</button>
+									<button
+										onClick={() => {
+											setOpenEditSubmissionModal(true);
+											setEditingSubmission(submission);
+										}}
+										className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
+									>
+										Edit
+									</button>
+								</div>
+							)}
 						</div>
+						{editingSubmission && (
+							<CreateSubmissionForm
+								openModal={openEditSubmissionModal}
+								setOpenModal={setOpenEditSubmissionModal}
+								parentBountyIndex={bountyIndex}
+								isUsedForEditing={true}
+								submission={editingSubmission}
+							/>
+						)}
 						<SubmissionDetailModal
 							openModal={openModalId === id}
 							setOpenModal={(open) => setOpenModalId(open ? id : null)}

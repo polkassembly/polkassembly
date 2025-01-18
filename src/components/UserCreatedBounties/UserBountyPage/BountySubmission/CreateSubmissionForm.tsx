@@ -9,7 +9,7 @@ import { useApiContext } from '~src/context';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import BN from 'bn.js';
-import { NotificationStatus, Wallet } from '~src/types';
+import { EUserCreatedBountyActions, IChildBountySubmission, NotificationStatus, Wallet } from '~src/types';
 import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
@@ -25,9 +25,11 @@ interface Props {
 	openModal: boolean;
 	setOpenModal: (pre: boolean) => void;
 	parentBountyIndex: number;
+	isUsedForEditing?: boolean;
+	submission?: IChildBountySubmission;
 }
 
-const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Props) => {
+const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUsedForEditing, submission }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -42,6 +44,18 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
+
+	useEffect(() => {
+		if (isUsedForEditing && submission) {
+			form.setFieldsValue({
+				title: submission.title || '',
+				requestAmount: submission.reqAmount || '',
+				description: submission.content || '',
+				links: submission.link || '',
+				loginAddress: submission.proposer || loginAddress
+			});
+		}
+	}, [isUsedForEditing, submission, form, loginAddress]);
 
 	const loadBalance = async () => {
 		if (!api || !apiReady) return;
@@ -106,11 +120,19 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 			link: values.links || '',
 			reqAmount: String(values.requestAmount),
 			proposerAddress: loginAddress,
-			parentBountyIndex: parentBountyIndex
+			parentBountyIndex: parentBountyIndex,
+			...(isUsedForEditing && submission
+				? {
+						action: EUserCreatedBountyActions.EDIT,
+						submissionId: submission.id
+				  }
+				: {})
 		};
 
+		const apiRoute = isUsedForEditing ? '/api/v1/user-created-bounties/submissions/editOrDeleteSubmission' : '/api/v1/user-created-bounties/submissions/addSubmission';
+
 		try {
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/user-created-bounties/submissions/addSubmission', requestBody);
+			const { data, error } = await nextApiClientFetch<any>(apiRoute, requestBody);
 
 			if (error || !data) {
 				console.log('Submission failed:', error);
@@ -125,7 +147,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 
 			queueNotification({
 				header: 'Success!',
-				message: 'Submission created successfully.',
+				message: isUsedForEditing ? 'Submission updated successfully.' : 'Submission created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -146,7 +168,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 			title={
 				<div className={`${dmSans.className} ${dmSans.variable}`}>
 					<div className='flex items-center gap-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						<span>Make Submission</span>
+						<span>{isUsedForEditing ? 'Edit Submission' : 'Make Submission'}</span>
 					</div>
 				</div>
 			}
@@ -165,7 +187,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						htmlType='submit'
 						height={40}
 						width={156}
-						text='Send'
+						text={isUsedForEditing ? 'Edit' : 'Send'}
 					/>
 				</div>
 			}

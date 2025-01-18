@@ -20,6 +20,14 @@ interface IResponse {
 }
 const ZERO_BN = new BN(0);
 
+function updateTransferableBal(data: { free: BN; frozen: BN; reserved: BN }, existentialDeposit: string) {
+	const { free, frozen, reserved } = data;
+	const frozenReserveDif = frozen.sub(reserved) || ZERO_BN;
+	const noZeroConsidered = (free || ZERO_BN).sub(BN.max(frozenReserveDif, new BN(existentialDeposit))).toString();
+
+	return BN.max(new BN(noZeroConsidered), ZERO_BN).toString();
+}
+
 const userProfileBalances = async ({ address, api, apiReady, network }: Props): Promise<IResponse> => {
 	const getBalances = async () => {
 		let freeBalance = ZERO_BN;
@@ -74,10 +82,20 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 				})
 				.catch((e: any) => console.error(e));
 		} else {
+			const existentialDeposit = await api?.consts?.balances?.existentialDeposit;
+
+			if (!api?.derive || !api?.derive?.balances || !api?.derive?.balances?.all) {
+				return {
+					freeBalance,
+					lockedBalance,
+					totalBalance,
+					transferableBalance
+				};
+			}
+
 			await api.derive.balances
-				?.all(encodedAddr)
+				.all(encodedAddr)
 				.then((result: any) => {
-					transferableBalance = new BN((result?.transferable || result.availableBalance).toBigInt().toString());
 					lockedBalance = new BN((result.lockedBalance || lockedBalance.toString()).toBigInt().toString());
 				})
 				.catch((e: any) => console.log(e));
@@ -87,8 +105,15 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 				.then((result: any) => {
 					const free = result.data?.free?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
+					const frozen = result.data?.frozen?.toBigInt() || BigInt(0);
 					totalBalance = new BN((free + reserved).toString());
 					freeBalance = new BN(free.toString());
+
+					const frozenBn = new BN((frozen || '0')?.toString()) || ZERO_BN;
+					const freeBn = new BN((free || '0')?.toString()) || ZERO_BN;
+					const reservedBn = new BN((reserved || '0')?.toString()) || ZERO_BN;
+
+					transferableBalance = new BN(updateTransferableBal({ free: freeBn, frozen: frozenBn, reserved: reservedBn }, existentialDeposit?.toString())) || ZERO_BN;
 				})
 				.catch((e: any) => console.error(e));
 		}

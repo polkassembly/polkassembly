@@ -28,7 +28,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import classNames from 'classnames';
+import MultipleBeneficiariesAmount from '../MultipleBeneficiariesAmount';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -262,18 +262,30 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{requestedAmt && (
+					{(!!requestedAmt || !!beneficiaries?.length) && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							<BeneficiaryAmoutTooltip
-								assetId={assetId}
-								requestedAmt={requestedAmt.toString()}
-								className={classNames(className, 'flex')}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-								usedInPostPage
-							/>
+							{beneficiaries && beneficiaries?.length > 1 ? (
+								<MultipleBeneficiariesAmount
+									beneficiaries={beneficiaries || []}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+								/>
+							) : (
+								<>
+									<BeneficiaryAmoutTooltip
+										assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
+										requestedAmt={requestedAmt?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || null}
+										className={'flex items-center justify-center text-xs'}
+										postId={onchainId ? Number(onchainId) : (onchainId as any)}
+										proposalCreatedAt={created_at as any}
+										timeline={timeline || []}
+										key={onchainId ? Number(onchainId) : (onchainId as any)}
+										usedInPostPage
+									/>
+								</>
+							)}
 						</div>
 					)}
 				</div>
@@ -338,7 +350,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</>
 						)}
-						{summary ? (
+						{content?.length > 200 && summary ? (
 							<>
 								<Divider
 									className='ml-1 mr-2 xs:mt-2 xs:inline-block md:mt-0 md:hidden'

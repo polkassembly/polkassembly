@@ -16,6 +16,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { userDetailsActions } from '~src/redux/userDetails';
+import classNames from 'classnames';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -35,6 +36,7 @@ interface Props {
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
 	showProxyDropdown?: boolean;
+	isUsedInProxy?: boolean;
 }
 
 const AddressDropdown = ({
@@ -50,7 +52,8 @@ const AddressDropdown = ({
 	linkAddressTextDisabled = false,
 	addressTextClassName,
 	isTruncateUsername = true,
-	showProxyDropdown
+	showProxyDropdown,
+	isUsedInProxy = false
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
@@ -156,10 +159,11 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
+					addressClassName={classNames('text-lightBlue text-xs dark:text-blue-dark-medium', isSwitchButton ? 'text-white' : '')}
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip
+					iconSize={isUsedInProxy ? 24 : 26}
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

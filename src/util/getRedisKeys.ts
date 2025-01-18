@@ -16,6 +16,8 @@ type KeyArgs = {
 	voterAddress?: string | string[] | undefined;
 	keyType?: string;
 	subStatus?: string | string[];
+	startBlockNo?: number;
+	endBlockNo?: number;
 };
 
 export function generateKey({
@@ -32,9 +34,28 @@ export function generateKey({
 	postId,
 	voterAddress,
 	keyType,
-	url
+	url,
+	endBlockNo,
+	startBlockNo
 }: KeyArgs): string {
-	return [network, govType, subsquidProposalType, proposalType, keyType, postId, trackId, trackStatus, subStatus, page, sortBy, filterBy, voterAddress, url]
+	return [
+		network,
+		govType,
+		subsquidProposalType,
+		proposalType,
+		keyType,
+		postId,
+		trackId,
+		trackStatus,
+		subStatus,
+		page,
+		sortBy,
+		filterBy,
+		voterAddress,
+		url,
+		endBlockNo,
+		startBlockNo
+	]
 		.filter((value) => value !== undefined && value !== null)
 		.join('_');
 }

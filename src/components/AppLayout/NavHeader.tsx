@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
+import { AccountsIcon, ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -31,7 +31,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { EGovType } from '~src/global/proposalType';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
+import { IconLogout, IconProfile, IconSettings, ProxyIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -51,6 +51,8 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import ProxyMain from '../createProxy';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -76,6 +78,7 @@ interface Props {
 	isVerified?: boolean;
 	isIdentityExists?: boolean;
 }
+export const isCreateProxySupportedNetwork = [AllNetworks.PASEO, AllNetworks.WESTEND, AllNetworks.POLKADOT];
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();
@@ -87,6 +90,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [openProxyModal, setOpenProxyModal] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
@@ -222,7 +226,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					className='mt-1/2 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -230,6 +234,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</Link>
 			)
 		},
+		...(isCreateProxySupportedNetwork.includes(network)
+			? [
+					{
+						key: 'accounts',
+						label: (
+							<Link
+								className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+								href={'/accounts'}
+							>
+								<AccountsIcon className='userdropdown-icon text-2xl' />
+								<span>Accounts</span>
+							</Link>
+						)
+					}
+			  ]
+			: []),
 		{
 			key: 'settings',
 			label: (
@@ -247,7 +267,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+					className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -262,13 +282,28 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
+	if (isCreateProxySupportedNetwork.includes(network)) {
+		dropdownMenuItems.splice(1, 0, {
+			key: 'create proxy',
+			label: (
+				<span
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+					onClick={() => setOpenProxyModal(true)}
+				>
+					<ProxyIcon className='userdropdown-icon text-2xl' />
+					<span>Create Proxy</span>
+				</span>
+			)
+		});
+	}
+
 	if (onchainIdentitySupportedNetwork.includes(network)) {
 		const options = [
 			{
 				key: 'set on-chain identity',
 				label: (
 					<Link
-						className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+						className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 						href={''}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -281,12 +316,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							handleIdentityButtonClick();
 						}}
 					>
-						<span className='text-2xl'>
+						<div className='my-0 text-2xl'>
 							<ApplayoutIdentityIcon />
-						</span>
+						</div>
 						<span>Set on-chain identity</span>
 						{!isIdentityExists && (
-							<span className='flex items-center'>
+							<span className='flex items-center text-[22px]'>
 								<IdentityCaution />
 							</span>
 						)}
@@ -316,7 +351,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				)
 			});
 		}
-		dropdownMenuItems.splice(1, 0, ...options);
+		dropdownMenuItems.splice(2, 0, ...options);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (
@@ -560,6 +595,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<RemoveIdentity />
 				</>
 			)}
+			<ProxyMain
+				openProxyModal={openProxyModal}
+				setOpenProxyModal={setOpenProxyModal}
+			/>
 		</Header>
 	);
 };

@@ -9,7 +9,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageComponent from '../ImageComponent';
-import FollowButton from './Follow/FollowButton';
+import FollowButton from '../Follow/FollowButton';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ProfileFollowIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';

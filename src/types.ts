@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 
 declare global {
 	interface Window {
@@ -143,8 +144,12 @@ export interface ChainProps {
 	gTag: string | null;
 	assetHubRpcEndpoint?: string;
 	assetHubTreasuryAddress?: string;
+	assetHubTreasuryAddress2?: string;
+	assetHubTreasuryAddress3?: string;
+	assetHubTreasuryAddress4?: string;
 	supportedAssets?: IAssets[];
 	hydrationTreasuryAddress?: string;
+	hydrationTreasuryAddress2?: string;
 	hydrationEndpoints?: string[];
 	hydrationAssets?: Asset[];
 }
@@ -593,6 +598,7 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+	genralIndex?: string | null;
 }
 
 export interface IRating {
@@ -782,6 +788,7 @@ export interface IChildBountiesResponse {
 
 export interface IUserPost {
 	assetId?: null | string;
+	beneficiaries?: IBeneficiary[];
 	content: string;
 	created_at: Date;
 	id: string;
@@ -994,7 +1001,7 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
-	identityInfo?: { display: string; leagal: string } | null;
+	identityInfo?: IIdentityInfo | null;
 }
 
 export enum EDelegationAddressFilters {
@@ -1017,6 +1024,42 @@ export interface ICommentsSummary {
 	summary_neutral: string;
 }
 
+interface IProxyAccount {
+	account_display: {
+		address: string;
+	};
+	proxy_type: string;
+}
+
+interface IProxy {
+	proxy_account: IProxyAccount[];
+	real_account: IProxyAccount[];
+}
+
+interface IMultisigAccount {
+	address: string;
+}
+
+interface IMultiAccountMember {
+	address: string;
+}
+
+interface IMultisig {
+	multi_account: IMultisigAccount[];
+	multi_account_member: IMultiAccountMember[];
+	threshold: number;
+}
+
+export interface IAccountData {
+	address: string;
+	balance: string;
+	balance_lock: string;
+	lock: string;
+	multisig: IMultisig;
+	proxy: IProxy;
+	nft_amount: string;
+	nonce: number;
+}
 export interface INetworkWalletErr {
 	message: string;
 	description: string;
@@ -1055,6 +1098,13 @@ export enum EChildbountySubmissionStatus {
 	PENDING = 'pending',
 	OUTDATED = 'outdated',
 	DELETED = 'deleted'
+}
+export enum EUserCreatedBountySubmissionStatus {
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
+	PENDING = 'pending',
+	DELETED = 'deleted',
+	PAID = 'paid'
 }
 
 export enum EPendingCuratorReqType {
@@ -1097,6 +1147,12 @@ export enum EExpertReqStatus {
 	REJECTED = 'rejected',
 	PENDING = 'pending'
 }
+
+export enum LinkProxyType {
+	MULTISIG = 'MULTISIG',
+	PROXY = 'PROXY',
+	PUREPROXY = 'PUREPROXY'
+}
 export interface IIdentityInfo {
 	display: string;
 	legal: string;
@@ -1115,4 +1171,106 @@ export interface IIdentityInfo {
 	verifiedByPolkassembly: boolean;
 	parentProxyTitle: string | null;
 	parentProxyAddress: string;
+}
+
+export interface IMessage {
+	id: string;
+	content: string;
+	created_at: Date;
+	updated_at: Date;
+	senderAddress: string;
+	receiverAddress: string;
+	senderImage?: string;
+	senderUsername?: string;
+	viewed_by: string[];
+}
+
+export enum EChatRequestStatus {
+	ACCEPTED = 'accepted',
+	REJECTED = 'rejected',
+	PENDING = 'pending'
+}
+
+export enum EChatFilter {
+	ALL = 'all',
+	UNREAD = 'unread',
+	READ = 'read'
+}
+
+export enum EChatTab {
+	MESSAGES = 'messages',
+	REQUESTS = 'requests'
+}
+
+export interface IChatRecipient {
+	username?: string;
+	address: string;
+	image?: string;
+}
+
+export interface IChat {
+	chatId: string;
+	participants: string[];
+	chatInitiatedBy: string;
+	created_at: Date;
+	updated_at: Date;
+	requestStatus: EChatRequestStatus;
+	latestMessage: IMessage;
+	recipientProfile: IChatRecipient | null;
+}
+
+export interface IChatsResponse {
+	messages: IChat[];
+	requests: IChat[];
+}
+
+export enum EUserCreatedBountiesStatuses {
+	ACTIVE = 'active',
+	CLOSED = 'closed',
+	CLAIMED = 'claimed',
+	CANCELLED = 'cancelled'
+}
+
+export interface IUserCreatedBounty {
+	content: string;
+	created_at: Date;
+	deadline_date: Date;
+	history: IPostHistory[];
+	post_index: number;
+	max_claim: number;
+	post_type: ProposalType;
+	proposer: string;
+	reward: string;
+	status: EUserCreatedBountiesStatuses;
+	submission_guidelines: string;
+	claimed_percentage: number;
+	tags: string[];
+	title: string;
+	network?: string;
+	twitter_handle: string;
+	source: 'polkassembly' | 'twitter';
+	post_reactions?: IReactions;
+	updated_at: Date;
+	user_id: number;
+	comments?: any[];
+	index?: number;
+}
+export enum EUserCreatedBountyActions {
+	EDIT = 'edit',
+	DELETE = 'delete',
+	APPROVE = 'approve'
+}
+
+export interface ICalendarEvent {
+	createdAt: Date;
+	index: number;
+	proposalType: ProposalType;
+	parentBountyIndex?: number;
+	proposer: string;
+	source: 'polkasembly' | 'subsquare';
+	status: string;
+	statusHistory: { status: string; timestamp: Date; block: number }[];
+	title: string;
+	trackNo?: number;
+	blockNo?: number;
 }

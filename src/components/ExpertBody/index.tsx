@@ -42,7 +42,7 @@ function ExpertBodyCard() {
 			const substrateAddress = getSubstrateAddress(address);
 			try {
 				const { data } = await nextApiClientFetch<ExpertStatusResponse>('api/v1/expertBody/getExpertStatus', { userAddress: substrateAddress });
-				if (data?.status !== undefined) {
+				if (data?.status) {
 					setIsExpert(data?.status);
 				} else {
 					console.error('Failed to fetch expert status:', data);
@@ -73,7 +73,7 @@ function ExpertBodyCard() {
 
 	useEffect(() => {
 		if (comments) {
-			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>;
+			const validProposalType = postType as Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS | ProposalType.USER_CREATED_BOUNTIES>;
 			const subsquidProposalType = getSubsquidProposalType(validProposalType);
 			const key = postIndex && postType ? `${postIndex?.toString()}_${subsquidProposalType}` : null;
 			const expertComments = key && comments[key] ? comments[key].filter((comment) => comment?.isExpertComment) : [];

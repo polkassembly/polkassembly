@@ -12,6 +12,7 @@ import { sortValues } from '~src/global/sortOptions';
 import {
 	GET_ALLIANCE_ANNOUNCEMENTS,
 	GET_BOUNTY_REWARDS_BY_IDS,
+	GET_PARENT_BOUNTY_DETAILS,
 	GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY,
 	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSALS_LISTING_BY_TYPE,
@@ -21,7 +22,7 @@ import {
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST
 } from '~src/queries';
-import { ESentiments, IApiResponse } from '~src/types';
+import { ESentiments, IApiResponse, IBeneficiary } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
@@ -36,6 +37,7 @@ import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChil
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -104,7 +106,7 @@ export interface IPostListing {
 	identity?: string | null;
 	isSpamReportInvalid?: boolean;
 	spam_users_count?: number;
-	beneficiaries?: string[];
+	beneficiaries?: IBeneficiary[];
 	allChildBounties?: any[];
 	assetId?: string | null;
 	reward?: string;
@@ -318,42 +320,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 					parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
 				}
+				const proposedCall = subsquidPost?.preimage?.proposedCall || null;
 
-				let requested = BigInt(0);
-				let assetId: null | string = null;
-				let args = subsquidPost?.preimage?.proposedCall?.args;
-
-				if (args) {
-					if (
-						args?.assetKind?.assetId?.value?.interior ||
-						args?.assetKind?.assetId?.interior?.value ||
-						args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
-					) {
-						const call =
-							args?.assetKind?.assetId?.value?.interior?.value ||
-							args?.assetKind?.assetId?.interior?.value ||
-							args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
-						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-					}
-
-					args = convertAnyHexToASCII(args, network);
-					if (args?.amount) {
-						requested = args.amount;
-					} else {
-						const calls = args.calls;
-
-						if (calls && Array.isArray(calls) && calls.length > 0) {
-							calls.forEach((call) => {
-								if (call && call.amount) {
-									requested += BigInt(call.amount);
-								}
-								if (call && call?.value?.amount) {
-									requested += BigInt(call?.value?.amount);
-								}
-							});
-						}
-					}
+				if (proposedCall?.args) {
+					proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network) || proposedCall?.args;
 				}
+
+				const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 
 				const isStatus = {
 					swap: false
@@ -419,7 +392,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const topic_id = data?.topic_id;
 
 						return {
-							assetId: assetId || null,
+							assetId: beneficiariesInfo?.assetId || null,
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							content: !includeContent ? '' : data.content || subsquareContent || '',
 							created_at: createdAt,
@@ -438,7 +411,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_reactions,
 							proposalHashBlock: proposalHashBlock || null,
 							proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-							requestedAmount: requested ? requested.toString() : undefined,
+							requestedAmount: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 							spam_users_count:
 								data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 							status,
@@ -469,7 +442,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				subsquareContent = res?.content;
 
 				return {
-					assetId: assetId || null,
+					assetId: beneficiariesInfo?.assetId || null,
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
 					content: !includeContent ? '' : subsquareContent || '',
 					created_at: createdAt,
@@ -485,7 +458,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					post_reactions,
 					proposalHashBlock: proposalHashBlock || null,
 					proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-					requestedAmount: requested ? requested.toString() : undefined,
+					requestedAmount: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 					status: status,
 					status_history: statusHistory,
 					tally,
@@ -500,6 +473,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
 
+			const parentBountyDetails: any = {};
+
 			if (Object.keys(parentBountyIndexes)?.length) {
 				for (const index of Object.keys(parentBountyIndexes)) {
 					const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
@@ -507,12 +482,24 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parentBountyIndexes[index] = data?.child_bounties;
 					}
 				}
+				const parentBountyIndexesNum = Object.keys(parentBountyIndexes)?.map((index) => Number(index));
+				const parentBountiesSubsquidRes = await fetchSubsquid({
+					network,
+					query: GET_PARENT_BOUNTY_DETAILS,
+					variables: { index_in: parentBountyIndexesNum, type: getSubsquidProposalType(ProposalType.BOUNTIES) }
+				});
+				const parentBountiesSubsquidDetails = parentBountiesSubsquidRes?.['data']?.proposals || [];
+				if (parentBountiesSubsquidDetails?.length) {
+					parentBountiesSubsquidDetails?.map((item: { index: number; curator: string }) => {
+						parentBountyDetails[item?.index] = item?.curator || '';
+					});
+				}
 			}
 
 			if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length) {
 				subsquidDataPost.map((post) => {
 					if (typeof post?.parent_bounty_index === 'number') {
-						return { ...post, allChildBounties: parentBountyIndexes[post?.parent_bounty_index] };
+						return { ...post, allChildBounties: parentBountyIndexes[post?.parent_bounty_index], proposer: post?.proposer || parentBountyDetails[post?.parent_bounty_index] || '' };
 					}
 					return post;
 				});
@@ -615,7 +602,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			} catch (error) {
 				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
 
-				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+				if (data?.items && Array.isArray(data.items)) {
 					subsquidRes['data'] = {
 						proposals: data.items.map((item: any) => {
 							return {
@@ -925,48 +912,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 					const postDoc = await postDocRef.get();
-					let args = subsquidPost?.preimage?.proposedCall?.args;
-					let requested = BigInt(0);
+					const proposedCall = subsquidPost?.preimage?.proposedCall || null;
 
-					const beneficiaries: string[] = [];
-					let assetId: null | string = null;
-
-					if (args) {
-						if (
-							args?.assetKind?.assetId?.value?.interior ||
-							args?.assetKind?.assetId?.interior?.value ||
-							args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
-						) {
-							const call =
-								args?.assetKind?.assetId?.value?.interior?.value ||
-								args?.assetKind?.assetId?.interior?.value ||
-								args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
-							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-						}
-
-						args = convertAnyHexToASCII(args, network);
-						if (args?.amount) {
-							requested = args.amount;
-							if (args.beneficiary) {
-								beneficiaries.push(args.beneficiary);
-							}
-						} else {
-							const calls = args.calls;
-							if (calls && Array.isArray(calls) && calls.length > 0) {
-								calls.forEach((call) => {
-									if (call && call.amount) {
-										requested += BigInt(call.amount);
-										if (call.beneficiary && !beneficiaries.includes(call.beneficiary)) {
-											beneficiaries.push(call.beneficiary);
-										}
-										if (call && call?.value?.amount) {
-											requested += BigInt(call?.value?.amount);
-										}
-									}
-								});
-							}
-						}
+					if (proposedCall?.args) {
+						proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network) || proposedCall?.args;
 					}
+
+					const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
 
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
@@ -992,8 +944,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							}
 
 							return {
-								assetId: assetId || null,
-								beneficiaries,
+								assetId: beneficiariesInfo?.assetId || null,
+								beneficiaries: beneficiariesInfo?.beneficiaries || [],
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								content: !includeContent ? '' : data.content || subsquareContent || '',
 								created_at: createdAt,
@@ -1012,7 +964,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								post_reactions,
 								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
-								requestedAmount: requested ? requested.toString() : undefined,
+								requestedAmount: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 								reward,
 								spam_users_count:
 									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -1052,8 +1004,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 
 					return {
-						assetId: assetId || null,
-						beneficiaries,
+						assetId: beneficiariesInfo?.assetId || null,
+						beneficiaries: beneficiariesInfo?.beneficiaries || [],
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						content: !includeContent ? '' : subsquareContent || '',
 						created_at: createdAt,
@@ -1069,7 +1021,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_reactions,
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
-						requestedAmount: requested ? requested.toString() : undefined,
+						requestedAmount: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 						reward,
 						status: status,
 						status_history: statusHistory || [],
@@ -1085,6 +1037,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 				const postsResults = await Promise.allSettled(postsPromise);
 
+				const parentBountyDetails: any = {};
+
 				if (Object.keys(parentBountyIndexes)?.length) {
 					for (const index of Object.keys(parentBountyIndexes)) {
 						const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
@@ -1092,12 +1046,29 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							parentBountyIndexes[index] = data?.child_bounties;
 						}
 					}
+
+					const parentBountyIndexesNum = Object.keys(parentBountyIndexes)?.map((index) => Number(index));
+					const parentBountiesSubsquidRes = await fetchSubsquid({
+						network,
+						query: GET_PARENT_BOUNTY_DETAILS,
+						variables: { index_in: parentBountyIndexesNum, type: getSubsquidProposalType(ProposalType.BOUNTIES) }
+					});
+					const parentBountiesSubsquidDetails = parentBountiesSubsquidRes?.['data']?.proposals || [];
+					if (parentBountiesSubsquidDetails?.length) {
+						parentBountiesSubsquidDetails?.map((item: { index: number; curator: string }) => {
+							parentBountyDetails[item?.index] = item?.curator || '';
+						});
+					}
 				}
 
 				posts = postsResults?.reduce((prev, post) => {
 					if (post && post.status === 'fulfilled') {
 						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
-							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });
+							prev.push({
+								...post?.value,
+								allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index],
+								proposer: post?.value?.proposer || parentBountyDetails[post?.value?.parent_bounty_index] || ''
+							});
 						} else {
 							prev.push(post.value);
 						}

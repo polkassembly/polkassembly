@@ -51,17 +51,18 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 		setLoading(true);
 
 		(async () => {
-			const { freeBalance, transferableBalance } = await userProfileBalances({
-				address: address,
+			const { transferableBalance, totalBalance, freeBalance } = await userProfileBalances({
+				address: address || '',
 				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
 				apiReady: usedInIdentityFlow ? peopleChainApiReady ?? apiReady : apiReady,
 				network
 			});
 
 			if ((isReferendum && isVoting) || isDelegating) {
-				setAvailableBalance?.(freeBalance.toString());
-				setBalance?.(freeBalance.toString());
-				onChange?.(freeBalance.toString());
+				const calBal = isDelegating ? freeBalance?.toString() : totalBalance.toString();
+				setAvailableBalance?.(calBal || '0');
+				setBalance?.(calBal || '0');
+				onChange?.(calBal || '0');
 			} else {
 				setAvailableBalance?.(transferableBalance?.toString());
 				setBalance?.(transferableBalance?.toString());
@@ -90,7 +91,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				}
 			/>
 			<span>:</span>
-			<span className='ml-2 text-pink_primary'>
+			<span className='ml-2 text-pink_primary dark:text-[#FF4098] '>
 				{loading ? <SkeletonButton className='mr-0 h-4 w-[20px] p-0' /> : formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
 			</span>
 		</div>

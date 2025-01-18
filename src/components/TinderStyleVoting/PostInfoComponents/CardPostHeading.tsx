@@ -24,7 +24,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from '../../Post/utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import classNames from 'classnames';
+import MultipleBeneficiariesAmount from '~src/components/MultipleBeneficiariesAmount';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -247,18 +247,30 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{post?.requested && (
+					{(!!post?.requested || !!post?.beneficiaries?.length) && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
-							<BeneficiaryAmoutTooltip
-								assetId={assetId}
-								requestedAmt={post?.requested?.toString()}
-								className={classNames(className, 'flex')}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-								usedInPostPage
-							/>
+							{post?.beneficiaries?.length > 1 ? (
+								<MultipleBeneficiariesAmount
+									beneficiaries={post?.beneficiaries || []}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+								/>
+							) : (
+								<>
+									<BeneficiaryAmoutTooltip
+										assetId={post?.beneficiaries ? post?.beneficiaries?.[0]?.genralIndex || null : null}
+										requestedAmt={post?.requested?.toString() || (!!post?.beneficiaries && post?.beneficiaries?.[0]?.amount.toString()) || null}
+										className={'flex items-center justify-center text-xs'}
+										postId={onchainId ? Number(onchainId) : (onchainId as any)}
+										proposalCreatedAt={created_at as any}
+										timeline={timeline || []}
+										key={onchainId ? Number(onchainId) : (onchainId as any)}
+										usedInPostPage
+									/>
+								</>
+							)}
 						</div>
 					)}
 				</div>

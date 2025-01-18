@@ -117,6 +117,7 @@ const Listing: FC<IListingProps> = (props) => {
 									childBountyAmount={post?.parent_bounty_requested_amount}
 									parentBounty={post?.parent_bounty_index}
 									allChildBounties={allChildBounties || []}
+									beneficiaries={post?.beneficiaries || []}
 								/>
 							</Link>
 						}

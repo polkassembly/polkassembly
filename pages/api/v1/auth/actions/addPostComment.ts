@@ -21,6 +21,7 @@ import { IDocumentPost } from './addCommentOrReplyReaction';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -46,6 +47,8 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	if (BLACKLISTED_USER_IDS.includes(Number(user.id))) return res.status(400).json({ message: messages.BLACKLISTED_USER_ERROR });
 
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) {
 		return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });

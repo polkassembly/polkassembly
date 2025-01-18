@@ -5,7 +5,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-import { Layout, Menu as AntdMenu, Modal } from 'antd';
+import { Layout } from 'antd';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,8 +17,6 @@ import NavHeader from './NavHeader';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
-import { dmSans } from 'pages/_app';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useGlobalSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { userDetailsActions } from '~src/redux/userDetails';
@@ -57,7 +55,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const sidebarRef = useRef<HTMLDivElement>(null);
@@ -210,7 +207,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								setSidedrawer={setSidedrawer}
 								sidedrawer={sidedrawer}
 								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-								setIdentityMobileModal={setIdentityMobileModal}
 								totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
 								isGood={isGood}
 								mainDisplay={mainDisplay}
@@ -228,7 +224,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									sidedrawer={sidedrawer}
 									setSidedrawer={setSidedrawer}
 									setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-									setIdentityMobileModal={setIdentityMobileModal}
 									totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
 									isGood={isGood}
 									mainDisplay={mainDisplay}
@@ -237,7 +232,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									setLoginOpen={setLoginOpen}
 									setIdentityOpen={setOpen}
 								/>
-								<div className={`fixed  ${is_sidebar_collapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
+								<div className={`fixed ${is_sidebar_collapsed ? 'left-16' : 'left-[212px]'} top-11 z-[102]`}>
 									{is_sidebar_collapsed ? (
 										<div
 											onClick={() => {
@@ -399,25 +394,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-
-			<Modal
-				zIndex={100}
-				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
-				onCancel={() => setIdentityMobileModal(false)}
-				className={`${dmSans.className} ${dmSans.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
-				wrapClassName='dark:bg-modalOverlayDark'
-			>
-				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<ImageIcon
-						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
-					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
-				</div>
-			</Modal>
 		</div>
 	);
 };

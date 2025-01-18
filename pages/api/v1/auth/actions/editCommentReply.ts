@@ -17,6 +17,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { EActivityAction } from '~src/types';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
+import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -39,6 +40,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 	const userId = user.id;
+
+	if (BLACKLISTED_USER_IDS.includes(Number(userId))) return res.status(400).json({ message: messages.BLACKLISTED_USER_ERROR });
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 	const last_comment_at = new Date();

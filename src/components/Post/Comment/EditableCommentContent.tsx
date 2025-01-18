@@ -218,16 +218,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 			console.error('Error saving comment ', editPostCommentError);
 			setComments((prev) => {
-				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType) || postType}`;
 				const payload = Object.assign(prev, {});
-				payload[key] = prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
+				payload[key] = prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
 				return payload;
 			});
 		}
 		if (data) {
 			setComments((prev) => {
 				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
-				prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
+				prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
 				return prev;
 			});
 		}

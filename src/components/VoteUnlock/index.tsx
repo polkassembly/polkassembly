@@ -46,7 +46,8 @@ export const votesUnlockUnavailableNetworks = [
 	AllNetworks.POLYMESH,
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
-	AllNetworks.MOONBEAM
+	AllNetworks.MOONBEAM,
+	AllNetworks.MYTHOS
 ];
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {
@@ -233,7 +234,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 			: null;
 
 		const data = customizeReferenda ? getAllLockData(api, customizeVotes as any[], customizeReferenda as [BN, any][]) : null;
-		const currentBlockNumber = await api.derive.chain.bestNumber();
+		const currentBlockNumber = await api?.derive?.chain?.bestNumber();
 		await handleLockUnlockData(data, currentBlockNumber);
 		setLoadingStatus({ isLoading: false, message: '' });
 	};

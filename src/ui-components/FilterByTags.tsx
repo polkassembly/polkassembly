@@ -26,9 +26,10 @@ interface Props {
 	setSelectedTags?: (pre: string[]) => void;
 	disabled?: boolean;
 	clearTags?: boolean;
+	isUsedInBountyPage?: boolean;
 }
 
-const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, clearTags }: Props) => {
+const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, clearTags, isUsedInBountyPage }: Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);
@@ -90,6 +91,21 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		}
 	};
 
+	const handleFilterByClickinBounty = (key: string[]) => {
+		const queryParams = { ...router.query };
+
+		delete queryParams.filterBy;
+
+		if (key.length > 0) {
+			queryParams.filterBy = encodeURIComponent(JSON.stringify(key));
+		}
+
+		router.push({
+			pathname: router.pathname,
+			query: queryParams
+		});
+	};
+
 	const handleExits = (value: string) => {
 		value = value.toLowerCase();
 		const isExits = tags.filter((tag) => tag === value);
@@ -135,13 +151,13 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				<div
 					className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${dmSans.variable} ${dmSans.className} dark:text-blue-dark-high`}
 				>
-					Tags
+					{isUsedInBountyPage ? 'Categories' : 'Tags'}
 					{!isSearch && (
 						<span
 							className='flex cursor-pointer justify-center text-[10px] font-normal text-pink_primary'
 							onClick={() => {
 								setTags([]);
-								!isSearch && handleFilterByClick([]);
+								!isSearch && isUsedInBountyPage ? handleFilterByClickinBounty([]) : handleFilterByClick([]);
 								setSearchInput('');
 							}}
 						>
@@ -216,7 +232,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		>
 			{!isSearch ? (
 				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
-					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Tags</span>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>{isUsedInBountyPage ? 'Filter' : 'Tags'}</span>
 					<DropdownGreyIcon className='ml-1' />
 				</div>
 			) : (
@@ -225,7 +241,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 						disabled ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
 					} max-sm:text-[10px]`}
 				>
-					Tags
+					{isUsedInBountyPage ? 'Filter' : 'Tags'}
 					<span className='font-semibold text-[#96A4B6]'>
 						{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1' /> : <DownOutlined className='ml-2.5 mt-1 max-md:ml-1' />}
 					</span>

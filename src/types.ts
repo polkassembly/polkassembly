@@ -1074,7 +1074,7 @@ export interface IChildBountySubmission {
 	parentBountyIndex: number;
 	proposer: string;
 	reqAmount: string;
-	status: EUserCreatedBountySubmissionStatus | EChildbountySubmissionStatus;
+	status: EUserCreatedBountySubmissionStatus | EChildbountySubmissionStatus | ETabBountyStatuses;
 	tags: string[];
 	title: string;
 	updatedAt: Date;

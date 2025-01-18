@@ -17,7 +17,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
 });
-const Tipping = dynamic(() => import('~src/components/Tipping'), {
+const SubmissionTippingModal = dynamic(() => import('./SubmissionTippingModal'), {
 	ssr: false
 });
 const CreateSubmissionForm = dynamic(() => import('../CreateSubmissionForm'), {
@@ -187,16 +187,10 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							submissionId={submission.id}
 						/>
 						{!!loginAddress && (
-							<Tipping
-								username={username || ''}
+							<SubmissionTippingModal
 								open={openTipping}
 								setOpen={setOpenTipping}
-								key={loginAddress}
-								paUsername={username as any}
-								setOpenAddressChangeModal={setOpenAddressChangeModal}
-								openAddressChangeModal={openAddressChangeModal}
-								isUsedInSubmissionPage={true}
-								submissionProposer={proposer}
+								submissionProposer={proposer || ''}
 							/>
 						)}
 					</div>

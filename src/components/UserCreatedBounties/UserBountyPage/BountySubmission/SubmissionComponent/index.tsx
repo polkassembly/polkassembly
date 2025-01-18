@@ -27,12 +27,11 @@ const CreateSubmissionForm = dynamic(() => import('../CreateSubmissionForm'), {
 const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { submissions: IChildBountySubmission[]; bountyProposer: string; bountyIndex: number }) => {
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
-	const { loginAddress, username } = useUserDetailsSelector();
+	const { loginAddress } = useUserDetailsSelector();
 	const [openModalId, setOpenModalId] = useState<string | null>(null);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openEditSubmissionModal, setOpenEditSubmissionModal] = useState<boolean>(false);
 	const [editingSubmission, setEditingSubmission] = useState<IChildBountySubmission | null>(null);
-	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	return (
 		<section className='mt-5 flex flex-col gap-4'>
@@ -125,10 +124,10 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 											if (confirmDelete) {
 												try {
 													const requestBody = {
-														proposerAddress: loginAddress,
+														action: EUserCreatedBountyActions.DELETE,
 														parentBountyIndex: bountyIndex,
-														submissionId: submission.id,
-														action: EUserCreatedBountyActions.DELETE
+														proposerAddress: loginAddress,
+														submissionId: submission.id
 													};
 													const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/submissions/editOrDeleteSubmission', requestBody);
 													if (error || !data) {

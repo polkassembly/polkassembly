@@ -13,6 +13,7 @@ const BountyPostComments = ({ comments }: { comments: { [index: string]: ICommen
 	const { id } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 
+	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 	if (!id) {
 		<div className='flex cursor-not-allowed items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
 			<Image
@@ -22,11 +23,9 @@ const BountyPostComments = ({ comments }: { comments: { [index: string]: ICommen
 				height={16}
 				className={`${theme === 'dark' ? 'dark-icons' : ''}`}
 			/>
-			<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>2</span>
+			<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
 		</div>;
 	}
-
-	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 
 	return (
 		<div>
@@ -49,7 +48,7 @@ const BountyPostComments = ({ comments }: { comments: { [index: string]: ICommen
 						height={16}
 						className={`${theme === 'dark' ? 'dark-icons' : ''}`}
 					/>
-					<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
+					<span className='text-xs font-semibold text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
 				</div>
 			</Popover>
 		</div>

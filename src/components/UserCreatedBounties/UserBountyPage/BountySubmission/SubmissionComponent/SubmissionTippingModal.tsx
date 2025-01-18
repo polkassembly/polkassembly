@@ -1,8 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import React, { useEffect, useState } from 'react';
-import { Modal, Spin, Form } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
@@ -27,7 +28,6 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const [form] = Form.useForm();
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });

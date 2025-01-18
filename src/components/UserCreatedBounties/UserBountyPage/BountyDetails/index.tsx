@@ -28,8 +28,6 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 	const rewardAmount = formatBnBalance(String(reward), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const unclaimedAmount = (unclaimedPercentage / 100) * Number(rewardAmount);
 
-	console.log('rewardAmount', { rewardAmount, unclaimedPercentage, unclaimedAmount });
-
 	return (
 		<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[30%] lg:p-6'>
 			<span className='text-xl font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high'>Details</span>

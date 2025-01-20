@@ -126,7 +126,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 							//spam discussion marked
 							if (postData?.isSpam) {
-								spamPostByUserId[Number(postData.user_id || postData.author_id)] = spamPostByUserId[Number(postData.user_id || postData.author_id)] || 0 + 1;
+								spamPostByUserId[Number(postData.user_id || postData.author_id)] = (spamPostByUserId[Number(postData.user_id || postData.author_id)] || 0) + 1;
 
 								switch (spamPostByUserId[Number(postData.user_id || postData.author_id)]) {
 									case spamPostByUserId[Number(postData.user_id || postData.author_id)] == 1:

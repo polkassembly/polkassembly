@@ -15,6 +15,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Balance from '~src/components/Balance';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -27,6 +28,7 @@ interface Props {
 const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -37,7 +39,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 		if (!api || !apiReady || !loginAddress) return;
 
 		const loadBalance = async () => {
-			const accountData = await api.query.system.account(loginAddress);
+			const accountData = await api?.query?.system?.account(loginAddress);
 			setAvailableBalance(new BN(accountData.data.free.toString() || '0'));
 		};
 
@@ -50,7 +52,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		try {
-			const tx = api.tx.balances.transferKeepAlive(submissionProposer, tipAmount);
+			const tx = api?.tx?.balances?.transferKeepAlive(submissionProposer, tipAmount);
 
 			await executeTx({
 				address: loginAddress,
@@ -60,6 +62,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				tx,
 				errorMessageFallback: 'Failed to process the transaction. Please try again later.',
 				onSuccess: () => {
+					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Success!',
 						message: 'Tip sent successfully.',
@@ -68,6 +71,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 					setOpen(false);
 				},
 				onFailed: () => {
+					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Error!',
 						message: 'Failed to send tip.',
@@ -77,8 +81,6 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 			});
 		} catch (error) {
 			console.error('Error sending tip:', error);
-		} finally {
-			setLoadingStatus({ isLoading: false, message: '' });
 		}
 	};
 
@@ -112,10 +114,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				</div>
 			}
 		>
-			<Spin
-				spinning={loadingStatus.isLoading}
-				tip={loadingStatus.message}
-			>
+			<Spin spinning={loadingStatus.isLoading}>
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 					{loginAddress && (
@@ -153,6 +152,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				</div>
 
 				<BalanceInput
+					theme={theme}
 					label='Amount'
 					placeholder='Enter amount to tip'
 					address={loginAddress}

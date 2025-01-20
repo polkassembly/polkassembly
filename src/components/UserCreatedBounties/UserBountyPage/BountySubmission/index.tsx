@@ -122,6 +122,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					openModal={openModal}
 					setOpenModal={setOpenModal}
 					parentBountyIndex={post?.post_index}
+					fetchSubmissions={fetchSubmissions}
 				/>
 			</section>
 		);
@@ -155,14 +156,17 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 						/>
 					)}
 					<SubmissionComponent
+						key={filteredSubmissions.length}
 						submissions={filteredSubmissions}
 						bountyProposer={post?.proposer}
 						bountyIndex={post?.post_index}
+						fetchSubmissions={fetchSubmissions}
 					/>
 					<CreateSubmissionForm
 						openModal={openModal}
 						setOpenModal={setOpenModal}
 						parentBountyIndex={post?.post_index}
+						fetchSubmissions={fetchSubmissions}
 					/>
 				</div>
 			</Spin>

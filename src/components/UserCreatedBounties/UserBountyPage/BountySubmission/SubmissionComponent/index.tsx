@@ -105,6 +105,12 @@ const SubmissionComponent = ({
 											<span className='text-xs font-medium text-[#0B8A00]'>APPROVED</span>
 										</div>
 									)}
+									{status === EUserCreatedBountySubmissionStatus.PAID && (
+										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#11C7001A] px-[6px] py-1'>
+											<div className='h-[6px] w-[6px] rounded-full bg-[#0B8A00]'></div>
+											<span className='text-xs font-medium text-[#0B8A00]'>PAID</span>
+										</div>
+									)}
 								</div>
 							</div>
 							<div
@@ -124,7 +130,11 @@ const SubmissionComponent = ({
 							)}
 							{status === EUserCreatedBountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (
 								<button
-									onClick={() => setOpenTipping(true)}
+									onClick={(e) => {
+										e.stopPropagation();
+										setOpenModalId(null);
+										setOpenTipping(true);
+									}}
 									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
 								>
 									Pay
@@ -177,11 +187,16 @@ const SubmissionComponent = ({
 							setIsUsedForDeletingSubmission={setIsUsedForDeletingSubmission}
 							setOpenModalId={setOpenModalId}
 						/>
-						{!!loginAddress && (
+						{!!loginAddress && status === EUserCreatedBountySubmissionStatus.APPROVED && (
 							<SubmissionTippingModal
+								key={id}
 								open={openTipping}
 								setOpen={setOpenTipping}
 								submissionProposer={proposer || ''}
+								parentBountyIndex={bountyIndex}
+								parentBountyProposerAddress={bountyProposer}
+								submissionId={openModalId || id || ''}
+								fetchSubmissions={fetchSubmissions}
 							/>
 						)}
 					</div>

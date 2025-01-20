@@ -1074,7 +1074,7 @@ export interface IChildBountySubmission {
 	parentBountyIndex: number;
 	proposer: string;
 	reqAmount: string;
-	status: EChildbountySubmissionStatus;
+	status: EUserCreatedBountySubmissionStatus | EChildbountySubmissionStatus | ETabBountyStatuses;
 	tags: string[];
 	title: string;
 	updatedAt: Date;
@@ -1105,6 +1105,7 @@ export enum EUserCreatedBountySubmissionStatus {
 	REJECTED = 'rejected',
 	PENDING = 'pending',
 	DELETED = 'deleted',
+	OUTDATED = 'outdated',
 	PAID = 'paid'
 }
 
@@ -1281,4 +1282,12 @@ export interface ICalendarEvent {
 	title: string;
 	trackNo?: number;
 	blockNo?: number;
+}
+
+export interface ISentimentsPercentage {
+	against: ESentiments | 0;
+	for: ESentiments | 0;
+	neutral: ESentiments | 0;
+	slightlyAgainst: ESentiments | 0;
+	slightlyFor: ESentiments | 0;
 }

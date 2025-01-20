@@ -35,7 +35,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary } from '~src/types';
+import { ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -85,14 +85,6 @@ export interface ITimeline {
 	firstCommentId: string;
 	index: string;
 	type: string;
-}
-
-export interface ISentimentsPercentage {
-	against: ESentiments | 0;
-	for: ESentiments | 0;
-	neutral: ESentiments | 0;
-	slightlyAgainst: ESentiments | 0;
-	slightlyFor: ESentiments | 0;
 }
 
 export const getSortedComments = (comments: { [index: string]: Array<IComment> }) => {

@@ -4,28 +4,31 @@
 
 /* eslint-disable sort-keys */
 import React, { useEffect, useState } from 'react';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import CreateSubmissionButton from './CreateSubmissionButton';
 import CustomTabs from './CustomTabs';
 import Image from 'next/image';
 import { dmSans } from 'pages/_app';
 import dynamic from 'next/dynamic';
-import { IChildBountySubmission, IUserCreatedBounty } from '~src/types';
+import { ETabBountyStatuses, IChildBountySubmission, IUserCreatedBounty } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SubmissionComponent from './SubmissionComponent';
 import { Spin } from 'antd';
+import { useTheme } from 'next-themes';
 
 const CreateSubmissionForm = dynamic(() => import('./CreateSubmissionForm'), {
 	ssr: false
 });
 
 const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState(false);
 	const [submissions, setSubmissions] = useState<IChildBountySubmission[]>([]);
+	const [filteredSubmissions, setFilteredSubmissions] = useState<IChildBountySubmission[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<{ isLoading: boolean; message: string }>({
 		isLoading: false,
 		message: ''
 	});
+	const [activeTab, setActiveTab] = useState<ETabBountyStatuses>(ETabBountyStatuses.ALL);
 
 	const fetchSubmissions = async () => {
 		setLoadingStatus({ isLoading: true, message: '' });
@@ -43,6 +46,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 			if (data) {
 				setLoadingStatus({ isLoading: false, message: '' });
 				setSubmissions(data.submissions);
+				setFilteredSubmissions(data.submissions);
 			}
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -50,27 +54,51 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 		}
 	};
 
+	const handleTabChange = (tab: ETabBountyStatuses) => {
+		setActiveTab(tab);
+		if (tab === ETabBountyStatuses.ALL) {
+			setFilteredSubmissions(submissions);
+		} else {
+			setFilteredSubmissions(submissions.filter((sub) => sub.status === tab));
+		}
+	};
+
 	useEffect(() => {
+		if (!post?.post_index) return;
 		if (post?.post_index) {
 			fetchSubmissions();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post?.post_index]);
 
-	if (!loadingStatus.isLoading && submissions.length < 1) {
+	const isDeadlinePassed = post?.deadline_date ? new Date(post.deadline_date) < new Date() : false;
+
+	if (!loadingStatus.isLoading && (!filteredSubmissions || filteredSubmissions.length < 1)) {
 		return (
 			<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
 				<div className='flex items-center justify-between'>
 					<div className='flex items-center gap-1'>
-						<ImageIcon
+						<Image
+							src={'/assets/icons/user-bounties/submission-icon.svg'}
 							alt='icon'
-							src='/assets/icons/user-bounties/submission-icon.svg'
+							width={20}
+							height={21}
+							className={`${theme === 'dark' ? 'dark-icons' : ''} mt-[2px]`}
 						/>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Submissions</span>
-						<span className=' text-base text-[#334D6E]'>(0)</span>
+						<span className=' text-base text-blue-light-medium dark:text-blue-dark-medium'>({filteredSubmissions.length})</span>
 					</div>
-					<CreateSubmissionButton setOpenModal={setOpenModal} />
+					<CreateSubmissionButton
+						setOpenModal={setOpenModal}
+						disabled={isDeadlinePassed}
+					/>
 				</div>
+				{!loadingStatus.isLoading && (
+					<CustomTabs
+						onTabChange={handleTabChange}
+						activeTab={activeTab}
+					/>
+				)}
 				<div className={`flex h-[500px] flex-col ${dmSans.className} ${dmSans.variable} items-center rounded-xl  px-5   `}>
 					<Image
 						src='/assets/Gifs/find.gif'
@@ -105,18 +133,29 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 				<div>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center gap-1'>
-							<ImageIcon
+							<Image
+								src={'/assets/icons/user-bounties/submission-icon.svg'}
 								alt='icon'
-								src='/assets/icons/user-bounties/submission-icon.svg'
+								width={20}
+								height={21}
+								className={`${theme === 'dark' ? 'dark-icons' : ''} mt-[2px]`}
 							/>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Submissions</span>
-							<span className=' text-base text-[#334D6E]'>({`${submissions.length}`})</span>
+							<span className=' text-base text-blue-light-medium dark:text-blue-dark-medium'>({`${filteredSubmissions.length}`})</span>
 						</div>
-						<CreateSubmissionButton setOpenModal={setOpenModal} />
+						<CreateSubmissionButton
+							setOpenModal={setOpenModal}
+							disabled={isDeadlinePassed}
+						/>
 					</div>
-					<CustomTabs />
+					{!loadingStatus.isLoading && (
+						<CustomTabs
+							onTabChange={handleTabChange}
+							activeTab={activeTab}
+						/>
+					)}
 					<SubmissionComponent
-						submissions={submissions}
+						submissions={filteredSubmissions}
 						bountyProposer={post?.proposer}
 						bountyIndex={post?.post_index}
 					/>

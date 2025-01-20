@@ -2,93 +2,35 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { Empty } from 'antd';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { AiStarIcon } from '~src/ui-components/CustomIcons';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import Image from 'next/image';
-import UnfilterAgainstIcon from '~assets/overall-sentiment/against.svg';
-import UnfilterSlightlyAgainstIcon from '~assets/overall-sentiment/slightly-against.svg';
-import UnfilterNeutralIcon from '~assets/overall-sentiment/neutral.svg';
-import UnfilterSlightlyForIcon from '~assets/overall-sentiment/slightly-for.svg';
-import UnfilterForIcon from '~assets/overall-sentiment/for.svg';
-import AgainstIcon from '~assets/overall-sentiment/pink-against.svg';
-import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
-import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
-import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
-import ForIcon from '~assets/overall-sentiment/pink-for.svg';
-import GreenTickIcon from '~assets/icons/green-tick.svg';
-import MinusSignIcon from '~assets/icons/minus-sign.svg';
-import CrossSignIcon from '~assets/icons/cross-sign.svg';
-import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
-import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
-import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
-import UnfilterDarkSentiment4 from '~assets/overall-sentiment/dark/dark(4).svg';
-import UnfilterDarkSentiment5 from '~assets/overall-sentiment/dark/dark(5).svg';
-import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
-import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
-import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
-import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
-import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary } from '~src/types';
-import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import Tooltip from '~src/basic-components/Tooltip';
-import Alert from '~src/basic-components/Alert';
 import classNames from 'classnames';
-import { dmSans } from 'pages/_app';
-import Skeleton from '~src/basic-components/Skeleton';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { getSortedComments, ISentimentsPercentage } from '~src/components/Post/Comment/CommentsContainer';
+import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
 import Comments from '~src/components/Post/Comment/Comments';
 import { IComment } from '~src/components/Post/Comment/Comment';
 
-const BountyCommentsContainer = ({ className, id, comments }: { id: number | null | undefined; className: string; comments: { [index: string]: IComment[] } }) => {
+const BountyCommentsContainer = ({
+	className,
+	id,
+	comments,
+	postIndex
+}: {
+	id: number | null | undefined;
+	className: string;
+	comments: { [index: string]: IComment[] };
+	postIndex: number;
+}) => {
 	const [comment, setComments] = useState<{ [index: string]: IComment[] }>(comments);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
-	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
-	const [loading, setLoading] = useState(true);
-	const { network } = useNetworkSelector();
-	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
-	let allComments = Object.values(comments)?.flat() || [];
+	const allComments = comment ? Object.values(comments)?.flat() : [];
 	const { resolvedTheme: theme } = useTheme();
-	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
-	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
-	const [aiContentSummary, setAiContentSummary] = useState<ICommentsSummary | null>(null);
-	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
-	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
-	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
-	const [showNeutralSummary, setNeutralSummary] = useState(false);
-	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
-
-	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
-		let allCommentsContent = '';
-
-		Object.values(comments).forEach((commentArray) => {
-			commentArray.forEach((comment) => {
-				allCommentsContent += ' ' + comment.content;
-				if (comment.replies && comment.replies.length > 0) {
-					comment.replies.forEach((reply) => {
-						allCommentsContent += ' ' + reply.content;
-					});
-				}
-			});
-		});
-		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
-		return wordCount > 100;
-	};
-
-	if (filterSentiments) {
-		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
-	}
 
 	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;
@@ -101,93 +43,21 @@ const BountyCommentsContainer = ({ className, id, comments }: { id: number | nul
 		router.push(`#${comment.id}`);
 	};
 
-	const getFilteredComments = (sentiment: number) => {
-		setFilterSentiments(filterSentiments === sentiment ? null : sentiment);
-	};
-
-	const checkActive = (sentiment: ESentiments) => {
-		return filterSentiments === sentiment;
-	};
-
-	const sentimentsData = [
-		{
-			iconActive: theme !== 'dark' ? <AgainstIcon /> : <DarkSentiment1 />,
-			iconInactive: theme !== 'dark' ? <UnfilterAgainstIcon /> : <UnfilterDarkSentiment1 />,
-			percentage: sentimentsPercentage?.against,
-			sentiment: ESentiments.Against,
-			title: 'Completely Against'
-		},
-		{
-			iconActive: theme !== 'dark' ? <SlightlyAgainstIcon /> : <DarkSentiment2 />,
-			iconInactive: theme !== 'dark' ? <UnfilterSlightlyAgainstIcon /> : <UnfilterDarkSentiment2 />,
-			percentage: sentimentsPercentage?.slightlyAgainst,
-			sentiment: ESentiments.SlightlyAgainst,
-			title: 'Slightly Against'
-		},
-		{
-			iconActive: theme !== 'dark' ? <NeutralIcon className='text-[20px] font-medium' /> : <DarkSentiment3 />,
-			iconInactive: theme !== 'dark' ? <UnfilterNeutralIcon /> : <UnfilterDarkSentiment3 />,
-			percentage: sentimentsPercentage?.neutral,
-			sentiment: ESentiments.Neutral,
-			title: 'Neutral'
-		},
-		{
-			iconActive: theme !== 'dark' ? <SlightlyForIcon /> : <DarkSentiment4 />,
-			iconInactive: theme !== 'dark' ? <UnfilterSlightlyForIcon /> : <UnfilterDarkSentiment4 />,
-			percentage: sentimentsPercentage?.slightlyFor,
-			sentiment: ESentiments.SlightlyFor,
-			title: 'Slightly For'
-		},
-		{
-			iconActive: theme !== 'dark' ? <ForIcon /> : <DarkSentiment5 />,
-			iconInactive: theme !== 'dark' ? <UnfilterForIcon /> : <UnfilterDarkSentiment5 />,
-			percentage: sentimentsPercentage?.for,
-			sentiment: ESentiments.For,
-			title: 'Completely For'
-		}
-	];
-
-	const toggleSummary = (type: 'positive' | 'negative' | 'neutral') => {
-		if (type === 'positive') {
-			setShowPositiveSummary(!showPositiveSummary);
-		} else if (type === 'negative') {
-			setShowNegativeSummary(!showNegativeSummary);
-		} else if (type === 'neutral') {
-			setNeutralSummary(!showNeutralSummary);
-		}
-	};
-	const getDisplayText = (text: string, showFull: boolean) => {
-		if (!text) return '';
-		const words = text.split(' ');
-		const isLongText = words.length > 100;
-		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
-	};
-
-	const shouldShowToggleButton = (text: string) => {
-		return text.split(' ').length > 100;
-	};
-
 	return (
 		<div className={className}>
 			{id ? (
 				<>
-					{!isCommentAllowed ? (
-						<Alert
-							message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}
-							type='info'
-							showIcon
-						/>
-					) : (
-						<PostCommentForm
-							className='mb-2'
-							setCurrentState={handleCurrentCommentAndTimeline}
-						/>
-					)}
+					<PostCommentForm
+						className='mb-2'
+						setCurrentState={handleCurrentCommentAndTimeline}
+						BountyPostIndex={postIndex}
+						isUsedInBounty={true}
+					/>
 				</>
 			) : (
 				<div
 					id='comment-login-prompt'
-					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-sm bg-[#E6F4FF] shadow-md dark:bg-alertColorDark')}
+					className={classNames('mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-sm bg-[#E6F4FF] shadow-md dark:bg-alertColorDark')}
 				>
 					<Image
 						src='/assets/icons/alert-login.svg'
@@ -209,129 +79,30 @@ const BountyCommentsContainer = ({ className, id, comments }: { id: number | nul
 					</div>
 				</div>
 			)}
-			<div className='mt-4'>
-				{fetchingAISummary ? (
-					<Skeleton className='mt-4' />
-				) : aiContentSummary && hasEnoughContent && (aiContentSummary?.summary_positive || aiContentSummary?.summary_neutral || aiContentSummary?.summary_negative) ? (
-					<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
-						<div className={`${dmSans.variable} ${dmSans.className} items-center justify-between sm:flex`}>
-							<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
-							<span
-								className={`${dmSans.variable} ${dmSans.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
-							>
-								<span className='mr-1 '>Based on all comments and replies</span>
-							</span>
-						</div>
-						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 20 && (
-							<div className='mt-2 flex items-start gap-4'>
-								<span className='mt-2'>
-									<GreenTickIcon />
-								</span>
-								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
-									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
-										<span
-											onClick={() => toggleSummary('positive')}
-											className='ml-1 cursor-pointer text-sm text-pink_primary'
-										>
-											{showPositiveSummary ? 'See Less' : 'See More'}
-										</span>
-									)}
-								</p>
-							</div>
-						)}
 
-						{aiContentSummary?.summary_neutral && aiContentSummary.summary_neutral.split(' ').length > 20 && (
-							<div className='flex items-start gap-4'>
-								<span className='mt-2'>
-									<MinusSignIcon />
-								</span>
-								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-									{getDisplayText(aiContentSummary?.summary_neutral, showNeutralSummary)}
-									{shouldShowToggleButton(aiContentSummary?.summary_neutral) && (
-										<span
-											onClick={() => toggleSummary('neutral')}
-											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
-										>
-											{showNeutralSummary ? 'See Less' : 'See More'}
-										</span>
-									)}
-								</p>
-							</div>
-						)}
-
-						{aiContentSummary?.summary_negative && aiContentSummary.summary_negative.split(' ').length > 20 && (
-							<div className='flex items-start gap-4'>
-								<span className='mt-2'>
-									<CrossSignIcon />
-								</span>
-								<p className={`${dmSans.variable} ${dmSans.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
-									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
-										<span
-											onClick={() => toggleSummary('negative')}
-											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
-										>
-											{showNegativeSummary ? 'See Less' : 'See More'}
-										</span>
-									)}
-								</p>
-							</div>
-						)}
-						<h2 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-							<AiStarIcon className='text-base' /> AI-generated from comments
-						</h2>
-					</div>
-				) : null}
-			</div>
-			{Boolean(allComments?.length) && !loading && (
+			{Boolean(allComments?.length) && (
 				<div
 					id='comments-section'
-					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1')}
+					className={classNames('tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1')}
 				>
 					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
-					{showOverallSentiment && (
-						<div className='flex gap-2 max-sm:-ml-2 max-sm:gap-[2px] '>
-							{sentimentsData.map((data) => (
-								<Tooltip
-									key={data.sentiment}
-									color='#E5007A'
-									title={
-										<div className='flex flex-col px-1 text-xs'>
-											<span className='text-center font-medium'>{data.title}</span>
-											<span className='pt-1 text-center'>Select to filter</span>
-										</div>
-									}
-								>
-									<div
-										onClick={() => getFilteredComments(data.sentiment)}
-										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8]  ${
-											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
-										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} dark:hover:bg-[#33071E]`}
-									>
-										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
-										<span className={'flex justify-center font-medium dark:font-normal dark:text-[#ffffff99]'}>{data.percentage}%</span>
-									</div>
-								</Tooltip>
-							))}
-						</div>
-					)}
 				</div>
 			)}
-			<div className={classNames(!isCommentAllowed ? 'mt-6' : '', 'block grid-cols-12 xl:grid')}>
+			<div className={classNames('block grid-cols-12 xl:grid')}>
 				<div className={'col-start-1 col-end-13 mt-0'}>
-					{!!allComments?.length && !loading && (
+					{!!allComments?.length && (
 						<>
 							<Comments
 								disableEdit={!id}
 								comments={allComments}
+								BountyPostIndex={postIndex}
+								isUsedInBounty={true}
 							/>
 						</>
 					)}
-					{loading && <Loader />}
 					{allComments.length === 0 && allComments.length > 0 && (
 						<div className='mb-4 mt-4'>
 							<Empty description='No comments available' />

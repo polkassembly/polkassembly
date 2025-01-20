@@ -9,14 +9,7 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import { FrownOutlined } from '@ant-design/icons';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { noTitle } from '~src/global/noTitle';
-import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
-import { useRouter } from 'next/router';
-import { PostEmptyState } from 'src/ui-components/UIStates';
-// import EmptyIcon from '~assets/icons/empty-state-image.svg';
-import { checkIsOnChain } from '~src/util/checkIsOnChain';
-import { useApiContext } from '~src/context';
-import { useState } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -25,9 +18,20 @@ import { getUserCreatedBountyById } from 'pages/api/v1/user-created-bounties/get
 import UserBountyPage from '~src/components/UserCreatedBounties/UserBountyPage';
 import { IUserCreatedBounty } from '~src/types';
 
-const proposalType = ProposalType.BOUNTIES;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
+
+	const bountyId = Number(id);
+	if (isNaN(bountyId) || bountyId <= 0) {
+		return {
+			props: {
+				error: 'Invalid bounty ID',
+				network: getNetworkFromReqHeaders(req.headers),
+				post: null,
+				status: 400
+			}
+		};
+	}
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
@@ -35,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (networkRedirect) return networkRedirect;
 
 	const { data, error, status } = await getUserCreatedBountyById({
-		bountyId: Number(id),
+		bountyId,
 		network
 	});
 	return { props: { error, network, post: data, status } };
@@ -48,37 +52,25 @@ interface IBountyPostProps {
 	status?: number;
 }
 const BountyPost: FC<IBountyPostProps> = (props) => {
-	const { post, error, network, status } = props;
+	const { post, error, network } = props;
 	const dispatch = useDispatch();
-	const router = useRouter();
-	const { api, apiReady } = useApiContext();
-	const [isUnfinalized, setIsUnFinalized] = useState(false);
-	const { id } = router.query;
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.network]);
 
-	useEffect(() => {
-		if (!api || !apiReady || !error || !status || !id || status !== 404) {
-			return;
-		}
-		(async () => {
-			setIsUnFinalized(Boolean(await checkIsOnChain(String(id), proposalType, api)));
-		})();
-	}, [api, apiReady, error, status, id]);
-
-	if (isUnfinalized) {
+	if (error) {
 		return (
-			<PostEmptyState
-				description={
-					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
-					</div>
-				}
-			/>
+			<div className='mt-20 flex flex-col items-center justify-center'>
+				<div className='flex items-center gap-5'>
+					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
+				</div>
+				<p className='mt-2 text-lg text-gray-500'>Post not found. If you just created a post, it might take up to a minute to appear.</p>
+				<div className='mt-5'>
+					<BackToListingView postCategory={PostCategory.USER_CREATED_BOUNTIES} />
+				</div>
+			</div>
 		);
 	}
 
@@ -92,7 +84,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 				/>
 				<div className={'transition-opacity duration-500'}>
 					<BackToListingView
-						postCategory={PostCategory.BOUNTY}
+						postCategory={PostCategory.USER_CREATED_BOUNTIES}
 						network={network}
 					/>
 					<div className='mt-6'>
@@ -100,18 +92,6 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 					</div>
 				</div>
 			</>
-		);
-	} else if (error) {
-		return (
-			<div className='mt-20 flex flex-col items-center justify-center'>
-				<div className='flex items-center gap-5'>
-					<FrownOutlined className=' -mt-5 text-4xl text-pink_primary dark:text-blue-dark-high' /> <h1 className='text-6xl font-bold'>404</h1>
-				</div>
-				<p className='mt-2 text-lg text-gray-500'>Post not found. If you just created a post, it might take up to a minute to appear.</p>
-				<div className='mt-5'>
-					<BackToListingView postCategory={PostCategory.BOUNTY} />
-				</div>
-			</div>
 		);
 	}
 

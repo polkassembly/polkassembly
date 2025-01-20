@@ -7,47 +7,61 @@ import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import BountyCommentsContainer from './BountyCommentsContainer';
 import { IComment } from '~src/components/Post/Comment/Comment';
+import { useTheme } from 'next-themes';
 
-const BountyPostComments = ({ comments }: { comments: { [index: string]: IComment[] } }) => {
+const BountyPostComments = ({ comments, postIndex }: { comments: { [index: string]: IComment[] }; postIndex: number }) => {
 	const { id } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
-	if (!id) {
-		<div className='flex cursor-not-allowed items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
-			<Image
-				src={'/assets/bounty-icons/bounty-post-comment-icon.svg'}
-				alt='Comments'
-				width={16}
-				height={16}
-			/>
-			<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>2</span>
-		</div>;
-	}
-
-	const content = (
-		<BountyCommentsContainer
-			id={id}
-			className=''
-			comments={comments}
-		/>
-	);
 	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 
-	// { postType, timeline, created_at, allowedCommentors, userId, postIndex }
+	if (!id) {
+		return (
+			<div className='flex cursor-not-allowed items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
+				<Image
+					src={'/assets/bounty-icons/bounty-post-comment-icon.svg'}
+					alt='Comments'
+					width={16}
+					height={16}
+					className={`${theme === 'dark' ? 'dark-icons' : ''}`}
+				/>
+				<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<Popover
-				content={content}
-				// title='Comments'
+				content={
+					<div
+						style={{
+							maxHeight: '875px',
+							maxWidth: '530px',
+							overflow: 'auto'
+						}}
+						className='scroll-hidden dark:bg-section-dark-overlay'
+					>
+						<BountyCommentsContainer
+							id={id}
+							className=''
+							comments={comments}
+							postIndex={postIndex}
+						/>
+					</div>
+				}
 				trigger='click'
+				placement='bottomLeft'
 			>
-				<div className='flex cursor-pointer items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
+				<div className='dark:dark-icons flex cursor-pointer items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
 					<Image
 						src={'/assets/bounty-icons/bounty-post-comment-icon.svg'}
 						alt='Comments'
 						width={16}
 						height={16}
+						className={`${theme === 'dark' ? 'dark-icons' : ''}`}
 					/>
-					<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
+					<span className='text-xs font-semibold text-blue-light-medium dark:text-blue-dark-medium'>{totalComments}</span>
 				</div>
 			</Popover>
 		</div>

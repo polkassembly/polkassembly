@@ -3,26 +3,29 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ETabBountyStatuses } from '~src/types';
 
-const CustomTabs = () => {
-	const [activeTab, setActiveTab] = useState<ETabBountyStatuses>(ETabBountyStatuses.ALL);
-
+const CustomTabs = ({ onTabChange, activeTab }: { onTabChange: (tab: ETabBountyStatuses) => void; activeTab: ETabBountyStatuses }) => {
 	const handleTabClick = (tab: ETabBountyStatuses) => {
-		setActiveTab(tab);
+		onTabChange(tab);
 	};
 
 	return (
-		<div style={{ ...styles.parentDiv }}>
+		<div
+			style={{ ...styles.parentDiv }}
+			className='bg-[#F5F5F5] dark:bg-section-dark-background'
+		>
 			<div style={styles.tabsContainer}>
 				<div
 					style={{
 						...styles.tab,
 						backgroundColor: activeTab === ETabBountyStatuses.ALL ? 'white' : '#F5F5F5',
-						color: activeTab === ETabBountyStatuses.ALL ? '#E5007A' : '#333',
 						fontWeight: activeTab === ETabBountyStatuses.ALL ? '600' : '400'
 					}}
+					className={`bg-white ${
+						activeTab === ETabBountyStatuses.ALL ? 'text-pink_primary' : 'text-blue-light-high dark:text-blue-dark-high'
+					} text-blue-dark-high dark:bg-section-dark-overlay `}
 					onClick={() => handleTabClick(ETabBountyStatuses.ALL)}
 				>
 					All
@@ -31,9 +34,11 @@ const CustomTabs = () => {
 					style={{
 						...styles.tab,
 						backgroundColor: activeTab === ETabBountyStatuses.APPROVED ? 'white' : '#F5F5F5',
-						color: activeTab === ETabBountyStatuses.APPROVED ? '#E5007A' : '#333',
 						fontWeight: activeTab === ETabBountyStatuses.APPROVED ? '600' : '400'
 					}}
+					className={`bg-white ${
+						activeTab === ETabBountyStatuses.APPROVED ? 'text-pink_primary' : 'text-blue-light-high dark:text-blue-dark-high'
+					} text-blue-dark-high dark:bg-section-dark-overlay `}
 					onClick={() => handleTabClick(ETabBountyStatuses.APPROVED)}
 				>
 					Approved
@@ -42,9 +47,11 @@ const CustomTabs = () => {
 					style={{
 						...styles.tab,
 						backgroundColor: activeTab === ETabBountyStatuses.REJECTED ? 'white' : '#F5F5F5',
-						color: activeTab === ETabBountyStatuses.REJECTED ? '#E5007A' : '#333',
 						fontWeight: activeTab === ETabBountyStatuses.REJECTED ? '600' : '400'
 					}}
+					className={`bg-white ${
+						activeTab === ETabBountyStatuses.REJECTED ? 'text-pink_primary' : 'text-blue-light-high dark:text-blue-dark-high'
+					} text-blue-dark-high dark:bg-section-dark-overlay `}
 					onClick={() => handleTabClick(ETabBountyStatuses.REJECTED)}
 				>
 					Rejected

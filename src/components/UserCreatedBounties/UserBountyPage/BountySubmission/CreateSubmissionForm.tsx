@@ -9,7 +9,7 @@ import { useApiContext } from '~src/context';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import BN from 'bn.js';
-import { NotificationStatus, Wallet } from '~src/types';
+import { EUserCreatedBountyActions, IChildBountySubmission, NotificationStatus, Wallet } from '~src/types';
 import { dmSans } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
@@ -25,9 +25,11 @@ interface Props {
 	openModal: boolean;
 	setOpenModal: (pre: boolean) => void;
 	parentBountyIndex: number;
+	isUsedForEditing?: boolean;
+	submission?: IChildBountySubmission;
 }
 
-const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Props) => {
+const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUsedForEditing, submission }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -42,6 +44,18 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [showError, setShowError] = useState(false);
+
+	useEffect(() => {
+		if (isUsedForEditing && submission) {
+			form.setFieldsValue({
+				title: submission.title || '',
+				requestAmount: submission.reqAmount || '',
+				description: submission.content || '',
+				links: submission.link || '',
+				loginAddress: submission.proposer || loginAddress
+			});
+		}
+	}, [isUsedForEditing, submission, form, loginAddress]);
 
 	const loadBalance = async () => {
 		if (!api || !apiReady) return;
@@ -67,8 +81,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 					status: NotificationStatus.ERROR
 				});
 				setShowBalanceAlert(true);
-			}
-			setShowBalanceAlert(false);
+			} else setShowBalanceAlert(false);
 		} catch (error) {
 			console.error('Failed to fetch balance:', error);
 		} finally {
@@ -107,11 +120,19 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 			link: values.links || '',
 			reqAmount: String(values.requestAmount),
 			proposerAddress: loginAddress,
-			parentBountyIndex: parentBountyIndex
+			parentBountyIndex: parentBountyIndex,
+			...(isUsedForEditing && submission
+				? {
+						action: EUserCreatedBountyActions.EDIT,
+						submissionId: submission.id
+				  }
+				: {})
 		};
 
+		const apiRoute = isUsedForEditing ? '/api/v1/user-created-bounties/submissions/editOrDeleteSubmission' : '/api/v1/user-created-bounties/submissions/addSubmission';
+
 		try {
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/user-created-bounties/submissions/addSubmission', requestBody);
+			const { data, error } = await nextApiClientFetch<any>(apiRoute, requestBody);
 
 			if (error || !data) {
 				console.log('Submission failed:', error);
@@ -126,7 +147,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 
 			queueNotification({
 				header: 'Success!',
-				message: 'Submission created successfully.',
+				message: isUsedForEditing ? 'Submission updated successfully.' : 'Submission created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -142,11 +163,12 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 	return (
 		<Modal
 			open={openModal}
+			wrapClassName='dark:bg-modalOverlayDark'
 			onCancel={() => setOpenModal(false)}
 			title={
 				<div className={`${dmSans.className} ${dmSans.variable}`}>
 					<div className='flex items-center gap-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
-						<span>Make Submission</span>
+						<span>{isUsedForEditing ? 'Edit Submission' : 'Make Submission'}</span>
 					</div>
 				</div>
 			}
@@ -165,7 +187,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						htmlType='submit'
 						height={40}
 						width={156}
-						text='Send'
+						text={isUsedForEditing ? 'Edit' : 'Send'}
 					/>
 				</div>
 			}
@@ -200,6 +222,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 									}
 								}
 							]}
+							className='mb-3'
 						>
 							<AccountSelectionForm
 								title='Select Account'
@@ -208,8 +231,8 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 								address={loginAddress}
 								withBalance={false}
 								onAccountChange={(address) => form.setFieldsValue({ loginAddress: address })}
-								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
+								className={`${dmSans.className} ${dmSans.variable}  text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-[7px]'
 								withoutInfo={true}
 								linkAddressTextDisabled
 								theme={theme}
@@ -226,10 +249,11 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='title'
 							rules={[{ required: true, message: 'Please input the title of your request!' }]}
+							className='mb-3'
 						>
 							<Input
 								placeholder='Add title for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
@@ -241,19 +265,23 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='requestAmount'
 							rules={[{ required: true, message: 'Please input the requested amount!' }]}
+							className='mb-3'
 						>
 							<Input
 								placeholder='Enter an amount for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
 						{/* Links */}
 						<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'> Links</span>
-						<Form.Item name='links'>
+						<Form.Item
+							name='links'
+							className='mb-3'
+						>
 							<Input
 								placeholder='Add more context for your request'
-								className='h-10 w-full'
+								className='h-10 w-full rounded border text-blue-light-high dark:border-separatorDark dark:text-blue-dark-high'
 							/>
 						</Form.Item>
 
@@ -264,10 +292,10 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex }: Pr
 						<Form.Item
 							name='description'
 							rules={[{ required: true, message: 'Please input the description of your request!' }]}
-							className='h-min'
+							className='mb-0 h-min'
 						>
 							<ContentForm
-								className='h-min'
+								className='h-min text-blue-light-high dark:text-blue-dark-high'
 								height={200}
 							/>
 						</Form.Item>

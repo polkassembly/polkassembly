@@ -27,7 +27,7 @@ const SubmissionReactionButton = ({
 		setLoading(true);
 
 		try {
-			const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/updateSubmissionStatus', {
+			const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/submissions/updateSubmissionStatus', {
 				parentBountyIndex,
 				parentBountyProposerAddress,
 				submissionId,
@@ -36,11 +36,12 @@ const SubmissionReactionButton = ({
 			});
 			if (error || !data) {
 				console.log('error in submission modal', error);
+				setLoading(false);
 				return;
 			}
 			if (data) {
 				setOpenModal(false);
-				// window.location.reload()
+				window.location.reload();
 			}
 		} catch (error) {
 			console.log(error);
@@ -52,7 +53,7 @@ const SubmissionReactionButton = ({
 	return (
 		<div>
 			{isUsedinModal && <Divider className='border-l-1 my-4 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />}
-			<div className={`${isUsedinModal ? 'flex items-center justify-end gap-2' : ''}`}>
+			<div className={`${isUsedinModal ? 'flex items-center justify-end gap-2' : 'flex sm:gap-3'}`}>
 				<button
 					className={`${
 						isUsedinModal ? 'w-[156px]' : 'w-full'

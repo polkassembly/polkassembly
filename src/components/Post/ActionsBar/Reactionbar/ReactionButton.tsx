@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
@@ -12,6 +11,7 @@ import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Tooltip from '~src/basic-components/Tooltip';
+import { ProposalType } from '~src/global/proposalType';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -27,11 +27,12 @@ export interface IReactionButtonProps {
 	isReactionButtonInPost?: boolean;
 	replyId?: string;
 	isReactionOnReply?: boolean;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 
 type IReaction = '👍' | '👎';
 
-// TODO: Refactor handleReact
 const ReactionButton: FC<IReactionButtonProps> = ({
 	className,
 	reaction,
@@ -44,12 +45,18 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	importedReactions = false,
 	isReactionButtonInPost,
 	replyId,
-	isReactionOnReply
+	isReactionOnReply,
+	BountyPostIndex,
+	isUsedInBounty
 }) => {
-	const {
-		postData: { postIndex, postType, track_number }
-	} = usePostDataContext();
+	// Call `usePostDataContext` unconditionally
+	const { postData } = usePostDataContext();
 	const { id, username } = useUserDetailsSelector();
+
+	// Assign default values based on `isUsedInBounty`
+	const postIndex = isUsedInBounty ? BountyPostIndex : postData?.postIndex || null;
+	const postType = isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postData?.postType || null;
+	const track_number = isUsedInBounty ? null : postData?.track_number || null;
 
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
@@ -135,7 +142,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				reaction,
 				replyId: replyId || null,
 				setReplyReaction: isReactionOnReply ? true : false,
-				trackNumber: track_number,
+				trackNumber: isUsedInBounty ? null : track_number,
 				userId: id
 			});
 

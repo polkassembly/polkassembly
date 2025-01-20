@@ -52,8 +52,6 @@ interface Props {
 	setOpenAddressChangeModal: (pre: boolean) => void;
 	paUsername: string;
 	isUsedInAccountsPage?: boolean;
-	isUsedInSubmissionPage?: boolean;
-	submissionProposer?: string;
 }
 
 export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; src: string; value: number }[] = [
@@ -63,18 +61,7 @@ export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenD
 	{ key: 'fifteenDollar', src: '/assets/icons/tip-4.svg', value: 15 }
 ];
 
-const Tipping = ({
-	className,
-	open,
-	setOpen,
-	username,
-	openAddressChangeModal,
-	setOpenAddressChangeModal,
-	paUsername,
-	isUsedInAccountsPage = false,
-	isUsedInSubmissionPage,
-	submissionProposer
-}: Props) => {
+const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername, isUsedInAccountsPage = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -299,7 +286,7 @@ const Tipping = ({
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<TipIcon className='mr-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-						{isUsedInAccountsPage ? 'Send Funds' : isUsedInSubmissionPage ? 'Pay' : 'Give a Tip'}
+						{isUsedInAccountsPage ? 'Send Funds' : 'Give a Tip'}
 					</div>
 				}
 				open={open}
@@ -315,7 +302,7 @@ const Tipping = ({
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
 							buttonsize='xs'
-							text={isUsedInSubmissionPage ? 'Cancel' : 'Go Back'}
+							text={'Go Back'}
 						/>
 						<CustomButton
 							variant='primary'
@@ -325,7 +312,7 @@ const Tipping = ({
 							onClick={handleTip}
 							className={`font-semibold ${disable && 'opacity-50'}`}
 							buttonsize='xs'
-							text={isUsedInAccountsPage ? 'Send' : isUsedInSubmissionPage ? 'Pay' : 'Tip'}
+							text={isUsedInAccountsPage ? 'Send' : 'Tip'}
 						/>
 					</div>
 				}
@@ -399,21 +386,6 @@ const Tipping = ({
 							/>
 						</div>
 					)}
-					{isUsedInSubmissionPage && submissionProposer && (
-						<div className='mt-4 '>
-							<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary</span>
-							<div className='flex h-10 items-center rounded-[4px] border-solid border-section-light-container bg-[#F6F7F9] px-2 dark:border-separatorDark dark:bg-transparent'>
-								<Address
-									address={submissionProposer}
-									key={submissionProposer}
-									disableTooltip
-									disableAddressClick
-									showKiltAddress
-									displayInline={network !== 'kilt'}
-								/>
-							</div>
-						</div>
-					)}
 					<div
 						onClick={(e) => {
 							e.preventDefault();
@@ -424,49 +396,45 @@ const Tipping = ({
 							form={form}
 							disabled={loadingStatus.isLoading || !network}
 						>
-							<div className={`mt-0 border-0 ${isUsedInSubmissionPage ? '' : 'pt-6'}`}>
-								{!isUsedInSubmissionPage && (
-									<>
-										<span className='text-[15px] font-medium tracking-wide text-bodyBlue dark:text-blue-dark-medium'>
-											Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
-										</span>
-										<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium'>
-											{TIPS.map((tip) => {
-												const [tipBlance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
-												return (
-													<span
-														className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
-															tipBlance.eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-section-light-container dark:border-[#3B444F]'
-														}`}
-														key={tip.key}
-														onClick={() => {
-															form.setFieldValue('balance', '');
-															setTipAmount(tipBlance);
-															setTipInput(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
-															form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
-														}}
-													>
-														<ImageIcon
-															src={tip?.src}
-															alt=''
-														/>
+							<div className='mt-0 border-0 pt-6'>
+								<span className='text-[15px] font-medium tracking-wide text-bodyBlue dark:text-blue-dark-medium'>
+									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
+								</span>
+								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium'>
+									{TIPS.map((tip) => {
+										const [tipBlance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
+										return (
+											<span
+												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
+													tipBlance.eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-section-light-container dark:border-[#3B444F]'
+												}`}
+												key={tip.key}
+												onClick={() => {
+													form.setFieldValue('balance', '');
+													setTipAmount(tipBlance);
+													setTipInput(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
+													form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
+												}}
+											>
+												<ImageIcon
+													src={tip?.src}
+													alt=''
+												/>
 
-														<span>${tip.value}</span>
-													</span>
-												);
-											})}
-										</div>
-									</>
-								)}
+												<span>${tip.value}</span>
+											</span>
+										);
+									})}
+								</div>
 								<BalanceInput
 									setInputValue={setTipInput}
-									label={isUsedInSubmissionPage ? 'Amount' : 'Or enter the custom amount you would like to Tip'}
+									label='Or enter the custom amount you would like to Tip'
 									placeholder='Enter Amount'
 									address={address}
 									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
 									onChange={(tip) => setTipAmount(tip)}
 									isBalanceUpdated={open}
-									className={isUsedInSubmissionPage ? 'mt-3' : 'mt-6'}
+									className='mt-6'
 									noRules
 									theme={theme}
 								/>

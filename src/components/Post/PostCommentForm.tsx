@@ -45,6 +45,7 @@ interface IPostCommentFormProps {
 	setPosted?: (pre: boolean) => void;
 	BountyPostIndex?: number;
 	isUsedInBounty?: boolean;
+	setBountyPopoverVisible?: (pre: boolean) => void;
 }
 
 interface IEmojiOption {
@@ -60,7 +61,18 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted, BountyPostIndex, isUsedInBounty } = props;
+	const {
+		className,
+		isUsedInSuccessModal = false,
+		voteDecision = null,
+		setCurrentState,
+		posted,
+		voteReason = false,
+		setPosted,
+		BountyPostIndex,
+		isUsedInBounty,
+		setBountyPopoverVisible
+	} = props;
 	const { postData } = usePostDataContext();
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
@@ -181,6 +193,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			handleSave();
 			return;
 		}
+		setBountyPopoverVisible && setBountyPopoverVisible(false);
 		setModalOpen(true);
 	};
 
@@ -270,6 +283,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					message: 'Comment created successfully.',
 					status: NotificationStatus.SUCCESS
 				});
+				isUsedInBounty && window.location.reload();
 				if (isUsedInSuccessModal) {
 					setPosted?.(true);
 				}

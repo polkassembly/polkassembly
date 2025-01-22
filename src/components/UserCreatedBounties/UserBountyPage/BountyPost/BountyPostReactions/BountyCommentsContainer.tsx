@@ -19,12 +19,14 @@ const BountyCommentsContainer = ({
 	className,
 	id,
 	comments,
-	postIndex
+	postIndex,
+	setBountyPopoverVisible
 }: {
 	id: number | null | undefined;
 	className: string;
 	comments: { [index: string]: IComment[] };
 	postIndex: number;
+	setBountyPopoverVisible?: (pre: boolean) => void;
 }) => {
 	const [comment, setComments] = useState<{ [index: string]: IComment[] }>(comments);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -52,6 +54,7 @@ const BountyCommentsContainer = ({
 						setCurrentState={handleCurrentCommentAndTimeline}
 						BountyPostIndex={postIndex}
 						isUsedInBounty={true}
+						setBountyPopoverVisible={setBountyPopoverVisible}
 					/>
 				</>
 			) : (

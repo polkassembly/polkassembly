@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Alert } from 'antd';
+import { Modal, Form, Input, Spin, Alert, Divider } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
@@ -18,6 +18,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { chainProperties } from '~src/global/networkConstants';
 
 const ZERO_BN = new BN(0);
 
@@ -45,7 +46,8 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
-	const [showError, setShowError] = useState(false);
+	const [errorStatus, setErrorStatus] = useState<{ isError: boolean; message: string }>({ isError: false, message: '' });
+	const baseDecimals = chainProperties?.[network]?.tokenDecimals;
 
 	useEffect(() => {
 		if (isUsedForEditing && submission) {
@@ -109,18 +111,20 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 		const hasValidationErrors = !form.getFieldValue('title') || !form.getFieldValue('requestAmount') || !form.getFieldValue('description');
 
 		if (hasValidationErrors) {
-			setShowError(true);
+			setErrorStatus({ isError: true, message: 'Please ensure all required fields are filled out correctly.' });
 			return;
 		}
 
-		setShowError(false);
+		setErrorStatus({ isError: false, message: '' });
+
+		const adjustedRequestAmount = new BN(values.requestAmount).mul(new BN(10).pow(new BN(baseDecimals)));
 
 		const requestBody = {
 			title: values.title,
 			content: values.description,
 			tags: [],
 			link: values.links || '',
-			reqAmount: String(values.requestAmount),
+			reqAmount: String(adjustedRequestAmount),
 			proposerAddress: loginAddress,
 			parentBountyIndex: parentBountyIndex,
 			...(isUsedForEditing && submission
@@ -143,6 +147,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 					message: 'Submission failed.',
 					status: NotificationStatus.ERROR
 				});
+				setErrorStatus({ isError: true, message: error || '' });
 				setLoadingStatus({ isLoading: false, message: '' });
 				return;
 			}
@@ -183,10 +188,14 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 					<div className='flex items-center gap-2 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<span>{isUsedForEditing ? 'Edit Submission' : 'Make Submission'}</span>
 					</div>
+					<Divider
+						className=' mb-1 mt-3 dark:bg-separatorDark'
+						style={{ background: '#D2D8E0' }}
+					/>
 				</div>
 			}
 			footer={
-				<div className='flex justify-end'>
+				<div className='flex justify-end gap-2 '>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						text='Cancel'
@@ -206,7 +215,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 			}
 			width={600}
 			closable
-			className={`${dmSans.className} ${dmSans.variable} rounded-[14px] dark:bg-section-dark-overlay`}
+			className={`${dmSans.className} ${dmSans.variable} rounded-[14px] p-0 dark:bg-section-dark-overlay`}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin spinning={loadingStatus.isLoading}>
@@ -305,10 +314,10 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 						<Form.Item
 							name='description'
 							rules={[{ required: true, message: 'Please input the description of your request!' }]}
-							className='mb-0 h-min'
+							className='mb-0 h-min pb-0'
 						>
 							<ContentForm
-								className='h-min text-blue-light-high dark:text-blue-dark-high'
+								className=' h-min text-blue-light-high dark:text-blue-dark-high'
 								height={200}
 								value={submission?.content || ''}
 							/>
@@ -322,11 +331,11 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 							/>
 						)}
 
-						{showError && (
+						{errorStatus.isError && (
 							<Alert
 								type='error'
 								message='Form Validation Error'
-								description='Please ensure all required fields are filled out correctly.'
+								description={errorStatus.message}
 							/>
 						)}
 					</Form>

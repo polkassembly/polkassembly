@@ -7,7 +7,7 @@ import { Modal, Spin } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
-import { NotificationStatus } from '~src/types';
+import { EUserCreatedBountySubmissionStatus, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import Address from '~src/ui-components/Address';
@@ -15,6 +15,9 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Balance from '~src/components/Balance';
+import { useTheme } from 'next-themes';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { dmSans } from 'pages/_app';
 
 const ZERO_BN = new BN(0);
 
@@ -22,11 +25,16 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	submissionProposer: string;
+	parentBountyProposerAddress: string;
+	submissionId: string;
+	parentBountyIndex: number;
+	fetchSubmissions?: () => Promise<void>;
 }
 
-const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) => {
+const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBountyProposerAddress, submissionId, parentBountyIndex, fetchSubmissions }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -37,12 +45,34 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 		if (!api || !apiReady || !loginAddress) return;
 
 		const loadBalance = async () => {
-			const accountData = await api.query.system.account(loginAddress);
+			const accountData = await api?.query?.system?.account(loginAddress);
 			setAvailableBalance(new BN(accountData.data.free.toString() || '0'));
 		};
 
 		loadBalance();
 	}, [api, apiReady, loginAddress]);
+
+	const handleSubmissionStatusChange = async (status: EUserCreatedBountySubmissionStatus) => {
+		try {
+			const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/submissions/updateSubmissionStatus', {
+				parentBountyIndex,
+				parentBountyProposerAddress,
+				submissionId,
+				submissionProposerAddress: submissionProposer,
+				updatedStatus: status
+			});
+			if (error || !data) {
+				console.log('error in submission modal', error);
+				setLoadingStatus({ isLoading: false, message: '' });
+				return;
+			}
+			if (data) {
+				fetchSubmissions && fetchSubmissions();
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const handleTip = async () => {
 		if (!api || !apiReady || disable || !submissionProposer) return;
@@ -50,7 +80,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		try {
-			const tx = api.tx.balances.transferKeepAlive(submissionProposer, tipAmount);
+			const tx = api?.tx?.balances?.transferKeepAlive(submissionProposer, tipAmount);
 
 			await executeTx({
 				address: loginAddress,
@@ -60,6 +90,8 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				tx,
 				errorMessageFallback: 'Failed to process the transaction. Please try again later.',
 				onSuccess: () => {
+					handleSubmissionStatusChange(EUserCreatedBountySubmissionStatus.PAID);
+					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Success!',
 						message: 'Tip sent successfully.',
@@ -68,6 +100,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 					setOpen(false);
 				},
 				onFailed: () => {
+					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Error!',
 						message: 'Failed to send tip.',
@@ -77,8 +110,6 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 			});
 		} catch (error) {
 			console.error('Error sending tip:', error);
-		} finally {
-			setLoadingStatus({ isLoading: false, message: '' });
 		}
 	};
 
@@ -89,7 +120,11 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 
 	return (
 		<Modal
-			title='Pay Submission Proposer'
+			title={
+				<div className={`${dmSans.variable} ${dmSans.className} text-xl font-bold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}>
+					Pay Submission Proposer
+				</div>
+			}
 			open={open}
 			onCancel={handleCancel}
 			closeIcon={<CloseIcon />}
@@ -112,10 +147,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				</div>
 			}
 		>
-			<Spin
-				spinning={loadingStatus.isLoading}
-				tip={loadingStatus.message}
-			>
+			<Spin spinning={loadingStatus.isLoading}>
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 					{loginAddress && (
@@ -153,6 +185,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer }: Props) =>
 				</div>
 
 				<BalanceInput
+					theme={theme}
 					label='Amount'
 					placeholder='Enter amount to tip'
 					address={loginAddress}

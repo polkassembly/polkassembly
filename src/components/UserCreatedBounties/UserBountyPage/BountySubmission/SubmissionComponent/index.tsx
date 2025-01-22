@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { EUserCreatedBountyActions, EUserCreatedBountySubmissionStatus, IChildBountySubmission, NotificationStatus } from '~src/types';
+import { EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import NameLabel from '~src/ui-components/NameLabel';
@@ -11,8 +11,6 @@ import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector
 import formatBnBalance from '~src/util/formatBnBalance';
 import dynamic from 'next/dynamic';
 import SubmissionReactionButton from './SubmissionReactionButton';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import queueNotification from '~src/ui-components/QueueNotification';
 
 const SubmissionDetailModal = dynamic(() => import('./SubmissionDetailModal'), {
 	ssr: false
@@ -24,7 +22,17 @@ const CreateSubmissionForm = dynamic(() => import('../CreateSubmissionForm'), {
 	ssr: false
 });
 
-const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { submissions: IChildBountySubmission[]; bountyProposer: string; bountyIndex: number }) => {
+const SubmissionComponent = ({
+	submissions,
+	bountyProposer,
+	bountyIndex,
+	fetchSubmissions
+}: {
+	submissions: IChildBountySubmission[];
+	bountyProposer: string;
+	bountyIndex: number;
+	fetchSubmissions: () => Promise<void>;
+}) => {
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
@@ -32,6 +40,12 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openEditSubmissionModal, setOpenEditSubmissionModal] = useState<boolean>(false);
 	const [editingSubmission, setEditingSubmission] = useState<IChildBountySubmission | null>(null);
+	const [isUsedForDeletingSubmission, setIsUsedForDeletingSubmission] = useState(false);
+
+	const handleEditSuccess = () => {
+		fetchSubmissions && fetchSubmissions();
+		setOpenEditSubmissionModal(false);
+	};
 
 	return (
 		<section className='mt-5 flex flex-col gap-4'>
@@ -91,6 +105,12 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 											<span className='text-xs font-medium text-[#0B8A00]'>APPROVED</span>
 										</div>
 									)}
+									{status === EUserCreatedBountySubmissionStatus.PAID && (
+										<div className='flex items-center justify-between gap-[5px] rounded-sm bg-[#11C7001A] px-[6px] py-1'>
+											<div className='h-[6px] w-[6px] rounded-full bg-[#0B8A00]'></div>
+											<span className='text-xs font-medium text-[#0B8A00]'>PAID</span>
+										</div>
+									)}
 								</div>
 							</div>
 							<div
@@ -110,7 +130,11 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							)}
 							{status === EUserCreatedBountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (
 								<button
-									onClick={() => setOpenTipping(true)}
+									onClick={(e) => {
+										e.stopPropagation();
+										setOpenModalId(null);
+										setOpenTipping(true);
+									}}
 									className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-[#E5007A] px-4 py-2 text-sm font-medium text-white'
 								>
 									Pay
@@ -119,36 +143,9 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							{status === EUserCreatedBountySubmissionStatus.PENDING && proposer == loginAddress && (
 								<div className='flex items-center gap-3'>
 									<button
-										onClick={async () => {
-											const confirmDelete = window.confirm('Are you sure you want to delete this submission?');
-											if (confirmDelete) {
-												try {
-													const requestBody = {
-														action: EUserCreatedBountyActions.DELETE,
-														parentBountyIndex: bountyIndex,
-														proposerAddress: loginAddress,
-														submissionId: submission.id
-													};
-													const { data, error } = await nextApiClientFetch('/api/v1/user-created-bounties/submissions/editOrDeleteSubmission', requestBody);
-													if (error || !data) {
-														console.error('Failed to delete submission:', error);
-														queueNotification({
-															header: 'Error',
-															message: 'Failed to delete submission.',
-															status: NotificationStatus.ERROR
-														});
-													} else {
-														queueNotification({
-															header: 'Success!',
-															message: 'Submission deleted successfully.',
-															status: NotificationStatus.SUCCESS
-														});
-														window.location.reload();
-													}
-												} catch (err) {
-													console.error(err);
-												}
-											}
+										onClick={() => {
+											setIsUsedForDeletingSubmission(true);
+											setOpenModalId(id);
 										}}
 										className='mt-3 h-9 w-full cursor-pointer rounded-[4px] border border-solid border-[#E5007A] bg-transparent px-4 py-2 text-sm font-medium text-pink_primary'
 									>
@@ -173,6 +170,7 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 								parentBountyIndex={bountyIndex}
 								isUsedForEditing={true}
 								submission={editingSubmission}
+								onEditSuccess={handleEditSuccess}
 							/>
 						)}
 						<SubmissionDetailModal
@@ -184,12 +182,21 @@ const SubmissionComponent = ({ submissions, bountyProposer, bountyIndex }: { sub
 							submissionProposerAddress={submission.proposer}
 							parentBountyIndex={bountyIndex}
 							submissionId={submission.id}
+							isUsedForDeletingSubmission={isUsedForDeletingSubmission}
+							fetchSubmissions={fetchSubmissions}
+							setIsUsedForDeletingSubmission={setIsUsedForDeletingSubmission}
+							setOpenModalId={setOpenModalId}
 						/>
-						{!!loginAddress && (
+						{!!loginAddress && status === EUserCreatedBountySubmissionStatus.APPROVED && (
 							<SubmissionTippingModal
+								key={id}
 								open={openTipping}
 								setOpen={setOpenTipping}
 								submissionProposer={proposer || ''}
+								parentBountyIndex={bountyIndex}
+								parentBountyProposerAddress={bountyProposer}
+								submissionId={openModalId || id || ''}
+								fetchSubmissions={fetchSubmissions}
 							/>
 						)}
 					</div>

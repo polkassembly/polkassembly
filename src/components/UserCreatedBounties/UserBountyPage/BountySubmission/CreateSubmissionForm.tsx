@@ -27,9 +27,11 @@ interface Props {
 	parentBountyIndex: number;
 	isUsedForEditing?: boolean;
 	submission?: IChildBountySubmission;
+	onEditSuccess?: (updatedSubmission: IChildBountySubmission) => void;
+	fetchSubmissions?: () => Promise<void>;
 }
 
-const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUsedForEditing, submission }: Props) => {
+const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUsedForEditing, submission, onEditSuccess, fetchSubmissions }: Props) => {
 	const { network } = useNetworkSelector();
 	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -50,7 +52,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 			form.setFieldsValue({
 				title: submission.title || '',
 				requestAmount: submission.reqAmount || '',
-				description: submission.content || '',
+				description: submission?.content || '',
 				links: submission.link || '',
 				loginAddress: submission.proposer || loginAddress
 			});
@@ -152,7 +154,18 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
 			setOpenModal(false);
-			window.location.reload();
+			if (onEditSuccess && isUsedForEditing && submission) {
+				onEditSuccess({
+					...submission,
+					title: values.title,
+					content: values.description,
+					reqAmount: values.requestAmount,
+					link: values.links || '',
+					createdAt: submission.createdAt ?? new Date()
+				});
+			} else {
+				fetchSubmissions && fetchSubmissions();
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -297,6 +310,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 							<ContentForm
 								className='h-min text-blue-light-high dark:text-blue-dark-high'
 								height={200}
+								value={submission?.content || ''}
 							/>
 						</Form.Item>
 

@@ -28,11 +28,10 @@ import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
-import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
 import { getVotesHistory } from '../votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
@@ -43,6 +42,7 @@ import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAd
 import { getTimeline } from '~src/util/getTimeline';
 import console_pretty from '~src/api-utils/console_pretty';
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
+import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -792,8 +792,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				variables: postVariables
 			});
 
-			console_pretty(subsquidRes?.data);
-
 			if (!subsquidRes?.data?.proposals?.length) {
 				console.log('Failed to fetch from subsquid, fetching from subsquare instead');
 				// this will make the control flow to the catch block to fetch from subsquare
@@ -878,85 +876,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
 		const proposedCall = preimage?.proposedCall || postData?.proposalArguments?.args;
-		let remark = '';
-		let requested = BigInt(0);
-		const beneficiaries: IBeneficiary[] = [];
-		let assetId: null | string = null;
 
-		if (proposedCall?.args) {
-			if (
-				proposedCall?.args?.assetKind?.assetId?.value?.interior ||
-				proposedCall?.args?.assetKind?.assetId?.interior?.value ||
-				proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.length
-			) {
-				const call =
-					proposedCall?.args?.assetKind?.assetId?.value?.interior?.value ||
-					proposedCall?.args?.assetKind?.assetId?.interior?.value ||
-					proposedCall?.args?.calls?.map((item: any) => item?.value?.assetKind?.assetId?.interior?.value || item?.value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
-				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-			}
-
-			proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
-
-			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
-				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
-			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id) {
-				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.[0]?.id, network);
-			}
-
-			if (proposedCall?.args?.amount) {
-				requested = proposedCall?.args?.amount;
-				if (proposedCall?.args?.beneficiary) {
-					beneficiaries.push({
-						address:
-							typeof proposedCall?.args?.beneficiary === 'string'
-								? proposedCall?.args?.beneficiary
-								: (proposedCall?.args?.beneficiary as any)?.value?.length
-								? (proposedCall?.args?.beneficiary as any)?.value
-								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) ||
-								  (proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.[0]?.id ||
-								  '',
-						amount: proposedCall?.args?.amount
-					});
-				}
-			} else {
-				const calls = proposedCall?.args?.calls;
-				if (calls && Array.isArray(calls) && calls.length > 0) {
-					if (assetId) {
-						calls.forEach((call) => {
-							if (call?.value?.beneficiary?.value?.interior?.value?.id) {
-								call.value.beneficiary.value.interior.value.id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value.id, network);
-							} else if (call?.value?.beneficiary?.value?.interior?.value?.[0]?.id) {
-								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value?.[0].id, network);
-							}
-
-							const beneficiary = {
-								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value?.[0]?.id || '',
-								amount: call?.value?.amount
-							};
-							requested += BigInt(call?.value?.amount || 0);
-
-							beneficiaries.push(beneficiary);
-						});
-					} else {
-						calls.forEach((call) => {
-							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-								remark += call.remark + '\n';
-							}
-							if (call && call.amount) {
-								requested += BigInt(call.amount);
-								if (call.beneficiary) {
-									beneficiaries.push({
-										address: call.beneficiary as string,
-										amount: call.amount
-									});
-								}
-							}
-						});
-					}
-				}
-			}
+		if (proposalArguments?.args) {
+			proposalArguments.args = convertAnyHexToASCII(proposalArguments.args, network) || proposalArguments?.args;
 		}
+
+		const beneficiariesInfo = preimageToBeneficiaries(proposedCall, network);
+
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
@@ -984,8 +910,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const post: IPostResponse = {
 			allowedCommentors: EAllowedCommentor.ALL,
 			announcement: postData?.announcement,
-			assetId: assetId || null,
-			beneficiaries,
+			assetId: beneficiariesInfo?.assetId || null,
+			beneficiaries: beneficiariesInfo?.beneficiaries || [],
 			bond: postData?.bond,
 			cid: postData?.cid,
 			code: postData?.code,
@@ -1026,7 +952,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: requested ? requested.toString() : undefined,
+			requested: Array.isArray(beneficiariesInfo?.beneficiaries) && beneficiariesInfo?.requested ? beneficiariesInfo?.requested.toString() : undefined,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,
@@ -1365,8 +1291,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		if (!post.content || post.content?.trim().length === 0) {
-			if (remark) {
-				post.content = remark.replace(/\n/g, '<br/>');
+			if (beneficiariesInfo?.remark) {
+				post.content = beneficiariesInfo?.remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
 				const identity = post?.identity;

@@ -75,6 +75,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 	const [showError, setShowError] = useState(false);
 	const onAccountChange = (address: string) => setAddress(address);
 	const currentBlock = useCurrentBlock();
+	const [isPureProxy, setIsPureProxy] = useState(false);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -161,12 +162,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		const fetchInitialBalance = async () => {
-			try {
-				const accountData = await api?.query?.system?.account(address || loginAddress);
+	const fetchInitialBalance = async () => {
+		try {
+			const accountData = await api?.query?.system?.account(address || loginAddress);
+			if (accountData) {
 				const balance = new BN(accountData.data.free.toString() || '0');
 				setAvailableBalance(balance);
 
@@ -179,10 +178,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					setShowBalanceAlert(true);
 				}
 				setShowBalanceAlert(false);
-			} catch (error) {
-				console.error('Failed to fetch initial balance:', error);
 			}
-		};
+		} catch (error) {
+			console.error('Failed to fetch initial balance:', error);
+		}
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
 
 		openModal && fetchInitialBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -433,8 +436,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									form.setFieldsValue({ loginAddress: address });
 								}}
 								onBalanceChange={handleOnBalanceChange}
-								className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
+								className={`${dmSans.className} ${dmSans.variable} rounded-[4px] border text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] h-10 px-3 py-1 border'
 								withoutInfo={true}
 								isBalanceUpdated={true}
 								linkAddressTextDisabled
@@ -447,7 +450,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						{/* Proxy Address */}
 						<span className={`${dmSans.className} ${dmSans.variable} text-sm tracking-tight text-blue-light-medium dark:text-blue-dark-medium`}>
 							{' '}
-							Proxy Address <span className='text-lg font-medium text-[#FF3C5F]'>*</span>
+							Proxy Address <span className='text-lg font-medium text-red-light-medium'>*</span>
 						</span>
 						<Form.Item
 							name='proxyAddress'
@@ -492,14 +495,14 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									style={{
 										width: '100%',
 										height: '40px',
-										borderRadius: '6px'
+										borderRadius: '4px'
 									}}
 									placeholder='Select an address for proxy'
 									onChange={(value) => {
 										form.setFieldsValue({ proxyAddress: value });
 									}}
 									className='h-10 rounded-[6px] text-blue-light-high dark:text-blue-dark-high'
-									disabled={form.getFieldValue('createPureProxy')}
+									disabled={isPureProxy}
 									popupClassName='dark:bg-section-dark-garyBackground'
 									filterOption={(inputValue, option) => option?.value.toLowerCase().includes(inputValue.toLowerCase()) ?? false}
 								/>
@@ -540,10 +543,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						>
 							<Checkbox
 								onChange={(e) => {
-									form.setFieldsValue({ createPureProxy: e.target.checked });
-									if (e.target.checked) {
-										form.setFieldsValue({ proxyAddress: '' });
-									}
+									setIsPureProxy(e.target.checked);
+									form.setFieldsValue({
+										proxyAddress: e.target.checked ? '' : undefined
+									});
 								}}
 							>
 								<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Create Pure Proxy</span>
@@ -577,10 +580,10 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 									}
 								}
 							]}
-							className='-mt-[2px] mb-0'
+							className='mb-0 mt-[2px] rounded-[4px]'
 						>
 							<Select
-								className='flex w-full items-center rounded-[4px] py-1 text-center'
+								className='custom-select'
 								style={{ width: '100%', textAlign: 'center' }}
 								value={form.getFieldValue('proxyType')}
 								size='large'
@@ -588,14 +591,15 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								onChange={(value) => form.setFieldsValue({ proxyType: value })}
 								options={Object.entries(proxyTypeDescriptions).map(([key, description], index) => ({
 									label: (
-										<div className={`${index === 0 ? 'mt-[7px]' : ''} mt-2 items-center gap-1 sm:flex`}>
+										<div className={`${index === 0 ? 'mt-2' : ''} mt-2 items-center gap-1 sm:flex`}>
 											<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>{key}</span>
 											<span className='text-sm italic text-blue-light-medium dark:text-blue-dark-medium'>({description})</span>
 										</div>
 									),
 									value: key
 								}))}
-								disabled={form.getFieldValue('createPureProxy')} // Disable selection when createPureProxy is true
+								disabled={isPureProxy}
+								popupClassName='custom-select-dropdown'
 							/>
 						</Form.Item>
 
@@ -604,7 +608,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 							className='mt-4 flex cursor-pointer items-center gap-2'
 							onClick={() => setOpenAdvanced(!openAdvanced)}
 						>
-							<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+							<span className='text-sm font-medium text-pink_primary dark:text-[#FF4098] '>Advanced Details</span>
 							<DownArrow className='down-icon' />
 						</div>
 
@@ -642,7 +646,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 												{enactment.key === EEnactment.At_Block_No && (
 													<Form.Item
 														name='at_block'
-														className='mt-0 pt-0'
+														className='mt-2 pl-3 pt-1'
 														rules={[{ required: true, message: 'Invalid Block no.' }]}
 													>
 														<Input
@@ -672,7 +676,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 														rules={[{ required: true, message: 'Invalid no. of Blocks' }]}
 													>
 														<Input
-															className='mt-3 w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+															className='mt-3 w-[100px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 															onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
 														/>
 													</Form.Item>
@@ -737,6 +741,22 @@ export default styled(CreateProxyMainModal)`
 	.ant-modal-content {
 		padding: 0px !important;
 		border-radius: 14px;
+	}
+
+	.custom-select .ant-select-selector {
+		border-radius: 4px !important;
+	}
+
+	.custom-select .ant-select {
+		border-radius: 4px !important;
+	}
+
+	.custom-select-dropdown .ant-select-item {
+		border-radius: 4px !important;
+	}
+
+	.custom-select .ant-select-arrow {
+		margin-top: -9px;
 	}
 
 	.proxy-address {

@@ -114,7 +114,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		})();
 
 		if (isReferendum2) {
-			const referendumInfoOf = await newAPI.query.referenda.referendumInfoFor(postId);
+			const referendumInfoOf = await newAPI.query?.referenda?.referendumInfoFor(postId);
 			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({

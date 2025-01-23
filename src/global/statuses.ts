@@ -312,7 +312,8 @@ export const childBountyStatus = {
 	ADDED: 'Added',
 	AWARDED: 'Awarded',
 	CANCELLED: 'Cancelled',
-	CLAIMED: 'Claimed'
+	CLAIMED: 'Claimed',
+	CURATOR_PROPOSED: 'CuratorProposed'
 };
 
 export const childBountyStatusOptions = [

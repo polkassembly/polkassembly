@@ -21,6 +21,7 @@ export interface IBountyListing {
 	claimedAmount?: string;
 	claimed?: number;
 	payee?: string;
+	totalChildBountiesAmt?: string;
 	status: string;
 	source?: string;
 	totalChildBountiesCount?: number;

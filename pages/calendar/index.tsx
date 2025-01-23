@@ -3,52 +3,30 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Button, Checkbox, MenuProps, Spin } from 'antd';
-import { Badge, Col, Divider, Row, Space } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
+import { Button, Spin } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
-import Image from 'next/image';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Calendar, DateHeaderProps, dayjsLocalizer, View } from 'react-big-calendar';
-import SidebarRight from 'src/components/SidebarRight';
+import React, { FC, useEffect, useState } from 'react';
+import { Calendar, DateHeaderProps, dayjsLocalizer } from 'react-big-calendar';
 import { approvalStatus } from 'src/global/statuses';
-import { NetworkEvent, NotificationStatus } from 'src/types';
 import { Role } from 'src/types';
-import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
-import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext } from '~src/context';
-import ErrorAlert from '~src/ui-components/ErrorAlert';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import CreateEventSidebar from '../../src/components/Calendar/CreateEventSidebar';
-import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
-import CustomWeekHeader, { TimeGutterHeader } from '../../src/components/Calendar/CustomWeekHeader';
-import {
-	fetchAuctionInfo,
-	fetchCouncilElection,
-	fetchCouncilMotions,
-	fetchDemocracyDispatches,
-	fetchDemocracyLaunch,
-	fetchParachainLease,
-	fetchScheduled,
-	fetchSocietyChallenge,
-	fetchSocietyRotate,
-	fetchStakingInfo,
-	fetchTreasurySpend
-} from '~src/util/getCalendarEvents';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import { useDispatch } from 'react-redux';
-import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
+import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+
+const CalendarEvents = dynamic(() => import('~src/components/Calendar/CalendarEvents'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 interface ICalendarViewProps {
 	className?: string;
@@ -118,12 +96,20 @@ const StyledCalendar: any = styled(Calendar)`
 
 		.rbc-header {
 			font-size: 16px;
-			font-weight: 400 !important;
+			font-weight: 800 !important;
 			border: none !important;
-			text-align: left;
+			text-align: center;
 			margin-left: 2px;
+
+			span {
+				font-size: 14px;
+				font-weight: 600 !important;
+				text-transform: uppercase;
+				color: ${(props: any) => (props.theme === 'dark' ? '#9e9e9e' : 'var(--bodyBlue)')} !important;
+			}
 		}
 	}
+
 	.rbc-date-cell {
 		text-align: center !important;
 
@@ -139,6 +125,17 @@ const StyledCalendar: any = styled(Calendar)`
 			&:hover {
 				background: #e8e8e8;
 				border: 1px solid #e8e8e8;
+			}
+		}
+
+		&.rbc-current {
+			button {
+				background-color: #e6007a;
+				color: #fff;
+				border: 1px solid #e6007a;
+				border-radius: 50%;
+				height: 30px;
+				width: 30px;
 			}
 		}
 
@@ -172,313 +169,25 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 };
 
-const categoryOptions = [
-	{ label: <span className='dark:text-blue-dark-medium'>Staking</span>, value: 'Staking' },
-	{ label: <span className='dark:text-blue-dark-medium'>Council</span>, value: 'Council' },
-	{ label: <span className='dark:text-blue-dark-medium'>Schedule</span>, value: 'Schedule' },
-	{ label: <span className='dark:text-blue-dark-medium'>Treasury</span>, value: 'Treasury' },
-	{ label: <span className='dark:text-blue-dark-medium'>Democracy</span>, value: 'Democracy' },
-	{ label: <span className='dark:text-blue-dark-medium'>Society</span>, value: 'Society' },
-	{ label: <span className='dark:text-blue-dark-medium'>Parachains</span>, value: 'Parachains' }
-];
-
-const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy', 'Society', 'Parachains'];
-
-const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
-	const { api, apiReady } = useApiContext();
+const CalendarView: FC<ICalendarViewProps> = ({ className, network }) => {
 	const dispatch = useDispatch();
-	const [width, setWidth] = useState(0);
-	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
-	const [error, setError] = useState('');
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
-	const [selectedView, setSelectedView] = useState<View>('day');
-	const [selectedNetwork, setSelectedNetwork] = useState<string>(network);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [selectedCategories, setSelectedCategories] = useState<CheckboxValueType[]>(initCategories);
-	const [sidebarEvent, setSidebarEvent] = useState<any>();
-	const [sidebarCreateEvent, setSidebarCreateEvent] = useState<boolean>(false);
-	const [categoriesLoading, setCategoriesLoading] = useState(true);
-
+	const [loading, setLoading] = useState<boolean>(false);
 	const [queryApprovalStatus, setQueryApprovalStatus] = useState<string>(approvalStatus.APPROVED);
-	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
-		if (window) {
-			const width = window.innerWidth > 0 ? window.innerWidth : screen.width;
-			setWidth(width);
-			setCalLeftPanelWidth(document?.getElementById('calendar-left-panel')?.clientWidth);
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		if (!api || !apiReady || ['polymesh'].includes(network)) {
-			setCategoriesLoading(false);
-			return;
-		}
-
-		// TODO: use Promise.allSettled instead
-		(async () => {
-			setCategoriesLoading(true);
-			const eventsArr: any[] = [];
-
-			if (selectedCategories.includes('Staking')) {
-				const stakingInfoEvents = await fetchStakingInfo(api, network);
-				stakingInfoEvents.forEach((eventObj, i) => {
-					const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
-					const title = type.charAt(0).toUpperCase() + type.slice(1);
-
-					eventsArr.push({
-						content:
-							eventObj.type === 'stakingEpoch'
-								? `Start of a new staking session ${eventObj?.data?.index}`
-								: eventObj.type === 'stakingEra'
-								? `Start of a new staking era ${eventObj?.data?.index}`
-								: `${eventObj.type} ${eventObj?.data?.index}`,
-						end_time: dayjs(eventObj.startDate).toDate(),
-						id: `stakingInfoEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.startDate).toDate(),
-						status: 'approved',
-						title,
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Council')) {
-				const councilMotionEvents = await fetchCouncilMotions(api, network);
-
-				councilMotionEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Council Motion ${eventObj?.data?.hash}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `councilMotionEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Council Motion',
-						url: ''
-					});
-				});
-
-				const councilElectionEvents = await fetchCouncilElection(api, network);
-				councilElectionEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `councilElectionEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Start New Council Election',
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Schedule')) {
-				const scheduledEvents = await fetchScheduled(api, network);
-
-				scheduledEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: eventObj?.data?.id ? `Execute named scheduled task ${eventObj?.data?.id}` : 'Execute anonymous scheduled task',
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `scheduledEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Scheduled Task',
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Treasury')) {
-				const treasurySpendEvents = await fetchTreasurySpend(api, network);
-
-				treasurySpendEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `treasurySpendEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Start Spend Period',
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Democracy')) {
-				const democracyDispatchEvents = await fetchDemocracyDispatches(api, network);
-
-				democracyDispatchEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Democracy Dispatch ${eventObj?.data?.index}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `democracyDispatchEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Democracy Dispatch',
-						url: ''
-					});
-				});
-
-				const democracyLaunchEvents = await fetchDemocracyLaunch(api, network);
-
-				democracyLaunchEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `democracyLaunchEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Start Referendum Voting Period',
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Society')) {
-				const societyRotateEvents = await fetchSocietyRotate(api, network);
-
-				societyRotateEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `societyRotateEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'New Members & Bids',
-						url: ''
-					});
-				});
-
-				const societyChallengeEvents = await fetchSocietyChallenge(api, network);
-				societyChallengeEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `societyChallengeEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Start Membership Challenge Period',
-						url: ''
-					});
-				});
-			}
-
-			if (selectedCategories.includes('Parachains')) {
-				const auctionInfoEvents = await fetchAuctionInfo(api, network);
-
-				auctionInfoEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `auctionInfoEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'End Parachain Auction',
-						url: ''
-					});
-				});
-
-				const parachainLeaseEvents = await fetchParachainLease(api, network);
-
-				parachainLeaseEvents.forEach((eventObj, i) => {
-					eventsArr.push({
-						content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
-						end_time: dayjs(eventObj.endDate).toDate(),
-						id: `parachainLeaseEvent_${i}`,
-						location: '',
-						start_time: dayjs(eventObj.endDate).toDate(),
-						status: 'approved',
-						title: 'Start Parachain Lease Period',
-						url: ''
-					});
-				});
-			}
-
-			setCalendarEvents(eventsArr);
-			setCategoriesLoading(false);
-		})();
-	}, [api, apiReady, network, selectedCategories]);
-
-	// calculate #route-wrapper height with margin for sidebar.
-
-	// for negative margin for toolbar
-
-	const { id, allowed_roles } = useUserDetailsSelector();
+	const { allowed_roles } = useUserDetailsSelector();
 	let accessible = false;
 	if (allowed_roles && allowed_roles?.length > 0 && allowed_roles.includes(ALLOWED_ROLE)) {
 		accessible = true;
 	}
-
-	const approvalStatusDropdown: MenuProps['items'] = [
-		{
-			key: approvalStatus.APPROVED,
-			label: 'Approved'
-		},
-		{
-			key: approvalStatus.PENDING,
-			label: 'Pending'
-		},
-		{
-			key: approvalStatus.REJECTED,
-			label: 'Rejected'
-		}
-	];
-
-	const getNetworkEvents = useCallback(async () => {
-		const { data, error: fetchError } = await nextApiClientFetch<NetworkEvent[]>('api/v1/events', {
-			approval_status: queryApprovalStatus
-		});
-
-		if (fetchError || !data) {
-			console.log('error fetching events : ', fetchError);
-			setError(fetchError || 'Error in fetching events');
-		}
-
-		if (data) {
-			const eventsArr: any[] = calendarEvents;
-
-			data.forEach((eventObj) => {
-				const eventDate = new Date(eventObj.end_time);
-				const currDate = new Date();
-				if (eventDate.getTime() >= currDate.getTime()) {
-					eventsArr.push({
-						content: eventObj.content,
-						end_time: dayjs(eventObj.end_time).toDate(),
-						id: eventObj.id,
-						location: eventObj.location,
-						start_time: dayjs(eventObj.end_time).toDate(),
-						status: eventObj.status,
-						title: eventObj.title,
-						url: eventObj.url
-					});
-				}
-			});
-			setCalendarEvents(eventsArr);
-			if (emitCalendarEvents) {
-				emitCalendarEvents(eventsArr);
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [emitCalendarEvents, queryApprovalStatus]);
-
-	useEffect(() => {
-		getNetworkEvents();
-	}, [getNetworkEvents]);
 
 	const togglePendingEvents = () => {
 		if (queryApprovalStatus != approvalStatus.APPROVED) {
@@ -487,62 +196,6 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 			setQueryApprovalStatus(approvalStatus.PENDING);
 		}
 	};
-
-	const onApprovalStatusChange: MenuProps['onClick'] = ({ key }) => {
-		const status = key as string;
-		setEventApprovalStatus(status);
-	};
-
-	const handleUpdateApproval = async () => {
-		if (!sidebarEvent || !eventApprovalStatus || Object.keys(sidebarEvent).length === 0) {
-			return;
-		}
-
-		const { data, error: fetchError } = await nextApiClientFetch<NetworkEvent[]>('api/v1/auth/actions/updateApprovalStatus', {
-			approval_status: queryApprovalStatus,
-			eventId: sidebarEvent.id
-		});
-
-		if (fetchError || !data) {
-			setError(fetchError || 'Error in fetching events');
-			queueNotification({
-				header: 'Error!',
-				message: 'Error updating event',
-				status: NotificationStatus.ERROR
-			});
-			console.error('Error updating event :', fetchError);
-		}
-
-		if (data) {
-			setError('');
-			queueNotification({
-				header: 'Success!',
-				message: 'Event updated successfully',
-				status: NotificationStatus.SUCCESS
-			});
-			setCalendarEvents((prev) => {
-				return (
-					prev?.map((event) => {
-						if (event.id === sidebarEvent.id) {
-							event.status = queryApprovalStatus.toLowerCase();
-						}
-						return {
-							...event
-						};
-					}) || []
-				);
-			});
-		}
-	};
-
-	function showEventSidebar(event: any) {
-		if (small) {
-			return;
-		}
-
-		setEventApprovalStatus(queryApprovalStatus);
-		setSidebarEvent(event);
-	}
 
 	const EventWrapperComponent = ({ event, children }: any) => {
 		const newChildren = { ...children };
@@ -553,21 +206,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 		return <div className='custom-event-wrapper'>{newChildren}</div>;
 	};
 
-	function Event({ event }: { event: any }) {
-		return (
-			<span
-				className='event-container-span'
-				onClick={() => showEventSidebar(event)}
-			>
-				{/* { (!(small || width < 768)) &&  <span className='event-time'> {dayjs(event.end_time).format('LT').toLowerCase()}</span> } */}
-				{event.title}
-			</span>
-		);
-	}
-
 	function showDay(date: Date) {
 		setSelectedDate(date);
-		setSelectedView('day');
 	}
 
 	function setCalendarToToday() {
@@ -578,17 +218,11 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 		return <button onClick={() => showDay(date)}>{date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}</button>;
 	};
 
-	const listData = [
-		{ color: '#EA8612', label: <span className='dark:text-blue-dark-medium'>Working</span> },
-		{ color: '#5BC044', label: <span className='dark:text-blue-dark-medium'>Completed</span> },
-		{ color: '#FF0000', label: <span className='dark:text-blue-dark-medium'>Overdue</span> }
-	];
-
 	return (
 		<>
 			<div className={`${className} mb-5 rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay`}>
 				<Spin
-					spinning={categoriesLoading}
+					spinning={loading}
 					indicator={<></>}
 				>
 					<StyledCalendar
@@ -598,8 +232,10 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						onNavigate={setSelectedDate}
 						localizer={localizer}
 						events={calendarEvents}
-						startAccessor='start_time'
-						endAccessor='end_time'
+						startAccessor='createdAt'
+						endAccessor='createdAt'
+						defaultView='month'
+						views={['month']}
 						components={{
 							event: () => null,
 							eventWrapper: EventWrapperComponent,
@@ -610,53 +246,15 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<CustomToolbarMini
 									{...props}
 									setCalendarToToday={setCalendarToToday}
-									leftPanelWidth={calLeftPanelWidth}
+									setSelectedDate={setSelectedDate}
 								/>
 							)
 						}}
 					/>
 				</Spin>
-				<div className='flex flex-col justify-between gap-10 p-5 pl-2 pt-0 lg:flex-row'>
-					<div>
-						<h4 className='text-md mb-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Proposal Status: </h4>
-						<Space direction='vertical'>
-							{listData.map((item) => (
-								<Badge
-									className='dark:text-blue-dark-medium'
-									key={item.color}
-									text={item.label}
-									color={item.color}
-								/>
-							))}
-						</Space>
-					</div>
-
-					<div>
-						<h4 className='text-md mb-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>Categories: </h4>
-						<Checkbox.Group
-							disabled={categoriesLoading}
-							className='flex-wrap'
-							defaultValue={initCategories}
-							onChange={(checkedValues) => setSelectedCategories(checkedValues)}
-						>
-							<Row>
-								{categoryOptions.map((item) => (
-									<Col
-										key={item.value}
-										span={8}
-									>
-										<Checkbox value={item.value}>{item.label}</Checkbox>
-									</Col>
-								))}
-							</Row>
-						</Checkbox.Group>
-					</div>
-				</div>
 			</div>
 
 			<div className={`${className} rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay`}>
-				{error && <ErrorAlert errorMsg={error} />}
-
 				{accessible && (
 					<div className='mt-2 flex w-full items-center justify-center gap-2 text-base font-medium text-sidebarBlue dark:text-blue-dark-medium'>
 						Show Pending Events:
@@ -665,170 +263,20 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								queryApprovalStatus == approvalStatus.APPROVED ? 'justify-start' : 'justify-end'
 							}`}
 							onClick={togglePendingEvents}
-							disabled={Boolean(sidebarEvent)}
+							// disabled={Boolean(sidebarEvent)}
 						>
 							<span className='hidden'>toggle pending events button</span>
 							<span className='h-5 w-5 rounded-full border-none bg-pink_primary' />
 						</Button>
 					</div>
 				)}
-
-				<div>
-					<Spin spinning={categoriesLoading}>
-						{!categoriesLoading ? ( // this is needed to render (+3 more) without changing views
-							<StyledCalendar
-								theme={theme as any}
-								className={`events-calendar ${small || width < 768 ? 'small' : ''}`}
-								localizer={localizer}
-								date={selectedDate}
-								view={selectedView}
-								events={calendarEvents}
-								popup={false}
-								startAccessor='start_time'
-								endAccessor='end_time'
-								components={{
-									event: Event,
-									eventWrapper: EventWrapperComponent,
-									timeGutterHeader: () => (
-										<TimeGutterHeader
-											localizer={localizer}
-											date={selectedDate}
-											selectedView={selectedView}
-										/>
-									),
-									toolbar: (props: any) => (
-										<CustomToolbar
-											{...props}
-											small={small}
-											width={width}
-											selectedNetwork={selectedNetwork}
-											setSelectedNetwork={setSelectedNetwork}
-											setSidebarCreateEvent={setSidebarCreateEvent}
-											isLoggedIn={Boolean(id)}
-											leftPanelWidth={calLeftPanelWidth}
-										/>
-									),
-									week: {
-										header: (props: any) => (
-											<CustomWeekHeader
-												{...props}
-												small={small || width < 768}
-											/>
-										)
-									}
-								}}
-								formats={{
-									timeGutterFormat: 'h A'
-								}}
-								onNavigate={setSelectedDate}
-								onView={setSelectedView}
-								views={{
-									agenda: true,
-									day: true,
-									month: true,
-									week: true,
-									work_week: false
-								}}
-							/>
-						) : (
-							<div className='flex max-h-screen flex-col gap-y-6 overflow-y-hidden px-4'>
-								<Skeleton />
-							</div>
-						)}
-					</Spin>
-				</div>
-			</div>
-
-			{/* Event View Sidebar */}
-			{sidebarEvent && (
-				<SidebarRight
-					open={sidebarEvent}
-					closeSidebar={() => setSidebarEvent(false)}
-				>
-					<div className='events-sidebar'>
-						{accessible && (
-							<div className='approval-status-div'>
-								<span>Status: </span>
-								<Dropdown
-									// value={eventApprovalStatus}
-									menu={{ items: approvalStatusDropdown, onClick: onApprovalStatusChange }}
-									// disabled={loadingUpdate}
-								>
-									{eventApprovalStatus}
-								</Dropdown>
-								<CustomButton
-									variant='primary'
-									text='Save'
-									onClick={handleUpdateApproval}
-								/>
-							</div>
-						)}
-						<div className='event-sidebar-header d-flex'>
-							<div className='d-flex'>
-								<div className={`status-icon ${dayjs(sidebarEvent.end_time).isBefore(new Date()) ? 'overdue-color' : `${sidebarEvent.status?.toLowerCase()}-color`}`}></div>
-								<h1 className='dashboard-heading mb-2'>{sidebarEvent.title}</h1>
-							</div>
-						</div>
-
-						<div className='sidebar-event-datetime'>
-							<span>{dayjs(sidebarEvent.end_time).format('MMMM D')}</span> <span>{dayjs(sidebarEvent.end_time).format('h:mm a')}</span>
-						</div>
-
-						{sidebarEvent.content && (
-							<div className='sidebar-event-content'>
-								{`${sidebarEvent.content.substring(0, 769)} ${sidebarEvent.content.length > 769 ? '...' : ''}`}
-								{sidebarEvent.content.length > 769 && (
-									<>
-										<br />
-										<a
-											href={sidebarEvent.url}
-											target='_blank'
-											rel='noreferrer'
-										>
-											Show More
-										</a>
-									</>
-								)}
-							</div>
-						)}
-
-						<Divider />
-
-						<div className='sidebar-event-links'>
-							<h3 className='dashboard-heading mb-2 flex items-center gap-x-2'>
-								{' '}
-								<Image
-									alt='link'
-									src={chainLink}
-									height={16}
-									width={16}
-								/>{' '}
-								Relevant Links
-							</h3>
-							<div className='links-container'>
-								<a
-									href={sidebarEvent.url}
-									target='_blank'
-									rel='noreferrer'
-								>
-									{sidebarEvent.url}
-								</a>
-							</div>
-						</div>
-					</div>
-				</SidebarRight>
-			)}
-
-			{/* Create Event Sidebar */}
-			{sidebarCreateEvent && (
-				<CreateEventSidebar
-					open={sidebarCreateEvent}
-					setSidebarCreateEvent={setSidebarCreateEvent}
-					selectedNetwork={selectedNetwork}
-					className='create-event-sidebar'
-					id={id}
+				{/* Events */}
+				<CalendarEvents
+					selectedDate={selectedDate}
+					setCalendarEvents={setCalendarEvents}
+					setCalendarLoading={setLoading}
 				/>
-			)}
+			</div>
 		</>
 	);
 };
@@ -998,15 +446,6 @@ export default styled(CalendarView)`
 
 		.rbc-month-header {
 			margin-bottom: 8px;
-		}
-
-		.rbc-header {
-			span {
-				font-size: 12px;
-				font-weight: 400 !important;
-				text-transform: uppercase;
-				color: #bbb;
-			}
 		}
 
 		.custom-event-wrapper {

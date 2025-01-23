@@ -598,6 +598,7 @@ export enum EAddressOtherTextType {
 export interface IBeneficiary {
 	address: string;
 	amount: string;
+	genralIndex?: string | null;
 }
 
 export interface IRating {
@@ -787,6 +788,7 @@ export interface IChildBountiesResponse {
 
 export interface IUserPost {
 	assetId?: null | string;
+	beneficiaries?: IBeneficiary[];
 	content: string;
 	created_at: Date;
 	id: string;
@@ -1257,4 +1259,18 @@ export enum EUserCreatedBountyActions {
 	EDIT = 'edit',
 	DELETE = 'delete',
 	APPROVE = 'approve'
+}
+
+export interface ICalendarEvent {
+	createdAt: Date;
+	index: number;
+	proposalType: ProposalType;
+	parentBountyIndex?: number;
+	proposer: string;
+	source: 'polkasembly' | 'subsquare';
+	status: string;
+	statusHistory: { status: string; timestamp: Date; block: number }[];
+	title: string;
+	trackNo?: number;
+	blockNo?: number;
 }

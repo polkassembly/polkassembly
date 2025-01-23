@@ -117,8 +117,11 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 			let claimedAmount = ZERO_BN;
 			let totalChildBountiesCount = 0;
 
+			let reward = ZERO_BN;
+
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string; createdAt: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
+				reward = reward?.add(amount);
 
 				if ([bountyStatus.CLAIMED].includes(childBounty?.status)) {
 					claimedAmount = claimedAmount.add(amount);
@@ -145,6 +148,7 @@ const handler: NextApiHandler<IRes | MessageType> = async (req, res) => {
 				source: 'polkassembly',
 				status: subsquidBounty?.status,
 				title: '',
+				totalChildBountiesAmt: reward.gt(ZERO_BN) ? reward?.toString() : subsquidBounty?.reward,
 				totalChildBountiesCount: totalChildBountiesCount || 0
 			};
 

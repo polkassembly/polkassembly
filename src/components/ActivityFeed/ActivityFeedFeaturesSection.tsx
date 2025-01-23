@@ -3,14 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { trackEvent } from 'analytics';
-import { Modal } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { dmSans } from 'pages/_app';
 import { useState, useEffect } from 'react';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -34,9 +30,7 @@ function FeaturesSection() {
 	const [open, setOpen] = useState(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState(false);
 	const { network } = useNetworkSelector();
-	const [identityMobileModal, setIdentityMobileModal] = useState(false);
 	const [openSignup, setSignupOpen] = useState(false);
-	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const features = [
 		{
 			description: 'Delegate your vote and catchup with Delegation Dashboard',
@@ -86,14 +80,11 @@ function FeaturesSection() {
 
 	const handleIdentityButtonClick = () => {
 		const address = localStorage?.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
 
@@ -140,24 +131,6 @@ function FeaturesSection() {
 					</div>
 				</Link>
 			</div>
-			<Modal
-				zIndex={100}
-				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
-				onCancel={() => setIdentityMobileModal(false)}
-				className={`${dmSans?.className} ${dmSans?.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
-				wrapClassName='dark:bg-modalOverlayDark'
-			>
-				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<ImageIcon
-						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
-					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
-				</div>
-			</Modal>
 			{onchainIdentitySupportedNetwork?.includes(network) && (
 				<OnchainIdentity
 					open={open}

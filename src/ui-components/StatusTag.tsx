@@ -66,7 +66,11 @@ export default styled(StatusTag).attrs(({ status, theme }: any) => ({
 		background: transparent;
 	}
 
-	&.${gov2ReferendumStatus.DECIDING}, &.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED}, &.${bountyStatus.ACTIVE}, &.${bountyStatus.EXTENDED}, &.${tipStatus.CLOSING} {
+	&.${gov2ReferendumStatus.DECIDING},
+		&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},&.${childBountyStatus.CURATOR_PROPOSED},
+		&.${bountyStatus.ACTIVE},
+		&.${bountyStatus.EXTENDED},
+		&.${tipStatus.CLOSING} {
 		color: #fff;
 		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #D05704' : '2px solid #FF6700')} !important;
 		background: ${(props: any) => (props.theme === 'dark' ? '#D05704' : '#FF6700')} !important;

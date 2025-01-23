@@ -59,7 +59,6 @@ const IdentityFormActionButtons = ({
 						!okAll ||
 						loading ||
 						(availableBalance && availableBalance.lte(totalFee)) ||
-						gasFee.lte(ZERO_BN) ||
 						handleAllowSetIdentity() ||
 						(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
 					}
@@ -68,7 +67,6 @@ const IdentityFormActionButtons = ({
 					className={`rounded-[4px] ${
 						(!okAll ||
 							loading ||
-							gasFee.lte(ZERO_BN) ||
 							(availableBalance && availableBalance.lte(totalFee)) ||
 							handleAllowSetIdentity() ||
 							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&

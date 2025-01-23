@@ -71,8 +71,10 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 			let claimedAmount = ZERO_BN;
 			let totalChildBountiesCount = 0;
 
+			let reward = ZERO_BN;
 			subsquidChildBountyData.map((childBounty: { status: string; reward: string; curator: string }) => {
 				const amount = new BN(childBounty?.reward || 0);
+				reward = reward?.add(amount);
 
 				if ([bountyStatus.CLAIMED].includes(childBounty.status)) {
 					if (subsquidBounty?.curator === childBounty?.curator) {
@@ -94,6 +96,7 @@ export async function getAllBounties({ page, network, curatorAddress }: Args): P
 				source: 'polkassembly',
 				status: subsquidBounty?.status,
 				title: '',
+				totalChildBountiesAmt: reward.gt(ZERO_BN) ? reward?.toString() : subsquidBounty?.reward,
 				totalChildBountiesCount: totalChildBountiesCount || 0
 			};
 

@@ -164,7 +164,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 			}
 
 			(async () => {
-				const referendumInfoOf = await api.query.referenda.referendumInfoFor(onchainId);
+				const referendumInfoOf = await api.query?.referenda?.referendumInfoFor(onchainId);
 				const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 				if (parsedReferendumInfo?.ongoing?.tally) {
 					setTallyData({

@@ -41,7 +41,6 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { getTimeline } from '~src/util/getTimeline';
-import console_pretty from '~src/api-utils/console_pretty';
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 
 export const isDataExist = (data: any) => {
@@ -791,8 +790,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				query: postQuery,
 				variables: postVariables
 			});
-
-			console_pretty(subsquidRes?.data);
 
 			if (!subsquidRes?.data?.proposals?.length) {
 				console.log('Failed to fetch from subsquid, fetching from subsquare instead');

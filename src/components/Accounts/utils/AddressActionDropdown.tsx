@@ -14,7 +14,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-
 const AddressActionDropdown = ({
 	address,
 	type,
@@ -34,7 +33,8 @@ const AddressActionDropdown = ({
 	const [state, setState] = useState({
 		isDropdownActive: false,
 		loading: false,
-		openProxyModal: false
+		openProxyModal: false,
+		openRemoveProxyModal: false
 	});
 
 	const isLinked = useMemo(() => {
@@ -133,7 +133,18 @@ const AddressActionDropdown = ({
 							</div>
 						)
 					}
-			  ])
+			  ]),
+		{
+			key: '3',
+			label: (
+				<div
+					onClick={() => setState((prevState) => ({ ...prevState, openRemoveProxyModal: true }))}
+					className='mt-1 flex items-center space-x-2'
+				>
+					<span className='text-sm text-blue-light-medium dark:text-blue-dark-medium'>Remove Proxy</span>
+				</div>
+			)
+		}
 	];
 
 	return (
@@ -169,6 +180,8 @@ const AddressActionDropdown = ({
 					<ProxyMain
 						openProxyModal={state.openProxyModal}
 						setOpenProxyModal={(open) => setState((prevState) => ({ ...prevState, openProxyModal: open }))}
+						openRemoveProxyModal={state.openRemoveProxyModal}
+						setOpenRemoveProxyModal={(open) => setState((prevState) => ({ ...prevState, openRemoveProxyModal: open }))}
 					/>
 				</div>
 			)}

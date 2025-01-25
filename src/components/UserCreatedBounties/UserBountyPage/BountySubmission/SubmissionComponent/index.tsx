@@ -197,6 +197,7 @@ const SubmissionComponent = ({
 								parentBountyProposerAddress={bountyProposer}
 								submissionId={openModalId || id || ''}
 								fetchSubmissions={fetchSubmissions}
+								submissionReqAmount={reqAmount}
 							/>
 						)}
 					</div>

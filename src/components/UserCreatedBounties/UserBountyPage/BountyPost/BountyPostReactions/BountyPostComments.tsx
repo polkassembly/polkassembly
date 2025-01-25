@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import { Popover } from 'antd';
 import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -12,6 +12,7 @@ import { useTheme } from 'next-themes';
 const BountyPostComments = ({ comments, postIndex }: { comments: { [index: string]: IComment[] }; postIndex: number }) => {
 	const { id } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const [bountyPopoverVisible, setBountyPopoverVisible] = useState(false);
 
 	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 
@@ -37,21 +38,23 @@ const BountyPostComments = ({ comments, postIndex }: { comments: { [index: strin
 					<div
 						style={{
 							maxHeight: '875px',
-							maxWidth: '530px',
 							overflow: 'auto'
 						}}
-						className='scroll-hidden dark:bg-section-dark-overlay'
+						className=' w-full dark:bg-section-dark-overlay'
 					>
 						<BountyCommentsContainer
 							id={id}
-							className=''
+							className='w-[500px] px-3'
 							comments={comments}
 							postIndex={postIndex}
+							setBountyPopoverVisible={setBountyPopoverVisible}
 						/>
 					</div>
 				}
 				trigger='click'
 				placement='bottomLeft'
+				visible={bountyPopoverVisible}
+				onVisibleChange={setBountyPopoverVisible}
 			>
 				<div className='dark:dark-icons flex cursor-pointer items-center gap-1 rounded-md bg-[#F4F6F8] p-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'>
 					<Image

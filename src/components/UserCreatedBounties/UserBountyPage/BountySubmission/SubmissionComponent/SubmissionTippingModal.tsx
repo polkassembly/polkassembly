@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import React, { useEffect, useState } from 'react';
-import { Modal, Spin } from 'antd';
+import { Divider, Modal, Spin } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
@@ -18,6 +18,7 @@ import Balance from '~src/components/Balance';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { dmSans } from 'pages/_app';
+import { inputToBn } from '~src/util/inputToBn';
 
 const ZERO_BN = new BN(0);
 
@@ -27,11 +28,21 @@ interface Props {
 	submissionProposer: string;
 	parentBountyProposerAddress: string;
 	submissionId: string;
+	submissionReqAmount: string;
 	parentBountyIndex: number;
 	fetchSubmissions?: () => Promise<void>;
 }
 
-const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBountyProposerAddress, submissionId, parentBountyIndex, fetchSubmissions }: Props) => {
+const SubmissionTippingModal = ({
+	open,
+	setOpen,
+	submissionProposer,
+	parentBountyProposerAddress,
+	submissionReqAmount,
+	submissionId,
+	parentBountyIndex,
+	fetchSubmissions
+}: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -87,6 +98,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 				api,
 				apiReady,
 				network,
+				setStatus: (message: string) => setLoadingStatus({ isLoading: false, message: message }),
 				tx,
 				errorMessageFallback: 'Failed to process the transaction. Please try again later.',
 				onSuccess: () => {
@@ -94,16 +106,16 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Success!',
-						message: 'Tip sent successfully.',
+						message: 'Submission paid successfully.',
 						status: NotificationStatus.SUCCESS
 					});
 					setOpen(false);
 				},
-				onFailed: () => {
+				onFailed: (error: string) => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
 						header: 'Error!',
-						message: 'Failed to send tip.',
+						message: error || 'Failed to pay.',
 						status: NotificationStatus.ERROR
 					});
 				}
@@ -118,13 +130,23 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 		setOpen(false);
 	};
 
+	const fundingAmtToBN = () => {
+		const [fundingAmt] = inputToBn(submissionReqAmount || '0', network, false);
+		return fundingAmt;
+	};
+
 	return (
 		<Modal
 			title={
 				<div className={`${dmSans.variable} ${dmSans.className} text-xl font-bold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}>
-					Pay Submission Proposer
+					Pay Submission Amount
+					<Divider
+						className=' mb-1 mt-3 dark:bg-separatorDark'
+						style={{ background: '#D2D8E0' }}
+					/>
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			onCancel={handleCancel}
 			closeIcon={<CloseIcon />}
@@ -159,7 +181,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 					)}
 				</div>
 				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:bg-transparent'>
+					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-transparent'>
 						<Address
 							address={loginAddress}
 							isTruncateUsername={false}
@@ -173,7 +195,7 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 					<span className='block text-sm font-medium'></span>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Submission Proposer</label>
 					<div className='flex w-full items-end gap-2 text-sm '>
-						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:bg-transparent'>
+						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-transparent'>
 							<Address
 								address={submissionProposer}
 								isTruncateUsername={false}
@@ -187,7 +209,8 @@ const SubmissionTippingModal = ({ open, setOpen, submissionProposer, parentBount
 				<BalanceInput
 					theme={theme}
 					label='Amount'
-					placeholder='Enter amount to tip'
+					balance={fundingAmtToBN()}
+					placeholder='Enter an amount to pay'
 					address={loginAddress}
 					onChange={(tip) => setTipAmount(tip)}
 				/>

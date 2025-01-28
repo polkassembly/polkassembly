@@ -10,7 +10,7 @@ export const postsByTypeRef = (networkName: string, proposalType: ProposalType) 
 	if (proposalType == ProposalType.USER_CREATED_BOUNTIES) {
 		return firestore_db.collection('user_created_bounties');
 	}
-		return networkDocRef(networkName).collection('post_types').doc(String(proposalType)).collection('posts');
+	return networkDocRef(networkName).collection('post_types').doc(String(proposalType)).collection('posts');
 };
 
 export const activityCollRef = (networkName: string) => networkDocRef(networkName).collection('activities');

@@ -39,8 +39,6 @@ interface IGetLatestActivityAllPostsParams {
 export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPostsParams): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { listingLimit, network, govType } = params;
-
-
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -181,8 +179,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
-
-
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
 				const {

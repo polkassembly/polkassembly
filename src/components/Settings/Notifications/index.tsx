@@ -17,7 +17,6 @@ import { ACTIONS } from './Reducer/action';
 import { INotificationObject } from './types';
 import { networks } from './Parachain/utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import PipNotification from './PIP/Pip';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';

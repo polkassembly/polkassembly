@@ -25,6 +25,7 @@ import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
@@ -179,7 +180,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	return (
 		<div
 			className={`${dmSans.className} ${dmSans.variable} ${
-				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
+				isUsedInGovAnalytics ? '' : `${!isPolymesh(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
 			<div
@@ -355,7 +356,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											) : (
 												<span>N/A</span>
 											)}
-											{!['polymesh', 'polymesh-test'].includes(network) && (
+											{!isPolymesh(network) && (
 												<span className='ml-2 whitespace-nowrap text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
 													{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 												</span>
@@ -386,7 +387,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 
 					{/* Spend Period */}
-					{!['polymesh', 'polymesh-test'].includes(network) && (
+					{!isPolymesh(network) && (
 						<>
 							<div className='w-full flex-col gap-x-0 lg:flex'>
 								{!spendPeriod.isLoading ? (
@@ -458,7 +459,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 
 					{/* Next Burn */}
-					{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
+					{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && (
 						<div>
 							<div className='w-full gap-x-0 lg:flex'>
 								{!nextBurn.isLoading ? (

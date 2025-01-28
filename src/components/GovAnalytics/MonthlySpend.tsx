@@ -25,6 +25,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
@@ -167,7 +168,7 @@ const MonthlySpend = () => {
 
 		const treasuryAccount = u8aConcat(
 			'modl',
-			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
+			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${isPolymesh(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
 

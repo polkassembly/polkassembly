@@ -42,6 +42,7 @@ import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAd
 import { getTimeline } from '~src/util/getTimeline';
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
+import { isPolymesh } from '~src/util/getNetwork';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -775,7 +776,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
-		} else if (network === 'polymesh') {
+		} else if (isPolymesh(network)) {
 			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 			postVariables = {
 				index_eq: numPostId,
@@ -925,7 +926,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			decision_deposit_amount: postData?.decisionDeposit?.amount,
 			delay: postData?.delay,
 			deposit: postData?.deposit,
-			description: network == AllNetworks.POLYMESH ? getAscciiFromHex(postData?.description) : postData?.description,
+			description: isPolymesh(network) ? getAscciiFromHex(postData?.description) : postData?.description,
 			enactment_after_block: postData?.enactmentAfterBlock,
 			enactment_at_block: postData?.enactmentAtBlock,
 			end: postData?.end,
@@ -1299,7 +1300,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					post.content = `This is a ${getProposalTypeTitle(
 						proposalType as ProposalType
 					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-					if (network === AllNetworks.POLYMESH) {
+					if (isPolymesh(network)) {
 						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
 				} else {

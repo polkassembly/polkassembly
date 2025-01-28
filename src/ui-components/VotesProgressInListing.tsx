@@ -18,6 +18,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const ZERO = new BN(0);
 
@@ -189,7 +190,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 	};
 
 	useEffect(() => {
-		if (proposalType === ProposalType.REFERENDUMS && network !== 'polymesh') {
+		if (proposalType === ProposalType.REFERENDUMS && !isPolymesh(network)) {
 			getReferendumVoteInfo();
 		} else {
 			(async () => {

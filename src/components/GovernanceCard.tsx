@@ -50,6 +50,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
 import MultipleBeneficiariesAmount from './MultipleBeneficiariesAmount';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -750,7 +751,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</div>
 							)}
-							{(votesData?.data || tally) && network !== 'polymesh' && (
+							{(votesData?.data || tally) && !isPolymesh(network) && (
 								<div className='flex items-center'>
 									<Divider
 										type='vertical'

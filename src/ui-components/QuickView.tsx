@@ -34,6 +34,7 @@ export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
 	AllNetworks.MOONRIVER,
 	AllNetworks.POLYMESH,
+	AllNetworks.POLYMESHTEST,
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM,

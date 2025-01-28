@@ -2086,3 +2086,5 @@ export const addressPrefix: Record<string, number> = {
 	polkadot: 0,
 	curio: 777
 };
+
+export const revampedNetworks = [network.WESTEND];

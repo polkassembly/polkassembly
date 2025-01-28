@@ -39,12 +39,13 @@ interface IUserProfileProps {
 	className?: string;
 }
 
-export const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
+export const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
 
 export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
 	AllNetworks.MOONRIVER,
 	AllNetworks.POLYMESH,
+	AllNetworks.POLYMESHTEST,
 	AllNetworks.COLLECTIVES,
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM

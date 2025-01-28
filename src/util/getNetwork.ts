@@ -49,3 +49,7 @@ export default function getNetwork(): Network {
 
 	return network;
 }
+
+export const isPolymesh = (network: string) => {
+	return network === 'polymesh' || network === 'polymesh-test';
+};

@@ -9,6 +9,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { LoadingOutlined } from '@ant-design/icons';
 import { chainProperties } from '~src/global/networkConstants';
+import { isPolymesh } from '~src/util/getNetwork';
 
 interface Props {
 	available: {
@@ -62,7 +63,7 @@ const AvailableTreasuryBalance = ({ available }: Props) => {
 										)}
 									</div>
 								</div>
-								{!['polymesh', 'polymesh-test'].includes(network) && (
+								{!isPolymesh(network) && (
 									<>
 										<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />

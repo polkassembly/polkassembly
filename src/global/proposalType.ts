@@ -168,7 +168,7 @@ export function getFirestoreProposalType(proposalType: string): string {
 			return 'community_pips';
 		case 'TechnicalCommittee':
 			return 'technical_pips';
-		case 'UpgradeCommitte':
+		case 'UpgradeCommittee':
 			return 'upgrade_pips';
 		case 'AdvisoryCommittee':
 			return 'advisory_committee';

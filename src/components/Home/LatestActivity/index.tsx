@@ -123,7 +123,6 @@ const getLabel = (key: 'all' | ProposalType): string => {
 const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const { resolvedTheme: theme } = useTheme();
-	console.log({ latestPosts });
 	const tabItems = (Object.entries(latestPosts) as [key: 'all' | ProposalType, value: IApiResponse<ILatestActivityPostsListingResponse>][]).map(([key, value]) => {
 		const label = getLabel(key);
 		return {

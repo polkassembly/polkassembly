@@ -74,6 +74,7 @@ import { GlobalActions } from '~src/redux/global';
 import CreateProposalDropdown from './CreateProposalDropdown';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const { Sider } = Layout;
 
@@ -356,7 +357,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				  ]
 				: [],
 		PIPsItems:
-			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
+			chainProperties[network]?.subsquidUrl && isPolymesh(network)
 				? [
 						getSiderMenuItem(
 							<div className='flex  items-center justify-between'>
@@ -568,7 +569,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
+	if (chainProperties[network]?.subsquidUrl && !isPolymesh(network)) {
 		if ([AllNetworks.PICASSO].includes(network)) {
 			items = items.concat([
 				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
@@ -693,14 +694,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
+	if (chainProperties[network]?.subsquidUrl && !isPolymesh(network)) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
 	}
 	if ([AllNetworks.MYTHOS].includes(network)) {
 		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems].slice(1, 2))]);
 		collapsedItems = collapsedItems.concat([...gov1Items.councilItems].slice(1, 2));
 	}
-	if (network === AllNetworks.POLYMESH) {
+	if (isPolymesh(network)) {
 		items = items.concat(
 			getSiderMenuItem(
 				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
@@ -1727,7 +1728,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		];
 	}
 
-	if (![AllNetworks.POLYMESH].includes(network)) {
+	if (!isPolymesh(network)) {
 		if (AllNetworks.WESTEND.includes(network)) {
 			gov2Items = [
 				...gov2Items,

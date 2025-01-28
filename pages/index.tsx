@@ -22,7 +22,7 @@ import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
-import { chainProperties } from '~src/global/networkConstants';
+import { chainProperties, revampedNetworks } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -44,6 +44,7 @@ const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
 };
+
 interface IHomeProps {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
 	latestPosts: {
@@ -58,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (isOpenGovSupported(network) && !req.headers.referer) {
+	if (isOpenGovSupported(network) && !revampedNetworks.includes(network) && !req.headers.referer) {
 		return {
 			props: {},
 			redirect: {

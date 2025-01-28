@@ -57,10 +57,10 @@ const SendFundsModal = ({ open, setOpen, address, accountData }: Props) => {
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		try {
-			const tx = api?.tx?.balances?.transferKeepAlive(address, tipAmount);
+			const tx = api?.tx?.balances?.transferKeepAlive(receiverAddress, tipAmount);
 
 			await executeTx({
-				address: loginAddress,
+				address: address,
 				api,
 				apiReady,
 				network,

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import React, { useEffect, useState } from 'react';
-import { Divider, Modal, Spin } from 'antd';
+import { AutoComplete, Divider, Modal, Spin } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
@@ -16,7 +16,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Balance from '~src/components/Balance';
 import { useTheme } from 'next-themes';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { dmSans } from 'pages/_app';
 import Image from 'next/image';
 import { inputToBn } from '~src/util/inputToBn';
@@ -36,6 +35,7 @@ const SendFundsModal = ({ open, setOpen, address, accountData }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
+	const [receiverAddress, setReceiverAddress] = useState<string>('');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || tipAmount.eq(ZERO_BN);
@@ -44,12 +44,12 @@ const SendFundsModal = ({ open, setOpen, address, accountData }: Props) => {
 		if (!api || !apiReady || !loginAddress) return;
 
 		const loadBalance = async () => {
-			const accountData = await api?.query?.system?.account(loginAddress);
+			const accountData = await api?.query?.system?.account(address || loginAddress);
 			setAvailableBalance(new BN(accountData.data.free.toString() || '0'));
 		};
 
 		loadBalance();
-	}, [api, apiReady, loginAddress]);
+	}, [api, apiReady, address, loginAddress]);
 
 	const handleTip = async () => {
 		if (!api || !apiReady || disable || !address) return;
@@ -89,6 +89,52 @@ const SendFundsModal = ({ open, setOpen, address, accountData }: Props) => {
 			console.error('Error sending tip:', error);
 		}
 	};
+
+	const accountSet = new Set<string>();
+
+	const combinedAccounts = [
+		...accountData.proxy.proxy_account.map((proxy) => ({
+			address: proxy.account_display.address,
+			type: proxy.proxy_type || 'Proxy Account'
+		})),
+		...accountData.proxy.real_account.map((real) => ({
+			address: real.account_display.address,
+			type: 'Real Account'
+		})),
+		...(accountData.multisig.multi_account || []).map((multi) => ({
+			address: multi.address,
+			type: 'Multi-Account'
+		})),
+		...(accountData.multisig.multi_account_member || []).map((member) => ({
+			address: member.address,
+			type: 'Multi-Account Member'
+		}))
+	];
+
+	const uniqueAccounts = combinedAccounts.filter((account) => {
+		const key = `${account.address}-${account.type}`;
+		if (accountSet.has(key)) {
+			return false;
+		}
+		accountSet.add(key);
+		return true;
+	});
+
+	const autoCompleteOptions = uniqueAccounts.map((account) => ({
+		value: account.address,
+		label: (
+			<div className='flex items-center gap-2'>
+				<Address
+					address={account.address}
+					isTruncateUsername={false}
+					displayInline
+					disableTooltip
+					usernameClassName='font-medium'
+				/>
+				<span className='text-xs'>{account.type}</span>
+			</div>
+		)
+	}));
 
 	const handleCancel = () => {
 		setTipAmount(ZERO_BN);
@@ -174,16 +220,14 @@ const SendFundsModal = ({ open, setOpen, address, accountData }: Props) => {
 				<div className='mb-4 mt-4'>
 					<span className='block text-sm font-medium'></span>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Send to Account</label>
-					<div className='flex w-full items-end gap-2 text-sm '>
-						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-transparent'>
-							<Address
-								address={address}
-								isTruncateUsername={false}
-								displayInline
-								disableTooltip
-							/>
-						</div>
-					</div>
+					<AutoComplete
+						options={autoCompleteOptions}
+						placeholder='Enter an address or select an address'
+						value={receiverAddress}
+						onChange={(value) => setReceiverAddress(value)}
+						style={{ width: '100%' }}
+						filterOption={(inputValue, option) => !!option?.value?.toLowerCase().includes(inputValue.toLowerCase())}
+					/>
 				</div>
 
 				<BalanceInput

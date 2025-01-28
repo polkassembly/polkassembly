@@ -25,7 +25,6 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
-	console.log('accountData', accountData);
 
 	return (
 		<div className={`${dmSans.className} ${dmSans.variable} `}>

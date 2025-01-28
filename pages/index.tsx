@@ -35,6 +35,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -93,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 	if (
 		chainProperties[network]?.subsquidUrl &&
-		![AllNetworks.COLLECTIVES, AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.POLYMESH].includes(network)
+		![AllNetworks.COLLECTIVES, AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST].includes(network)
 	) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
@@ -131,7 +132,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		fetches = { ...fetches, ...onChainFetches };
 	}
 
-	if (chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH) {
+	if (chainProperties[network]?.subsquidUrl && isPolymesh(network)) {
 		const onChainFetches = {
 			community_pips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,

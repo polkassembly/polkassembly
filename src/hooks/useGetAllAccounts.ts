@@ -151,7 +151,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			} else if (extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+			} else if (ispolymesh(network) && extObj.name === 'polywallet') {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
 			}
@@ -164,7 +164,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			});
 		}
 
-		if (['polymesh'].includes(network) && polywalletJSAccounts) {
+		if (ispolymesh(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';

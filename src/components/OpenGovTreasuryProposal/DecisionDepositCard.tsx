@@ -30,6 +30,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { isPolymesh } from '~src/util/getNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -377,7 +378,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 										}
 									/>
 								)}
-								{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
+								{isPolymesh(network) && availableWallets[Wallet.POLYWALLET] && (
 									<WalletButton
 										disabled={!apiReady}
 										className={`${wallet === Wallet.POLYWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}

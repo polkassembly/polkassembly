@@ -28,6 +28,7 @@ import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-c
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { isPolymesh } from '~src/util/getNetwork';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -38,6 +39,8 @@ interface IGetLatestActivityAllPostsParams {
 export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPostsParams): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { listingLimit, network, govType } = params;
+
+		console.log({ network, govType, listingLimit });
 
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
@@ -103,7 +106,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					.join(' ');
 				const singlePost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+					description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 					hash: hash,
 					method: '',
 					origin: '',
@@ -134,11 +137,13 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 			let query = GET_PROPOSALS_LISTING_BY_TYPE;
-			if (network === AllNetworks.POLYMESH) {
+			if (isPolymesh(network)) {
+				console.log({network});
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 				variables = {
 					limit: numListingLimit
 				};
+				console.log({ query, variables });
 			}
 			if (network === AllNetworks.ZEITGEIST) {
 				query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
@@ -150,6 +155,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					query,
 					variables
 				});
+				console.log({ subsquidRes });
 			} catch (error) {
 				const data = await fetchLatestSubsquare(network);
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
@@ -180,8 +186,11 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
 
+			console.log({ subsquidPosts });
+
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
+				console.log('asdadasdasd');
 				const {
 					createdAt,
 					proposer,
@@ -200,8 +209,13 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					proposalHashBlock
 				} = subsquidPost;
 				const postId = type === 'Tip' ? hash : index;
+				console.log({ postId });
+				console.log({ type });
+				console.log({ network });
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
+				console.log('reffff');
 				const postDoc = await postDocRef.get();
+				console.log({ postDoc });
 				let newProposer = proposer || preimage?.proposer || curator;
 				if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
 					parentBounties.add(parentBountyIndex);
@@ -237,7 +251,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 				const onChainPost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || (proposalArguments ? proposalArguments?.description : null),
+					description: isPolymesh(network) ? getAscciiFromHex(description) : description || (proposalArguments ? proposalArguments?.description : null),
 					hash,
 					method: method || preimage?.method || (proposalArguments ? proposalArguments?.method : proposalArguments?.method),
 					origin,
@@ -250,6 +264,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					track_number: trackNumber,
 					type
 				};
+				console.log({ onChainPost });
 				if (postDoc && postDoc.exists) {
 					const data = postDoc?.data();
 					let subsquareTitle = '';
@@ -274,9 +289,11 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 				return onChainPost;
 			});
-
+			console.log({ onChainPostsPromise });
 			onChainPosts = await Promise.all(onChainPostsPromise);
+			console.log({ onChainPosts });
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
+			console.log({ onChainPostsCount });
 
 			if (parentBounties.size > 0) {
 				const subsquidRes = await fetchSubsquid({
@@ -307,10 +324,12 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);
+		console.log({ discussionsPostsColRef });
 		const postsSnapshotArr = await discussionsPostsColRef.where('isDeleted', '==', false).orderBy('created_at', 'desc').limit(numListingLimit).get();
 
 		let offChainPosts: any[] = [];
 		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).count().get()).data().count;
+		console.log({ offChainPostsCount });
 
 		const idsSet = new Set<number>();
 		postsSnapshotArr.docs.forEach((doc) => {
@@ -402,8 +421,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				});
 			}
 		}
-
+		console.log({ onChainPosts, offChainPosts });
 		const allPosts = [...onChainPosts, ...offChainPosts];
+		console.log({ allPosts });
 		let deDupedAllPosts = Array.from(new Set(allPosts));
 		deDupedAllPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
@@ -440,6 +460,10 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 		listingLimit,
 		network
 	});
+
+	console.log({ data });
+	console.log({ error });
+	console.log({ status });
 
 	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });

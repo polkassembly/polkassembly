@@ -138,7 +138,7 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 							}
 						/>
 					)}
-					{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
+					{ispolymesh(network) && availableWallets[Wallet.POLYWALLET] && (
 						<WalletButton
 							disabled={!apiReady}
 							className={`h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.POLYWALLET && 'border border-solid border-pink_primary'}`}

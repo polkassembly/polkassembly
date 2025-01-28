@@ -22,6 +22,7 @@ import PipNotification from './PIP/Pip';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { isPolymesh } from '~src/util/getNetwork';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
@@ -275,7 +276,7 @@ export default function Notifications({ network }: { network: string }) {
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
-			{network !== AllNetworks.POLYMESH ? (
+			{!isPolymesh(network) ? (
 				<>
 					<Gov1Notification
 						userNotification={networkPreferences?.triggerPreferences[network]}

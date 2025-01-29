@@ -77,7 +77,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 
 	if (!loadingStatus.isLoading && (!filteredSubmissions || filteredSubmissions.length < 1)) {
 		return (
-			<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
+			<section className='my-1 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
 				<div className='flex items-center justify-between'>
 					<div className='flex items-center gap-1'>
 						<Image
@@ -132,7 +132,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 	}
 
 	return (
-		<section className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
+		<section className='my-1 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6'>
 			<Spin spinning={loadingStatus.isLoading}>
 				<div>
 					<div className='flex items-center justify-between'>

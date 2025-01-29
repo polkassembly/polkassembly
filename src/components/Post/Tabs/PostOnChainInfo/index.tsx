@@ -24,7 +24,7 @@ import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import Markdown from '~src/ui-components/Markdown';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,

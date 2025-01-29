@@ -42,7 +42,7 @@ import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAd
 import { getTimeline } from '~src/util/getTimeline';
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);

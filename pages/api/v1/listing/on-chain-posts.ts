@@ -39,7 +39,7 @@ import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {

@@ -10,7 +10,7 @@ import { InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletButton from '../WalletButton';
 import { WalletIcon } from './MetamaskLogin';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface Props {
 	disabled: boolean;

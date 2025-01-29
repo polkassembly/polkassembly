@@ -28,7 +28,7 @@ import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-c
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;

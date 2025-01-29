@@ -19,7 +19,7 @@ import {
 	ZEITGEIST_NETWORK_ACTIVE_PROPOSALS_COUNT
 } from '~src/queries';
 import { IActiveProposalCount } from '~src/types';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const getNetworkTrackActiveProposalsCount = async ({ network }: { network: string }) => {
 	try {

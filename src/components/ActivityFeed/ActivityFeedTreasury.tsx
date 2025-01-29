@@ -24,7 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface ITokenPrice {
 	value: string;

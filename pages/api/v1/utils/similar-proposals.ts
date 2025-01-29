@@ -8,7 +8,7 @@ import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 async function queryWithLargeInArray(collection: any, field: any, array: any) {
 	const MAX_IN_SIZE = 30;

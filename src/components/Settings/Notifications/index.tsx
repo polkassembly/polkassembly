@@ -21,7 +21,7 @@ import PipNotification from './PIP/Pip';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];

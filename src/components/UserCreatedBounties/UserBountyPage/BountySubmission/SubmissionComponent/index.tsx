@@ -86,7 +86,10 @@ const SubmissionComponent = ({
 												className='border-l-1 mx-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block'
 											/>
 											<span className='text-base font-bold text-[#E5007A]'>
-												${Number(currentTokenPrice) * Number(formatBnBalance(String(reqAmount), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network))}
+												$
+												{(
+													Number(currentTokenPrice) * Number(formatBnBalance(String(reqAmount), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network))
+												).toFixed(2)}
 											</span>
 										</>
 									)}

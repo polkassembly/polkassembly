@@ -19,6 +19,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { chainProperties } from '~src/global/networkConstants';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 const ZERO_BN = new BN(0);
 
@@ -53,7 +54,9 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 		if (isUsedForEditing && submission) {
 			form.setFieldsValue({
 				title: submission.title || '',
-				requestAmount: submission.reqAmount || '',
+				requestAmount: submission.reqAmount
+					? Number(formatBnBalance(String(submission.reqAmount), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))
+					: '',
 				description: submission?.content || '',
 				links: submission.link || '',
 				loginAddress: submission.proposer || loginAddress

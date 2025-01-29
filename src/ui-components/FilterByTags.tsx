@@ -12,7 +12,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { dmSans } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
-
+import Image from 'next/image';
 import { NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 import { useTheme } from 'next-themes';
@@ -233,7 +233,17 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			{!isSearch ? (
 				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
 					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>{isUsedInBountyPage ? 'Filter' : 'Tags'}</span>
-					<DropdownGreyIcon className='ml-1' />
+					{!isUsedInBountyPage ? (
+						<DropdownGreyIcon className='ml-1' />
+					) : (
+						<Image
+							src={'/assets/bounty-icons/filter-icon.svg'}
+							width={16}
+							height={16}
+							alt='info'
+							className={`${theme === 'dark' ? 'dark-icons' : 'text-lightBlue'} ml-[2px]`}
+						/>
+					)}
 				</div>
 			) : (
 				<div

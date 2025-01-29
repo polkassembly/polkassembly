@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import Link from 'next/link';
 import { spaceGrotesk } from 'pages/_app';
 import React, { FC, useEffect } from 'react';
@@ -20,6 +21,7 @@ import { getUserCreatedBounties } from 'pages/api/v1/user-created-bounties/getAl
 import { EUserCreatedBountiesStatuses } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IUserBountiesListingProps {
 	network: string;
@@ -97,10 +99,24 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 					</div>
 				</Link>
 
-				<div className='flex items-center justify-between pt-4'>
-					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
-						User Created Bounties
-					</span>
+				<div className='flex items-center justify-between pt-2'>
+					<div className='flex items-center gap-2'>
+						<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
+							User Created Bounties
+						</span>
+						<Tooltip
+							placement='top'
+							title={'User created bounties are off-chain bounties not linked to the network treasury.'}
+						>
+							<Image
+								src={'/assets/bounty-icons/info-icon.svg'}
+								width={32}
+								height={32}
+								alt='info'
+								className={`${theme === 'dark' ? 'dark-icons' : 'text-lightBlue'}`}
+							/>
+						</Tooltip>
+					</div>
 					<div className='flex gap-2'>
 						<CreateBountyBtn className='hidden md:block' />
 					</div>

@@ -103,7 +103,7 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 				openTagsModal={tagsModal}
 				setOpenTagsModal={setTagsModal}
 			/>
-			<Divider className='border-l-1 my-4 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
+			<Divider className='border-l-1 my-2 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
 			<div className='min-h-[152px]'>
 				{content && (
 					<Markdown

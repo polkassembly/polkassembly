@@ -113,7 +113,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			dataIndex: 'post_index',
 			key: 'post_index',
 			render: (post_index: number) => <div className='p-0'>{post_index}</div>,
-			title: '#'
+			title: <span className='dark:text-[#C7C1C1]'>#</span>
 		},
 		{
 			className: 'w-[117px] pr-0',
@@ -134,14 +134,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					)}
 				</div>
 			),
-			title: 'Proposer'
+			title: <span className='dark:text-[#C7C1C1]'>Proposer</span>
 		},
 		{
 			className: 'w-[100px] p-0 text-center',
 			dataIndex: 'max_claim',
 			key: 'max_claim',
 			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{max_claim}</p>,
-			title: 'Max no of claims'
+			title: <span className='dark:text-[#C7C1C1]'>Max no of claims</span>
 		},
 		{
 			className: 'w-[225px] m-0 py-1',
@@ -159,7 +159,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Title'
+			title: <span className='dark:text-[#C7C1C1]'>Title</span>
 		},
 		{
 			className: 'w-[80px] min-w-[80px] px-1',
@@ -191,7 +191,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: 'Claimed'
+			title: <span className='dark:text-[#C7C1C1]'>Claimed</span>
 		},
 		{
 			className: 'w-[120px] px-1',
@@ -211,7 +211,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</>
 				);
 			},
-			title: 'Date'
+			title: <span className='dark:text-[#C7C1C1]'>Date</span>
 		},
 		{
 			className: 'w-[80px] px-1',
@@ -221,7 +221,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				const capitalizedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1) : '-';
 				return <div>{capitalizedStatus ? <StatusTag status={capitalizedStatus} /> : '-'}</div>;
 			},
-			title: 'Status'
+			title: <span className='dark:text-[#C7C1C1]'>Status</span>
 		},
 
 		{
@@ -236,7 +236,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				) : (
 					'-'
 				),
-			title: 'Reward'
+			title: <span className='dark:text-[#C7C1C1]'>Reward</span>
 		},
 		{
 			className: 'px-0 pl-0 ml-0 max-w-[140px] overflow-auto scroll-hidden',
@@ -245,7 +245,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			render: (tags: string[]) => {
 				return <Categories categories={tags || []} />;
 			},
-			title: 'Categories'
+			title: <span className='dark:text-[#C7C1C1]'>Categories</span>
 		}
 	];
 
@@ -388,7 +388,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 
 const StyledTableContainer = styled.div<{ themeMode: string }>`
 	.ant-table-thead .ant-table-cell {
-		background-color: ${(props) => (props.themeMode == 'dark' ? '#1b1d1f' : '#f9fcfb')} !important;
+		background-color: ${(props) => (props.themeMode == 'dark' ? '#303030' : '#F5F6F880')} !important;
 		border-width: 1px 0px 1px 0px;
 		border-style: solid;
 		border-color: ${(props) => (props.themeMode == 'dark' ? '#323232' : '#d2d8e0')};

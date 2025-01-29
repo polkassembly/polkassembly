@@ -104,14 +104,16 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 				setOpenTagsModal={setTagsModal}
 			/>
 			<Divider className='border-l-1 my-4 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
-			{content && (
-				<Markdown
-					className=''
-					md={content}
-					theme={theme}
-					disableQuote={true}
-				/>
-			)}
+			<div className='min-h-[152px]'>
+				{content && (
+					<Markdown
+						className=''
+						md={content}
+						theme={theme}
+						disableQuote={true}
+					/>
+				)}
+			</div>
 			<div className='flex items-center'>
 				<BountyPostReactionBar
 					post_reactions={post?.post_reactions}

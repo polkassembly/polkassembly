@@ -62,6 +62,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				loginAddress: submission.proposer || loginAddress
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isUsedForEditing, submission, form, loginAddress]);
 
 	const loadBalance = async () => {

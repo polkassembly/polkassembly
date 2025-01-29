@@ -10,7 +10,7 @@ import { IUserCreatedBounty } from '~src/types';
 const UserBountyPage = ({ post }: { post: IUserCreatedBounty }) => {
 	return (
 		<section>
-			<div className='flex items-start justify-between'>
+			<div className='flex h-full items-start justify-between'>
 				<BountyPost post={post} />
 				<BountyDetails post={post} />
 			</div>

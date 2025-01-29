@@ -29,7 +29,7 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 	const unclaimedAmount = (unclaimedPercentage / 100) * Number(rewardAmount);
 
 	return (
-		<section className='my-5 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[29%] lg:p-6'>
+		<section className='my-5 h-full w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[29%] lg:p-6'>
 			<span className='text-xl font-semibold tracking-wide text-blue-light-high dark:text-blue-dark-high'>Details</span>
 			<div className='mt-3 flex flex-col gap-3'>
 				{/* Deadline Row */}

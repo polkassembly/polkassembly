@@ -129,6 +129,7 @@ const SubmissionComponent = ({
 									parentBountyIndex={bountyIndex}
 									submissionId={submission.id}
 									setOpenModal={(open) => setOpenModalId(open ? id : null)}
+									fetchSubmissions={fetchSubmissions}
 								/>
 							)}
 							{status === EUserCreatedBountySubmissionStatus.APPROVED && bountyProposer == loginAddress && (

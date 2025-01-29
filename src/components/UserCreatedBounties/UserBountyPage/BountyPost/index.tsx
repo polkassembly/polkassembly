@@ -27,7 +27,7 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 	const date = new Date(created_at);
 
 	return (
-		<section className='my-5 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[69%] lg:p-6 '>
+		<section className='my-5 h-full w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[69%] lg:p-6 '>
 			<div className={'mb-[6px] flex items-center justify-between'}>
 				{status && (
 					<StatusTag
@@ -104,7 +104,7 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 				setOpenTagsModal={setTagsModal}
 			/>
 			<Divider className='border-l-1 my-2 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
-			<div className='min-h-[167px]'>
+			<div className='min-h-[183px]'>
 				{content && (
 					<Markdown
 						className=''

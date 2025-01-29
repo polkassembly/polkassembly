@@ -204,7 +204,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		if (data) {
 			queueNotification({
 				header: 'Success!',
-				message: data.message,
+				message: 'Bounty created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
@@ -508,7 +508,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					</article>
 					{/* footer buttons */}
 					<div className='-mx-6 flex items-center justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-separatorDark'>
-						<Form.Item>
+						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
 								variant='default'
 								text='Cancel'
@@ -520,7 +520,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								}}
 							/>
 						</Form.Item>
-						<Form.Item>
+						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
 								variant='primary'
 								text={isUsedForEdit ? 'Edit' : 'Create'}

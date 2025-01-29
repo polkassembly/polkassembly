@@ -12,7 +12,8 @@ const SubmissionReactionButton = ({
 	submissionProposerAddress,
 	parentBountyIndex,
 	submissionId,
-	setOpenModal
+	setOpenModal,
+	fetchSubmissions
 }: {
 	submissionProposerAddress: string;
 	parentBountyProposerAddress: string;
@@ -20,6 +21,7 @@ const SubmissionReactionButton = ({
 	isUsedinModal?: boolean;
 	parentBountyIndex: number;
 	setOpenModal: (pre: boolean) => void;
+	fetchSubmissions?: () => Promise<void>;
 }) => {
 	const [loading, setLoading] = useState(false);
 
@@ -41,7 +43,7 @@ const SubmissionReactionButton = ({
 			}
 			if (data) {
 				setOpenModal(false);
-				window.location.reload();
+				fetchSubmissions && fetchSubmissions();
 			}
 		} catch (error) {
 			console.log(error);
@@ -53,7 +55,7 @@ const SubmissionReactionButton = ({
 	return (
 		<div>
 			{isUsedinModal && <Divider className='border-l-1 my-4 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />}
-			<div className={`${isUsedinModal ? 'flex items-center justify-end gap-2' : 'flex sm:gap-3'}`}>
+			<div className={`${isUsedinModal ? 'flex items-center justify-end gap-2' : 'mt-[6px] flex sm:gap-3'}`}>
 				<button
 					className={`${
 						isUsedinModal ? 'w-[156px]' : 'w-full'

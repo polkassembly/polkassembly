@@ -112,8 +112,8 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			className: 'w-[20px] pl-0',
 			dataIndex: 'post_index',
 			key: 'post_index',
-			render: (post_index: number) => <div className='p-0'>{post_index}</div>,
-			title: <span className='dark:text-[#C7C1C1]'>#</span>
+			render: (post_index: number) => <div className='p-0 text-blue-light-high dark:text-blue-dark-high '>{post_index}</div>,
+			title: <span className='text-blue-light-medium  dark:text-[#C7C1C1]'>#</span>
 		},
 		{
 			className: 'w-[117px] pr-0',
@@ -125,6 +125,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 						<Address
 							iconSize={22}
 							address={proposer}
+							className='text-blue-light-high dark:text-blue-dark-high'
 							displayInline
 							isTruncateUsername={true}
 							disableTooltip
@@ -134,14 +135,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					)}
 				</div>
 			),
-			title: <span className='dark:text-[#C7C1C1]'>Proposer</span>
+			title: <span className='text-blue-light-medium  dark:text-[#C7C1C1]'>Proposer</span>
 		},
 		{
 			className: 'w-[100px] p-0 text-center',
 			dataIndex: 'max_claim',
 			key: 'max_claim',
-			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{max_claim}</p>,
-			title: <span className='dark:text-[#C7C1C1]'>Max no of claims</span>
+			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>{max_claim}</p>,
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Max no of claims</span>
 		},
 		{
 			className: 'w-[225px] m-0 py-1',
@@ -152,14 +153,14 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				const truncatedTitle = title?.length > maxLength ? `${title?.substring(0, maxLength)}...` : title;
 				return (
 					<div
-						className='m-0 truncate p-0 pt-3'
+						className='m-0 truncate p-0 pt-3 text-blue-light-high dark:text-blue-dark-high'
 						style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
 					>
 						<p>{title ? truncatedTitle : '-'}</p>
 					</div>
 				);
 			},
-			title: <span className='dark:text-[#C7C1C1]'>Title</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Title</span>
 		},
 		{
 			className: 'w-[80px] min-w-[80px] px-1',
@@ -183,7 +184,12 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 									strokeColor='#ffc500'
 									trailColor='#F0F0F0'
 								/>
-								<span style={{ marginLeft: '8px' }}>{percentage.toNumber().toFixed(1)}%</span>
+								<span
+									className='text-blue-light-high dark:text-blue-dark-high'
+									style={{ marginLeft: '8px' }}
+								>
+									{percentage.toNumber().toFixed(1)}%
+								</span>
 							</>
 						) : (
 							'-'
@@ -191,7 +197,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</div>
 				);
 			},
-			title: <span className='dark:text-[#C7C1C1]'>Claimed</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Claimed</span>
 		},
 		{
 			className: 'w-[120px] px-1',
@@ -211,7 +217,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 					</>
 				);
 			},
-			title: <span className='dark:text-[#C7C1C1]'>Date</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Date</span>
 		},
 		{
 			className: 'w-[80px] px-1',
@@ -221,7 +227,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				const capitalizedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1) : '-';
 				return <div>{capitalizedStatus ? <StatusTag status={capitalizedStatus} /> : '-'}</div>;
 			},
-			title: <span className='dark:text-[#C7C1C1]'>Status</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Status</span>
 		},
 
 		{
@@ -231,21 +237,21 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			render: (reward: string) =>
 				reward ? (
 					<>
-						<div className='whitespace-nowrap'>{parseBalance(reward || '0', 2, true, network)}</div>
+						<div className='whitespace-nowrap text-blue-light-high dark:text-blue-dark-high'>{parseBalance(reward || '0', 2, true, network)}</div>
 					</>
 				) : (
 					'-'
 				),
-			title: <span className='dark:text-[#C7C1C1]'>Reward</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Reward</span>
 		},
 		{
-			className: 'px-0 pl-0 ml-0 max-w-[140px] overflow-auto scroll-hidden',
+			className: 'px-0 pl-[6px] ml-0 max-w-[140px] overflow-auto scroll-hidden',
 			dataIndex: 'tags',
 			key: 'tags',
 			render: (tags: string[]) => {
 				return <Categories categories={tags || []} />;
 			},
-			title: <span className='dark:text-[#C7C1C1]'>Categories</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Categories</span>
 		}
 	];
 

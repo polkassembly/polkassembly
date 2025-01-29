@@ -214,33 +214,37 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			)}
 
 			{/* Footer */}
-			<div className='relative mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
-				<Image
-					src={'/assets/bounty-icons/bounty-poster.png'}
-					fill
-					alt='curator'
-					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
-				/>
-				<Link
-					href='/user-created-bounties'
-					passHref
-					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} absolute left-[476px] top-[31px] flex h-[48px] w-[188px] items-center justify-center gap-x-1 rounded-[50px] px-[36px] text-2xl font-bold text-white`}
-					style={{
-						background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
-					}}
-				>
-					{' '}
-					<div className='flex items-center gap-[2px] '>
-						View All
-						<ImageIcon
-							src='assets/bounty-icons/redirect-white-icon.svg'
-							alt='arrow right'
-							className=''
-						/>
-					</div>
-				</Link>
+			<div className=' mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
+				<div className='relative md:w-[50%] xl:w-[60%]'>
+					<Image
+						src={'/assets/bounty-icons/bounty-poster.png'}
+						fill
+						alt='curator'
+						className='relative h-full w-full '
+					/>
+					<Link
+						href='/user-created-bounties'
+						passHref
+						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} z-100 absolute right-0 top-0 flex h-10 w-[150px] items-center justify-center gap-x-1 rounded-[50px] px-6 text-base font-bold text-white xl:text-xl 2xl:h-[48px] 2xl:w-[188px] 2xl:px-[36px]`}
+						style={{
+							background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
+						}}
+					>
+						{' '}
+						<div className='flex items-center gap-[2px] '>
+							View All
+							<ImageIcon
+								src='assets/bounty-icons/redirect-white-icon.svg'
+								alt='arrow right'
+								className=''
+							/>
+						</div>
+					</Link>
+				</div>
 
-				<BountyActivities />
+				<div className='md:w-[50%] xl:w-[40%]'>
+					<BountyActivities />
+				</div>
 			</div>
 			<div className='sticky bottom-0 z-20 -ml-4 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black md:hidden'>
 				<BountyProposalActionButton className='w-full' />

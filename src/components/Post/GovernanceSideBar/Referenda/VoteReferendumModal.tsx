@@ -63,7 +63,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import useImagePreloader from '~src/hooks/useImagePreloader';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 const ZERO_BN = new BN(0);
 
 interface Props {

@@ -4,7 +4,7 @@
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Wallet } from '~src/types';
-import { isPolymesh } from './getNetwork';
+import { isPolymesh } from './isPolymeshNetwork';
 
 export const checkWalletForSubstrateNetwork = (network: string) => {
 	if (!network || !window) return;

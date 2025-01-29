@@ -11,7 +11,7 @@ import { APPNAME } from 'src/global/appName';
 import { Wallet } from 'src/types';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 type Response = {
 	noExtension: boolean;

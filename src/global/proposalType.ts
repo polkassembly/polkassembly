@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 // TODO: Optimize this
 export enum ProposalType {

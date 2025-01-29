@@ -26,7 +26,7 @@ import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IVotersListProps {
 	className?: string;

@@ -9,7 +9,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { APPNAME } from '~src/global/appName';
 import { Wallet } from '~src/types';
 import getEncodedAddress from './getEncodedAddress';
-import { isPolymesh } from './getNetwork';
+import { isPolymesh } from './isPolymeshNetwork';
 export type Response = {
 	noExtension: boolean;
 	noAccounts: boolean;

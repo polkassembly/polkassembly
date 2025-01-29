@@ -37,7 +37,7 @@ import createUserActivity from '../../utils/create-activity';
 import { getSubscanData } from '../../subscanApi';
 import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export interface IEditPostResponse {
 	content: string;

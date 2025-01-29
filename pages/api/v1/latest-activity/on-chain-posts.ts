@@ -22,7 +22,7 @@ import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-p
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export interface ILatestActivityPostsListingResponse {
 	count: number;

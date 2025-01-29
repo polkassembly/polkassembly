@@ -30,7 +30,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const ZERO_BN = new BN(0);
 

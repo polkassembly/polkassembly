@@ -37,10 +37,9 @@ const BountyPostComments = ({ comments, postIndex }: { comments: { [index: strin
 				content={
 					<div
 						style={{
-							maxHeight: '875px',
 							overflow: 'auto'
 						}}
-						className=' w-full dark:bg-section-dark-overlay'
+						className='max-h-[750px] w-full dark:bg-section-dark-overlay'
 					>
 						<BountyCommentsContainer
 							id={id}
@@ -52,7 +51,7 @@ const BountyPostComments = ({ comments, postIndex }: { comments: { [index: strin
 					</div>
 				}
 				trigger='click'
-				placement='bottomLeft'
+				placement='right'
 				visible={bountyPopoverVisible}
 				onVisibleChange={setBountyPopoverVisible}
 			>

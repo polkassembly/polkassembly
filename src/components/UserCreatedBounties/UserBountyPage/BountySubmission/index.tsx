@@ -14,6 +14,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SubmissionComponent from './SubmissionComponent';
 import { Spin } from 'antd';
 import { useTheme } from 'next-themes';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const CreateSubmissionForm = dynamic(() => import('./CreateSubmissionForm'), {
 	ssr: false
@@ -22,6 +23,7 @@ const CreateSubmissionForm = dynamic(() => import('./CreateSubmissionForm'), {
 const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState(false);
+	const { loginAddress } = useUserDetailsSelector();
 	const [submissions, setSubmissions] = useState<IChildBountySubmission[]>([]);
 	const [filteredSubmissions, setFilteredSubmissions] = useState<IChildBountySubmission[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<{ isLoading: boolean; message: string }>({
@@ -90,7 +92,8 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					</div>
 					<CreateSubmissionButton
 						setOpenModal={setOpenModal}
-						disabled={isDeadlinePassed}
+						disabled={isDeadlinePassed || post.proposer == loginAddress}
+						isProposer={post.proposer == loginAddress}
 					/>
 				</div>
 				{!loadingStatus.isLoading && (
@@ -110,7 +113,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					<span className='-mt-10 text-xl font-semibold text-[#243A57] dark:text-white'>No Submissions Yet</span>
 					<div className='pt-3 text-center'>
 						<span
-							onClick={() => setOpenModal(true)}
+							onClick={() => (post.proposer == loginAddress ? setOpenModal(false) : setOpenModal(true))}
 							className='cursor-pointer font-semibold text-pink_primary'
 						>
 							Add Submission
@@ -146,7 +149,8 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 						</div>
 						<CreateSubmissionButton
 							setOpenModal={setOpenModal}
-							disabled={isDeadlinePassed}
+							disabled={isDeadlinePassed || post.proposer == loginAddress}
+							isProposer={post.proposer == loginAddress}
 						/>
 					</div>
 					{!loadingStatus.isLoading && (

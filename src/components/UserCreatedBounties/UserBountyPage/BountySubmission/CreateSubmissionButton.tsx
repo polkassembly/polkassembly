@@ -5,7 +5,7 @@ import React from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Tooltip } from 'antd';
 
-const CreateSubmissionButton = ({ setOpenModal, disabled }: { setOpenModal: (pre: boolean) => void; disabled?: boolean }) => {
+const CreateSubmissionButton = ({ setOpenModal, disabled, isProposer }: { setOpenModal: (pre: boolean) => void; disabled?: boolean; isProposer: boolean }) => {
 	const button = (
 		<div
 			className={`flex items-center gap-[6px] rounded-md ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} bg-[#E5007A] px-3 py-[5px]`}
@@ -19,7 +19,11 @@ const CreateSubmissionButton = ({ setOpenModal, disabled }: { setOpenModal: (pre
 		</div>
 	);
 
-	return disabled ? <Tooltip title="Deadline is passed, can't make a submission now">{button}</Tooltip> : button;
+	return disabled ? (
+		<Tooltip title={isProposer ? "You can't make a submission to your own Bounty" : "Deadline is passed, You can't make a submission now"}>{button}</Tooltip>
+	) : (
+		button
+	);
 };
 
 export default CreateSubmissionButton;

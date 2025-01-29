@@ -11,20 +11,29 @@ import Markdown from '~src/ui-components/Markdown';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
 import { chainProperties } from '~src/global/networkConstants';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
 import TagsModal from '~src/ui-components/TagsModal';
 import BountyPostReactionBar from './BountyPostReactions';
 import BountyPostComments from './BountyPostReactions/BountyPostComments';
+import dynamic from 'next/dynamic';
+import Skeleton from '~src/basic-components/Skeleton';
+
+const CreateBountyModal = dynamic(() => import('../../CreateBountyModal'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 	const { title, post_index, created_at, tags, proposer, content, status, reward } = post;
 	const { resolvedTheme: theme } = useTheme();
+	const { loginAddress } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const date = new Date(created_at);
+	const [openCreateBountyModal, setOpenCreateBountyModal] = useState<boolean>(false);
 
 	return (
 		<section className='my-5 h-full w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[69%] lg:p-6 '>
@@ -114,16 +123,32 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 					/>
 				)}
 			</div>
-			<div className='flex items-center'>
-				<BountyPostReactionBar
-					post_reactions={post?.post_reactions}
-					postIndex={post?.post_index}
-				/>
-				<BountyPostComments
-					comments={post?.comments || {}}
-					postIndex={post?.post_index}
-				/>
+			<div className='flex items-center justify-between'>
+				<div className='flex items-center'>
+					<BountyPostReactionBar
+						post_reactions={post?.post_reactions}
+						postIndex={post?.post_index}
+					/>
+					<BountyPostComments
+						comments={post?.comments || {}}
+						postIndex={post?.post_index}
+					/>
+				</div>
+				{loginAddress == proposer && (
+					<button
+						onClick={() => setOpenCreateBountyModal(true)}
+						className='flex cursor-pointer items-center gap-1 rounded-md border-none bg-[#F4F6F8] px-3 py-[8.5px] text-xs hover:bg-[#ebecee] dark:bg-[#1F1F21]'
+					>
+						<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>Edit</span>
+					</button>
+				)}
 			</div>
+			<CreateBountyModal
+				openCreateBountyModal={openCreateBountyModal}
+				setOpenCreateBountyModal={setOpenCreateBountyModal}
+				isUsedForEdit={true}
+				postInfo={post}
+			/>
 		</section>
 	);
 };

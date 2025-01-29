@@ -9,7 +9,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -22,6 +22,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
 import TrackListingTabs from '~src/components/Listing/Tracks/TrackListingTabs';
 
+const TTL_DURATION = 3600 * 23; // 23 Hours or 82800 seconds
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
@@ -99,7 +100,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	});
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
-		await redisSet(redisKey, JSON.stringify(props));
+		await redisSetex(redisKey, TTL_DURATION, JSON.stringify(props));
 	}
 
 	return { props };

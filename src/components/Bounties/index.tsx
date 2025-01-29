@@ -217,7 +217,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			<div className=' mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
 				<div className='relative md:w-[50%] xl:w-[60%]'>
 					<Image
-						src={'/assets/bounty-icons/bounty-poster.png'}
+						src={'/assets/bounty-icons/bounty-poster1.svg'}
 						fill
 						alt='curator'
 						className='relative h-full w-full '
@@ -225,7 +225,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					<Link
 						href='/user-created-bounties'
 						passHref
-						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} z-100 absolute right-0 top-0 flex h-10 w-[150px] items-center justify-center gap-x-1 rounded-[50px] px-6 text-base font-bold text-white xl:text-xl 2xl:h-[48px] 2xl:w-[188px] 2xl:px-[36px]`}
+						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} z-100 absolute right-0 top-0 flex h-10 w-[150px] items-center justify-center gap-x-1 rounded-[50px] px-6 text-base font-bold text-white xl:h-[48px] xl:w-[180px] xl:px-[36px] xl:text-xl`}
 						style={{
 							background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
 						}}

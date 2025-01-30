@@ -127,7 +127,6 @@ const BountyCommentsContainer = ({
 	);
 };
 
-// @ts-ignore
 export default React.memo(styled(BountyCommentsContainer)`
 	.ant-anchor-wrapper {
 		.ant-anchor {

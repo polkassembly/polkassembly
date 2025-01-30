@@ -180,8 +180,6 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 		}
 	};
 
-	console.log('availableBalance', availableBalance);
-
 	return (
 		<Modal
 			open={openModal}
@@ -327,7 +325,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 							/>
 						</Form.Item>
 
-						{showBalanceAlert && (
+						{showBalanceAlert && availableBalance.lt(ZERO_BN) && (
 							<Alert
 								type='error'
 								message='Insufficient Balance'

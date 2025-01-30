@@ -216,7 +216,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props?.postId,
 			postType: comment.post_type || props?.proposalType,
 			sentiment: sentiment,
-			trackNumber: isUsedInBounty ? null : track_number,
+			trackNumber: isUsedInBounty ? null : track_number || null,
 			userId: id
 		});
 
@@ -375,8 +375,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					status: NotificationStatus.ERROR
 				});
 				!isUsedInBounty &&
-					setComments &&
-					setComments((prev) => {
+					setComments?.((prev) => {
 						const comments: any = Object.assign({}, prev);
 						for (const key of keys) {
 							let flag = false;
@@ -402,8 +401,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			} else {
 				isUsedInBounty && window.location.reload();
 				!isUsedInBounty &&
-					setComments &&
-					setComments((prev) => {
+					setComments?.((prev) => {
 						const comments: any = Object.assign({}, prev);
 						for (const key of keys) {
 							let flag = false;
@@ -652,9 +650,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, [canEditComment]);
 
 	useEffect(() => {
-		isUsedInBounty
-			? setCommentAllowed(true)
-			: setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors as EAllowedCommentor, !!loginAddress && isUserOnchainVerified));
+		if (isUsedInBounty) {
+			setCommentAllowed(true);
+		} else {
+			setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors as EAllowedCommentor, !!loginAddress && isUserOnchainVerified));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 

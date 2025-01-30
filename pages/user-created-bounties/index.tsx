@@ -47,8 +47,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			status
 		});
 
-		console.log('error', error);
-
 		return {
 			props: {
 				data: data || null,

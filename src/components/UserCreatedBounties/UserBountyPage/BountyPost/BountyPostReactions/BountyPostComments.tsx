@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Popover } from 'antd';
 import Image from 'next/image';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -13,6 +13,13 @@ const BountyPostComments = ({ comments, postIndex }: { comments: { [index: strin
 	const { id } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [bountyPopoverVisible, setBountyPopoverVisible] = useState(false);
+	const popoverContentRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (bountyPopoverVisible && popoverContentRef.current) {
+			popoverContentRef.current.scrollTop = 0;
+		}
+	}, [bountyPopoverVisible]);
 
 	const totalComments = Object.values(comments).reduce((acc, commentArray) => acc + commentArray.length, 0);
 
@@ -36,10 +43,12 @@ const BountyPostComments = ({ comments, postIndex }: { comments: { [index: strin
 			<Popover
 				content={
 					<div
+						ref={popoverContentRef}
 						style={{
+							maxHeight: '600px',
 							overflow: 'auto'
 						}}
-						className='max-h-[750px] w-full dark:bg-section-dark-overlay'
+						className='w-full dark:bg-section-dark-overlay'
 					>
 						<BountyCommentsContainer
 							id={id}

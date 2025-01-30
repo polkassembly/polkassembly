@@ -177,6 +177,8 @@ export const Comment: FC<ICommentProps> = (props) => {
 						comment={comment}
 						isSubsquareUser={comment_source === 'subsquare'}
 						isReactionOnReply={true}
+						BountyPostIndex={BountyPostIndex}
+						isUsedInBounty={isUsedInBounty}
 					/>
 				)}
 			</div>

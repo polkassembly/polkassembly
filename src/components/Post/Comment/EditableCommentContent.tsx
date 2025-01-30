@@ -170,36 +170,40 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		setError('');
 		global.window.localStorage.removeItem(editCommentKey(commentId));
 		const keys = Object.keys(comments);
-		setComments((prev) => {
-			const comments: any = Object.assign({}, prev);
-			for (const key of keys) {
-				let flag = false;
-				if (prev?.[key]) {
-					comments[key] = prev?.[key]?.map((comment: IComment) => {
-						const newComment = comment;
-						if (comment.id === commentId) {
-							(newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || [])]),
-								(newComment.content = newContent);
-							newComment.updated_at = new Date();
-							newComment.sentiment = sentiment || 0;
-							flag = true;
-						}
-						return {
-							...newComment
-						};
-					});
+		!isUsedInBounty &&
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment: IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								(newComment.history = [
+									{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 },
+									...(newComment?.history || [])
+								]),
+									(newComment.content = newContent);
+								newComment.updated_at = new Date();
+								newComment.sentiment = sentiment || 0;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
 				}
-				if (flag) {
-					break;
-				}
-			}
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was edited.',
-				status: NotificationStatus.SUCCESS
+				queueNotification({
+					header: 'Success!',
+					message: 'Your comment was edited.',
+					status: NotificationStatus.SUCCESS
+				});
+				return comments;
 			});
-			return comments;
-		});
 		form.setFieldValue('content', currentContent.current);
 		if (currentContent.current !== newContent) {
 			currentContent.current = newContent;
@@ -292,54 +296,56 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		if (!replyContent) return;
 		setErrorReply('');
 		global.window.localStorage.removeItem(replyKey(commentId));
-		const keys = Object.keys(comments);
+		const keys = Object.keys(comments || {});
 		const replyId = v4();
 		const oldComment: any = Object.assign({}, comments);
-		setComments((prev) => {
-			const comments: any = Object.assign({}, prev);
-			for (const key of keys) {
-				let flag = false;
-				if (prev?.[key]) {
-					comments[key] = prev[key].map((comment) => {
-						if (comment.id === commentId) {
-							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies.push({
-									content: replyContent,
-									created_at: new Date(),
-									id: replyId,
-									isReplyError: false,
-									postIndex: postIndex,
-									postType,
-									proposer: loginAddress,
-									reply_reactions: {
-										'👍': {
-											count: 0,
-											usernames: []
+		!isUsedInBounty &&
+			setComments &&
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies.push({
+										content: replyContent,
+										created_at: new Date(),
+										id: replyId,
+										isReplyError: false,
+										postIndex: postIndex,
+										postType,
+										proposer: loginAddress,
+										reply_reactions: {
+											'👍': {
+												count: 0,
+												usernames: []
+											},
+											'👎': {
+												count: 0,
+												usernames: []
+											}
 										},
-										'👎': {
-											count: 0,
-											usernames: []
-										}
-									},
-									updated_at: new Date(),
-									user_id: id,
-									user_profile_img: picture || '',
-									username: username
-								});
+										updated_at: new Date(),
+										user_id: id,
+										user_profile_img: picture || '',
+										username: username
+									});
+								}
+								flag = true;
 							}
-							flag = true;
-						}
-						return {
-							...comment
-						};
-					});
+							return {
+								...comment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
 				}
-				if (flag) {
-					break;
-				}
-			}
-			return comments;
-		});
+				return comments;
+			});
 		replyForm.setFieldValue('content', '');
 		queueNotification({
 			header: 'Success!',
@@ -368,63 +374,69 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					message: error || 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for (const key of keys) {
-						let flag = false;
-						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment) => {
-								if (comment.id === commentId) {
-									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
+				!isUsedInBounty &&
+					setComments &&
+					setComments((prev) => {
+						const comments: any = Object.assign({}, prev);
+						for (const key of keys) {
+							let flag = false;
+							if (prev?.[key]) {
+								comments[key] = prev[key].map((comment) => {
+									if (comment.id === commentId) {
+										if (comment?.replies && Array.isArray(comment.replies)) {
+											comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
+										}
+										flag = true;
 									}
-									flag = true;
-								}
-								return {
-									...comment
-								};
-							});
+									return {
+										...comment
+									};
+								});
+							}
+							if (flag) {
+								break;
+							}
 						}
-						if (flag) {
-							break;
-						}
-					}
-					return comments;
-				});
+						return comments;
+					});
 			} else {
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for (const key of keys) {
-						let flag = false;
-						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment) => {
-								if (comment.id === commentId) {
-									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = comment.replies.map((reply: any) => {
-											if (reply.id === replyId) {
-												reply.id = data.id;
-											}
-											return {
-												...reply
-											};
-										});
+				isUsedInBounty && window.location.reload();
+				!isUsedInBounty &&
+					setComments &&
+					setComments((prev) => {
+						const comments: any = Object.assign({}, prev);
+						for (const key of keys) {
+							let flag = false;
+							if (prev?.[key]) {
+								comments[key] = prev[key].map((comment) => {
+									if (comment.id === commentId) {
+										if (comment?.replies && Array.isArray(comment.replies)) {
+											comment.replies = comment.replies.map((reply: any) => {
+												if (reply.id === replyId) {
+													reply.id = data.id;
+												}
+												return {
+													...reply
+												};
+											});
+										}
+										flag = true;
 									}
-									flag = true;
-								}
-								return {
-									...comment
-								};
-							});
+									return {
+										...comment
+									};
+								});
+							}
+							if (flag) {
+								break;
+							}
 						}
-						if (flag) {
-							break;
-						}
-					}
-					return comments;
-				});
+						return comments;
+					});
 			}
 			setLoadingReply(false);
 		}
+		isUsedInBounty && window.location.reload();
 	};
 
 	const copyLink = () => {

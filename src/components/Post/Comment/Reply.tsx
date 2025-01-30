@@ -18,9 +18,11 @@ interface Props {
 	isSubsquareUser: boolean;
 	isReactionOnReply: boolean;
 	comment: IComment;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 
-export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser, isReactionOnReply }: Props) => {
+export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser, isReactionOnReply, isUsedInBounty, BountyPostIndex }: Props) => {
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
@@ -71,6 +73,8 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 					comment={comment}
 					isSubsquareUser={isSubsquareUser}
 					isReactionOnReply={isReactionOnReply}
+					BountyPostIndex={BountyPostIndex}
+					isUsedInBounty={isUsedInBounty}
 				/>
 			</div>
 		</div>

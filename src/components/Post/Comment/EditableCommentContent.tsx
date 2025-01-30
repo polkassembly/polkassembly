@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
+/* eslint-disable sort-keys */
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { EReportType, NotificationStatus } from 'src/types';
+import { EAllowedCommentor, EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -68,8 +68,8 @@ interface IEditableCommentContentProps {
 	commentId: string;
 	content: string;
 	created_at: Date;
-	proposalType: ProposalType;
-	postId: number | string;
+	proposalType: ProposalType | null | undefined;
+	postId: number | string | null | undefined;
 	disableEdit?: boolean;
 	sentiment: number;
 	setSentiment: (pre: number) => void;
@@ -78,6 +78,8 @@ interface IEditableCommentContentProps {
 	userName?: string;
 	is_custom_username?: boolean;
 	proposer?: string;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -85,7 +87,8 @@ const editCommentKey = (commentId: string) => `comment:${commentId}:${global.win
 const replyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
-	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer, BountyPostIndex, isUsedInBounty } = props;
+	const { postData } = usePostDataContext();
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
@@ -97,9 +100,13 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const currentContent = useRef<string>(content);
 
-	const {
-		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
-	} = usePostDataContext();
+	// Extract values conditionally
+	const postIndex = isUsedInBounty ? BountyPostIndex : postData?.postIndex || null;
+	const postType = isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postData?.postType || null;
+	const allowedCommentors = isUsedInBounty ? null : postData?.allowedCommentors || null;
+	const track_number = isUsedInBounty ? null : postData?.track_number || null;
+	const proposerId = isUsedInBounty ? null : postData?.userId || null;
+
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -163,36 +170,40 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		setError('');
 		global.window.localStorage.removeItem(editCommentKey(commentId));
 		const keys = Object.keys(comments);
-		setComments((prev) => {
-			const comments: any = Object.assign({}, prev);
-			for (const key of keys) {
-				let flag = false;
-				if (prev?.[key]) {
-					comments[key] = prev?.[key]?.map((comment: IComment) => {
-						const newComment = comment;
-						if (comment.id === commentId) {
-							(newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || [])]),
-								(newComment.content = newContent);
-							newComment.updated_at = new Date();
-							newComment.sentiment = sentiment || 0;
-							flag = true;
-						}
-						return {
-							...newComment
-						};
-					});
+		!isUsedInBounty &&
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment: IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								(newComment.history = [
+									{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 },
+									...(newComment?.history || [])
+								]),
+									(newComment.content = newContent);
+								newComment.updated_at = new Date();
+								newComment.sentiment = sentiment || 0;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
 				}
-				if (flag) {
-					break;
-				}
-			}
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was edited.',
-				status: NotificationStatus.SUCCESS
+				queueNotification({
+					header: 'Success!',
+					message: 'Your comment was edited.',
+					status: NotificationStatus.SUCCESS
+				});
+				return comments;
 			});
-			return comments;
-		});
 		form.setFieldValue('content', currentContent.current);
 		if (currentContent.current !== newContent) {
 			currentContent.current = newContent;
@@ -202,10 +213,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		const { data, error: editPostCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editPostComment', {
 			commentId,
 			content: newContent,
-			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props.postId,
-			postType: comment.post_type || props.proposalType,
+			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props?.postId,
+			postType: comment.post_type || props?.proposalType,
 			sentiment: sentiment,
-			trackNumber: track_number,
+			trackNumber: isUsedInBounty ? null : track_number || null,
 			userId: id
 		});
 
@@ -218,7 +229,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 			console.error('Error saving comment ', editPostCommentError);
 			setComments((prev) => {
-				const key = `${postIndex}_${getSubsquidLikeProposalType(postType) || postType}`;
+				const key = `${isUsedInBounty ? BountyPostIndex : postIndex}_${getSubsquidLikeProposalType(isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postType!) || postType}`;
 				const payload = Object.assign(prev, {});
 				payload[key] = prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
 				return payload;
@@ -226,7 +237,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		}
 		if (data) {
 			setComments((prev) => {
-				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				const key = `${postIndex}_${getSubsquidLikeProposalType(isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postType!)}`;
 				prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
 				return prev;
 			});
@@ -239,9 +250,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
 			commentId: commentId,
 			content: comment.content,
-			postId: props.postId,
-			postType: props.proposalType,
-			trackNumber: track_number,
+			postId: props?.postId,
+			postType: props?.proposalType,
+			trackNumber: isUsedInBounty ? null : track_number,
 			userId: id
 		});
 
@@ -285,54 +296,56 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		if (!replyContent) return;
 		setErrorReply('');
 		global.window.localStorage.removeItem(replyKey(commentId));
-		const keys = Object.keys(comments);
+		const keys = Object.keys(comments || {});
 		const replyId = v4();
 		const oldComment: any = Object.assign({}, comments);
-		setComments((prev) => {
-			const comments: any = Object.assign({}, prev);
-			for (const key of keys) {
-				let flag = false;
-				if (prev?.[key]) {
-					comments[key] = prev[key].map((comment) => {
-						if (comment.id === commentId) {
-							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies.push({
-									content: replyContent,
-									created_at: new Date(),
-									id: replyId,
-									isReplyError: false,
-									postIndex: postIndex,
-									postType,
-									proposer: loginAddress,
-									reply_reactions: {
-										'👍': {
-											count: 0,
-											usernames: []
+		!isUsedInBounty &&
+			setComments &&
+			setComments((prev) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies.push({
+										content: replyContent,
+										created_at: new Date(),
+										id: replyId,
+										isReplyError: false,
+										postIndex: postIndex,
+										postType,
+										proposer: loginAddress,
+										reply_reactions: {
+											'👍': {
+												count: 0,
+												usernames: []
+											},
+											'👎': {
+												count: 0,
+												usernames: []
+											}
 										},
-										'👎': {
-											count: 0,
-											usernames: []
-										}
-									},
-									updated_at: new Date(),
-									user_id: id,
-									user_profile_img: picture || '',
-									username: username
-								});
+										updated_at: new Date(),
+										user_id: id,
+										user_profile_img: picture || '',
+										username: username
+									});
+								}
+								flag = true;
 							}
-							flag = true;
-						}
-						return {
-							...comment
-						};
-					});
+							return {
+								...comment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
 				}
-				if (flag) {
-					break;
-				}
-			}
-			return comments;
-		});
+				return comments;
+			});
 		replyForm.setFieldValue('content', '');
 		queueNotification({
 			header: 'Success!',
@@ -361,63 +374,67 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					message: error || 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for (const key of keys) {
-						let flag = false;
-						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment) => {
-								if (comment.id === commentId) {
-									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
+				!isUsedInBounty &&
+					setComments?.((prev) => {
+						const comments: any = Object.assign({}, prev);
+						for (const key of keys) {
+							let flag = false;
+							if (prev?.[key]) {
+								comments[key] = prev[key].map((comment) => {
+									if (comment.id === commentId) {
+										if (comment?.replies && Array.isArray(comment.replies)) {
+											comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
+										}
+										flag = true;
 									}
-									flag = true;
-								}
-								return {
-									...comment
-								};
-							});
+									return {
+										...comment
+									};
+								});
+							}
+							if (flag) {
+								break;
+							}
 						}
-						if (flag) {
-							break;
-						}
-					}
-					return comments;
-				});
+						return comments;
+					});
 			} else {
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for (const key of keys) {
-						let flag = false;
-						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment) => {
-								if (comment.id === commentId) {
-									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = comment.replies.map((reply: any) => {
-											if (reply.id === replyId) {
-												reply.id = data.id;
-											}
-											return {
-												...reply
-											};
-										});
+				isUsedInBounty && window.location.reload();
+				!isUsedInBounty &&
+					setComments?.((prev) => {
+						const comments: any = Object.assign({}, prev);
+						for (const key of keys) {
+							let flag = false;
+							if (prev?.[key]) {
+								comments[key] = prev[key].map((comment) => {
+									if (comment.id === commentId) {
+										if (comment?.replies && Array.isArray(comment.replies)) {
+											comment.replies = comment.replies.map((reply: any) => {
+												if (reply.id === replyId) {
+													reply.id = data.id;
+												}
+												return {
+													...reply
+												};
+											});
+										}
+										flag = true;
 									}
-									flag = true;
-								}
-								return {
-									...comment
-								};
-							});
+									return {
+										...comment
+									};
+								});
+							}
+							if (flag) {
+								break;
+							}
 						}
-						if (flag) {
-							break;
-						}
-					}
-					return comments;
-				});
+						return comments;
+					});
 			}
 			setLoadingReply(false);
 		}
+		isUsedInBounty && window.location.reload();
 	};
 
 	const copyLink = () => {
@@ -446,7 +463,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		setTimelines((prev) => {
 			return [
 				...prev.map((timeline) => {
-					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postType!)) {
 						return {
 							...timeline,
 							commentsCount: timeline.commentsCount > 0 ? timeline.commentsCount - 1 : 0
@@ -484,8 +501,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 			commentId,
-			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props.postId,
-			postType: comment.post_type || props.proposalType,
+			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props?.postId,
+			postType: comment.post_type || props?.proposalType,
 			trackNumber: track_number
 		});
 
@@ -558,7 +575,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				</div>
 			)
 		},
-		id && id !== userId && !isEditing
+		id && id !== userId && !isEditing && postType
 			? {
 					key: 3,
 					label: (
@@ -567,7 +584,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
 							type='comment'
 							commentId={commentId}
-							postId={postIndex}
+							postId={isUsedInBounty ? BountyPostIndex : postIndex!}
 							isButtonOnComment={true}
 						/>
 					)
@@ -593,7 +610,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						</div>
 					)
 			  }
-			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
+			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && postType
 			? {
 					key: 4,
 					label: (
@@ -633,7 +650,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, [canEditComment]);
 
 	useEffect(() => {
-		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		if (isUsedInBounty) {
+			setCommentAllowed(true);
+		} else {
+			setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors as EAllowedCommentor, !!loginAddress && isUserOnchainVerified));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 

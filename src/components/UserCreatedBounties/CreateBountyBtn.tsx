@@ -30,10 +30,9 @@ const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
 				onClick={() => {
 					setOpenCreateBountyModal(true);
 				}}
-				shape='circle'
 				style={{ background: 'linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%)' }}
 				className={classNames(
-					' flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-2xl border-none px-6 py-3 md:w-auto md:justify-normal',
+					' flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[12px] border-none px-6 py-3 md:w-auto md:justify-normal',
 					!loginAddress ? 'opacity-50' : ''
 				)}
 				height={46}

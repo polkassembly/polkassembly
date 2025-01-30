@@ -86,6 +86,9 @@ const BackToListingView = ({ postCategory, trackName, network }: Props) => {
 			case PostCategory.ADVISORY_COMMITTEE:
 				path = 'advisory-committee/motions';
 				break;
+			case PostCategory.USER_CREATED_BOUNTIES:
+				path = 'user-created-bounties';
+				break;
 		}
 	}
 

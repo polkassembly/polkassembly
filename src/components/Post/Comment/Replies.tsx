@@ -15,9 +15,11 @@ interface Props {
 	isSubsquareUser: boolean;
 	isReactionOnReply: boolean;
 	comment: IComment;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 
-const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReactionOnReply, comment }: Props) => {
+const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReactionOnReply, comment, BountyPostIndex, isUsedInBounty }: Props) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
@@ -51,6 +53,8 @@ const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isReaction
 								comment={comment}
 								isSubsquareUser={isSubsquareUser}
 								isReactionOnReply={isReactionOnReply}
+								isUsedInBounty={isUsedInBounty}
+								BountyPostIndex={BountyPostIndex}
 							/>
 						</div>
 					);

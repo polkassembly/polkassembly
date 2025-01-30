@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
 import Tooltip from '~src/basic-components/Tooltip';
+import classNames from 'classnames';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -27,6 +28,7 @@ interface Props {
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
 	isUsedInLeadership?: boolean;
+	isUsedInBountyPage?: boolean;
 }
 const NameLabel = ({
 	className,
@@ -37,7 +39,8 @@ const NameLabel = ({
 	disableAddressClick = false,
 	truncateUsername,
 	usernameMaxLength,
-	isUsedInLeadership
+	isUsedInLeadership,
+	isUsedInBountyPage
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -124,7 +127,7 @@ const NameLabel = ({
 					<Address
 						passedUsername={username}
 						address={defaultAddress}
-						className='text-sm'
+						className={classNames(isUsedInBountyPage ? '-mt-1' : '', 'text-sm')}
 						displayInline
 						usernameClassName={usernameClassName}
 						disableIdenticon={disableIdenticon}

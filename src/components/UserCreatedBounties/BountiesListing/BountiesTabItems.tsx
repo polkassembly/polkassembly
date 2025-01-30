@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
-// import FilterByTags from '~src/ui-components/FilterByTags';
+import FilterByTags from '~src/ui-components/FilterByTags';
 import { Tabs } from '~src/ui-components/Tabs';
 import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
@@ -68,9 +68,9 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 
 	return (
 		<div className='relative mt-5 md:mt-0'>
-			{/* <div className='absolute -top-2 right-5 z-50 md:top-8'>
+			<div className='absolute -top-2 right-5 z-50 md:top-8'>
 				<FilterByTags isUsedInBountyPage={true} />
-			</div> */}
+			</div>
 
 			<div>
 				<Tabs

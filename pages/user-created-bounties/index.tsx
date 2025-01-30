@@ -39,20 +39,31 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const status: EUserCreatedBountiesStatuses | null =
 		query?.status && query?.status !== '' ? (decodeURIComponent(String(query?.status)).toLowerCase() as EUserCreatedBountiesStatuses) : null;
 
-	const { data, error } = await getUserCreatedBounties({
-		filterBy: filterBy,
-		network,
-		page: Number(page),
-		status
-	});
+	try {
+		const { data, error } = await getUserCreatedBounties({
+			filterBy: filterBy,
+			network,
+			page: Number(page),
+			status
+		});
 
-	return {
-		props: {
-			data,
-			error,
-			network
-		}
-	};
+		console.log('error', error);
+
+		return {
+			props: {
+				data: data || null,
+				error: error ? JSON.stringify(error) : null,
+				network
+			}
+		};
+	} catch (err) {
+		return {
+			props: {
+				error: err instanceof Error ? err.message : 'Unknown error occurred',
+				network
+			}
+		};
+	}
 };
 
 const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {

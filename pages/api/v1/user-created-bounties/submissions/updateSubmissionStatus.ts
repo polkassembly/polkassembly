@@ -66,15 +66,15 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(400).json({ message: messages?.UNAUTHORISED });
 		}
 
-		const { maxClaimReached, claimedSubmissionsCount } = await checkIsUserCreatedBountySubmissionValid(
+		const { maxClaimReached, submissionAlreadyExists, claimedSubmissionsCount } = await checkIsUserCreatedBountySubmissionValid(
 			userCreatedBountySnapshot?.docs?.[0]?.ref,
 			Number(user?.id),
 			substrateSubmissionProposerAddress || submissionProposerAddress
 		);
 
-		// if (!submissionAlreadyExists) {
-		// return res.status(400).json({ message: `Submission does not exists for bounty id-${parentBountyIndex}` });
-		// }
+		if (!submissionAlreadyExists) {
+			return res.status(400).json({ message: `Submission does not exists for bounty id-${parentBountyIndex}` });
+		}
 		if (maxClaimReached) {
 			return res.status(400).json({ message: `Max number of claimed reached for bounty id-${parentBountyIndex}` });
 		}

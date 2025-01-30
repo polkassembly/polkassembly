@@ -74,7 +74,9 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 						/>
 						<span className='ml-[2px] text-[13px] text-blue-light-high dark:text-blue-dark-high'>{claimed_percentage}%</span>
 					</div>
-					<span className='rounded-lg bg-[#FF3C5F] px-[6px] py-1 text-xs tracking-wide text-white'>Unclaimed: ${Number(currentTokenPrice) * Number(unclaimedAmount)}</span>
+					<span className='rounded-lg bg-[#FF3C5F] px-[6px] py-1 text-xs tracking-wide text-white'>
+						Unclaimed: ${(Number(currentTokenPrice) * Number(unclaimedAmount)).toFixed(2)}
+					</span>
 				</div>
 
 				{/* Max Claims Row */}

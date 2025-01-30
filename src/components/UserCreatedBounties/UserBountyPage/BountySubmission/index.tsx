@@ -114,7 +114,7 @@ const BountySubmission = ({ post }: { post: IUserCreatedBounty }) => {
 					<div className='pt-3 text-center'>
 						<span
 							onClick={() => (post.proposer == loginAddress ? setOpenModal(false) : setOpenModal(true))}
-							className='cursor-pointer font-semibold text-pink_primary'
+							className={`${post.proposer == loginAddress ? 'cursor-not-allowed' : 'cursor-pointer '} font-semibold text-pink_primary`}
 						>
 							Add Submission
 						</span>{' '}

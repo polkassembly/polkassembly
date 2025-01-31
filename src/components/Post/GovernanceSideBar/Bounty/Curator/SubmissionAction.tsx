@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Modal, Spin } from 'antd';
 import { EditOutlined, ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EChildbountySubmissionStatus, IChildBountySubmission } from '~src/types';
+import { EChildbountySubmissionStatus, ETabBountyStatuses, EUserCreatedBountySubmissionStatus, IChildBountySubmission } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
@@ -22,7 +22,7 @@ interface SubmissionActionProps {
 	isApproveButton?: boolean;
 }
 
-const StatusUI = ({ status }: { status: EChildbountySubmissionStatus }) => {
+const StatusUI = ({ status }: { status: EChildbountySubmissionStatus | EUserCreatedBountySubmissionStatus | ETabBountyStatuses }) => {
 	return (
 		<div
 			className={classNames(

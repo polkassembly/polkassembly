@@ -7,7 +7,7 @@ import { useApiContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Wallet } from '~src/types';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface Props {
 	className?: string;

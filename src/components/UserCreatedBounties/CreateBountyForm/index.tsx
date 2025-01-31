@@ -23,7 +23,6 @@ import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';
 import BN from 'bn.js';
 import { IVerificationResponse } from 'pages/api/v1/verification';
-import { usePostDataContext } from '~src/context';
 import _ from 'lodash';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useDispatch } from 'react-redux';
@@ -31,6 +30,7 @@ import { ICreateBountyFormState } from '~src/redux/userCreateBountyForm/@types';
 import { resetForm, setFormField } from '~src/redux/userCreateBountyForm';
 import { inputToBn } from '~src/util/inputToBn';
 import { useRouter } from 'next/router';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -46,7 +46,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const { className, setOpenCreateBountyModal, isUsedForEdit, postInfo } = props;
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { setPostData } = usePostDataContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const createBountyFormState = useUserCreateBountyFormSelector();
 	const dispatch = useDispatch();
@@ -64,14 +63,17 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 
 	useEffect(() => {
 		form.setFieldsValue({
-			address: createBountyFormState.address || selectedAddress || loginAddress,
-			balance: createBountyFormState.balance || '0',
-			content: createBountyFormState.content || '',
-			claims: createBountyFormState.claims,
+			address: postInfo?.address || createBountyFormState.address || selectedAddress || loginAddress,
+			balance:
+				(postInfo?.reward && Number(formatBnBalance(String(postInfo?.reward), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))) ||
+				createBountyFormState.balance ||
+				'0',
+			content: postInfo?.content || createBountyFormState.content || '',
+			claims: postInfo?.max_claim || createBountyFormState.claims,
 			deadline: createBountyFormState.deadline ? dayjs(createBountyFormState.deadline) : null,
-			guidelines: createBountyFormState.guidelines,
-			title: createBountyFormState.title,
-			twitter: createBountyFormState.twitter,
+			guidelines: postInfo?.submission_guidelines || createBountyFormState.guidelines,
+			title: postInfo?.title || createBountyFormState.title,
+			twitter: postInfo?.twitter_handle || createBountyFormState.twitter,
 			categories: createBountyFormState.categories
 		});
 		setSelectedAddress(createBountyFormState.address || selectedAddress || loginAddress);
@@ -90,6 +92,26 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	}, []);
 
 	useEffect(() => {
+		if (postInfo) {
+			form.setFieldsValue({
+				address: postInfo?.address || createBountyFormState.address || selectedAddress || loginAddress,
+				balance:
+					(postInfo?.reward && Number(formatBnBalance(String(postInfo?.reward), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))) ||
+					createBountyFormState.balance ||
+					'0',
+				content: postInfo?.content || createBountyFormState.content || '',
+				claims: postInfo?.max_claim || createBountyFormState.claims,
+				deadline: postInfo?.deadline_date ? dayjs(postInfo.deadline_date) : null,
+				guidelines: postInfo?.submission_guidelines || createBountyFormState.guidelines,
+				title: postInfo?.title || createBountyFormState.title,
+				twitter: postInfo?.twitter_handle || createBountyFormState.twitter,
+				categories: createBountyFormState.categories
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postInfo, form]);
+
+	useEffect(() => {
 		form.setFieldsValue({ address: selectedAddress || loginAddress });
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAddress]);
@@ -101,6 +123,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		});
 	};
 	const allowCreateBounty = () => {
+		form.validateFields();
 		const formValues = form?.getFieldsValue(['title', 'content', 'address', 'claims', 'deadline', 'twitter']);
 
 		const allow =
@@ -109,9 +132,11 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			!!(formValues?.address as string)?.length &&
 			!!formValues?.claims &&
 			!!dayjs(formValues?.deadline)?.isValid() &&
-			!!formValues?.twitter &&
-			!!isTwitterVerified &&
 			newBountyAmount.gt(ZERO_BN);
+
+		if (!isUsedForEdit) {
+			return allow && !!formValues?.twitter && !!isTwitterVerified;
+		}
 
 		return allow;
 	};
@@ -204,7 +229,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		if (data) {
 			queueNotification({
 				header: 'Success!',
-				message: data.message,
+				message: 'Bounty created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
@@ -216,7 +241,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const handleEditBounty = async (values: any) => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/user-created-bounties/editBounty', {
-			bountyId: postInfo?.id,
+			bountyId: postInfo?.post_index,
 			content: values?.content,
 			deadlineDate: dayjs(values?.deadline).toDate(),
 			maxClaim: Number(values?.claims),
@@ -226,21 +251,21 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			title: values?.title
 		});
 		if (error) {
-			console.error('error resetting passoword : ', error);
+			console.error('error during editing bounty : ', error);
 			setLoading(false);
 		}
 
 		if (data) {
-			setPostData(data?.post);
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
+			setOpenCreateBountyModal?.(false);
+			window.location.reload();
 		}
 	};
-
 	return (
 		<section className={`${className} ${spaceGrotesk.className} ${spaceGrotesk.variable} flex w-full flex-col gap-y-2`}>
 			<Form
@@ -252,7 +277,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					address: postInfo?.proposer || '',
 					balance: Number(postInfo?.reward) / 10 ** 10 || '', // Convert from planck to DOT if necessary
 					claims: postInfo?.maxClaim || '',
-					deadline: postInfo?.deadlineDate ? dayjs(postInfo.deadlineDate) : null,
+					deadline: postInfo?.deadline_date ? dayjs.utc(postInfo.deadline_date) : null,
 					content: postInfo?.content || '',
 					guidelines: postInfo?.submissionGuidelines || '',
 					title: postInfo?.title || ''
@@ -508,7 +533,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					</article>
 					{/* footer buttons */}
 					<div className='-mx-6 flex items-center justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-separatorDark'>
-						<Form.Item>
+						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
 								variant='default'
 								text='Cancel'
@@ -520,7 +545,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								}}
 							/>
 						</Form.Item>
-						<Form.Item>
+						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
 								variant='primary'
 								text={isUsedForEdit ? 'Edit' : 'Create'}

@@ -302,7 +302,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
 							buttonsize='xs'
-							text='Go Back'
+							text={'Go Back'}
 						/>
 						<CustomButton
 							variant='primary'

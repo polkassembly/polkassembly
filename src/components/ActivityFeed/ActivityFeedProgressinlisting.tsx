@@ -17,7 +17,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { PieChart } from 'react-minimal-pie-chart';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const ZERO = new BN(0);
 

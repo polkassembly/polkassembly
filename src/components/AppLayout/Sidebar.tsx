@@ -74,7 +74,7 @@ import { GlobalActions } from '~src/redux/global';
 import CreateProposalDropdown from './CreateProposalDropdown';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const { Sider } = Layout;
 

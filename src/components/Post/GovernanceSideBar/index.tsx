@@ -86,7 +86,7 @@ import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/type
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 import ExpertBodyCard from '~src/components/ExpertBody';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;

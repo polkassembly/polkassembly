@@ -25,7 +25,7 @@ import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 

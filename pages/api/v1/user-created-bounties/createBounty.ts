@@ -99,7 +99,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const bountyDoc = userCreatedBountiesSnapshot?.doc(String(totalCreatedBountiesCount));
 
 		const payload = {
-			content,
+			content: content || '',
 			createdAt: new Date(),
 			deadlineDate: new Date(deadlineDate),
 			history: [],

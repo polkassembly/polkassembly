@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { post_topic } from '~src/global/post_topics';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType } from '~src/types';
-import { isPolymesh } from '~src/util/getNetwork';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface Props {
 	className?: string;

@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider, Form, message, Modal } from 'antd';
+import { Button, Divider, Form, message, Modal, Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { NetworkSocials } from '~src/types';
+import { NetworkSocials, NotificationStatus } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import SignupPopup from '~src/ui-components/SignupPopup';
@@ -22,6 +22,7 @@ import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import TextEditor from '~src/ui-components/TextEditor';
 import classNames from 'classnames';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -31,6 +32,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const address = currentUser?.loginAddress;
 	const { network } = useNetworkSelector();
@@ -82,6 +84,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			return;
 		}
 		if (address) {
+			setLoading(true);
 			const substrateAddress = getSubstrateAddress(address);
 			const { data, error } = await nextApiClientFetch<any>('api/v1/expertBody/becomeExpert', {
 				contribution: contribution,
@@ -96,8 +99,13 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				setReason('');
 			}
 			if (error) {
-				message.error('Failed to submit application. Please try again later.');
+				queueNotification({
+					header: 'Error!',
+					message: error || data.message,
+					status: NotificationStatus.ERROR
+				});
 			}
+			setLoading(false);
 		}
 	};
 
@@ -276,7 +284,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 								height={150}
 							/>
 						</Form.Item>
-						<p className='text-sm font-medium text-[#243A57]'>Share any relevant contributions you&apos;ve made in the past for the Polkadot ecosystem.</p>
+						<p className='text-sm font-medium text-[#243A57] dark:text-blue-dark-medium'>
+							Share any relevant contributions you&apos;ve made in the past for the Polkadot ecosystem.
+						</p>
 						<Form.Item
 							name='contribution'
 							rules={[{ message: 'Please provide a contribution', required: true }]}
@@ -294,13 +304,13 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 						/>
 						<div className='pt-2 text-right'>
 							<Button
-								className='mr-[8px] h-9 w-28 border-pink_primary text-pink_primary'
+								className='mr-[8px] h-9 w-28 border-pink_primary text-pink_primary dark:bg-transparent'
 								onClick={handleCancel}
 							>
 								Cancel
 							</Button>
 							<Button
-								className='h-9 w-28 bg-pink_primary text-white'
+								className='h-9 w-28 border-none bg-pink_primary text-white'
 								onClick={handleContributionSubmit}
 							>
 								Submit
@@ -344,13 +354,15 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				closeIcon={<CloseIcon className='font-medium text-[#485F7D] dark:text-icon-dark-inactive' />}
 				footer={null}
 			>
-				{!successSubmission && (
-					<Divider
-						type='horizontal'
-						className='m-0 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
-					/>
-				)}
-				{renderContent()}
+				<Spin spinning={loading}>
+					{!successSubmission && (
+						<Divider
+							type='horizontal'
+							className='m-0 rounded-sm border-t-2 border-l-[#D2D8E0] p-0 dark:border-[#4B4B4B]'
+						/>
+					)}
+					{renderContent()}
+				</Spin>
 			</Modal>
 			{onchainIdentitySupportedNetwork.includes(network) && (
 				<OnchainIdentity

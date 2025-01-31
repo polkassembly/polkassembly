@@ -12,7 +12,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EExpertReqStatus } from '~src/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -23,9 +23,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const { contribution, userAddress, reason } = req.body;
 
-		const encodedUserAddress = getEncodedAddress(userAddress, network);
+		const substrateAddress = getSubstrateAddress(userAddress);
 
-		if (!userAddress?.length || !encodedUserAddress) {
+		if (!userAddress?.length || !substrateAddress) {
 			return res.status(400).json({ message: 'Invalid Proposer Address' });
 		}
 
@@ -41,7 +41,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const userAddressesRefs = await firestore_db
 			.collection('addresses')
-			.where('address', '==', encodedUserAddress)
+			.where('address', '==', substrateAddress)
 			.where('user_id', '==', user?.id)
 			.get();
 
@@ -53,7 +53,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const expertReqDocs = await expertReqSnapshot
 			.where('userId', '==', user?.id)
-			.where('address', '==', encodedUserAddress)
+			.where('address', '==', substrateAddress)
 			.get();
 
 		if (!expertReqDocs.empty) {
@@ -63,7 +63,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const expertReqDoc = expertReqSnapshot.doc();
 
 		const payload = {
-			address: encodedUserAddress,
+			address: substrateAddress,
 			contribution: contribution || '',
 			createdAt: new Date(),
 			id: expertReqDoc?.id,

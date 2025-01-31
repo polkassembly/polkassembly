@@ -7,7 +7,7 @@ import Image from 'next/image';
 import SendFundsModal from './SendFundsModal';
 import { IAccountData } from '~src/types';
 
-const SendFundsButton = ({ address, accountData }: { address: string; accountData: IAccountData }) => {
+const SendFundsButton = ({ address, accountData }: { address: string; accountData?: IAccountData }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	return (
 		<>

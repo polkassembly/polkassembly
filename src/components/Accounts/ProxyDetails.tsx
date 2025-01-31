@@ -31,6 +31,7 @@ const ProxyDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 											proxyType={realAccount?.proxy_type}
 											isPureProxy={true}
 											linkedAddresses={linkedAddresses}
+											accountData={accountData}
 										/>
 									</div>
 								))}
@@ -44,6 +45,7 @@ const ProxyDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 											address={proxyAccount?.account_display?.address}
 											proxyType={proxyAccount?.proxy_type}
 											linkedAddresses={linkedAddresses}
+											accountData={accountData}
 										/>
 									</div>
 								))}

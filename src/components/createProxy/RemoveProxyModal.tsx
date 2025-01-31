@@ -12,7 +12,7 @@ import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
@@ -39,6 +39,7 @@ const RemoveProxyModal = ({ openModal, setOpenModal, className, setAddress, addr
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
 	const userDetails = useUserDetailsSelector();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { loginAddress, loginWallet } = userDetails;
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -262,14 +263,14 @@ const RemoveProxyModal = ({ openModal, setOpenModal, className, setAddress, addr
 
 				<div className={`${dmSans.className} ${dmSans.variable} mt-2 flex items-center justify-between text-sm tracking-tight text-blue-light-medium dark:text-blue-dark-medium`}>
 					{' '}
-					Reserved Balance <span className='text-xs text-pink_primary dark:text-pink-dark-primary'>0 USD</span>
+					Reserved Balance <span className='text-xs text-pink_primary dark:text-pink-dark-primary'>{(Number(currentTokenPrice) * 20).toFixed(2)} USD</span>
 				</div>
 				<Form.Item
 					tooltip='Amount reserved for the proxy'
 					className='relative'
 				>
 					<Input
-						value='0 DOT'
+						value='20 DOT'
 						disabled
 						className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
@@ -281,7 +282,7 @@ const RemoveProxyModal = ({ openModal, setOpenModal, className, setAddress, addr
 					showIcon
 					description={
 						<div className='mt-1 flex flex-col p-0 text-xs dark:text-blue-dark-high'>
-							Gas Fees of 2.48 DOT will be applied to the transaction and the deposit X DOT locked to create proxy will be returned.
+							Gas Fees of 2.48 {unit} will be applied to the transaction and the deposit 20 {unit} locked to create proxy will be returned.
 						</div>
 					}
 				/>

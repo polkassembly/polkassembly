@@ -82,22 +82,20 @@ const ChatWithDelegates = ({ className }: Props) => {
 
 	useEffect(() => {
 		fetchUnreadChatCount();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
-	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
+		const handleClickOutside = (event: MouseEvent) => {
 			if (chatButtonRef.current && !chatButtonRef.current.contains(event.target as Node)) {
 				setIsTooltipOpen(false);
 			}
-		}
-		if (isTooltipOpen) {
-			document.addEventListener('click', handleClickOutside, true);
-		}
+		};
+
+		document.addEventListener('click', handleClickOutside, true);
+
 		return () => {
 			document.removeEventListener('click', handleClickOutside, true);
 		};
-	}, [isTooltipOpen]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>

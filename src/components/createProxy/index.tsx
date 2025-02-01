@@ -14,14 +14,19 @@ const CreateProxyMainModal = dynamic(() => import('~src/components/createProxy/C
 const CreateProxySuccessModal = dynamic(() => import('~src/components/createProxy/CreateProxySuccessModal'), {
 	ssr: false
 });
+const RemoveProxyModal = dynamic(() => import('~src/components/createProxy/RemoveProxyModal'), {
+	ssr: false
+});
 
 interface Props {
 	openProxyModal: boolean;
 	setOpenProxyModal: (pre: boolean) => void;
+	openRemoveProxyModal: boolean;
+	setOpenRemoveProxyModal: (pre: boolean) => void;
 	className?: string;
 }
 
-const ProxyMain = ({ openProxyModal, setOpenProxyModal }: Props) => {
+const ProxyMain = ({ openProxyModal, setOpenProxyModal, openRemoveProxyModal, setOpenRemoveProxyModal }: Props) => {
 	const { loginAddress } = useUserDetailsSelector();
 	const [openProxyMainModal, setOpenProxyMainModal] = useState<boolean>(false);
 	const [openProxySuccessModal, setOpenProxySuccessModal] = useState<boolean>(false);
@@ -54,6 +59,13 @@ const ProxyMain = ({ openProxyModal, setOpenProxyModal }: Props) => {
 				isPureProxyCreated={isPureProxyCreated}
 				proxiedAddress={proxiedAddress}
 				className=''
+			/>
+			<RemoveProxyModal
+				openModal={openRemoveProxyModal}
+				setOpenModal={setOpenRemoveProxyModal}
+				className=''
+				address={address}
+				setAddress={setAddress}
 			/>
 		</>
 	);

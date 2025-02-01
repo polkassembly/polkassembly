@@ -26,6 +26,7 @@ const Signatories: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 							address={signatories?.address}
 							isMultisigAddress={true}
 							linkedAddresses={linkedAddresses}
+							accountData={accountData}
 						/>
 					</div>
 				))}

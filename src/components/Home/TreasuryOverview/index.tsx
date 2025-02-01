@@ -24,6 +24,7 @@ import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
 import AvailableTreasuryBalance from './AvailableTreasuryBalance';
 import CurrentPrice from './CurrentPrice';
 import NextBurn from './NextBurn';
+import _ from 'lodash';
 import SpendPeriod from './SpendPeriod';
 import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
 
@@ -128,6 +129,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				});
 			});
 	}, [api, apiReady, blockTime, network]);
+
+	// fetch current price of the token
+	useEffect(() => {
+		if (!network) return;
+
+		const debouncedFetch = _.debounce(() => {
+			GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		}, 500);
+
+		debouncedFetch();
+
+		return () => {
+			debouncedFetch.cancel();
+		};
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -264,18 +280,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
-	// set availableUSD and nextBurnUSD whenever they or current price of the token changes
-
-	// fetch current price of the token
-	useEffect(() => {
-		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
-	}, [network]);
-
 	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
-		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
+		if (cancel || !currentTokenPrice.value || currentTokenPrice.value == 'N/A' || currentTokenPrice.isLoading || !network) return;
 
 		setPriceWeeklyChange({
 			isLoading: true,

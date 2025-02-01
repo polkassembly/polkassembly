@@ -40,7 +40,10 @@ interface Props {
 const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme } = useTheme();
-	const sortedPostsData = postsData.sort((a, b) => b.created_at - a.created_at);
+	const sortedPostsData = [...postsData].sort((a, b) => {
+		if (!a?.created_at || !b?.created_at) return 0;
+		return b.created_at - a.created_at;
+	});
 
 	const eventRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,7 +56,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 		return () => {
 			clearTimeout(scrollToTop);
 		};
-	}, [sortedPostsData, postsPage]);
+	}, [postsPage]);
 
 	return sortedPostsData.length > 0 ? (
 		<>

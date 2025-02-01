@@ -4,7 +4,7 @@
 
 import { Drawer, Button, Tooltip, Badge } from 'antd';
 import { dmSans } from 'pages/_app';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import UserChats from './UserChats';
 import ChatHeader from './ChatHeader';
@@ -34,6 +34,8 @@ const ChatWithDelegates = ({ className }: Props) => {
 
 	const dispatch = useDispatch();
 	const { unreadChatCount } = useChatsSelector();
+
+	const chatButtonRef = useRef<HTMLDivElement>(null);
 
 	const openChat = () => {
 		setIsModalOpen(true);
@@ -83,6 +85,20 @@ const ChatWithDelegates = ({ className }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (chatButtonRef.current && !chatButtonRef.current.contains(event.target as Node)) {
+				setIsTooltipOpen(false);
+			}
+		}
+		if (isTooltipOpen) {
+			document.addEventListener('click', handleClickOutside, true);
+		}
+		return () => {
+			document.removeEventListener('click', handleClickOutside, true);
+		};
+	}, [isTooltipOpen]);
+
 	return (
 		<>
 			<Tooltip
@@ -99,26 +115,28 @@ const ChatWithDelegates = ({ className }: Props) => {
 				open={isTooltipOpen}
 				color='#2D80FF'
 			>
-				<Badge
-					count={unreadChatCount}
-					overflowCount={99}
-					offset={[-2, 2]}
-					size='small'
-					style={{ backgroundColor: 'var(--pink_primary)' }}
-					className='[&_.ant-badge-count]:shadow-[0_0_0_2px_rgba(255,255,255,1)] [&_.ant-badge-count]:dark:shadow-[0_0_0_2px_rgba(0,0,0,1)]'
-				>
-					<Button
-						onClick={openChat}
-						className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
+				<div ref={chatButtonRef}>
+					<Badge
+						count={unreadChatCount}
+						overflowCount={99}
+						offset={[-2, 2]}
+						size='small'
+						style={{ backgroundColor: 'var(--pink_primary)' }}
+						className='[&_.ant-badge-count]:shadow-[0_0_0_2px_rgba(255,255,255,1)] [&_.ant-badge-count]:dark:shadow-[0_0_0_2px_rgba(0,0,0,1)]'
 					>
-						<Image
-							src={'/assets/icons/delegation-chat/message-icon.svg'}
-							height={20}
-							width={20}
-							alt='message icon'
-						/>
-					</Button>
-				</Badge>
+						<Button
+							onClick={openChat}
+							className={'h-10 w-10 border-pink_primary bg-white px-0 font-medium dark:bg-black'}
+						>
+							<Image
+								src={'/assets/icons/delegation-chat/message-icon.svg'}
+								height={20}
+								width={20}
+								alt='message icon'
+							/>
+						</Button>
+					</Badge>
+				</div>
 			</Tooltip>
 			<Drawer
 				title={<ChatHeader actions={chatHeaderActions} />}

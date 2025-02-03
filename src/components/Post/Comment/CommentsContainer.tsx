@@ -464,7 +464,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div className='text-xs text-pink_primary '>
 								Was this review helpful ?
 								<span
-									className='ml-1 cursor-pointer text-xs font-medium'
+									className='ml-1 cursor-pointer text-xs font-medium underline'
 									onClick={() => {
 										setForceRefresh(true);
 										getSummary();

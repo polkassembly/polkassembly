@@ -50,7 +50,7 @@ export const fetchTokenPriceFromDB = async ({ network }: { network: string }): P
 		}
 
 		return {
-			data: { price: tokenPriceData.value, last_fetched_at: tokenPriceData.last_fetched_at.toDate() },
+			data: { last_fetched_at: tokenPriceData.last_fetched_at.toDate(), price: tokenPriceData.value },
 			error: null,
 			status: 200
 		};

@@ -31,8 +31,8 @@ const useTokenPrice = (network: string) => {
 
 				if (res.ok && data?.price) {
 					setPriceData({
-						price: data.price,
-						lastFetchedAt: new Date(data.last_fetched_at)
+						lastFetchedAt: new Date(data.last_fetched_at),
+						price: data.price
 					});
 				} else {
 					setPriceData({ error: data?.message || 'Token price not found' });

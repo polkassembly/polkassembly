@@ -45,7 +45,7 @@ const Messages = ({ chat, chatId, recipientAddress, isNewChat }: Props) => {
 
 	const chatRecipientAddress = isNewChat ? recipientAddress : chat?.recipientProfile?.address;
 
-	const isReceiverAddress = chat?.chatInitiatedBy !== substrateAddress;
+	const isReceiverAddress = isNewChat ? false : chat?.chatInitiatedBy !== substrateAddress;
 
 	const renderUserImage = useMemo(() => {
 		if (chat?.recipientProfile?.image) {

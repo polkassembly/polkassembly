@@ -490,31 +490,29 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 				</div>
 			)}
-			{bountyValues && (
-				<TreasuryDetailsModal
-					visible={isModalVisible}
-					onClose={closeModal}
-					available={tokenValue}
-					assetValue={assetValue}
-					assetValueFellowship={assetValueFellowship}
-					assetValueUSDC={assetValueUSDC}
-					assetValueUSDT={assetValueUSDT}
-					assetValueUSDTFellowship={assetValueUSDTFellowship}
-					assetValueUSDTFellowshipRaw={assetValueUSDTFellowshipRaw.toString()}
-					hydrationValue={hydrationValue}
-					hydrationValueUSDC={hydrationValueUSDC}
-					hydrationValueUSDT={hydrationValueUSDT}
-					chainProperties={chainProperties}
-					network={network}
-					assethubApiReady={assethubApiReady}
-					hydrationApiReady={hydrationApiReady}
-					unit={unit}
-					currentTokenPrice={!tokenLoading && tokenPrice ? String(tokenPrice) : currentTokenPrice.value}
-					loansData={loansData}
-					totalBountyPool={statsData.totalBountyPool}
-					bountyValues={bountyValues}
-				/>
-			)}
+			<TreasuryDetailsModal
+				visible={isModalVisible}
+				onClose={closeModal}
+				available={tokenValue}
+				assetValue={assetValue}
+				assetValueFellowship={assetValueFellowship}
+				assetValueUSDC={assetValueUSDC}
+				assetValueUSDT={assetValueUSDT}
+				assetValueUSDTFellowship={assetValueUSDTFellowship}
+				assetValueUSDTFellowshipRaw={assetValueUSDTFellowshipRaw.toString()}
+				hydrationValue={hydrationValue}
+				hydrationValueUSDC={hydrationValueUSDC}
+				hydrationValueUSDT={hydrationValueUSDT}
+				chainProperties={chainProperties}
+				network={network}
+				assethubApiReady={assethubApiReady}
+				hydrationApiReady={hydrationApiReady}
+				unit={unit}
+				currentTokenPrice={!tokenLoading && tokenPrice ? String(tokenPrice) : currentTokenPrice.value}
+				loansData={loansData}
+				totalBountyPool={statsData.totalBountyPool}
+				bountyValues={bountyValues ? bountyValues : null}
+			/>
 		</div>
 	);
 };

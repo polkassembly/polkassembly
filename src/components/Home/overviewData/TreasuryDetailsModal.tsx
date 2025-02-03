@@ -60,7 +60,7 @@ const TreasuryDetailsModal = ({
 	bountyValues
 }: TreasuryDetailsModalProps) => {
 	const availableValue = parseFloat(String(available));
-	const tokenPrice = parseFloat(currentTokenPrice || '0');
+	const tokenPrice = currentTokenPrice && currentTokenPrice !== 'N/A' ? parseFloat(currentTokenPrice) : 0;
 	const assetValueNum = parseFloat(assetValue || '0');
 	const assetValueUSDCNum = parseFloat(assetValueUSDC || '0');
 	const assetValueUSDTNum = parseFloat(assetValueUSDT || '0');
@@ -108,7 +108,7 @@ const TreasuryDetailsModal = ({
 							<span className={`${dmSans.className} ${dmSans.variable} text-sm font-medium `}>Relay Chain</span>
 						</div>
 						<div className={`${dmSans.className} ${dmSans.variable} -mt-[2px] ml-6 flex flex-col sm:ml-0`}>
-							<span className='ml-1 text-base font-semibold'>~ ${relayChainValue}</span>
+							{relayChainValue && <span className='ml-1 text-base font-semibold'>~ ${relayChainValue}</span>}
 							<div className='ml-1 flex items-center gap-[6px] text-sm'>
 								<Image
 									alt='relay icon'
@@ -136,16 +136,18 @@ const TreasuryDetailsModal = ({
 								<span className='text-sm font-medium '>Asset Hub</span>
 							</div>
 							<div className='ml-6 flex flex-col sm:ml-0'>
-								<span className='ml-1 text-base font-semibold'>
-									~ ${assetHubValue}{' '}
-									<Link
-										href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
-										className=' cursor-pointer sm:hidden'
-										target='_blank'
-									>
-										<RedirectingIcon />
-									</Link>
-								</span>
+								{assetHubValue && (
+									<span className='ml-1 text-base font-semibold'>
+										~ ${assetHubValue}{' '}
+										<Link
+											href={'https://assethub-polkadot.subscan.io/account/14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'}
+											className=' cursor-pointer sm:hidden'
+											target='_blank'
+										>
+											<RedirectingIcon />
+										</Link>
+									</span>
+								)}
 								<div className='items-center gap-1 sm:flex'>
 									<div className='ml-1 flex items-center gap-[6px] text-sm'>
 										<Image
@@ -216,7 +218,7 @@ const TreasuryDetailsModal = ({
 								<span className='text-sm font-medium '>Hydration</span>
 							</div>
 							<div className='ml-6 flex flex-col sm:ml-0'>
-								<span className='ml-1 text-base font-semibold'>~ ${hydrationValueTotal}</span>
+								{hydrationValueTotal && <span className='ml-1 text-base font-semibold'>~ ${hydrationValueTotal}</span>}
 								<div className='items-center gap-1 sm:flex'>
 									<div className='flex'>
 										<div className='ml-1 flex items-center gap-[6px] text-sm'>
@@ -294,7 +296,7 @@ const TreasuryDetailsModal = ({
 								<span className='text-sm font-medium '>Bounties</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='ml-1 text-base font-semibold'>~ ${bountyValues}</span>
+								{bountyValues && <span className='ml-1 text-base font-semibold'>~ ${bountyValues}</span>}
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Image
 										alt='relay icon'
@@ -322,7 +324,7 @@ const TreasuryDetailsModal = ({
 							<span className='text-sm font-medium '>Fellowships</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ ${fellowshipValues}</span>
+							{fellowshipValues && <span className='ml-1 text-base font-semibold'>~ ${fellowshipValues}</span>}
 							<div className='items-center gap-1 sm:flex'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link
@@ -372,7 +374,7 @@ const TreasuryDetailsModal = ({
 							<span className='text-sm font-medium '>Loans</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='ml-1 text-base font-semibold'>~ ${loansValue}</span>
+							{loansValue && <span className='ml-1 text-base font-semibold'>~ ${loansValue}</span>}
 							<div className='items-center gap-1 md:flex'>
 								<div className='ml-1 flex items-center gap-[6px] text-sm'>
 									<Link

@@ -9,6 +9,9 @@ import TwitterIcon from '~assets/icons/twitter.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useQuoteCommentContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
+import { CopyIcon } from './CustomIcons';
+import copyToClipboard from '~src/util/copyToClipboard';
+import { message } from 'antd';
 
 interface IHiglightMenuProps {
 	markdownRef: React.RefObject<HTMLDivElement>;
@@ -18,7 +21,7 @@ interface IHiglightMenuProps {
 const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const { postData } = usePostDataContext();
-
+	const [messageApi, contextHolder] = message.useMessage();
 	const { id } = useUserDetailsSelector();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
@@ -86,12 +89,20 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 		id ? commentForm?.scrollIntoView({ behavior: 'smooth', block: 'center' }) : commentLogin?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	};
 
+	const handleCopy = () => {
+		copyToClipboard(selectedText || '');
+		messageApi.open({
+			content: 'Text copied to clipboard',
+			type: 'success'
+		});
+	};
+
 	return (
 		<div
 			ref={menuRef}
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
-			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
+			} flex w-20 flex-col justify-start gap-2 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
 			style={!isUsedInComments ? { left: menuPosition.left, top: menuPosition.top - 10 } : {}}
 		>
 			<div
@@ -107,6 +118,14 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 			>
 				<TwitterIcon className='w-3 fill-white' />
 				Share
+			</div>
+			<div
+				className='z-50 flex cursor-pointer items-center justify-between gap-x-1'
+				onClick={handleCopy}
+			>
+				{contextHolder}
+				<CopyIcon className='text-base' />
+				Copy
 			</div>
 		</div>
 	);

@@ -33,7 +33,7 @@ interface TreasuryDetailsModalProps {
 	currentTokenPrice: string;
 	loansData: Record<'bifrost' | 'pendulum' | 'hydration' | 'centrifuge', number>;
 	totalBountyPool: string;
-	bountyValues: string;
+	bountyValues: string | null;
 }
 
 const TreasuryDetailsModal = ({

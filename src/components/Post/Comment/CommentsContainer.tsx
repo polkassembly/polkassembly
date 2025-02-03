@@ -209,6 +209,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	useEffect(() => {
+		if (forceRefresh) {
+			getSummary();
+			setForceRefresh(false);
+		}
+	}, [forceRefresh]);
+
+	useEffect(() => {
 		getOverallSentimentPercentage();
 		if (!Object.keys(comments).length) return;
 		setHasEnoughContent(CommentsContentCheck(comments));
@@ -462,13 +469,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<AiStarIcon className='text-base' /> AI-generated from comments
 							</h3>
 							<div className='text-xs text-pink_primary '>
-								Was this review helpful ?
+								Was this review helpful?
 								<span
 									className='ml-1 cursor-pointer text-xs font-medium underline'
-									onClick={() => {
-										setForceRefresh(true);
-										getSummary();
-									}}
+									onClick={() => setForceRefresh(true)}
 								>
 									No
 								</span>

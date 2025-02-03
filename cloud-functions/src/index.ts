@@ -345,15 +345,25 @@ export const updateMultipleNetworkTokenPricesScheduled = functions
 	.timeZone('UTC')
 	.onRun(async () => {
 		const networks = ['polkadot', 'kusama'];
+		const logResults = [];
 
 		for (const networkName of networks) {
 			try {
 				const networkDocRef = firestoreDB.collection('networks').doc(networkName.toLowerCase());
 				const networkDocSnapshot = await networkDocRef.get();
 
+				let actionTaken = 'Fetched new token price';
+				let lastFetchedAt = null;
+
 				if (networkDocSnapshot.exists) {
-					const lastFetchedAt = networkDocSnapshot.get('token_price.last_fetched_at')?.toDate?.();
+					lastFetchedAt = networkDocSnapshot.get('token_price.last_fetched_at')?.toDate?.();
 					if (lastFetchedAt && dayjs().diff(dayjs(lastFetchedAt), 'minute') < 5) {
+						logResults.push({
+							network: networkName,
+							action: actionTaken,
+							lastFetchedAt: lastFetchedAt.toISOString(),
+							status: 'success'
+						});
 						continue;
 					}
 				}
@@ -361,6 +371,12 @@ export const updateMultipleNetworkTokenPricesScheduled = functions
 				const latestTokenPrice = await fetchTokenUSDPrice(networkName);
 
 				if (latestTokenPrice === 'N/A') {
+					actionTaken = 'Skipped - price not available';
+					logResults.push({
+						network: networkName,
+						action: actionTaken,
+						status: 'skipped'
+					});
 					continue;
 				}
 
@@ -373,11 +389,27 @@ export const updateMultipleNetworkTokenPricesScheduled = functions
 					},
 					{ merge: true }
 				);
+
+				logResults.push({
+					network: networkName,
+					action: actionTaken,
+					tokenPrice: latestTokenPrice,
+					status: 'updated'
+				});
 			} catch (error) {
-				console.error(`Error updating token price for ${networkName}:`, error);
+				logResults.push({
+					network: networkName,
+					action: 'Error during update',
+					error: error,
+					status: 'failed'
+				});
 				continue;
 			}
 		}
+
+		logger.info('Token price update results', {
+			results: logResults
+		});
 
 		return null;
 	});

@@ -355,7 +355,7 @@ export const updateNetworkTokenPriceScheduled = functions
 				const lastFetchedAt = networkData?.token_price?.last_fetched_at?.toDate?.();
 
 				if (lastFetchedAt) {
-					const isDataStale = dayjs().diff(dayjs(lastFetchedAt), 'minute') >= 2;
+					const isDataStale = dayjs().diff(dayjs(lastFetchedAt), 'minute') >= 5;
 
 					if (!isDataStale) {
 						return null;

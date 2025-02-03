@@ -175,7 +175,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const totalUsdcRaw = new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString();
 	const totalUsdtRaw = new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString();
-	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)));
+	const totalUsd =
+		currentTokenPrice && currentTokenPrice.value !== 'N/A'
+			? formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)))
+			: null;
 
 	return (
 		<div
@@ -201,32 +204,32 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												/>
 											</div>
 										)}
-										<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
-											<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
-											<div className='flex items-end gap-x-1 text-lg font-semibold'>
-												<div>
-													{currentTokenPrice.value === 'N/A' ? (
-														<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-													) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-														<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-													) : null}
-												</div>
-												{priceWeeklyChange.value !== 'N/A' && (
-													<div className='-mb-[2px] flex items-center'>
-														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
-															{Math.abs(Number(priceWeeklyChange.value))}%
-														</span>
-														<span>
-															{Number(priceWeeklyChange.value) < 0 ? (
-																<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
-															) : (
-																<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
-															)}
-														</span>
+										{currentTokenPrice && currentTokenPrice.value !== 'N/A' && (
+											<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
+												<span className='flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol} Price</span>
+												<div className='flex items-end gap-x-1 text-lg font-semibold'>
+													<div>
+														{currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+															<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
+														) : null}
 													</div>
-												)}
+													{priceWeeklyChange.value !== 'N/A' && (
+														<div className='-mb-[2px] flex items-center'>
+															<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'}`}>
+																{Math.abs(Number(priceWeeklyChange.value))}%
+															</span>
+															<span>
+																{Number(priceWeeklyChange.value) < 0 ? (
+																	<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
+																) : (
+																	<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
+																)}
+															</span>
+														</div>
+													)}
+												</div>
 											</div>
-										</div>
+										)}
 									</div>
 									<div className='flex flex-col flex-wrap items-start justify-between gap-1'>
 										<div className='flex items-baseline gap-[6px]'>

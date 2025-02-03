@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+interface CoinGeckoResponse {
+	[coinId: string]: { usd: number; usd_24h_change?: number };
+}
+
 function formatUSDWithUnits(usd: String, numberAfterDot?: number) {
 	const toFixed = numberAfterDot && !isNaN(Number(numberAfterDot)) ? numberAfterDot : 2;
 	let newUsd = usd;
@@ -26,10 +30,8 @@ function formatUSDWithUnits(usd: String, numberAfterDot?: number) {
 	return formattedUSD.toString() + suffix;
 }
 
-export default async function fetchTokenUSDPrice(networkOrAsset: string) {
+export default async function fetchTokenUSDPrice(coinId: string) {
 	try {
-		const coinId = networkOrAsset;
-
 		const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
 			params: {
 				ids: coinId,
@@ -38,15 +40,23 @@ export default async function fetchTokenUSDPrice(networkOrAsset: string) {
 			}
 		});
 
-		const responseData = response.data;
+		const responseData = response.data as CoinGeckoResponse;
 
-		if (!responseData[coinId] || !responseData[coinId]['usd']) {
+		if (
+			!responseData ||
+			typeof responseData !== 'object' ||
+			Object.keys(responseData).length === 0 ||
+			!responseData.hasOwnProperty(coinId) ||
+			!responseData[coinId].hasOwnProperty('usd') ||
+			responseData[coinId]['usd'] === null ||
+			isNaN(responseData[coinId]['usd'])
+		) {
 			return 'N/A';
 		}
 
 		return formatUSDWithUnits(String(responseData[coinId]['usd']));
 	} catch (error) {
-		console.error(`Error fetching price for ${networkOrAsset}:`, error);
+		console.error(`Error fetching price for ${coinId}:`, error);
 		return 'N/A';
 	}
 }

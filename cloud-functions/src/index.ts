@@ -339,33 +339,31 @@ export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 	});
 });
 
-export const updateNetworkTokenPriceScheduled = functions
+export const updateMultipleNetworkTokenPricesScheduled = functions
 	.region('europe-west1')
-	.pubsub.schedule('every 1 minutes')
+	.pubsub.schedule('every 2 minutes')
 	.timeZone('UTC')
-	.onRun(async (context) => {
-		const networkName = context.params.network || 'polkadot';
+	.onRun(async () => {
+		const networks = ['polkadot', 'kusama'];
 
-		try {
-			const networkDocRef = firestoreDB.collection('networks').doc(networkName.toLowerCase());
-			const networkDocSnapshot = await networkDocRef.get();
+		for (const networkName of networks) {
+			try {
+				const networkDocRef = firestoreDB.collection('networks').doc(networkName.toLowerCase());
+				const networkDocSnapshot = await networkDocRef.get();
 
-			if (networkDocSnapshot.exists) {
-				const networkData = networkDocSnapshot.data();
-				const lastFetchedAt = networkData?.token_price?.last_fetched_at?.toDate?.();
-
-				if (lastFetchedAt) {
-					const isDataStale = dayjs().diff(dayjs(lastFetchedAt), 'minute') >= 5;
-
-					if (!isDataStale) {
-						return null;
+				if (networkDocSnapshot.exists) {
+					const lastFetchedAt = networkDocSnapshot.get('token_price.last_fetched_at')?.toDate?.();
+					if (lastFetchedAt && dayjs().diff(dayjs(lastFetchedAt), 'minute') < 5) {
+						continue;
 					}
 				}
-			}
 
-			const latestTokenPrice = await fetchTokenUSDPrice(networkName);
+				const latestTokenPrice = await fetchTokenUSDPrice(networkName);
 
-			if (latestTokenPrice !== 'N/A') {
+				if (latestTokenPrice === 'N/A') {
+					continue;
+				}
+
 				await networkDocRef.set(
 					{
 						token_price: {
@@ -375,11 +373,10 @@ export const updateNetworkTokenPriceScheduled = functions
 					},
 					{ merge: true }
 				);
-			} else {
-				console.warn(`Token price not available for ${networkName}.`);
+			} catch (error) {
+				console.error(`Error updating token price for ${networkName}:`, error);
+				continue;
 			}
-		} catch (error) {
-			console.error(`Error updating token price for ${networkName}:`, error);
 		}
 
 		return null;

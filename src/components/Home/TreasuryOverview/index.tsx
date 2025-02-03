@@ -136,7 +136,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 		const debouncedFetch = _.debounce(() => {
 			GetCurrentTokenPrice(network, setCurrentTokenPrice);
-		}, 500);
+		}, 1250);
 
 		debouncedFetch();
 

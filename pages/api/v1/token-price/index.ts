@@ -3,19 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-import * as admin from 'firebase-admin';
+import { firestore_db } from '~src/services/firebaseInit';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
-
-if (!admin.apps.length) {
-	admin.initializeApp({
-		credential: admin.credential.applicationDefault()
-	});
-}
-
-const firestoreDB = admin.firestore();
 
 interface FetchTokenPriceResponse {
 	data: {
@@ -28,7 +20,7 @@ interface FetchTokenPriceResponse {
 
 export const fetchTokenPriceFromDB = async ({ network }: { network: string }): Promise<FetchTokenPriceResponse> => {
 	try {
-		const networkDocRef = firestoreDB.collection('networks').doc(network.toLowerCase());
+		const networkDocRef = firestore_db.collection('networks').doc(network.toLowerCase());
 		const networkDocSnapshot = await networkDocRef.get();
 
 		if (!networkDocSnapshot.exists) {

@@ -20,7 +20,7 @@ const useTokenPrice = (network: string) => {
 			setPriceData({});
 
 			try {
-				const res = await fetch('/api/token-price', {
+				const res = await fetch('/api/v1/token-price', {
 					headers: {
 						'x-network': network
 					},

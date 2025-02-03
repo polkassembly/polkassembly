@@ -1405,6 +1405,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
+		if (['polkadot'].includes(network)) {
+			bountiesSubItems.push(
+				getSiderMenuItem(
+					<div className='ml-[2px] flex items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>User Created Bounties</div>,
+					'/user-created-bounties',
+					null
+				)
+			);
+		}
 		if (isOpenGovSupported(network)) {
 			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(

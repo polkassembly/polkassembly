@@ -26,13 +26,14 @@ import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
-import useTokenPrice from '~src/hooks/useTokenPrice';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
-	const { price: tokenPrice, loading: tokenLoading } = useTokenPrice(network);
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
@@ -83,6 +84,21 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const bountyValues =
 		!tokenLoading &&
 		formatUSDWithUnits(String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(tokenPrice)));
+
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
 
 	const fetchStats = async () => {
 		try {

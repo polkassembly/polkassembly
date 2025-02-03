@@ -16,6 +16,7 @@ interface FetchCommentsSummaryFromPostParams {
 	network: string;
 	postId: string;
 	postType: ProposalType;
+	forceRefresh?: boolean;
 }
 
 interface FetchCommentsSummaryFromPostResponse {
@@ -24,7 +25,12 @@ interface FetchCommentsSummaryFromPostResponse {
 	status: number;
 }
 
-export const fetchCommentsSummaryFromPost = async ({ network, postId, postType }: FetchCommentsSummaryFromPostParams): Promise<FetchCommentsSummaryFromPostResponse> => {
+export const fetchCommentsSummaryFromPost = async ({
+	network,
+	postId,
+	postType,
+	forceRefresh = false
+}: FetchCommentsSummaryFromPostParams): Promise<FetchCommentsSummaryFromPostResponse> => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(String(postId));
 		const postDoc = await postRef.get();
@@ -37,14 +43,30 @@ export const fetchCommentsSummaryFromPost = async ({ network, postId, postType }
 			};
 		}
 
-		const commentsSummary = postDoc.data()?.comments_summary as ICommentsSummary | undefined;
-
-		if (!commentsSummary) {
+		if (forceRefresh) {
 			await getCommentsAISummaryByPost({ network, postId, postType });
-
 			const updatedPostDoc = await postRef.get();
 			const updatedCommentsSummary = updatedPostDoc.data()?.comments_summary as ICommentsSummary | undefined;
+			if (updatedCommentsSummary) {
+				return {
+					data: updatedCommentsSummary,
+					error: null,
+					status: 200
+				};
+			} else {
+				return {
+					data: null,
+					error: 'Comments summary generation failed',
+					status: 500
+				};
+			}
+		}
 
+		const commentsSummary = postDoc.data()?.comments_summary as ICommentsSummary | undefined;
+		if (!commentsSummary) {
+			await getCommentsAISummaryByPost({ network, postId, postType });
+			const updatedPostDoc = await postRef.get();
+			const updatedCommentsSummary = updatedPostDoc.data()?.comments_summary as ICommentsSummary | undefined;
 			if (updatedCommentsSummary) {
 				return {
 					data: updatedCommentsSummary,
@@ -79,9 +101,11 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 
-	const { postId, postType } = req.body;
+	const { postId, postType, forceRefresh } = req.body;
 
 	if (Number.isNaN(postId) || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
@@ -90,7 +114,8 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	const { data, error, status } = await fetchCommentsSummaryFromPost({
 		network,
 		postId: String(postId),
-		postType: postType as ProposalType
+		postType: postType as ProposalType,
+		forceRefresh: forceRefresh === true
 	});
 
 	if (error || !data) {

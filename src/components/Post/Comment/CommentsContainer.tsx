@@ -121,6 +121,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
 	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
+	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -187,21 +188,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setFetchingAISummary(true);
 		try {
 			const { data, error } = await nextApiClientFetch<ICommentsSummary | null>('api/v1/ai-summary/fetchCommentsSummary', {
+				forceRefresh: forceRefresh,
 				postId: postIndex,
 				postType
 			});
-
 			if (error || !data) {
 				console.log('Error While fetching AI summary data', error);
 				setFetchingAISummary(false);
+				return;
 			}
-
 			if (data) {
 				setAiContentSummary(data);
 				setFetchingAISummary(false);
+				if (forceRefresh) setForceRefresh(false);
 			}
 		} catch (error) {
 			console.log(error);
+			setFetchingAISummary(false);
 		}
 	};
 
@@ -454,9 +457,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								</p>
 							</div>
 						)}
-						<h2 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-							<AiStarIcon className='text-base' /> AI-generated from comments
-						</h2>
+						<div className=' items-center justify-between sm:flex'>
+							<h3 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+								<AiStarIcon className='text-base' /> AI-generated from comments
+							</h3>
+							<div className='text-xs text-pink_primary '>
+								Was this review helpful ?
+								<span
+									className='ml-1 cursor-pointer text-xs font-medium'
+									onClick={() => {
+										setForceRefresh(true);
+										getSummary();
+									}}
+								>
+									No
+								</span>
+							</div>
+						</div>
 					</div>
 				) : null}
 			</div>

@@ -59,12 +59,10 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 
 export const fetchOGTracker = async (id: string) => {
 	try {
-		const res = await fetch('https://api.ogtracker.io/proposals', {
-			body: JSON.stringify({
-				refNum: id
-			}),
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&select=*`, {
 			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
 			},
 			method: 'POST'
 		});

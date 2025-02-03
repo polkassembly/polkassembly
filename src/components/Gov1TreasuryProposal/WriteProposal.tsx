@@ -166,7 +166,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							showIcon
 							message={
 								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>
-									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
+									Discussion posts give the community a chance to share their thoughts and suggest improvements. Make sure to create a Discussion before submitting a proposal.{' '}
 									<a
 										className='ml-1 text-xs font-semibold text-pink_primary'
 										target='_blank'

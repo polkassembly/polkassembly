@@ -55,7 +55,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 
 		const clearSelection = () => {
 			if (selectedText) {
-				document.getSelection()?.removeAllRanges();
+				// document.getSelection()?.removeAllRanges();
 				setTimeout(() => {
 					setSelectedText('');
 				}, 250);
@@ -63,6 +63,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 		};
 
 		markdown?.addEventListener('pointerup', handleSelection);
+
 		document?.addEventListener('pointerdown', clearSelection);
 
 		return () => {

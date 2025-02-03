@@ -52,7 +52,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 
 		const clearSelection = () => {
 			if (selectedText) {
-				document.getSelection()?.removeAllRanges();
+				// document.getSelection()?.removeAllRanges();
 				setTimeout(() => {
 					setSelectedText('');
 				}, 250);
@@ -60,6 +60,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 		};
 
 		markdown?.addEventListener('pointerup', handleSelection);
+
 		document?.addEventListener('pointerdown', clearSelection);
 
 		return () => {
@@ -91,7 +92,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 			ref={menuRef}
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
-			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
+			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent`}
 			style={!isUsedInComments ? { left: menuPosition.left, top: menuPosition.top - 10 } : {}}
 		>
 			<div

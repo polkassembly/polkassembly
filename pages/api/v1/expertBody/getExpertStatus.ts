@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const handler: NextApiHandler<{ status: string } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -28,14 +28,14 @@ const handler: NextApiHandler<{ status: string } | MessageType> = async (req, re
 			return res.status(400).json({ message: 'User address is required' });
 		}
 
-		const encodedUserAddress = getEncodedAddress(userAddress, network);
+		const substrateAddress = getSubstrateAddress(userAddress);
 
-		if (!encodedUserAddress) {
+		if (!substrateAddress) {
 			return res.status(400).json({ message: `Invalid address format for network: ${network}` });
 		}
 
 		const expertReqSnapshot = firestore_db.collection('expert_requests');
-		const expertReqDocs = await expertReqSnapshot.where('address', '==', encodedUserAddress).limit(1).get();
+		const expertReqDocs = await expertReqSnapshot.where('address', '==', substrateAddress).limit(1).get();
 
 		if (expertReqDocs.empty) {
 			return res.status(404).json({ message: 'Expert request not found' });

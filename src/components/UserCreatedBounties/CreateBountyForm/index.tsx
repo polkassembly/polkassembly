@@ -569,7 +569,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				onConfirm={(address: string) => {
 					setSelectedAddress(address);
 				}}
-				isUsedInBatchVoting={true}
 			/>
 		</section>
 	);

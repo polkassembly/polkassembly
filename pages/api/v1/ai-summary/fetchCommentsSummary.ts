@@ -112,10 +112,10 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	}
 
 	const { data, error, status } = await fetchCommentsSummaryFromPost({
+		forceRefresh: forceRefresh === true,
 		network,
 		postId: String(postId),
-		postType: postType as ProposalType,
-		forceRefresh: forceRefresh === true
+		postType: postType as ProposalType
 	});
 
 	if (error || !data) {

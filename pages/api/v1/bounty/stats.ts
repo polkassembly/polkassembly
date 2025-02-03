@@ -26,18 +26,18 @@ const handler: NextApiHandler<IBountyStats | MessageType> = async (req, res) => 
 	if (!subsquidRes?.data?.proposals?.length) return res.status(200).json({ message: 'No bounty data found' });
 
 	const activeBounties = String(subsquidRes.data.proposals.length);
-	const totalBountyPool = subsquidRes.data.proposals.reduce((totalActive: BN, { reward }: { reward: string }) => totalActive.add(new BN(reward)), new BN(0));
+	let totalBountyPool = subsquidRes.data.proposals.reduce((totalActive: BN, { reward }: { reward: string }) => totalActive.add(new BN(reward)), new BN(0));
 
 	const activeBountyIndices = subsquidRes.data.proposals.map(({ index }: { index: string }) => index);
 
 	// 1. get all claimed child bounties for these indices
-	const claimedChildBounties = await fetchSubsquid({
+	const allChildBounties = await fetchSubsquid({
 		network,
 		query: GET_AWARDED_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES,
 		variables: { parentBountyIndex_in: activeBountyIndices }
 	});
 
-	if (!claimedChildBounties?.data?.proposals?.length) {
+	if (!allChildBounties?.data?.proposals?.length) {
 		return res.status(200).json({
 			activeBounties,
 			availableBountyPool: 'N/A',
@@ -48,12 +48,18 @@ const handler: NextApiHandler<IBountyStats | MessageType> = async (req, res) => 
 	}
 
 	// 2. calculate the total claimed amount (this will be the totalRewarded)
-	const totalRewarded = claimedChildBounties.data.proposals.reduce((total: BN, { reward }: { reward: string }) => total.add(new BN(reward)), new BN(0));
+	totalBountyPool = allChildBounties.data.proposals.reduce((total: BN, { reward }: { reward: string }) => total.add(new BN(reward)), new BN(0));
+
+	const awardedChildBounties = allChildBounties.data.proposals?.filter(
+		(bounty: { statusHistory: { status: string }[] }) => bounty.statusHistory?.some((item: { status: string }) => item?.status === 'Awarded')
+	);
+
+	const totalRewarded = awardedChildBounties.reduce((total: BN, { reward }: { reward: string }) => total.add(new BN(reward)), new BN(0));
 
 	return res.status(200).json({
 		activeBounties,
 		availableBountyPool: totalBountyPool.sub(totalRewarded).toString(),
-		peopleEarned: String(claimedChildBounties.data.proposals.length),
+		peopleEarned: String(allChildBounties.data.proposals.length),
 		totalBountyPool: totalBountyPool.toString(),
 		totalRewarded: totalRewarded.toString()
 	});

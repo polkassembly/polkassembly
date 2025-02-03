@@ -2595,8 +2595,11 @@ export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
 
 export const GET_AWARDED_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES = `
 query AwardedChildBounties($parentBountyIndex_in: [Int!]) {
-		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in, statusHistory_some: {status_eq: Awarded}}) {
+		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in}) {
 			reward
+      statusHistory{
+      status
+      }
 		}
 	}
 `;

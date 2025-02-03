@@ -8,6 +8,7 @@ import trackLevelAnalytics from './trackLevelAnalytics';
 import crypto from 'crypto';
 
 import cors = require('cors');
+import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -337,3 +338,49 @@ export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 		}
 	});
 });
+
+export const updateNetworkTokenPriceScheduled = functions
+	.region('europe-west1')
+	.pubsub.schedule('every 1 minutes')
+	.timeZone('UTC')
+	.onRun(async (context) => {
+		const networkName = context.params.network || 'polkadot';
+
+		try {
+			const networkDocRef = firestoreDB.collection('networks').doc(networkName.toLowerCase());
+			const networkDocSnapshot = await networkDocRef.get();
+
+			if (networkDocSnapshot.exists) {
+				const networkData = networkDocSnapshot.data();
+				const lastFetchedAt = networkData?.token_price?.last_fetched_at?.toDate?.();
+
+				if (lastFetchedAt) {
+					const isDataStale = dayjs().diff(dayjs(lastFetchedAt), 'minute') >= 2;
+
+					if (!isDataStale) {
+						return null;
+					}
+				}
+			}
+
+			const latestTokenPrice = await fetchTokenUSDPrice(networkName);
+
+			if (latestTokenPrice !== 'N/A') {
+				await networkDocRef.set(
+					{
+						token_price: {
+							value: latestTokenPrice,
+							last_fetched_at: admin.firestore.Timestamp.now()
+						}
+					},
+					{ merge: true }
+				);
+			} else {
+				console.warn(`Token price not available for ${networkName}.`);
+			}
+		} catch (error) {
+			console.error(`Error updating token price for ${networkName}:`, error);
+		}
+
+		return null;
+	});

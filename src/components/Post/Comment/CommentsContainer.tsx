@@ -129,7 +129,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
 	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
-	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean>(false);
+	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -503,8 +503,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</h3>
 							{reportingAISummary ? (
 								<Loader />
-							) : isAlreadyReported ? (
+							) : isAlreadyReported === true ? (
 								<div className='text-xs text-pink_primary'>You have already reported this review.</div>
+							) : isAlreadyReported === false ? (
+								<div className='text-xs text-pink_primary'>Thanks for reporting the review.</div>
 							) : (
 								<div className='text-xs text-pink_primary'>
 									Was this review helpful?

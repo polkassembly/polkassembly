@@ -11,7 +11,6 @@ import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
 import dayjs from 'dayjs';
 import { isValidNetwork } from '~src/api-utils';
-
 const createReportInFirestore = async ({
 	userId,
 	network,
@@ -25,7 +24,7 @@ const createReportInFirestore = async ({
 }): Promise<{ success: boolean; data?: any; error?: string; isAlreadyReported: boolean }> => {
 	try {
 		const existingReportQuery = await firestore_db
-			.collection('ai-summary-reports')
+			.collection('ai_summary_reports')
 			.where('userId', '==', userId)
 			.where('network', '==', network)
 			.where('postType', '==', postType)
@@ -48,7 +47,7 @@ const createReportInFirestore = async ({
 			reportedAt: dayjs().toDate()
 		};
 
-		const reportRef = await firestore_db.collection('ai-summary-reports').add(reportData);
+		const reportRef = await firestore_db.collection('ai_summary_reports').add(reportData);
 
 		return {
 			success: true,
@@ -71,9 +70,7 @@ const createReportInFirestore = async ({
 const handler: NextApiHandler = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	if (req.method !== 'POST') {
-		return res.status(405).json({ message: 'Method Not Allowed. Use POST.' });
-	}
+	const { postType, postIndex } = req.body;
 
 	const token = getTokenFromReq(req);
 	if (!token) {
@@ -92,9 +89,8 @@ const handler: NextApiHandler = async (req, res) => {
 	}
 
 	const userId = user.id;
-	const { postType, postIndex } = req.body;
 
-	if (!network || !postType || typeof postIndex === 'undefined') {
+	if (!postType || !postIndex) {
 		return res.status(400).json({ message: 'Missing required fields: network, postType, postIndex' });
 	}
 

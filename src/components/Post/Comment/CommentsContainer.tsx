@@ -77,6 +77,12 @@ interface ICommentsContainerProps {
 	id: number | null | undefined;
 }
 
+interface IReportSummaryResponse {
+	isAlreadyReported: boolean;
+	message: string;
+	data?: any;
+}
+
 export interface ITimeline {
 	date: Dayjs;
 	status: string;
@@ -122,6 +128,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
+	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
+	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -208,23 +216,28 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
-	const reportSummary = async ({ postId, postType }: { postId: number; postType: string }) => {
+	const reportSummary = async () => {
+		setReportingAISummary(true);
 		try {
-			const { data, error } = await nextApiClientFetch<ICommentsSummary | null>('/api/v1/ai-summary/reportAISummary', {
-				postId,
+			const { data, error } = await nextApiClientFetch<IReportSummaryResponse>('/api/v1/ai-summary/reportAISummary', {
+				postIndex,
 				postType
 			});
 
 			if (error || !data) {
 				console.log('Error While reporting AI summary data', error);
+				setReportingAISummary(false);
 				return;
 			}
 
-			if (data) {
-				console.log('AI summary is reported');
+			if (data && data?.isAlreadyReported) {
+				setIsAlreadyReported(data?.isAlreadyReported);
+				setReportingAISummary(false);
 			}
+			await nextApiClientFetch('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
 		} catch (error) {
 			console.log(error);
+			setReportingAISummary(false);
 		}
 	};
 
@@ -488,15 +501,21 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<h3 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
 								<AiStarIcon className='text-base' /> AI-generated from comments
 							</h3>
-							<div className='text-xs text-pink_primary '>
-								Was this review helpful?
-								<span
-									className='ml-1 cursor-pointer text-xs font-medium underline'
-									onClick={() => reportSummary({ postId: Number(postIndex), postType })}
-								>
-									No
-								</span>
-							</div>
+							{reportingAISummary ? (
+								<Loader />
+							) : isAlreadyReported ? (
+								<div className='text-xs text-pink_primary'>You have already reported this review.</div>
+							) : (
+								<div className='text-xs text-pink_primary'>
+									Was this review helpful?
+									<span
+										className='ml-1 cursor-pointer text-xs font-medium underline'
+										onClick={() => reportSummary()}
+									>
+										No
+									</span>
+								</div>
+							)}
 						</div>
 					</div>
 				) : null}

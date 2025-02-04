@@ -53,7 +53,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 	}
 
 	const participantsSubstrateAddr = chatData?.participants.map((addr: string) => getSubstrateAddress(addr));
-	const { data: delegatesList, error } = await getDelegatesData(network);
+	const { data: delegatesList, error } = await getDelegatesData(network, null);
 
 	if (delegatesList) {
 		const isAnyParticipantDelegate = participantsSubstrateAddr.some((participantAddr: string) =>

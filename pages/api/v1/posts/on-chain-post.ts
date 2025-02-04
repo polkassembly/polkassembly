@@ -1113,12 +1113,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					created_at: OGdata?.[0]?.fdate,
 					id: OGdata?.[0]?.id,
 					isFromOgtracker: true,
-					progress_file: OGdata?.[0]?.proplink,
-					progress_summary: OGdata?.[0]?.summary,
-					refNum: OGdata?.[0]?.refnum
+					progress_file: OGdata?.[0]?.proplink || '',
+					progress_summary: OGdata?.[0]?.summary || '',
+					refNum: OGdata?.[0]?.refnum || ''
 				};
 
-				if (OGdata?.[0]?.proplink?.includes('polkassembly.io') || OGdata?.[0]?.proplink?.includes('subsquare.io')) {
+				if (['polkassembly.io', 'subsquare.io'].includes(ogReport?.progress_file || '')) {
 					ogReport.progress_file = '';
 				}
 

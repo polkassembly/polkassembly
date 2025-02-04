@@ -2406,7 +2406,7 @@ export const GET_NETWORK_TRACK_ACTIVE_PROPOSALS_COUNT = `query getNetworkTrackAc
   all: proposalsConnection(where:{type_eq:ReferendumV2, status_in:[Started, DecisionDepositPlaced, Deciding,Submitted, ConfirmStarted]} , orderBy:id_ASC){
     totalCount
   }
-  bountiesCount: proposalsConnection(where:{type_in:Bounty, status_not_in:[Cancelled,Rejected, Approved, Claimed, Approved, Proposed]}, orderBy:id_ASC) {
+  bountiesCount: proposalsConnection(where:{type_in:Bounty, status_not_in:[Cancelled,Rejected, Approved, Claimed, Approved]}, orderBy:id_ASC) {
     totalCount
   }
    childBountiesCount: proposalsConnection(where:{type_eq:ChildBounty, status_in:[Awarded,Added, Active]}, orderBy:id_ASC) {
@@ -2586,7 +2586,7 @@ query MyQuery ($trackNo: Int){
 
 export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
   query Rewards {
-    proposals(where: {type_eq: Bounty, status_in: [Active, CuratorUnassigned, Extended]}) {
+    proposals(where: {type_eq: Bounty, status_not_in: [Cancelled,Rejected, Approved, Claimed, Approved]}) {
       index
       reward
     }

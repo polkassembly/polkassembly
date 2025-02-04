@@ -58,7 +58,7 @@ const handler: NextApiHandler<IBountyStats | MessageType> = async (req, res) => 
 
 	return res.status(200).json({
 		activeBounties,
-		availableBountyPool: totalBountyPool.sub(totalRewarded).toString(),
+		availableBountyPool: totalBountyPool.toString(),
 		peopleEarned: String(allChildBounties.data.proposals.length),
 		totalBountyPool: totalBountyPool.toString(),
 		totalRewarded: totalRewarded.toString()

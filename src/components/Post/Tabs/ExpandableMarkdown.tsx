@@ -8,9 +8,12 @@ import Markdown from 'src/ui-components/Markdown';
 interface ExpandableMarkdownProps {
 	md: string;
 	theme?: string | undefined;
+	minHeight?: number;
 }
 
-const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) => {
+const DEFAULT_MIN_HEIGHT = 301;
+
+const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme, minHeight = DEFAULT_MIN_HEIGHT }) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isContentOverflowing, setIsContentOverflowing] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -18,7 +21,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 	useEffect(() => {
 		const checkOverflow = () => {
 			if (contentRef.current) {
-				setIsContentOverflowing(contentRef.current.scrollHeight > 301);
+				setIsContentOverflowing(contentRef.current.scrollHeight > minHeight);
 			}
 		};
 
@@ -33,6 +36,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 			clearTimeout(timeout);
 			observer.disconnect();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [md]);
 
 	const handleShowMore = () => {
@@ -48,7 +52,8 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 			<div
 				ref={contentRef}
 				id='expandable-content'
-				className={`${isExpanded ? 'h-auto' : 'h-[301px]'} overflow-hidden`}
+				className={`${isExpanded ? 'h-auto' : `h-[${minHeight}px]`} overflow-hidden`}
+				style={{ height: isExpanded ? 'auto' : minHeight }}
 			>
 				<Markdown
 					md={md}
@@ -56,7 +61,7 @@ const ExpandableMarkdown: React.FC<ExpandableMarkdownProps> = ({ md, theme }) =>
 				/>
 			</div>
 			{isContentOverflowing && (
-				<div className='flex w-full justify-center'>
+				<div className='flex w-full justify-start'>
 					<p
 						onClick={isExpanded ? handleShowLess : handleShowMore}
 						className='m-0 my-2 flex h-[30px] w-[120px] cursor-pointer items-center border-none bg-transparent p-0 text-center text-sm font-medium text-pink_primary'

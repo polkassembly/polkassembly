@@ -2406,7 +2406,7 @@ export const GET_NETWORK_TRACK_ACTIVE_PROPOSALS_COUNT = `query getNetworkTrackAc
   all: proposalsConnection(where:{type_eq:ReferendumV2, status_in:[Started, DecisionDepositPlaced, Deciding,Submitted, ConfirmStarted]} , orderBy:id_ASC){
     totalCount
   }
- bountiesCount: proposalsConnection(where:{type_in:Bounty, status_in:[Active, Proposed, Extended]}, orderBy:id_ASC) {
+  bountiesCount: proposalsConnection(where:{type_in:Bounty, status_not_in:[Cancelled,Rejected, Approved, Claimed, Approved, Proposed]}, orderBy:id_ASC) {
     totalCount
   }
    childBountiesCount: proposalsConnection(where:{type_eq:ChildBounty, status_in:[Awarded,Added, Active]}, orderBy:id_ASC) {

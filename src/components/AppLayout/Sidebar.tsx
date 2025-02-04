@@ -805,13 +805,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
 							}  w-5 rounded-lg px-[5px] py-1 text-center font-dmSans text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount > 9 ? (
-								<>
-									9<span className='text-[8px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.allCount || ''
-							)}
+							{!!totalActiveProposalsCount?.allCount && totalActiveProposalsCount?.allCount}
 						</span>
 					)}
 				</div>,
@@ -846,13 +840,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
 							}   rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount > 9 ? (
-								<>
-									9<span className='text-[8px]'>+</span>
-								</>
-							) : (
-								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>
-							)}
+							{!!totalActiveProposalsCount?.allCount && <span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>}
 						</span>
 					</div>
 				</div>
@@ -865,19 +853,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			const menuItem = getSiderMenuItem(
 				<div className='flex justify-between'>
-					<span className='pt-[6px] text-lightBlue dark:text-icon-dark-inactive'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
+					<span className=' ml-[2px] flex  items-center gap-1.5 pt-[6px] text-sm text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+						{' '}
+						{trackName.split(/(?=[A-Z])/).join(' ')}
+					</span>
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 						} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 					>
-						{activeProposal && activeProposal > 9 ? (
-							<>
-								9<span className='text-[7px]'>+</span>
-							</>
-						) : (
-							activeProposal || ''
-						)}
+						{!!activeProposal && activeProposal}
 					</span>
 				</div>,
 				`/${trackName
@@ -893,20 +878,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							<div className='flex  justify-between'>
-								<span className='pt-1 text-[12px] text-lightBlue dark:text-icon-dark-inactive'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+							<div className='flex justify-between'>
+								<span className='ml-[2px] flex items-center gap-1.5 pt-[6px] text-sm text-lightBlue hover:text-navBlue '>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 									} w-5 rounded-lg px-[5px] py-1 text-center text-[#96A4B6] dark:text-[#595959]`}
 								>
-									{activeProposal && activeProposal > 9 ? (
-										<>
-											9<span className='text-[7px]'>+</span>
-										</>
-									) : (
-										activeProposal || ''
-									)}
+									{!!activeProposal && activeProposal}
 								</span>
 							</div>,
 							`/${trackName
@@ -927,13 +906,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								)}
 							</div>,
@@ -1028,13 +1001,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} w-5 rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								)}
 							</div>,
@@ -1056,13 +1023,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								</div>
 							</div>
@@ -1417,13 +1378,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									: ''
 							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
-								<>
-									9<span className='text-[7px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.['bountiesCount'] || ''
-							)}
+							{!!totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount?.['bountiesCount']}
 						</span>
 					</div>,
 					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
@@ -1439,13 +1394,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									: ''
 							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
-								<>
-									9<span className='text-[7px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.['childBountiesCount'] || ''
-							)}
+							{!!totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount?.['childBountiesCount']}
 						</span>
 					</div>,
 					'/child_bounties',

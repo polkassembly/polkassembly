@@ -879,7 +879,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								<span className='ml-[2px] flex items-center gap-1.5 pt-[6px] text-sm text-lightBlue hover:text-navBlue '>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+								<span className='ml-[2px] flex items-center gap-1.5 pt-[6px] text-sm hover:text-navBlue dark:text-icon-dark-inactive'>
+									{trackName.split(/(?=[A-Z])/).join(' ')}
+								</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''

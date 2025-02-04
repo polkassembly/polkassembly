@@ -64,9 +64,10 @@ export const fetchOGTracker = async (id: string) => {
 				'Content-type': 'application/json; charset=UTF-8',
 				apikey: process.env.OGT_TRACKER_API_KEY || ''
 			},
-			method: 'POST'
+			method: 'GET'
 		});
-		return await res.json();
+		const resJson = await res.json();
+		return resJson;
 	} catch (error) {
 		return [];
 	}
@@ -140,9 +141,9 @@ interface IGetOnChainPostParams {
 interface IOGData {
 	fdate: string;
 	id: string;
-	propLink: string;
+	proplink: string;
 	summary: string;
-	refNum: string;
+	refnum: string;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -1112,12 +1113,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					created_at: OGdata?.[0]?.fdate,
 					id: OGdata?.[0]?.id,
 					isFromOgtracker: true,
-					progress_file: OGdata?.[0]?.propLink,
+					progress_file: OGdata?.[0]?.proplink,
 					progress_summary: OGdata?.[0]?.summary,
-					refNum: OGdata?.[0]?.refNum
+					refNum: OGdata?.[0]?.refnum
 				};
 
-				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+				if (OGdata?.[0]?.proplink?.includes('polkassembly.io') || OGdata?.[0]?.proplink?.includes('subsquare.io')) {
 					ogReport.progress_file = '';
 				}
 
@@ -1127,7 +1128,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					data?.progress_report?.push(ogReport);
 				}
 			}
-
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;

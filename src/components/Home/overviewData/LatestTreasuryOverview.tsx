@@ -26,11 +26,14 @@ import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
@@ -78,9 +81,24 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		totalRewarded: ''
 	});
 
-	const bountyValues = formatUSDWithUnits(
-		String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(currentTokenPrice.value))
-	);
+	const bountyValues =
+		!tokenLoading &&
+		formatUSDWithUnits(String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(tokenPrice)));
+
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
 
 	const fetchStats = async () => {
 		try {
@@ -175,10 +193,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const totalUsdcRaw = new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString();
 	const totalUsdtRaw = new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString();
-	const totalUsd =
-		currentTokenPrice && currentTokenPrice.value !== 'N/A'
-			? formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)))
-			: null;
+	const totalUsd = !tokenLoading && tokenPrice ? formatUSDWithUnits(String(Number(totalDotsRaw) * Number(tokenPrice) + Number(totalUsdcRaw) + Number(totalUsdtRaw))) : null;
 
 	return (
 		<div
@@ -204,32 +219,26 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												/>
 											</div>
 										)}
-										{currentTokenPrice && currentTokenPrice.value !== 'N/A' && (
-											<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
-												<span className='flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol} Price</span>
-												<div className='flex items-end gap-x-1 text-lg font-semibold'>
-													<div>
-														{currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-															<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-														) : null}
+										<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
+											<span className='flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol} Price</span>
+											<div className='flex items-end gap-x-1 text-lg font-semibold'>
+												<div>{!tokenLoading && tokenPrice ? <span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${tokenPrice}</span> : null}</div>
+												{priceWeeklyChange.value && priceWeeklyChange.value !== 'N/A' && (
+													<div className='-mb-[2px] flex items-center'>
+														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'}`}>
+															{Math.abs(Number(priceWeeklyChange.value))}%
+														</span>
+														<span>
+															{Number(priceWeeklyChange.value) < 0 ? (
+																<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
+															) : (
+																<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
+															)}
+														</span>
 													</div>
-													{priceWeeklyChange.value !== 'N/A' && (
-														<div className='-mb-[2px] flex items-center'>
-															<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'}`}>
-																{Math.abs(Number(priceWeeklyChange.value))}%
-															</span>
-															<span>
-																{Number(priceWeeklyChange.value) < 0 ? (
-																	<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
-																) : (
-																	<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
-																)}
-															</span>
-														</div>
-													)}
-												</div>
+												)}
 											</div>
-										)}
+										</div>
 									</div>
 									<div className='flex flex-col flex-wrap items-start justify-between gap-1'>
 										<div className='flex items-baseline gap-[6px]'>
@@ -515,10 +524,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				assethubApiReady={assethubApiReady}
 				hydrationApiReady={hydrationApiReady}
 				unit={unit}
-				currentTokenPrice={currentTokenPrice.value}
+				currentTokenPrice={!tokenLoading && tokenPrice ? String(tokenPrice) : currentTokenPrice.value}
 				loansData={loansData}
 				totalBountyPool={statsData.totalBountyPool}
-				bountyValues={bountyValues}
+				bountyValues={bountyValues ? bountyValues : null}
 			/>
 		</div>
 	);

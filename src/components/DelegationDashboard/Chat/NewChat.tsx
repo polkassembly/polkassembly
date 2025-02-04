@@ -12,7 +12,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import DelegateCard from './DelegateCard';
 import { chatsActions } from '~src/redux/chats';
 import { useDispatch } from 'react-redux';
-
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 interface Props {
 	setIsNewChat: (isNewChat: boolean) => void;
 }
@@ -31,7 +31,36 @@ const NewChat = ({ setIsNewChat }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [allDelegates, setAllDelegates] = useState<IDelegateAddressDetails[]>([]);
 	const [searchedDelegates, setSearchedDelegates] = useState<IDelegateAddressDetails[]>([]);
-	const [searchAddress, setSearchAddress] = useState<string>('');
+	const [searchInput, setSearchInput] = useState<string>('');
+
+	const fetchIdentityInfo = async (delegates: IDelegateAddressDetails[]) => {
+		if (!api || !apiReady) return;
+
+		const identityInfo: { [key: string]: any | null } = {};
+		const identityInfoPromises = delegates?.map(async (delegate: IDelegateAddressDetails) => {
+			if (delegate?.address) {
+				const info = await getIdentityInformation({
+					address: delegate?.address,
+					api: peopleChainApi ?? api,
+					network: network
+				});
+
+				identityInfo[delegate?.address] = info || null;
+			}
+		});
+
+		await Promise.allSettled(identityInfoPromises);
+
+		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
+			return {
+				...delegate,
+				identityInfo: identityInfo?.[delegate?.address] || null,
+				username: identityInfo?.[delegate?.address]?.display || identityInfo?.[delegate?.address]?.legal || ''
+			};
+		});
+		setAllDelegates(updatedData);
+		setSearchedDelegates(updatedData || []);
+	};
 
 	const handleDelegatesDataFetch = async () => {
 		if (!(api && peopleChainApiReady) || !network) return;
@@ -39,10 +68,11 @@ const NewChat = ({ setIsNewChat }: Props) => {
 
 		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
 		if (data) {
-			const updatedDelegates = data || [];
+			const delegatesData = data || [];
 
-			setAllDelegates(updatedDelegates);
-			setSearchedDelegates(updatedDelegates);
+			setAllDelegates(delegatesData);
+			setSearchedDelegates(delegatesData);
+			fetchIdentityInfo(delegatesData);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -55,24 +85,27 @@ const NewChat = ({ setIsNewChat }: Props) => {
 		input.focus();
 	}
 
-	const handleSearch = (searchAddress: string) => {
-		if (!searchAddress.length) {
+	const handleSearch = (searchInput: string) => {
+		if (!searchInput.length) {
 			setSearchedDelegates([]);
 			return;
 		}
 
+		setLoading(true);
+
 		const filteredDelegates = allDelegates.filter((delegate) => {
-			const searchTerm = searchAddress.toLowerCase();
+			const searchTerm = searchInput.toLowerCase();
 			const encodedAddress = delegate.address.toLowerCase();
 			const substrateAddress = getSubstrateAddress(delegate.address);
 
-			return encodedAddress.includes(searchTerm) || substrateAddress?.includes(searchAddress) || delegate.username?.toLowerCase().includes(searchTerm);
+			return encodedAddress.match(searchTerm) || substrateAddress?.match(searchTerm) || delegate.username?.toLowerCase().match(searchTerm);
 		});
 		setSearchedDelegates(filteredDelegates);
+		setLoading(false);
 	};
 
 	const handleStartChat = (recipientAddr?: string) => {
-		const recipientAddress = recipientAddr ?? searchAddress.trim();
+		const recipientAddress = recipientAddr ?? searchInput.trim();
 		if (!recipientAddress) return;
 
 		const existingChat = [...filteredRequests, ...filteredMessages].find(
@@ -101,18 +134,18 @@ const NewChat = ({ setIsNewChat }: Props) => {
 					showSearch
 					autoClearSearchValue={true}
 					loading={loading}
-					defaultValue={loading ? 'Loading...' : 'Enter or select a delegate address'}
+					defaultValue={loading ? 'Loading...' : 'Enter username or address to chat with delegate'}
 					defaultOpen={false}
 					open={!loading}
 					onChange={(value) => {
-						setSearchAddress(value);
+						setSearchInput(value);
 						handleStartChat(value);
 					}}
 					onSearch={(value) => {
 						if (!value?.length) {
 							setSearchedDelegates(allDelegates);
 						} else {
-							setSearchAddress(value.trim());
+							setSearchInput(value.trim());
 							handleSearch(value.trim());
 						}
 					}}

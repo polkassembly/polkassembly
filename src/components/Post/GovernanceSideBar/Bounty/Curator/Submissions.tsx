@@ -157,6 +157,12 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 	);
 	const { canViewAll, hasSubmitted } = memoizedValues;
 
+	const handleActiveTab = (tab: EChildbountySubmissionStatus | null) => {
+		if (activeTab !== tab) {
+			setActiveTab(tab);
+		}
+	};
+
 	return (
 		<GovSidebarCard>
 			<div className='flex items-center justify-between'>
@@ -185,34 +191,35 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			{bountySubmission?.length > 0 && (
 				<div className='mb-2 mt-4 flex items-center justify-between gap-3 rounded-lg bg-section-light-background px-2 py-2 text-center text-sm text-bodyBlue dark:bg-section-dark-garyBackground dark:text-white'>
 					<Button
-						onClick={() => setActiveTab(null)}
-						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
+						onClick={() => handleActiveTab(null)}
+						className={`w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === null
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
+						style={{ pointerEvents: 'auto', zIndex: 2 }}
 					>
 						All
 					</Button>
 					<Button
-						onClick={() => {
-							setActiveTab(EChildbountySubmissionStatus.PENDING);
-						}}
-						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
+						onClick={() => handleActiveTab(EChildbountySubmissionStatus.PENDING)}
+						className={`w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === EChildbountySubmissionStatus.PENDING
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
+						style={{ pointerEvents: 'auto', zIndex: 2 }}
 					>
 						Pending
 					</Button>
 					<Button
-						onClick={() => setActiveTab(EChildbountySubmissionStatus.REJECTED)}
-						className={` w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
+						onClick={() => handleActiveTab(EChildbountySubmissionStatus.REJECTED)}
+						className={`w-1/3 cursor-pointer rounded-md border-none p-0 py-1 text-sm font-semibold ${
 							activeTab === EChildbountySubmissionStatus.REJECTED
 								? 'bg-white text-pink_primary dark:bg-section-dark-overlay'
-								: 'bg-section-light-background text-lightBlue shadow-none dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
+								: 'bg-section-light-background text-lightBlue dark:bg-section-dark-garyBackground dark:text-[#DADADA]'
 						}`}
+						style={{ pointerEvents: 'auto', zIndex: 2 }}
 					>
 						Rejected
 					</Button>

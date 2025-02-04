@@ -246,6 +246,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			getSummary();
 			setForceRefresh(false);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [forceRefresh]);
 
 	useEffect(() => {

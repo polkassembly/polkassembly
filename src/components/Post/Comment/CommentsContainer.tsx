@@ -208,6 +208,26 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
+	const reportSummary = async ({ postId, postType }: { postId: number; postType: string }) => {
+		try {
+			const { data, error } = await nextApiClientFetch<ICommentsSummary | null>('/api/v1/ai-summary/reportAISummary', {
+				postId,
+				postType
+			});
+
+			if (error || !data) {
+				console.log('Error While reporting AI summary data', error);
+				return;
+			}
+
+			if (data) {
+				console.log('AI summary is reported');
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		if (forceRefresh) {
 			getSummary();
@@ -472,7 +492,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								Was this review helpful?
 								<span
 									className='ml-1 cursor-pointer text-xs font-medium underline'
-									onClick={() => setForceRefresh(true)}
+									onClick={() => reportSummary({ postId: Number(postIndex), postType })}
 								>
 									No
 								</span>

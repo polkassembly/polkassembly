@@ -485,7 +485,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
+					{network == 'polkadot' && post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

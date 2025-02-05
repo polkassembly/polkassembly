@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
 import OptionWrapper from './OptionWrapper';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILastVote } from '~src/types';
 import Alert from '~src/basic-components/Alert';
 import { ProposalType } from '~src/global/proposalType';
@@ -23,9 +23,12 @@ const ZERO_BN = new BN(0);
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const dispatch = useAppDispatch();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [open, setOpen] = useState(false);
+	const {
+		batch_vote_details: { ayeVoteBalance, nyeVoteBalance, abstainVoteBalance }
+	} = useBatchVotesSelector();
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -61,7 +64,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					showIcon
 					className='mt-8 px-4'
 					message={
-						<p className='m-0 p-0 p-2 text-[13px] dark:text-white'>
+						<p className='m-0 p-2 text-[13px] dark:text-white'>
 							You can adjust for delegated voting power from edit button on each proposal.
 							<Tooltip
 								color='#363636'
@@ -79,31 +82,48 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 						</p>
 					}
 				/>
-				<div className='mt-6 flex justify-end'>
-					<Balance
-						address={address}
-						onChange={handleOnAvailableBalanceChange}
-					/>
-				</div>
-				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-[44px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-						<Address
-							address={address}
-							isTruncateUsername={false}
-							displayInline
+
+				{availableBalance &&
+					(availableBalance.lte(new BN(ayeVoteBalance || '0')) ||
+						availableBalance.lte(new BN(nyeVoteBalance || '0')) ||
+						availableBalance?.lte(new BN(abstainVoteBalance || '0'))) && (
+						<Alert
+							className='mt-4 h-10'
+							showIcon
+							type='info'
+							message={<p className='m-0 p-2 text-[13px] dark:text-white'>Low balance. Proceed anyway?</p>}
 						/>
-						<CustomButton
-							text='Change Wallet'
-							onClick={() => {
-								setOpen(true);
-							}}
-							width={120}
-							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
-							height={24}
-							variant='primary'
-						/>
+					)}
+				{!!id && (
+					<div className='flex flex-col gap-y-1'>
+						<div className='mt-6 flex justify-end'>
+							<Balance
+								isVoting
+								address={address || loginAddress}
+								onChange={handleOnAvailableBalanceChange}
+							/>
+						</div>
+						<div className='flex w-full items-end gap-2 text-sm '>
+							<div className='flex h-[44px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+								<Address
+									address={address || loginAddress}
+									isTruncateUsername={false}
+									displayInline
+								/>
+								<CustomButton
+									text='Change Wallet'
+									onClick={() => {
+										setOpen(true);
+									}}
+									width={120}
+									className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+									height={24}
+									variant='primary'
+								/>
+							</div>
+						</div>
 					</div>
-				</div>
+				)}
 
 				<OptionWrapper
 					address={String(address)}
@@ -115,24 +135,26 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 					postEdit={postEdit}
 				/>
 			</article>
-			<div className='mb-2 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
-				<CustomButton
-					variant='default'
-					text='Skip'
-					buttonsize='sm'
-					onClick={() => {
-						dispatch(batchVotesActions.setIsDefaultSelected(false));
-					}}
-				/>
-				<CustomButton
-					variant='primary'
-					text='Next'
-					buttonsize='sm'
-					onClick={() => {
-						dispatch(batchVotesActions.setIsDefaultSelected(false));
-					}}
-				/>
-			</div>
+			{!!id && (
+				<div className='mb-2 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
+					<CustomButton
+						variant='default'
+						text='Skip'
+						buttonsize='sm'
+						onClick={() => {
+							dispatch(batchVotesActions.setIsDefaultSelected(false));
+						}}
+					/>
+					<CustomButton
+						variant='primary'
+						text='Next'
+						buttonsize='sm'
+						onClick={() => {
+							dispatch(batchVotesActions.setIsDefaultSelected(false));
+						}}
+					/>
+				</div>
+			)}
 			<AddressConnectModal
 				open={open}
 				setOpen={setOpen}

@@ -366,6 +366,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		return () => {
 			cancel = true;
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTokenPrice, network]);
 
 	return (

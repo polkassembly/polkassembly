@@ -17,7 +17,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IBountyStats, IOverviewProps } from '~src/types';
+import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
@@ -26,6 +26,7 @@ import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import { useApiContext } from '~src/context';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
@@ -41,6 +42,7 @@ const LatestTreasuryOverview = ({
 	tokenPrice
 }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
@@ -80,31 +82,11 @@ const LatestTreasuryOverview = ({
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
 	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
 
-	const [statsData, setStatsData] = useState<IBountyStats>({
-		activeBounties: '',
-		availableBountyPool: '',
-		peopleEarned: '',
-		totalBountyPool: '',
-		totalRewarded: ''
-	});
+	const [activeBountyBalance, setActiveBountyBalance] = useState(0);
 
-	const bountyValues =
-		!tokenLoading &&
-		formatUSDWithUnits(String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(tokenPrice)));
-
-	const fetchStats = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
-			if (error || !data) {
-				console.error(error);
-			}
-			if (data) {
-				setStatsData(data);
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
+	const bountyValues = formatUSDWithUnits(
+		String(Number(formatBnBalance(String(activeBountyBalance), { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(tokenPrice))
+	);
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -144,9 +126,37 @@ const LatestTreasuryOverview = ({
 	};
 
 	useEffect(() => {
+		const fetchActiveBountyBalance = async () => {
+			if (!api || !apiReady) return;
+
+			try {
+				const bountyEntries = await api.query.bounties.bounties.entries();
+				let totalValue = 0;
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				bountyEntries?.forEach(([_, bountyOption]) => {
+					if (bountyOption.isSome) {
+						const bountyData = bountyOption.unwrap().toJSON();
+						if (bountyData.value && !isNaN(Number(bountyData?.value))) {
+							totalValue += Number(bountyData?.value);
+						}
+					}
+				});
+				if (totalValue) {
+					setActiveBountyBalance(totalValue);
+				} else {
+					setActiveBountyBalance(0);
+				}
+			} catch (error) {
+				console.error('Error fetching active bounty balance:', error);
+			}
+		};
+
+		fetchActiveBountyBalance();
+	}, [api, apiReady]);
+
+	useEffect(() => {
 		fetchDataFromApi();
 		getGraphData();
-		fetchStats();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -166,7 +176,7 @@ const LatestTreasuryOverview = ({
 	const loan3 = loansData.hydration.toString();
 	const totalToken = Math.floor(Number(tokenValue));
 
-	const totalBounty = formatBnBalance(String(statsData.totalBountyPool), { numberAfterComma: 0, withThousandDelimitor: false }, network);
+	const totalBounty = formatBnBalance(String(activeBountyBalance), { numberAfterComma: 0, withThousandDelimitor: false }, network);
 
 	const totalDotsRaw = new BN(assetValue)
 		.add(new BN(assetValueFellowship))
@@ -518,7 +528,7 @@ const LatestTreasuryOverview = ({
 				unit={unit}
 				currentTokenPrice={!tokenLoading && tokenPrice ? String(tokenPrice) : currentTokenPrice.value}
 				loansData={loansData}
-				totalBountyPool={statsData.totalBountyPool}
+				totalBountyPool={activeBountyBalance}
 				bountyValues={bountyValues ? bountyValues : null}
 			/>
 		</div>

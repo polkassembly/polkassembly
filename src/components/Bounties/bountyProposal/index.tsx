@@ -40,7 +40,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 		<div className={className}>
 			<button
 				onClick={() => handleClick(1)}
-				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[14px] border-none bg-gradient-to-b from-[#FF50AD] 
+				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[14px] border-none bg-gradient-to-b from-[#FF50AD]
     via-[#E5007A] to-[#E5007A] px-[22px] py-[11px] md:w-auto md:justify-normal'
 			>
 				<ImageIcon

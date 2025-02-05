@@ -614,6 +614,7 @@ export interface IProgressReport {
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	tasks?: { title: string; status: 'A' | 'B' }[];
 	isFromOgtracker?: boolean;
 }
 

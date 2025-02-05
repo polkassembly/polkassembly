@@ -43,8 +43,8 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
-import PostProgressReport from '../ProgressReport/PostProgressReport';
 import { useRouter } from 'next/router';
+
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -485,7 +485,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{network == 'polkadot' && post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />}
+					{/* {network == 'polkadot' && post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />} */}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

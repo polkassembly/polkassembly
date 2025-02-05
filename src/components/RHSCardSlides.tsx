@@ -23,12 +23,19 @@ import UploadReport from './ProgressReport/UploadReport';
 import { showProgressReportUploadFlow } from './ProgressReport/utils';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { useRouter } from 'next/router';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
 });
 
-type card = { title: string; description: string; icon: string; tag: string; clickHandler?: (() => void) | ((prop?: any) => void) };
+interface card {
+	title: string;
+	description: string;
+	icon: string;
+	tag: string;
+	clickHandler?: (() => void) | ((prop?: any) => void);
+}
 
 enum cardTags {
 	ADD_DEADLINE = 'add',
@@ -37,13 +44,15 @@ enum cardTags {
 	ADD_DESCRIPTION = 'add',
 	ADD_TAGS = 'add',
 	REFUND_DEPOSIT = 'refund',
-	ADD_PROGRESS_REPORT = 'add'
+	ADD_PROGRESS_REPORT = 'add',
+	VIEW_PROGRESS_REPORT = 'view'
 }
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { api, apiReady } = useApiContext();
 	const { postData } = usePostDataContext();
+	const router = useRouter();
 	const dispatch = useDispatch();
 	// const { show_nudge } = useProgressReportSelector();
 	const { network } = useNetworkSelector();
@@ -64,7 +73,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	});
 
 	const {
-		postData: { post_link, tags, postType, content, statusHistory, postIndex }
+		postData: { post_link, tags, postType, content, statusHistory, postIndex, progress_report }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
@@ -146,7 +155,31 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, postIndex, statusHistory]);
 
+	const handleProgressReportClick = () => {
+		router.replace({
+			pathname: '',
+			query: {
+				...router.query,
+				tab: 'evaluation'
+			}
+		});
+	};
+
 	useEffect(() => {
+		if (Object.keys(progress_report).length) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => handleProgressReportClick(),
+					description: 'A new progress report was added by the proposal',
+					icon: '/assets/icons/progressReport.svg',
+					tag: cardTags.VIEW_PROGRESS_REPORT,
+					title: 'Progress Report'
+				});
+
+				return newCards;
+			});
+		}
 		if (showRefundDeposit?.show && postData?.status !== 'Executed') {
 			trackEvent('refund_card_clicked', 'clicked_refund_card', {
 				loginAddress: loginAddress || '',

@@ -57,6 +57,21 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+const fetchOGTTasks = async (id: string) => {
+	try {
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/tasks?proposal_id=eq.${id}&select=*`, {
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
+			},
+			method: 'GET'
+		});
+		const resJson = await res.json();
+		return resJson;
+	} catch (error) {
+		return [];
+	}
+};
 export const fetchOGTracker = async (id: string) => {
 	try {
 		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&select=*`, {
@@ -66,7 +81,14 @@ export const fetchOGTracker = async (id: string) => {
 			},
 			method: 'GET'
 		});
-		const resJson = await res.json();
+		let resJson = await res.json();
+		const tasks = await fetchOGTTasks(id);
+
+		if (tasks) {
+			resJson = resJson?.map((item: any) => {
+				return { ...item, tasks: tasks || [] };
+			});
+		}
 		return resJson;
 	} catch (error) {
 		return [];
@@ -144,6 +166,7 @@ interface IOGData {
 	proplink: string;
 	summary: string;
 	refnum: string;
+	tasks: { title: string; status: 'A' | 'B' }[];
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -1115,7 +1138,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					isFromOgtracker: true,
 					progress_file: OGdata?.[0]?.proplink || '',
 					progress_summary: OGdata?.[0]?.summary || '',
-					refNum: OGdata?.[0]?.refnum || ''
+					refNum: OGdata?.[0]?.refnum || '',
+					tasks: OGdata?.[0]?.tasks || []
 				};
 
 				if (['polkassembly.io', 'subsquare.io'].includes(ogReport?.progress_file || '')) {
@@ -1123,9 +1147,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				}
 
 				data.progress_report = data?.progress_report || [];
-				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === ogReport?.id);
 				if (!isOgReportPresent) {
 					data?.progress_report?.push(ogReport);
+				} else {
+					data.progress_report = data.progress_report.map((report: IProgressReport) => {
+						if (report.id === ogReport?.id) {
+							return ogReport;
+						}
+						return report;
+					});
 				}
 			}
 			// Populate firestore post data into the post object

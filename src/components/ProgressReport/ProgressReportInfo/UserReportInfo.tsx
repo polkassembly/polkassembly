@@ -140,7 +140,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 											<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
 												<div className='flex items-center gap-x-2'>
 													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
-														Object.keys(postData?.progress_report).length - index
+														Object.keys(postData?.progress_report || {})?.length - index
 													}`}</h1>
 													<ClockCircleOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}

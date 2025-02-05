@@ -27,6 +27,7 @@ import NextBurn from './NextBurn';
 import _ from 'lodash';
 import SpendPeriod from './SpendPeriod';
 import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -73,6 +74,24 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	});
 
 	const [tokenValue, setTokenValue] = useState<number>(0);
+
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
+
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -207,7 +226,15 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									)
 								);
 								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+									let priceToUse;
+
+									if (network === 'polkadot') {
+										priceToUse = tokenPrice !== undefined ? tokenPrice : currentTokenPrice.value;
+									} else {
+										priceToUse = currentTokenPrice.value;
+									}
+
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(priceToUse)).toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(
@@ -305,8 +332,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				if (responseJSON['message'] == 'Success') {
 					const weekAgoPrice = responseJSON?.['data']?.['list']?.[0]?.['price'] ? responseJSON?.['data']?.['list']?.[0]?.['price'] : responseJSON?.['data']?.['ema7_average'];
 
-					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
-					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
+					const priceString = network === 'polkadot' ? (tokenPrice !== null && tokenPrice !== undefined ? tokenPrice : currentTokenPrice.value) : currentTokenPrice.value;
+
+					const currentTokenPriceNum = parseFloat(priceString ?? '0');
+					const weekAgoPriceNum = parseFloat(weekAgoPrice ?? '0');
 					if (weekAgoPriceNum == 0) {
 						setPriceWeeklyChange({
 							isLoading: false,
@@ -337,6 +366,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		return () => {
 			cancel = true;
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTokenPrice, network]);
 
 	return (
@@ -350,6 +380,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						spendPeriod={spendPeriod}
 						nextBurn={nextBurn}
 						tokenValue={tokenValue}
+						tokenPrice={tokenPrice}
+						tokenLoading={tokenLoading}
 					/>
 				</>
 			) : (

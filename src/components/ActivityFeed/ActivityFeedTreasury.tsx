@@ -24,6 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface ITokenPrice {
 	value: string;
@@ -67,7 +68,7 @@ const ActivityFeedSidebar = () => {
 	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: ITokenPrice, setAvailable: Function, setNextBurn: Function) => {
 		const treasuryAccount = u8aConcat(
 			'modl',
-			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
+			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${isPolymesh(network) ? 'pm' : 'pr'}/trsry`,
 			new Uint8Array(32)
 		);
 
@@ -279,11 +280,7 @@ const ActivityFeedSidebar = () => {
 	}, [network]);
 
 	return (
-		<div
-			className={`${dmSans.className} ${dmSans.variable} ${
-				!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-1' : ''
-			} mt-5 grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
-		>
+		<div className={`${dmSans.className} ${dmSans.variable} ${!isPolymesh(network) ? 'md:grid-cols-1' : ''} mt-5 grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}>
 			<div className='dark:bg-section-dark-overlaysm:my-0 flex w-full flex-1 flex-col rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 dark:border-[#4B4B4B] dark:bg-section-dark-overlay lg:px-6 lg:py-4'>
 				<div>
 					<div>
@@ -422,7 +419,7 @@ const ActivityFeedSidebar = () => {
 					</div>
 				</div>
 				<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-				{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec']?.includes(network) && (
+				{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polymesh-test', 'polimec', 'rolimec']?.includes(network) && (
 					<div>
 						<div className='w-full gap-x-0 lg:flex'>
 							{!nextBurn?.isLoading ? (

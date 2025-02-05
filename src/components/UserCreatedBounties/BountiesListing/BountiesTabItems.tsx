@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
-	onTabChange: (key: string) => void;
 }
 
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {

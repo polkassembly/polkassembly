@@ -40,6 +40,10 @@ interface Props {
 const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme } = useTheme();
+	const sortedPostsData = [...postsData].sort((a, b) => {
+		if (!a?.created_at || !b?.created_at) return 0;
+		return b.created_at - a.created_at;
+	});
 
 	const eventRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,15 +56,15 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 		return () => {
 			clearTimeout(scrollToTop);
 		};
-	}, [postsData, postsPage]);
+	}, [postsPage]);
 
-	return postsData.length > 0 ? (
+	return sortedPostsData.length > 0 ? (
 		<>
 			<div
-				className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 ? 'overflow-y-auto' : ''}`}
+				className={`${className} -mx-6 mt-4 h-[400px] ${sortedPostsData.length > 1 ? 'overflow-y-auto' : ''}`}
 				ref={eventRef}
 			>
-				{postsData.map((post, index: number) => {
+				{sortedPostsData.map((post, index: number) => {
 					let titleString = post?.title || noTitle;
 
 					const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
@@ -75,7 +79,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 							<div
 								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
 									index % 2 === 1 && 'bg-[#fafafb] dark:bg-[#161616]'
-								} ${index === postsData.length - 1 ? 'border-b-[1px]' : ''} dark:border-none max-md:flex-wrap`}
+								} ${index === sortedPostsData.length - 1 ? 'border-b-[1px]' : ''} dark:border-none max-md:flex-wrap`}
 								onClick={() => {
 									// GAEvent when user clicks on search result
 									trackEvent('search_results_clicked', 'clicked_search_result', {

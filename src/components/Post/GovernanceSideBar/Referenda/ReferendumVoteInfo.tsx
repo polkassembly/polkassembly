@@ -163,12 +163,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 
 		if (['equilibrium'].includes(network)) {
 			(async () => {
-				const { collateral } = (await api.query.eqAggregates.totalUserGroups('Balances', { '0': 25969 })) as any;
+				const { collateral } = (await api?.query?.eqAggregates?.totalUserGroups('Balances', { '0': 25969 })) as any;
 				setTotalIssuance(collateral);
 			})();
 		} else if (['genshiro'].includes(network)) {
 			(async () => {
-				const { collateral } = (await api.query.eqAggregates.totalUserGroups('Balances', { '0': 1734700659 })) as any;
+				const { collateral } = (await api?.query?.eqAggregates?.totalUserGroups('Balances', { '0': 1734700659 })) as any;
 				setTotalIssuance(collateral);
 			})();
 		} else {

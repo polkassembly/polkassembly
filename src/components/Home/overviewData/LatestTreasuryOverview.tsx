@@ -17,7 +17,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IBountyStats, IOverviewProps } from '~src/types';
+import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import useAssetHubApi from '~src/hooks/treasury/useAssetHubApi';
 import useHydrationApi from '~src/hooks/treasury/useHydrationApi';
@@ -25,11 +25,24 @@ import TreasuryAssetDisplay from './TreasuryAssetDisplay';
 import BN from 'bn.js';
 import TreasuryDetailsModal from './TreasuryDetailsModal';
 import useMythTokenBalance from '~src/hooks/treasury/useMythTokenBalance';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import { useApiContext } from '~src/context';
 
 const MYTH_TOKEN_BASE_DECIMALS = 1000000000000000000;
 
-const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
+const LatestTreasuryOverview = ({
+	currentTokenPrice,
+	available,
+	priceWeeklyChange,
+	spendPeriod,
+	nextBurn,
+	tokenValue,
+	isUsedInGovAnalytics,
+	tokenLoading,
+	tokenPrice
+}: IOverviewProps) => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
 	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
@@ -69,31 +82,11 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const hydrationValueUSDC = formatUSDWithUnits(new BN(hydrationValues.usdcValue).div(BN_MILLION).toString());
 	const hydrationValueUSDT = formatUSDWithUnits(new BN(hydrationValues.usdtValue).div(BN_MILLION).toString());
 
-	const [statsData, setStatsData] = useState<IBountyStats>({
-		activeBounties: '',
-		availableBountyPool: '',
-		peopleEarned: '',
-		totalBountyPool: '',
-		totalRewarded: ''
-	});
+	const [activeBountyBalance, setActiveBountyBalance] = useState(0);
 
 	const bountyValues = formatUSDWithUnits(
-		String(Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(currentTokenPrice.value))
+		String(Number(formatBnBalance(String(activeBountyBalance), { numberAfterComma: 1, withThousandDelimitor: false }, network)) * Number(tokenPrice))
 	);
-
-	const fetchStats = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
-			if (error || !data) {
-				console.error(error);
-			}
-			if (data) {
-				setStatsData(data);
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
 
 	const fetchDataFromApi = async () => {
 		try {
@@ -133,9 +126,37 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	};
 
 	useEffect(() => {
+		const fetchActiveBountyBalance = async () => {
+			if (!api || !apiReady) return;
+
+			try {
+				const bountyEntries = await api.query.bounties.bounties.entries();
+				let totalValue = 0;
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				bountyEntries?.forEach(([_, bountyOption]) => {
+					if (bountyOption.isSome) {
+						const bountyData = bountyOption.unwrap().toJSON();
+						if (bountyData.value && !isNaN(Number(bountyData?.value))) {
+							totalValue += Number(bountyData?.value);
+						}
+					}
+				});
+				if (totalValue) {
+					setActiveBountyBalance(totalValue);
+				} else {
+					setActiveBountyBalance(0);
+				}
+			} catch (error) {
+				console.error('Error fetching active bounty balance:', error);
+			}
+		};
+
+		fetchActiveBountyBalance();
+	}, [api, apiReady]);
+
+	useEffect(() => {
 		fetchDataFromApi();
 		getGraphData();
-		fetchStats();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -155,7 +176,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const loan3 = loansData.hydration.toString();
 	const totalToken = Math.floor(Number(tokenValue));
 
-	const totalBounty = formatBnBalance(String(statsData.totalBountyPool), { numberAfterComma: 0, withThousandDelimitor: false }, network);
+	const totalBounty = formatBnBalance(String(activeBountyBalance), { numberAfterComma: 0, withThousandDelimitor: false }, network);
 
 	const totalDotsRaw = new BN(assetValue)
 		.add(new BN(assetValueFellowship))
@@ -174,12 +195,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const totalUsdcRaw = new BN(assethubValues.usdcValue).add(new BN(hydrationValues.usdcValue)).div(BN_MILLION).add(new BN(loansData.centrifuge)).toString();
 	const totalUsdtRaw = new BN(assethubValues.usdtValue).add(new BN(hydrationValues.usdtValue)).div(BN_MILLION).add(assetValueUSDTFellowshipRaw).toString();
-	const totalUsd = formatUSDWithUnits(String(Number(totalDotsRaw) * Number(currentTokenPrice.value) + Number(totalUsdcRaw) + Number(totalUsdtRaw)));
+	const totalUsd = !tokenLoading && tokenPrice ? formatUSDWithUnits(String(Number(totalDotsRaw) * Number(tokenPrice) + Number(totalUsdcRaw) + Number(totalUsdtRaw))) : null;
 
 	return (
 		<div
 			className={`${dmSans.className} ${dmSans.variable} ${
-				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
+				isUsedInGovAnalytics ? '' : `${!isPolymesh(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
 			<div
@@ -201,18 +222,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											</div>
 										)}
 										<div className={`${dmSans.className} ${dmSans.variable} flex items-baseline gap-x-1 self-end`}>
-											<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
+											<span className='flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol} Price</span>
 											<div className='flex items-end gap-x-1 text-lg font-semibold'>
-												<div>
-													{currentTokenPrice.value === 'N/A' ? (
-														<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-													) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-														<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-													) : null}
-												</div>
-												{priceWeeklyChange.value !== 'N/A' && (
+												<div>{!tokenLoading && tokenPrice ? <span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${tokenPrice}</span> : null}</div>
+												{priceWeeklyChange.value && priceWeeklyChange.value !== 'N/A' && (
 													<div className='-mb-[2px] flex items-center'>
-														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+														<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'}`}>
 															{Math.abs(Number(priceWeeklyChange.value))}%
 														</span>
 														<span>
@@ -355,7 +370,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 											) : (
 												<span>N/A</span>
 											)}
-											{!['polymesh', 'polymesh-test'].includes(network) && (
+											{!isPolymesh(network) && (
 												<span className='ml-2 whitespace-nowrap text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
 													{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 												</span>
@@ -386,7 +401,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 
 					{/* Spend Period */}
-					{!['polymesh', 'polymesh-test'].includes(network) && (
+					{!isPolymesh(network) && (
 						<>
 							<div className='w-full flex-col gap-x-0 lg:flex'>
 								{!spendPeriod.isLoading ? (
@@ -458,7 +473,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 
 					{/* Next Burn */}
-					{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
+					{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && (
 						<div>
 							<div className='w-full gap-x-0 lg:flex'>
 								{!nextBurn.isLoading ? (
@@ -511,10 +526,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				assethubApiReady={assethubApiReady}
 				hydrationApiReady={hydrationApiReady}
 				unit={unit}
-				currentTokenPrice={currentTokenPrice.value}
+				currentTokenPrice={!tokenLoading && tokenPrice ? String(tokenPrice) : currentTokenPrice.value}
 				loansData={loansData}
-				totalBountyPool={statsData.totalBountyPool}
-				bountyValues={bountyValues}
+				totalBountyPool={activeBountyBalance}
+				bountyValues={bountyValues ? bountyValues : null}
 			/>
 		</div>
 	);

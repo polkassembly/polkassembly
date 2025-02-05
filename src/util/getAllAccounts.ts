@@ -9,7 +9,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { APPNAME } from '~src/global/appName';
 import { Wallet } from '~src/types';
 import getEncodedAddress from './getEncodedAddress';
-
+import { isPolymesh } from './isPolymeshNetwork';
 export type Response = {
 	noExtension: boolean;
 	noAccounts: boolean;
@@ -154,7 +154,7 @@ const getAllAccounts: TGetAllAccounts = async (params) => {
 			} else if (extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+			} else if (isPolymesh(network) && extObj.name === 'polywallet') {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
 			}
@@ -167,7 +167,7 @@ const getAllAccounts: TGetAllAccounts = async (params) => {
 			});
 		}
 
-		if (['polymesh'].includes(network) && polywalletJSAccounts) {
+		if (isPolymesh(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';

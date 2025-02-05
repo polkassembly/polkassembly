@@ -283,7 +283,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			</div>
 			{/* For Large screen */}
 			<div className='hidden sm:flex sm:flex-col'>
-				<div className='flex items-center justify-between px-5 pt-4'>
+				<div className='flex flex-wrap items-center justify-between px-5 pt-4'>
 					<div className='flex items-center gap-2 max-lg:justify-start'>
 						{!!delegate?.image?.length && (
 							<ImageComponent

@@ -40,7 +40,9 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { getTimeline } from '~src/util/getTimeline';
+import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -55,18 +57,39 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+const fetchOGTTasks = async (id: string) => {
+	try {
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/tasks?proposal_id=eq.${id}&select=*`, {
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
+			},
+			method: 'GET'
+		});
+		const resJson = await res.json();
+		return resJson;
+	} catch (error) {
+		return [];
+	}
+};
 export const fetchOGTracker = async (id: string) => {
 	try {
-		const res = await fetch('https://api.ogtracker.io/proposals', {
-			body: JSON.stringify({
-				refNum: id
-			}),
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&status=eq.Delivered`, {
 			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
 			},
-			method: 'POST'
+			method: 'GET'
 		});
-		return await res.json();
+		let resJson = await res.json();
+		const tasks = await fetchOGTTasks(id);
+
+		if (tasks) {
+			resJson = resJson?.map((item: any) => {
+				return { ...item, tasks: tasks || [] };
+			});
+		}
+		return resJson;
 	} catch (error) {
 		return [];
 	}
@@ -100,6 +123,7 @@ export interface IPostResponse {
 	comments: any;
 	currentTimeline?: any;
 	content: string;
+	markdownContent?: string;
 	end?: number;
 	delay?: number;
 	vote_threshold?: any;
@@ -139,9 +163,10 @@ interface IGetOnChainPostParams {
 interface IOGData {
 	fdate: string;
 	id: string;
-	propLink: string;
+	proplink: string;
 	summary: string;
-	refNum: string;
+	refnum: string;
+	tasks: { title: string; status: 'A' | 'B' }[];
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -773,7 +798,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
-		} else if (network === 'polymesh') {
+		} else if (isPolymesh(network)) {
 			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 			postVariables = {
 				index_eq: numPostId,
@@ -923,7 +948,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			decision_deposit_amount: postData?.decisionDeposit?.amount,
 			delay: postData?.delay,
 			deposit: postData?.deposit,
-			description: network == AllNetworks.POLYMESH ? getAscciiFromHex(postData?.description) : postData?.description,
+			description: isPolymesh(network) ? getAscciiFromHex(postData?.description) : postData?.description,
 			enactment_after_block: postData?.enactmentAfterBlock,
 			enactment_at_block: postData?.enactmentAtBlock,
 			end: postData?.end,
@@ -934,6 +959,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
+			markdownContent: '',
 			marketMetadata: postData?.marketMetadata || null,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
@@ -1110,28 +1136,36 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					created_at: OGdata?.[0]?.fdate,
 					id: OGdata?.[0]?.id,
 					isFromOgtracker: true,
-					progress_file: OGdata?.[0]?.propLink,
-					progress_summary: OGdata?.[0]?.summary,
-					refNum: OGdata?.[0]?.refNum
+					progress_file: OGdata?.[0]?.proplink || '',
+					progress_summary: OGdata?.[0]?.summary || '',
+					refNum: OGdata?.[0]?.refnum || '',
+					tasks: OGdata?.[0]?.tasks || []
 				};
 
-				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+				if (['polkassembly.io', 'subsquare.io'].includes(ogReport?.progress_file || '')) {
 					ogReport.progress_file = '';
 				}
 
 				data.progress_report = data?.progress_report || [];
-				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === ogReport?.id);
 				if (!isOgReportPresent) {
 					data?.progress_report?.push(ogReport);
+				} else {
+					data.progress_report = data.progress_report.map((report: IProgressReport) => {
+						if (report.id === ogReport?.id) {
+							return ogReport;
+						}
+						return report;
+					});
 				}
 			}
-
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
 				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
+				post.markdownContent = convertHtmlToMarkdown(data.content) || '';
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
@@ -1186,6 +1220,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
+				post.markdownContent = convertHtmlToMarkdown(res.content) || '';
 				post.title = res.title;
 
 				if (res.title || res.content) {
@@ -1294,7 +1329,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					post.content = `This is a ${getProposalTypeTitle(
 						proposalType as ProposalType
 					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-					if (network === AllNetworks.POLYMESH) {
+					if (isPolymesh(network)) {
 						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
 				} else {

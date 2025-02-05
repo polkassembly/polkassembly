@@ -5,7 +5,8 @@
 import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 
-const ClaimedAmountPieGraph = ({ percentageClaimed }: { percentageClaimed: number }) => {
+const ClaimedAmountPieGraph = ({ percentageClaimed, isUsedInBountyDetails }: { percentageClaimed: number; isUsedInBountyDetails?: boolean }) => {
+	const size = isUsedInBountyDetails ? 20 : 30;
 	const data = [
 		{
 			color: '#FFC302',
@@ -22,7 +23,7 @@ const ClaimedAmountPieGraph = ({ percentageClaimed }: { percentageClaimed: numbe
 	];
 
 	return (
-		<div style={{ height: '30px', width: '30px' }}>
+		<div style={{ height: `${size}px`, width: `${size}px` }}>
 			<ResponsivePie
 				data={data}
 				margin={{ top: 0, right: 0, bottom: 0, left: 0 }}

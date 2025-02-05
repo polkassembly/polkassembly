@@ -37,6 +37,7 @@ import createUserActivity from '../../utils/create-activity';
 import { getSubscanData } from '../../subscanApi';
 import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export interface IEditPostResponse {
 	content: string;
@@ -121,7 +122,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
-			if (network === 'polymesh') {
+			if (isPolymesh(network)) {
 				postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 			}
 			let variables: any = {
@@ -231,7 +232,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 		}
 

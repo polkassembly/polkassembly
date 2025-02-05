@@ -37,6 +37,7 @@ import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
+import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	userId: number;
@@ -51,12 +52,28 @@ interface Props {
 	isSubsquareUser: boolean;
 	isReactionOnReply?: boolean;
 	comment: IComment;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({
+	isSubsquareUser,
+	isReactionOnReply,
+	userId,
+	className,
+	commentId,
+	content,
+	replyId,
+	userName,
+	reply,
+	proposer,
+	is_custom_username,
+	BountyPostIndex,
+	isUsedInBounty
+}: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
@@ -78,12 +95,21 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
-	const {
-		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
-	} = usePostDataContext();
+	const postDataContext = usePostDataContext();
+	const postData = postDataContext?.postData || {};
+
+	const postType = isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postData?.postType;
+	const postIndex = isUsedInBounty ? BountyPostIndex : postData?.postIndex;
+	const track_number = isUsedInBounty ? null : postData?.track_number;
+	const allowedCommentors = isUsedInBounty ? null : postData?.allowedCommentors;
+	const proposerId = isUsedInBounty ? null : postData?.userId;
 
 	useEffect(() => {
-		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		if (isUsedInBounty) {
+			setCommentAllowed(true);
+		} else {
+			allowedCommentors && setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 

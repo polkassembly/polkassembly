@@ -18,7 +18,7 @@ type ApiResponse = {
 const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
 
 export const fetchForumTopics = async ({ pageNumber = 0 }: { pageNumber: number }): Promise<ApiResponse> => {
-	const url = `${baseURL}/latest.json?page=${pageNumber}`;
+	const url = `${baseURL}/latest.json?page=${pageNumber}&order=default`;
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {

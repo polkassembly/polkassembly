@@ -37,7 +37,9 @@ import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChil
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getTimeline } from '~src/util/getTimeline';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
+import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -112,6 +114,7 @@ export interface IPostListing {
 	reward?: string;
 	content?: string;
 	includeContent?: boolean;
+	markdownContent?: string;
 	isVoted?: boolean;
 	highestSentiment?: { sentiment: ESentiments; percentage: number } | null;
 }
@@ -275,7 +278,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
-			if (network === 'polymesh') {
+			if (isPolymesh(network)) {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
 			if (network === 'zeitgeist') {
@@ -397,13 +400,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							content: !includeContent ? '' : data.content || subsquareContent || '',
 							created_at: createdAt,
 							curator,
-							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+							description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 							end,
 							gov_type: data.gov_type,
 							hash,
 							identity,
 							isSpam: data?.isSpam || false,
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
+							markdownContent: convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || '',
 							method: subsquidPost?.preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -447,10 +451,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					content: !includeContent ? '' : subsquareContent || '',
 					created_at: createdAt,
 					curator,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+					description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 					end: end,
 					hash: hash || null,
 					identity,
+					markdownContent: convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || '',
 					method: subsquidPost?.preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -586,7 +591,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			} else {
 				query = GET_PROPOSALS_LISTING_BY_TYPE;
 			}
-			if (network === AllNetworks.POLYMESH) {
+			if (isPolymesh(network)) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
 			if (network === 'zeitgeist') {
@@ -751,7 +756,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									comments_count: commentsQuerySnapshot.data()?.count || 0,
 									content: !includeContent ? '' : data.content || subsquareContent || '',
 									created_at: createdAt,
-									description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+									description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 									end,
 									gov_type: data.gov_type,
 									hash,
@@ -782,7 +787,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							content: !includeContent ? '' : subsquareContent || '',
 							created_at: createdAt,
-							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+							description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 							end: end,
 							hash: hash || null,
 							post_id: postId,
@@ -950,13 +955,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								content: !includeContent ? '' : data.content || subsquareContent || '',
 								created_at: createdAt,
 								curator,
-								description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+								description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 								end,
 								gov_type: data.gov_type,
 								hash,
 								identity,
 								isSpam: data?.isSpam || false,
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
+								markdownContent: convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || '',
 								method: subsquidPost?.preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -1010,10 +1016,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						content: !includeContent ? '' : subsquareContent || '',
 						created_at: createdAt,
 						curator,
-						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+						description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 						end: end,
 						hash: hash || null,
 						identity,
+						markdownContent: convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || '',
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						parent_bounty_requested_amount: parentBountyRequestedAmount,

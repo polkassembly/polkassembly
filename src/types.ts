@@ -10,6 +10,7 @@ import { EAssets } from './components/OpenGovTreasuryProposal/types';
 import { IBountyListing } from './components/Bounties/BountiesListing/types/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
+import { IComment } from './components/Post/Comment/Comment';
 
 declare global {
 	interface Window {
@@ -613,6 +614,7 @@ export interface IProgressReport {
 	progress_name?: string;
 	progress_summary?: string;
 	ratings?: IRating[];
+	tasks?: { title: string; status: 'A' | 'B' }[];
 	isFromOgtracker?: boolean;
 }
 
@@ -980,6 +982,8 @@ export interface IOverviewProps {
 		valueUSD: string;
 	};
 	tokenValue: number;
+	tokenPrice: string | null;
+	tokenLoading: boolean;
 }
 
 export interface ITreasuryResponseData {
@@ -1073,7 +1077,7 @@ export interface IChildBountySubmission {
 	parentBountyIndex: number;
 	proposer: string;
 	reqAmount: string;
-	status: EChildbountySubmissionStatus;
+	status: EUserCreatedBountySubmissionStatus | EChildbountySubmissionStatus | ETabBountyStatuses;
 	tags: string[];
 	title: string;
 	updatedAt: Date;
@@ -1104,6 +1108,7 @@ export enum EUserCreatedBountySubmissionStatus {
 	REJECTED = 'rejected',
 	PENDING = 'pending',
 	DELETED = 'deleted',
+	OUTDATED = 'outdated',
 	PAID = 'paid'
 }
 
@@ -1252,7 +1257,9 @@ export interface IUserCreatedBounty {
 	post_reactions?: IReactions;
 	updated_at: Date;
 	user_id: number;
-	comments?: any[];
+	comments?: {
+		[index: string]: IComment[];
+	};
 	index?: number;
 }
 export enum EUserCreatedBountyActions {
@@ -1261,6 +1268,11 @@ export enum EUserCreatedBountyActions {
 	APPROVE = 'approve'
 }
 
+export enum ETabBountyStatuses {
+	ALL = 'all',
+	APPROVED = 'approved',
+	REJECTED = 'rejected'
+}
 export interface ICalendarEvent {
 	createdAt: Date;
 	index: number;
@@ -1273,4 +1285,12 @@ export interface ICalendarEvent {
 	title: string;
 	trackNo?: number;
 	blockNo?: number;
+}
+
+export interface ISentimentsPercentage {
+	against: ESentiments | 0;
+	for: ESentiments | 0;
+	neutral: ESentiments | 0;
+	slightlyAgainst: ESentiments | 0;
+	slightlyFor: ESentiments | 0;
 }

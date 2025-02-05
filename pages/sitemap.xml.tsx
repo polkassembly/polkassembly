@@ -6,6 +6,7 @@ import { GetServerSideProps } from 'next';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { revampedNetworks } from '~src/global/networkConstants';
 
 const DOMAIN = 'polkassembly.io';
 const PROPOSAL_TYPES = [
@@ -85,7 +86,7 @@ const generateSiteMap = (network: string, urls: string[]): string => {
 				<loc>https://${network}.${DOMAIN}/tech-comm-proposals</loc>
 			</url>
 			${
-				GOV2[network]
+				GOV2[network] && !revampedNetworks.includes(network)
 					? `
 					<url>
 					<loc>https://${network}.${DOMAIN}/opengov</loc>

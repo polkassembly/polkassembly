@@ -16,7 +16,7 @@ import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
-import { getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { getSubsquidLikeProposalType, ProposalType } from '~src/global/proposalType';
 import { v4 } from 'uuid';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
 import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
@@ -43,6 +43,9 @@ interface IPostCommentFormProps {
 	posted?: boolean;
 	voteReason?: boolean;
 	setPosted?: (pre: boolean) => void;
+	BountyPostIndex?: number;
+	isUsedInBounty?: boolean;
+	setBountyPopoverVisible?: (pre: boolean) => void;
 }
 
 interface IEmojiOption {
@@ -58,14 +61,27 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted } = props;
+	const {
+		className,
+		isUsedInSuccessModal = false,
+		voteDecision = null,
+		setCurrentState,
+		posted,
+		voteReason = false,
+		setPosted,
+		BountyPostIndex,
+		isUsedInBounty,
+		setBountyPopoverVisible
+	} = props;
+	const { postData } = usePostDataContext();
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
-	const {
-		postData: { postIndex, postType, track_number }
-	} = usePostDataContext();
+	const postIndex = isUsedInBounty ? BountyPostIndex : postData?.postIndex;
+	const postType = isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postData?.postType;
+	const track_number = isUsedInBounty ? null : postData?.track_number;
+
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -177,6 +193,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			handleSave();
 			return;
 		}
+		setBountyPopoverVisible && setBountyPopoverVisible(false);
 		setModalOpen(true);
 	};
 
@@ -190,7 +207,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setContent('');
 		form.resetFields();
 		form.setFieldValue('content', '');
-		setQuotedText('');
+		!isUsedInBounty && setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
 		// postIndex && createSubscription(postIndex);
 		const commentId = v4();
@@ -220,14 +237,14 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			user_id: id as any,
 			username: username || ''
 		};
-		setCurrentState && setCurrentState(postIndex?.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		!isUsedInBounty && postIndex && setCurrentState && setCurrentState(postIndex?.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				postId: postIndex,
-				postType: postType,
+				postId: isUsedInBounty ? BountyPostIndex : postIndex,
+				postType: isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postType,
 				sentiment: isSentimentPost ? sentiment : 0,
-				trackNumber: track_number,
+				trackNumber: isUsedInBounty ? null : track_number,
 				userId: id
 			});
 			if (error || !data) {
@@ -266,6 +283,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					message: 'Comment created successfully.',
 					status: NotificationStatus.SUCCESS
 				});
+				isUsedInBounty && window.location.reload();
 				if (isUsedInSuccessModal) {
 					setPosted?.(true);
 				}

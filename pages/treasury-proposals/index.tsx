@@ -113,7 +113,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 						className='flex h-10 cursor-pointer items-center rounded-md bg-pink_primary px-3'
 					/>
 				)}
-				{!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network) && (
+				{!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network) && (
 					<Gov1TreasuryProposal isUsedInTreasuryPage />
 				)}
 			</div>

@@ -19,6 +19,7 @@ import {
 	ZEITGEIST_NETWORK_ACTIVE_PROPOSALS_COUNT
 } from '~src/queries';
 import { IActiveProposalCount } from '~src/types';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export const getNetworkTrackActiveProposalsCount = async ({ network }: { network: string }) => {
 	try {
@@ -57,7 +58,7 @@ export const getNetworkTrackActiveProposalsCount = async ({ network }: { network
 			if (network === 'zeitgeist') {
 				query = ZEITGEIST_NETWORK_ACTIVE_PROPOSALS_COUNT;
 			}
-			if (network === 'polymesh') {
+			if (isPolymesh(network)) {
 				query = POLYMESH_NETWORK_ACTIVE_PROPOSALS_COUNT;
 			}
 			const subsquidRes = await fetchSubsquid({
@@ -66,7 +67,7 @@ export const getNetworkTrackActiveProposalsCount = async ({ network }: { network
 			});
 			const data = subsquidRes?.['data'];
 			let proposalsCount: IActiveProposalCount;
-			if (network === 'polymesh') {
+			if (isPolymesh(network)) {
 				proposalsCount = {
 					communityPipsCount: data?.communityPips?.totalCount || 0,
 					technicalPipsCount: data?.technicalPips?.totalCount || 0,

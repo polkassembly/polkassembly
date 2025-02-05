@@ -74,6 +74,7 @@ import { GlobalActions } from '~src/redux/global';
 import CreateProposalDropdown from './CreateProposalDropdown';
 import isCurrentlyLoggedInUsingMultisig from '~src/util/isCurrentlyLoggedInUsingMultisig';
 import { SidebarFoot1, SidebarFoot2 } from './menuSidebarUtils';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const { Sider } = Layout;
 
@@ -116,6 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const dispatch = useDispatch();
 	const [activeGovernance, setActiveGovernance] = useState(false);
 	const [activeTreasury, setActiveTreasury] = useState(false);
+	const [activeBounties, setActiveBounties] = useState(false);
 	const [activeWhitelist, setActiveWhitelist] = useState(false);
 	const [activeParachain, setActiveParachain] = useState(false);
 	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
@@ -177,9 +179,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const isActive = gov2TrackItems.governanceItems.some((item) => item?.key === currentPath);
 		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
 		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
+		const isBountiesActive = bountiesSubItems.some((item) => item?.key === currentPath);
 		const isParachainActive = currentPath.includes('parachains');
 		setActiveGovernance(isActive);
 		setActiveTreasury(isTreasuryActive);
+		setActiveBounties(isBountiesActive);
 		setActiveWhitelist(isWhitelistActive);
 		setActiveParachain(isParachainActive);
 	}, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -193,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		};
 
 		const capitalizedLabel = capitalizeLabel(label);
-		label = <span className={`w-5 text-sm font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}`}>{capitalizedLabel}</span>;
+		label = <span className='w-5 text-sm font-medium text-lightBlue dark:text-icon-dark-inactive'>{capitalizedLabel}</span>;
 
 		return {
 			children,
@@ -356,7 +360,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				  ]
 				: [],
 		PIPsItems:
-			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
+			chainProperties[network]?.subsquidUrl && isPolymesh(network)
 				? [
 						getSiderMenuItem(
 							<div className='flex  items-center justify-between'>
@@ -568,7 +572,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
+	if (chainProperties[network]?.subsquidUrl && !isPolymesh(network)) {
 		if ([AllNetworks.PICASSO].includes(network)) {
 			items = items.concat([
 				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
@@ -693,14 +697,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
+	if (chainProperties[network]?.subsquidUrl && !isPolymesh(network)) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
 	}
 	if ([AllNetworks.MYTHOS].includes(network)) {
 		items = items.concat([getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems].slice(1, 2))]);
 		collapsedItems = collapsedItems.concat([...gov1Items.councilItems].slice(1, 2));
 	}
-	if (network === AllNetworks.POLYMESH) {
+	if (isPolymesh(network)) {
 		items = items.concat(
 			getSiderMenuItem(
 				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
@@ -722,7 +726,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
             			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
@@ -804,13 +808,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
 							}  w-5 rounded-lg px-[5px] py-1 text-center font-dmSans text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount > 9 ? (
-								<>
-									9<span className='text-[8px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.allCount || ''
-							)}
+							{!!totalActiveProposalsCount?.allCount && totalActiveProposalsCount?.allCount}
 						</span>
 					)}
 				</div>,
@@ -845,13 +843,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
 							}   rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount > 9 ? (
-								<>
-									9<span className='text-[8px]'>+</span>
-								</>
-							) : (
-								<span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>
-							)}
+							{!!totalActiveProposalsCount?.allCount && <span className='px-[3px]'>{totalActiveProposalsCount?.allCount}</span>}
 						</span>
 					</div>
 				</div>
@@ -864,19 +856,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 			const menuItem = getSiderMenuItem(
 				<div className='flex justify-between'>
-					<span className='pt-[6px] text-lightBlue dark:text-icon-dark-inactive'> {trackName.split(/(?=[A-Z])/).join(' ')}</span>
+					<span className=' ml-[2px] flex  items-center gap-1.5 pt-[6px] text-sm text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+						{' '}
+						{trackName.split(/(?=[A-Z])/).join(' ')}
+					</span>
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 						} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 					>
-						{activeProposal && activeProposal > 9 ? (
-							<>
-								9<span className='text-[7px]'>+</span>
-							</>
-						) : (
-							activeProposal || ''
-						)}
+						{!!activeProposal && activeProposal}
 					</span>
 				</div>,
 				`/${trackName
@@ -892,20 +881,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							<div className='flex  justify-between'>
-								<span className='pt-1 text-[12px] text-lightBlue dark:text-icon-dark-inactive'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
+							<div className='flex justify-between'>
+								<span className='ml-[2px] flex items-center gap-1.5 pt-[6px] text-sm hover:text-navBlue dark:text-icon-dark-inactive'>
+									{trackName.split(/(?=[A-Z])/).join(' ')}
+								</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 									} w-5 rounded-lg px-[5px] py-1 text-center text-[#96A4B6] dark:text-[#595959]`}
 								>
-									{activeProposal && activeProposal > 9 ? (
-										<>
-											9<span className='text-[7px]'>+</span>
-										</>
-									) : (
-										activeProposal || ''
-									)}
+									{!!activeProposal && activeProposal}
 								</span>
 							</div>,
 							`/${trackName
@@ -926,13 +911,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								)}
 							</div>,
@@ -1027,13 +1006,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} w-5 rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								)}
 							</div>,
@@ -1055,13 +1028,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal > 9 ? (
-											<>
-												9<span className='text-[7px]'>+</span>
-											</>
-										) : (
-											activeProposal || ''
-										)}
+										{!!activeProposal && activeProposal}
 									</span>
 								</div>
 							</div>
@@ -1070,6 +1037,49 @@ const Sidebar: React.FC<SidebarProps> = ({
 				}
 			}
 		}
+	}
+
+	let bountiesSubItems: ItemType[] = [];
+	if (['polkadot'].includes(network)) {
+		bountiesSubItems.push(
+			getSiderMenuItem(<div className='flex items-center  gap-1.5 pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty-dashboard', null)
+		);
+	}
+	if (isOpenGovSupported(network)) {
+		bountiesSubItems = bountiesSubItems.concat(
+			getSiderMenuItem(
+				<div className='flex items-center justify-between pl-2  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					Bounties
+					<span
+						className={`text-[10px] ${
+							totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
+								? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
+								: ''
+						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+					>
+						{!!totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount?.['bountiesCount']}
+					</span>
+				</div>,
+				network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
+				null
+			),
+			getSiderMenuItem(
+				<div className='flex items-center justify-between pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+					Child Bounties
+					<span
+						className={`text-[10px] ${
+							totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
+								? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
+								: ''
+						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+					>
+						{!!totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount?.['childBountiesCount']}
+					</span>
+				</div>,
+				'/child_bounties',
+				null
+			)
+		);
 	}
 
 	const gov2OverviewItems = [
@@ -1121,6 +1131,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)}
 			</>
 		),
+		sidebarCollapsed
+			? null
+			: getSiderMenuItem(
+					'Bounties',
+					'gov2_bounties_group',
+					<div>
+						<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					</div>,
+					[...bountiesSubItems]
+			  ),
 		getSiderMenuItem(
 			<div
 				style={{
@@ -1232,7 +1252,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
 					${item && 'label' in item ? (isActive(item.key as any) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive') : ''} `}
 					>
 						<Link
@@ -1263,7 +1283,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
             		${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
@@ -1391,83 +1411,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
-	let bountiesSubItems: ItemType[] = [];
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
-		let items = [...gov2TrackItems.treasuryItems];
-
-		if (['polkadot'].includes(network)) {
-			bountiesSubItems.push(
-				getSiderMenuItem(
-					<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>,
-					'/bounty-dashboard',
-					null
-				)
-			);
-		}
-		if (isOpenGovSupported(network)) {
-			bountiesSubItems = bountiesSubItems.concat(
-				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						Bounties
-						<span
-							className={`text-[10px] ${
-								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
-									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
-									: ''
-							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
-						>
-							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
-								<>
-									9<span className='text-[7px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.['bountiesCount'] || ''
-							)}
-						</span>
-					</div>,
-					network === AllNetworks.POLKADOT ? '/bounties-listing' : '/bounties',
-					null
-				),
-				getSiderMenuItem(
-					<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
-						Child Bounties
-						<span
-							className={`text-[10px] ${
-								totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
-									? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
-									: ''
-							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
-						>
-							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
-								<>
-									9<span className='text-[7px]'>+</span>
-								</>
-							) : (
-								totalActiveProposalsCount?.['childBountiesCount'] || ''
-							)}
-						</span>
-					</div>,
-					'/child_bounties',
-					null
-				)
-			);
-		}
-
-		const bountiesMenuItem = getSiderMenuItem(
-			'Bounties',
-			'gov2_bounties_group',
-			<div>
-				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-			</div>,
-			[...bountiesSubItems]
-		);
-
-		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
-
-		items = items.concat(bountiesMenuItem);
+		const items = [...gov2TrackItems.treasuryItems];
 
 		gov2Items.splice(
-			8,
+			9,
 			0,
 			getSiderMenuItem(
 				'Treasury',
@@ -1500,6 +1448,46 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 
+	const bountiesPopoverContent = (
+		<div className='w-[150px] py-1'>
+			{bountiesSubItems.map((subItem, subIndex) => {
+				if (!subItem) return null;
+				const uniqueSubKey = `${subItem?.key}-${subIndex}`;
+
+				let formattedSubLabel;
+				if (subItem && 'label' in subItem) {
+					if (typeof subItem.label === 'string') {
+						formattedSubLabel = subItem.label
+							?.toString()
+							.replace(/^\//, '')
+							.split('_')
+							.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+							.join(' ');
+					} else if (React.isValidElement(subItem.label)) {
+						formattedSubLabel = subItem.label;
+					}
+				}
+
+				if (formattedSubLabel === 'Bounty') {
+					formattedSubLabel = 'Dashboard';
+				}
+
+				return (
+					<p
+						key={uniqueSubKey}
+						className={`m-0  w-full rounded-lg  p-0 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+							isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+						}`}
+					>
+						<Link href={subItem?.key as string}>
+							<span className={`block p-2 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedSubLabel || ''}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
+
 	const treasuryDropdownContent = (
 		<div className='text-left'>
 			{gov2TrackItems.treasuryItems.map((item, index) => {
@@ -1508,85 +1496,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 				let formattedLabel;
 				if (item && 'label' in item) {
 					if (typeof item.label === 'string') {
-						formattedLabel = toPascalCase(item.label);
-					} else if (React.isValidElement(item.label)) {
-						formattedLabel = item.label;
+						formattedLabel = toPascalCase(item?.label);
+					} else if (React.isValidElement(item?.label)) {
+						if (item.label) {
+							formattedLabel = item.label;
+						}
 					}
-				}
-				if (item && item.key === 'gov2_bounties_group') {
-					const bountiesPopoverContent = (
-						<div className='w-[150px] pt-2'>
-							{bountiesSubItems.map((subItem, subIndex) => {
-								if (!subItem) return null;
-								const uniqueSubKey = `${subItem?.key}-${subIndex}`;
-
-								let formattedSubLabel;
-								if (subItem && 'label' in subItem) {
-									if (typeof subItem.label === 'string') {
-										formattedSubLabel = subItem.label
-											?.toString()
-											.replace(/^\//, '')
-											.split('_')
-											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-											.join(' ');
-									} else if (React.isValidElement(subItem.label)) {
-										formattedSubLabel = subItem.label;
-									}
-								}
-
-								if (formattedSubLabel === 'Bounty') {
-									formattedSubLabel = 'Dashboard';
-								}
-
-								return (
-									<p
-										key={uniqueSubKey}
-										className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
-											isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
-										}`}
-									>
-										<Link href={subItem?.key as string}>
-											<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
-												{formattedSubLabel || ''}
-											</span>
-										</Link>
-									</p>
-								);
-							})}
-						</div>
-					);
-
-					return (
-						<div
-							key={uniqueKey}
-							className='relative'
-						>
-							<Popover
-								content={bountiesPopoverContent}
-								placement='right'
-								trigger='hover'
-								overlayClassName='z-[1200]'
-							>
-								<p
-									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-[#243A57] dark:text-icon-dark-inactive'
-									}`}
-								>
-									<span className='flex items-center gap-2 font-medium'>
-										<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' />
-										<span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
-									</span>
-									<RightOutlined />
-								</p>
-							</Popover>
-						</div>
-					);
 				}
 
 				return (
 					<p
 						key={uniqueKey}
-						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
+						className={`m-0 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
 							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>
@@ -1603,7 +1524,42 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO, AllNetworks.LAOSSIGMA].includes(network)) {
 		gov2CollapsedItems.splice(
-			8,
+			7,
+			0,
+			getSiderMenuItem(
+				<Popover
+					content={bountiesPopoverContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[190px] left-16 p-0 m-0'
+				>
+					<Tooltip
+						title='Bounties'
+						placement='left'
+						className='text-xs'
+					>
+						<div
+							className='relative cursor-pointer px-1'
+							style={{ marginRight: '-13px', padding: '10%' }}
+						>
+							{activeBounties ? (
+								<BountiesIcon className='-ml-8  w-20 scale-90 bg-[#FFF2F9] pt-2 text-2xl text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
+							) : (
+								<BountiesIcon
+									className={`-ml-8 mt-1.5 w-20 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
+								/>
+							)}
+						</div>
+					</Tooltip>
+				</Popover>,
+				'gov2_bounties_group',
+				null,
+				[...gov2TrackItems.mainItems]
+			)
+		);
+		gov2CollapsedItems.splice(
+			10,
 			0,
 			getSiderMenuItem(
 				<Popover
@@ -1727,7 +1683,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		];
 	}
 
-	if (![AllNetworks.POLYMESH].includes(network)) {
+	if (!isPolymesh(network)) {
 		if (AllNetworks.WESTEND.includes(network)) {
 			gov2Items = [
 				...gov2Items,
@@ -1829,7 +1785,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												return (
 													<div
 														key={subIndex}
-														className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
+														className='m-0 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
 													>
 														{subItem?.key && (
 															<Link href={subItem.key.toString()}>

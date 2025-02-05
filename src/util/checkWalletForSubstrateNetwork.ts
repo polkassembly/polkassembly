@@ -4,6 +4,7 @@
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Wallet } from '~src/types';
+import { isPolymesh } from './isPolymeshNetwork';
 
 export const checkWalletForSubstrateNetwork = (network: string) => {
 	if (!network || !window) return;
@@ -18,14 +19,14 @@ export const checkWalletForSubstrateNetwork = (network: string) => {
 		availableWallets[Wallet.POLKAGATE] === undefined &&
 		!(window as any).walletExtension?.isNovaWallet
 	) {
-		if (!['polymesh'].includes(network)) {
+		if (!isPolymesh(network)) {
 			return {
 				description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,
 				message: 'Wallet extension not detected.'
 			};
 		}
-		if (network === 'polymesh' && !availableWallets[Wallet.POLYWALLET]) {
+		if (isPolymesh(network) && !availableWallets[Wallet.POLYWALLET]) {
 			return {
 				description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,

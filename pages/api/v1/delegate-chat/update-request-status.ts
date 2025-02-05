@@ -60,11 +60,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IMessage[] | Me
 		return res.status(403).json({ message: 'Unauthorized: Not a chat participant' });
 	}
 
-	if (chatData?.chatInitiatedBy === userSubstrateAddresses?.[0]) {
+	if (userSubstrateAddresses?.includes(chatData?.chatInitiatedBy)) {
 		return res.status(403).json({ message: "You don't have permission to update this request's status." });
 	}
 
-	const { data: delegatesList, error } = await getDelegatesData(network, address);
+	const { data: delegatesList, error } = await getDelegatesData(network, null);
 
 	if (delegatesList) {
 		const isValidReceiverAddress = delegatesList.some((delegate: IDelegateAddressDetails) => getSubstrateAddress(delegate.address) === substrateAddress);

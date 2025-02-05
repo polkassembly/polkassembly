@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { post_topic } from '~src/global/post_topics';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType } from '~src/types';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface Props {
 	className?: string;
@@ -41,7 +42,7 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 	const [topicOptions, setTopicOptions] = useState<string[]>([]);
 
 	useEffect(() => {
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			if (![post_topic.GENERAL, post_topic.COMMUNITY_PIPS, post_topic.TECHNICAL_PIPS, post_topic.UPGRADE_PIPS].includes(topicId)) {
 				onTopicSelection(5);
 			}

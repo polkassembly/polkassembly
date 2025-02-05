@@ -10,6 +10,7 @@ import { InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletButton from '../WalletButton';
 import { WalletIcon } from './MetamaskLogin';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface Props {
 	disabled: boolean;
@@ -86,7 +87,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						text='SubWallet'
 						isLoginFlow={isLoginFlow}
 					/>
-					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || isPolymesh(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 							// disabled={!availableWallets?.[Wallet.POLKADOT]}
@@ -122,7 +123,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					/>
 				</div>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network)) && (
+					{(!['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || isPolymesh(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${
 								selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''
@@ -184,7 +185,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						/>
 					)}
 				</div>
-				{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || ['polymesh'].includes(network) ? (
+				{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || isPolymesh(network) ? (
 					<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
 						{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) ? (
 							<WalletButton
@@ -204,7 +205,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 								isLoginFlow={isLoginFlow}
 							/>
 						) : null}
-						{['polymesh'].includes(network) ? (
+						{isPolymesh(network) ? (
 							<WalletButton
 								className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
 								// disabled={!availableWallets?.[Wallet.POLYWALLET]}

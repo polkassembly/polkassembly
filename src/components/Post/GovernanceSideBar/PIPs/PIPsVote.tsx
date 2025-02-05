@@ -39,6 +39,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import classNames from 'classnames';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -121,7 +122,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 
 	const getPolymeshCommitteeMembers = async () => {
 		try {
-			if (!api || !apiReady || !api.query || network !== AllNetworks.POLYMESH) return;
+			if (!api || !apiReady || !api.query || !isPolymesh(network)) return;
 			const members = await api.query.polymeshCommittee.members();
 			if (!members) {
 				setIsPolymeshCommitteeMember(false);
@@ -430,7 +431,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												}
 											/>
 										)}
-										{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] ? (
+										{isPolymesh(network) && availableWallets[Wallet.POLYWALLET] ? (
 											<WalletButton
 												disabled={!apiReady}
 												onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}

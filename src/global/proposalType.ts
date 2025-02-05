@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 // TODO: Optimize this
 export enum ProposalType {
@@ -167,7 +168,7 @@ export function getFirestoreProposalType(proposalType: string): string {
 			return 'community_pips';
 		case 'TechnicalCommittee':
 			return 'technical_pips';
-		case 'UpgradeCommitte':
+		case 'UpgradeCommittee':
 			return 'upgrade_pips';
 		case 'AdvisoryCommittee':
 			return 'advisory_committee';
@@ -298,7 +299,7 @@ export const proposalTypes = [
 	'upgrade_pips',
 	'advisory_committee'
 ];
-export const offChainProposalTypes = ['discussions', 'grants'];
+export const offChainProposalTypes = ['discussions', 'grants', 'user_created_bounties'];
 
 export const checkIsOnChainPost = (proposalType: string) => {
 	return !offChainProposalTypes.includes(proposalType);
@@ -309,7 +310,7 @@ export const gov1ProposalTypes = (network: string) => {
 	if (network === 'zeitgeist') {
 		proposalType.splice(1, 0, 'AdvisoryCommittee');
 	}
-	if (network === 'polymesh') {
+	if (isPolymesh(network)) {
 		proposalType.splice(1, 0, 'TechCommitteeProposal');
 	}
 	return proposalType;

@@ -24,8 +24,10 @@ import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
 import AvailableTreasuryBalance from './AvailableTreasuryBalance';
 import CurrentPrice from './CurrentPrice';
 import NextBurn from './NextBurn';
+import _ from 'lodash';
 import SpendPeriod from './SpendPeriod';
 import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -72,6 +74,24 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	});
 
 	const [tokenValue, setTokenValue] = useState<number>(0);
+
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
+
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -128,6 +148,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				});
 			});
 	}, [api, apiReady, blockTime, network]);
+
+	// fetch current price of the token
+	useEffect(() => {
+		if (!network) return;
+
+		const debouncedFetch = _.debounce(() => {
+			GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		}, 1250);
+
+		debouncedFetch();
+
+		return () => {
+			debouncedFetch.cancel();
+		};
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -191,7 +226,15 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									)
 								);
 								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+									let priceToUse;
+
+									if (network === 'polkadot') {
+										priceToUse = tokenPrice !== undefined ? tokenPrice : currentTokenPrice.value;
+									} else {
+										priceToUse = currentTokenPrice.value;
+									}
+
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(priceToUse)).toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(
@@ -264,18 +307,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
-	// set availableUSD and nextBurnUSD whenever they or current price of the token changes
-
-	// fetch current price of the token
-	useEffect(() => {
-		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
-	}, [network]);
-
 	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
-		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
+		if (cancel || !currentTokenPrice.value || currentTokenPrice.value == 'N/A' || currentTokenPrice.isLoading || !network) return;
 
 		setPriceWeeklyChange({
 			isLoading: true,
@@ -297,8 +332,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				if (responseJSON['message'] == 'Success') {
 					const weekAgoPrice = responseJSON?.['data']?.['list']?.[0]?.['price'] ? responseJSON?.['data']?.['list']?.[0]?.['price'] : responseJSON?.['data']?.['ema7_average'];
 
-					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
-					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
+					const priceString = network === 'polkadot' ? (tokenPrice !== null && tokenPrice !== undefined ? tokenPrice : currentTokenPrice.value) : currentTokenPrice.value;
+
+					const currentTokenPriceNum = parseFloat(priceString ?? '0');
+					const weekAgoPriceNum = parseFloat(weekAgoPrice ?? '0');
 					if (weekAgoPriceNum == 0) {
 						setPriceWeeklyChange({
 							isLoading: false,
@@ -329,6 +366,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		return () => {
 			cancel = true;
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTokenPrice, network]);
 
 	return (
@@ -342,6 +380,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						spendPeriod={spendPeriod}
 						nextBurn={nextBurn}
 						tokenValue={tokenValue}
+						tokenPrice={tokenPrice}
+						tokenLoading={tokenLoading}
 					/>
 				</>
 			) : (

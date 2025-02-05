@@ -22,7 +22,7 @@ import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-p
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 export interface ILatestActivityPostsListingResponse {
 	count: number;
@@ -71,7 +71,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		if (network === 'collectives') {
 			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 		}
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 		}
 		if (network === 'zeitgeist') {
@@ -151,7 +151,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 					}
 					return {
 						created_at: createdAt,
-						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+						description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 						hash,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,
@@ -176,7 +176,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 
 			return {
 				created_at: createdAt,
-				description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+				description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 				hash,
 				method: method || preimage?.method,
 				origin,

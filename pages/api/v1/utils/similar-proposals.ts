@@ -8,6 +8,7 @@ import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { getTimeline } from '~src/util/getTimeline';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 async function queryWithLargeInArray(collection: any, field: any, array: any) {
 	const MAX_IN_SIZE = 30;
@@ -53,7 +54,7 @@ export const getNetworkBasedSubsquidQuery = (network: string, proposalType: any)
 	} else {
 		query = GET_POSTS_LISTING_BY_TYPE;
 	}
-	if (network === AllNetworks.POLYMESH) {
+	if (isPolymesh(network)) {
 		query = GET_POSTS_LISTING_FOR_POLYMESH;
 	}
 	return query;

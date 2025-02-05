@@ -26,6 +26,7 @@ import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IVotersListProps {
 	className?: string;
@@ -104,14 +105,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			fetchVotersListForPolymesh();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, apiReady]);
 
 	useEffect(() => {
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			setLoadingStatus({
 				isLoading: true,
 				message: ''
@@ -210,7 +211,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const onChange: PaginationProps['onChange'] = (page) => {
 		setCurrentPage(page);
-		if (network === 'polymesh') {
+		if (isPolymesh(network)) {
 			setVotesRes({
 				abstain: {
 					count: 0,
@@ -237,7 +238,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME_DESC],
 				items: [
-					...(network === AllNetworks.POLYMESH
+					...(isPolymesh(network)
 						? votesSortOptions.slice(2, 5)
 						: proposalType === ProposalType.REFERENDUM_V2
 						? votesSortOptions.slice(2, votesSortOptions.length - 2)
@@ -299,7 +300,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</>
 							)}
 						</div>
-						{![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH].includes(network) ? <div className='w-[70px]'>Conviction</div> : null}
+						{![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST].includes(network) ? <div className='w-[70px]'>Conviction</div> : null}
 						<div className='w-[30px]'>Vote</div>
 					</div>
 
@@ -347,7 +348,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													1
 												)} */}
 											</div>
-											{network !== AllNetworks.POLYMESH && (
+											{!isPolymesh(network) && (
 												<div className='w-[50px] max-w-[50px] overflow-ellipsis'>
 													{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.isDelegated ? '/d' : ''}` : '0.1x'}
 												</div>

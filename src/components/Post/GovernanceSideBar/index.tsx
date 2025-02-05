@@ -86,6 +86,7 @@ import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/type
 import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyButton';
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 import ExpertBodyCard from '~src/components/ExpertBody';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -307,7 +308,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			} else if (extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+			} else if (isPolymesh(network) && extObj.name === 'polywallet') {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
 			}
@@ -320,7 +321,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			});
 		}
 
-		if (['polymesh'].includes(network) && polywalletJSAccounts) {
+		if (isPolymesh(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
@@ -1197,7 +1198,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<div className='overflow-y-hidden'>
-														{['polymesh'].includes(network) ? (
+														{isPolymesh(network) ? (
 															<PIPsVote
 																address={address}
 																lastVote={lastVote}
@@ -1356,7 +1357,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								/>
 							</GovSidebarCard>
 						)}
-						{network.includes('polymesh') ? (
+						{isPolymesh(network) ? (
 							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS ? (
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>

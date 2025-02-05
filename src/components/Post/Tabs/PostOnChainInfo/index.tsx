@@ -24,6 +24,7 @@ import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import Markdown from '~src/ui-components/Markdown';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -484,7 +485,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							</li>
 						)}
 					</ul>
-					{description && network === 'polymesh' ? (
+					{description && isPolymesh(network) ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
 							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
 							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{description}</p>
@@ -576,7 +577,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							/>
 						</div>
 					) : null}
-					{description && network !== 'polymesh' ? (
+					{description && !isPolymesh(network) ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
 							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
 							<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{description}</p>

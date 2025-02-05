@@ -27,7 +27,6 @@ const CreateBountyModal = ({
 			wrapClassName='dark:bg-modalOverlayDark'
 			className={classNames(dmSans.className, dmSans.variable, 'mt-[20px] w-[50%]')}
 			open={openCreateBountyModal}
-			// open={true}
 			maskClosable={false}
 			footer={null}
 			title={

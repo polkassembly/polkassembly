@@ -13,8 +13,9 @@ import Address from '~src/ui-components/Address';
 import SocialsHandle from '../../ui-components/SocialsHandle';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import Markdown from '../../ui-components/Markdown';
 import Image from 'next/image';
+import ExpandableMarkdown from '../Post/Tabs/ExpandableMarkdown';
+import { useTheme } from 'next-themes';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -42,6 +43,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
+	const { theme } = useTheme();
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress: address } = userProfile;
 	const { image, social_links, username, bio } = profileDetails;
@@ -73,7 +75,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 		>
 			<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 				<div className='w-full gap-[34px] max-sm:mb-2 max-sm:mt-3 sm:flex'>
-					<div className='w-3/10 mb-4 flex items-center justify-between sm:mb-0'>
+					<div className='w-3/10 mb-4 flex items-start justify-between sm:mb-0'>
 						<ImageComponent
 							src={image}
 							alt='User Picture'
@@ -131,10 +133,10 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							</div>
 							{userBio || bio ? (
 								<h2 className={'mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high sm:ml-1 sm:mt-1.5'}>
-									<Markdown
+									<ExpandableMarkdown
 										md={userBio || bio}
-										className={'max-h-32 overflow-y-auto max-sm:text-center max-sm:text-[#576D8BCC]'}
-										isPreview={true}
+										theme={theme}
+										minHeight={90}
 									/>
 								</h2>
 							) : null}
@@ -173,7 +175,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 								<div className='flex space-x-2'>
 									<Button
 										onClick={() => setIsModalOpen(true)}
-										className={'h-10 border-pink_primary bg-white font-medium font-semibold text-pink_primary dark:bg-black'}
+										className={'h-10 border-pink_primary bg-white font-medium text-pink_primary dark:bg-black'}
 									>
 										Become a Delegate
 									</Button>

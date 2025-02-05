@@ -28,6 +28,7 @@ import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-c
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -38,7 +39,6 @@ interface IGetLatestActivityAllPostsParams {
 export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPostsParams): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { listingLimit, network, govType } = params;
-
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -103,7 +103,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					.join(' ');
 				const singlePost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+					description: isPolymesh(network) ? getAscciiFromHex(description) : description || '',
 					hash: hash,
 					method: '',
 					origin: '',
@@ -134,7 +134,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 			let query = GET_PROPOSALS_LISTING_BY_TYPE;
-			if (network === AllNetworks.POLYMESH) {
+			if (isPolymesh(network)) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 				variables = {
 					limit: numListingLimit
@@ -179,7 +179,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
-
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
 				const {
@@ -237,7 +236,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 				const onChainPost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || (proposalArguments ? proposalArguments?.description : null),
+					description: isPolymesh(network) ? getAscciiFromHex(description) : description || (proposalArguments ? proposalArguments?.description : null),
 					hash,
 					method: method || preimage?.method || (proposalArguments ? proposalArguments?.method : proposalArguments?.method),
 					origin,
@@ -274,7 +273,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 				return onChainPost;
 			});
-
 			onChainPosts = await Promise.all(onChainPostsPromise);
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
 
@@ -402,7 +400,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				});
 			}
 		}
-
 		const allPosts = [...onChainPosts, ...offChainPosts];
 		let deDupedAllPosts = Array.from(new Set(allPosts));
 		deDupedAllPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());

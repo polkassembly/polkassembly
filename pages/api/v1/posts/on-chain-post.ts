@@ -445,6 +445,7 @@ export async function getComments(
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
+						isDeleted: data.isDeleted || false,
 						isExpertComment: data?.isisExpertComment || false,
 						is_custom_username: false,
 						post_index: postIndex,

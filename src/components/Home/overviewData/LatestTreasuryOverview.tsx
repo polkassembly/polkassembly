@@ -132,16 +132,20 @@ const LatestTreasuryOverview = ({
 			try {
 				const bountyEntries = await api.query.bounties.bounties.entries();
 				let totalValue = 0;
-				bountyEntries.forEach(([_, bountyOption]) => {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				bountyEntries?.forEach(([_, bountyOption]) => {
 					if (bountyOption.isSome) {
 						const bountyData = bountyOption.unwrap().toJSON();
-						if (bountyData.value && !isNaN(Number(bountyData.value))) {
-							totalValue += Number(bountyData.value);
+						if (bountyData.value && !isNaN(Number(bountyData?.value))) {
+							totalValue += Number(bountyData?.value);
 						}
 					}
 				});
-
-				setActiveBountyBalance(totalValue);
+				if (totalValue) {
+					setActiveBountyBalance(totalValue);
+				} else {
+					setActiveBountyBalance(0);
+				}
 			} catch (error) {
 				console.error('Error fetching active bounty balance:', error);
 			}

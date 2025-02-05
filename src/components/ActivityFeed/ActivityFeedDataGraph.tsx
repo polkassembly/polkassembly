@@ -11,8 +11,9 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import dayjs from 'dayjs';
 
-const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -34,19 +35,25 @@ const ActivityFeedDataGraph = ({
 }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const currentMonth = dayjs().format('MMMM').toLowerCase();
+	const currentMonthIndex = monthOrder.indexOf(currentMonth);
+	const dynamicMonthOrder = [...monthOrder.slice(currentMonthIndex + 1), ...monthOrder.slice(0, currentMonthIndex + 1)];
+
 	const filteredData = graphData
-		?.filter((item) => parseFloat(item.balance) !== 0)
-		?.sort((a, b) => monthOrder?.indexOf(a?.month?.slice(0, 3)) - monthOrder?.indexOf(b?.month?.slice(0, 3)));
+		.filter((item) => parseFloat(item.balance) !== 0)
+		.sort((a, b) => dynamicMonthOrder.indexOf(a.month.toLowerCase()) - dynamicMonthOrder.indexOf(b.month.toLowerCase()));
+
 	const firstMonth = filteredData[0]?.month;
-	const lastMonth = filteredData[filteredData?.length - 1]?.month;
+	const lastMonth = filteredData[filteredData.length - 1]?.month;
+
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData?.map((item) => ({
-				x: item?.month?.slice(0, 3),
+			data: filteredData.map((item) => ({
+				x: item.month.charAt(0).toUpperCase() + item.month.slice(1),
 				y: formatUSDWithUnits(
 					formatBnBalance(
-						item?.balance,
+						item.balance,
 						{
 							numberAfterComma: 0,
 							withThousandDelimitor: false,
@@ -78,13 +85,13 @@ const ActivityFeedDataGraph = ({
 				axisRight={null}
 				axisBottom={{
 					tickSize: 3,
-					tickPadding: 25,
+					tickPadding: 20,
 					tickRotation: 0,
 					format: (value) => {
-						if (value === firstMonth?.slice(0, 3) || value === lastMonth?.slice(0, 3)) {
+						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
 							return '';
 						}
-						return value;
+						return value.slice(0, 3);
 					}
 				}}
 				axisLeft={null}

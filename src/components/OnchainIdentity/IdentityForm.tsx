@@ -207,7 +207,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					});
 					return;
 				}
-				const weight = (await tx.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				const weight = (await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
 				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
 					threshold,
 					signatories.filter((signatory: string) => {
@@ -250,7 +250,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					});
 					return;
 				}
-				const weight = (await tx.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				const weight = (await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
 				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
 					threshold,
 					signatories.filter((signatory: string) => {
@@ -351,14 +351,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 
 		if (identityInfo.isIdentitySet) {
 			if (allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) && requestJudgementTx) {
-				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
+				const paymentInfo = await requestJudgementTx?.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			} else {
-				const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+				const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any])?.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			}
 		} else {
-			const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+			const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any])?.paymentInfo(signingAddress);
 			setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 		}
 

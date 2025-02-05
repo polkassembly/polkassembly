@@ -84,7 +84,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		const txArr = api.tx.convictionVoting.undelegate(trackNum);
 
 		(async () => {
-			const info = await txArr.paymentInfo(defaultAddress);
+			const info = await txArr?.paymentInfo(defaultAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
 		})();

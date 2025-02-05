@@ -119,7 +119,7 @@ const CreateBounty = ({
 		if (!api || !apiReady || !linkedAddress || !proposerAddress || !bountyAmount) return;
 		const title = 'PA';
 		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
-		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+		const { partialFee: bountyTxGasFee } = (await bountyTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 		setGasFee(new BN(String(bountyTxGasFee)));
 	};
 
@@ -178,7 +178,7 @@ const CreateBounty = ({
 
 		const title = 'PA';
 		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
-		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+		const { partialFee: bountyTxGasFee } = (await bountyTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 
 		if (availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {
 			setError('Available balance too low');

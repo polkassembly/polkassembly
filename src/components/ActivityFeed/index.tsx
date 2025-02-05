@@ -14,7 +14,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { setExplorePosts, setLoadingExplore, setLoadingSubscribed } from '~src/redux/activityFeed';
+import { setExplorePosts, setLoadingExplore, setLoadingSubscribed, setSubscribedPosts } from '~src/redux/activityFeed';
 
 const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | { error: string }> => {
 	try {
@@ -188,7 +188,7 @@ const LatestActivityFollowing: React.FC = () => {
 				}
 			})
 		);
-		dispatch(setExplorePosts(detailedPosts?.filter((post) => !post?.error) || []));
+		dispatch(setSubscribedPosts(detailedPosts?.filter((post) => !post?.error) || []));
 		dispatch(setLoadingSubscribed(false));
 	};
 

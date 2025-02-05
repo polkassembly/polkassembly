@@ -74,7 +74,7 @@ const fetchOGTTasks = async (id: string) => {
 };
 export const fetchOGTracker = async (id: string) => {
 	try {
-		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&select=*`, {
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&status=eq.Delivered`, {
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8',
 				apikey: process.env.OGT_TRACKER_API_KEY || ''

@@ -8,7 +8,6 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -126,7 +125,7 @@ const handler: NextApiHandler<BountyResponseType> = async (req, res) => {
 
 		await bountyDoc?.set(payload, { merge: true });
 
-		return res.status(200).json({ message: messages?.SUCCESS, index: totalCreatedBountiesCount });
+		return res.status(200).json({ index: totalCreatedBountiesCount, message: messages?.SUCCESS });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

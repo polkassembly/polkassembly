@@ -17,7 +17,6 @@ import { RangePickerProps } from 'antd/es/date-picker';
 import styled from 'styled-components';
 import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';

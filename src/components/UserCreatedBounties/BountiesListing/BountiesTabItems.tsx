@@ -9,9 +9,8 @@ import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Link from 'next/link';
 import CreateBountyBtn from '../CreateBountyBtn';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
 }
@@ -19,7 +18,6 @@ interface IBountiesTabItemsProps {
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const { loginAddress } = useUserDetailsSelector();
 
 	const [activeTab, setActiveTab] = useState<string>('all');
 
@@ -42,8 +40,6 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	];
 
 	const tabItems = bountyStatuses.map((status) => ({
-		key: status.key,
-		label: <p>{status.label}</p>,
 		children:
 			props.bounties?.length > 0 ? (
 				<BountiesTable bounties={props.bounties as IUserCreatedBounty[]} />
@@ -68,7 +64,9 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 						</span>
 					</div>
 				</div>
-			)
+			),
+		key: status.key,
+		label: <p>{status.label}</p>
 	}));
 
 	const handleTabChange = (key: string) => {

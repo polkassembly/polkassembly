@@ -8,7 +8,6 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -19,6 +18,11 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
+
+export interface BountyResponseType {
+	message: string;
+	index?: number;
+}
 
 const checkIsTwitterHandleVerified = async (twitterHandle: string, userId: number) => {
 	const twitterVerificationDoc = await firestore_db.collection('twitter_verification_tokens').doc(String(userId)).get();
@@ -42,7 +46,7 @@ const modifyTwitterHandle = (handle: string) => {
 	return handle;
 };
 
-const handler: NextApiHandler<MessageType> = async (req, res) => {
+const handler: NextApiHandler<BountyResponseType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	try {
@@ -121,7 +125,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		await bountyDoc?.set(payload, { merge: true });
 
-		return res.status(200).json({ message: messages?.SUCCESS });
+		return res.status(200).json({ index: totalCreatedBountiesCount, message: messages?.SUCCESS });
 	} catch (err) {
 		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}

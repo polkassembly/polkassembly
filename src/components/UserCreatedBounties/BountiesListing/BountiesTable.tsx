@@ -31,7 +31,7 @@ const ZERO_BN = new BN(0);
 
 const Categories = ({ categories }: { categories: string[] }) => {
 	if (!categories?.length) {
-		return <span>N/A</span>;
+		return <span className='text-lightBlue dark:text-blue-dark-high'>-</span>;
 	}
 
 	return (

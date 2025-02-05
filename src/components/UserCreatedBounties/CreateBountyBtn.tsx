@@ -17,33 +17,45 @@ const CreateBountyModal = dynamic(() => import('~src/components/UserCreatedBount
 
 interface ICreateBountyBtnProps {
 	className?: string;
+	isUsedInTable?: boolean;
 }
 
-const CreateBountyBtn = ({ className }: ICreateBountyBtnProps) => {
+const CreateBountyBtn = ({ className, isUsedInTable }: ICreateBountyBtnProps) => {
 	const [openCreateBountyModal, setOpenCreateBountyModal] = useState<boolean>(false);
 	const { loginAddress } = useUserDetailsSelector();
 
 	return (
 		<div className={className}>
-			<CustomButton
-				disabled={!loginAddress}
-				onClick={() => {
-					setOpenCreateBountyModal(true);
-				}}
-				style={{ background: 'linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%)' }}
-				className={classNames(
-					' flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[12px] border-none px-6 py-3 md:w-auto md:justify-normal',
-					!loginAddress ? 'opacity-50' : ''
-				)}
-				height={46}
-			>
-				<ImageIcon
-					src='/assets/bounty-icons/proposal-icon.svg'
-					alt='bounty icon'
-					imgClassName=''
-				/>
-				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty</span>
-			</CustomButton>
+			{!isUsedInTable ? (
+				<CustomButton
+					disabled={!loginAddress}
+					onClick={() => {
+						setOpenCreateBountyModal(true);
+					}}
+					style={{ background: 'linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%)' }}
+					className={classNames(
+						' flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[12px] border-none px-6 py-3 md:w-auto md:justify-normal',
+						!loginAddress ? 'opacity-50' : ''
+					)}
+					height={46}
+				>
+					<ImageIcon
+						src='/assets/bounty-icons/proposal-icon.svg'
+						alt='bounty icon'
+						imgClassName=''
+					/>
+					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty</span>
+				</CustomButton>
+			) : (
+				<span
+					onClick={() => {
+						setOpenCreateBountyModal(true);
+					}}
+					className={` ${!loginAddress ? 'cursor-not-allowed' : 'cursor-pointer'}  text-sm font-medium text-pink_primary`}
+				>
+					Create Bounty
+				</span>
+			)}
 			<CreateBountyModal
 				openCreateBountyModal={openCreateBountyModal}
 				setOpenCreateBountyModal={setOpenCreateBountyModal}

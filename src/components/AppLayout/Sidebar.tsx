@@ -726,7 +726,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
             			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
@@ -1042,17 +1042,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 	let bountiesSubItems: ItemType[] = [];
 	if (['polkadot'].includes(network)) {
 		bountiesSubItems.push(
-			getSiderMenuItem(
-				<div className='ml-[2px] flex  items-center gap-1.5 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>,
-				'/bounty-dashboard',
-				null
-			)
+			getSiderMenuItem(<div className='flex items-center  gap-1.5 pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty-dashboard', null)
 		);
 	}
 	if (isOpenGovSupported(network)) {
 		bountiesSubItems = bountiesSubItems.concat(
 			getSiderMenuItem(
-				<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+				<div className='flex items-center justify-between pl-2  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 					Bounties
 					<span
 						className={`text-[10px] ${
@@ -1068,7 +1064,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				null
 			),
 			getSiderMenuItem(
-				<div className='flex items-center justify-between  text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
+				<div className='flex items-center justify-between pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>
 					Child Bounties
 					<span
 						className={`text-[10px] ${
@@ -1256,7 +1252,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
 					${item && 'label' in item ? (isActive(item.key as any) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive') : ''} `}
 					>
 						<Link
@@ -1287,7 +1283,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={index}
-						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+						className={`m-0 rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
             		${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 					>
 						<Link
@@ -1453,7 +1449,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	const bountiesPopoverContent = (
-		<div className='w-[150px] pt-2'>
+		<div className='w-[150px] py-1'>
 			{bountiesSubItems.map((subItem, subIndex) => {
 				if (!subItem) return null;
 				const uniqueSubKey = `${subItem?.key}-${subIndex}`;
@@ -1479,14 +1475,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={uniqueSubKey}
-						className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+						className={`m-0 h-10 w-full rounded-lg  p-0 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
 							isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>
 						<Link href={subItem?.key as string}>
-							<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
-								{formattedSubLabel || ''}
-							</span>
+							<span className={`block p-2 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedSubLabel || ''}</span>
 						</Link>
 					</p>
 				);
@@ -1513,7 +1507,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={uniqueKey}
-						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
+						className={`m-0 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14] ${
 							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>
@@ -1538,7 +1532,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					placement='right'
 					arrow={false}
 					trigger='click'
-					overlayClassName='z-[1100] w-[190px] left-16'
+					overlayClassName='z-[1100] w-[190px] left-16 p-0 m-0'
 				>
 					<Tooltip
 						title='Bounties'
@@ -1791,7 +1785,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												return (
 													<div
 														key={subIndex}
-														className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
+														className='m-0 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
 													>
 														{subItem?.key && (
 															<Link href={subItem.key.toString()}>

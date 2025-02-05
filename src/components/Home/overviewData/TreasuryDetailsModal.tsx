@@ -32,7 +32,7 @@ interface TreasuryDetailsModalProps {
 	unit: string;
 	currentTokenPrice: string;
 	loansData: Record<'bifrost' | 'pendulum' | 'hydration' | 'centrifuge', number>;
-	totalBountyPool: string;
+	totalBountyPool: number;
 	bountyValues: string | null;
 }
 
@@ -305,7 +305,9 @@ const TreasuryDetailsModal = ({
 										src={'/assets/treasury/dot-icon.svg'}
 										className='-mt-[2px]'
 									/>
-									<span className='font-medium'>~ {formatUSDWithUnits(formatBnBalance(totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
+									<span className='font-medium'>
+										~ {formatUSDWithUnits(formatBnBalance(String(totalBountyPool), { numberAfterComma: 1, withThousandDelimitor: false }, network))}
+									</span>
 									{unit}
 									<Link
 										href={'https://polkadot.polkassembly.io/bounty-dashboard'}

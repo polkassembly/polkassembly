@@ -102,7 +102,16 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	};
 
 	const voteProposals = async () => {
-		if (!api || !apiReady || availableBalance.lte(totalVotingAmount)) return;
+		if (!api || !apiReady) return;
+
+		if (availableBalance.lte(totalVotingAmount)) {
+			queueNotification({
+				header: 'Error!',
+				message: 'Insufficient balance to vote',
+				status: NotificationStatus.ERROR
+			});
+			return;
+		}
 		const batchCall: any[] = [];
 		vote_cart_data.map((vote) => {
 			let voteTx = null;

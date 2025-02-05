@@ -150,12 +150,14 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 							</div>
 						);
 					})}
-					<button
-						onClick={() => setSeeMore(!seeMore)}
-						className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'
-					>
-						{seeMore ? 'See Less' : 'See More'}
-					</button>
+					{!!report?.tasks?.length && (
+						<button
+							onClick={() => setSeeMore(!seeMore)}
+							className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'
+						>
+							{seeMore ? 'See Less' : 'See More'}
+						</button>
+					)}
 				</div>
 			}
 		</article>

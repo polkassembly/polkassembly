@@ -981,6 +981,8 @@ export interface IOverviewProps {
 		valueUSD: string;
 	};
 	tokenValue: number;
+	tokenPrice: string | null;
+	tokenLoading: boolean;
 }
 
 export interface ITreasuryResponseData {

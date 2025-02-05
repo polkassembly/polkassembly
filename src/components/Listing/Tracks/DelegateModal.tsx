@@ -147,7 +147,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTxn = txArr?.length > 1 ? api.tx.utility.batchAll(txArr) : txArr?.[0];
 
 		(async () => {
-			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
+			const info = await delegateTxn?.paymentInfo(delegationDashboardAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
 			setShowAlert(true);

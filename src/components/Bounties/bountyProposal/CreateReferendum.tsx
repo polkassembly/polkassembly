@@ -371,7 +371,7 @@ const CreateReferendum = ({
 			txns.push(proposalTx);
 
 			const mainTx = txns.length > 1 ? api.tx.utility.batchAll(txns) : proposalTx;
-			const { partialFee: bountyTxGasFee } = (await mainTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+			const { partialFee: bountyTxGasFee } = (await mainTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 
 			setGasFee(new BN(String(bountyTxGasFee)));
 

@@ -156,7 +156,7 @@ const CreateProposal = ({
 			enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
 		);
 		(async () => {
-			const info = await tx.paymentInfo(proposerAddress);
+			const info = await tx?.paymentInfo(proposerAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
 			setShowAlert(true);

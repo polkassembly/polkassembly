@@ -200,7 +200,7 @@ const CreatePreimage = ({
 
 		(async () => {
 			await form.validateFields();
-			const info = await (txArr.length > 1 ? api.tx.utility.batchAll(txArr).paymentInfo(proposerAddress) : txArr[0].paymentInfo(proposerAddress));
+			const info = await (txArr.length > 1 ? api.tx.utility.batchAll(txArr)?.paymentInfo(proposerAddress) : txArr[0].paymentInfo(proposerAddress));
 			const gasFee: BN = new BN(info.partialFee);
 			setGasFee(gasFee);
 			setTxFee(gasFee.add(baseDeposit));

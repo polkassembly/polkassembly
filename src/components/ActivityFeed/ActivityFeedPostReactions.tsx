@@ -134,21 +134,6 @@ export const ActivityFeedPostReactions: React.FC<{
 			</div>
 
 			<div className='flex items-center gap-1 md:gap-3'>
-				<div className='flex items-center gap-2'>
-					<span>
-						<Popover
-							placement='bottom'
-							trigger='hover'
-							content={renderUsernames('👎')}
-							arrow={true}
-						>
-							<p className='cursor-pointer whitespace-nowrap text-[10px] text-gray-600 hover:underline dark:text-[#9E9E9E] md:text-[12px]'>
-								{reactionState?.dislikesCount} dislikes
-							</p>
-						</Popover>
-					</span>
-				</div>
-				<p className='pt-1 text-blue-light-medium dark:text-[#9E9E9E]'>|</p>
 				<p className='whitespace-nowrap text-[10px] text-gray-600 dark:text-[#9E9E9E] md:text-[12px] '>{commentsCount || 0} Comments</p>
 				{post?.highestSentiment?.sentiment > 0 && <p className='block pt-1 text-blue-light-medium dark:text-[#9E9E9E]  lg:hidden'>|</p>}
 				<div className='block lg:hidden'>

@@ -9,6 +9,7 @@ export const parseBalance = (balance: string, decimals: number, withUnit: boolea
 	let readableBalance = formatUSDWithUnits(
 		parseFloat(
 			formatBalance(balance, {
+				decimals: chainProperties[network]?.tokenDecimals,
 				forceUnit: chainProperties[network]?.tokenSymbol,
 				withAll: false,
 				withUnit: false,

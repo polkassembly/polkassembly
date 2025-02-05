@@ -25,6 +25,9 @@ import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
+
+const EMPTY_U8A_32 = new Uint8Array(32);
 
 interface ITokenPrice {
 	value: string;
@@ -57,19 +60,38 @@ const ActivityFeedSidebar = () => {
 	const assetValue = formatBnBalance(assethubValues?.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues?.usdcValue) / 1000000));
 	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues?.usdtValue) / 1000000));
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
+
+	const tokenValueNum = !tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice?.value;
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues?.dotValue) / 10000000000) * parseFloat(currentTokenPrice?.value) +
+			(tokenValue + parseFloat(assethubValues?.dotValue) / 10000000000) * parseFloat(tokenValueNum) +
 				Number(assethubValues?.usdcValue) / 1000000 +
 				Number(assethubValues?.usdtValue) / 1000000
 		)
 	);
 
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
+
 	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: ITokenPrice, setAvailable: Function, setNextBurn: Function) => {
 		const treasuryAccount = u8aConcat(
 			'modl',
-			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${isPolymesh(network) ? 'pm' : 'pr'}/trsry`,
-			new Uint8Array(32)
+			api?.consts?.treasury?.palletId ? api?.consts?.treasury?.palletId.toU8a(true) : `${isPolymesh(network) ? 'pm' : 'pr'}/trsry`,
+			EMPTY_U8A_32
 		);
 
 		setAvailable({ isLoading: true, value: '', valueUSD: '' });
@@ -98,9 +120,9 @@ const ActivityFeedSidebar = () => {
 		let valueUSD = '';
 		let value = '';
 
-		if (burn && currentTokenPrice?.value) {
+		if (burn) {
 			const nextBurnValueUSD = parseFloat(formatBnBalance(burn?.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
-			valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice?.value))?.toString());
+			valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice?.value))?.toString());
 			value = formatUSDWithUnits(formatBnBalance(burn?.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
 		}
 
@@ -115,21 +137,15 @@ const ActivityFeedSidebar = () => {
 		if (freeBalance) {
 			const availableValueUSD = parseFloat(formatBnBalance(freeBalance?.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
 			setTokenValue(availableValueUSD);
-			if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
-				valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice?.value))?.toString());
+			if (availableValueUSD) {
+				valueUSD = formatUSDWithUnits((availableValueUSD * Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice?.value))?.toString());
 			}
 			value = formatUSDWithUnits(formatBnBalance(freeBalance?.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
 		}
 
 		setAvailable({ isLoading: false, value, valueUSD });
 	};
-
 	const fetchWeekAgoTokenPrice = async (currentTokenPrice: ITokenPrice, network: string, setPriceWeeklyChange: (change: IPriceWeeklyChange) => void) => {
-		if (!currentTokenPrice?.value || currentTokenPrice.isLoading) {
-			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
-			return;
-		}
-
 		const weekAgoDate = dayjs()?.subtract(7, 'd')?.format('YYYY-MM-DD');
 		try {
 			const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
@@ -140,26 +156,37 @@ const ActivityFeedSidebar = () => {
 				headers: subscanApiHeaders,
 				method: 'POST'
 			});
-
-			const responseJSON = await response?.json();
+			const responseJSON = await response.json();
 			if (responseJSON['message'] === 'Success') {
-				const weekAgoPrice = responseJSON['data']['ema7_average'];
-				const currentTokenPriceNum = parseFloat(currentTokenPrice.value);
-				const weekAgoPriceNum = parseFloat(weekAgoPrice);
+				const weekAgoPrice = responseJSON?.['data']?.['list']?.[0]?.['price'] ? responseJSON?.['data']?.['list']?.[0]?.['price'] : responseJSON?.['data']?.['ema7_average'];
 
-				if (weekAgoPriceNum === 0) {
-					setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
+				const priceString = network === 'polkadot' ? (tokenPrice !== null && tokenPrice !== undefined ? tokenPrice : currentTokenPrice.value) : currentTokenPrice.value;
+
+				const currentTokenPriceNum = parseFloat(priceString ?? '0');
+				const weekAgoPriceNum = parseFloat(weekAgoPrice ?? '0');
+				if (weekAgoPriceNum == 0) {
+					setPriceWeeklyChange({
+						isLoading: false,
+						value: 'N/A'
+					});
 					return;
 				}
-
 				const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-				setPriceWeeklyChange({ isLoading: false, value: percentChange?.toFixed(2) });
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: percentChange.toFixed(2)
+				});
 				return;
 			}
-
-			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
+			setPriceWeeklyChange({
+				isLoading: false,
+				value: 'N/A'
+			});
 		} catch (err) {
-			setPriceWeeklyChange({ isLoading: false, value: 'N/A' });
+			setPriceWeeklyChange({
+				isLoading: false,
+				value: 'N/A'
+			});
 		}
 	};
 
@@ -259,11 +286,12 @@ const ActivityFeedSidebar = () => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network, currentTokenPrice, dispatch]);
+	}, [api, apiReady, network, tokenLoading, currentTokenPrice, dispatch]);
 
 	useEffect(() => {
 		fetchWeekAgoTokenPrice(currentTokenPrice, network, setPriceWeeklyChange);
-	}, [currentTokenPrice, network]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentTokenPrice, network, tokenLoading]);
 
 	useEffect(() => {
 		if (assethubApi) {
@@ -303,8 +331,8 @@ const ActivityFeedSidebar = () => {
 											) : (
 												<span>N/A</span>
 											)}
-											{totalTreasuryValueUSD && (
-												<div className='flex items-baseline'>
+											{totalTreasuryValueUSD && totalTreasuryValueUSD != 'NaN' && (
+												<div className='ml-[2px] flex items-baseline'>
 													<span className={`${dmSans.className} ${dmSans.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 														~${totalTreasuryValueUSD}
 													</span>
@@ -396,14 +424,14 @@ const ActivityFeedSidebar = () => {
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>
-							{currentTokenPrice?.value === 'N/A' ? (
-								<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
+							{!tokenLoading && tokenPrice ? (
+								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${tokenPrice}</span>
 							) : currentTokenPrice?.value && !isNaN(Number(currentTokenPrice?.value)) ? (
 								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice?.value}</span>
 							) : null}
 						</div>
 						{priceWeeklyChange?.value !== 'N/A' && (
-							<div className='-mb-[2px] ml-2 flex items-center'>
+							<div className='-mb-[2px] ml-1 flex items-center'>
 								<span className={`text-xs font-medium ${Number(priceWeeklyChange?.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
 									{Math.abs(Number(priceWeeklyChange?.value))}%
 								</span>

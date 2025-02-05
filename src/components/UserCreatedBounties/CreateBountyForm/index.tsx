@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 import React, { useState, useEffect, FC, useCallback } from 'react';
 import { spaceGrotesk } from 'pages/_app';
-import { Form, DatePicker, InputNumber, Spin } from 'antd';
+import { Form, DatePicker, Spin } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import { useNetworkSelector, useUserCreateBountyFormSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -493,8 +493,21 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								<Form.Item
 									name='claims'
 									className='w-full'
+									rules={[
+										{
+											message: 'Please enter max claims',
+											required: true,
+											validator(rule, value, callback) {
+												if (callback && (value < 0 || !Number.isInteger(value) || !value)) {
+													callback(value < 0 ? 'Invalid max claims' : rule?.message?.toString());
+												} else {
+													callback();
+												}
+											}
+										}
+									]}
 								>
-									<InputNumber
+									<Input
 										name='claims'
 										type='number'
 										placeholder='Enter maximum number of requests'
@@ -567,10 +580,10 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				open={open}
 				setOpen={setOpen}
 				walletAlertTitle='Batch Voting.'
+				linkAddressNeeded
 				onConfirm={(address: string) => {
 					setSelectedAddress(address);
 				}}
-				isUsedInBatchVoting={true}
 			/>
 		</section>
 	);

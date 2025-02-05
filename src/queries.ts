@@ -2406,7 +2406,7 @@ export const GET_NETWORK_TRACK_ACTIVE_PROPOSALS_COUNT = `query getNetworkTrackAc
   all: proposalsConnection(where:{type_eq:ReferendumV2, status_in:[Started, DecisionDepositPlaced, Deciding,Submitted, ConfirmStarted]} , orderBy:id_ASC){
     totalCount
   }
- bountiesCount: proposalsConnection(where:{type_in:Bounty, status_in:[Active, Proposed, Extended]}, orderBy:id_ASC) {
+  bountiesCount: proposalsConnection(where:{type_in:Bounty, status_not_in:[Cancelled,Rejected, Approved, Claimed, Approved]}, orderBy:id_ASC) {
     totalCount
   }
    childBountiesCount: proposalsConnection(where:{type_eq:ChildBounty, status_in:[Awarded,Added, Active]}, orderBy:id_ASC) {
@@ -2586,17 +2586,20 @@ query MyQuery ($trackNo: Int){
 
 export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
   query Rewards {
-    proposals(where: {type_eq: Bounty, status_in: [Active, CuratorUnassigned, Extended]}) {
+    proposals(where: {type_eq: Bounty, status_not_in: [Cancelled,Rejected, Approved, Claimed, Approved]}) {
       index
       reward
     }
   }
 `;
 
-export const GET_AWARDED_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES = `
+export const GET_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES = `
 query AwardedChildBounties($parentBountyIndex_in: [Int!]) {
-		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in, statusHistory_some: {status_eq: Awarded}}) {
+		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in}) {
 			reward
+      statusHistory{
+      status
+      }
 		}
 	}
 `;

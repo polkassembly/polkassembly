@@ -87,7 +87,7 @@ const handleBatchCall = (args: any, network: string) => {
 		}
 	});
 
-	return { beneficiaries: allBeneficiaries || [], remark, requested: requestedAmt.toString() };
+	return { beneficiaries: allBeneficiaries || [], remark, requested: allBeneficiaries?.length ? requestedAmt.toString() : undefined };
 };
 
 const preimageToBeneficiaries = (onchainCall: any, network: string): IRes => {
@@ -104,7 +104,6 @@ const preimageToBeneficiaries = (onchainCall: any, network: string): IRes => {
 	}
 
 	const data = methodHandlers?.[method]?.(onchainCall?.args, network);
-
 	return { ...data, assetId: method == 'spend' ? data?.assetId || null : null };
 };
 

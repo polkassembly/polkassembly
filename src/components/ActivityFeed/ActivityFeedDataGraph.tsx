@@ -40,8 +40,8 @@ const ActivityFeedDataGraph = ({
 	const dynamicMonthOrder = [...monthOrder.slice(currentMonthIndex + 1), ...monthOrder.slice(0, currentMonthIndex + 1)];
 
 	const filteredData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => dynamicMonthOrder.indexOf(a.month.toLowerCase()) - dynamicMonthOrder.indexOf(b.month.toLowerCase()));
+		?.filter((item) => parseFloat(item.balance) !== 0)
+		?.sort((a, b) => dynamicMonthOrder?.indexOf(a?.month?.toLowerCase()) - dynamicMonthOrder?.indexOf(b?.month?.toLowerCase()));
 
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData.length - 1]?.month;
@@ -49,11 +49,11 @@ const ActivityFeedDataGraph = ({
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData.map((item) => ({
-				x: item.month.charAt(0).toUpperCase() + item.month.slice(1),
+			data: filteredData?.map((item) => ({
+				x: item?.month?.charAt(0).toUpperCase() + item?.month?.slice(1),
 				y: formatUSDWithUnits(
 					formatBnBalance(
-						item.balance,
+						item?.balance,
 						{
 							numberAfterComma: 0,
 							withThousandDelimitor: false,
@@ -88,7 +88,7 @@ const ActivityFeedDataGraph = ({
 					tickPadding: 20,
 					tickRotation: 0,
 					format: (value) => {
-						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
+						if (value === firstMonth?.charAt(0).toUpperCase() + firstMonth?.slice(1) || value === lastMonth?.charAt(0).toUpperCase() + lastMonth?.slice(1)) {
 							return '';
 						}
 						return value.slice(0, 3);

@@ -1475,7 +1475,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				return (
 					<p
 						key={uniqueSubKey}
-						className={`m-0 h-10 w-full rounded-lg  p-0 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+						className={`m-0  w-full rounded-lg  p-0 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
 							isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
 						}`}
 					>

@@ -82,6 +82,7 @@ interface Props {
 	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
 	showCopyIcon?: boolean;
+	showProxyTitle?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -164,12 +165,14 @@ const Address = (props: Props) => {
 		addressClassName,
 		disableAddressClick = false,
 		disableHeader,
+		showProxyTitle = true,
 		isTruncateUsername = true,
 		usernameClassName,
 		extensionName,
 		usernameMaxLength,
 		addressMaxLength,
 		addressOtherTextType,
+
 		passedUsername,
 		ethIdenticonSize,
 		isVoterAddress,
@@ -664,7 +667,7 @@ const Address = (props: Props) => {
 				</div>
 			</Tooltip>
 			{/* proxy parent title */}
-			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && (
+			{!!identity?.parentProxyTitle && (displayInline || isProfileView || disableHeader) && showProxyTitle && (
 				<ParentProxyTitle
 					disableParentProxyAddressTitle={disableParentProxyAddressTitle}
 					title={identity?.parentProxyTitle}

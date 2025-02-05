@@ -604,7 +604,7 @@ const AddressConnectModal = ({
 							showIcon
 							message={
 								<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-									Please maintain minimum {formatedBalance(String(baseDeposit.add(submissionDeposite).toString()), unit)} {unit} balance for these transactions:
+									Please maintain minimum {formatedBalance(submissionDeposite.toString(), unit)} {unit} balance for these transactions:
 									<span
 										className='ml-1 cursor-pointer text-xs text-pink_primary'
 										onClick={() => setHideDetails(!hideDetails)}
@@ -618,18 +618,7 @@ const AddressConnectModal = ({
 									''
 								) : (
 									<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-										<li className='flex w-full justify-between'>
-											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
-											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-												{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
-											</span>
-										</li>
-										<li className='mt-0 flex w-full justify-between'>
-											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-												{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-											</span>
-										</li>
+										Note: Preimage creation requires an additional {formatedBalance(baseDeposit.toString(), unit)} {unit} if no existing preimage is available.
 									</div>
 								)
 							}

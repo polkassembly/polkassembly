@@ -10,7 +10,6 @@ import { usePostDataContext } from '~src/context';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import ReportDetails from './ReportDetails';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
 import { progressReportActions } from '~src/redux/progressReport';
@@ -107,7 +106,6 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 		}
 		setLoading(false);
 	};
-
 	return (
 		<section className={`${className} mt-8`}>
 			<Timeline className={`${className}`}>
@@ -142,10 +140,9 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 											<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
 												<div className='flex items-center gap-x-2'>
 													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
-														Object.keys(postData?.progress_report).length - index
+														Object.keys(postData?.progress_report || {})?.length - index
 													}`}</h1>
 													<ClockCircleOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
-													<p className='m-0 p-0 text-xs text-lightBlue dark:text-icon-dark-inactive'>{dayjs(report?.created_at).format('DD MMM YYYY')}</p>
 													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
 													{report?.isFromOgtracker && (
 														<Tooltip
@@ -168,12 +165,14 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 																</p>
 															}
 														>
-															<Image
-																src='/assets/icons/ogTracker.svg'
-																alt='ogtracker'
-																height={20}
-																width={20}
-															/>
+															<div className='flex items-center rounded-full p-0.5 dark:bg-[#393939]'>
+																<Image
+																	src='/assets/icons/ogTracker.svg'
+																	alt='ogtracker'
+																	height={20}
+																	width={20}
+																/>
+															</div>
 														</Tooltip>
 													)}
 												</div>

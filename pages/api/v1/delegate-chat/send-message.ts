@@ -44,7 +44,7 @@ const validateParticipants = async (network: string, senderAddress: string, rece
 		return { error: 'User must be logged in to send messages' };
 	}
 
-	const { data: delegatesList, error } = await getDelegatesData(network, receiverAddress);
+	const { data: delegatesList, error } = await getDelegatesData(network, null);
 	if (error) return { error: error.message || messages.API_FETCH_ERROR };
 
 	if (delegatesList) {

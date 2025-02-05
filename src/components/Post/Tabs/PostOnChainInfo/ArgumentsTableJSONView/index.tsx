@@ -43,7 +43,7 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 			},
 			{
 				children: (
-					<div className='json-view'>
+					<div className='json-view dark:[&_.brace-row_*]:text-white dark:[&_.icon-container~span]:text-white dark:[&_.icon-container~span_*]:text-white dark:[&_.object-key]:text-white dark:[&_.object-key~span]:text-white dark:[&_.object-size]:text-blue-dark-medium dark:[&_.object-size]:opacity-50 dark:[&_.react-json-view]:bg-black'>
 						<ReactJson
 							theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
 							src={postArguments}

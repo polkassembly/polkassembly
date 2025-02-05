@@ -7,10 +7,8 @@ import { useTheme } from 'next-themes';
 import { usePostDataContext } from '~src/context';
 import { IProgressReport, IRating } from '~src/types';
 import { StarFilled } from '@ant-design/icons';
-import ImageIcon from '~src/ui-components/ImageIcon';
-import Markdown from '~src/ui-components/Markdown';
-import NameLabel from '~src/ui-components/NameLabel';
 import Image from 'next/image';
+import classNames from 'classnames';
 
 interface IReportDetails {
 	report: IProgressReport;
@@ -18,10 +16,11 @@ interface IReportDetails {
 }
 
 const ReportDetails: FC<IReportDetails> = (props) => {
-	const { report, index } = props;
+	const { report } = props;
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
+	const [seeMore, setSeeMore] = useState(false);
 
 	useEffect(() => {
 		getRatingInfo();
@@ -87,21 +86,17 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 
 	return (
 		<article className='mt-2 flex flex-col justify-start gap-y-2'>
-			<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{postData?.title}</h1>
 			<div className='flex items-center justify-start gap-x-1'>
-				<NameLabel
-					defaultAddress={postData?.proposer || ''}
-					truncateUsername
-					usernameClassName='text-xs text-ellipsis text-lightBlue overflow-hidden font-normal dark:text-blue-dark-medium'
-				/>
-				{postData?.progress_report_views && postData?.progress_report_views?.length > 0 && (
+				<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{postData?.title}</h1>
+				{!!postData?.progress_report_views?.length && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'
 						type='vertical'
 						style={{ borderLeft: '1px solid var(--lightBlue)' }}
 					/>
 				)}
-				{postData?.progress_report_views && postData?.progress_report_views?.length > 0 && (
+
+				{!!postData?.progress_report_views && postData?.progress_report_views?.length > 0 && (
 					<p className='m-0 flex items-center gap-x-1 p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 						<Image
 							src='/assets/icons/view-icon.svg'
@@ -109,11 +104,11 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 							height={16}
 							width={16}
 							className={theme == 'dark' ? 'dark-icons' : ''}
-						></Image>
+						/>
 						{postData?.progress_report_views?.length}
 					</p>
 				)}
-				{report?.ratings && report?.ratings?.length > 0 && (
+				{!!report?.ratings && report?.ratings?.length > 0 && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'
 						type='vertical'
@@ -126,7 +121,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					</p>
 				)}
 			</div>
-			{report?.progress_summary && (
+			{/* {report?.progress_summary && (
 				<div className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
 					<Markdown
 						className='post-content m-0 p-0 font-normal'
@@ -134,37 +129,37 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 						theme={theme}
 					/>
 				</div>
-			)}
-
-			<div>
-				{report?.progress_file && (
-					<a
-						href={report?.progress_file}
-						target='_blank'
-						rel='noreferrer'
-						className='mb-1 flex flex-col rounded-md border border-solid border-[#D2D8E0] px-4 py-2 dark:border-separatorDark dark:bg-transparent'
-						style={{
-							background: 'rgba(210, 216, 224, 0.20)',
-							textDecoration: 'none'
-						}}
-					>
-						<div className='flex items-center justify-start gap-x-2'>
-							<div className='flex h-[32px] w-[32px] items-center justify-center rounded-md bg-[#F9173E]'>
-								<ImageIcon
-									src='/assets/icons/pdf-icon.svg'
-									alt='pdf.icon'
-								/>
+			)} */}
+			{
+				<div className='mt-2 flex flex-col gap-y-4'>
+					{(seeMore ? report?.tasks : report?.tasks?.slice(0, 2))?.map((task) => {
+						return (
+							<div
+								key={task?.title}
+								className='flex items-center justify-between rounded-xl bg-[#f5f7f9] px-3 py-3 font-normal text-lightBlue dark:bg-[#393939] dark:text-blue-dark-high'
+							>
+								<span>{task?.title}</span>
+								<div
+									className={classNames(
+										'rounded-xl px-3 py-1.5 text-xs font-medium tracking-wide text-blue-dark-high',
+										task?.status === 'B' ? 'bg-[#5BC044] dark:bg-[#478F37]' : 'bg-[#FF6700] dark:bg-[#D05704]'
+									)}
+								>
+									{task?.status == 'A' ? 'In progress' : 'Completed'}
+								</div>
 							</div>
-							<div className='flex flex-col gap-y-0.5'>
-								<p className='m-0 cursor-pointer p-0 text-xs font-medium capitalize text-bodyBlue dark:text-white'>
-									{`Progress Report - ${postData?.postType?.replaceAll('_', ' ')} - ${postData?.postIndex}`} - {Object?.keys(postData?.progress_report)?.length - index}
-								</p>
-								<p className='m-0 p-0 text-[10px] font-normal capitalize text-sidebarBlue dark:text-blue-dark-medium'>PDF Document</p>
-							</div>
-						</div>
-					</a>
-				)}
-			</div>
+						);
+					})}
+					{!!report?.tasks?.length && (
+						<button
+							onClick={() => setSeeMore(!seeMore)}
+							className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'
+						>
+							{seeMore ? 'See Less' : 'See More'}
+						</button>
+					)}
+				</div>
+			}
 		</article>
 	);
 };

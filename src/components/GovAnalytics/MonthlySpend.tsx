@@ -26,6 +26,7 @@ import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview'
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { isAssetHubSupportedNetwork } from '../Home/TreasuryOverview/utils/isAssetHubSupportedNetwork';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
@@ -92,6 +93,24 @@ const MonthlySpend = () => {
 	});
 
 	const [tokenValue, setTokenValue] = useState<number>(0);
+
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
+
+	useEffect(() => {
+		const getTokenPrice = async () => {
+			setTokenLoading(true);
+			const priceData = await fetchTokenPrice(network);
+			if (priceData) {
+				setTokenPrice(priceData.price);
+			}
+			setTokenLoading(false);
+		};
+
+		if (network) {
+			getTokenPrice();
+		}
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
@@ -210,8 +229,15 @@ const MonthlySpend = () => {
 										network
 									)
 								);
-								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+								if (nextBurnValueUSD) {
+									const priceString =
+										network === 'polkadot'
+											? !tokenLoading && tokenPrice !== null && tokenPrice !== undefined
+												? tokenPrice
+												: currentTokenPrice && currentTokenPrice.value
+											: currentTokenPrice && currentTokenPrice.value;
+
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(priceString)).toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(
@@ -362,6 +388,8 @@ const MonthlySpend = () => {
 						nextBurn={nextBurn}
 						tokenValue={tokenValue}
 						isUsedInGovAnalytics={true}
+						tokenPrice={tokenPrice}
+						tokenLoading={tokenLoading}
 					/>
 				</div>
 			) : (

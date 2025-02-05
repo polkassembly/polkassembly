@@ -57,18 +57,39 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
+const fetchOGTTasks = async (id: string) => {
+	try {
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/tasks?proposal_id=eq.${id}&select=*`, {
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
+			},
+			method: 'GET'
+		});
+		const resJson = await res.json();
+		return resJson;
+	} catch (error) {
+		return [];
+	}
+};
 export const fetchOGTracker = async (id: string) => {
 	try {
-		const res = await fetch('https://api.ogtracker.io/proposals', {
-			body: JSON.stringify({
-				refNum: id
-			}),
+		const res = await fetch(`https://api.ogtracker.io/rest/v1/proposals?refnum=eq.${id}&status=eq.Delivered`, {
 			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+				'Content-type': 'application/json; charset=UTF-8',
+				apikey: process.env.OGT_TRACKER_API_KEY || ''
 			},
-			method: 'POST'
+			method: 'GET'
 		});
-		return await res.json();
+		let resJson = await res.json();
+		const tasks = await fetchOGTTasks(id);
+
+		if (tasks) {
+			resJson = resJson?.map((item: any) => {
+				return { ...item, tasks: tasks || [] };
+			});
+		}
+		return resJson;
 	} catch (error) {
 		return [];
 	}
@@ -142,9 +163,10 @@ interface IGetOnChainPostParams {
 interface IOGData {
 	fdate: string;
 	id: string;
-	propLink: string;
+	proplink: string;
 	summary: string;
-	refNum: string;
+	refnum: string;
+	tasks: { title: string; status: 'A' | 'B' }[];
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -1114,22 +1136,29 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					created_at: OGdata?.[0]?.fdate,
 					id: OGdata?.[0]?.id,
 					isFromOgtracker: true,
-					progress_file: OGdata?.[0]?.propLink,
-					progress_summary: OGdata?.[0]?.summary,
-					refNum: OGdata?.[0]?.refNum
+					progress_file: OGdata?.[0]?.proplink || '',
+					progress_summary: OGdata?.[0]?.summary || '',
+					refNum: OGdata?.[0]?.refnum || '',
+					tasks: OGdata?.[0]?.tasks || []
 				};
 
-				if (OGdata?.[0]?.propLink.includes('polkassembly.io') || OGdata?.[0]?.propLink.includes('subsquare.io')) {
+				if (['polkassembly.io', 'subsquare.io'].includes(ogReport?.progress_file || '')) {
 					ogReport.progress_file = '';
 				}
 
 				data.progress_report = data?.progress_report || [];
-				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === OGdata?.[0]?.id);
+				const isOgReportPresent = data.progress_report.some((report: IProgressReport) => report.id === ogReport?.id);
 				if (!isOgReportPresent) {
 					data?.progress_report?.push(ogReport);
+				} else {
+					data.progress_report = data.progress_report.map((report: IProgressReport) => {
+						if (report.id === ogReport?.id) {
+							return ogReport;
+						}
+						return report;
+					});
 				}
 			}
-
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;

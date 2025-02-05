@@ -11,6 +11,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import dayjs from 'dayjs';
 
 const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
@@ -35,9 +36,13 @@ const OverviewDataGraph = ({
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
+	const currentMonth = dayjs().format('MMMM').toLowerCase();
+	const currentMonthIndex = monthOrder.indexOf(currentMonth);
+	const dynamicMonthOrder = [...monthOrder.slice(currentMonthIndex + 1), ...monthOrder.slice(0, currentMonthIndex + 1)];
+
 	const filteredData = graphData
 		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
+		.sort((a, b) => dynamicMonthOrder.indexOf(a.month.toLowerCase()) - dynamicMonthOrder.indexOf(b.month.toLowerCase()));
 
 	const firstMonth = filteredData[0]?.month;
 	const lastMonth = filteredData[filteredData.length - 1]?.month;

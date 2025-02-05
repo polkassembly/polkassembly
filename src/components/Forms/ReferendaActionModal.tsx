@@ -18,7 +18,7 @@ import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposa
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, PostOrigin, EReferendumType, EKillOrCancel } from '~src/types';
+import { NotificationStatus, PostOrigin, EReferendumType, EKillOrCancel, EAllowedCommentor } from '~src/types';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -93,11 +93,13 @@ const ReferendaActionModal = ({
 	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
 	const [preimageHash, setPreimageHash] = useState<string>('');
 	const [preimageLength, setPreimageLength] = useState<number | null>(null);
+	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
 		const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,
@@ -263,6 +265,8 @@ const ReferendaActionModal = ({
 							setDiscussionLink={setDiscussionLink}
 							setTags={setTags}
 							setContent={setContent}
+							setAllowedCommentors={setAllowedCommentors}
+							allowedCommentors={allowedCommentors}
 							setTitle={setTitle}
 						/>
 					)}

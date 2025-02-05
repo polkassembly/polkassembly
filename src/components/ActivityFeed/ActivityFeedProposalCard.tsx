@@ -71,6 +71,7 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 							<Link
 								className='flex items-center border-none bg-transparent bg-none p-0'
 								href={`/user/${username}`}
+								target='_blank'
 							>
 								<RightOutlined className='h-3 w-4 p-0 pl-1 text-xl text-blue-light-medium dark:text-[#9E9E9E]' />
 							</Link>

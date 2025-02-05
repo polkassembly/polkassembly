@@ -166,7 +166,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	};
 
 	useEffect(() => {
-		if (!!progress_report && Object.keys(progress_report || {}).length) {
+		if (!!progress_report && Object.keys(progress_report || {}).length && progress_report?.tasks?.length && network === 'polkadot') {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({

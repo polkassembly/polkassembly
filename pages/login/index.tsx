@@ -69,7 +69,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
 	const [walletError, setWalletError] = useState<string | undefined>();
-	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
+	// const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -82,7 +82,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 	// TODO: FIX ambiguous function name
 	const onWalletUpdate = () => {
 		setChosenWallet(null);
-		setWithPolkasafe(false);
+		// setWithPolkasafe(false);
 		setDisplayWeb(2);
 	};
 
@@ -119,7 +119,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 							setSignupOpen={setSignupOpen}
 							onWalletSelect={onWalletSelect}
 							walletError={walletError}
-							setWithPolkasafe={setWithPolkasafe}
+							// setWithPolkasafe={setWithPolkasafe}
 						/>
 					) : null}
 
@@ -151,7 +151,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 									setDisplayWeb2={setDisplayWeb2}
 									setWalletError={setWalletError}
 									onWalletUpdate={onWalletUpdate}
-									withPolkasafe={withPolkasafe}
+									withPolkasafe={false}
 									setChosenWallet={setChosenWallet}
 									setIsClosable={setIsClosable}
 								/>

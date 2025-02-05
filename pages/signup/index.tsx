@@ -62,7 +62,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
 	const [walletError, setWalletError] = useState<string | undefined>();
-	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
+	// const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
 	const [method, setMethod] = useState('');
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -74,7 +74,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 
 	const onWalletUpdate = () => {
 		setChosenWallet(null);
-		setWithPolkasafe(false);
+		// setWithPolkasafe(false);
 		setDisplayWeb(2);
 	};
 
@@ -110,7 +110,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 							setSignupOpen={setSignupOpen}
 							onWalletSelect={onWalletSelect}
 							walletError={walletError}
-							setWithPolkasafe={setWithPolkasafe}
+							// setWithPolkasafe={setWithPolkasafe}
 						/>
 					) : null}
 
@@ -141,7 +141,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 									setDisplayWeb2={setDisplayWeb2}
 									setWalletError={setWalletError}
 									onWalletUpdate={onWalletUpdate}
-									withPolkasafe={withPolkasafe}
+									withPolkasafe={false}
 									setChosenWallet={setChosenWallet}
 									setIsClosable={setIsClosable}
 								/>

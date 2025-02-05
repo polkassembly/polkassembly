@@ -64,18 +64,20 @@ const CustomTabs = ({ onTabChange, activeTab }: { onTabChange: (tab: ETabBountyS
 const styles = {
 	parentDiv: {
 		backgroundColor: '#F5F5F5',
-		padding: '4px',
+		padding: '4.5px',
 		borderRadius: '8px',
-		maxWidth: '291px',
+		maxWidth: '302px',
 		marginTop: '12px'
 	},
 	tabsContainer: {
 		display: 'flex',
-		gap: '4px',
-		cursor: 'pointer'
+		gap: '8px',
+		cursor: 'pointer',
+		justifyContent: 'space-between',
+		alignItems: 'center'
 	},
 	tab: {
-		width: '97px',
+		width: '94px',
 		fontSize: '14px',
 		fontWeight: '400',
 		padding: '6px 10px',

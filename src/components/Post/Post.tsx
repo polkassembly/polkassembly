@@ -50,11 +50,6 @@ const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	ssr: false
 });
 
-// const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
-// loading: () => <Skeleton active />,
-// ssr: false
-// });
-
 const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -485,7 +480,6 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{/* {network == 'polkadot' && post?.progress_report && Object.keys(post?.progress_report).length > 0 && <PostProgressReport theme={theme} />} */}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}

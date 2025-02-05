@@ -175,7 +175,7 @@ const VoterRow: FC<IVoterRow> = ({
 									isSubVisible={false}
 									displayInline
 									showFullAddress
-									showTitle={false}
+									showProxyTitle={false}
 									address={voteData?.voter}
 								/>
 							</a>
@@ -189,7 +189,7 @@ const VoterRow: FC<IVoterRow> = ({
 									isSubVisible={false}
 									displayInline
 									showFullAddress
-									showTitle={false}
+									showProxyTitle={false}
 									address={voteData?.voter}
 								/>
 							</div>

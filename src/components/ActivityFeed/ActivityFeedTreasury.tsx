@@ -290,6 +290,7 @@ const ActivityFeedSidebar = () => {
 
 	useEffect(() => {
 		fetchWeekAgoTokenPrice(currentTokenPrice, network, setPriceWeeklyChange);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTokenPrice, network, tokenLoading]);
 
 	useEffect(() => {

@@ -163,7 +163,7 @@ const CreateReferendum = ({
 	};
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/saveBountyProposalInfo', {
-			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
 			bountyId,
 			content,
 			postId,
@@ -371,9 +371,11 @@ const CreateReferendum = ({
 			txns.push(proposalTx);
 
 			const mainTx = txns.length > 1 ? api.tx.utility.batchAll(txns) : proposalTx;
-			const { partialFee: bountyTxGasFee } = (await mainTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+			if (mainTx) {
+				const fee = await mainTx?.paymentInfo(linkedAddress || proposerAddress);
 
-			setGasFee(new BN(String(bountyTxGasFee)));
+				setGasFee(new BN(String(fee?.partialFee?.toString())));
+			}
 
 			const totalRequired = new BN(gasFee).add(baseDeposit).add(submissionDeposit);
 
@@ -702,13 +704,13 @@ const CreateReferendum = ({
 							onClick={() => {
 								setSteps({ percent: 100, step: 1 });
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-10 w-min font-semibold ${
+							className={`h-10 w-min ${
 								!eligibleToCreateRef ? 'opacity-50' : ''
 							} rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary `}
 							onClick={() => handleSubmitCreateReferendum()}

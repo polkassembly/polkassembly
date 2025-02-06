@@ -273,8 +273,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			console.log('NO TXN');
 			return;
 		}
-		const { partialFee: txGasFee } = (await txn?.paymentInfo(address || loginAddress)).toJSON();
-		setGasFee(new BN(String(txGasFee)));
+		const paymentInfo = await txn?.paymentInfo(address || loginAddress);
+		setGasFee(new BN(String(paymentInfo?.partialFee?.toString())));
 
 		const onFailed = (message: string) => {
 			queueNotification({

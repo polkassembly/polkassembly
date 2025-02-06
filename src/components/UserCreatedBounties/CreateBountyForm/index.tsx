@@ -498,8 +498,8 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 											message: 'Please enter max claims',
 											required: true,
 											validator(rule, value, callback) {
-												if (callback && (value < 0 || !Number.isInteger(value) || !value)) {
-													callback(value < 0 ? 'Invalid max claims' : rule?.message?.toString());
+												if (callback && (value < 0 || !value)) {
+													callback(rule?.message?.toString());
 												} else {
 													callback();
 												}

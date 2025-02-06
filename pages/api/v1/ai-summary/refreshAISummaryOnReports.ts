@@ -18,7 +18,6 @@ const handleReportCheckAndRefresh = async ({
 	postType,
 	postIndex
 }: {
-	userId: number;
 	network: string;
 	postType: ProposalType;
 	postIndex: number;
@@ -90,11 +89,15 @@ const handler: NextApiHandler = async (req, res) => {
 		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}
 
-	if (!postType || typeof postIndex === 'undefined') {
-		return res.status(400).json({ message: 'Missing required fields: postType, postIndex' });
+	if (!postType || !Object.values(ProposalType).includes(postType)) {
+		return res.status(400).json({ message: 'Invalid postType' });
 	}
 
-	const response = await handleReportCheckAndRefresh({ userId: user.id, network, postType, postIndex });
+	if (typeof postIndex !== 'number' || postIndex < 0 || !Number.isInteger(postIndex)) {
+		return res.status(400).json({ message: 'Invalid postIndex' });
+	}
+
+	const response = await handleReportCheckAndRefresh({ network, postType, postIndex });
 
 	if (response.success) {
 		return res.status(200).json({

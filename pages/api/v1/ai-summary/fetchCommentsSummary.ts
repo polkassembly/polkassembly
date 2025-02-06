@@ -47,23 +47,23 @@ export const fetchCommentsSummaryFromPost = async ({
 			await getCommentsAISummaryByPost({ network, postId, postType });
 			const updatedPostDoc = await postRef.get();
 			const updatedCommentsSummary = updatedPostDoc.data()?.comments_summary as ICommentsSummary | undefined;
-			if (updatedCommentsSummary) {
-				return {
-					data: updatedCommentsSummary,
-					error: null,
-					status: 200
-				};
-			} else {
+			if (!updatedCommentsSummary) {
 				return {
 					data: null,
 					error: 'Comments summary generation failed',
 					status: 500
 				};
 			}
+
+			return {
+				data: updatedCommentsSummary,
+				error: null,
+				status: 200
+			};
 		}
 
 		const commentsSummary = postDoc.data()?.comments_summary as ICommentsSummary | undefined;
-		if (!commentsSummary) {
+		if (typeof commentsSummary == 'undefined') {
 			await getCommentsAISummaryByPost({ network, postId, postType });
 			const updatedPostDoc = await postRef.get();
 			const updatedCommentsSummary = updatedPostDoc.data()?.comments_summary as ICommentsSummary | undefined;
@@ -112,7 +112,7 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	}
 
 	const { data, error, status } = await fetchCommentsSummaryFromPost({
-		forceRefresh: forceRefresh === true,
+		forceRefresh: forceRefresh,
 		network,
 		postId: String(postId),
 		postType: postType as ProposalType

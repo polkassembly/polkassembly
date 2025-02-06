@@ -8,6 +8,8 @@ import { Tabs } from '~src/ui-components/Tabs';
 import BountiesTable from './BountiesTable';
 import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import CreateBountyBtn from '../CreateBountyBtn';
 
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
@@ -38,7 +40,31 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	];
 
 	const tabItems = bountyStatuses.map((status) => ({
-		children: <BountiesTable bounties={props.bounties?.length > 0 ? (props.bounties as IUserCreatedBounty[]) : []} />,
+		children:
+			props.bounties?.length > 0 ? (
+				<BountiesTable bounties={props.bounties as IUserCreatedBounty[]} />
+			) : (
+				<div className='flex w-full flex-col items-center justify-center bg-white pb-40'>
+					<Image
+						src='/assets/Gifs/watering.gif'
+						alt='empty state'
+						width={600}
+						height={600}
+						className='-mt-10 mb-4'
+					/>
+					<div className='-mt-40 flex flex-col items-center'>
+						<div className='text-lg font-semibold text-gray-700 dark:text-gray-300'>Nothing to see here</div>
+						<span className='mt-1 flex gap-1 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
+							No Bounties have been created yet.
+							<CreateBountyBtn
+								className='hidden md:block'
+								isUsedInTable={true}
+							/>
+							to get started.
+						</span>
+					</div>
+				</div>
+			),
 		key: status.key,
 		label: <p>{status.label}</p>
 	}));

@@ -44,7 +44,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 			props.bounties?.length > 0 ? (
 				<BountiesTable bounties={props.bounties as IUserCreatedBounty[]} />
 			) : (
-				<div className='flex w-full flex-col items-center justify-center bg-white pb-40'>
+				<div className='flex w-full flex-col items-center justify-center bg-white pb-40 dark:bg-section-dark-overlay'>
 					<Image
 						src='/assets/Gifs/watering.gif'
 						alt='empty state'
@@ -53,7 +53,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 						className='-mt-10 mb-4'
 					/>
 					<div className='-mt-40 flex flex-col items-center'>
-						<div className='text-lg font-semibold text-gray-700 dark:text-gray-300'>Nothing to see here</div>
+						<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high'>Nothing to see here</div>
 						<span className='mt-1 flex gap-1 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
 							No Bounties have been created yet.
 							<CreateBountyBtn

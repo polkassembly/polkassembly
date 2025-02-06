@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { IUserDetailsStore } from '~src/redux/userDetails/@types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { RightOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 interface IRankCardProps {
 	currentUser: IUserDetailsStore | null;
@@ -18,6 +19,7 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 		activeProposals: 0,
 		totalVotes: 0
 	});
+	const { username, id } = useUserDetailsSelector();
 
 	async function getProposalData() {
 		if (!currentUser) return;
@@ -65,7 +67,15 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 						<div>
 							<p className='whitespace-nowrap pt-3  font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
 						</div>
-						<RightOutlined className=' -mt-[4px] h-3 w-4 p-0 pl-1 text-xl text-blue-light-medium dark:text-[#9E9E9E]' />
+						{!!id && !!username && (
+							<Link
+								className='flex items-center border-none bg-transparent bg-none p-0'
+								href={`/user/${username}`}
+								target='_blank'
+							>
+								<RightOutlined className='h-3 w-4 p-0 pl-1 text-xl text-blue-light-medium dark:text-[#9E9E9E]' />
+							</Link>
+						)}
 					</div>
 					<div className='mt-[7px]'>
 						<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] text-[#485F7DCC] text-opacity-[80%] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>

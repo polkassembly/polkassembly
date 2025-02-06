@@ -510,6 +510,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									<Input
 										name='claims'
 										type='number'
+										min={1}
 										placeholder='Enter maximum number of requests'
 										className={`h-10 w-full rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 									/>

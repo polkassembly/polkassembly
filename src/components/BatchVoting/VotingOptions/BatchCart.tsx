@@ -25,10 +25,12 @@ import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuc
 import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 interface IBatchCartProps {
 	className?: string;
 }
+const ZERO_BN = new BN(0);
 
 const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const { api, apiReady } = useApiContext();
@@ -43,6 +45,8 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const { vote_cart_data } = useBatchVotesSelector();
 	const [isLoading, setIsLoading] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [totalVotingAmount, setTotalVotingAmount] = useState<BN>(ZERO_BN);
 
 	const getVoteCartData = async () => {
 		setIsLoading(true);
@@ -99,6 +103,15 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 
 	const voteProposals = async () => {
 		if (!api || !apiReady) return;
+
+		if (availableBalance.lte(totalVotingAmount)) {
+			queueNotification({
+				header: 'Error!',
+				message: 'Insufficient balance to vote',
+				status: NotificationStatus.ERROR
+			});
+			return;
+		}
 		const batchCall: any[] = [];
 		vote_cart_data.map((vote) => {
 			let voteTx = null;
@@ -126,6 +139,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const getGASFees = () => {
 		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
+		let amount = ZERO_BN;
 		vote_cart_data.map((vote) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
@@ -133,17 +147,22 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
 					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
 				});
+				amount = amount.add(new BN(balance));
 			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.ayeBalance && vote?.nayBalance) {
 				try {
 					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
 						SplitAbstain: { abstain: `${vote?.abstainBalance?.toString()}`, aye: `${vote?.ayeBalance?.toString()}`, nay: `${vote?.nayBalance?.toString()}` }
 					});
+					const totalBalance = new BN(vote?.ayeBalance?.toString()).add(new BN(vote?.nayBalance?.toString())).add(new BN(vote?.abstainBalance?.toString()));
+					amount = amount.add(totalBalance || ZERO_BN);
 				} catch (e) {
 					console.log(e);
 				}
 			}
 			batchCall.push(voteTx);
 		});
+
+		setTotalVotingAmount(amount || ZERO_BN);
 		api?.tx?.utility
 			?.batchAll(batchCall)
 			?.paymentInfo(batch_voting_address)
@@ -161,6 +180,23 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [vote_cart_data]);
 
+	useEffect(() => {
+		if (!api || !apiReady || !batch_voting_address) return;
+
+		(async () => {
+			const { totalBalance } = await userProfileBalances({
+				address: batch_voting_address || '',
+				api: api,
+				apiReady: apiReady,
+				network
+			});
+
+			setAvailableBalance?.(totalBalance);
+		})();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [batch_voting_address, api, apiReady]);
+
 	return (
 		<section className={`px-4 ${className}`}>
 			<article className=''>
@@ -169,7 +205,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						type='info'
 						showIcon
 						className='icon-alert mt-2'
-						message={<span className='m-0 flex gap-x-1 p-0 text-sm text-xs dark:text-white'>All Votes will be made with</span>}
+						message={<span className='m-0 flex gap-x-1 p-0 text-[13px] dark:text-white'>All Votes will be made with</span>}
 						description={
 							<Address
 								disableTooltip
@@ -179,12 +215,20 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							/>
 						}
 					/>
+					{availableBalance.lte(totalVotingAmount) && (
+						<Alert
+							type='info'
+							showIcon
+							className='mt-2 h-10 py-1'
+							message={<p className='m-0 p-2 text-[13px] dark:text-white'>Default vote balance exceeds wallet fund.</p>}
+						/>
+					)}
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
 					{!isLoading && vote_cart_data.length <= 0 && !!loginAddress.length && (
-						<div className='flex h-[350px] items-center justify-center'>
+						<div className='flex h-[320px] items-center justify-center'>
 							<PostEmptyState
 								description={
 									<div className='p-5 text-center'>
@@ -214,18 +258,18 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 			{vote_cart_data.length > 0 && (
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
 					<div className='flex flex-col gap-y-2'>
-						<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
+						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 						</div>
-						<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
+						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
 						<Button
-							className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
+							className='flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
 							onClick={voteProposals}
 							disabled={isDisable}
 						>

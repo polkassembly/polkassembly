@@ -146,7 +146,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				<div className='mr-auto flex items-center gap-x-1'>
 					{voteInfo?.decision === 'aye' || voteInfo?.decision === 'nay' ? (
 						<ImageIcon
-							src={`${voteInfo?.decision === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
+							src={`${voteInfo?.decision === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/red-dislike-icon.svg'}`}
 							imgClassName='text-black'
 							alt='like-dislike-icon'
 						/>
@@ -160,7 +160,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								: voteInfo?.decision === 'nay'
 								? 'text-nay_red dark:text-nay_red_Dark'
 								: 'text-bodyBlue dark:text-blue-dark-medium'
-						} text-capitalize m-0 p-0 text-xs`}
+						} m-0 p-0 text-xs capitalize`}
 					>
 						{voteInfo?.decision}
 					</p>

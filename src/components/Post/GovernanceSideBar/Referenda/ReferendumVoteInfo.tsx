@@ -172,8 +172,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 				setTotalIssuance(collateral);
 			})();
 		} else {
-			api.query.balances
-				.totalIssuance((result) => {
+			api?.query?.balances
+				?.totalIssuance((result) => {
 					setTotalIssuance(result);
 				})
 				.then((unsub) => {

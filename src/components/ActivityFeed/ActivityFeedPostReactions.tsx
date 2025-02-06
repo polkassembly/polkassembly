@@ -53,9 +53,12 @@ export const ActivityFeedPostReactions: React.FC<{
 		const usernames = reaction === '👍' ? reactionState?.likesUsernames : reactionState?.dislikesUsernames;
 		const userImages = reaction === '👍' ? reactionState?.likesImages : reactionState?.dislikesImages;
 
-		return usernames?.length ? (
+		const filteredUsernames = usernames?.slice(1);
+		const filteredUserImages = userImages?.slice(1);
+
+		return filteredUsernames?.length ? (
 			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', dmSans.className, dmSans.variable)}>
-				{usernames?.map((name: string, index: number) => (
+				{filteredUsernames?.map((name: string, index: number) => (
 					<Link
 						href={`https://${network}.polkassembly.io/user/${name}`}
 						key={index}
@@ -63,7 +66,7 @@ export const ActivityFeedPostReactions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages && userImages[index] && userImages[index]}
+							src={filteredUserImages && filteredUserImages[index]}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'

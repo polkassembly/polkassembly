@@ -119,8 +119,10 @@ const CreateBounty = ({
 		if (!api || !apiReady || !linkedAddress || !proposerAddress || !bountyAmount) return;
 		const title = 'PA';
 		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
-		const { partialFee: bountyTxGasFee } = (await bountyTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
-		setGasFee(new BN(String(bountyTxGasFee)));
+		if (bountyTx) {
+			const gasFee = await bountyTx?.paymentInfo(linkedAddress || proposerAddress);
+			setGasFee(new BN(String(gasFee?.partialFee?.toString())));
+		}
 	};
 
 	useEffect(() => {
@@ -178,9 +180,8 @@ const CreateBounty = ({
 
 		const title = 'PA';
 		const bountyTx = api?.tx?.bounties?.proposeBounty(bountyAmount, title);
-		const { partialFee: bountyTxGasFee } = (await bountyTx?.paymentInfo(linkedAddress || proposerAddress)).toJSON();
-
-		if (availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {
+		const gasFee = await bountyTx?.paymentInfo(linkedAddress || proposerAddress);
+		if (availableBalanceBN.lt(bountyBond.add(new BN(String(gasFee?.partialFee?.toString()))))) {
 			setError('Available balance too low');
 			return;
 		}
@@ -354,7 +355,7 @@ const CreateBounty = ({
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });
 							}}
-							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium font-semibold tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -362,7 +363,7 @@ const CreateBounty = ({
 							htmlType='submit'
 							className={`${
 								isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee)) ? 'opacity-50' : ''
-							} h-10 w-[165px]  rounded-[4px] bg-pink_primary text-center text-sm font-medium font-semibold tracking-[0.05em] text-white
+							} h-10 w-[165px]  rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
 							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee))}
 						>

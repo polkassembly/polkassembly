@@ -207,7 +207,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					});
 					return;
 				}
-				const weight = (await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				const paymentInfo = await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '');
 				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
 					threshold,
 					signatories.filter((signatory: string) => {
@@ -215,7 +215,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					}),
 					null,
 					tx,
-					weight
+					paymentInfo?.weight?.toString()
 				);
 			}
 		} else {
@@ -250,7 +250,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					});
 					return;
 				}
-				const weight = (await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '')).weight;
+				const paymentInfo = await tx?.paymentInfo(currentUser?.multisigAssociatedAddress || '');
 				tx = (peopleChainApi ?? api).tx.multisig.asMulti(
 					threshold,
 					signatories.filter((signatory: string) => {
@@ -258,7 +258,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 					}),
 					null,
 					tx,
-					weight
+					paymentInfo?.weight
 				);
 			}
 		}

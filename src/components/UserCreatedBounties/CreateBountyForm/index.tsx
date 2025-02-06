@@ -17,7 +17,6 @@ import { RangePickerProps } from 'antd/es/date-picker';
 import styled from 'styled-components';
 import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';
@@ -31,6 +30,7 @@ import { resetForm, setFormField } from '~src/redux/userCreateBountyForm';
 import { inputToBn } from '~src/util/inputToBn';
 import { useRouter } from 'next/router';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { BountyResponseType } from 'pages/api/v1/user-created-bounties/createBounty';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -49,11 +49,11 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
 	const createBountyFormState = useUserCreateBountyFormSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [startLoading, setStartLoading] = useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>(loginAddress);
-	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const [tags, setTags] = useState<string[]>([]);
 	const [isTwitterVerified, setIsTwitterVerified] = useState<boolean>(false);
@@ -210,7 +210,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 
 	const handleFormSubmit = async (values: any) => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/user-created-bounties/createBounty', {
+		const { data, error } = await nextApiClientFetch<BountyResponseType>('api/v1/user-created-bounties/createBounty', {
 			content: values?.content,
 			deadlineDate: dayjs(values?.deadline).toDate(),
 			maxClaim: Number(values?.claims),
@@ -233,7 +233,12 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
-			router.reload();
+			const newBountyIndex = data?.index;
+			if (newBountyIndex) {
+				router.push(`/user-created-bounty/${data?.index}`);
+			} else {
+				router.reload();
+			}
 			setOpenCreateBountyModal?.(false);
 			handleReset();
 		}
@@ -434,9 +439,11 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					</article>
 					{/* Submission Guidelines */}
 					<article className='mt-2 flex w-full flex-col justify-center gap-y-2 md:flex-row md:items-center md:justify-between md:gap-y-0'>
-						<div className='flex w-full items-center gap-x-2 text-sm'>
+						<div className='flex w-full items-start gap-x-2 text-sm'>
 							<div className='flex w-full flex-col gap-y-1'>
-								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>Submission Guidelines</p>
+								<p className={`m-0 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									Submission Guidelines<span className='ml-[2px] text-[#FF3C5F]'>*</span>
+								</p>
 								<Form.Item
 									name='guidelines'
 									className='w-full'

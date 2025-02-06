@@ -1045,6 +1045,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(<div className='flex items-center  gap-1.5 pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Dashboard</div>, '/bounty-dashboard', null)
 		);
 	}
+	if (['polkadot'].includes(network)) {
+		bountiesSubItems.push(
+			getSiderMenuItem(
+				<div className='flex items-center  gap-1.5 pl-2 text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>User Bounties</div>,
+				'/user-created-bounties',
+				null
+			)
+		);
+	}
 	if (isOpenGovSupported(network)) {
 		bountiesSubItems = bountiesSubItems.concat(
 			getSiderMenuItem(

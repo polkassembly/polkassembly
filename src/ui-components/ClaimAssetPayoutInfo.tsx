@@ -65,7 +65,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 		const batchData = payouts?.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
 		const tx = batchData.length > 1 ? api.tx.utility.batch(batchData) : batchData[0];
 
-		const paymentInfo = await tx.paymentInfo(address);
+		const paymentInfo = await tx?.paymentInfo(address);
 		setTxFee(paymentInfo.partialFee);
 	};
 

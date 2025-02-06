@@ -229,8 +229,15 @@ const MonthlySpend = () => {
 										network
 									)
 								);
-								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+								if (nextBurnValueUSD) {
+									const priceString =
+										network === 'polkadot'
+											? !tokenLoading && tokenPrice !== null && tokenPrice !== undefined
+												? tokenPrice
+												: currentTokenPrice && currentTokenPrice.value
+											: currentTokenPrice && currentTokenPrice.value;
+
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(priceString)).toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(

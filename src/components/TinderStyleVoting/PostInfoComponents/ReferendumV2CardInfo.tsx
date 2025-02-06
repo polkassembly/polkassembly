@@ -125,12 +125,12 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 		if (!api || !apiReady) return;
 		(async () => {
 			if (network === 'picasso') {
-				const totalIssuance = await api.query.openGovBalances.totalIssuance();
-				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+				const totalIssuance = await api?.query?.openGovBalances?.totalIssuance();
+				const inactiveIssuance = await api?.query?.openGovBalances?.inactiveIssuance();
 				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
 			} else {
-				const totalIssuance = await api.query.balances.totalIssuance();
-				const inactiveIssuance = await api.query.balances.inactiveIssuance();
+				const totalIssuance = await api?.query?.balances?.totalIssuance();
+				const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance) as any);
 			}
 		})();
@@ -231,7 +231,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes({ayeNayAbstainCounts.ayes})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
-								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}
 							</div>
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
@@ -239,7 +239,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays({ayeNayAbstainCounts.nays})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
-								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}
 							</div>
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
@@ -247,7 +247,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Support</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
-								{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}
 							</div>
 						</article>
 						{activeIssuance ? (
@@ -256,7 +256,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 									<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Issuance</span>
 								</div>
 								<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
-									{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}
 								</div>
 							</article>
 						) : null}

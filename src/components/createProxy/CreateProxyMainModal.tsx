@@ -110,7 +110,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 					const availableBalance = new BN(accountData?.data?.free.toString() || '0');
 					setAvailableBalance(availableBalance);
 
-					const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+					const gasFee = (await proxyTx?.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
 					setGasFee(new BN(gasFee));
 				}
 			} catch (error) {
@@ -137,7 +137,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				: null;
 
 			if (proxyTx) {
-				const gasFee = (await proxyTx.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
+				const gasFee = (await proxyTx?.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
 				setGasFee(new BN(gasFee));
 			}
 		} catch (error) {
@@ -273,7 +273,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			console.log('NO TXN');
 			return;
 		}
-		const { partialFee: txGasFee } = (await txn.paymentInfo(address || loginAddress)).toJSON();
+		const { partialFee: txGasFee } = (await txn?.paymentInfo(address || loginAddress)).toJSON();
 		setGasFee(new BN(String(txGasFee)));
 
 		const onFailed = (message: string) => {

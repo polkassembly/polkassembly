@@ -71,7 +71,7 @@ const CreateAmassadorPreimge = ({
 	const getGasFee = async () => {
 		if (!api || !apiReady || !xcmCallData || !proposer) return;
 
-		const info = await api.tx.preimage.notePreimage(xcmCallData as HexString).paymentInfo(proposer);
+		const info = await api.tx.preimage.notePreimage(xcmCallData as HexString)?.paymentInfo(proposer);
 		const gasFee: BN = new BN((info as any)?.partialFee);
 		setGasFee(gasFee);
 	};

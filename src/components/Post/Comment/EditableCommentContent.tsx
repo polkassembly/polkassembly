@@ -482,6 +482,27 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 	};
 
+	const canEditComment = useCallback(async () => {
+		if (comment.isDeleted) {
+			setIsEditable(false);
+			return;
+		}
+		if (id === userId) {
+			return setIsEditable(true);
+		}
+		if (!proposer) {
+			return setIsEditable(false);
+		}
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		if (!isProposer) {
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			if (isProposer) {
+				return setIsEditable(true);
+			}
+		}
+		return setIsEditable(false);
+	}, [addresses, id, loginAddress, proposer, userId, comment.isDeleted]);
+
 	const deleteComment = async () => {
 		const oldComments = comments;
 		const keys = Object.keys(comments);
@@ -516,23 +537,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 		}
 	};
-
-	const canEditComment = useCallback(async () => {
-		if (id === userId) {
-			return setIsEditable(true);
-		}
-		if (!proposer) {
-			return setIsEditable(false);
-		}
-		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
-		if (!isProposer) {
-			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
-			if (isProposer) {
-				return setIsEditable(true);
-			}
-		}
-		return setIsEditable(false);
-	}, [addresses, id, loginAddress, proposer, userId]);
 
 	const items: MenuProps['items'] = [
 		isEditable

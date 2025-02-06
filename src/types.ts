@@ -11,6 +11,8 @@ import { IBountyListing } from './components/Bounties/BountiesListing/types/type
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import { IComment } from './components/Post/Comment/Comment';
+import { HexString } from '@polkadot/util/types';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 declare global {
 	interface Window {
@@ -1293,4 +1295,18 @@ export interface ISentimentsPercentage {
 	neutral: ESentiments | 0;
 	slightlyAgainst: ESentiments | 0;
 	slightlyFor: ESentiments | 0;
+}
+
+export interface IPreimageArgument {
+	name: string;
+	type: string;
+	docs: string;
+	methodDocs?: string;
+}
+
+export interface IPreimage {
+	encodedProposal: HexString | null;
+	notePreimageTx: SubmittableExtrinsic<'promise'>;
+	preimageHash: string;
+	preimageLength: number;
 }

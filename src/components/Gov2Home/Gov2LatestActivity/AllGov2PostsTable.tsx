@@ -99,7 +99,7 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 				if (status || obj.spam_users_count)
 					return (
 						<div className='flex items-center gap-x-2'>
-							{status ? (
+							{status && status !== '-' ? (
 								<StatusTag
 									theme={theme}
 									status={status}

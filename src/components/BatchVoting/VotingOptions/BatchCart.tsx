@@ -215,14 +215,6 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							/>
 						}
 					/>
-					{availableBalance.lte(totalVotingAmount) && (
-						<Alert
-							type='info'
-							showIcon
-							className='mt-2 h-10 py-1'
-							message={<p className='m-0 p-2 text-[13px] dark:text-white'>Default vote balance exceeds wallet fund.</p>}
-						/>
-					)}
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>

@@ -73,7 +73,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			proposalHashBlock: post?.proposalHashBlock || null,
 			proposer: proposer,
 			spam_users_count: spam_users_count,
-			status: status || '-',
+			status: status || '',
 			tip_id: count - index - 1,
 			title,
 			topic: post?.topic?.name,

@@ -99,7 +99,7 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 				if (status || obj.spam_users_count)
 					return (
 						<div className='flex items-center gap-x-2'>
-							{status && status !== '-' ? (
+							{status ? (
 								<StatusTag
 									theme={theme}
 									status={status}
@@ -166,7 +166,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					username: post?.username,
 					created_at: post.created_at,
 					origin: post.origin || post.type || null,
-					status: post.status || '-',
+					status: post.status || '',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type,

@@ -75,19 +75,23 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 		};
 	};
 
-	useEffect(() => {
-		const getTokenPrice = async () => {
-			setTokenLoading(true);
+	const getTokenPrice = async () => {
+		setTokenLoading(true);
+		try {
 			const priceData = await fetchTokenPrice(network);
-			if (priceData) {
+			if (priceData && priceData?.price) {
 				setTokenPrice(priceData.price);
 			}
+		} catch (error) {
+			console.error('Error fetching token price:', error);
+		} finally {
 			setTokenLoading(false);
-		};
-
-		if (network) {
-			getTokenPrice();
 		}
+	};
+
+	useEffect(() => {
+		if (!network) return;
+		getTokenPrice();
 	}, [network]);
 
 	const fetchUSDValue = async () => {

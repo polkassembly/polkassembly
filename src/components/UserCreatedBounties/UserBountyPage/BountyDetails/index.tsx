@@ -80,7 +80,7 @@ const BountyDetails = ({ post }: { post: IUserCreatedBounty }) => {
 				</div>
 
 				{/* Max Claims Row */}
-				<DetailRow label='Max no. of claims'>{max_claim}</DetailRow>
+				<DetailRow label='Max claims'>{max_claim}</DetailRow>
 			</div>
 		</section>
 	);

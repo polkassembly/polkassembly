@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect, useState } from 'react';
-import { Progress, Spin, Tag } from 'antd';
+import { Spin, Tag } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
@@ -21,13 +21,10 @@ import dayjs from 'dayjs';
 import { IBountyListing } from './types/types';
 import Link from 'next/link';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { BN } from 'bn.js';
 
 interface IOnchainBountiesProps {
 	bounties: IBountyListing[];
 }
-
-const ZERO_BN = new BN(0);
 
 const Categories = ({ categories }: { categories: string[] }) => {
 	if (!categories?.length) {
@@ -164,39 +161,6 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 				),
 			title: 'Amount',
 			width: 126
-		},
-		{
-			className: 'w-[120px] min-w-[120px]',
-			dataIndex: 'claimedAmount',
-			key: 'claimed',
-			render: (claimed: string, record: IBountyListing) => {
-				const claimedBn = new BN(claimed || '0');
-				const rewardBn = new BN(record?.totalChildBountiesAmt || '0');
-
-				const percentage = !rewardBn.eq(ZERO_BN) ? claimedBn.mul(new BN('100')).div(rewardBn) : ZERO_BN;
-
-				return (
-					<div style={{ alignItems: 'center', display: 'flex' }}>
-						{!rewardBn.eq(ZERO_BN) ? (
-							<>
-								<Progress
-									type='circle'
-									percent={percentage.toNumber()}
-									width={25}
-									showInfo={false}
-									strokeColor='#ffc500'
-									trailColor='#F0F0F0'
-								/>
-								<span style={{ marginLeft: '8px' }}>{percentage.toNumber().toFixed(1)}%</span>
-							</>
-						) : (
-							'-'
-						)}
-					</div>
-				);
-			},
-			title: 'Claimed',
-			width: 120
 		},
 		{
 			className: 'w-[120px]',

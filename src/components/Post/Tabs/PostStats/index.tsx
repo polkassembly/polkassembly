@@ -109,7 +109,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 			} else {
 				const totalIssuance = await api?.query?.balances?.totalIssuance();
 				const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
-				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+				setActiveIssuance(totalIssuance?.sub(inactiveIssuance));
 			}
 		})();
 

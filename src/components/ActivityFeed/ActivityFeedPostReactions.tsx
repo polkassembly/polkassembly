@@ -53,9 +53,13 @@ export const ActivityFeedPostReactions: React.FC<{
 		const usernames = reaction === '👍' ? reactionState?.likesUsernames : reactionState?.dislikesUsernames;
 		const userImages = reaction === '👍' ? reactionState?.likesImages : reactionState?.dislikesImages;
 
-		return usernames?.length ? (
+		if (!Array.isArray(usernames) || usernames.length <= 1) {
+			return <p className='pt-2 text-sm text-gray-400 dark:text-gray-500'>No reactions yet</p>;
+		}
+
+		return usernames?.slice(1)?.length ? (
 			<div className={classNames('max-h-24 w-min overflow-y-auto pt-1', dmSans.className, dmSans.variable)}>
-				{usernames?.map((name: string, index: number) => (
+				{usernames?.slice(1)?.map((name: string, index: number) => (
 					<Link
 						href={`https://${network}.polkassembly.io/user/${name}`}
 						key={index}
@@ -63,7 +67,10 @@ export const ActivityFeedPostReactions: React.FC<{
 						className='mb-[6px] flex items-center gap-[6px]'
 					>
 						<ImageComponent
-							src={userImages && userImages[index] && userImages[index]}
+							src={(() => {
+								const slicedImages = userImages?.slice(1);
+								return slicedImages?.length && typeof slicedImages[index] === 'string' ? slicedImages[index] : undefined;
+							})()}
 							alt='User Picture'
 							className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'

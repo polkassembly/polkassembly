@@ -42,21 +42,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	if (!postSubs.includes(user.id)) return res.status(400).json({ message: 'You are not subscribed to this post' });
 	const updatedSubscribers = postSubs.filter((i: any) => Number(i) !== Number(user.id));
 
+	const userRef = firestore_db.collection('users').doc(String(user.id));
+	const userDoc = await userRef.get();
+
+	let updatedSubscribedPosts: any[] = [];
+	if (userDoc.exists) {
+		const existingSubscribedPosts = (userDoc.data()?.subscribed_posts || []) as { post_id: number; post_type: string; network: string }[];
+
+		updatedSubscribedPosts = existingSubscribedPosts.filter((post) => !(post.post_id === Number(post_id) && post.post_type === strProposalType && post.network === network));
+	}
+
+	const batch = firestore_db.batch();
+
+	batch.update(postRef, { subscribers: updatedSubscribers });
+
+	if (userDoc.exists) {
+		batch.update(userRef, { subscribed_posts: updatedSubscribedPosts });
+	}
+
 	try {
-		await postRef.update({ subscribers: updatedSubscribers });
-
-		const userRef = firestore_db.collection('users').doc(String(user.id));
-		const userDoc = await userRef.get();
-
-		if (userDoc.exists) {
-			const existingSubscribedPosts = (userDoc.data()?.subscribed_posts || []) as { post_id: number; post_type: string; network: string }[];
-
-			const updatedSubscribedPosts = existingSubscribedPosts.filter(
-				(post) => !(post.post_id === Number(post_id) && post.post_type === strProposalType && post.network === network)
-			);
-
-			await userRef.update({ subscribed_posts: updatedSubscribedPosts });
-		}
+		await batch.commit();
 
 		return res.status(200).json({ message: messages.SUBSCRIPTION_REMOVE_SUCCESSFUL });
 	} catch (error) {

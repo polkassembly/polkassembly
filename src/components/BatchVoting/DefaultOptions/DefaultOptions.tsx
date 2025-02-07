@@ -91,7 +91,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 							className='mt-4 h-10 w-[650px] px-4'
 							showIcon
 							type='info'
-							message={<p className='m-0 py-2 text-[13px] dark:text-white'>Default vote balance exceeds wallet</p>}
+							message={<p className='m-0 py-2 text-[13px] dark:text-white'>Default vote balance exceeds wallet fund</p>}
 						/>
 					)}
 				{!!id && (

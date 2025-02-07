@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider, Popover } from 'antd';
+import { Popover } from 'antd';
 import Image from 'next/image';
 import { dmSans, spaceGrotesk } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -18,9 +18,7 @@ import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import CuratorPopover from './utils/CuratorPopover';
-import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import { getFormattedValue } from './utils/formatBalanceUsd';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
@@ -41,8 +39,6 @@ const CardHeader = styled.div`
 	}
 `;
 
-const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGraph'), { ssr: false });
-
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
 	const { post_id, title, content, tags, reward, user_id, curator, proposer, description } = extendedData;
@@ -53,7 +49,6 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		value: ''
 	});
 	const [loading, setLoading] = useState(false);
-	const [percentageClaimed, setPercentageClaimed] = useState<number>(0);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
 		bio: '',
@@ -87,15 +82,6 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		});
 		if (data) {
 			setChildBountiesCount(data.child_bounties_count);
-
-			if (data.child_bounties_count > 0) {
-				const totalChildRewards = data.child_bounties.reduce((sum, childBounty) => sum.add(new BN(childBounty.reward)), new BN(0));
-				const totalReward = new BN(reward);
-				const claimedPercentage = totalChildRewards.muln(100).div(totalReward).toNumber();
-				setPercentageClaimed(claimedPercentage);
-			} else {
-				setPercentageClaimed(0);
-			}
 		}
 		if (error) {
 			console.log('error', error);
@@ -148,12 +134,6 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 											{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
 										</span>
 									</div>
-									<Divider
-										type='vertical'
-										className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
-									/>
-									<h2 className='mt-3 font-pixeboy text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
-									<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
 								</CardHeader>
 								<Link
 									key={post_id}

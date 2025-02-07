@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider } from 'antd';
 import Image from 'next/image';
 import { dmSans, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -75,6 +74,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline, proposer, description } = activeData;
+	/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 	const [decision, setDecision] = useState<IPeriod>();
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [loading, setLoading] = useState(false);
@@ -178,11 +178,6 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 										{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
 									</span>
 								</div>
-								<Divider
-									type='vertical'
-									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
-								/>
-								{decision && decidingStatusBlock && <h2 className='mt-3 font-pixeboy text-[22px] font-normal dark:text-white'>{decision.periodPercent || 0}%</h2>}
 								<div className='mr-1'>
 									{votesData && (
 										<VotesProgressInListing

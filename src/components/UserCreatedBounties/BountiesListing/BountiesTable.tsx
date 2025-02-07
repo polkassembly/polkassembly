@@ -142,7 +142,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 			dataIndex: 'max_claim',
 			key: 'max_claim',
 			render: (max_claim: string) => <p className='m-0 p-0 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>{max_claim}</p>,
-			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Max no of claims</span>
+			title: <span className='text-blue-light-medium dark:text-[#C7C1C1]'>Max claims</span>
 		},
 		{
 			className: 'w-[225px] m-0 py-1',

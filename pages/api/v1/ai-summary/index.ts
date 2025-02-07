@@ -149,7 +149,7 @@ export const getCommentsAISummaryByPost = async ({
 		if (!response.ok) {
 			return {
 				data: null,
-				error: `Failed to fetch: ${response.status} - ${response.statusText}`,
+				error: `Failed to fetch for post ${postId}`,
 				status: response.status
 			};
 		}
@@ -171,10 +171,9 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 	} catch (error) {
-		console.error('Error in getCommentsAISummary:', error);
 		return {
 			data: null,
-			error: (error as Error).message,
+			error: messages.API_FETCH_ERROR,
 			status: 500
 		};
 	}

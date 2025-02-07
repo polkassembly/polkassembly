@@ -147,9 +147,10 @@ export const getCommentsAISummaryByPost = async ({
 		});
 
 		if (!response.ok) {
+			console.error('Error occurred:', response.statusText.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, '[REDACTED]'));
 			return {
 				data: null,
-				error: `Failed to fetch: ${response.status} - ${response.statusText}`,
+				error: 'Internal Server Error',
 				status: response.status
 			};
 		}
@@ -171,10 +172,9 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 	} catch (error) {
-		console.error('Error in getCommentsAISummary:', error);
 		return {
 			data: null,
-			error: (error as Error).message,
+			error: messages.API_FETCH_ERROR,
 			status: 500
 		};
 	}

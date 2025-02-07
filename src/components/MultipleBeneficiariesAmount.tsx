@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 
 interface Props {
 	className?: string;
@@ -48,12 +49,17 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
 	const [totalAmountInChainSymbol, setTotalAmountInChainSymbol] = useState<string>('0');
 	const [isGenralIndexExist, setIsGenralIndexExist] = useState<boolean>(false);
 	const [isSameAssetUsed, setIsSameAssetUsed] = useState<boolean>(false);
 
-	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? currentTokenPrice : null);
+	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(
+		dayjs(proposalCreatedAt).isSame(dayjs()) ? (!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice) : null
+	);
+
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -68,6 +74,25 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 			isSame: beneficiaries.every((item) => item.genralIndex === firstGenralIndex)
 		};
 	};
+
+	const getTokenPrice = async () => {
+		setTokenLoading(true);
+		try {
+			const priceData = await fetchTokenPrice(network);
+			if (priceData && priceData?.price) {
+				setTokenPrice(priceData.price);
+			}
+		} catch (error) {
+			console.error('Error fetching token price:', error);
+		} finally {
+			setTokenLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (!network) return;
+		getTokenPrice();
+	}, [network]);
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs()) || (postId && isNaN(postId))) return;
@@ -117,7 +142,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 			beneficiaries?.map((beneficiary: IBeneficiary) => {
 				if (beneficiary?.genralIndex) {
 					const amount = getUsdValueFromAsset({
-						currentTokenPrice: currentTokenPrice || '0',
+						currentTokenPrice: !tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice || '0',
 						dedTokenUsdPrice: dedTokenUsdPrice || '0',
 						generalIndex: beneficiary?.genralIndex,
 						inputAmountValue:
@@ -144,7 +169,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	useEffect(() => {
 		handleBeneficiaryAmount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, beneficiaries, currentTokenPrice, dedTokenUsdPrice]);
+	}, [network, beneficiaries, tokenLoading, currentTokenPrice, dedTokenUsdPrice]);
 
 	useEffect(() => {
 		fetchUSDValue();
@@ -186,7 +211,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 										<span className='font-normal'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
 										<span className='font-medium text-blue-dark-high'>
 											{getUsdValueFromAsset({
-												currentTokenPrice: isGenralIndexExist ? usdValueOnClosed || '0' : usdValueOnCreation || '0',
+												currentTokenPrice: isGenralIndexExist ? (usdValueOnClosed ? usdValueOnClosed : (!tokenLoading && tokenPrice) || '0') : usdValueOnCreation || '0',
 												dedTokenUsdPrice: dedTokenUsdPrice || '0',
 												generalIndex: beneficiaries[0]?.genralIndex,
 												inputAmountValue:
@@ -232,9 +257,11 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 												requestedAmountFormatted
 													?.mul(
 														!isProposalClosed
-															? new BN(Number(currentTokenPrice) * 10 ** chainProperties?.[network]?.tokenDecimals)
+															? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice) * 10 ** chainProperties?.[network]?.tokenDecimals)
 															: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-															? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+															? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice)).mul(
+																	new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))
+															  )
 															: bnUsdValueOnClosed
 													)
 													?.toString() || '0',
@@ -249,7 +276,11 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 										<span className='font-normal'>Value on day of creation:</span>
 										<span className='font-mediumtext-blue-dark-high'>
 											{parseBalance(
-												requestedAmountFormatted?.mul(new BN(Number(usdValueOnCreation || currentTokenPrice) * 10 ** chainProperties[network]?.tokenDecimals))?.toString() || '0',
+												requestedAmountFormatted
+													?.mul(
+														new BN(Number(usdValueOnCreation || (!tokenLoading && tokenPrice) ? tokenPrice : currentTokenPrice) * 10 ** chainProperties[network]?.tokenDecimals)
+													)
+													?.toString() || '0',
 												0,
 												false,
 												network

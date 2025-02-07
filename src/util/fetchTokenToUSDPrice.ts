@@ -18,7 +18,7 @@ export default async function fetchTokenToUSDPrice(networkOrAsset: string) {
 		}
 
 		if (['cere', treasuryAssets.DED.name].includes(networkOrAsset)) {
-			return formatUSDWithUnits(String(responseJSON[coinId]['usd']), 4);
+			return formatUSDWithUnits(String(responseJSON[coinId]['usd']), 7);
 		} else {
 			return formatUSDWithUnits(String(responseJSON[coinId]['usd']));
 		}

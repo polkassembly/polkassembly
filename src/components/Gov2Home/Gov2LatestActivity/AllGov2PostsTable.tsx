@@ -166,7 +166,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					username: post?.username,
 					created_at: post.created_at,
 					origin: post.origin || post.type || null,
-					status: post.status || '-',
+					status: post.status || '',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type,

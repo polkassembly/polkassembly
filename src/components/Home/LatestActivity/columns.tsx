@@ -90,7 +90,7 @@ const Status: any = {
 		if (status || obj.spam_users_count)
 			return (
 				<div className='flex items-center gap-x-2'>
-					{status ? <StatusTag status={status} /> : null}
+					{status && status !== '-' ? <StatusTag status={status} /> : null}
 					{obj.spam_users_count ? (
 						<div className='flex items-center justify-center'>
 							<Tooltip

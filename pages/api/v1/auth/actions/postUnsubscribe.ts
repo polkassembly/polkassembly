@@ -55,10 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const batch = firestore_db.batch();
 
 	batch.update(postRef, { subscribers: updatedSubscribers });
-
-	if (userDoc.exists) {
-		batch.update(userRef, { subscribed_posts: updatedSubscribedPosts });
-	}
+	batch.update(userRef, { subscribed_posts: updatedSubscribedPosts });
 
 	try {
 		await batch.commit();

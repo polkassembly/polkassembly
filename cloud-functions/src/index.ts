@@ -422,7 +422,7 @@ export const scheduledUpdateTreasuryStats = functions
 		timeoutSeconds: 540
 		// failurePolicy: true // retry on failure
 	})
-	.pubsub.schedule('every 10 minutes')
+	.pubsub.schedule('every 6 hours')
 	.timeZone('UTC')
 	.onRun(async () => {
 		logger.info('Updating treasury stats');

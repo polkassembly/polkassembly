@@ -37,6 +37,7 @@ import { activityFeedSlice } from './activityFeed';
 import { followStore } from './follow';
 import { chatsStore } from './chats';
 import { userCreatedBountyFormStore } from './userCreateBountyForm';
+import { addCuratorStore } from './AddCurator';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -140,7 +141,8 @@ export const makeStore = () => {
 		[childBountyCreationStore.name]: childBountyCreationStore.reducer,
 		[followStore.name]: followStore.reducer,
 		[chatsStore.name]: chatsStore.reducer,
-		[userCreatedBountyFormStore.name]: userCreatedBountyFormStore.reducer
+		[userCreatedBountyFormStore.name]: userCreatedBountyFormStore.reducer,
+		[addCuratorStore.name]: addCuratorStore.reducer
 	});
 
 	if (isServer) {

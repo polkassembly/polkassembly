@@ -186,7 +186,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
 
-		const regex = /<[^>]+>/;
+		const regex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
 
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
 			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);

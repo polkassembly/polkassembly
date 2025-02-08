@@ -1160,7 +1160,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					});
 				}
 			}
-			const regex = /<[^>]+>/;
+			const regex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
 
 			// Populate firestore post data into the post object
 			if (data && post) {

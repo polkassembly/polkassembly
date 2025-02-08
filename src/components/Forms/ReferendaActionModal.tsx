@@ -29,7 +29,7 @@ const CancelOrKillReferendaForm = dynamic(() => import('./CancelOrKillReferendaF
 	ssr: false
 });
 
-const CreateReferendaForm = dynamic(() => import('../Forms/CreateReferendaForm'), {
+const CreateReferendaForm = dynamic(() => import('./CreateReferendaForm'), {
 	loading: () => <Loader />,
 	ssr: false
 });

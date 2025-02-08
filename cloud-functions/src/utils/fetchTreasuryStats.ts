@@ -34,10 +34,6 @@ interface ITreasuryStats {
 		totalUsdt: string;
 		totalMyth: string;
 	};
-	dotPrice: {
-		usd: string;
-		change: string;
-	};
 	loans: {
 		dot: string;
 		usdc: string;
@@ -83,10 +79,6 @@ export async function fetchTreasuryStats(): Promise<ITreasuryStats | null> {
 				totalUsdc: '',
 				totalUsdt: '',
 				totalMyth: ''
-			},
-			dotPrice: {
-				usd: '',
-				change: ''
 			},
 			loans: {
 				dot: '15500000000000000',

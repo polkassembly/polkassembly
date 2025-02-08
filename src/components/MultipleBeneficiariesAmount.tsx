@@ -92,6 +92,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	useEffect(() => {
 		if (!network) return;
 		getTokenPrice();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	const fetchUSDValue = async () => {

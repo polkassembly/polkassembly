@@ -461,7 +461,7 @@ const TreasuryDetailsModal = ({
 										src={'/assets/treasury/usdc-icon.svg'}
 										className='-mt-[2px]'
 									/>
-									<span className='font-medium'>3M USDC</span>
+									<span className='font-medium'>1.5M USDC</span>
 								</div>
 							</div>
 						</div>

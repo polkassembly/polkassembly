@@ -45,7 +45,7 @@ const LatestTreasuryOverview = ({
 	const { api, apiReady } = useApiContext();
 	const { assethubApiReady, assethubValues, fetchAssetsAmount } = useAssetHubApi(network);
 	const { hydrationApiReady, hydrationValues, fetchHydrationAssetsAmount } = useHydrationApi(network);
-	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 3_000_000 };
+	const loansData = { bifrost: 500_000, pendulum: 50_000, hydration: 1_000_000, centrifuge: 1_500_000 };
 	const { balance: mythBalance, loading: mythLoading } = useMythTokenBalance(network);
 	const MythBalanceBn = mythBalance && Number(mythBalance) / MYTH_TOKEN_BASE_DECIMALS;
 

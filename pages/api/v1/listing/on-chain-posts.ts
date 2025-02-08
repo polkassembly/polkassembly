@@ -148,6 +148,15 @@ interface IGetOnChainPostsParams {
 	getBountyReward?: boolean;
 }
 
+const convertHtmlToMarkDown = (htmlStr: string) => {
+	const htmlDetectionRegex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
+
+	if (!htmlDetectionRegex.test(htmlStr)) return htmlStr;
+
+	const markdownContent = convertHtmlToMarkdown(htmlStr);
+	return markdownContent || htmlStr || '';
+};
+
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const {
@@ -185,8 +194,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
-
-		const regex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
 
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
 			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
@@ -409,11 +416,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							identity,
 							isSpam: data?.isSpam || false,
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
-							markdownContent: regex.test(!includeContent ? '' : data.content || subsquareContent || '')
-								? convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || ''
-								: !includeContent
-								? ''
-								: data.content || subsquareContent || '',
+							markdownContent: convertHtmlToMarkDown(!includeContent ? '' : data.content || subsquareContent || ''),
 							method: subsquidPost?.preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -461,11 +464,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					end: end,
 					hash: hash || null,
 					identity,
-					markdownContent: regex.test(!includeContent ? '' : subsquareContent || '')
-						? convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || ''
-						: !includeContent
-						? ''
-						: subsquareContent || '',
+					markdownContent: convertHtmlToMarkDown(!includeContent ? '' : subsquareContent || ''),
 					method: subsquidPost?.preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -972,11 +971,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								identity,
 								isSpam: data?.isSpam || false,
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
-								markdownContent: regex.test(!includeContent ? '' : data.content || subsquareContent || '')
-									? convertHtmlToMarkdown(!includeContent ? '' : data.content || subsquareContent || '') || ''
-									: !includeContent
-									? ''
-									: data.content || subsquareContent || '',
+								markdownContent: convertHtmlToMarkDown(!includeContent ? '' : data.content || subsquareContent || ''),
 								method: subsquidPost?.preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -1034,11 +1029,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						end: end,
 						hash: hash || null,
 						identity,
-						markdownContent: regex.test(!includeContent ? '' : subsquareContent || '')
-							? convertHtmlToMarkdown(!includeContent ? '' : subsquareContent || '') || ''
-							: !includeContent
-							? ''
-							: subsquareContent || '',
+						markdownContent: convertHtmlToMarkDown(!includeContent ? '' : subsquareContent || ''),
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						parent_bounty_requested_amount: parentBountyRequestedAmount,

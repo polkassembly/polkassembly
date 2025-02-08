@@ -9,6 +9,7 @@ import crypto from 'crypto';
 
 import cors = require('cors');
 import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
+import { fetchTreasuryStats } from './utils/fetchTreasuryStats';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -412,4 +413,73 @@ export const updateMultipleNetworkTokenPricesScheduled = functions
 		});
 
 		return null;
+	});
+
+export const scheduledUpdateTreasuryStats = functions
+	.region('europe-west1')
+	.runWith({
+		memory: '1GB',
+		timeoutSeconds: 540
+		// failurePolicy: true // retry on failure
+	})
+	.pubsub.schedule('every 10 minutes')
+	.timeZone('UTC')
+	.onRun(async () => {
+		logger.info('Updating treasury stats');
+		const treasuryStats = await fetchTreasuryStats();
+
+		logger.info('Treasury stats:', { treasuryStats });
+
+		if (!treasuryStats) {
+			logger.error('Treasury stats not found');
+			return;
+		}
+
+		const networkDocRef = firestoreDB.collection('networks').doc('polkadot');
+
+		await networkDocRef.set(
+			{
+				treasury_stats: treasuryStats
+			},
+			{ merge: true }
+		);
+
+		return null;
+	});
+
+export const callUpdateTreasuryStats = functions
+	.runWith({
+		memory: '1GB',
+		timeoutSeconds: 540
+	})
+	.https.onRequest(async (req, res) => {
+		corsHandler(req, res, async () => {
+			try {
+				const treasuryStats = await fetchTreasuryStats();
+
+				logger.info('Treasury stats:', { treasuryStats });
+
+				if (!treasuryStats) {
+					logger.error('Treasury stats not found');
+					return res.status(500).json({ error: 'Treasury stats not found' });
+				}
+
+				const networkDocRef = firestoreDB.collection('networks').doc('polkadot');
+
+				await networkDocRef.set(
+					{
+						treasury_stats: treasuryStats
+					},
+					{ merge: true }
+				);
+
+				return res.status(200).end();
+			} catch (err: unknown) {
+				logger.error('Error in callUpdateTreasuryStats:', {
+					err,
+					stack: (err as any).stack
+				});
+				return res.status(500).json({ error: 'Internal error.' });
+			}
+		});
 	});

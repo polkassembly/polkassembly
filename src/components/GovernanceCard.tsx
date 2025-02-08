@@ -156,8 +156,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		childBountyAmount,
 		parentBounty,
 		allChildBounties,
-		beneficiaries,
-		assetId
+		beneficiaries
 	} = props;
 
 	const router = useRouter();
@@ -675,16 +674,28 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								/>
 							</div>
 						)}
-						{!!requestedAmount && (
-							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								<BeneficiaryAmoutTooltip
-									assetId={assetId || null}
-									requestedAmt={requestedAmount.toString()}
-									className='flex items-center justify-center'
-									proposalCreatedAt={created_at || null}
-									timeline={timeline || []}
-									postId={onchainId as any}
-								/>
+						{(!!requestedAmount || !!beneficiaries?.length) && (
+							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								{beneficiaries && beneficiaries?.length > 1 ? (
+									<MultipleBeneficiariesAmount
+										beneficiaries={beneficiaries || []}
+										postId={onchainId ? Number(onchainId) : null}
+										proposalCreatedAt={created_at as Date}
+										timeline={timeline || []}
+									/>
+								) : (
+									<>
+										<BeneficiaryAmoutTooltip
+											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
+											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
+											className={'flex items-center justify-center'}
+											postId={onchainId ? Number(onchainId) : null}
+											proposalCreatedAt={created_at as Date}
+											timeline={timeline || []}
+											key={onchainId ? Number(onchainId) : (onchainId as any)}
+										/>
+									</>
+								)}
 							</div>
 						)}
 						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}

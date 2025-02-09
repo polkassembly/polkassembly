@@ -1294,3 +1294,40 @@ export interface ISentimentsPercentage {
 	slightlyAgainst: ESentiments | 0;
 	slightlyFor: ESentiments | 0;
 }
+
+export interface TreasuryData {
+	relayChain: {
+		dot: string;
+		myth: string;
+	};
+	ambassador: {
+		usdt: string;
+	};
+	assetHub: {
+		dot: string;
+		usdc: string;
+		usdt: string;
+	};
+	hydration: {
+		dot: string;
+		usdc: string;
+		usdt: string;
+	};
+	bounties: {
+		dot: string;
+	};
+	fellowship: {
+		dot: string;
+		usdt: string;
+	};
+	total: {
+		totalDot: string;
+		totalUsdc: string;
+		totalUsdt: string;
+		totalMyth: string;
+	};
+	loans: {
+		dot: string;
+		usdc: string;
+	};
+}

@@ -9,13 +9,13 @@ import { IAccountData } from '~src/types';
 import { dmSans } from 'pages/_app';
 
 interface Props {
-	accountData: IAccountData;
+	accountData?: IAccountData;
 	loginAddress: string;
+	isNewAccount?: boolean;
 }
 
-const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
+const AccountInfo: React.FC<Props> = ({ accountData, loginAddress, isNewAccount }) => {
 	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window.innerWidth < 768);
-
 	useEffect(() => {
 		const handleResize = () => {
 			setIsMobile(window.innerWidth < 768);
@@ -29,21 +29,34 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 		<div className={`${dmSans.className} ${dmSans.variable} `}>
 			<div className='relative w-full '>
 				<div className='flex items-start justify-between'>
-					{accountData?.address && (
-						<div>
-							<Address
-								address={accountData?.address}
-								displayInline
-								iconSize={isMobile ? 24 : 90}
-								isUsedInAccountsPage={true}
-								isTruncateUsername={false}
-								isProfileView
-								showCopyIcon={true}
-							/>
-						</div>
+					{isNewAccount ? (
+						<Address
+							address={loginAddress}
+							displayInline
+							iconSize={isMobile ? 24 : 90}
+							isUsedInAccountsPage={true}
+							isTruncateUsername={false}
+							isProfileView
+							showCopyIcon={true}
+						/>
+					) : (
+						accountData &&
+						accountData?.address && (
+							<div>
+								<Address
+									address={accountData?.address}
+									displayInline
+									iconSize={isMobile ? 24 : 90}
+									isUsedInAccountsPage={true}
+									isTruncateUsername={false}
+									isProfileView
+									showCopyIcon={true}
+								/>
+							</div>
+						)
 					)}
 					<div className='mr-7 flex items-center gap-2'>
-						{accountData?.address && (
+						{accountData && accountData?.address && (
 							<AddressActionDropdown
 								type={null}
 								address={loginAddress || accountData?.address}
@@ -52,7 +65,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 					</div>
 				</div>
 				<span className='md:absolute md:left-[104px] md:top-10'>
-					<BalanceDetails address={accountData?.address ? accountData.address : loginAddress} />
+					<BalanceDetails address={accountData && accountData?.address ? accountData.address : loginAddress} />
 				</span>
 			</div>
 		</div>

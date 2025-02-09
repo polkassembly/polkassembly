@@ -14,10 +14,14 @@ import { StatItem } from './utils/Statitem';
 import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { dmSans } from 'pages/_app';
+import useFetchTreasuryStats from '~src/hooks/treasury/useTreasuryStats';
+import Loader from '~src/ui-components/Loader';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { data: treasuryData, loading: treasuryLoading } = useFetchTreasuryStats();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [statsData, setStatsData] = useState<IBountyStats>({
 		activeBounties: '',
@@ -67,17 +71,21 @@ const BountiesHeader = () => {
 					<div className='hidden gap-6 md:flex'>
 						<div>
 							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
-							<div className='font-pixeboy text-[46px]'>
-								{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}
-								{!isNaN(Number(currentTokenPrice.value)) && (
-									<>
-										<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
-											~{formatNumberWithSuffix(Number(formatBnBalance(statsData.availableBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)))}
-										</span>
-										<span className={`${dmSans.className} ${dmSans.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
-									</>
-								)}
-							</div>
+							{treasuryLoading ? (
+								<Loader />
+							) : (
+								<div className='font-pixeboy text-[46px]'>
+									{treasuryData?.bounties?.dot && formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot)))}
+									{!isNaN(Number(currentTokenPrice.value)) && (
+										<>
+											<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
+												~{formatNumberWithSuffix(Number(formatBnBalance(statsData.availableBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)))}
+											</span>
+											<span className={`${dmSans.className} ${dmSans.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
+										</>
+									)}
+								</div>
+							)}
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon

@@ -267,21 +267,6 @@ const Web2Login: FC<Props> = ({
 										required: username.required
 									},
 									{
-										validator: (_, value) => {
-											if (!value) return Promise.reject(new Error(messages.VALIDATION_USERNAME_REQUIRED_ERROR));
-											const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-											if (!emailPattern.test(value)) {
-												if (value.length > username.maxLength) {
-													return Promise.reject(new Error(messages.VALIDATION_USERNAME_MAXLENGTH_ERROR));
-												}
-												if (value.length < username.minLength) {
-													return Promise.reject(new Error(messages.VALIDATION_USERNAME_MINLENGTH_ERROR));
-												}
-											}
-											return Promise.resolve();
-										}
-									},
-									{
 										message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
 										min: username.minLength
 									}

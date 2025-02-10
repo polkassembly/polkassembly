@@ -11,8 +11,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { StatItem } from './utils/Statitem';
-import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
-import formatBnBalance from '~src/util/formatBnBalance';
+import { getDisplayValue } from './utils/formatBalanceUsd';
 import { dmSans } from 'pages/_app';
 import useFetchTreasuryStats from '~src/hooks/treasury/useTreasuryStats';
 import Loader from '~src/ui-components/Loader';
@@ -71,7 +70,7 @@ const BountiesHeader = () => {
 
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
-			{treasuryLoading ? (
+			{loading ? (
 				<Skeleton active />
 			) : (
 				<div className='flex'>

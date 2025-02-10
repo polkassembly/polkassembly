@@ -19,6 +19,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isConfirmModalOpen, setIsCo
 					<Divider className='-mx-6 h-full w-[520px] bg-section-light-container dark:bg-separatorDark ' />
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={isConfirmModalOpen}
 			onCancel={() => setIsConfirmModalOpen(false)}
 			footer={false}
@@ -29,7 +30,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isConfirmModalOpen, setIsCo
 					onClick={onConfirm}
 					className='mt-6 flex items-center gap-10'
 				>
-					<div className='flex h-[112px] w-[112px] cursor-pointer items-center justify-center rounded-full bg-[#D2D8E0] shadow-md transition-colors duration-300 hover:bg-[#F53C3C]'>
+					<div className='flex h-[112px] w-[112px] cursor-pointer items-center justify-center rounded-full bg-[#D2D8E0] shadow-lg transition-colors duration-300 hover:bg-nayRedColor dark:bg-[#4B4B4B] dark:hover:bg-nayDarkRedColor'>
 						<Image
 							alt='like-icon'
 							src='/assets/like-ai-icon.svg'
@@ -40,7 +41,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isConfirmModalOpen, setIsCo
 
 					<div
 						onClick={() => setIsConfirmModalOpen(false)}
-						className='flex h-[112px] w-[112px] cursor-pointer items-center justify-center rounded-full bg-[#D2D8E0] shadow-md transition-colors duration-300 hover:bg-[#2ED47A]'
+						className='flex h-[112px] w-[112px] cursor-pointer items-center justify-center rounded-full bg-[#D2D8E0] shadow-lg transition-colors duration-300 hover:bg-aye_green dark:bg-[#4B4B4B] dark:hover:bg-aye_green_Dark'
 					>
 						<Image
 							alt='like-icon'

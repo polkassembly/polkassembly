@@ -62,6 +62,8 @@ const BountiesHeader = () => {
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
 
+	const availableBounty = formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot) * Number(currentTokenPrice.value)));
+
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
 			{loading ? (
@@ -74,17 +76,17 @@ const BountiesHeader = () => {
 							{treasuryLoading ? (
 								<Loader />
 							) : (
-								<div className='font-pixeboy text-[46px]'>
-									{treasuryData?.bounties?.dot && formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot)))}
-									{!isNaN(Number(currentTokenPrice.value)) && (
-										<>
-											<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
-												~{formatNumberWithSuffix(Number(formatBnBalance(statsData.availableBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)))}
-											</span>
-											<span className={`${dmSans.className} ${dmSans.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
-										</>
-									)}
-								</div>
+								treasuryData?.bounties?.dot &&
+								currentTokenPrice.value &&
+								!isNaN(Number(currentTokenPrice.value)) && (
+									<div className='font-pixeboy text-[46px]'>
+										<span>${availableBounty}</span>
+										<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
+											~{treasuryData?.bounties?.dot && formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot)))}
+										</span>
+										<span className={`${dmSans.className} ${dmSans.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
+									</div>
+								)
 							)}
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>

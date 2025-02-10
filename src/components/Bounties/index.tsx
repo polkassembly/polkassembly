@@ -15,30 +15,39 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
+import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
 	activeBountyData?: IPostsListingResponse;
 }
 
+const LISTING_LIMIT = 6;
+
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
-	const carouselRef1 = useRef<any>(null);
+	const { resolvedTheme: theme } = useTheme();
 	const carouselRef2 = useRef<any>(null);
-	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
-
-	const handleBeforeChange1 = (next: number) => {
-		setCurrentSlide1(next);
-	};
 
 	const handleBeforeChange2 = (next: number) => {
 		setCurrentSlide2(next);
 	};
 
-	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, isMobile ? 1 : 3) : [];
 	const activeDataChunks = activeBountyData ? chunkArray(activeBountyData.posts, isMobile ? 1 : 3) : [];
 
+	const [currentPage, setCurrentPage] = useState(1);
+	const count = extendedData?.count || 0;
+	const length = extendedData?.posts?.length;
+
+	const startIndex = (currentPage - 1) * LISTING_LIMIT;
+	const endIndex = startIndex + LISTING_LIMIT;
+	const paginatedData = extendedData ? extendedData.posts.slice(startIndex, endIndex) : [];
+
+	const onPaginationChange = (page: number) => {
+		setCurrentPage(page);
+	};
 	return (
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
@@ -51,7 +60,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			<BountiesHeader />
 
 			{/* Hot Bounties */}
-			{extendedData && extendedData?.posts?.length > 0 && (
+			{extendedData && extendedData.posts.length > 0 && (
 				<>
 					<div className='mt-8 flex items-center justify-between'>
 						<div className='flex items-center gap-2'>
@@ -61,9 +70,9 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								imgClassName='-mt-[18px]'
 							/>
 							<h2 className='font-pixelify text-2xl font-bold text-bodyBlue dark:text-blue-dark-high md:text-3xl'>Hot Bounties</h2>
-							{extendedData?.count && (
+							{extendedData.count && (
 								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
-									({extendedData?.count})
+									({extendedData.count})
 								</span>
 							)}
 						</div>
@@ -75,63 +84,29 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 						</Link>
 					</div>
 
-					<div className='relative '>
-						{currentSlide1 > 0 && (
-							<span
-								onClick={() => carouselRef1?.current?.prev()}
-								className='rotate-180 cursor-pointer'
-								style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
-							>
-								<ImageIcon
-									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
-									className='scale-75 md:scale-100'
-								/>
-							</span>
-						)}
-						<Carousel
-							ref={carouselRef1}
-							arrows
-							className='overflow-hidden'
-							infinite={false}
-							dots={false}
-							afterChange={handleBeforeChange1}
-						>
-							{extendedDataChunks.map((chunk, index) => {
-								const chunkClass = chunk.length % 3 === 0 ? 'flex justify-center md:justify-around' : 'flex justify-start';
-								return (
-									<div
-										key={index}
-										className={chunkClass}
-									>
-										{chunk.map((post, postIndex) => (
-											<HotBountyCard
-												key={postIndex}
-												extendedData={post}
-											/>
-										))}
-									</div>
-								);
-							})}
-						</Carousel>
-						{currentSlide1 < extendedDataChunks.length - 1 && (
-							<span
-								onClick={() => carouselRef1?.current?.next()}
-								className='cursor-pointer'
-								style={{
-									position: 'absolute',
-									right: -46,
-									top: '35%',
-									zIndex: 10,
-									...(isMobile ? { right: 10 } : {})
-								}}
-							>
-								<ImageIcon
-									src='/assets/bounty-icons/carousel-icon.svg'
-									alt='carousel icon'
-									className='scale-75 md:scale-100'
-								/>
-							</span>
+					{/* Bounty Cards Grid */}
+					<div className='mt-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
+						{paginatedData.map((post, index) => (
+							<HotBountyCard
+								key={index}
+								extendedData={post}
+							/>
+						))}
+					</div>
+
+					{/* Pagination Controls */}
+					<div className='mt-6 flex justify-end'>
+						{!!count && count > 0 && count > LISTING_LIMIT && (
+							<Pagination
+								theme={theme}
+								defaultCurrent={1}
+								pageSize={LISTING_LIMIT}
+								total={count}
+								showSizeChanger={false}
+								hideOnSinglePage={true}
+								onChange={onPaginationChange}
+								responsive={true}
+							/>
 						)}
 					</div>
 				</>

@@ -158,7 +158,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 			{loading ? (
 				<Skeleton />
 			) : (
-				<div className='w-full cursor-pointer md:w-[383px]'>
+				<div className='w-full cursor-pointer md:w-[365px]'>
 					<Link
 						key={post_id}
 						href={`/referenda/${post_id}`}
@@ -225,7 +225,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								<ImageIcon
 									src='/assets/bounty-icons/bounty-image.svg'
 									alt='bounty icon'
-									imgClassName='mt-5 mb-3 w-full md:w-auto'
+									imgClassName='mt-5 mb-3 w-full w-[339px]'
 									imgWrapperClassName=''
 								/>
 							</Link>

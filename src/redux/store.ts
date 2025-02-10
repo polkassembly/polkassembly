@@ -174,7 +174,8 @@ export const makeStore = () => {
 				'claimPayout',
 				'childBountyCreation',
 				'activityFeed',
-				'createBountyForm'
+				'createBountyForm',
+				'addCurator'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

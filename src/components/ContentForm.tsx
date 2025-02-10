@@ -10,7 +10,7 @@ import TextEditor from '~src/ui-components/TextEditor';
 interface Props {
 	className?: string;
 	height?: number;
-	onChange?: (content: string) => void | string | null;
+	onChange?: (content: string) => void;
 	value?: string;
 	autofocus?: boolean;
 }

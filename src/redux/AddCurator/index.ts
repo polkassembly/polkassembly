@@ -6,19 +6,22 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IAddCuratorStore, IProposalContent } from './@types';
+import { EEnactment } from '~src/components/OpenGovTreasuryProposal';
+import { EAllowedCommentor } from '~src/types';
 
 const initialState: IAddCuratorStore = {
 	alreadyPreimage: null,
+	allowedCommentors: EAllowedCommentor.ALL,
 	bountyAmount: '0',
 	bountyIndex: null,
 	bountyProposalIndex: null,
 	curatorAddress: '',
 	curatorFee: '0',
-	discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
-	enactment: { afterBlockNo: null, atBlockNo: null },
+	proposal: { content: '', tags: [], title: '' },
+	enactment: { key: EEnactment.After_No_Of_Blocks, value: null },
 	preimage: { hash: '', length: 0 },
 	proposer: '',
-	trackNumber: null
+	track: null
 };
 
 export const addCuratorStore = createSlice({
@@ -34,10 +37,10 @@ export const addCuratorStore = createSlice({
 	name: 'addCurator',
 	reducers: {
 		resetAddCurator: (state) => {
-			state.discussion = {
-				discussionContent: '',
-				discussionTags: [],
-				discussionTitle: ''
+			state.proposal = {
+				content: '',
+				tags: [],
+				title: ''
 			};
 			state.alreadyPreimage = null;
 			state.bountyAmount = '0';
@@ -45,9 +48,10 @@ export const addCuratorStore = createSlice({
 			state.bountyIndex = null;
 			state.bountyProposalIndex = null;
 			state.preimage = { hash: '', length: 0 };
-			state.trackNumber = null;
-			state.enactment = { afterBlockNo: null, atBlockNo: null };
+			state.track = null;
+			state.enactment = { key: EEnactment.After_No_Of_Blocks, value: null };
 			state.curatorFee = '0';
+			state.allowedCommentors = EAllowedCommentor.ALL;
 		},
 		updateCuratorPreimage: (state, action: PayloadAction<{ hash: string; length: number }>) => {
 			state.preimage = action.payload;
@@ -59,13 +63,13 @@ export const addCuratorStore = createSlice({
 			state.bountyIndex = action.payload;
 		},
 		updateProposalContent: (state, action: PayloadAction<string>) => {
-			state.discussion.discussionContent = action.payload;
+			state.proposal.content = action.payload;
 		},
 		updateProposalTags: (state, action: PayloadAction<string[]>) => {
-			state.discussion.discussionTags = action.payload;
+			state.proposal.tags = action.payload;
 		},
 		updateProposalTitle: (state, action: PayloadAction<string>) => {
-			state.discussion.discussionTitle = action.payload;
+			state.proposal.title = action.payload;
 		},
 		updateAlreadyPreimage: (state, action: PayloadAction<boolean>) => {
 			state.alreadyPreimage = action.payload;
@@ -74,13 +78,22 @@ export const addCuratorStore = createSlice({
 			state.proposer = action.payload;
 		},
 		writeProposal: (state, action: PayloadAction<IProposalContent>) => {
-			state.discussion = action.payload;
+			state.proposal = action.payload;
 		},
-		updateCurator: (state, action: PayloadAction<string>) => {
+		updateCuratorAddress: (state, action: PayloadAction<string>) => {
 			state.curatorAddress = action.payload;
 		},
-		updateTrackNumber: (state, action: PayloadAction<number | null>) => {
-			state.trackNumber = action.payload;
+		updateTrack: (state, action: PayloadAction<string | null>) => {
+			state.track = action.payload;
+		},
+		updateCuratorFee: (state, action: PayloadAction<string>) => {
+			state.curatorFee = action.payload;
+		},
+		updateEnactment: (state, action: PayloadAction<{ key: EEnactment; value: string | null }>) => {
+			state.enactment = action.payload;
+		},
+		updateAllowedCommentors: (state, action: PayloadAction<EAllowedCommentor>) => {
+			state.allowedCommentors = action.payload;
 		}
 	}
 });

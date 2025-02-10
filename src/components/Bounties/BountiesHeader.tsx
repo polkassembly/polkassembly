@@ -62,11 +62,16 @@ const BountiesHeader = () => {
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
 
-	const availableBounty = formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot) * Number(currentTokenPrice.value)));
+	const availableBounty =
+		!treasuryLoading &&
+		treasuryData?.bounties?.dot &&
+		currentTokenPrice.value &&
+		!isNaN(Number(currentTokenPrice.value)) &&
+		formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot) * Number(currentTokenPrice.value)));
 
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
-			{loading ? (
+			{treasuryLoading ? (
 				<Skeleton active />
 			) : (
 				<div className='flex'>

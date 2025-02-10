@@ -50,8 +50,13 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import dynamic from 'next/dynamic';
 
 const { Link: AnchorLink } = Anchor;
+
+const ConfirmModal = dynamic(() => import('./utils/ConfirmModal'), {
+	ssr: false
+});
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -130,6 +135,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
 	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
 	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -510,12 +516,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<div className='text-xs text-pink_primary'>Thanks for reporting the review.</div>
 							) : (
 								<div className='text-xs text-pink_primary'>
-									Was this review helpful?
+									Was this summary helpful?
 									<span
 										className='ml-1 cursor-pointer text-xs font-medium underline'
-										onClick={() => reportSummary()}
+										onClick={() => setIsConfirmModalOpen(true)}
 									>
-										No
+										Give feedback
 									</span>
 								</div>
 							)}
@@ -636,6 +642,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					}
 				</div>
 			</div>
+			<ConfirmModal
+				isConfirmModalOpen={isConfirmModalOpen}
+				setIsConfirmModalOpen={setIsConfirmModalOpen}
+				onConfirm={() => {
+					reportSummary();
+					setIsConfirmModalOpen(false);
+				}}
+			/>
 		</div>
 	);
 };

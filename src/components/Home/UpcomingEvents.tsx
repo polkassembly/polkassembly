@@ -60,16 +60,19 @@ const Calendar = styled(StyledCalendar)`
 
 const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number) => {
 	if (!events?.length) return [];
-	
-	return events.flatMap(item => 
-		item.statusHistory
-			?.filter(status => status.block >= blockNo)
-			?.map(timeline => ({
-				...item,
-				blockNo: timeline.block,
-				createdAt: timeline.timestamp
-			}))
-	).sort((a, b) => a.blockNo - b.blockNo);
+
+	return events
+		.flatMap(
+			(item) =>
+				item.statusHistory
+					?.filter((status) => status.block >= blockNo)
+					?.map((timeline) => ({
+						...item,
+						blockNo: timeline.block,
+						createdAt: timeline.timestamp
+					}))
+		)
+		.sort((a, b) => a.blockNo - b.blockNo);
 };
 
 const UpcomingEvents = ({ className }: Props) => {
@@ -78,7 +81,6 @@ const UpcomingEvents = ({ className }: Props) => {
 	const currentBlock = useCurrentBlock();
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<ICalendarEvent[]>([]);
-	const [eventDates, setEventDates] = useState<string[]>([]);
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [currentBlockStatic, setCurrentBlockStatic] = useState<BN | null>(null);
@@ -98,15 +100,15 @@ const UpcomingEvents = ({ className }: Props) => {
 		const startDate = dayjs(selectedDate).startOf('month');
 		const endDate = dayjs(selectedDate).endOf('month');
 
-		const startBlockNo = dateToBlockNo({ 
-			currentBlockNumber: currentBlockStatic.toNumber(), 
-			date: startDate.toDate(), 
-			network 
+		const startBlockNo = dateToBlockNo({
+			currentBlockNumber: currentBlockStatic.toNumber(),
+			date: startDate.toDate(),
+			network
 		});
-		const endBlockNo = dateToBlockNo({ 
-			currentBlockNumber: currentBlockStatic.toNumber(), 
-			date: endDate.toDate(), 
-			network 
+		const endBlockNo = dateToBlockNo({
+			currentBlockNumber: currentBlockStatic.toNumber(),
+			date: endDate.toDate(),
+			network
 		});
 
 		if (startBlockNo && currentBlockStatic && startBlockNo > currentBlockStatic.toNumber()) {
@@ -116,16 +118,12 @@ const UpcomingEvents = ({ className }: Props) => {
 		}
 
 		try {
-			const { data, error } = await nextApiClientFetch<ICalendarEvent[]>(
-				'/api/v1/calendar/getEventsByDate',
-				{ endBlockNo, startBlockNo }
-			);
+			const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('/api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
 
 			if (error) throw error;
 
 			const updatedEvents = updateEventsWithTimeStamps(data || [], startBlockNo || 0);
 			setCalendarEvents(updatedEvents);
-			setEventDates(updatedEvents.map(event => dayjs(event.createdAt).format('L')));
 		} catch (err) {
 			setError(err.message);
 			console.error(err);
@@ -138,25 +136,8 @@ const UpcomingEvents = ({ className }: Props) => {
 		getNetworkEvents();
 	}, []);
 
-	const getDateHasEvent = (value: Dayjs): boolean => {
-		const valueDateStr = value.format('L');
-		return eventDates.includes(valueDateStr);
-	};
-
-	const getEventData = (value: Dayjs): any[] => {
-		const eventList: any[] = [];
-		calendarEvents.forEach((eventObj) => {
-			if (dayjs(eventObj.createdAt).format('L') === value.format('L')) {
-				eventList.push(eventObj);
-			}
-		});
-		return eventList;
-	};
-
 	const dateCellRender = (value: Dayjs) => {
-		const eventData = calendarEvents.filter(event => 
-			dayjs(event.createdAt).format('L') === value.format('L')
-		);
+		const eventData = calendarEvents.filter((event) => dayjs(event.createdAt).format('L') === value.format('L'));
 
 		if (!eventData.length) return null;
 
@@ -179,7 +160,10 @@ const UpcomingEvents = ({ className }: Props) => {
 		);
 
 		return (
-			<Tooltip color='#E5007A' title={eventList}>
+			<Tooltip
+				color='#E5007A'
+				title={eventList}
+			>
 				<div className='calenderDate dark:bg-[#FF0088]'>{value.format('D')}</div>
 			</Tooltip>
 		);

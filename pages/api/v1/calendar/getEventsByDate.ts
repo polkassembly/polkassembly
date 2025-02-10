@@ -111,9 +111,12 @@ const handler: NextApiHandler<ICalendarEvent[] | MessageType> = async (req, res)
 					} else {
 						const title = await getSubSquareTitle(key as ProposalType, network, subsquidEvent.index);
 						if (title) {
-							payload.title = title || getProposalTypeTitle(key as ProposalType);
+							payload.title = title;
 							payload.source = 'subsquare';
 						}
+					}
+					if (!payload.title?.length) {
+						payload.title = getProposalTypeTitle(key as ProposalType) || '';
 					}
 					events?.push(payload);
 				});

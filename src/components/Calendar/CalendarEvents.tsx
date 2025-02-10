@@ -20,6 +20,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 
 interface Props {
 	selectedDate: Date;
+	smallView?: boolean;
 	setCalendarEvents?: (pre: ICalendarEvent[]) => void;
 	setCalendarLoading?: (pre: boolean) => void;
 }
@@ -59,7 +60,7 @@ const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number): 
 	return newObj;
 };
 
-const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }: Props) => {
+const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading, smallView = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentBlock = useCurrentBlock();
 	const [formatedEvents, setformatedEvents] = useState<IEventsWithTimeStamps | null>(null);
@@ -75,10 +76,10 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 		const startDateOfMonth = dayjs(selectedDate).startOf('month').toDate();
 		const endDateOfMonth = dayjs(selectedDate).endOf('month').toDate();
 
-		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: startDateOfMonth, network });
-		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: endDateOfMonth, network });
+		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: startDateOfMonth, network });
+		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: endDateOfMonth, network });
 
-		if (startBlockNo && currentBlock && startBlockNo > currentBlock?.toNumber()) {
+		if (startBlockNo && currentBlockStatic && startBlockNo > currentBlockStatic?.toNumber()) {
 			setLoading(false);
 			setformatedEvents(null);
 			setCalendarLoading?.(false);
@@ -104,8 +105,8 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 	const handleSelectedDateChange = (data: ICalendarEvent[]) => {
 		setLoading(true);
 		setCalendarLoading?.(true);
-		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: selectedDate, network }) || 0;
-		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: dayjs(selectedDate)?.add(24, 'hours').toDate(), network }) || 0;
+		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: selectedDate, network }) || 0;
+		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: dayjs(selectedDate)?.add(24, 'hours').toDate(), network }) || 0;
 
 		const filteredEvents = data?.filter((event) => event?.statusHistory?.map((item) => item?.block >= startBlockNo && item?.block < endBlockNo));
 
@@ -140,10 +141,12 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 	return (
 		<Spin spinning={loading}>
 			<div className='px-4'>
-				<main className='mt-6 flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high'>
-					<span className='text-xl font-semibold'>Events</span>
-					<span className='mt-0.5 text-lg font-normal'>({dayjs(selectedDate).format('MMM DD, YYYY')})</span>
-				</main>
+				{!smallView && (
+					<main className='mt-6 flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high'>
+						<span className='text-xl font-semibold'>Events</span>
+						<span className='mt-0.5 text-lg font-normal'>({dayjs(selectedDate).format('MMM DD, YYYY')})</span>
+					</main>
+				)}
 
 				<div className='min-h-40 mt-4 flex flex-col gap-4'>
 					{formatedEvents && Object.keys(formatedEvents)?.length

@@ -14,7 +14,6 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageComponent from '../ImageComponent';
 import Link from 'next/link';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import CuratorPopover from './utils/CuratorPopover';
@@ -24,6 +23,7 @@ import { getFormattedValue } from './utils/formatBalanceUsd';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
 import { removeSymbols } from '~src/util/htmlDiff';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 
 const CardHeader = styled.div`
 	&:after {
@@ -41,13 +41,10 @@ const CardHeader = styled.div`
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 	const { post_id, title, content, tags, reward, user_id, curator, proposer, description } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
 	const { resolvedTheme: theme } = useTheme();
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
 	const [loading, setLoading] = useState(false);
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
@@ -97,7 +94,6 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 			user_id: 0,
 			username: ''
 		});
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		const fetchData = async () => {
 			setLoading(true);
 			await getChildBounties();
@@ -127,12 +123,10 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								>
 									<div className='flex items-baseline gap-x-2'>
 										<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
-											{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? '' : '$'}
-											{getFormattedValue(String(reward), network, currentTokenPrice)}
+											{tokenLoading || isNaN(Number(tokenPrice)) ? '' : '$'}
+											{tokenPrice && getFormattedValue(String(reward), network, tokenPrice, tokenLoading)}
 										</h2>
-										<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>
-											{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
-										</span>
+										<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>{tokenLoading || isNaN(Number(tokenPrice)) ? `${unit}` : ''}</span>
 									</div>
 								</CardHeader>
 								<Link

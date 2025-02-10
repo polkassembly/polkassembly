@@ -17,8 +17,20 @@ const nextConfig = {
 					{ key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
 					{ key: 'Access-Control-Allow-Headers', value: '*' },
 					{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*'" },
+					{ key: 'X-XSS-Protection', value: '1; mode=block' },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';" },
 					{ key: 'Cache-Control', value: 's-maxage=60, stale-while-revalidate=59' }
+				]
+			},
+			{
+				// Add security headers for all other routes
+				source: '/:path*',
+				headers: [
+					{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+					{ key: 'X-XSS-Protection', value: '1; mode=block' },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';" }
 				]
 			}
 		];

@@ -5,57 +5,23 @@
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
-import { deleteKeys, redisDel } from '~src/auth/redis';
+import { deleteKeys } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	try {
 		storeApiKeyUsage(req);
 
-		const { network, postId, govType: govTypeQuery, postType, password, trackNumber } = req.query;
-
-		if (!network || !String(postId) || !postType || !password) {
-			return res.status(400).json({ message: 'Invalid parameters' });
-		}
-
-		if (!isValidNetwork(String(network))) {
-			return res.status(400).json({ message: 'Invalid network' });
-		}
-
-		const govType = govTypeQuery || String(govTypeQuery);
-
-		if (!['OpenGov', 'Gov1'].includes(String(govType))) {
-			return res.status(400).json({ message: 'Invalid gov type' });
-		}
+		const { password } = req.query;
 
 		if (!password || !process.env.REDIS_DELETE_PASSPHRASE || password !== process.env.REDIS_DELETE_PASSPHRASE) {
 			return res.status(401).json({ message: 'Unauthorized' });
 		}
 
-		// Handle different post types with their specific Redis key patterns
-		if (govType === 'OpenGov' && trackNumber) {
-			const trackListingKey = `${network}_${postType}_trackId_${trackNumber}_*`;
-			const postDetail = `${network}_${govType}_${postType}_postId_${postId}`;
+		const polkadotKeysPattern = 'polkadot_*';
+		const kusamaKeysPattern = 'kusama_*';
 
-			await redisDel(postDetail);
-			await deleteKeys(trackListingKey);
-		} else if (postType === 'discussions') {
-			const listingKeys = `${network}_${postType}_page_*`;
-			const postDetail = `${network}_${postType}_postId_${postId}`;
-
-			await redisDel(postDetail);
-			await deleteKeys(listingKeys);
-		} else {
-			const postDetail = `${network}_${govType}_${postType}_postId_${postId}`;
-			const listingKeys = `${network}_${postType}_page_*`;
-			const latestActivityKey = `${network}_latestActivity_${govType}`;
-
-			await redisDel(postDetail);
-			await redisDel(latestActivityKey);
-			await deleteKeys(listingKeys);
-		}
-
+		await Promise.all([deleteKeys(polkadotKeysPattern), deleteKeys(kusamaKeysPattern)]);
 		return res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		console.log('Error: ', error);

@@ -16,6 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@polkadot/api": "^10.12.4",
+    "@polkadot/types": "^15.5.2",
     "algoliasearch": "^4.17.1",
     "axios": "^1.6.8",
     "bn.js": "^5.2.1",

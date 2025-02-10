@@ -62,26 +62,26 @@ const logger = functions.logger;
 
 const getWSProvider = (network: string) => {
 	switch (network) {
-		case 'kusama':
-			return 'wss://kusama-rpc.polkadot.io';
-		case 'polkadot':
-			return 'wss://rpc.polkadot.io';
-		case 'vara':
-			return 'wss://rpc.vara.network';
-		case 'rococo':
-			return 'wss://rococo-rpc.polkadot.io';
-		case 'moonbeam':
-			return 'wss://wss.api.moonbeam.network';
-		case 'moonriver':
-			return 'wss://wss.moonriver.moonbeam.network';
-		case 'moonbase':
-			return 'wss://wss.api.moonbase.moonbeam.network';
-		case 'picasso':
-			return 'wss://picasso-rpc.composable.finance';
-		case 'westend':
-			return 'wss://westend-rpc.dwellir.com';
-		default:
-			return null;
+	case 'kusama':
+		return 'wss://kusama-rpc.polkadot.io';
+	case 'polkadot':
+		return 'wss://rpc.polkadot.io';
+	case 'vara':
+		return 'wss://rpc.vara.network';
+	case 'rococo':
+		return 'wss://rococo-rpc.polkadot.io';
+	case 'moonbeam':
+		return 'wss://wss.api.moonbeam.network';
+	case 'moonriver':
+		return 'wss://wss.moonriver.moonbeam.network';
+	case 'moonbase':
+		return 'wss://wss.api.moonbase.moonbeam.network';
+	case 'picasso':
+		return 'wss://picasso-rpc.composable.finance';
+	case 'westend':
+		return 'wss://westend-rpc.dwellir.com';
+	default:
+		return null;
 	}
 };
 
@@ -118,12 +118,12 @@ const getDelegationSplit = (data: IDataType, type: EVoteType) => {
 		});
 	}
 	switch (type) {
-		case EVoteType.ACCOUNTS:
-			return accountsData;
-		case EVoteType.CONVICTIONVOTES:
-			return { ...convictionData, delegated: convictionData?.delegated?.toString(), solo: convictionData?.solo?.toString() };
-		case EVoteType.VOTEAMOUNT:
-			return { ...voteAmountData, delegated: voteAmountData?.delegated?.toString(), solo: voteAmountData?.solo?.toString() };
+	case EVoteType.ACCOUNTS:
+		return accountsData;
+	case EVoteType.CONVICTIONVOTES:
+		return { ...convictionData, delegated: convictionData?.delegated?.toString(), solo: convictionData?.solo?.toString() };
+	case EVoteType.VOTEAMOUNT:
+		return { ...voteAmountData, delegated: voteAmountData?.delegated?.toString(), solo: voteAmountData?.solo?.toString() };
 	}
 };
 
@@ -150,16 +150,16 @@ const getVotesSplit = (data: IDataType, type: EVoteType) => {
 		});
 	}
 	switch (type) {
-		case EVoteType.ACCOUNTS:
-			return accountsData;
-		case EVoteType.CONVICTIONVOTES:
-			return { ...convictionData, abstain: convictionData?.abstain?.toString(), aye: convictionData?.aye?.toString(), nay: convictionData?.nay?.toString() };
-		case EVoteType.VOTEAMOUNT:
-			return { ...voteAmountData, abstain: voteAmountData?.abstain?.toString(), aye: voteAmountData?.aye?.toString(), nay: voteAmountData?.nay?.toString() };
+	case EVoteType.ACCOUNTS:
+		return accountsData;
+	case EVoteType.CONVICTIONVOTES:
+		return { ...convictionData, abstain: convictionData?.abstain?.toString(), aye: convictionData?.aye?.toString(), nay: convictionData?.nay?.toString() };
+	case EVoteType.VOTEAMOUNT:
+		return { ...voteAmountData, abstain: voteAmountData?.abstain?.toString(), aye: voteAmountData?.aye?.toString(), nay: voteAmountData?.nay?.toString() };
 	}
 };
 
-const bnToIntBalance = function (bn: BN, network: string): number {
+const bnToIntBalance = function(bn: BN, network: string): number {
 	return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 };
 
@@ -234,7 +234,7 @@ const trackLevelAnalytics = async () => {
 						...proposal,
 						balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 						createdAt: vote?.createdAt,
-						decision: vote?.decision == 'no' ? 'nay' : vote.decision == 'yes' ? 'aye' : 'abstain' || null,
+						decision: vote?.decision == 'no' ? 'nay' : vote.decision == 'yes' ? 'aye' : 'abstain',
 						delegatedVotingPower: vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : '0',
 						extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 						isDelegatedVote: vote?.isDelegated,

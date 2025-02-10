@@ -39,7 +39,6 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const count = extendedData?.count || 0;
-	const length = extendedData?.posts?.length;
 
 	const startIndex = (currentPage - 1) * LISTING_LIMIT;
 	const endIndex = startIndex + LISTING_LIMIT;

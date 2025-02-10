@@ -27,7 +27,7 @@ import NextBurn from './NextBurn';
 import _ from 'lodash';
 import SpendPeriod from './SpendPeriod';
 import { isAssetHubSupportedNetwork } from './utils/isAssetHubSupportedNetwork';
-import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -41,6 +41,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 
 	const dispatch = useDispatch();
 	const blockTime: number = chainProperties?.[network]?.blockTime;
@@ -74,24 +75,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	});
 
 	const [tokenValue, setTokenValue] = useState<number>(0);
-
-	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
-	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
-
-	useEffect(() => {
-		const getTokenPrice = async () => {
-			setTokenLoading(true);
-			const priceData = await fetchTokenPrice(network);
-			if (priceData) {
-				setTokenPrice(priceData.price);
-			}
-			setTokenLoading(false);
-		};
-
-		if (network) {
-			getTokenPrice();
-		}
-	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {

@@ -25,7 +25,7 @@ import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 import { dmSans } from 'pages/_app';
 import type { Balance } from '@polkadot/types/interfaces';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
-import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -45,6 +45,7 @@ const ActivityFeedSidebar = () => {
 	const dispatch = useDispatch();
 	const [available, setAvailable] = useState({ isLoading: true, value: '', valueUSD: '' });
 	const [nextBurn, setNextBurn] = useState({ isLoading: true, value: '', valueUSD: '' });
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 	const [currentTokenPrice, setCurrentTokenPrice] = useState<ITokenPrice>({ isLoading: true, value: '' });
 	const [priceWeeklyChange, setPriceWeeklyChange] = useState<IPriceWeeklyChange>({ isLoading: true, value: '' });
 	const [tokenValue, setTokenValue] = useState<number>(0);
@@ -60,8 +61,6 @@ const ActivityFeedSidebar = () => {
 	const assetValue = formatBnBalance(assethubValues?.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues?.usdcValue) / 1000000));
 	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues?.usdtValue) / 1000000));
-	const [tokenPrice, setTokenPrice] = useState<string | null>(null);
-	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
 
 	const tokenValueNum = !tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice?.value;
 	const totalTreasuryValueUSD = formatUSDWithUnits(
@@ -71,21 +70,6 @@ const ActivityFeedSidebar = () => {
 				Number(assethubValues?.usdtValue) / 1000000
 		)
 	);
-
-	useEffect(() => {
-		const getTokenPrice = async () => {
-			setTokenLoading(true);
-			const priceData = await fetchTokenPrice(network);
-			if (priceData) {
-				setTokenPrice(priceData.price);
-			}
-			setTokenLoading(false);
-		};
-
-		if (network) {
-			getTokenPrice();
-		}
-	}, [network]);
 
 	const fetchTreasuryData = async (api: ApiPromise, network: string, currentTokenPrice: ITokenPrice, setAvailable: Function, setNextBurn: Function) => {
 		const treasuryAccount = u8aConcat(

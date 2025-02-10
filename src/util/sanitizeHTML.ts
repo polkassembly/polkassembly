@@ -6,11 +6,11 @@ import xss from 'xss';
 export const sanitizeHTML = (html: string): string => {
 	return xss(html, {
 		whiteList: {
-			a: ['href', 'title', 'target'],
-			blockquote: [],
+			a: ['href', 'title', 'target', 'rel'],
+			blockquote: ['style'],
 			br: [],
-			code: [],
-			div: ['class', 'style'],
+			code: ['class'],
+			div: ['class', 'style', 'id', 'contenteditable'],
 			em: [],
 			h1: [],
 			h2: [],
@@ -19,12 +19,13 @@ export const sanitizeHTML = (html: string): string => {
 			h5: [],
 			h6: [],
 			hr: [],
-			img: ['src', 'alt', 'title', 'width', 'height'],
-			li: [],
-			ol: [],
-			p: ['style'],
-			pre: [],
-			span: ['class', 'style'],
+			img: ['src', 'alt', 'title', 'width', 'height', 'data-mce-src'],
+			li: ['style'],
+			mark: [],
+			ol: ['style', 'type'],
+			p: ['style', 'contenteditable'],
+			pre: ['class'],
+			span: ['class', 'style', 'contenteditable'],
 			strong: [],
 			table: ['style', 'border', 'cellpadding', 'cellspacing'],
 			tbody: [],
@@ -32,7 +33,7 @@ export const sanitizeHTML = (html: string): string => {
 			th: ['style', 'colspan', 'rowspan'],
 			thead: [],
 			tr: [],
-			ul: []
+			ul: ['style']
 		}
 	});
 };

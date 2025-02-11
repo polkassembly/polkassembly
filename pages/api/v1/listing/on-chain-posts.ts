@@ -40,6 +40,7 @@ import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAd
 import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -147,15 +148,6 @@ interface IGetOnChainPostsParams {
 	includeContent?: boolean;
 	getBountyReward?: boolean;
 }
-
-const convertHtmlToMarkDown = (htmlStr: string) => {
-	const htmlDetectionRegex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
-
-	if (!htmlDetectionRegex.test(htmlStr)) return htmlStr;
-
-	const markdownContent = convertHtmlToMarkdown(htmlStr);
-	return markdownContent || htmlStr || '';
-};
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
@@ -416,7 +408,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							identity,
 							isSpam: data?.isSpam || false,
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
-							markdownContent: convertHtmlToMarkDown(!includeContent ? '' : data.content || subsquareContent || ''),
+							markdownContent: getMarkdownContent(!includeContent ? '' : data.content || subsquareContent || ''),
 							method: subsquidPost?.preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -464,7 +456,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					end: end,
 					hash: hash || null,
 					identity,
-					markdownContent: convertHtmlToMarkDown(!includeContent ? '' : subsquareContent || ''),
+					markdownContent: getMarkdownContent(!includeContent ? '' : subsquareContent || ''),
 					method: subsquidPost?.preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -971,7 +963,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								identity,
 								isSpam: data?.isSpam || false,
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
-								markdownContent: convertHtmlToMarkDown(!includeContent ? '' : data.content || subsquareContent || ''),
+								markdownContent: getMarkdownContent(!includeContent ? '' : data.content || subsquareContent || ''),
 								method: subsquidPost?.preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								parent_bounty_requested_amount: parentBountyRequestedAmount,
@@ -1029,7 +1021,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						end: end,
 						hash: hash || null,
 						identity,
-						markdownContent: convertHtmlToMarkDown(!includeContent ? '' : subsquareContent || ''),
+						markdownContent: getMarkdownContent(!includeContent ? '' : subsquareContent || ''),
 						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						parent_bounty_requested_amount: parentBountyRequestedAmount,

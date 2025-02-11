@@ -67,10 +67,10 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 			progress_file: ogReport?.progress_file,
 			progress_summary: ogReport?.progress_summary,
 			proposalType: postData?.postType,
-			rating: [...(postData?.progress_report?.[selectedReportId as any]?.ratings || []), report_rating],
-			reportId: selectedReportId,
-			tasks: postData?.progress_report?.[selectedReportId as any]?.tasks || []
+			rating: report_rating,
+			reportId: selectedReportId
 		};
+
 		const ratingBody = {
 			postId: postData?.postIndex,
 			proposalType: postData?.postType,
@@ -97,9 +97,10 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			const { progress_report } = data;
+
 			setPostData((prev) => ({
 				...prev,
-				progress_report
+				progress_report: { ...progress_report, 0: { ...((progress_report as any)?.[0] || {}), tasks: postData?.progress_report?.[0]?.tasks } }
 			}));
 			dispatch(progressReportActions.setOpenRatingModal(false));
 			dispatch(progressReportActions.setOpenRatingSuccessModal(true));

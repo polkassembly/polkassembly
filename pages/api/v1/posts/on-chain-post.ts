@@ -1167,7 +1167,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				post.markdownContent = getMarkdownContent(data.content);
-				console.log(data?.content);
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}

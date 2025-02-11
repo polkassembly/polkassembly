@@ -100,7 +100,7 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 
 			setPostData((prev) => ({
 				...prev,
-				progress_report: { ...progress_report, 0: { ...((progress_report as any)?.[0] || {}), tasks: postData?.progress_report?.[0]?.tasks } }
+				progress_report: { ...(progress_report || {}), 0: { ...((progress_report as any)?.[0] || {}), tasks: postData?.progress_report?.[0]?.tasks || [] } }
 			}));
 			dispatch(progressReportActions.setOpenRatingModal(false));
 			dispatch(progressReportActions.setOpenRatingSuccessModal(true));

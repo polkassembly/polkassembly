@@ -23,8 +23,16 @@ import createUserActivity from '../../utils/create-activity';
 import { isSpamDetected } from '~src/util/getPostContentAiSummary';
 import { sendSpamNotificationEmail } from '~src/auth/email';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { applyRateLimit } from '~src/api-middlewares/rateLimiter';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
+	// Apply rate limiting
+	try {
+		await applyRateLimit(req, res);
+	} catch (error) {
+		return res.status(429).json({ message: 'Too many requests, please try again later.' });
+	}
+
 	storeApiKeyUsage(req);
 
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });

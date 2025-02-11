@@ -10,8 +10,8 @@ import { usePostDataContext } from '~src/context';
 import Markdown from '~src/ui-components/Markdown';
 import { useTheme } from 'next-themes';
 import { StarOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router';
 import { IProgressReport } from '~src/types';
+import Link from 'next/link';
 
 const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
@@ -24,7 +24,6 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
-	const router = useRouter();
 	const [reportData, setReportData] = useState<IProgressReport>();
 	const { report_rating } = useProgressReportSelector();
 	const customIcons = Object.fromEntries(
@@ -61,15 +60,18 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 						theme={theme}
 					/>
 				</p>
-				<p
-					className='m-0 cursor-pointer p-0 text-sm font-normal text-pink_primary'
-					onClick={() => {
-						router.push(`/referenda/${postData?.postIndex}?tab=evaluation`);
+				<Link
+					className='m-0 cursor-pointer p-0 text-sm font-medium text-pink_primary hover:underline'
+					href={`/referenda/${postData?.postIndex}?tab=evaluation`}
+					target='_blank'
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
 						dispatch(progressReportActions.setOpenRatingModal(false));
 					}}
 				>
 					View Progress Report in detail
-				</p>
+				</Link>
 				{reportData?.progress_summary && (
 					<Divider
 						dashed={true}
@@ -77,7 +79,7 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 					/>
 				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
-					<h1 className='text-normal flex flex-col gap-y-1 text-lg text-bodyBlue dark:text-white'>Rate Delivery</h1>
+					<h1 className='text-normal flex flex-col gap-y-1 text-base font-medium text-bodyBlue dark:text-white'>Rate Delivery</h1>
 					<>
 						<Rate
 							tooltips={desc}

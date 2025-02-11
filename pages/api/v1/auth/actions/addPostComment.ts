@@ -22,6 +22,7 @@ import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { applyRateLimit } from '~src/api-middlewares/rateLimiter';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -31,6 +32,14 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	storeApiKeyUsage(req);
 
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
+
+	// Apply rate limiting
+	try {
+		await applyRateLimit(req, res);
+	} catch (error) {
+		return res.status(429).json({ message: 'Too many requests, please try again later.' });
+	}
+
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });

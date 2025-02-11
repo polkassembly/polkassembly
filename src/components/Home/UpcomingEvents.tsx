@@ -117,7 +117,6 @@ const UpcomingEvents = ({ className }: Props) => {
 			setCalendarEvents([]);
 			return;
 		}
-		console.log('hereee');
 
 		const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('/api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
 
@@ -127,7 +126,6 @@ const UpcomingEvents = ({ className }: Props) => {
 			setLoading(false);
 			return;
 		}
-		console.log('hereee', data);
 
 		const updatedEvents = updateEventsWithTimeStamps(data || [], startBlockNo || 0);
 		setCalendarEvents(updatedEvents);
@@ -164,7 +162,7 @@ const UpcomingEvents = ({ className }: Props) => {
 					{eventData.map((eventObj: any) => (
 						<div key={eventObj.id}>
 							<Link
-								className='text-white hover:text-pink_primary hover:text-white hover:underline'
+								className='capitalize text-white hover:text-pink_primary hover:text-white hover:underline'
 								href={`/${getSinglePostLinkFromProposalType(eventObj.proposalType)}/${eventObj.index}`}
 								target='_blank'
 								rel='noreferrer'
@@ -215,7 +213,7 @@ const UpcomingEvents = ({ className }: Props) => {
 								rel='noreferrer'
 								className={'cursor-pointer text-sidebarBlue hover:text-pink_primary hover:underline'}
 							>
-								<div className='text-sm text-bodyBlue hover:text-pink_primary dark:font-normal dark:text-blue-dark-high hover:dark:text-pink_primary'>{item.title}</div>
+								<div className='text-sm capitalize text-bodyBlue hover:text-pink_primary dark:font-normal dark:text-blue-dark-high hover:dark:text-pink_primary'>{item.title}</div>
 							</Link>
 						</List.Item>
 					);

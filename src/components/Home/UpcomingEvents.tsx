@@ -84,6 +84,7 @@ const UpcomingEvents = ({ className }: Props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [currentBlockStatic, setCurrentBlockStatic] = useState<BN | null>(null);
+	const [eventDates, setEventDates] = useState<string[]>([]);
 
 	useEffect(() => {
 		if (!currentBlockStatic) {
@@ -116,57 +117,75 @@ const UpcomingEvents = ({ className }: Props) => {
 			setCalendarEvents([]);
 			return;
 		}
+		console.log('hereee');
 
-		try {
-			const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('/api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
+		const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('/api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
 
-			if (error) throw error;
-
-			const updatedEvents = updateEventsWithTimeStamps(data || [], startBlockNo || 0);
-			setCalendarEvents(updatedEvents);
-		} catch (err) {
-			setError(err.message);
-			console.error(err);
-		} finally {
+		if (error) {
+			console.error(error);
+			setError(error);
 			setLoading(false);
+			return;
 		}
+		console.log('hereee', data);
+
+		const updatedEvents = updateEventsWithTimeStamps(data || [], startBlockNo || 0);
+		setCalendarEvents(updatedEvents);
+		setEventDates(updatedEvents.map((event) => dayjs(event.createdAt).format('L')));
+		setLoading(false);
 	}, [currentBlockStatic, network]);
 
 	useEffect(() => {
 		getNetworkEvents();
-	}, []);
+	}, [getNetworkEvents]);
+
+	const getDateHasEvent = (value: Dayjs): boolean => {
+		const valueDateStr = value.format('L');
+		return eventDates.includes(valueDateStr);
+	};
+
+	const getEventData = (value: Dayjs): any[] => {
+		const eventList: any[] = [];
+		calendarEvents.forEach((eventObj) => {
+			if (dayjs(eventObj.createdAt).format('L') === value.format('L')) {
+				eventList.push(eventObj);
+			}
+		});
+
+		return eventList;
+	};
 
 	const dateCellRender = (value: Dayjs) => {
-		const eventData = calendarEvents.filter((event) => dayjs(event.createdAt).format('L') === value.format('L'));
+		const hasEvent = getDateHasEvent(value);
+		if (hasEvent) {
+			const eventData = getEventData(value);
+			const eventList = (
+				<div className='flex max-h-[200px] flex-col gap-2 overflow-y-auto'>
+					{eventData.map((eventObj: any) => (
+						<div key={eventObj.id}>
+							<Link
+								className='text-white hover:text-pink_primary hover:text-white hover:underline'
+								href={`/${getSinglePostLinkFromProposalType(eventObj.proposalType)}/${eventObj.index}`}
+								target='_blank'
+								rel='noreferrer'
+							>
+								{eventObj.title}
+							</Link>
+							<span className='my-2 flex h-[1px] w-full rounded-full bg-[rgba(255,255,255,0.3)]'></span>
+						</div>
+					))}
+				</div>
+			);
 
-		if (!eventData.length) return null;
-
-		const eventList = (
-			<div className='flex max-h-[200px] flex-col gap-2 overflow-y-auto'>
-				{eventData.map((event, index) => (
-					<div key={index}>
-						<Link
-							className='text-white hover:text-pink_primary hover:text-white hover:underline'
-							href={`/${getSinglePostLinkFromProposalType(event.proposalType)}/${event.index}`}
-							target='_blank'
-							rel='noreferrer'
-						>
-							{event.title}
-						</Link>
-						<span className='my-2 flex h-[1px] w-full rounded-full bg-[rgba(255,255,255,0.3)]' />
-					</div>
-				))}
-			</div>
-		);
-
-		return (
-			<Tooltip
-				color='#E5007A'
-				title={eventList}
-			>
-				<div className='calenderDate dark:bg-[#FF0088]'>{value.format('D')}</div>
-			</Tooltip>
-		);
+			return (
+				<Tooltip
+					color='#E5007A'
+					title={eventList}
+				>
+					<div className='calenderDate dark:bg-[#FF0088]'>{value.format('D')}</div>
+				</Tooltip>
+			);
+		}
 	};
 
 	const CalendarElement = () => (
@@ -196,7 +215,7 @@ const UpcomingEvents = ({ className }: Props) => {
 								rel='noreferrer'
 								className={'cursor-pointer text-sidebarBlue hover:text-pink_primary hover:underline'}
 							>
-								<div className='text-sm text-bodyBlue hover:text-pink_primary dark:font-normal dark:text-blue-dark-high'>{item.title}</div>
+								<div className='text-sm text-bodyBlue hover:text-pink_primary dark:font-normal dark:text-blue-dark-high hover:dark:text-pink_primary'>{item.title}</div>
 							</Link>
 						</List.Item>
 					);

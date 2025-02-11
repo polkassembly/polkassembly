@@ -3,6 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import xss from 'xss';
 
+/* eslint-disable sort-keys */
+
 export const sanitizeHTML = (html: string): string => {
 	return xss(html, {
 		whiteList: {
@@ -34,6 +36,15 @@ export const sanitizeHTML = (html: string): string => {
 			thead: ['class'],
 			tr: ['class'],
 			ul: ['style', 'class', 'data-mce-style']
+		},
+		stripIgnoreTagBody: false,
+		css: true,
+		onTagAttr: function (tag, name, value) {
+			if (tag === 'a' && name === 'href') {
+				const hasProtocol = /^(?:http|https|ftp|mailto):/i.test(value);
+				const url = hasProtocol ? value : `https://${value}`;
+				return `${name}="${url}"`;
+			}
 		}
 	});
 };

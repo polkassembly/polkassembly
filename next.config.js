@@ -33,7 +33,7 @@ const nextConfig = {
 					{
 						key: 'Content-Security-Policy',
 						value:
-							"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.tinymce.com *.tiny.cloud; connect-src 'self' *.tinymce.com *.tiny.cloud *.imgbb.com *.giphy.com api.giphy.com blob:; img-src 'self' * data: blob:; style-src 'self' 'unsafe-inline' *.tinymce.com *.tiny.cloud; font-src 'self' *.tinymce.com *.tiny.cloud;"
+							"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.tinymce.com *.tiny.cloud; connect-src 'self' *.tinymce.com *.tiny.cloud *.imgbb.com *.giphy.com api.giphy.com blob: wss://*.polkadot.io wss://*.onfinality.io wss://*.dwellir.com wss://*.pinknode.io wss://*.ibp.network wss://*.dotters.network wss://*.radiumblock.co wss://*.luckyfriday.io; img-src 'self' * data: blob:; style-src 'self' 'unsafe-inline' *.tinymce.com *.tiny.cloud; font-src 'self' *.tinymce.com *.tiny.cloud;"
 					}
 				]
 			}

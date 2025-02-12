@@ -39,7 +39,6 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 	const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 	const dispatch = useDispatch();
 	const { open_rating_modal, open_rating_success_modal, report_rating } = useProgressReportSelector();
-	console.log(postData?.track_name, 'postData?.track_name');
 	const ogTrackerUrl =
 		!!postData?.track_name && !!postData?.postIndex
 			? `https://app.ogtracker.io/${postData.track_name.replace(/^[A-Z]/, (c) => c.toLowerCase())}/${postData.postIndex}`

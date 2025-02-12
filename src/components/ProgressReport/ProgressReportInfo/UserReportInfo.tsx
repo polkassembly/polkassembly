@@ -7,13 +7,11 @@ import styled from 'styled-components';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { usePostDataContext } from '~src/context';
-import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
-import { useTheme } from 'next-themes';
 import { StarFilled } from '@ant-design/icons';
 import ReportDetails from './ReportDetails';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
 import { progressReportActions } from '~src/redux/progressReport';
-import { ArrowDownIcon, CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
@@ -25,8 +23,6 @@ import { IProgressReport, NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const { Panel } = Collapse;
 
 interface IUserReportInfo {
 	className?: string;
@@ -40,10 +36,14 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
 	const { postData, setPostData } = usePostDataContext();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { resolvedTheme: theme } = useTheme();
 	const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 	const dispatch = useDispatch();
 	const { open_rating_modal, open_rating_success_modal, report_rating } = useProgressReportSelector();
+	console.log(postData?.track_name, 'postData?.track_name');
+	const ogTrackerUrl =
+		!!postData?.track_name && !!postData?.postIndex
+			? `https://app.ogtracker.io/${postData.track_name.replace(/^[A-Z]/, (c) => c.toLowerCase())}/${postData.postIndex}`
+			: 'https://app.ogtracker.io/';
 
 	const uniqueReports = useMemo(() => {
 		if (!postData?.progress_report) return [];
@@ -109,97 +109,76 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 		}
 		setLoading(false);
 	};
+
 	return (
-		<section className={`${className} mt-8`}>
+		<section className={`${className}`}>
 			<Timeline className={`${className}`}>
 				{uniqueReports.length > 0 ? (
 					uniqueReports.map(([key, report], index) => (
 						<Timeline.Item
 							key={key}
-							className='-mt-6'
+							className=''
 							dot={
-								<div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
+								<div className='mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
 									{uniqueReports.length - index}
 								</div>
 							}
 						>
 							<>
-								<Collapse
-									size='large'
-									theme={theme as any}
-									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
-									expandIconPosition='end'
-									expandIcon={({ isActive }) =>
-										uniqueReports.length == 1 ? null : isActive ? (
-											<ArrowDownIcon className='rotate-180 text-bodyBlue dark:text-blue-dark-medium' />
-										) : (
-											<ArrowDownIcon className='text-bodyBlue dark:text-blue-dark-medium' />
-										)
-									}
-									defaultActiveKey={index === 0 ? ['1'] : []}
-								>
-									<Panel
-										header={
-											<div className='-mt-1 flex w-full items-center justify-between space-x-4'>
-												<div className='flex items-center gap-x-2'>
-													<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
-														Object.keys(postData?.progress_report || {})?.length - index
-													}`}</h1>
-													{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
-													{report?.isFromOgtracker && (
-														<div className='flex items-center gap-x-1'>
-															<span className=' rounded-full p-0.5 dark:bg-[#393939]'>
-																<Image
-																	src='/assets/icons/ogTracker.svg'
-																	alt='ogtracker'
-																	height={22}
-																	width={22}
-																/>
-															</span>
-															<Link
-																href={
-																	postData?.track_name
-																		? `https://app.ogtracker.io/${postData?.track_name[0].toLowerCase() + postData?.track_name.slice(1)}/${postData?.postIndex}`
-																		: 'https://app.ogtracker.io/'
-																}
-																target='_blank'
-																className='m-0 p-0 font-medium text-blue-700 underline hover:text-blue-700'
-																rel='noreferrer'
-															>
-																OG Tracker
-															</Link>
-														</div>
-													)}
-												</div>
-
-												<Button
-													className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
-													onClick={(e) => {
-														e.preventDefault();
-														e.stopPropagation();
-														if (loginAddress) {
-															dispatch(progressReportActions.setOpenRatingModal(true));
-															setSelectedReportId(report?.id);
-														} else {
-															setLoginOpen(true);
-														}
-													}}
+								<div className='flex w-full items-center justify-between space-x-4 px-2'>
+									<div className='flex items-center gap-x-2'>
+										<h1 className='m-0 p-0 text-base font-medium text-bodyBlue dark:text-white'>{`Progress Report #${
+											Object.keys(postData?.progress_report || {})?.length - index
+										}`}</h1>
+										{report?.isEdited && <p className='m-0 ml-auto p-0 text-[10px] text-sidebarBlue dark:text-blue-dark-medium'>(Edited)</p>}
+										{report?.isFromOgtracker && (
+											<div className='flex items-center gap-x-1'>
+												<span className=' rounded-full p-0.5 dark:bg-[#393939]'>
+													<Image
+														src='/assets/icons/ogTracker.svg'
+														alt='ogtracker'
+														height={22}
+														width={22}
+													/>
+												</span>
+												<Link
+													href={ogTrackerUrl}
+													target='_blank'
+													className='m-0 p-0 font-medium text-blue-700 underline hover:text-blue-700'
+													rel='noreferrer'
 												>
-													<div className='flex items-center gap-x-1'>
-														<StarFilled className='text-base' />
-														<span className='m-0 p-0 font-medium'>Rate Progress</span>
-													</div>
-												</Button>
+													OG Tracker
+												</Link>
 											</div>
-										}
-										key='1'
+										)}
+									</div>
+
+									<Button
+										className='m-0 flex items-center justify-start gap-x-1 border-none bg-transparent p-0 text-sm font-medium text-pink_primary shadow-none'
+										onClick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											if (loginAddress) {
+												dispatch(progressReportActions.setOpenRatingModal(true));
+												setSelectedReportId(report?.id);
+											} else {
+												setLoginOpen(true);
+											}
+										}}
 									>
-										<ReportDetails
-											report={report}
-											index={index}
-										/>
-									</Panel>
-								</Collapse>
+										<div className='flex items-center gap-x-1'>
+											<StarFilled className='text-base' />
+											<span className='m-0 p-0 font-medium'>Rate Progress</span>
+										</div>
+									</Button>
+								</div>
+
+								<ReportDetails
+									report={report}
+									index={index}
+									className='px-2'
+								/>
+
 								{index + 1 !== uniqueReports.length && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -308,5 +287,8 @@ export default styled(UserReportInfo)`
 	}
 	.ant-timeline .ant-timeline-item-tail {
 		height: calc(100% - 15px) !important;
+	}
+	.ant-timeline .ant-timeline-item {
+		padding: 0 !important;
 	}
 `;

@@ -13,10 +13,11 @@ import classNames from 'classnames';
 interface IReportDetails {
 	report: IProgressReport;
 	index: number;
+	className?: string;
 }
 
 const ReportDetails: FC<IReportDetails> = (props) => {
-	const { report } = props;
+	const { report, className } = props;
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
@@ -85,7 +86,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 	};
 
 	return (
-		<article className='mt-2 flex flex-col justify-start gap-y-2'>
+		<article className={classNames('mt-2 flex flex-col justify-start', className)}>
 			<div className='flex items-center justify-start gap-x-1'>
 				{report?.ratings && report?.ratings?.length > 0 && (
 					<p className='m-0 flex items-center p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
@@ -115,7 +116,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 				)}
 			</div>
 
-			<div className='mt-2 flex flex-col gap-y-3'>
+			<div className='mt-2 flex flex-col gap-y-2'>
 				{(seeMore ? report?.tasks : report?.tasks?.slice(0, 2))?.map((task) => {
 					return (
 						<div
@@ -135,7 +136,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					);
 				})}
 				{!!report?.tasks?.length && report?.tasks?.length > 2 && (
-					<div className='flex items-center justify-start'>
+					<div className='flex items-center justify-start -mt-1'>
 						<button
 							onClick={() => setSeeMore(!seeMore)}
 							className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'

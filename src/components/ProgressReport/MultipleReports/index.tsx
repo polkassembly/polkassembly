@@ -134,7 +134,7 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 								<Collapse
 									size='large'
 									theme={theme as any}
-									className='ml-1  bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
+									className='ml-1  border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 									expandIconPosition='end'
 									expandIcon={({ isActive }) =>
 										isActive ? <ArrowDownIcon className='rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='dark:text-blue-dark-medium' />

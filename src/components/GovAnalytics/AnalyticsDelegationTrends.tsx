@@ -64,7 +64,7 @@ const AnalyticsDelegationTrends = () => {
 		<Collapse
 			size='large'
 			theme={theme as any}
-			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
+			className='border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) =>
 				isActive ? (

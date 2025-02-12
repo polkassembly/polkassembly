@@ -36,6 +36,11 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 		])
 	) as Record<number, React.ReactNode>;
 
+	const ogTrackerUrl =
+		!!postData?.track_name && !!postData?.postIndex
+			? `https://app.ogtracker.io/${postData.track_name.replace(/^[A-Z]/, (c) => c.toLowerCase())}/${postData.postIndex}`
+			: 'https://app.ogtracker.io/';
+
 	useEffect(() => {
 		if (postData?.progress_report) {
 			Object.values(postData.progress_report).some((report: any) => {
@@ -62,13 +67,8 @@ const ProgressReportRatingModal: FC<IProgressReportRatingModal> = (props) => {
 				</p>
 				<Link
 					className='m-0 cursor-pointer p-0 text-sm font-medium text-pink_primary hover:underline'
-					href={`/referenda/${postData?.postIndex}?tab=evaluation`}
+					href={ogTrackerUrl}
 					target='_blank'
-					onClick={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						dispatch(progressReportActions.setOpenRatingModal(false));
-					}}
 				>
 					View Progress Report in detail
 				</Link>

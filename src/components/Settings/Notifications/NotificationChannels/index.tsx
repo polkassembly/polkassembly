@@ -84,7 +84,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	return (
 		<Collapse
 			size='large'
-			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			className={'border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			theme={theme as any}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {

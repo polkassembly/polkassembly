@@ -308,10 +308,6 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											pattern: username.pattern
 										},
 										{
-											max: username.maxLength,
-											message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
-										},
-										{
 											message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
 											min: username.minLength
 										}

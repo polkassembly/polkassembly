@@ -96,7 +96,6 @@ const Web2Login: FC<Props> = ({
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
 	};
-
 	const handleSubmitForm = async (data: any) => {
 		const { username, password } = data;
 
@@ -266,10 +265,6 @@ const Web2Login: FC<Props> = ({
 									{
 										message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
 										required: username.required
-									},
-									{
-										max: username.maxLength,
-										message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
 									},
 									{
 										message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,

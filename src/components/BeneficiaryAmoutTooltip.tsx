@@ -12,7 +12,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { formatedBalance } from '~src/util/formatedBalance';
 import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
 
@@ -30,7 +29,6 @@ const ZERO_BN = new BN(0);
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-	const unit = chainProperties?.[network]?.tokenSymbol;
 	const requestedAmountFormatted = requestedAmt ? new BN(requestedAmt).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? currentTokenPrice : null);
@@ -131,9 +129,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 					</div>
 				) : (
 					<div className={'flex items-center gap-1'}>
-						<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
-							{formatedBalance(requestedAmt, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-						</span>
+						<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>{parseBalance(requestedAmt, 1, true, network)}</span>
 
 						<HelperTooltip
 							usedInPostPage={usedInPostPage}

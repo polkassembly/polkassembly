@@ -40,9 +40,9 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
 import { getTimeline } from '~src/util/getTimeline';
-import { convertHtmlToMarkdown } from '~src/util/htmlToMarkdown';
 import preimageToBeneficiaries from '~src/util/preimageToBeneficiaries';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -1160,15 +1160,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					});
 				}
 			}
-			const htmlDetectionRegex = /<([a-z][a-z0-9]*)\b[^>]*>/i;
-
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
 				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
-				post.markdownContent = htmlDetectionRegex?.test(data.content) ? convertHtmlToMarkdown(data.content) : data?.content;
+				post.markdownContent = getMarkdownContent(data.content);
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
@@ -1223,8 +1221,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			if (!post.content || !post.title) {
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
-				post.markdownContent = post.markdownContent = htmlDetectionRegex?.test(res.content) ? convertHtmlToMarkdown(res.content) : res?.content;
-
+				post.markdownContent = getMarkdownContent(res.content);
 				post.title = res.title;
 
 				if (res.title || res.content) {

@@ -12,8 +12,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
+import { getGeneralIndexFromAsset } from './OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
+import { EAssets } from './OpenGovTreasuryProposal/types';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 interface Args {
 	className?: string;
@@ -29,6 +31,32 @@ const ZERO_BN = new BN(0);
 const getAssetSymbol = (assetId: string | null, network: string) => {
 	const asset = chainProperties[network]?.supportedAssets?.find((asset) => asset.genralIndex === assetId);
 	return asset?.symbol || '';
+};
+
+const getUsdValueFromAsset = ({
+	currentTokenPrice,
+	dedTokenUsdPrice,
+	generalIndex,
+	inputAmountValue,
+	network
+}: {
+	inputAmountValue: string;
+	dedTokenUsdPrice: string;
+	currentTokenPrice: string;
+	generalIndex: string;
+	network: string;
+}) => {
+	if (!Number(currentTokenPrice)) return 0;
+	switch (generalIndex) {
+		case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
+			return Math.floor((Number(inputAmountValue) * Number(dedTokenUsdPrice)) / Number(currentTokenPrice) || 0);
+		case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
+			return Math.floor(Number(inputAmountValue));
+		case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
+			return Math.floor(Number(inputAmountValue));
+		default:
+			return '0';
+	}
 };
 
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
@@ -98,16 +126,18 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
 											<span className='uppercase'>
-												{getUsdValueFromAsset({
-													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
-													dedTokenUsdPrice: dedTokenUsdPrice || '0',
-													generalIndex: assetId,
-													inputAmountValue:
-														new BN(requestedAmt)
-															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
-															.toString() || '0',
-													network
-												}) || 0}{' '}
+												{formatUSDWithUnits(
+													getUsdValueFromAsset({
+														currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+														dedTokenUsdPrice: dedTokenUsdPrice || '0',
+														generalIndex: assetId,
+														inputAmountValue:
+															new BN(requestedAmt)
+																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+																.toString() || '0',
+														network
+													}).toString()
+												) || 0}{' '}
 												{getAssetSymbol(assetId, network)}
 												{/* {getBeneficiaryAmountAndAsset(assetId, ((isProposalClosed && usdValueOnClosed) || currentTokenPrice).toString(), network)} */}
 											</span>
@@ -115,16 +145,18 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span className='flex'>Value on day of creation:</span>
 											<span className='uppercase'>
-												{getUsdValueFromAsset({
-													currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
-													dedTokenUsdPrice: dedTokenUsdPrice || '0',
-													generalIndex: assetId,
-													inputAmountValue:
-														new BN(requestedAmt)
-															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
-															.toString() || '0',
-													network
-												}) || 0}{' '}
+												{formatUSDWithUnits(
+													getUsdValueFromAsset({
+														currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
+														dedTokenUsdPrice: dedTokenUsdPrice || '0',
+														generalIndex: assetId,
+														inputAmountValue:
+															new BN(requestedAmt)
+																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+																.toString() || '0',
+														network
+													}).toString()
+												) || 0}{' '}
 												{getAssetSymbol(assetId, network)}
 											</span>
 										</div>

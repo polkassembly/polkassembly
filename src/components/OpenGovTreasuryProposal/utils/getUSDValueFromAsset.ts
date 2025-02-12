@@ -19,9 +19,9 @@ export const getUsdValueFromAsset = ({ currentTokenPrice, dedTokenUsdPrice, gene
 		case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
 			return Math.floor((Number(inputAmountValue) * Number(dedTokenUsdPrice)) / Number(currentTokenPrice) || 0);
 		case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
-			return Number(inputAmountValue);
+			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
 		case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
-			return Number(inputAmountValue);
+			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
 		default:
 			return '0';
 	}

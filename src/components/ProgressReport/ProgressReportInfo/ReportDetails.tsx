@@ -136,7 +136,7 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 					);
 				})}
 				{!!report?.tasks?.length && report?.tasks?.length > 2 && (
-					<div className='flex items-center justify-start -mt-1'>
+					<div className='-mt-1 flex items-center justify-start'>
 						<button
 							onClick={() => setSeeMore(!seeMore)}
 							className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'

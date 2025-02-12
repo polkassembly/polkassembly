@@ -35,9 +35,7 @@ export const sanitizeHTML = (html: string): string => {
 			th: ['style', 'colspan', 'rowspan', 'class', 'data-mce-style'],
 			thead: ['class'],
 			tr: ['class'],
-			ul: ['style', 'class', 'data-mce-style'],
-			video: ['src', 'controls', 'width', 'height', 'autoplay', 'muted', 'loop', 'playsinline', 'class', 'style'],
-			source: ['src', 'type']
+			ul: ['style', 'class', 'data-mce-style']
 		},
 		stripIgnoreTagBody: false,
 		css: true,

@@ -17,8 +17,24 @@ const nextConfig = {
 					{ key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
 					{ key: 'Access-Control-Allow-Headers', value: '*' },
 					{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*'" },
+					{ key: 'X-XSS-Protection', value: '1; mode=block' },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';" },
 					{ key: 'Cache-Control', value: 's-maxage=60, stale-while-revalidate=59' }
+				]
+			},
+			{
+				// Add security headers for all other routes
+				source: '/:path*',
+				headers: [
+					{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+					{ key: 'X-XSS-Protection', value: '1; mode=block' },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{
+						key: 'Content-Security-Policy',
+						value:
+							"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.tinymce.com *.tiny.cloud *.google-analytics.com *.googletagmanager.com *.twitter.com platform.twitter.com syndication.twitter.com; connect-src 'self' *.tinymce.com *.tiny.cloud *.imgbb.com *.giphy.com api.giphy.com blob: wss://*.polkadot.io wss://*.onfinality.io wss://*.dwellir.com wss://*.pinknode.io wss://*.ibp.network wss://*.dotters.network wss://*.radiumblock.co wss://*.luckyfriday.io wss://*.subsquid.io wss://*.squids.live wss://*.stakeworld.io wss://*.composablenodes.tech wss://*.hydradx.cloud wss://*.helikon.io wss://*.paras.ibp.network wss://*.subscan.io https://*.subscan.io https://*.squids.live https://*.subsquid.io https://*.google-analytics.com https://*.googletagmanager.com https://*.polkassembly.io https://*.subsquid.io/graphql https://squid.subsquid.io/*/graphql https://*.algolia.net https://*.algolianet.com https://api.firebase.google.com https://*.walletconnect.org https://*.walletconnect.com wss://*.walletconnect.org wss://*.walletconnect.com; img-src 'self' * data: blob:; style-src 'self' 'unsafe-inline' *.tinymce.com *.tiny.cloud abs.twimg.com platform.twitter.com; frame-src 'self' *.twitter.com platform.twitter.com syndication.twitter.com *.walletconnect.org *.walletconnect.com *.google.com; font-src 'self' *.tinymce.com *.tiny.cloud data:; media-src 'self' * blob:;"
+					}
 				]
 			}
 		];

@@ -26,6 +26,11 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
+const getAssetSymbol = (assetId: string | null, network: string) => {
+	const asset = chainProperties[network]?.supportedAssets?.find((asset) => asset.genralIndex === assetId);
+	return asset?.symbol || '';
+};
+
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -92,7 +97,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
-											<span>
+											<span className='uppercase'>
 												{getUsdValueFromAsset({
 													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
 													dedTokenUsdPrice: dedTokenUsdPrice || '0',
@@ -103,12 +108,13 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 															.toString() || '0',
 													network
 												}) || 0}{' '}
-												{chainProperties[network]?.tokenSymbol}
+												{getAssetSymbol(assetId, network)}
+												{/* {getBeneficiaryAmountAndAsset(assetId, ((isProposalClosed && usdValueOnClosed) || currentTokenPrice).toString(), network)} */}
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span className='flex'>Value on day of creation:</span>
-											<span>
+											<span className='uppercase'>
 												{getUsdValueFromAsset({
 													currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
 													dedTokenUsdPrice: dedTokenUsdPrice || '0',
@@ -119,7 +125,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 															.toString() || '0',
 													network
 												}) || 0}{' '}
-												{chainProperties[network]?.tokenSymbol}
+												{getAssetSymbol(assetId, network)}
 											</span>
 										</div>
 									</div>

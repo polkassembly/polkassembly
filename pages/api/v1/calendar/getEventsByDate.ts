@@ -116,7 +116,7 @@ const handler: NextApiHandler<ICalendarEvent[] | MessageType> = async (req, res)
 						}
 					}
 					if (!payload.title?.length) {
-						payload.title = key == ProposalType.REFERENDUM_V2 ? 'Open Gov Proposal' : getProposalTypeTitle(key as ProposalType) || '';
+						payload.title = `${key == ProposalType.REFERENDUM_V2 ? 'Open Gov' : getProposalTypeTitle(key as ProposalType) || ''} Proposal`;
 					}
 					events?.push(payload);
 				});

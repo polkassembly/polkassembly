@@ -140,12 +140,10 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 	return (
 		<Spin spinning={loading}>
 			<div className='px-4'>
-				(
 				<main className='mt-6 flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high'>
 					<span className='text-xl font-semibold'>Events</span>
 					<span className='mt-0.5 text-lg font-normal'>({dayjs(selectedDate).format('MMM DD, YYYY')})</span>
 				</main>
-				)
 				<div className='min-h-40 mt-4 flex flex-col gap-4'>
 					{formatedEvents && Object.keys(formatedEvents)?.length
 						? Object.entries(formatedEvents).map(([key, value], index) => {

@@ -111,16 +111,22 @@ const UserReportInfo: FC<IUserReportInfo> = (props) => {
 
 	return (
 		<section className={`${className}`}>
-			<Timeline className={`${className}`}>
+			<Timeline
+				className={`${className}`}
+				reverse
+				mode='left'
+			>
+				<div className='border-primary top-[calc(100% - 25px)] round absolute h-2.5 w-2.5 rounded-full border-4' />
 				{uniqueReports.length > 0 ? (
 					uniqueReports.map(([key, report], index) => (
 						<Timeline.Item
 							key={key}
-							className=''
 							dot={
-								<div className='mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
-									{uniqueReports.length - index}
-								</div>
+								index === 0 && (
+									<div className='mt-2 flex h-8 w-8 items-center justify-center rounded-full  bg-[#EAECEE] text-sidebarBlue dark:bg-highlightBg dark:text-white'>
+										{uniqueReports.length - index}
+									</div>
+								)
 							}
 						>
 							<>
@@ -270,7 +276,7 @@ export default styled(UserReportInfo)`
 		padding: 0 !important;
 	}
 	.ant-timeline .ant-timeline-item-tail {
-		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1.5px solid #4b4b4b' : '1.5px solid #485f7d')} !important;
+		border-inline-start: ${({ theme }: { theme: any }) => (theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #485f7d')} !important;
 	}
 	.ant-collapse {
 		border: none !important;
@@ -282,12 +288,22 @@ export default styled(UserReportInfo)`
 		border: none !important;
 	}
 	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-		padding: 0 !important;
+		padding: 2px !important;
 	}
 	.ant-timeline .ant-timeline-item-tail {
-		height: calc(100% - 15px) !important;
+		height: calc(100% - 25px) !important;
 	}
 	.ant-timeline .ant-timeline-item {
 		padding: 0 !important;
+	}
+	.ant-timeline .ant-timeline-item-last > .ant-timeline-item-tail {
+		display: flex !important;
+	}
+	.ant-timeline .ant-timeline-item-head-blue {
+		border: none !important;
+	}
+	.round {
+		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
+		margin-top: -18px !important;
 	}
 `;

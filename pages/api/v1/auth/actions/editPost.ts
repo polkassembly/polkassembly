@@ -38,7 +38,6 @@ import { getSubscanData } from '../../subscanApi';
 import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
-import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 export interface IEditPostResponse {
 	content: string;
@@ -62,9 +61,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, postId, proposalType, title, timeline, tags, topicId, allowedCommentors } = req.body;
-
-	// Sanitize the content before processing
-	const sanitizedContent = content ? sanitizeHTML(content) : '';
 
 	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
 		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
@@ -314,12 +310,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const last_comment_at = new Date();
 
-	const summary = (await fetchContentSummary(sanitizedContent, proposalType)) || '';
+	const summary = (await fetchContentSummary(content, proposalType)) || '';
 	const { data: postUser } = await getUserWithAddress(proposer_address);
 
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		allowedCommentors: allowedCommentorsArr,
-		content: sanitizedContent,
+		content,
 		created_at,
 		history,
 		id: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
@@ -359,7 +355,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				batch.set(
 					postDocRef,
 					{
-						content: sanitizedContent,
+						content,
 						created_at,
 						id: proposalType === ProposalType.TIPS ? obj.hash : proposalType === ProposalType.ADVISORY_COMMITTEE ? obj?.proposalHashBlock || obj.hash : Number(obj.index),
 						isDeleted: false,
@@ -388,7 +384,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	res.status(200).json({
 		allowedCommentors: allowedCommentorsArr,
-		content: sanitizedContent,
+		content,
 		last_edited_at: last_edited_at,
 		proposer: proposer_address,
 		summary: summary,
@@ -416,7 +412,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	try {
 		await createUserActivity({
 			action: EActivityAction.EDIT,
-			content: sanitizedContent,
+			content,
 			network,
 			postAuthorId: postUser?.userId as number,
 			postId: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),

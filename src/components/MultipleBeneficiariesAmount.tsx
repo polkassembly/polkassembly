@@ -206,7 +206,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 							})}
 						</div>
 						<Spin spinning={loading}>
-							{isSameAssetUsed && isGenralIndexExist && beneficiaries[0]?.genralIndex ? (
+							{isSameAssetUsed && !beneficiaries[0]?.genralIndex ? (
 								<div className='flex flex-col gap-1 text-xs'>
 									<div className='flex items-center gap-1 text-blue-dark-high'>
 										<span className='font-normal'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
@@ -214,7 +214,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 											{getUsdValueFromAsset({
 												currentTokenPrice: isGenralIndexExist ? (usdValueOnClosed ? usdValueOnClosed : (!tokenLoading && tokenPrice) || '0') : usdValueOnCreation || '0',
 												dedTokenUsdPrice: dedTokenUsdPrice || '0',
-												generalIndex: beneficiaries[0]?.genralIndex,
+												generalIndex: '',
 												inputAmountValue:
 													new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
 														.div(
@@ -234,7 +234,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 											{getUsdValueFromAsset({
 												currentTokenPrice: usdValueOnCreation || '0',
 												dedTokenUsdPrice: dedTokenUsdPrice || '0',
-												generalIndex: beneficiaries[0]?.genralIndex,
+												generalIndex: '',
 												inputAmountValue:
 													new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
 														.div(
@@ -298,14 +298,43 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 				<>
 					{
 						<div className='flex gap-1 font-medium text-lightBlue dark:text-blue-dark-high'>
-							{isGenralIndexExist && '$'}
-							{parseBalance(
-								isGenralIndexExist
-									? requestedAmountFormatted?.mul(new BN(Number(currentTokenPrice) * 10 ** chainProperties?.[network]?.tokenDecimals))?.toString() || '0'
-									: totalAmountInChainSymbol?.toString(),
-								0,
-								!isGenralIndexExist,
-								network
+							{isSameAssetUsed && !beneficiaries[0]?.genralIndex ? (
+								<div>
+									{getUsdValueFromAsset({
+										currentTokenPrice: isGenralIndexExist ? (usdValueOnClosed ? usdValueOnClosed : (!tokenLoading && tokenPrice) || '0') : usdValueOnCreation || '0',
+										dedTokenUsdPrice: dedTokenUsdPrice || '0',
+										generalIndex: '',
+										inputAmountValue:
+											new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
+												.div(
+													new BN('10').pow(
+														new BN(getAssetDecimalFromAssetId({ assetId: beneficiaries[0]?.genralIndex ? String(beneficiaries[0]?.genralIndex) : null, network }) || '0')
+													)
+												)
+												.toString() || '0',
+										network
+									}) || 0}{' '}
+								</div>
+							) : (
+								<div>
+									{isGenralIndexExist && '$'}
+									{parseBalance(
+										requestedAmountFormatted
+											?.mul(
+												!isProposalClosed
+													? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice) * 10 ** chainProperties?.[network]?.tokenDecimals)
+													: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+													? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : currentTokenPrice)).mul(
+															new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))
+													  )
+													: bnUsdValueOnClosed
+											)
+											?.toString() || '0',
+										0,
+										false,
+										network
+									)}{' '}
+								</div>
 							)}
 							<InfoCircleOutlined className={classNames(theme == 'dark' ? 'text-icon-dark-inactive' : 'text-bodyBlue')} />
 						</div>

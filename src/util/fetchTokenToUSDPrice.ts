@@ -6,9 +6,16 @@ import { coinGeckoNetworks } from '~src/global/coinGeckoNetworkMappings';
 
 import formatUSDWithUnits from './formatUSDWithUnits';
 import { treasuryAssets } from '~src/global/networkConstants';
+import { fetchTokenPrice } from './fetchTokenPrice';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 export default async function fetchTokenToUSDPrice(networkOrAsset: string) {
 	try {
+		if ([AllNetworks.POLKADOT, AllNetworks.KUSAMA].includes(networkOrAsset)) {
+			const tokenPrice = await fetchTokenPrice(networkOrAsset);
+			return formatUSDWithUnits(String(tokenPrice?.price));
+		}
+
 		const coinId = coinGeckoNetworks[networkOrAsset] || networkOrAsset;
 		const response = await fetch('https://api.coingecko.com/api/v3/simple/price?' + new URLSearchParams({ ids: coinId, include_24hr_change: 'true', vs_currencies: 'usd' }));
 		const responseJSON = await response.json();

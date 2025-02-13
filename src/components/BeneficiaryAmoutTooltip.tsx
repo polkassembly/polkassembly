@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
@@ -12,10 +12,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
-import { getGeneralIndexFromAsset } from './OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
-import { EAssets } from './OpenGovTreasuryProposal/types';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface Args {
 	className?: string;
@@ -28,48 +28,38 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
-const getAssetSymbol = (assetId: string | null, network: string) => {
-	const asset = chainProperties[network]?.supportedAssets?.find((asset) => asset.genralIndex === assetId);
-	return asset?.symbol || '';
-};
-
-const getUsdValueFromAsset = ({
-	currentTokenPrice,
-	dedTokenUsdPrice,
-	generalIndex,
-	inputAmountValue,
-	network
-}: {
-	inputAmountValue: string;
-	dedTokenUsdPrice: string;
-	currentTokenPrice: string;
-	generalIndex: string;
-	network: string;
-}) => {
-	if (!Number(currentTokenPrice)) return 0;
-	switch (generalIndex) {
-		case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
-			return Math.floor((Number(inputAmountValue) * Number(dedTokenUsdPrice)) / Number(currentTokenPrice) || 0);
-		case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
-			return Math.floor(Number(inputAmountValue));
-		case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
-			return Math.floor(Number(inputAmountValue));
-		default:
-			return '0';
-	}
-};
-
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
-	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const requestedAmountFormatted = requestedAmt ? new BN(requestedAmt).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
-	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? currentTokenPrice : null);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
 	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelector();
+	const [tokenPrice, setTokenPrice] = useState<string>('0');
+	const [tokenLoading, setTokenLoading] = useState<boolean>(false);
+	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? tokenPrice : null);
+
+	const getTokenPrice = async () => {
+		setTokenLoading(true);
+		try {
+			const priceData = await fetchTokenPrice(network);
+			if (priceData && priceData?.price) {
+				setTokenPrice(priceData.price);
+			}
+		} catch (error) {
+			console.error('Error fetching token price:', error);
+		} finally {
+			setTokenLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (!network) return;
+		getTokenPrice();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs()) || (postId && isNaN(postId))) return;
@@ -90,8 +80,8 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 		});
 
 		if (data) {
-			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : currentTokenPrice, network, false);
-			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
+			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : tokenPrice, network, false);
+			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : tokenPrice, network, false);
 			setUsdValueOnCreation(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : null);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
@@ -105,59 +95,59 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	};
 
 	useEffect(() => {
+		if (!tokenPrice) return;
 		fetchUSDValue();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [tokenPrice]);
 
 	return (
 		<div className={className}>
 			{requestedAmt ? (
 				assetId ? (
 					<div className={'flex items-center gap-1'}>
-						<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
-							{getBeneficiaryAmountAndAsset(assetId, requestedAmt.toString(), network)}
-						</span>
+						{tokenLoading ? (
+							<SkeletonButton active />
+						) : (
+							<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
+								{getBeneficiaryAmountAndAsset(assetId, requestedAmt.toString(), network)}
+							</span>
+						)}
 						<HelperTooltip
 							usedInPostPage={usedInPostPage}
 							overlayClassName='w-96 mb-5'
 							text={
-								<Spin spinning={loading}>
+								<Spin spinning={loading || tokenLoading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
-											<span className='uppercase'>
-												{formatUSDWithUnits(
-													getUsdValueFromAsset({
-														currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
-														dedTokenUsdPrice: dedTokenUsdPrice || '0',
-														generalIndex: assetId,
-														inputAmountValue:
-															new BN(requestedAmt)
-																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
-																.toString() || '0',
-														network
-													}).toString()
-												) || 0}{' '}
-												{getAssetSymbol(assetId, network)}
-												{/* {getBeneficiaryAmountAndAsset(assetId, ((isProposalClosed && usdValueOnClosed) || currentTokenPrice).toString(), network)} */}
+											<span>
+												{getUsdValueFromAsset({
+													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? tokenPrice : tokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span className='flex'>Value on day of creation:</span>
-											<span className='uppercase'>
-												{formatUSDWithUnits(
-													getUsdValueFromAsset({
-														currentTokenPrice: usdValueOnCreation || currentTokenPrice || '0',
-														dedTokenUsdPrice: dedTokenUsdPrice || '0',
-														generalIndex: assetId,
-														inputAmountValue:
-															new BN(requestedAmt)
-																.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
-																.toString() || '0',
-														network
-													}).toString()
-												) || 0}{' '}
-												{getAssetSymbol(assetId, network)}
+											<span>
+												{getUsdValueFromAsset({
+													currentTokenPrice: usdValueOnCreation || tokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>
 									</div>
@@ -167,13 +157,17 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 					</div>
 				) : (
 					<div className={'flex items-center gap-1'}>
-						<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>{parseBalance(requestedAmt, 1, true, network)}</span>
+						{tokenLoading ? (
+							<SkeletonButton active />
+						) : (
+							<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>{parseBalance(requestedAmt, 1, true, network)}</span>
+						)}
 
 						<HelperTooltip
 							usedInPostPage={usedInPostPage}
 							overlayClassName='mb-10'
 							text={
-								<Spin spinning={loading}>
+								<Spin spinning={loading || tokenLoading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
@@ -182,9 +176,9 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 													requestedAmountFormatted
 														?.mul(
 															!isProposalClosed
-																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																? new BN(Number(tokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 																: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																? new BN(Number(tokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 																: bnUsdValueOnClosed
 														)
 														?.toString() || '0',

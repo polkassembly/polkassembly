@@ -4,7 +4,7 @@
 
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useAssetsCurrentPriceSelector, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelector, useNetworkSelector } from '~src/redux/selectors';
 import { IBeneficiary } from '~src/types';
 import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
 import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
@@ -56,9 +56,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 	const [isGenralIndexExist, setIsGenralIndexExist] = useState<boolean>(false);
 	const [isSameAssetUsed, setIsSameAssetUsed] = useState<boolean>(false);
 
-	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(
-		dayjs(proposalCreatedAt).isSame(dayjs()) ? (!tokenLoading && tokenPrice ? tokenPrice : '0') : null
-	);
+	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? (!tokenLoading && tokenPrice ? tokenPrice : '0') : null);
 
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnClosed, setUsdValueOnClosed] = useState<string | null>(null);
@@ -260,9 +258,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 														!isProposalClosed
 															? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0') * 10 ** chainProperties?.[network]?.tokenDecimals)
 															: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-															? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0')).mul(
-																	new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))
-															  )
+															? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0')).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 															: bnUsdValueOnClosed
 													)
 													?.toString() || '0',
@@ -278,9 +274,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 										<span className='font-mediumtext-blue-dark-high'>
 											{parseBalance(
 												requestedAmountFormatted
-													?.mul(
-														new BN(Number(usdValueOnCreation || (!tokenLoading && tokenPrice) ? tokenPrice : '0') * 10 ** chainProperties[network]?.tokenDecimals)
-													)
+													?.mul(new BN(Number(usdValueOnCreation || (!tokenLoading && tokenPrice) ? tokenPrice : '0') * 10 ** chainProperties[network]?.tokenDecimals))
 													?.toString() || '0',
 												0,
 												false,
@@ -296,7 +290,9 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 				}
 			>
 				<>
-					{tokenLoading ? <SkeletonButton active /> :
+					{tokenLoading ? (
+						<SkeletonButton active />
+					) : (
 						<div className='flex gap-1 font-medium text-lightBlue dark:text-blue-dark-high'>
 							{isSameAssetUsed && isGenralIndexExist ? (
 								<div>
@@ -324,9 +320,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 												!isProposalClosed
 													? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0') * 10 ** chainProperties?.[network]?.tokenDecimals)
 													: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-													? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0')).mul(
-															new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals)))
-													  )
+													? new BN(Number(!tokenLoading && tokenPrice ? tokenPrice : '0')).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 													: bnUsdValueOnClosed
 											)
 											?.toString() || '0',
@@ -338,7 +332,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 							)}
 							<InfoCircleOutlined className={classNames(theme == 'dark' ? 'text-icon-dark-inactive' : 'text-bodyBlue')} />
 						</div>
-					}
+					)}
 				</>
 			</Popover>
 		</div>

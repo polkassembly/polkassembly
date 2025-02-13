@@ -81,7 +81,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 
 		if (data) {
 			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : tokenPrice, network, false);
-			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
+			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : tokenPrice, network, false);
 			setUsdValueOnCreation(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : null);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
@@ -95,9 +95,10 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	};
 
 	useEffect(() => {
+		if (!tokenPrice) return;
 		fetchUSDValue();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [tokenPrice]);
 
 	return (
 		<div className={className}>

@@ -326,7 +326,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 											)
 											?.toString() || '0',
 										0,
-										false,
+										true,
 										network
 									)}{' '}
 								</div>

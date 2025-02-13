@@ -116,7 +116,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 							usedInPostPage={usedInPostPage}
 							overlayClassName='w-96 mb-5'
 							text={
-								<Spin spinning={loading}>
+								<Spin spinning={loading || tokenLoading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
@@ -167,7 +167,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 							usedInPostPage={usedInPostPage}
 							overlayClassName='mb-10'
 							text={
-								<Spin spinning={loading}>
+								<Spin spinning={loading || tokenLoading}>
 									<div className='flex flex-col gap-1 text-xs'>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>

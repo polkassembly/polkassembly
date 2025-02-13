@@ -212,7 +212,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 											{getUsdValueFromAsset({
 												currentTokenPrice: isGenralIndexExist ? (usdValueOnClosed ? usdValueOnClosed : (!tokenLoading && tokenPrice) || '0') : usdValueOnCreation || '0',
 												dedTokenUsdPrice: dedTokenUsdPrice || '0',
-												generalIndex: '',
+												generalIndex: beneficiaries[0]?.genralIndex || '',
 												inputAmountValue:
 													new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
 														.div(
@@ -232,7 +232,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 											{getUsdValueFromAsset({
 												currentTokenPrice: usdValueOnCreation || '0',
 												dedTokenUsdPrice: dedTokenUsdPrice || '0',
-												generalIndex: '',
+												generalIndex: beneficiaries[0]?.genralIndex || '',
 												inputAmountValue:
 													new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
 														.div(
@@ -299,7 +299,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 									{getUsdValueFromAsset({
 										currentTokenPrice: isGenralIndexExist ? (usdValueOnClosed ? usdValueOnClosed : (!tokenLoading && tokenPrice) || '0') : usdValueOnCreation || '0',
 										dedTokenUsdPrice: dedTokenUsdPrice || '0',
-										generalIndex: '',
+										generalIndex: beneficiaries[0]?.genralIndex || '',
 										inputAmountValue:
 											new BN(beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0))?.toString())
 												.div(
@@ -310,6 +310,7 @@ const MultipleBeneficiariesAmount = ({ className, beneficiaries, postId, proposa
 												.toString() || '0',
 										network
 									}) || 0}{' '}
+									{chainProperties[network]?.tokenSymbol}
 								</div>
 							) : (
 								<div>

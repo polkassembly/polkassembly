@@ -41,13 +41,18 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 				(
 				{assetId
 					? isProposalCreationFlow
-						? getBeneficiaryAmountAndAsset(
+						? getBeneficiaryAmountAndAsset({
+								amount: new BN(beneficiary.amount).mul(new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)))).toString(),
 								assetId,
-								new BN(beneficiary.amount).mul(new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)))).toString(),
-								network,
-								isProposalCreationFlow
-						  )
-						: getBeneficiaryAmountAndAsset(assetId, beneficiary.amount.toString(), network)
+								isProposalCreationFlow,
+								network
+						  })
+						: getBeneficiaryAmountAndAsset({
+								amount: beneficiary.amount.toString(),
+								assetId,
+								isProposalCreationFlow,
+								network
+						  })
 					: disableBalanceFormatting
 					? beneficiary.amount.toString()
 					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}

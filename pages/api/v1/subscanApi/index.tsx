@@ -23,7 +23,7 @@ const validateURL = (url: string) => {
 
 export const getSubscanData = async (url: string, network: string, body?: any, method?: string) => {
 	try {
-		const redisKey = generateKey({ keyType: 'subscan', network, url });
+		const redisKey = generateKey({ keyType: 'subscan', network, postId: body?.post_id, url });
 
 		const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;
 

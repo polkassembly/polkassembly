@@ -28,11 +28,6 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
-const getAssetSymbol = (assetId: string | null, network: string) => {
-	const asset = chainProperties[network]?.supportedAssets?.find((asset) => asset.genralIndex === assetId);
-	return asset?.symbol || '';
-};
-
 const getUsdValueFromAsset = ({
 	currentTokenPrice,
 	dedTokenUsdPrice,
@@ -138,8 +133,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 														network
 													}).toString()
 												) || 0}{' '}
-												{getAssetSymbol(assetId, network)}
-												{/* {getBeneficiaryAmountAndAsset(assetId, ((isProposalClosed && usdValueOnClosed) || currentTokenPrice).toString(), network)} */}
+												{chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
@@ -157,7 +151,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 														network
 													}).toString()
 												) || 0}{' '}
-												{getAssetSymbol(assetId, network)}
+												{chainProperties[network]?.tokenSymbol}{' '}
 											</span>
 										</div>
 									</div>

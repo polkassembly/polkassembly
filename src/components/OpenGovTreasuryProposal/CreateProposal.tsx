@@ -351,7 +351,7 @@ const CreateProposal = ({
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{generalIndex ? (
 									<div className='flex items-center gap-1'>
-										{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}
+										{getBeneficiaryAmountAndAsset({ amount: fundingAmount.toString(), assetId: generalIndex, isProposalCreationFlow: true, network })}
 										<HelperTooltip
 											text={
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>

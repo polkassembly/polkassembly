@@ -260,7 +260,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 													displayInline
 												/>
 											</span>
-											<span>{getBeneficiaryAmountAndAsset(payout.generalIndex, String(payout.amount || '0'), network)}</span>
+											<span>{getBeneficiaryAmountAndAsset({ amount: String(payout.amount || '0'), assetId: payout.generalIndex, network })}</span>
 											<span>{payout.expireAt}</span>
 										</div>
 									);

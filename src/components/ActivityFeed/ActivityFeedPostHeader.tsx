@@ -196,7 +196,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								<>
 									<p className='text-[16px] font-bold text-blue-light-medium dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
 										{post?.assetId ? (
-											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount?.toString(), network)
+											getBeneficiaryAmountAndAsset({ amount: post?.requestedAmount?.toString(), assetId: post?.assetId, network })
 										) : (
 											<>
 												{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}

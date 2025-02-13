@@ -10,10 +10,12 @@ const contentBlacklist: string[] = [
 	'cosmoweb',
 	'beeceptor',
 	'dailyjili',
+	'dreamjili',
 	'peso99',
 	'88taya',
 	'neonstar',
-	'Premyo77'
+	'premyo77',
+	'bmw555'
 ];
 
 export default contentBlacklist;

@@ -50,13 +50,8 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import dynamic from 'next/dynamic';
 
 const { Link: AnchorLink } = Anchor;
-
-const ConfirmModal = dynamic(() => import('./utils/ConfirmModal'), {
-	ssr: false
-});
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -135,7 +130,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
 	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
 	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
-	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -515,14 +509,31 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							) : isAlreadyReported === false ? (
 								<div className='text-xs text-pink_primary'>Thanks for reporting the review.</div>
 							) : (
-								<div className='text-xs text-pink_primary'>
+								<div className='flex items-center gap-1 text-xs text-pink_primary'>
 									Was this summary helpful?
-									<span
-										className='ml-1 cursor-pointer text-xs font-medium underline'
-										onClick={() => setIsConfirmModalOpen(true)}
-									>
-										Give feedback
-									</span>
+									<div className='flex items-center gap-1'>
+										<div
+											onClick={() => reportSummary()}
+											className='cursor-pointer '
+										>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={10}
+												height={9}
+											/>
+											No
+										</div>
+										<div className='cursor-pointer '>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={10}
+												height={9}
+											/>
+											yes
+										</div>
+									</div>
 								</div>
 							)}
 						</div>
@@ -642,14 +653,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					}
 				</div>
 			</div>
-			<ConfirmModal
-				isConfirmModalOpen={isConfirmModalOpen}
-				setIsConfirmModalOpen={setIsConfirmModalOpen}
-				onConfirm={() => {
-					reportSummary();
-					setIsConfirmModalOpen(false);
-				}}
-			/>
 		</div>
 	);
 };

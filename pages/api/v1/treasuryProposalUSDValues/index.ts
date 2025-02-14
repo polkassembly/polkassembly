@@ -44,7 +44,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			if (priceNum == 0) {
 				usdValueOnCreation = null;
 			} else {
-				usdValueOnCreation = priceNum ? (String(Math.floor(priceNum))) : null;
+				usdValueOnCreation = priceNum ? String(Math.floor(priceNum)) : null;
 			}
 		} else {
 			usdValueOnCreation = null;
@@ -60,13 +60,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					start: closedDate
 				});
 
-				if ( valueonClosedResponse.message === 'Success' && valueonClosedResponse?.['data']?.['list']?.[0]?.['price']) {
+				if (valueonClosedResponse.message === 'Success' && valueonClosedResponse?.['data']?.['list']?.[0]?.['price']) {
 					const closedPrice = valueonClosedResponse?.['data']?.['list']?.[0]?.['price'];
 					const closedPriceNum: number = Math.round(parseFloat(closedPrice));
 					if (closedPriceNum == 0) {
 						usdValueOnClosed = null;
 					} else {
-						usdValueOnClosed = closedPriceNum ? (String(Math.floor(closedPriceNum))) : null;
+						usdValueOnClosed = closedPriceNum ? String(Math.floor(closedPriceNum)) : null;
 					}
 				} else {
 					usdValueOnClosed = null;

@@ -114,7 +114,7 @@ const calculateAmountValue = ({
 			let totalAmount = ZERO_BN;
 			//beneficiaries with multiple assets:
 			beneficiaries?.map((beneficiary: IBeneficiary) => {
-				//converting all amount to network token 
+				//converting all amount to network token
 				if (beneficiary?.genralIndex) {
 					const amount = getUsdValueFromAsset({
 						currentTokenPrice: currentTokenPrice || '0',

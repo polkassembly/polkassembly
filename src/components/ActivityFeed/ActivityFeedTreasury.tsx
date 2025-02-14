@@ -292,10 +292,6 @@ const ActivityFeedSidebar = () => {
 															/>
 															<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
 															USDC
-															<Divider
-																type='vertical'
-																className='border-l-1 mx-1 mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
-															/>
 														</div>
 													</div>
 
@@ -350,7 +346,7 @@ const ActivityFeedSidebar = () => {
 						currentTokenPrice={currentTokenPrice}
 					/>
 				</div>
-				<div className={`${dmSans.className} ${dmSans.variable} mx-4 my-3  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
+				<div className={`${dmSans.className} ${dmSans.variable} my-3 flex w-full flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2 dark:bg-[#343437]`}>
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>

@@ -8,7 +8,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IBountyStats } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { StatItem } from './utils/Statitem';
 import { getDisplayValue } from './utils/formatBalanceUsd';
@@ -16,6 +15,7 @@ import { dmSans } from 'pages/_app';
 import useFetchTreasuryStats from '~src/hooks/treasury/useTreasuryStats';
 import Loader from '~src/ui-components/Loader';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
@@ -29,10 +29,7 @@ const BountiesHeader = () => {
 		totalBountyPool: '',
 		totalRewarded: ''
 	});
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 	const [loading, setLoading] = useState(false);
 
 	const fetchStats = async () => {
@@ -56,17 +53,7 @@ const BountiesHeader = () => {
 		fetchStats();
 	}, []);
 
-	useEffect(() => {
-		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
-	}, [network]);
-
-	const availableBounty =
-		!treasuryLoading &&
-		treasuryData?.bounties?.dot &&
-		currentTokenPrice.value &&
-		!isNaN(Number(currentTokenPrice.value)) &&
-		formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot) * Number(currentTokenPrice.value)));
+	const availableBounty = !treasuryLoading && treasuryData?.bounties?.dot && tokenPrice && formatUSDWithUnits(String(Number(treasuryData?.bounties?.dot) * Number(tokenPrice)));
 
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
@@ -81,8 +68,7 @@ const BountiesHeader = () => {
 								<Loader />
 							) : (
 								treasuryData?.bounties?.dot &&
-								currentTokenPrice.value &&
-								!isNaN(Number(currentTokenPrice.value)) && (
+								tokenPrice && (
 									<div className='font-pixeboy text-[46px]'>
 										<span>${availableBounty}</span>
 										<span className={`${dmSans.className} ${dmSans.variable} ml-2 text-[22px] font-medium `}>
@@ -106,24 +92,26 @@ const BountiesHeader = () => {
 								</div>
 							</div>
 						</div>
-						<div className='grid grid-cols-2 gap-x-24 py-7'>
-							<StatItem
-								label='Active Bounties'
-								value={statsData.activeBounties}
-							/>
-							<StatItem
-								label='Claimants'
-								value={statsData.peopleEarned}
-							/>
-							<StatItem
-								label='Total Rewarded'
-								value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
-							/>
-							<StatItem
-								label='Total Bounty Pool'
-								value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
-							/>
-						</div>
+						{tokenPrice && (
+							<div className='grid grid-cols-2 gap-x-24 py-7'>
+								<StatItem
+									label='Active Bounties'
+									value={statsData.activeBounties}
+								/>
+								<StatItem
+									label='Claimants'
+									value={statsData.peopleEarned}
+								/>
+								<StatItem
+									label='Total Rewarded'
+									value={getDisplayValue(statsData.totalRewarded, network, tokenPrice, tokenLoading, unit)}
+								/>
+								<StatItem
+									label='Total Bounty Pool'
+									value={getDisplayValue(statsData.totalBountyPool, network, tokenPrice, tokenLoading, unit)}
+								/>
+							</div>
+						)}
 					</div>
 
 					<div className='items-between relative hidden h-full flex-col justify-between md:flex'>
@@ -154,25 +142,27 @@ const BountiesHeader = () => {
 					<div className='flex flex-col gap-6 md:hidden'>
 						<div>
 							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
-							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
-							<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
-								<StatItem
-									label='Active Bounties'
-									value={statsData.activeBounties}
-								/>
-								<StatItem
-									label='No. of People Earned'
-									value={statsData.peopleEarned}
-								/>
-								<StatItem
-									label='Total Rewarded'
-									value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
-								/>
-								<StatItem
-									label='Total Bounty Pool'
-									value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
-								/>
-							</div>
+							{tokenPrice && <div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, tokenPrice, tokenLoading, unit)}</div>}
+							{tokenPrice && (
+								<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
+									<StatItem
+										label='Active Bounties'
+										value={statsData.activeBounties}
+									/>
+									<StatItem
+										label='No. of People Earned'
+										value={statsData.peopleEarned}
+									/>
+									<StatItem
+										label='Total Rewarded'
+										value={getDisplayValue(statsData.totalRewarded, network, tokenPrice, tokenLoading, unit)}
+									/>
+									<StatItem
+										label='Total Bounty Pool'
+										value={getDisplayValue(statsData.totalBountyPool, network, tokenPrice, tokenLoading, unit)}
+									/>
+								</div>
+							)}
 							<div className='items-between relative -ml-6 flex items-center justify-between'>
 								<div className='left-0 h-20 w-10 rounded-r-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 								<ImageIcon

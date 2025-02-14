@@ -5,23 +5,20 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Carousel } from 'antd';
 import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { IBountyUserActivity } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Skeleton from '~src/basic-components/Skeleton';
 import NameLabel from '~src/ui-components/NameLabel';
 import { chainProperties } from '~src/global/networkConstants';
 import { getDisplayValue } from './utils/formatBalanceUsd';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 
 const BountyActivities = () => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [userActivities, setUserActivities] = useState<IBountyUserActivity[]>([]);
 	const [loading, setLoading] = useState(false);
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 
 	const getData = useCallback(async () => {
 		setLoading(true);
@@ -40,7 +37,6 @@ const BountyActivities = () => {
 	useEffect(() => {
 		if (!network) return;
 		getData();
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -74,7 +70,9 @@ const BountyActivities = () => {
 									usernameMaxLength={10}
 								/>
 								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-								<span className='font-pixeboy text-sm font-normal text-pink_primary md:text-[20px]'>{getDisplayValue(activity?.amount, network, currentTokenPrice, unit)}</span>
+								<span className='font-pixeboy text-sm font-normal text-pink_primary md:text-[20px]'>
+									{tokenPrice && getDisplayValue(activity?.amount, network, tokenPrice, tokenLoading, unit)}
+								</span>
 								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
 								<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
 								<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>

@@ -22,12 +22,12 @@ import dayjs from 'dayjs';
 import { IPeriod } from '~src/types';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { formatTrackName, getFormattedValue } from './utils/formatBalanceUsd';
 import { IDelegationProfileType } from '~src/auth/types';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { removeSymbols } from '~src/util/htmlDiff';
+import useTokenPrice from '~src/hooks/useTokenPrice';
 export interface BountiesProposalsCardProps {
 	activeData: any;
 }
@@ -72,6 +72,7 @@ const BtnLine = styled.div`
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeData }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const { tokenPrice, tokenLoading } = useTokenPrice();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline, proposer, description } = activeData;
 	/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
@@ -79,10 +80,6 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [loading, setLoading] = useState(false);
 	const [votesData, setVotesData] = useState(null);
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
 		bio: '',
 		image: '',
@@ -143,7 +140,6 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 
 	useEffect(() => {
 		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		const fetchData = async () => {
 			setLoading(true);
 			await getData();
@@ -171,12 +167,10 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							>
 								<div className='flex items-baseline gap-x-2'>
 									<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
-										{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? '' : '$'}
-										{getFormattedValue(String(reward), network, currentTokenPrice)}
+										{tokenLoading || isNaN(Number(tokenPrice)) ? '' : '$'}
+										{tokenPrice && getFormattedValue(String(reward), network, tokenPrice, tokenLoading)}
 									</h2>
-									<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>
-										{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
-									</span>
+									<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>{tokenLoading || isNaN(Number(tokenPrice)) ? `${unit}` : ''}</span>
 								</div>
 								<div className='mr-1'>
 									{votesData && (

@@ -38,13 +38,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			start: date
 		});
 
-		if (response.message === 'Success' && response?.['list']?.[0]?.['price']) {
-			const price = response?.['list']?.[0]?.['price'];
-			const priceNum: number = parseFloat(price.toFixed(2));
+		if (response.message === 'Success' && response?.['data']?.['list']?.[0]?.['price']) {
+			const price = response?.['data']?.['list']?.[0]?.['price'];
+			const priceNum: number = Math.round(parseFloat(price));
 			if (priceNum == 0) {
 				usdValueOnCreation = null;
 			} else {
-				usdValueOnCreation = price ? String(price) : null;
+				usdValueOnCreation = priceNum ? (String(Math.floor(priceNum))) : null;
 			}
 		} else {
 			usdValueOnCreation = null;
@@ -60,13 +60,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					start: closedDate
 				});
 
-				if (response.message === 'Success' && response?.['list']?.[0]?.['price']) {
-					const price = response?.['list']?.[0]?.['price'];
-					const priceNum: number = parseFloat(price.toFixed(2));
+				if (response.message === 'Success' && response?.['data']?.['list']?.[0]?.['price']) {
+					const price = response?.['data']?.['list']?.[0]?.['price'];
+					const priceNum: number = Math.round(parseFloat(price));
 					if (priceNum == 0) {
 						usdValueOnClosed = null;
 					} else {
-						usdValueOnClosed = price ? String(price) : null;
+						usdValueOnClosed = priceNum ? (String(Math.floor(priceNum))) : null;
 					}
 				} else {
 					usdValueOnClosed = null;

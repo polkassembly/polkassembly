@@ -7,6 +7,7 @@ import AddressActionDropdown from './utils/AddressActionDropdown';
 import Address from '~src/ui-components/Address';
 import { IAccountData } from '~src/types';
 import { dmSans } from 'pages/_app';
+import SendFundsButton from './SendFundsButton';
 
 interface Props {
 	accountData: IAccountData;
@@ -42,7 +43,13 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress }) => {
 							/>
 						</div>
 					)}
-					<div className='mr-7 flex items-center gap-2'>
+					<div className='mr-7 flex items-center gap-2 sm:gap-4'>
+						{accountData?.address && (
+							<SendFundsButton
+								address={accountData?.address}
+								accountData={accountData}
+							/>
+						)}
 						{accountData?.address && (
 							<AddressActionDropdown
 								type={null}

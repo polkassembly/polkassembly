@@ -11,12 +11,13 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import { message } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
-import { LinkProxyType } from '~src/types';
+import { IAccountData, LinkProxyType } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Alert from '~src/basic-components/Alert';
 import { useApiContext } from '~src/context';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import SendFundsButton from '../SendFundsButton';
 
 interface Props {
 	address: string;
@@ -24,9 +25,10 @@ interface Props {
 	isPureProxy?: boolean;
 	isMultisigAddress?: boolean;
 	linkedAddresses: Array<{ linked_address: string; is_linked: boolean }>;
+	accountData?: IAccountData;
 }
 
-const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses }: Props) => {
+const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress = false, linkedAddresses, accountData }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [messageApi, contextHolder] = message.useMessage();
@@ -134,7 +136,11 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 							</div>
 						</div>
 					</div>
-					<div className='mt-2 flex items-center gap-2 md:mt-0'>
+					<div className='mt-2 flex items-center gap-2 sm:gap-4 md:mt-0'>
+						<SendFundsButton
+							address={address}
+							accountData={accountData}
+						/>
 						<AddressActionDropdown
 							address={address}
 							type={type}

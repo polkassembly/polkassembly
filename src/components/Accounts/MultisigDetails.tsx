@@ -23,6 +23,7 @@ const MultisigDetails: React.FC<Props> = ({ accountData, linkedAddresses }) => {
 							<AddressComponent
 								address={multisigAddress?.address}
 								linkedAddresses={linkedAddresses}
+								accountData={accountData}
 							/>
 						</div>
 					))}

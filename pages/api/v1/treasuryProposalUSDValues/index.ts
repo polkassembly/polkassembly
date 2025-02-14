@@ -54,19 +54,19 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			if (closedStatus?.status && getStatusesFromCustomStatus(CustomStatus.Closed).includes(closedStatus?.status)) {
 				const closedDate = dayjs(closedStatus?.timeStamp).format('YYYY-MM-DD');
 
-				const response = await getSubscanData('/api/scan/price/history', network, {
+				const valueonClosedResponse = await getSubscanData('/api/scan/price/history', network, {
 					end: closedDate,
 					post_id: postId,
 					start: closedDate
 				});
 
-				if (response.message === 'Success' && response?.['data']?.['list']?.[0]?.['price']) {
-					const price = response?.['data']?.['list']?.[0]?.['price'];
-					const priceNum: number = Math.round(parseFloat(price));
-					if (priceNum == 0) {
+				if ( valueonClosedResponse.message === 'Success' && valueonClosedResponse?.['data']?.['list']?.[0]?.['price']) {
+					const closedPrice = valueonClosedResponse?.['data']?.['list']?.[0]?.['price'];
+					const closedPriceNum: number = Math.round(parseFloat(closedPrice));
+					if (closedPriceNum == 0) {
 						usdValueOnClosed = null;
 					} else {
-						usdValueOnClosed = priceNum ? (String(Math.floor(priceNum))) : null;
+						usdValueOnClosed = closedPriceNum ? (String(Math.floor(closedPriceNum))) : null;
 					}
 				} else {
 					usdValueOnClosed = null;

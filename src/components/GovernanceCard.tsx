@@ -49,7 +49,6 @@ import { gov2ReferendumStatus } from '~src/global/statuses';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
-import MultipleBeneficiariesAmount from './MultipleBeneficiariesAmount';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
@@ -64,7 +63,8 @@ const ListingChildBountyChart = dynamic(() => import('~src/ui-components/Listing
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
-const BeneficiaryAmoutTooltip = dynamic(() => import('./BeneficiaryAmoutTooltip'), {
+
+const AmountTooltip = dynamic(() => import('~src/components/AmountTooltip'), {
 	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
@@ -419,26 +419,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 						{(!!requestedAmount || !!beneficiaries?.length) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								{beneficiaries && beneficiaries?.length > 1 ? (
-									<MultipleBeneficiariesAmount
-										beneficiaries={beneficiaries || []}
-										postId={onchainId ? Number(onchainId) : null}
-										proposalCreatedAt={created_at as Date}
-										timeline={timeline || []}
-									/>
-								) : (
-									<>
-										<BeneficiaryAmoutTooltip
-											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
-											className={'flex items-center justify-center'}
-											postId={onchainId ? Number(onchainId) : null}
-											proposalCreatedAt={created_at as Date}
-											timeline={timeline || []}
-											key={onchainId ? Number(onchainId) : (onchainId as any)}
-										/>
-									</>
-								)}
+								<AmountTooltip
+									beneficiaries={beneficiaries || []}
+									proposalCreatedAt={created_at as Date}
+									postId={onchainId ? Number(onchainId) : null}
+									timeline={timeline || []}
+								/>
 							</div>
 						)}
 					</div>
@@ -676,26 +662,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 						{(!!requestedAmount || !!beneficiaries?.length) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								{beneficiaries && beneficiaries?.length > 1 ? (
-									<MultipleBeneficiariesAmount
-										beneficiaries={beneficiaries || []}
-										postId={onchainId ? Number(onchainId) : null}
-										proposalCreatedAt={created_at as Date}
-										timeline={timeline || []}
-									/>
-								) : (
-									<>
-										<BeneficiaryAmoutTooltip
-											assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-											requestedAmt={requestedAmount?.toString() || (beneficiaries ? beneficiaries?.[0]?.amount.toString() : null) || null}
-											className={'flex items-center justify-center'}
-											postId={onchainId ? Number(onchainId) : null}
-											proposalCreatedAt={created_at as Date}
-											timeline={timeline || []}
-											key={onchainId ? Number(onchainId) : (onchainId as any)}
-										/>
-									</>
-								)}
+								<AmountTooltip
+									beneficiaries={beneficiaries || []}
+									proposalCreatedAt={created_at as Date}
+									postId={onchainId ? Number(onchainId) : null}
+									timeline={timeline || []}
+								/>
 							</div>
 						)}
 						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}

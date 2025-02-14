@@ -8,7 +8,19 @@ import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { getGeneralIndexFromAsset } from './getGeneralIndexFromAsset';
 
-const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
+const getBeneficiaryAmountAndAsset = ({
+	assetId,
+	amount,
+	network,
+	isProposalCreationFlow,
+	withoutSymbol = false
+}: {
+	assetId: string;
+	amount: string;
+	network: string;
+	isProposalCreationFlow?: boolean;
+	withoutSymbol?: boolean;
+}) => {
 	const bnAmount = new BN(amount || 0);
 	if (isProposalCreationFlow) {
 		const divBn = new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)));
@@ -30,7 +42,7 @@ const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: 
 					0,
 					false,
 					network
-				)} USDT`;
+				)} ${withoutSymbol ? '' : 'USDT'}`;
 			case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
 				return `${parseBalance(
 					bnAmount
@@ -39,7 +51,7 @@ const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: 
 					0,
 					false,
 					network
-				)} USDC`;
+				)} ${withoutSymbol ? '' : 'USDC'}`;
 			case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
 				return `${parseBalance(
 					bnAmount
@@ -48,7 +60,7 @@ const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: 
 					0,
 					false,
 					network
-				)} DED`;
+				)} ${withoutSymbol ? '' : 'DED'}`;
 		}
 	}
 };

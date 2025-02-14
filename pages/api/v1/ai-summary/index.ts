@@ -9,9 +9,11 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import fetch from 'node-fetch';
-import { ICommentsSummary } from '~src/types';
+import { ICommentsSummary, Post } from '~src/types';
 import messages from '~src/auth/utils/messages';
 import { removeSymbols } from '~src/util/htmlDiff';
+import { QuerySnapshot } from 'firebase-admin/firestore';
+import { DocumentData } from 'firebase-admin/firestore';
 
 interface GetCommentsAISummaryResponse {
 	data: ICommentsSummary | null;
@@ -48,10 +50,22 @@ export const getCommentsAISummaryByPost = async ({
 	const postRef = postsByTypeRef(network, postType).doc(String(postId));
 
 	try {
+		let linkedPostCommentsSnapshot: QuerySnapshot<DocumentData, DocumentData> | null = null;
+
+		// get post link comments
+		const postData = (await postRef.get()).data() as Post;
+
+		if (postData.post_link) {
+			const postLinkRef = postsByTypeRef(network, postData.post_link.type).doc(String(postData.post_link.id));
+			// get post link comments
+			const postLinkCommentsRef = postLinkRef.collection('comments').where('isDeleted', '!=', true);
+			linkedPostCommentsSnapshot = await postLinkCommentsRef.get();
+		}
+
 		const commentsRef = postRef.collection('comments').where('isDeleted', '!=', true);
 		const commentsSnapshot = await commentsRef.get();
 
-		if (commentsSnapshot.empty) {
+		if (commentsSnapshot.empty && (!linkedPostCommentsSnapshot || linkedPostCommentsSnapshot.empty)) {
 			return {
 				data: null,
 				error: 'No comments found for this post.',
@@ -67,7 +81,7 @@ export const getCommentsAISummaryByPost = async ({
 			}
 		];
 
-		const commentsDataPromises = commentsSnapshot.docs.map(async (commentDoc) => {
+		const commentsDataPromises = [...commentsSnapshot.docs, ...(linkedPostCommentsSnapshot?.docs || [])].map(async (commentDoc) => {
 			const commentData = commentDoc.data();
 			if (!commentData || !commentData.content) return '';
 

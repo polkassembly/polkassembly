@@ -322,6 +322,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										trigger: '@',
 										minChars: 1,
 										columns: 1,
+										ch: '@',
 										fetch: (pattern: string) => {
 											// eslint-disable-next-line no-async-promise-executor
 											return new Promise(async (resolve) => {

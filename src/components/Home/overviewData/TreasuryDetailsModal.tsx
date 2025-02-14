@@ -49,6 +49,7 @@ const TreasuryDetailsModal = ({ visible, onClose, unit, currentTokenPrice }: Tre
 				</div>
 			}
 			open={visible}
+			wrapClassName='dark:bg-modalOverlayDark'
 			className='w-fit p-0 px-0'
 			onCancel={onClose}
 			footer={null}

@@ -26,8 +26,7 @@ const handleReportCheckAndRefresh = async ({
 		const reportQuery = await firestore_db.collection('ai_summary_reports').where('postType', '==', postType).where('postIndex', '==', postIndex).get();
 
 		const reportCount = reportQuery.size;
-
-		if (reportCount >= 3) {
+		if (reportCount % 3 === 0) {
 			const { data, error } = await fetchCommentsSummaryFromPost({
 				network,
 				postId: String(postIndex),
@@ -43,9 +42,15 @@ const handleReportCheckAndRefresh = async ({
 				};
 			}
 
+			const batch = firestore_db.batch();
+			reportQuery.forEach((doc) => {
+				batch.delete(doc.ref);
+			});
+			await batch.commit();
+
 			return {
 				success: true,
-				message: 'Comments summary refreshed successfully.',
+				message: 'Comments summary refreshed successfully and reports deleted successfully.',
 				data
 			};
 		} else {

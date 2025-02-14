@@ -35,7 +35,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
+import { ESentiments, ICommentsSummary, ISentimentsPercentage, NotificationStatus } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -50,6 +50,7 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -231,10 +232,50 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 
 			if (data && data?.isAlreadyReported) {
+				queueNotification({
+					header: '',
+					message: 'You have already submitted the feedback.',
+					status: NotificationStatus.INFO
+				});
 				setIsAlreadyReported(data?.isAlreadyReported);
 				setReportingAISummary(false);
 			}
-			await nextApiClientFetch('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
+			if (data && !data?.isAlreadyReported) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Your feedback has been submitted.',
+					status: NotificationStatus.SUCCESS
+				});
+				setIsAlreadyReported(data?.isAlreadyReported);
+				setReportingAISummary(false);
+			}
+		} catch (error) {
+			console.log(error);
+			setReportingAISummary(false);
+		}
+	};
+
+	const refetchAISummary = async () => {
+		setReportingAISummary(true);
+		try {
+			const { data, error } = await nextApiClientFetch<{
+				success: boolean;
+				message: string;
+				data?: any;
+				error?: string;
+			}>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
+
+			console.log('ReFetch message', { data, error });
+			if (error || !data) {
+				console.log('Error While reporting AI summary data', error);
+				setReportingAISummary(false);
+				return;
+			}
+
+			if (data && data?.message) {
+				setReportingAISummary(false);
+				window.location.reload();
+			}
 		} catch (error) {
 			console.log(error);
 			setReportingAISummary(false);
@@ -513,24 +554,27 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									Was this summary helpful?
 									<div className='flex items-center gap-1'>
 										<div
-											onClick={() => reportSummary()}
+											onClick={() => {
+												reportSummary();
+												refetchAISummary();
+											}}
 											className='cursor-pointer '
 										>
-											<Image
+											{/* <Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
 												width={10}
 												height={9}
-											/>
+											/> */}
 											No
 										</div>
 										<div className='cursor-pointer '>
-											<Image
+											{/* <Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
 												width={10}
 												height={9}
-											/>
+											/> */}
 											yes
 										</div>
 									</div>

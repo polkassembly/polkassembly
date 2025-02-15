@@ -63,7 +63,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
-		let unsubscribes: (() => void)[];
+		let unsubscribes: (() => void)[] = [];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
 			nickname: ''

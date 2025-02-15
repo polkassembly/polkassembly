@@ -55,8 +55,11 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 	const [filter, setFilter] = useState<EActivityFilter>(EActivityFilter.ALL);
 	const [totalCount, setTotalCount] = useState<number>(0);
 
+	console.log('userProfile', { userProfile, profileUserId });
+
 	const getData = async () => {
-		if (isNaN(profileUserId)) return;
+		if (profileUserId === null || profileUserId === undefined || isNaN(profileUserId)) return;
+
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<{ data: IUserActivityTypes[]; totalCount: number }>('/api/v1/users/user-activities', {
 			filterBy: filter === EActivityFilter.ALL ? null : filter,

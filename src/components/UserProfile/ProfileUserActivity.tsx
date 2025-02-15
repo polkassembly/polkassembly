@@ -55,8 +55,6 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 	const [filter, setFilter] = useState<EActivityFilter>(EActivityFilter.ALL);
 	const [totalCount, setTotalCount] = useState<number>(0);
 
-	console.log('userProfile', { userProfile, profileUserId });
-
 	const getData = async () => {
 		if (profileUserId === null || profileUserId === undefined || isNaN(profileUserId)) return;
 

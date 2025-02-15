@@ -13,7 +13,6 @@ import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { assetsCurrentPriceActions } from '~src/redux/assetsCurrentPrices';
@@ -138,11 +137,6 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 			}, 60000);
 			api.on('error', async () => {
 				clearTimeout(timer);
-				queueNotification({
-					header: 'Error!',
-					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
-					status: NotificationStatus.ERROR
-				});
 				setApiReady(true);
 				setIsApiLoading(false);
 				await api.disconnect();

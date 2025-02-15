@@ -40,13 +40,10 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const [currentPage, setCurrentPage] = useState(1);
 	const count = extendedData?.count || 0;
 
-	const startIndex = (currentPage - 1) * LISTING_LIMIT;
-	const endIndex = startIndex + LISTING_LIMIT;
-	const paginatedData = extendedData ? extendedData.posts.slice(startIndex, endIndex) : [];
+	const startIndex = Math.max(0, (currentPage - 1) * LISTING_LIMIT);
+	const endIndex = Math.min(startIndex + LISTING_LIMIT, extendedData?.count || 0);
+	const paginatedData = extendedData?.posts?.slice(startIndex, endIndex) || [];
 
-	const onPaginationChange = (page: number) => {
-		setCurrentPage(page);
-	};
 	return (
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
@@ -59,7 +56,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			<BountiesHeader />
 
 			{/* Hot Bounties */}
-			{extendedData && extendedData.posts.length > 0 && (
+			{!!extendedData && extendedData.posts.length > 0 && (
 				<>
 					<div className='mt-8 flex items-center justify-between'>
 						<div className='flex items-center gap-2'>
@@ -103,7 +100,9 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								total={count}
 								showSizeChanger={false}
 								hideOnSinglePage={true}
-								onChange={onPaginationChange}
+								onChange={(page: number) => {
+									setCurrentPage(page);
+								}}
 								responsive={true}
 							/>
 						)}

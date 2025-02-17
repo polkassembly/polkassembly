@@ -187,23 +187,25 @@ const Footer = ({ className }: { className?: string }) => {
 				{/* Below divider */}
 				<Divider className='mb-0' />
 				<div className='mt-2 pb-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
-					{ network == 'polkadot' && <div className='flex items-center max-lg:justify-center mb-3'>
-						<span className='text-base font-medium text-lightBlue dark:text-blue-dark-medium '>Powered By</span>
-						<a
-							href='https://polkadot.com/'
-							target='_blank'
-							rel='noopener noreferrer'
-						>
-							<Image
-								src={theme == 'light' ? '/assets/icons/polkadot.svg' : '/assets/icons/polkadot-dark.svg' }
-								alt='Polkadot'
-								className={`${theme == 'light' ? '-ml-2' : 'ml-1'}`}
-								height={30}
-								width={141}
-							/>
-						</a>
-					</div>}
-										<div className='text-center sm:flex sm:justify-between sm:text-left'>
+					{network == 'polkadot' && (
+						<div className='mb-3 flex items-center max-lg:justify-center'>
+							<span className='text-base font-medium text-lightBlue dark:text-blue-dark-medium '>Powered By</span>
+							<a
+								href='https://polkadot.com/'
+								target='_blank'
+								rel='noopener noreferrer'
+							>
+								<Image
+									src={theme == 'light' ? '/assets/icons/polkadot.svg' : '/assets/icons/polkadot-dark.svg'}
+									alt='Polkadot'
+									className={`${theme == 'light' ? '-ml-2' : 'ml-1'}`}
+									height={30}
+									width={141}
+								/>
+							</a>
+						</div>
+					)}
+					<div className='text-center sm:flex sm:justify-between sm:text-left'>
 						<div className='flex max-[650px]:flex-col'>
 							<p className=' mr-1 max-[650px]:mb-0 '>A House of Commons Initiative.</p>
 							<p className='mt-4 sm:mt-0 '>Polka Labs Private Limited {new Date().getFullYear()}</p>

@@ -135,24 +135,19 @@ const AddressesComponent = () => {
 	}
 	if (isError) {
 		return (
-			<div className='mx-auto max-w-[600px]'>
-				<Alert
-					type='info'
-					showIcon
-					className={'my-5 dark:text-white'}
-					message='Something wrong , while fetching data. Please try again after sometime '
-				/>
-				<div className='flex items-center justify-center'>
-					<Image
-						src={!isGifLoaded ? '/assets/Gifs/search.svg' : '/assets/Gifs/search.gif'}
-						alt='search-icon'
-						width={400}
-						height={400}
-						className='-my-[40px]'
-						priority={true}
-					/>
+			<section className='min-h-[80vh]'>
+				<h3 className='mt-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high md:mt-5 md:text-2xl'>
+					{accountData && accountData?.multisig?.multi_account_member?.length > 0 ? 'Multisig Address' : 'Addresses'}
+				</h3>
+				<div className='min-h-screen'>
+					<div className='w-full rounded-[14px] bg-white p-[10px] drop-shadow-md dark:bg-section-dark-overlay lg:p-4'>
+						<AccountInfo
+							isNewAccount={true}
+							loginAddress={loginAddress}
+						/>
+					</div>
 				</div>
-			</div>
+			</section>
 		);
 	}
 

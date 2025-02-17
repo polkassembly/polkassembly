@@ -69,6 +69,7 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 	const onPaginationChange = (page: number) => {
 		router?.push({
 			pathname: router?.pathname,
@@ -110,7 +111,9 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 
 				<div className='flex items-center justify-between pt-2'>
 					<div className='flex items-center gap-2'>
-						<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
+						<span
+							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[26px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite sm:text-[32px]`}
+						>
 							User Created Bounties
 						</span>
 						<Tooltip
@@ -119,8 +122,8 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 						>
 							<Image
 								src={'/assets/bounty-icons/info-icon.svg'}
-								width={32}
-								height={32}
+								width={isMobile ? 24 : 32}
+								height={isMobile ? 24 : 32}
 								alt='info'
 								className={`${theme === 'dark' ? 'dark-icons' : 'text-lightBlue'}`}
 							/>

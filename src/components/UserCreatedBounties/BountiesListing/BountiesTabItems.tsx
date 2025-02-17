@@ -18,6 +18,7 @@ interface IBountiesTabItemsProps {
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
+	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
 	const [activeTab, setActiveTab] = useState<string>('all');
 
@@ -48,19 +49,24 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 					<Image
 						src='/assets/Gifs/watering.gif'
 						alt='empty state'
-						width={600}
-						height={600}
+						width={isMobile ? 400 : 600}
+						height={isMobile ? 400 : 600}
 						className='-mt-10 mb-4'
 					/>
-					<div className='-mt-40 flex flex-col items-center'>
+					<div className='-mt-20 items-center sm:-mt-40 sm:flex sm:flex-col'>
 						<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high'>Nothing to see here</div>
 						<span className='mt-1 flex gap-1 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
 							No Bounties have been created yet.
-							<CreateBountyBtn
-								className='hidden md:block'
-								isUsedInTable={true}
-							/>
-							to get started.
+							{!isMobile && (
+								<>
+									{' '}
+									<CreateBountyBtn
+										className='hidden md:block'
+										isUsedInTable={true}
+									/>
+									to get started.
+								</>
+							)}
 						</span>
 					</div>
 				</div>

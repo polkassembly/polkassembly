@@ -38,13 +38,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			start: date
 		});
 
-		if (response.message === 'Success' && response?.['list']?.[0]?.['price']) {
-			const price = response?.['list']?.[0]?.['price'];
-			const priceNum: number = parseFloat(price.toFixed(2));
+		if (response.message === 'Success' && response?.['data']?.['list']?.[0]?.['price']) {
+			const price = response?.['data']?.['list']?.[0]?.['price'];
+			const priceNum: number = Math.round(parseFloat(price));
 			if (priceNum == 0) {
 				usdValueOnCreation = null;
 			} else {
-				usdValueOnCreation = price ? String(price) : null;
+				usdValueOnCreation = priceNum ? String(Math.floor(priceNum)) : null;
 			}
 		} else {
 			usdValueOnCreation = null;
@@ -54,19 +54,19 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			if (closedStatus?.status && getStatusesFromCustomStatus(CustomStatus.Closed).includes(closedStatus?.status)) {
 				const closedDate = dayjs(closedStatus?.timeStamp).format('YYYY-MM-DD');
 
-				const response = await getSubscanData('/api/scan/price/history', network, {
+				const valueonClosedResponse = await getSubscanData('/api/scan/price/history', network, {
 					end: closedDate,
 					post_id: postId,
 					start: closedDate
 				});
 
-				if (response.message === 'Success' && response?.['list']?.[0]?.['price']) {
-					const price = response?.['list']?.[0]?.['price'];
-					const priceNum: number = parseFloat(price.toFixed(2));
-					if (priceNum == 0) {
+				if (valueonClosedResponse.message === 'Success' && valueonClosedResponse?.['data']?.['list']?.[0]?.['price']) {
+					const closedPrice = valueonClosedResponse?.['data']?.['list']?.[0]?.['price'];
+					const closedPriceNum: number = Math.round(parseFloat(closedPrice));
+					if (closedPriceNum == 0) {
 						usdValueOnClosed = null;
 					} else {
-						usdValueOnClosed = price ? String(price) : null;
+						usdValueOnClosed = closedPriceNum ? String(Math.floor(closedPriceNum)) : null;
 					}
 				} else {
 					usdValueOnClosed = null;

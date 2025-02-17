@@ -217,7 +217,7 @@ const ActivityFeedSidebar = () => {
 			? formatUSDWithUnits(String(Number(treasuryData?.total?.totalDot) * Number(tokenPrice) + Number(treasuryData?.total?.totalUsdc) + Number(treasuryData?.total?.totalUsdt)))
 			: null;
 
-	const totalDots = treasuryData?.total?.totalUsdc && formatUSDWithUnits(String(treasuryData?.total?.totalDot));
+	const totalDots = treasuryData?.total?.totalDot && formatUSDWithUnits(String(treasuryData?.total?.totalDot));
 	const MythBalance = treasuryData?.relayChain?.myth && formatUSDWithUnits(treasuryData?.relayChain?.myth, 1);
 	const totalUsdcPrice = treasuryData?.total?.totalUsdc && formatUSDWithUnits(treasuryData?.total?.totalUsdc).toString();
 	const totalUsdtPrice = treasuryData?.total?.totalUsdt && formatUSDWithUnits(treasuryData?.total?.totalUsdt).toString();

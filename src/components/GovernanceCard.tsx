@@ -417,19 +417,21 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{!!requestedAmount ? !!beneficiaries?.length ? (
-							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								<AmountTooltip
-									beneficiaries={beneficiaries || []}
-									proposalCreatedAt={created_at as Date}
-									postId={onchainId ? Number(onchainId) : null}
-									timeline={timeline || []}
-								/>
-							</div>
-						) : (
-							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem] text-sm font-medium text-bodyBlue dark:text-white')}>
-								<span>{parseBalance(requestedAmount.toString(), 2, true, network)}</span>
-							</div>
+						{requestedAmount ? (
+							beneficiaries?.length ? (
+								<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+									<AmountTooltip
+										beneficiaries={beneficiaries || []}
+										proposalCreatedAt={created_at as Date}
+										postId={onchainId ? Number(onchainId) : null}
+										timeline={timeline || []}
+									/>
+								</div>
+							) : (
+								<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'text-sm font-medium text-bodyBlue dark:text-white sm:mr-[2.63rem]')}>
+									<span>{parseBalance(requestedAmount.toString(), 2, true, network)}</span>
+								</div>
+							)
 						) : null}
 					</div>
 					{showSimilarPost && content && (
@@ -664,19 +666,21 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								/>
 							</div>
 						)}
-						{!!requestedAmount ? !!beneficiaries?.length ? (
-							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
-								<AmountTooltip
-									beneficiaries={beneficiaries || []}
-									proposalCreatedAt={created_at as Date}
-									postId={onchainId ? Number(onchainId) : null}
-									timeline={timeline || []}
-								/>
-							</div>
-						) : (
-							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem] text-sm font-medium text-bodyBlue dark:text-white')}>
-								<span>{parseBalance(requestedAmount.toString(), 2, true, network)}</span>
-							</div>
+						{requestedAmount ? (
+							beneficiaries?.length ? (
+								<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+									<AmountTooltip
+										beneficiaries={beneficiaries || []}
+										proposalCreatedAt={created_at as Date}
+										postId={onchainId ? Number(onchainId) : null}
+										timeline={timeline || []}
+									/>
+								</div>
+							) : (
+								<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'text-sm font-medium text-bodyBlue dark:text-white sm:mr-[2.63rem]')}>
+									<span>{parseBalance(requestedAmount.toString(), 2, true, network)}</span>
+								</div>
+							)
 						) : null}
 						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>

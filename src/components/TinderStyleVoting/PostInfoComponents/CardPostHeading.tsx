@@ -247,21 +247,23 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{!!post?.requested ? !!post?.beneficiaries?.length ? (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
-							<AmountTooltip
-								beneficiaries={post?.beneficiaries || []}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-							/>
-						</div>
-					) : (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
-							<span>{parseBalance(post?.requested.toString(), 2, true, network)}</span>
-						</div>
+					{post?.requested ? (
+						post?.beneficiaries?.length ? (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<AmountTooltip
+									beneficiaries={post?.beneficiaries || []}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+								/>
+							</div>
+						) : (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<span>{parseBalance(post?.requested.toString(), 2, true, network)}</span>
+							</div>
+						)
 					) : null}
 				</div>
 			)}

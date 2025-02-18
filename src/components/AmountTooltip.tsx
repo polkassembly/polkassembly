@@ -56,14 +56,14 @@ const calculateCurrentValue = ({
 }) => {
 	const usdGeneralIndex = [getGeneralIndexFromAsset({ asset: EAssets.USDT, network }), getGeneralIndexFromAsset({ asset: EAssets.USDC, network })];
 	//all assetId are same
-	const isSameAsset = beneficiaries?.every((beneficiary) => beneficiary.genralIndex === beneficiaries[0].genralIndex);
+	const isSameAsset = beneficiaries?.every((beneficiary) => beneficiary?.genralIndex === beneficiaries[0]?.genralIndex);
 
 	//if all beneficiaries have same assetId and it is not USD
-	if (isSameAsset && !usdGeneralIndex.includes(beneficiaries[0].genralIndex || '')) {
+	if (isSameAsset && !usdGeneralIndex.includes(beneficiaries[0]?.genralIndex || '')) {
 		const amount = beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0));
 		//if any beneficiary has generalIndex
-		if (beneficiaries.some((beneficiary) => beneficiary.genralIndex)) {
-			return getBeneficiaryAmountAndAsset({ amount: amount.toString(), assetId: beneficiaries[0].genralIndex || '', network });
+		if (beneficiaries.some((beneficiary) => beneficiary?.genralIndex)) {
+			return getBeneficiaryAmountAndAsset({ amount: amount.toString(), assetId: beneficiaries[0]?.genralIndex || '', network });
 		}
 		//if all beneficiaries have no generalIndex
 		return parseBalance(amount.toString(), 0, true, network);
@@ -86,7 +86,7 @@ const calculateAmountValue = ({
 	const [bnTokenPrice] = inputToBn(currentTokenPrice, network, false);
 
 	//if all beneficiaries have no generalIndex
-	if (!beneficiaries.some((beneficiary) => beneficiary.genralIndex)) {
+	if (!beneficiaries.some((beneficiary) => beneficiary?.genralIndex)) {
 		const amount = beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0));
 		return `${parseBalance(
 			amount
@@ -99,7 +99,7 @@ const calculateAmountValue = ({
 		)} USD`;
 	} else {
 		const nonUsdGeneralIndex = [getGeneralIndexFromAsset({ asset: EAssets.DED, network }), getGeneralIndexFromAsset({ asset: EAssets.MYTH, network }), null];
-		if (!beneficiaries.some((beneficiary) => nonUsdGeneralIndex.includes(beneficiary.genralIndex || null))) {
+		if (!beneficiaries.some((beneficiary) => nonUsdGeneralIndex.includes(beneficiary?.genralIndex || null))) {
 			const amount = beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0));
 			return `${beneficiaries?.length > 1 ? '$' : ''}${getBeneficiaryAmountAndAsset({
 				amount: amount.toString(),
@@ -229,7 +229,7 @@ const AmountTooltip = ({ beneficiaries, proposalCreatedAt, timeline, postId, cla
 									className='text-xs font-medium text-lightBlue dark:text-blue-dark-high'
 								>
 									{beneficiary?.genralIndex
-										? getBeneficiaryAmountAndAsset({ amount: beneficiary.amount.toString(), assetId: beneficiary?.genralIndex, network })
+										? getBeneficiaryAmountAndAsset({ amount: beneficiary.amount.toString(), assetId: beneficiary?.genralIndex || '', network })
 										: parseBalance(beneficiary?.amount, 1, true, network)}
 									{beneficiaries?.length - 1 !== index && (
 										<Divider

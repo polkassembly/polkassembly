@@ -24,6 +24,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from '../../Post/utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -246,17 +247,24 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{(!!post?.requested || !!post?.beneficiaries?.length) && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
-							<AmountTooltip
-								beneficiaries={post?.beneficiaries || []}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-							/>
-						</div>
-					)}
+					{post?.requested ? (
+						post?.beneficiaries?.length ? (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<AmountTooltip
+									beneficiaries={post?.beneficiaries || []}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+								/>
+							</div>
+						) : (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<span>{parseBalance(post?.requested.toString(), 2, true, network)}</span>
+							</div>
+						)
+					) : null}
 				</div>
 			)}
 

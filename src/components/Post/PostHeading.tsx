@@ -28,6 +28,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { parseBalance } from './GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -260,17 +261,24 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{(!!requestedAmt || !!beneficiaries?.length) && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
-							<AmountTooltip
-								beneficiaries={beneficiaries || []}
-								postId={onchainId ? Number(onchainId) : (onchainId as any)}
-								proposalCreatedAt={created_at as any}
-								timeline={timeline || []}
-							/>
-						</div>
-					)}
+					{requestedAmt ? (
+						beneficiaries?.length ? (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<AmountTooltip
+									beneficiaries={beneficiaries || []}
+									postId={onchainId ? Number(onchainId) : (onchainId as any)}
+									proposalCreatedAt={created_at as any}
+									timeline={timeline || []}
+								/>
+							</div>
+						) : (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<span>{parseBalance(requestedAmt.toString(), 2, true, network)}</span>
+							</div>
+						)
+					) : null}
 				</div>
 			)}
 

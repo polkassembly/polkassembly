@@ -563,22 +563,22 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 												reportSummary();
 												refetchAISummary();
 											}}
-											className='cursor-pointer '
+											className='cursor-pointer bg-transparent transition-transform duration-200 hover:scale-110'
 										>
 											<Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
-												width={16}
-												height={16}
-												className=' rotate-180 scale-x-[-1]'
+												width={18}
+												height={18}
+												className='rotate-180 scale-x-[-1] bg-transparent'
 											/>
 										</div>
-										<div className='cursor-pointer '>
+										<div className='cursor-pointer transition-transform duration-200 hover:scale-110'>
 											<Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
-												width={16}
-												height={16}
+												width={18}
+												height={18}
 												className=''
 											/>
 										</div>

@@ -260,7 +260,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{(!!requestedAmt || !!beneficiaries?.length) && (
+					{!!requestedAmt && beneficiaries && Array.isArray(beneficiaries) && beneficiaries.length > 0 && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<AmountTooltip

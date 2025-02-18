@@ -228,6 +228,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			if (error || !data) {
 				console.log('Error While reporting AI summary data', error);
 				setReportingAISummary(false);
+				queueNotification({
+					header: '',
+					message: 'Error While reporting AI summary.',
+					status: NotificationStatus.ERROR
+				});
 				return;
 			}
 
@@ -560,22 +565,22 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}}
 											className='cursor-pointer '
 										>
-											{/* <Image
+											<Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
-												width={10}
-												height={9}
-											/> */}
-											No
+												width={16}
+												height={16}
+												className=' rotate-180 scale-x-[-1]'
+											/>
 										</div>
 										<div className='cursor-pointer '>
-											{/* <Image
+											<Image
 												alt='like-icon'
 												src='/assets/like-ai-icon.svg'
-												width={10}
-												height={9}
-											/> */}
-											yes
+												width={16}
+												height={16}
+												className=''
+											/>
 										</div>
 									</div>
 								</div>

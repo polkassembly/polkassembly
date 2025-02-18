@@ -13,10 +13,11 @@ import classNames from 'classnames';
 interface IReportDetails {
 	report: IProgressReport;
 	index: number;
+	className?: string;
 }
 
 const ReportDetails: FC<IReportDetails> = (props) => {
-	const { report } = props;
+	const { report, className } = props;
 	const { postData } = usePostDataContext();
 	const [averageRating, setAverageRating] = useState<number>();
 	const { resolvedTheme: theme } = useTheme();
@@ -85,9 +86,14 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 	};
 
 	return (
-		<article className='mt-2 flex flex-col justify-start gap-y-2'>
+		<article className={classNames('mt-2 flex flex-col justify-start', className)}>
 			<div className='flex items-center justify-start gap-x-1'>
-				<h1 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{postData?.title}</h1>
+				{report?.ratings && report?.ratings?.length > 0 && (
+					<p className='m-0 flex items-center p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+						Average Rating({report.ratings.length}): <div className='ml-2 flex gap-1'>{renderStars()}</div>
+					</p>
+				)}
+
 				{!!postData?.progress_report_views?.length && (
 					<Divider
 						className='hidden dark:border-separatorDark md:inline-block'
@@ -108,58 +114,38 @@ const ReportDetails: FC<IReportDetails> = (props) => {
 						{postData?.progress_report_views?.length}
 					</p>
 				)}
-				{!!report?.ratings && report?.ratings?.length > 0 && (
-					<Divider
-						className='hidden dark:border-separatorDark md:inline-block'
-						type='vertical'
-						style={{ borderLeft: '1px solid var(--lightBlue)' }}
-					/>
-				)}
-				{report?.ratings && report?.ratings?.length > 0 && (
-					<p className='m-0 flex items-center p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-						Average Rating({report.ratings.length}): <div className='ml-2 flex'>{renderStars()}</div>
-					</p>
-				)}
 			</div>
-			{/* {report?.progress_summary && (
-				<div className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
-					<Markdown
-						className='post-content m-0 p-0 font-normal'
-						md={report?.progress_summary}
-						theme={theme}
-					/>
-				</div>
-			)} */}
-			{
-				<div className='mt-2 flex flex-col gap-y-4'>
-					{(seeMore ? report?.tasks : report?.tasks?.slice(0, 2))?.map((task) => {
-						return (
+
+			<div className='mt-2 flex flex-col gap-y-2'>
+				{(seeMore ? report?.tasks : report?.tasks?.slice(0, 2))?.map((task) => {
+					return (
+						<div
+							key={task?.title}
+							className='flex items-center justify-between gap-x-4 rounded-lg bg-[#F7F7F7] px-3 py-3 text-sm font-medium text-bodyBlue dark:bg-[#393939] dark:text-blue-dark-high'
+						>
+							<span>{task?.title}</span>
 							<div
-								key={task?.title}
-								className='flex items-center justify-between rounded-xl bg-[#f5f7f9] px-3 py-3 font-normal text-lightBlue dark:bg-[#393939] dark:text-blue-dark-high'
+								className={classNames(
+									'min-w-[93px] rounded-[20px] px-3 py-1.5 text-xs font-medium tracking-wide text-blue-dark-high',
+									task?.status === 'B' ? 'bg-[#5BC044] dark:bg-[#478F37]' : 'bg-[#FF6700] dark:bg-[#D05704]'
+								)}
 							>
-								<span>{task?.title}</span>
-								<div
-									className={classNames(
-										'rounded-xl px-3 py-1.5 text-xs font-medium tracking-wide text-blue-dark-high',
-										task?.status === 'B' ? 'bg-[#5BC044] dark:bg-[#478F37]' : 'bg-[#FF6700] dark:bg-[#D05704]'
-									)}
-								>
-									{task?.status == 'A' ? 'In progress' : 'Completed'}
-								</div>
+								{task?.status == 'A' ? 'In progress' : 'Completed'}
 							</div>
-						);
-					})}
-					{!!report?.tasks?.length && (
+						</div>
+					);
+				})}
+				{!!report?.tasks?.length && report?.tasks?.length > 2 && (
+					<div className='-mt-1 flex items-center justify-start'>
 						<button
 							onClick={() => setSeeMore(!seeMore)}
 							className='cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-pink_primary'
 						>
 							{seeMore ? 'See Less' : 'See More'}
 						</button>
-					)}
-				</div>
-			}
+					</div>
+				)}
+			</div>
 		</article>
 	);
 };

@@ -225,7 +225,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					<Link
 						href='/user-created-bounties'
 						passHref
-						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} z-100 absolute right-0 top-0 flex h-10 w-[150px] items-center justify-center gap-x-1 rounded-[50px] px-6 text-base font-bold text-white xl:h-[48px] xl:w-[180px] xl:px-[36px] xl:text-xl`}
+						className={`${spaceGrotesk.className} ${spaceGrotesk.variable} z-100 absolute right-0 top-0 flex h-6 w-[86px] items-center justify-center gap-x-1 rounded-[50px] px-2 text-[10px] font-bold text-white sm:h-10 sm:w-[150px] sm:px-6 sm:text-base xl:h-[48px] xl:w-[180px] xl:px-[36px] xl:text-xl`}
 						style={{
 							background: 'linear-gradient(266deg, #301DA7 15.23%, #57F 75.34%)'
 						}}
@@ -233,10 +233,11 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 						{' '}
 						<div className='flex items-center gap-[2px] '>
 							View All
-							<ImageIcon
+							<Image
 								src='assets/bounty-icons/redirect-white-icon.svg'
 								alt='arrow right'
-								className=''
+								height={isMobile ? 16 : 25}
+								width={isMobile ? 16 : 24}
 							/>
 						</div>
 					</Link>
@@ -246,7 +247,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					<BountyActivities />
 				</div>
 			</div>
-			<div className='sticky bottom-0 z-20 -ml-4 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black md:hidden'>
+			<div className='sticky bottom-0 z-20 -mb-6 -ml-6 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black sm:-ml-4 md:hidden'>
 				<BountyProposalActionButton className='w-full' />
 			</div>
 		</main>

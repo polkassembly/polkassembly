@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useTheme } from 'next-themes';
 import UserReportInfo from '~src/components/ProgressReport/ProgressReportInfo/UserReportInfo';
+import styled from 'styled-components';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -129,10 +130,10 @@ const ProgressReportTab = ({ className }: Props) => {
 	};
 
 	return (
-		<div className={`${className}`}>
+		<div className={className}>
 			<Collapse
 				size='large'
-				className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+				className={'border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 				expandIconPosition='end'
 				defaultActiveKey={['1']}
 				expandIcon={({ isActive }) => {
@@ -203,4 +204,11 @@ const ProgressReportTab = ({ className }: Props) => {
 	);
 };
 
-export default ProgressReportTab;
+export default styled(ProgressReportTab)`
+	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+		padding: 0 !important;
+	}
+	.ant-collapse-large > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+		padding: 20px 24px 8px 36px !important;
+	}
+`;

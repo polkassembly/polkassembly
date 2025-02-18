@@ -705,7 +705,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 									content={
 										<Collapse
 											collapsible='header'
-											className={`${dmSans.className} ${dmSans.variable} cursor-pointer`}
+											className={`${dmSans.className} ${dmSans.variable} cursor-pointer border-section-light-container dark:border-separatorDark`}
 										>
 											<Collapse.Panel
 												key={1}

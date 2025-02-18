@@ -66,7 +66,7 @@ const calculateCurrentValue = ({
 			return getBeneficiaryAmountAndAsset({ amount: amount.toString(), assetId: beneficiaries[0]?.genralIndex || '', network });
 		}
 		//if all beneficiaries have no generalIndex
-		return parseBalance(amount.toString(), 0, true, network);
+		return parseBalance(amount.toString(), 2, true, network);
 	} else {
 		return calculateAmountValue({ beneficiaries, currentTokenPrice, dedTokenUsdPrice, network });
 	}
@@ -93,11 +93,12 @@ const calculateAmountValue = ({
 				.mul(bnTokenPrice)
 				.div(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)))
 				.toString(),
-			0,
+			2,
 			false,
 			network
 		)} USD`;
 	} else {
+		//beneficiaries with non usd assets:
 		const nonUsdGeneralIndex = [getGeneralIndexFromAsset({ asset: EAssets.DED, network }), getGeneralIndexFromAsset({ asset: EAssets.MYTH, network }), null];
 		if (!beneficiaries.some((beneficiary) => nonUsdGeneralIndex.includes(beneficiary?.genralIndex || null))) {
 			const amount = beneficiaries.reduce((acc, item) => acc.add(new BN(item.amount)), new BN(0));
@@ -110,7 +111,9 @@ const calculateAmountValue = ({
 			})}`;
 		} else {
 			let totalAmount = ZERO_BN;
+			//beneficiaries with multiple assets:
 			beneficiaries?.map((beneficiary: IBeneficiary) => {
+				//converting all amount to network token
 				if (beneficiary?.genralIndex) {
 					const amount = getUsdValueFromAsset({
 						currentTokenPrice: currentTokenPrice || '0',
@@ -138,7 +141,7 @@ const calculateAmountValue = ({
 					.mul(bnTokenPrice)
 					.div(new BN(10).pow(new BN(chainProperties[network].tokenDecimals)))
 					.toString(),
-				0,
+				2,
 				false,
 				network
 			)} USD`;
@@ -205,7 +208,7 @@ const AmountTooltip = ({ beneficiaries, proposalCreatedAt, timeline, postId, cla
 			setLoading(false);
 			return;
 		}
-		setUsdValueOnClosed(data?.usdValueOnClosed || null);
+		setUsdValueOnClosed(data?.usdValueOnClosed ? Math.round(Number(data?.usdValueOnClosed))?.toString() : null);
 		setUsdValueOnCreation(data?.usdValueOnCreation || null);
 		setLoading(false);
 	};

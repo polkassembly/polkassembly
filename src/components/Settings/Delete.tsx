@@ -90,7 +90,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className={`bg-white dark:border-separatorDark dark:bg-section-dark-overlay ${className}`}
+			className={`border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay ${className}`}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;

@@ -52,7 +52,7 @@ const PostProgressReport = ({ className }: Props) => {
 		<div className={`${className} mt-2 rounded-lg border border-solid border-[#796EEC]`}>
 			<Collapse
 				size='large'
-				className={'h-full bg-[#F0EEFE] dark:bg-transparent'}
+				className={'h-full border-section-light-container bg-[#F0EEFE] dark:border-separatorDark dark:bg-transparent'}
 				expandIconPosition='end'
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;

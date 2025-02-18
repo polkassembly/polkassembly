@@ -417,7 +417,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{(!!requestedAmount || !!beneficiaries?.length) && (
+						{(!!requestedAmount || (beneficiaries && Array.isArray(beneficiaries) && beneficiaries.length > 0)) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
 								<AmountTooltip
 									beneficiaries={beneficiaries || []}
@@ -660,7 +660,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								/>
 							</div>
 						)}
-						{(!!requestedAmount || !!beneficiaries?.length) && (
+						{(!!requestedAmount || (beneficiaries && Array.isArray(beneficiaries) && beneficiaries.length > 0)) && (
 							<div className={classNames(requestedAmount && requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
 								<AmountTooltip
 									beneficiaries={beneficiaries || []}

@@ -246,7 +246,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{(!!post?.requested || !!post?.beneficiaries?.length) && (
+					{(!!post?.requested || (post?.beneficiaries && Array.isArray(post.beneficiaries) && post.beneficiaries.length > 0)) && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<AmountTooltip

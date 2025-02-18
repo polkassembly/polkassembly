@@ -1139,10 +1139,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					isFromOgtracker: true,
 					progress_file: OGdata?.[0]?.proplink || '',
 					progress_summary: OGdata?.[0]?.summary || '',
+					ratings: data?.progress_report?.[0]?.ratings || [],
 					refNum: OGdata?.[0]?.refnum || '',
 					tasks: OGdata?.[0]?.tasks || []
 				};
-
 				if (['polkassembly.io', 'subsquare.io'].includes(ogReport?.progress_file || '')) {
 					ogReport.progress_file = '';
 				}
@@ -1160,6 +1160,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					});
 				}
 			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;

@@ -322,7 +322,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<span className='text-sm font-medium text-pink_primary max-sm:hidden'>Delegate</span>
 					</Button>
 				</div>
-				<div className={'mb-4 mt-2 flex h-12 flex-col gap-0 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+				<div className={'mb-4 mt-2 flex h-[52px] flex-col gap-0 pl-5 text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
 					<p className='bio w-full'>
 						{delegate?.bio ? (
 							<Markdown

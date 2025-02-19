@@ -298,6 +298,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							destroyTooltipOnHide
 							disableIdenticon={Boolean(delegate?.image?.length)}
 							iconSize={26}
+							showProxyTitle={false}
 							usernameClassName='font-semibold'
 							isTruncateUsername={Boolean(delegate?.identityInfo?.parentProxyAddress) || !!(delegate?.identityInfo?.display && delegate?.identityInfo?.display?.length > 15)}
 							className='flex items-center'

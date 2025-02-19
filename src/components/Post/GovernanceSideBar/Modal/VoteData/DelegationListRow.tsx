@@ -30,6 +30,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 						displayInline={true}
 						showFullAddress
 						address={voteData?.voter}
+						showProxyTitle={false}
 					/>
 				</a>
 			) : (
@@ -40,6 +41,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 						displayInline={true}
 						showFullAddress
 						address={voteData?.voter}
+						showProxyTitle={false}
 					/>
 				</div>
 			)}

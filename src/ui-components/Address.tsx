@@ -7,6 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/router';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
@@ -79,6 +80,7 @@ interface Props {
 	addressWithVerifiedTick?: boolean;
 	isUsedIndelegationNudge?: boolean;
 	isUsedInDelegationProfile?: boolean;
+	isUsedInProfileBalances?: boolean;
 	isUsedInAccountsPage?: boolean;
 	disableParentProxyAddressTitle?: boolean;
 	showCopyIcon?: boolean;
@@ -186,12 +188,15 @@ const Address = (props: Props) => {
 		isUsedInDelegationProfile = false,
 		isUsedInAccountsPage = false,
 		disableParentProxyAddressTitle = false,
+		isUsedInProfileBalances = false,
 		showCopyIcon = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise | null>(null);
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const router = useRouter();
+	const isDelegation = router.asPath.includes('delegation');
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
@@ -513,14 +518,12 @@ const Address = (props: Props) => {
 									<div
 										className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} ${
 											!disableAddressClick && 'cursor-pointer hover:underline'
-										} flex items-center font-normal `}
+										} flex items-center font-normal ${isDelegation && isUsedInProfileBalances && 'dark:text-white'} `}
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-
 										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
-
 										{addressWithVerifiedTick && (
 											<div>
 												{!kiltName && !isGood && (

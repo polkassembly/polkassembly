@@ -184,6 +184,7 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 			<>
 				<div key={post?.post_id}>
 					<ActivityFeedPostHeader
+						key={post?.post_id}
 						post={post}
 						tallyData={tallyData}
 						updateTally={updateTally}

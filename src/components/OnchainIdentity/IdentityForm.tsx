@@ -440,7 +440,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 			>
 				{onchainIdentitySupportedNetwork.includes(network) && ['kusama', 'polkadot'].includes(network) && (
 					<div
-						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
+						className='mb-4 flex h-11 w-full items-center justify-start rounded-[4px] px-2 min-[460px]:h-8'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}
 					>
 						<span className='font-semibold capitalize text-white'>People Chain is now LIVE for {network} network</span>

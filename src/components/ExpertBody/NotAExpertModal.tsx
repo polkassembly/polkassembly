@@ -160,7 +160,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 					</div>
 					<div className='mt-6 pb-3 text-center'>
 						<Button
-							className='h-10 w-96  border-none bg-[#E5007A] stroke-none text-white'
+							className='h-10 w-full border-none  bg-[#E5007A] stroke-none text-white sm:w-96'
 							onClick={() => {
 								setIsInitial(false);
 							}}

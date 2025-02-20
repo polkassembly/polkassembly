@@ -167,16 +167,16 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const handleDebounceTallyData = useCallback(_.debounce(handleSummaryReload, 10000), [updateTally]);
+	const handleDebounceTallyData = useCallback(_.debounce(handleSummaryReload, 5000), [updateTally]);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const handleDebounceAyeNayCount = useCallback(_.debounce(handleAyeNayCount, 10000), [updateTally]);
+	const handleDebounceAyeNayCount = useCallback(_.debounce(handleAyeNayCount, 5000), [updateTally]);
 
 	useEffect(() => {
 		setIsLoading(true);
 		handleDebounceTallyData();
 		handleDebounceAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [updateTally]);
+	}, [updateTally, tally]);
 
 	return (
 		<>

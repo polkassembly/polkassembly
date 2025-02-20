@@ -647,7 +647,7 @@ const Address = (props: Props) => {
 											alt=''
 											width={24}
 											height={24}
-											className='ml-1 sm:ml-2'
+											className='ml-[2px] sm:ml-2'
 										/>
 									</Tooltip>
 								)}

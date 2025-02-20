@@ -635,7 +635,7 @@ const Address = (props: Props) => {
 									)}
 								</div>
 							)}
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center gap-1 sm:gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
 									<Tooltip
@@ -647,7 +647,7 @@ const Address = (props: Props) => {
 											alt=''
 											width={24}
 											height={24}
-											className='ml-2'
+											className='ml-1 sm:ml-2'
 										/>
 									</Tooltip>
 								)}

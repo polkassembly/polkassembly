@@ -281,7 +281,10 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 						</div>
 					</div>
 				</Link>
-				<div className='hidden lg:block'>
+				<div
+					key={post?.post_id}
+					className='hidden lg:block'
+				>
 					{post?.isVoted ? (
 						<div className='flex items-center gap-5'>
 							<div className='flex flex-col justify-center'>

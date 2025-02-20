@@ -120,12 +120,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>();
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
-	const [combinedVotes, setCombinedVotes] = useState<any[]>([]);
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
-	// const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
 
 	const [tallyData, setTallyData] = useState({
 		abstain: ZERO,
@@ -169,6 +167,30 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const handleSortByClick = ({ key }: { key: string }) => {
 		setSortBy(key);
 	};
+
+	const getVoteFromHistory = useCallback(async () => {
+		const { data } = await nextApiClientFetch('api/v1/votes/history', {
+			listingLimit: VOTES_LISTING_LIMIT,
+			page: currentPage,
+			proposalIndex: referendumId,
+			proposalType: postType,
+			voterAddress: voterAddress
+		});
+		if (data) {
+			const res = getFromatedData((data as any)?.votes);
+			setVotesRes(res);
+			firstRef.current = false;
+			let decision: DecisionType = 'yes';
+			if (res.yes.count > 0) {
+				decision = 'yes';
+			} else if (res.no.count > 0) {
+				decision = 'no';
+			} else if (res.abstain.count > 0) {
+				decision = 'abstain';
+			}
+			setDecision(decision);
+		}
+	}, [currentPage, postType, referendumId, voterAddress]);
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
@@ -215,22 +237,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			isLoading: true,
 			message: 'Loading votes'
 		});
+		if (!voterAddress) return;
 		getReferendumV2VoteInfo().then(() => {
-			let url;
-			let payload: any;
-			if (voterAddress && isUsedInVotedModal) {
-				url = 'api/v1/votes/history';
-				payload = {
-					listingLimit: VOTES_LISTING_LIMIT,
-					page: currentPage,
-					proposalIndex: referendumId,
-					proposalType: postType,
-					voterAddress: voterAddress
-				};
-			} else {
-				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
-			}
-			nextApiClientFetch<IVotesResponse>(url, payload)
+			const url = `api/v1/votes?address=${voterAddress}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			nextApiClientFetch<IVotesResponse>(url)
 				.then((res) => {
 					if (res.error) {
 						console.log(res.error);
@@ -240,9 +250,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						});
 					} else {
 						const votesRes = (res.data as any)?.votes ? getFromatedData((res?.data as any)?.votes) : res?.data;
-						let combinedVotes;
-						setVotesRes(votesRes);
-						if (votesRes && firstRef.current) {
+						if (!votesRes || (!votesRes.yes.count && !votesRes.no.count && !votesRes.abstain.count && isUsedInVotedModal)) {
+							getVoteFromHistory();
+						} else if (votesRes && firstRef.current) {
 							firstRef.current = false;
 							let decision: DecisionType = 'yes';
 							if (votesRes.yes.count > 0) {
@@ -253,10 +263,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								decision = 'abstain';
 							}
 							setDecision(decision);
-						}
-						if (votesRes && votesRes.abstain && votesRes.no && votesRes.yes) {
-							combinedVotes = [...votesRes.abstain.votes, ...votesRes.no.votes, ...votesRes.yes.votes];
-							setCombinedVotes(combinedVotes);
+							setVotesRes(votesRes);
 						}
 						setLoadingStatus({
 							isLoading: false,
@@ -361,53 +368,29 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</span>
 									</div>
 								</div>
-								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px] w-full sm:w-min'>
-										{votesRes &&
-											decision &&
-											!!votesRes[decision]?.votes?.length &&
-											votesRes[decision]?.votes.map((voteData: any, index: number) => (
-												<VoterRow
-													className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
-													key={`${voteData.voter}_${index}`}
-													currentKey={activeKey}
-													voteType={voteType}
-													voteData={voteData}
-													index={index}
-													isReferendum2={isReferendum2}
-													setDelegationVoteModal={setDelegationVoteModal}
-													setActiveKey={setActiveKey}
-													tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
-													decision={decision}
-													referendumId={referendumId}
-												/>
-											))}
-										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
-									</div>
-								) : (
-									<div className='max-h-[360px] w-full sm:w-min'>
-										{combinedVotes &&
-											!!combinedVotes.length &&
-											combinedVotes.map((voteData: any, index: number) => (
-												<VoterRow
-													className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}
-													key={`${voteData.voter}_${index}`}
-													currentKey={activeKey}
-													voteType={voteType}
-													voteData={voteData}
-													index={index}
-													isReferendum2={isReferendum2}
-													setDelegationVoteModal={setDelegationVoteModal}
-													setActiveKey={setActiveKey}
-													tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
-													decision={decision}
-													referendumId={referendumId}
-													isUsedInVotedModal={isUsedInVotedModal}
-												/>
-											))}
-										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
-									</div>
-								)}
+
+								<div className='max-h-[360px] w-full sm:w-min'>
+									{votesRes &&
+										decision &&
+										!!votesRes[decision]?.votes?.length &&
+										votesRes[decision]?.votes.map((voteData: any, index: number) => (
+											<VoterRow
+												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
+												key={`${voteData.voter}_${index}`}
+												currentKey={activeKey}
+												voteType={voteType}
+												voteData={voteData}
+												index={index}
+												isReferendum2={isReferendum2}
+												setDelegationVoteModal={setDelegationVoteModal}
+												setActiveKey={setActiveKey}
+												tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
+												decision={decision}
+												referendumId={referendumId}
+											/>
+										))}
+									{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+								</div>
 							</VoteContainer>
 						</div>
 						{!isUsedInVotedModal && (

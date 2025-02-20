@@ -9,7 +9,8 @@ import removeMd from 'remove-markdown';
 
 export function removeSymbols(input: string | undefined): string {
 	if (!input) return '';
-	return removeMd(striptags(String(input)));
+	const decodedInput = String(input).replace(/&nbsp;/g, ' ');
+	return removeMd(striptags(decodedInput)).replace(/\s+/g, ' ').trim();
 }
 
 export function GenerateDiffHtml(originalHtml: string, modifiedHtml: string) {

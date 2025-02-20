@@ -182,13 +182,15 @@ const ActivityFeedPostItem: React.FC<any> = ({ post }: { post: any }) => {
 	return (
 		<div className='hover:scale-30 rounded-2xl border-[0.6px] border-solid border-[#D2D8E0] bg-white  px-5 pb-6 pt-5 font-dmSans  hover:shadow-md dark:border-solid dark:border-[#4B4B4B] dark:bg-[#0D0D0D] md:px-7'>
 			<>
-				<ActivityFeedPostHeader
-					post={post}
-					tallyData={tallyData}
-					updateTally={updateTally}
-					isLoading={isLoading}
-					setUpdateTally={setUpdateTally}
-				/>
+				<div key={post?.post_id}>
+					<ActivityFeedPostHeader
+						post={post}
+						tallyData={tallyData}
+						updateTally={updateTally}
+						isLoading={isLoading}
+						setUpdateTally={setUpdateTally}
+					/>
+				</div>
 				<Link
 					href={`/referenda/${post?.post_id}`}
 					passHref

@@ -137,12 +137,12 @@ const ParentProxyTitle = ({
 					className='border-[1px] bg-lightBlue dark:bg-separatorDark'
 				/>
 				<span
-					className='font-medium text-[#407BFF] hidden sm:block'
+					className='hidden font-medium text-[#407BFF] sm:block'
 					title={title}
 				>
 					{title?.length > 10 || truncate ? `${title?.slice(0, 10)}...` : title}
 				</span>
-				<span className='sm:ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
+				<span className='rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark sm:ml-0.5'>
 					<Image
 						src={'/assets/icons/proxy-icon.svg'}
 						height={14}

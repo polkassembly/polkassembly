@@ -37,6 +37,7 @@ interface Props {
 	isTruncateUsername?: boolean;
 	showProxyDropdown?: boolean;
 	isUsedInProxy?: boolean;
+	isUsedInProfileBalances?: boolean;
 }
 
 const AddressDropdown = ({
@@ -53,7 +54,8 @@ const AddressDropdown = ({
 	addressTextClassName,
 	isTruncateUsername = true,
 	showProxyDropdown,
-	isUsedInProxy = false
+	isUsedInProxy = false,
+	isUsedInProfileBalances = false
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
@@ -161,6 +163,7 @@ const AddressDropdown = ({
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
 					addressClassName={classNames('text-lightBlue text-xs dark:text-blue-dark-medium', isSwitchButton ? 'text-white' : '')}
 					disableAddressClick
+					isUsedInProfileBalances={isUsedInProfileBalances}
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip
 					iconSize={isUsedInProxy ? 24 : 26}

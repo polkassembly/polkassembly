@@ -10,8 +10,8 @@ import { chainProperties, network, treasuryAssets } from 'src/global/networkCons
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
-import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+// import queueNotification from '~src/ui-components/QueueNotification';
+// import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { typesBundle } from '@kiltprotocol/type-definitions';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
@@ -122,11 +122,11 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		if (api) {
 			setIsApiLoading(true);
 			const timer = setTimeout(async () => {
-				queueNotification({
-					header: 'Error!',
-					message: 'RPC connection Timeout.',
-					status: NotificationStatus.ERROR
-				});
+				// queueNotification({
+				// header: 'Error!',
+				// message: 'RPC connection Timeout.',
+				// status: NotificationStatus.ERROR
+				// });
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
@@ -167,11 +167,11 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				})
 				.catch(async (error) => {
 					clearTimeout(timer);
-					queueNotification({
-						header: 'Error!',
-						message: 'RPC connection error.',
-						status: NotificationStatus.ERROR
-					});
+					// queueNotification({
+					// header: 'Error!',
+					// message: 'RPC connection error.',
+					// status: NotificationStatus.ERROR
+					// });
 					setIsApiLoading(false);
 					setApiReady(false);
 					await api.disconnect();
@@ -211,11 +211,11 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 			console.log('API reconnected successfully');
 		} catch (error) {
 			console.error('Failed to reconnect API:', error);
-			queueNotification({
-				header: 'Error!',
-				message: 'Failed to reconnect to the RPC. Please refresh the page.',
-				status: NotificationStatus.ERROR
-			});
+			// queueNotification({
+			// header: 'Error!',
+			// message: 'Failed to reconnect to the RPC. Please refresh the page.',
+			// status: NotificationStatus.ERROR
+			// });
 		} finally {
 			setIsApiLoading(false);
 		}

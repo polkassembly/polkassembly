@@ -75,14 +75,14 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 	const requestedAmountFormatted = useMemo(() => {
 		return post?.requestedAmount ? new BN(post.requestedAmount).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	}, [post?.requestedAmount, network]);
-	const ayes = tallyData.ayes;
-	const nays = tallyData.nays;
+	// const ayes = tallyData.ayes;
+	// const nays = tallyData.nays;
 	const [decision, setDecision] = useState<IPeriod>();
 	const router = useRouter();
-	const ayesNumber = Number(ayes.toString());
+	// const ayesNumber = Number(ayes.toString());
 	const { resolvedTheme: theme } = useTheme();
 	const [remainingTime, setRemainingTime] = useState<string>('');
-	const naysNumber = Number(nays.toString());
+	// const naysNumber = Number(nays.toString());
 	const convertRemainingTime = (periodEndsAt: any) => {
 		const diffMilliseconds = periodEndsAt.diff();
 		const diffDuration = dayjs.duration(diffMilliseconds);
@@ -94,12 +94,12 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
-	const { ayesPercentage, naysPercentage, isAyeNaN, isNayNaN } = useMemo(() => {
-		const totalVotes = ayesNumber + naysNumber;
-		const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
-		const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
-		return { ayesPercentage, isAyeNaN: isNaN(ayesPercentage), isNayNaN: isNaN(naysPercentage), naysPercentage };
-	}, [ayesNumber, naysNumber]);
+	// const { ayesPercentage, naysPercentage, isAyeNaN, isNayNaN } = useMemo(() => {
+	// const totalVotes = ayesNumber + naysNumber;
+	// const ayesPercentage = totalVotes > 0 ? (ayesNumber / totalVotes) * 100 : 0;
+	// const naysPercentage = totalVotes > 0 ? (naysNumber / totalVotes) * 100 : 0;
+	// return { ayesPercentage, isAyeNaN: isNaN(ayesPercentage), isNayNaN: isNaN(naysPercentage), naysPercentage };
+	// }, [ayesNumber, naysNumber]);
 	const confirmedStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(post?.timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(post?.status || '');
@@ -285,7 +285,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 					key={post?.post_id}
 					className='hidden lg:block'
 				>
-					{post?.isVoted ? (
+					{/* {post?.isVoted ? (
 						<div className='flex items-center gap-5'>
 							<div className='flex flex-col justify-center'>
 								<span className='text-[20px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayesPercentage.toFixed(1)}%</span>
@@ -298,8 +298,9 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-blue-light-medium dark:text-blue-dark-medium'>Nay</span>
 							</div>
 						</div>
-					) : (
-						<div className='mt-1 flex flex-col items-end '>
+					) : ( */}
+					<div className='mt-1 flex flex-col items-end '>
+						{!post?.isVoted && (
 							<div
 								onClick={() => {
 									if (!userid) {
@@ -313,55 +314,56 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								<VoteIcon className=' mt-[1px]' />
 								<p className='cursor-pointer pt-3 font-medium'>{!lastVote ? 'Cast Vote' : 'Cast Vote Again'}</p>
 							</div>
+						)}
 
-							<div className='flex items-center gap-2'>
-								{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
-									<div className='flex items-center gap-2'>
-										<div className='mt-2 min-w-[30px]'>
-											<Tooltip
-												overlayClassName='max-w-none'
-												title={
-													<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
-														decidingBlock !== 0 ? `#${decidingBlock}` : ''
-													}`}</div>
-												}
-												color='#575255'
-											>
-												<div className='mt-2 min-w-[30px] hover:cursor-pointer'>
-													<ProgressBar
-														strokeWidth={7}
-														percent={decision.periodPercent || 0}
-														strokeColor='#407AFC'
-														trailColor='#D4E0FC'
-														showInfo={false}
-													/>
-												</div>
-											</Tooltip>
-										</div>
-										<Divider
-											type='vertical'
-											className='border-l-1 border-[#485F7D] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
-										/>
+						<div className='flex items-center gap-2'>
+							{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
+								<div className='flex items-center gap-2'>
+									<div className='mt-2 min-w-[30px]'>
+										<Tooltip
+											overlayClassName='max-w-none'
+											title={
+												<div className={`p-1.5 ${dmSans.className} ${dmSans.variable} flex items-center whitespace-nowrap text-xs`}>{`Deciding ends in ${remainingTime} ${
+													decidingBlock !== 0 ? `#${decidingBlock}` : ''
+												}`}</div>
+											}
+											color='#575255'
+										>
+											<div className='mt-2 min-w-[30px] hover:cursor-pointer'>
+												<ProgressBar
+													strokeWidth={7}
+													percent={decision.periodPercent || 0}
+													strokeColor='#407AFC'
+													trailColor='#D4E0FC'
+													showInfo={false}
+												/>
+											</div>
+										</Tooltip>
 									</div>
-								)}
-								<Spin
-									spinning={isLoading}
-									size='small'
-								>
-									<div className='hover:cursor-pointer'>
-										<ActivityFeedProgressinlisting
-											index={0}
-											proposalType={ProposalType.REFERENDUM_V2}
-											votesData={votesData}
-											onchainId={post?.post_id}
-											status={post?.status}
-											tally={tallyData}
-										/>
-									</div>
-								</Spin>
-							</div>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-[#485F7D] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+									/>
+								</div>
+							)}
+							<Spin
+								spinning={isLoading}
+								size='small'
+							>
+								<div className='hover:cursor-pointer'>
+									<ActivityFeedProgressinlisting
+										index={0}
+										proposalType={ProposalType.REFERENDUM_V2}
+										votesData={votesData}
+										onchainId={post?.post_id}
+										status={post?.status}
+										tally={tallyData}
+									/>
+								</div>
+							</Spin>
 						</div>
-					)}
+					</div>
+					{/* )} */}
 				</div>
 			</div>
 			{showModal && (

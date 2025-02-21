@@ -87,6 +87,7 @@ import AwardChildBountyButton from '~src/components/Bounties/AwardChildBountyBut
 import ClaimChildBountyButton from '~src/components/Bounties/ClaimChildBountyButton';
 import ExpertBodyCard from '~src/components/ExpertBody';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import AddCuratorButton from '~src/components/AddCurator/AddCuratorButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -1029,6 +1030,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							trackName={String(trackName)}
 							toggleEdit={toggleEdit}
 						/>
+						{proposalType === ProposalType.BOUNTIES && <AddCuratorButton />}
 						{accountsNotFound || extensionNotFound ? (
 							<GovSidebarCard>
 								{accountsNotFound ? (

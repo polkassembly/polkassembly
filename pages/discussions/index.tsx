@@ -140,7 +140,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					posts={posts}
 					defaultPage={page || 1}
 					count={count}
-					className='mt-6'
+					className=''
 				/>
 			) : (
 				<OffChainPostsContainer

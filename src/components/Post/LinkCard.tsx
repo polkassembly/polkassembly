@@ -12,7 +12,7 @@ interface Props {
 }
 const LinkCard = ({ timeline, proposalType }: Props) => {
 	return (
-		<div className='mb-6 w-full rounded-md bg-white px-4 py-5 drop-shadow-md dark:bg-section-dark-overlay'>
+		<div className='mb-4 w-full rounded-md bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay sm:mb-6 sm:px-4 sm:py-5'>
 			{timeline?.map((item: any, index: number) => {
 				const firestoreProposalType = getFirestoreProposalType(item?.type);
 				return proposalType === firestoreProposalType ? (

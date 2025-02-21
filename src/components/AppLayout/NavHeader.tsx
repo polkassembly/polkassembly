@@ -376,7 +376,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
-				className='ml-3 mr-5 flex items-center justify-center lg:hidden'
+				className='-ml-2 mr-5 flex items-center justify-center sm:ml-3 lg:hidden'
 			>
 				{!sidedrawer ? (
 					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
@@ -484,7 +484,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
+							className='-mr-2 ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px] dark:text-white' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
@@ -561,7 +561,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								setSidedrawer(false);
 								setOpen(true);
 							}}
-							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
+							className='-mr-2 flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
 						>
 							<Image
 								className='h-[20px] w-[20px] rounded-full'

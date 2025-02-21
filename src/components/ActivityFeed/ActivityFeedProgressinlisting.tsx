@@ -215,14 +215,14 @@ const ActivityFeedProgressinlisting = ({ tally, onchainId, status, proposalType,
 								Aye ={' '}
 								{usingTallyForAyeNayVotes
 									? ayes
-									: formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
+									: formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}{' '}
 								({(isAyeNaN ? 50 : ayePercent)?.toFixed(2)}%){' '}
 							</span>
 							<span>
 								Nay ={' '}
 								{usingTallyForAyeNayVotes
 									? nays
-									: formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
+									: formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 2)}{' '}
 								({(isNayNaN ? 50 : nayPercent)?.toFixed(2)}%){' '}
 							</span>
 						</div>

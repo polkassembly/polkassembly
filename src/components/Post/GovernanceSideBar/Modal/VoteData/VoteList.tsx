@@ -168,7 +168,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		setSortBy(key);
 	};
 
-	const getVoteFromHistory = useCallback(async () => {
+	const fetchVotesFromHistory = useCallback(async () => {
 		const { data } = await nextApiClientFetch('api/v1/votes/history', {
 			listingLimit: VOTES_LISTING_LIMIT,
 			page: currentPage,
@@ -237,7 +237,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			isLoading: true,
 			message: 'Loading votes'
 		});
-		if (!voterAddress) return;
+
 		getReferendumV2VoteInfo().then(() => {
 			const url = `api/v1/votes?address=${voterAddress}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
 			nextApiClientFetch<IVotesResponse>(url)
@@ -249,21 +249,21 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							message: ''
 						});
 					} else {
-						const votesRes = (res.data as any)?.votes ? getFromatedData((res?.data as any)?.votes) : res?.data;
-						if (!votesRes || (!votesRes.yes.count && !votesRes.no.count && !votesRes.abstain.count && isUsedInVotedModal)) {
-							getVoteFromHistory();
-						} else if (votesRes && firstRef.current) {
+						const votesResponse = (res.data as any)?.votes ? getFromatedData((res?.data as any)?.votes) : res?.data;
+						setVotesRes(votesResponse);
+						if ((!votesResponse || (!votesResponse.yes.count && !votesResponse.no.count && !votesResponse.abstain.count)) && isUsedInVotedModal) {
+							fetchVotesFromHistory();
+						} else if (votesResponse && firstRef.current) {
 							firstRef.current = false;
 							let decision: DecisionType = 'yes';
-							if (votesRes.yes.count > 0) {
+							if (votesResponse.yes.count > 0) {
 								decision = 'yes';
-							} else if (votesRes.no.count > 0) {
+							} else if (votesResponse.no.count > 0) {
 								decision = 'no';
-							} else if (votesRes.abstain.count > 0) {
+							} else if (votesResponse.abstain.count > 0) {
 								decision = 'abstain';
 							}
 							setDecision(decision);
-							setVotesRes(votesRes);
 						}
 						setLoadingStatus({
 							isLoading: false,

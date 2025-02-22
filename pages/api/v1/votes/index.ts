@@ -13,6 +13,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getOrderBy } from './utils/votesSorted';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export interface IVotesResponse {
 	yes: {
@@ -76,9 +77,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 
 	let votesQuery = GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
-	if (address) {
+	if (!!address && typeof address === 'string' && !!getEncodedAddress(address, network)) {
 		votesQuery = GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
-		variables['voter_eq'] = address;
+		variables['voter_eq'] = getEncodedAddress(address, network) || address || '';
 	}
 
 	const decisions = ['yes', 'no', 'abstain'];

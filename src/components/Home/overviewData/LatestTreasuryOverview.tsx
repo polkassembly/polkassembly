@@ -395,7 +395,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='flex items-baseline gap-x-[6px]'>
 													{nextBurn.value ? (
 														<div className='flex items-baseline gap-x-[3px]'>
-															<span className='text-lg font-medium'>{nextBurn.value}</span>
+															<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>{nextBurn.value}</span>
 															<span className='text-base font-medium text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 														</div>
 													) : null}

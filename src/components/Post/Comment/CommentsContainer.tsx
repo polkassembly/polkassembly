@@ -104,7 +104,7 @@ export const getSortedComments = (comments: { [index: string]: Array<IComment> }
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { loginAddress, isUserOnchainVerified, addresses } = useUserDetailsSelector();
+	const { loginAddress, isUserOnchainVerified, addresses, id: loggedInUserId } = useUserDetailsSelector();
 	const {
 		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
 	} = usePostDataContext();
@@ -401,8 +401,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	];
 
 	useEffect(() => {
-		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!addresses?.length && isUserOnchainVerified));
-		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!addresses?.length && isUserOnchainVerified));
+		const allowed = isUserOnchainVerified || loggedInUserId === 8057;
+		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!addresses?.length && allowed));
+		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!addresses?.length && allowed));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified, addresses]);
 

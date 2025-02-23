@@ -28,7 +28,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import MultipleBeneficiariesAmount from '../MultipleBeneficiariesAmount';
+import { parseBalance } from './GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -39,11 +39,10 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	),
 	ssr: false
 });
-const BeneficiaryAmoutTooltip = dynamic(() => import('../BeneficiaryAmoutTooltip'), {
+const AmountTooltip = dynamic(() => import('~src/components/AmountTooltip'), {
 	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
-
 interface ITagListingProps {
 	className?: string;
 	tags: string[];
@@ -262,32 +261,24 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							status={status}
 						/>
 					)}
-					{(!!requestedAmt || !!beneficiaries?.length) && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							<span> Requested: </span>
-							{beneficiaries && beneficiaries?.length > 1 ? (
-								<MultipleBeneficiariesAmount
+					{requestedAmt ? (
+						beneficiaries?.length ? (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<AmountTooltip
 									beneficiaries={beneficiaries || []}
 									postId={onchainId ? Number(onchainId) : (onchainId as any)}
 									proposalCreatedAt={created_at as any}
 									timeline={timeline || []}
 								/>
-							) : (
-								<>
-									<BeneficiaryAmoutTooltip
-										assetId={beneficiaries ? beneficiaries?.[0]?.genralIndex || null : null}
-										requestedAmt={requestedAmt?.toString() || (!!beneficiaries && beneficiaries?.[0]?.amount.toString()) || null}
-										className={'flex items-center justify-center text-xs'}
-										postId={onchainId ? Number(onchainId) : (onchainId as any)}
-										proposalCreatedAt={created_at as any}
-										timeline={timeline || []}
-										key={onchainId ? Number(onchainId) : (onchainId as any)}
-										usedInPostPage
-									/>
-								</>
-							)}
-						</div>
-					)}
+							</div>
+						) : (
+							<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span> Requested: </span>
+								<span>{parseBalance(requestedAmt.toString(), 2, true, network)}</span>
+							</div>
+						)
+					) : null}
 				</div>
 			)}
 

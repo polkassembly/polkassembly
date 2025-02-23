@@ -18,6 +18,8 @@ import { useQuoteCommentContext } from '~src/context';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import { EditorEvent } from 'tinymce';
 
+const FILTERED_TAGS = ['object', 'embed', 'iframe', 'script', 'style', 'form', 'input', 'button', 'textarea', 'select', 'meta', 'link', 'base', 'applet'];
+
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
 	strikethrough: true,
@@ -228,6 +230,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
 							onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
 							init={{
+								convert_unsafe_embeds: true,
 								block_unsupported_drop: false,
 								branding: false,
 								content_style: theme === 'dark' ? editorContentStyleDark : editorContentStyle,
@@ -297,6 +300,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									pasteRef.current = '';
 								},
 								setup: (editor) => {
+									// Add node filters to remove unsafe elements
+									editor.on('PreInit', () => {
+										editor.parser.addNodeFilter(FILTERED_TAGS.join(','), (nodes) => {
+											for (const node of nodes) {
+												node.remove();
+											}
+										});
+										editor.serializer.addNodeFilter(FILTERED_TAGS.join(','), (nodes) => {
+											for (const node of nodes) {
+												node.remove();
+											}
+										});
+									});
+
 									editor.on('init', () => {
 										if (autofocus) editor.focus();
 									});
@@ -305,6 +322,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										trigger: '@',
 										minChars: 1,
 										columns: 1,
+										ch: '@',
 										fetch: (pattern: string) => {
 											// eslint-disable-next-line no-async-promise-executor
 											return new Promise(async (resolve) => {

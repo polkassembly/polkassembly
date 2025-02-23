@@ -18,6 +18,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
+import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -71,9 +72,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history) ? [newHistory, ...(commentData?.history || [])] : new Array(newHistory);
+	const sanitizedContent = content ? sanitizeHTML(content) : '';
+
 	try {
 		await commentRef.update({
-			content,
+			content: sanitizedContent,
 			history,
 			isDeleted: false,
 			sentiment,
@@ -93,7 +96,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 		const postAuthorId = postData?.user_id || null;
 		if (typeof postAuthorId == 'number') {
-			await createUserActivity({ action: EActivityAction.EDIT, commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });
+			await createUserActivity({ action: EActivityAction.EDIT, commentAuthorId: userId, commentId, content: sanitizedContent, network, postAuthorId, postId, postType, userId });
 		}
 		return;
 	} catch (err) {

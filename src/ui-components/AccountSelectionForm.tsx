@@ -31,6 +31,7 @@ interface Props {
 	isVoting?: boolean;
 	usedInIdentityFlow?: boolean;
 	isUsedInProxy?: boolean;
+	isUsedInProfileBalances?: boolean;
 }
 
 const AccountSelectionForm = ({
@@ -52,6 +53,7 @@ const AccountSelectionForm = ({
 	isTruncateUsername = true,
 	showProxyDropdown,
 	isVoting = false,
+	isUsedInProfileBalances = false,
 	usedInIdentityFlow,
 	isUsedInProxy,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -100,6 +102,7 @@ const AccountSelectionForm = ({
 				isTruncateUsername={isTruncateUsername}
 				showProxyDropdown={showProxyDropdown}
 				isUsedInProxy={isUsedInProxy}
+				isUsedInProfileBalances={isUsedInProfileBalances}
 			/>
 		</article>
 	);

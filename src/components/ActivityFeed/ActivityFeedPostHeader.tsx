@@ -196,7 +196,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 								<>
 									<p className='text-[16px] font-bold text-blue-light-medium dark:text-[#9E9E9E] md:pt-[10px] xl:text-[20px]'>
 										{post?.assetId ? (
-											getBeneficiaryAmountAndAsset(post?.assetId, post?.requestedAmount?.toString(), network)
+											getBeneficiaryAmountAndAsset({ amount: post?.requestedAmount?.toString(), assetId: post?.assetId, network })
 										) : (
 											<>
 												{formatedBalance(post?.requestedAmount, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
@@ -281,7 +281,10 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 						</div>
 					</div>
 				</Link>
-				<div className='hidden lg:block'>
+				<div
+					key={post?.post_id}
+					className='hidden lg:block'
+				>
 					{post?.isVoted ? (
 						<div className='flex items-center gap-5'>
 							<div className='flex flex-col justify-center'>

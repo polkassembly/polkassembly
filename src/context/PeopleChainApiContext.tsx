@@ -9,7 +9,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
@@ -63,11 +62,6 @@ export function PeopleChainApiContextProvider(props: PeopleChainApiContextProvid
 			}, 60000);
 			peopleChainApi.on('error', async () => {
 				clearTimeout(timer);
-				queueNotification({
-					header: 'Error!',
-					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
-					status: NotificationStatus.ERROR
-				});
 
 				await peopleChainApi.disconnect();
 			});

@@ -18,6 +18,7 @@ import createUserActivity from '../../utils/create-activity';
 import { EActivityAction } from '~src/types';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -29,6 +30,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const { commentId, content, postId, postType, replyId } = req.body;
 	if (!commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	// Sanitize the content before processing
+	const sanitizedContent = content ? sanitizeHTML(content) : '';
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
@@ -67,7 +71,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	replyRef
 		.update({
-			content,
+			content: sanitizedContent,
 			isDeleted: false,
 			updated_at: last_comment_at
 		})
@@ -80,10 +84,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {
-			// The document probably doesn't exist.
 			console.error('Error saving reply: ', error);
 			return res.status(500).json({ message: 'Error saving reply' });
 		});
+
 	try {
 		const postData = (await postRef.get()).data();
 		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
@@ -95,7 +99,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			action: EActivityAction.EDIT,
 			commentAuthorId,
 			commentId,
-			content,
+			content: sanitizedContent,
 			network,
 			postAuthorId,
 			postId,

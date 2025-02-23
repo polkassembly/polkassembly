@@ -23,11 +23,7 @@ const handleReportCheckAndRefresh = async ({
 	postIndex: number;
 }): Promise<{ success: boolean; message: string; data?: any; error?: string }> => {
 	try {
-		const reportQuery = await firestore_db
-			.collection('ai_summary_reports')
-			.where('postType', '==', postType)
-			.where('postIndex', '==', postIndex)
-			.get();
+		const reportQuery = await firestore_db.collection('ai_summary_reports').where('postType', '==', postType).where('postIndex', '==', postIndex).get();
 
 		const reportCount = reportQuery.size;
 		if (reportCount % 3 !== 0) {

@@ -151,10 +151,18 @@ export const getCommentsAISummaryByPost = async ({
 				status: 404
 			};
 		}
-
-		const commentsData = [{ network, postContent, postId }, ...allCommentsAndReplies];
-
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
+		const safeKey: string | undefined = process.env.AI_COMMENT_SUMMARY_SAFE_KEY;
+
+		if (!safeKey) {
+			return {
+				data: null,
+				error: 'Unauthorized access: Safe key is missing',
+				status: 401
+			};
+		}
+
+		const commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
 
 		if (!apiUrl) {
 			return {

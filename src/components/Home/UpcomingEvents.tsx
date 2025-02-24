@@ -14,11 +14,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
-import { useCurrentBlock } from '~src/hooks';
 import dateToBlockNo from '~src/util/dateToBlockNo';
 import Link from 'next/link';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import getCurrentBlock from '~src/util/getCurrentBlock';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -76,9 +77,9 @@ const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number) =
 };
 
 const UpcomingEvents = ({ className }: Props) => {
+	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const currentBlock = useCurrentBlock();
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<ICalendarEvent[]>([]);
 	const [error, setError] = useState('');
@@ -86,12 +87,15 @@ const UpcomingEvents = ({ className }: Props) => {
 	const [currentBlockStatic, setCurrentBlockStatic] = useState<BN | null>(null);
 	const [eventDates, setEventDates] = useState<string[]>([]);
 
+	const fetchCurrentBlock = useCallback(async () => {
+		if (!api || !apiReady) return;
+		const currentBlock = await getCurrentBlock({ api, apiReady });
+		setCurrentBlockStatic(currentBlock || null);
+	}, [api, apiReady]);
+
 	useEffect(() => {
-		if (!currentBlockStatic) {
-			setCurrentBlockStatic(currentBlock || null);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentBlock]);
+		fetchCurrentBlock();
+	}, [fetchCurrentBlock]);
 
 	const getNetworkEvents = useCallback(async () => {
 		if (!currentBlockStatic) return;
@@ -118,7 +122,7 @@ const UpcomingEvents = ({ className }: Props) => {
 			return;
 		}
 
-		const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('/api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
+		const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
 
 		if (error) {
 			console.error(error);
@@ -200,9 +204,11 @@ const UpcomingEvents = ({ className }: Props) => {
 	const EventsListElement = () => (
 		<>
 			<List
-				className='h-[100%] overflow-y-auto'
+				className='h-[100%] overflow-y-auto overflow-x-hidden'
 				itemLayout='horizontal'
-				dataSource={calendarEvents.sort((a, b) => dayjs(a.createdAt).diff(dayjs(b.createdAt)))}
+				dataSource={calendarEvents
+					.sort((a, b) => dayjs(a.createdAt).diff(dayjs(b.createdAt)))
+					?.filter((event) => dayjs(event.createdAt).format('DD YYYY MM') == dayjs().format('DD YYYY MM'))}
 				renderItem={(item) => {
 					return (
 						<List.Item className={'flex cursor-pointer flex-col items-start justify-start gap-1 text-blue-light-high dark:text-blue-dark-high'}>

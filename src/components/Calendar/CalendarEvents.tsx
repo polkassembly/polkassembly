@@ -6,15 +6,16 @@ import { Divider, Spin } from 'antd';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useApiContext } from '~src/context';
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
-import { useCurrentBlock } from '~src/hooks';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ICalendarEvent } from '~src/types';
 import Address from '~src/ui-components/Address';
 import StatusTag from '~src/ui-components/StatusTag';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import dateToBlockNo from '~src/util/dateToBlockNo';
+import getCurrentBlock from '~src/util/getCurrentBlock';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 
@@ -61,12 +62,22 @@ const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number): 
 
 const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }: Props) => {
 	const { network } = useNetworkSelector();
-	const currentBlock = useCurrentBlock();
+	const { api, apiReady } = useApiContext();
+	const [currentBlock, setCurrentBlock] = useState<BN | null>(null);
 	const [formatedEvents, setformatedEvents] = useState<IEventsWithTimeStamps | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedMonth, setSelectedMonth] = useState('');
 	const [allEvents, setAllEvents] = useState<ICalendarEvent[]>([]);
-	const [currentBlockStatic, setCurrentBlockStatic] = useState<BN | null>(null);
+
+	const fetchCurrentBlock = useCallback(async () => {
+		if (!api || !apiReady) return;
+		const currentBlock = await getCurrentBlock({ api, apiReady });
+		setCurrentBlock(currentBlock || null);
+	}, [api, apiReady]);
+
+	useEffect(() => {
+		fetchCurrentBlock();
+	}, [fetchCurrentBlock]);
 
 	const getAllEvents = async () => {
 		setLoading(true);
@@ -75,10 +86,10 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 		const startDateOfMonth = dayjs(selectedDate).startOf('month').toDate();
 		const endDateOfMonth = dayjs(selectedDate).endOf('month').toDate();
 
-		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: startDateOfMonth, network });
-		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: endDateOfMonth, network });
+		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: startDateOfMonth, network });
+		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: endDateOfMonth, network });
 
-		if (startBlockNo && currentBlockStatic && startBlockNo > currentBlockStatic?.toNumber()) {
+		if (startBlockNo && currentBlock && startBlockNo > currentBlock?.toNumber()) {
 			setLoading(false);
 			setformatedEvents(null);
 			setCalendarLoading?.(false);
@@ -104,8 +115,8 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 	const handleSelectedDateChange = (data: ICalendarEvent[]) => {
 		setLoading(true);
 		setCalendarLoading?.(true);
-		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: selectedDate, network }) || 0;
-		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlockStatic?.toNumber() || 0, date: dayjs(selectedDate)?.add(24, 'hours').toDate(), network }) || 0;
+		const startBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: selectedDate, network }) || 0;
+		const endBlockNo = dateToBlockNo({ currentBlockNumber: currentBlock?.toNumber() || 0, date: dayjs(selectedDate)?.add(24, 'hours').toDate(), network }) || 0;
 
 		const filteredEvents = data?.filter((event) => event?.statusHistory?.map((item) => item?.block >= startBlockNo && item?.block < endBlockNo));
 
@@ -116,14 +127,7 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 	};
 
 	useEffect(() => {
-		if (!currentBlockStatic) {
-			setCurrentBlockStatic(currentBlock || null);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentBlock]);
-
-	useEffect(() => {
-		if (!network || !selectedDate || !currentBlockStatic) return;
+		if (!network || !selectedDate || !currentBlock) return;
 
 		handleSelectedDateChange(allEvents || []);
 
@@ -135,7 +139,7 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 
 		getAllEvents();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, selectedDate, currentBlockStatic]);
+	}, [network, selectedDate, currentBlock]);
 
 	return (
 		<Spin spinning={loading}>

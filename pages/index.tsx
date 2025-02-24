@@ -11,13 +11,11 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
-import UpcomingEvents from '~src/components/Home/UpcomingEvents';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { IApiResponse, NetworkSocials } from '~src/types';
-
 import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
@@ -36,6 +34,11 @@ import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+
+const UpcomingEvents = dynamic(() => import('~src/components/Home/UpcomingEvents'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,

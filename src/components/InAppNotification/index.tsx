@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -18,10 +18,11 @@ import { ACTIONS } from '../Settings/Notifications/Reducer/action';
 import { ECustomNotificationFilters } from './types';
 import { useApiContext } from '~src/context';
 import checkPayoutForUserAddresses from '~src/util/checkPayoutForUserAddresses';
-import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { GlobalActions } from '~src/redux/global';
+import BN from 'bn.js';
+import getCurrentBlock from '~src/util/getCurrentBlock';
 
 interface INotificationProps {
 	className?: string;
@@ -36,12 +37,22 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	const currentBlock = useCurrentBlock();
+	const [currentBlock, setCurrentBlock] = useState<BN | null>(null);
 	const { id: userId, loginAddress } = currentUser;
 	const { unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [open, setOpen] = useState(false);
+
+	const fetchCurrentBlock = useCallback(async () => {
+		if (!api || !apiReady) return;
+		const currentBlock = await getCurrentBlock({ api, apiReady });
+		setCurrentBlock(currentBlock || null);
+	}, [api, apiReady]);
+
+	useEffect(() => {
+		fetchCurrentBlock();
+	}, [fetchCurrentBlock]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress || !currentBlock || !isMultiassetSupportedNetwork(network)) return;

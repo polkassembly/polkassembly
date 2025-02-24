@@ -137,7 +137,9 @@ const TreasuryProposalSuccessPopup = ({
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 							{generalIndex ? (
-								<div className='flex items-center gap-1'>{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}</div>
+								<div className='flex items-center gap-1'>
+									{getBeneficiaryAmountAndAsset({ amount: fundingAmount.toString(), assetId: generalIndex, isProposalCreationFlow: true, network })}
+								</div>
 							) : (
 								<div className='flex items-center gap-1'>
 									<span className='flex items-center gap-1'>
@@ -189,7 +191,7 @@ const TreasuryProposalSuccessPopup = ({
 									{fundingAmount ? (
 										generalIndex ? (
 											<div className='flex items-center gap-1'>
-												{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}
+												{getBeneficiaryAmountAndAsset({ amount: fundingAmount.toString(), assetId: generalIndex, isProposalCreationFlow: true, network })}
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>

@@ -4,7 +4,7 @@
 
 import { GetServerSideProps } from 'next';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, memo, useEffect, useState } from 'react';
+import React, { FC, memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
@@ -18,7 +18,7 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { PostCategory } from '~src/global/post_categories';
-import ConfusedNudge from '~src/ui-components/ConfusedNudge';
+// import ConfusedNudge from '~src/ui-components/ConfusedNudge';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const proposalType = ProposalType.OPEN_GOV;
@@ -47,7 +47,7 @@ interface IReferendaPostProps {
 
 const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 	const dispatch = useDispatch();
-	const [openNudge, setOpenNudge] = useState(false);
+	// const [openNudge, setOpenNudge] = useState(false);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -72,15 +72,16 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 					desc={post.content}
 					network={network}
 				/>
-				<ConfusedNudge
+				{/* <ConfusedNudge
 					postIndex={post?.post_id}
 					postType={proposalType}
 					status={post?.status}
 					title={post?.title || ''}
 					setOpenNudge={setOpenNudge}
-				/>
+				/> */}
 				{/* Main content */}
-				<div className={`transition-opacity duration-500 ${openNudge ? 'mt-7' : 'mt-0'}`}>
+				{/* <div className={`transition-opacity duration-500 ${openNudge ? 'mt-7' : 'mt-0'}`}> */}
+				<div className={'mt-0 transition-opacity duration-500'}>
 					{trackName && <BackToListingView trackName={trackName} />}
 
 					<div className='mt-6'>

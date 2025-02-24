@@ -47,7 +47,7 @@ function FeaturesSection() {
 		{
 			description: 'Create, Manage and Participate in Bounties',
 			image: '/assets/features3.svg',
-			path: 'bounty',
+			path: '/bounty-dashboard',
 			title: 'Bounties'
 		},
 		{

@@ -62,11 +62,9 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 	return (
 		<div>
 			<div className='mt-5 rounded-xxl border-[0.6px] border-solid border-[#D2D8E0] bg-white p-5 text-[13px] dark:border-[#4B4B4B] dark:bg-section-dark-overlay md:p-5'>
-				<div className='flex items-center justify-between gap-2'>
-					<div className='flex items-center'>
-						<div>
-							<p className='whitespace-nowrap pt-3  font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</p>
-						</div>
+				<div className='flex items-start justify-between gap-2'>
+					<div className='flex items-center pt-1.5'>
+						<div className='whitespace-nowrap font-semibold text-[#243A57] dark:text-white xl:text-[15px] 2xl:text-[18px]'>Voted Proposals</div>
 						{!!id && !!username && (
 							<Link
 								className='flex items-center border-none bg-transparent bg-none p-0'
@@ -77,16 +75,20 @@ const ActivityFeedProposalCard: React.FC<IRankCardProps> = ({ currentUser }) => 
 							</Link>
 						)}
 					</div>
-					<div className='mt-[7px]'>
-						<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] text-[#485F7DCC] text-opacity-[80%] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
-							Last 15 days
-						</p>
-					</div>
+					<p className='whitespace-nowrap rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[11px] text-[#485F7DCC] text-opacity-[80%] dark:bg-[#3F3F4080] dark:bg-opacity-[50%] dark:text-[#9E9E9ECC] dark:text-opacity-[80%]'>
+						Last 15 days
+					</p>
 				</div>
 				<div>
 					<p className='text-blue-light-medium dark:text-[#9E9E9E]'>
-						<span className='text-xl font-semibold text-pink_primary'>{proposaldata?.totalVotes}</span> out of{' '}
-						<span className='text-md font-semibold text-blue-light-medium dark:text-[#9E9E9E]'>{proposaldata?.activeProposals}</span> active proposals
+						<Link
+							className='mr-1'
+							href={`/user/${username}`}
+							target='_blank'
+						>
+							<span className='text-xl font-semibold text-pink_primary'>{proposaldata?.totalVotes}</span>
+						</Link>
+						out of <span className='text-md font-semibold text-blue-light-medium dark:text-[#9E9E9E]'>{proposaldata?.activeProposals}</span> active proposals
 					</p>
 				</div>
 			</div>

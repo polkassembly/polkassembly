@@ -22,6 +22,7 @@ import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { firestore_db } from '~src/services/firebaseInit';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -38,7 +39,12 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const { userId, content, postId, postType, sentiment, trackNumber = null, isExpertComment, userAddress } = req.body;
 	if (!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
+	// Sanitize the content before validation and processing
+	const sanitizedContent = content ? sanitizeHTML(content) : '';
+
+	if (typeof content !== 'string' || isContentBlacklisted(sanitizedContent)) {
+		return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
+	}
 
 	const strProposalType = String(postType);
 
@@ -92,7 +98,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const newCommentRef = postRef.collection('comments').doc();
 
 	const newComment: PostComment = {
-		content: content,
+		content: sanitizedContent,
 		created_at: new Date(),
 		history: [],
 		id: newCommentRef.id,
@@ -165,7 +171,17 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		const postAuthorId = postData?.user_id || null;
 
 		if (typeof postAuthorId == 'number') {
-			await createUserActivity({ action: EActivityAction.CREATE, commentAuthorId: userId, commentId: newComment.id, content, network, postAuthorId, postId, postType, userId });
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				commentAuthorId: userId,
+				commentId: newComment.id,
+				content: sanitizedContent,
+				network,
+				postAuthorId,
+				postId,
+				postType,
+				userId
+			});
 		}
 		return;
 	} catch (err) {

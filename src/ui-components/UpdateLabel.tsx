@@ -5,7 +5,7 @@
 import { dayjs } from 'dayjs-init';
 import React from 'react';
 import styled from 'styled-components';
-import Tooltip from '~src/basic-components/Tooltip';
+import { Tooltip } from 'antd';
 
 interface Props {
 	className?: string;
@@ -23,6 +23,7 @@ const UpdateLabel = ({ className, created_at, updated_at, isHistory }: Props) =>
 			<Tooltip
 				color='#E5007A'
 				title={title}
+				zIndex={10}
 			>
 				<span className={`text-xs leading-4 text-navBlue ${isHistory && 'text-pink_primary'}`}>(Edited)</span>
 			</Tooltip>

@@ -61,8 +61,8 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 			className=''
 		>
-			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-dmSans text-[14px] text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-5 xl:px-3 xl:py-[6px]'>
-				Switch to <span className='font-semibold'>{pathname === '/activity-feed' ? 'Overview' : 'Activity Feed'}</span>
+			<div className='mr-2 mt-1 flex cursor-pointer items-center gap-[2px] whitespace-nowrap rounded-lg border-[1px] border-solid border-[#D2D8E0] bg-[#FFFFFF] px-2 py-[6px] font-dmSans text-xs text-[#243A57] dark:border-[#4B4B4B] dark:bg-[#0D0D0D] dark:text-white sm:text-[14px] md:mr-0 md:mt-0 md:w-auto md:gap-1 lg:text-[14px] xl:mr-3 xl:px-3 xl:py-[6px]'>
+				Switch to <span className='text-xs font-semibold sm:text-sm'>{pathname === '/activity-feed' ? 'Overview' : 'Activity Feed'}</span>
 				<span>
 					<ImageIcon
 						src='/assets/icons/loop.svg'
@@ -135,28 +135,30 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
-			{isUsedInHomePage && (
-				<div className='flex justify-between space-x-2 sm:space-x-4'>
-					<div className='-mt-1'>
-						<Dropdown
-							theme={theme}
-							overlayStyle={{ marginTop: '20px' }}
-							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container  ${
-								theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
-							}`}
-							overlayClassName='z-[1056'
-							placement='bottomRight'
-							menu={{ items }}
-							onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
-						>
-							<span className='ml-1 mt-1'>
-								<ThreeDotsIcon />
-							</span>
-						</Dropdown>
+			<div className='flex items-center'>
+				{isUsedInHomePage && isActivityFeedSupportedNetwork(network) && isRelevantPath && <SwitchViewButton pathname={pathname} />}
+				{isUsedInHomePage && (
+					<div className='flex justify-between space-x-2 sm:space-x-4'>
+						<div className='sm:-mt-1'>
+							<Dropdown
+								theme={theme}
+								overlayStyle={{ marginTop: '20px' }}
+								className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container sm:h-8 sm:w-8  ${
+									theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+								}`}
+								overlayClassName='z-[1056'
+								placement='bottomRight'
+								menu={{ items }}
+								onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
+							>
+								<span className='mt-1 sm:ml-1'>
+									<ThreeDotsIcon />
+								</span>
+							</Dropdown>
+						</div>
 					</div>
-				</div>
-			)}
+				)}
+			</div>
 			{isCreateProposal && (
 				<CustomButton
 					className='w-min'

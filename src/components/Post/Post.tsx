@@ -586,7 +586,7 @@ const Post: FC<IPostProps> = (props) => {
 								)}
 
 								{/* Post Content */}
-								<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
+								<div className='mb-6 w-full rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 									{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 									{!isEditing && (

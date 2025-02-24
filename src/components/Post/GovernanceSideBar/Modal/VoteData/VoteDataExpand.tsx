@@ -86,7 +86,7 @@ const VoteDataExpand = () => {
 								onClick={(e) => e.stopPropagation()}
 							>
 								<Address
-									usernameClassName='overflow-ellipsis w-[250px] '
+									usernameClassName='overflow-ellipsis sm:w-[250px] '
 									isSubVisible={false}
 									displayInline
 									showFullAddress

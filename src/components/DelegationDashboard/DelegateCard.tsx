@@ -245,7 +245,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</Button>
 				</div>
 				<div className={`${dmSans.variable} ${dmSans.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
-					<p className='inline text-xs'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
+					<p className='inline text-xs text-blue-light-high dark:text-blue-dark-high'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
 					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(!openReadMore)}
@@ -267,17 +267,17 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className='mb-2 flex justify-between'>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
-						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
+						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv&apos;d Delegation</div>
 
-						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
+						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>
 					</div>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals</div>
-						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
+						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>
 					</div>
 				</div>
 			</div>

@@ -32,7 +32,7 @@ const ScrollToTopButton = () => {
 	return (
 		<Tooltip title='scroll to top'>
 			<div
-				className={`fixed bottom-8 right-24 cursor-pointer ${isVisible ? '' : 'hidden'}`}
+				className={`fixed bottom-8 right-8 cursor-pointer sm:right-24 ${isVisible ? '' : 'hidden'}`}
 				onClick={scrollToTop}
 			>
 				<ScrollIcon />

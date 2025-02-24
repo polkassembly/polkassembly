@@ -39,6 +39,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 	const userAddress = typeof address == 'string' ? address : (address as any)?.interior?.value?.id || '';
+	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -100,12 +101,12 @@ const ProfileData = ({ address, className }: IProfileData) => {
 
 	return (
 		<div className={`${className}`}>
-			<div className='flex gap-x-4'>
-				<div className='h-[60px] w-[60px]'>
+			<div className='flex gap-x-1 sm:gap-x-4'>
+				<div className=''>
 					<ImageComponent
 						src={profileData?.profile?.image}
 						alt='User Picture'
-						className='flex h-[60px] w-[60px] items-center justify-center bg-transparent'
+						className='flex h-[30px] w-[30px] items-center justify-center bg-transparent sm:h-[60px] sm:w-[60px]'
 						iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 					/>
 				</div>
@@ -115,7 +116,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							address={userAddress}
 							disableIdenticon={true}
 							isProfileView
-							isTruncateUsername={false}
+							isTruncateUsername={isMobile}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'

@@ -161,18 +161,18 @@ function ExpertBodyCard() {
 			</div>
 			<div className='flex flex-col py-1 text-[#243A57] dark:text-white'>
 				<span className=' text-base font-semibold'>{title}</span>
-				<span className='my-1 w-52 text-sm'>{contentText}</span>
-				<span className='text-sm'>
+				<span className='my-1 w-48 text-xs sm:w-52 sm:text-sm'>{contentText}</span>
+				<span className='text-xs sm:text-sm'>
 					An expert?{' '}
 					<span
-						className='cursor-pointer text-pink_primary underline'
+						className='cursor-pointer text-xs text-pink_primary underline sm:text-sm'
 						onClick={() => setIsModalVisible(true)}
 					>
 						Add your Review!
 					</span>
 				</span>
 			</div>
-			<div className='absolute right-2 top-11 z-50'>
+			<div className='absolute right-2 top-7 z-50 sm:top-11'>
 				<ArrowRightOutlined
 					onClick={() => setIsModalVisible(true)}
 					className='rounded-full bg-black p-2 text-lg text-white dark:border dark:border-solid dark:border-white'

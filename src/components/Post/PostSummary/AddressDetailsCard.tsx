@@ -56,7 +56,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	return (
-		<div className='tags-container flex items-center gap-3'>
+		<div className='flex w-fit items-center gap-3'>
 			{showAddress && (
 				<span className='min-w-[120px]'>
 					<Address
@@ -66,7 +66,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 					/>
 				</span>
 			)}
-			<span
+			<div
 				className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090] ${
 					!isMultisigProposer
 						? 'border-infoAlertBorderDark bg-[#E6F4FF] dark:border-[#125798] dark:bg-[#05263F] '
@@ -90,8 +90,8 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 						</div>
 					</div>
 				)}
-			</span>
-			<span
+			</div>
+			<div
 				className={`verified-container flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090]  ${
 					isGood ? 'border-[#2ED47A] bg-[#EFFCF5] dark:border-[#026630] dark:bg-[#063E20]' : 'border-[#FFA08B] bg-[#F7E3E0] dark:border-[#5C3931] dark:bg-[#331701]'
 				}`}
@@ -110,7 +110,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 						<div className='token-mobile-container block'>{shortenString('Not Verified', 3)}</div>
 					</div>
 				)}
-			</span>
+			</div>
 		</div>
 	);
 };

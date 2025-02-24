@@ -92,7 +92,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			key: 1,
 			label: (
 				<div>
-					{canEdit && !isEditing && (
+					{canEdit && !isEditing && postType == ProposalType.DISCUSSIONS && (
 						<CreateOptionPoll
 							proposalType={postType}
 							postId={postIndex}

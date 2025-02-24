@@ -15,7 +15,8 @@ const contentBlacklist: string[] = [
 	'88taya',
 	'neonstar',
 	'premyo77',
-	'bmw555'
+	'bmw555',
+	'hacksavvytechrecovery'
 ];
 
 export default contentBlacklist;

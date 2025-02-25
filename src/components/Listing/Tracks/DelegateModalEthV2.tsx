@@ -268,8 +268,6 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			return;
 		}
 
-		console.log(trackNum, target, conviction, bnBalance);
-
 		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
 		const gasPrice = await voteContract.delegate.estimateGas(trackNum, target, conviction, bnBalance);

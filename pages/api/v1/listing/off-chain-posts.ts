@@ -6,7 +6,7 @@ import type { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isFirestoreProposalTypeValid, isSortByValid, isValidNetwork } from '~src/api-utils';
-import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
@@ -30,6 +30,31 @@ interface IGetOffChainPostsParams {
 	proposalType: OffChainProposalType | string | string[];
 	filterBy?: string[];
 }
+const checkReportThreshold = (totalUsers?: number) => {
+	const threshold = process.env.REPORTS_THRESHOLD;
+
+	if (threshold && totalUsers) {
+		if (Number(totalUsers) >= Number(threshold)) {
+			return totalUsers;
+		}
+		return 0;
+	}
+	return totalUsers || 0;
+};
+
+const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number, type: 'post' | 'comment') => {
+	const countQuery = await networkDocRef(network)
+		.collection('reports')
+		.where('type', '==', type)
+		.where('proposal_type', '==', proposalType)
+		.where('content_id', '==', postId)
+		.count()
+		.get();
+	const data = countQuery.data();
+	const totalUsers = data.count || 0;
+	console.log({ totalUsers: checkReportThreshold(totalUsers) }, postId);
+	return checkReportThreshold(totalUsers);
+};
 
 export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
@@ -97,6 +122,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 					};
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
+					const spam_users_count = await getSpamUsersCount(network, strProposalType, docData.id, 'post');
 
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;
@@ -109,8 +135,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 						post_id: docData.id,
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(docData, network),
-						spam_users_count:
-							docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
+						spam_users_count: spam_users_count || 0,
 						tags: docData?.tags || [],
 						title: docData?.title || null,
 						topic: topic

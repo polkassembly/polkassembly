@@ -216,7 +216,7 @@ const Address = (props: Props) => {
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState(false);
-	const [messageApi] = message.useMessage();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -403,9 +403,6 @@ const Address = (props: Props) => {
 			type: 'success'
 		});
 	};
-	const copyLink = (address: string) => {
-		copyToClipboard(address);
-	};
 
 	return (
 		<div className={classNames(addressOtherTextType ? 'w-full' : ' myAddress', identity?.parentProxyTitle?.length ? 'flex items-center' : 'items-start')}>
@@ -445,12 +442,22 @@ const Address = (props: Props) => {
 								address={encodedAddr}
 							/>
 						) : (
-							<Identicon
-								className='image identicon'
-								value={encodedAddr}
-								size={iconSize ? iconSize : displayInline ? 20 : 32}
-								theme={'polkadot'}
-							/>
+							<button
+								className='flex items-center border-none bg-transparent p-0'
+								onClick={(e) => {
+									e.preventDefault();
+									navigator.clipboard.writeText(encodedAddr);
+									success();
+								}}
+							>
+								<Identicon
+									className='image identicon'
+									value={encodedAddr}
+									size={iconSize ? iconSize : displayInline ? 20 : 32}
+									theme={'polkadot'}
+								/>
+								{contextHolder}
+							</button>
 						))}
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
@@ -604,11 +611,13 @@ const Address = (props: Props) => {
 									{showCopyIcon && (
 										<span
 											className='flex cursor-pointer items-center text-base'
-											onClick={() => {
-												copyLink(encodedAddr || '');
+											onClick={(e) => {
+												e.preventDefault();
+												copyToClipboard(encodedAddr || '');
 												success();
 											}}
 										>
+											{contextHolder}
 											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
 										</span>
 									)}
@@ -625,11 +634,13 @@ const Address = (props: Props) => {
 									{isUsedInDelegationProfile && (
 										<span
 											className='flex cursor-pointer items-center text-base'
-											onClick={() => {
-												copyLink(encodedAddr || '');
+											onClick={(e) => {
+												e.preventDefault();
+												copyToClipboard(encodedAddr || '');
 												success();
 											}}
 										>
+											{contextHolder}
 											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
 										</span>
 									)}

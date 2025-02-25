@@ -3,11 +3,21 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Jazzicon from '@metamask/jazzicon';
+import { message } from 'antd';
 import { useEffect, useRef } from 'react';
 
 const EthIdenticon = ({ address, size, className }: { address: string; size: number; className?: string }) => {
 	const ref = useRef<HTMLDivElement>();
 	const numericAddress = parseInt(address.slice(2, 10), 16);
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const success = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
 
 	useEffect(() => {
 		if (numericAddress && ref.current) {
@@ -18,10 +28,16 @@ const EthIdenticon = ({ address, size, className }: { address: string; size: num
 
 	return (
 		<div
-			onClick={() => navigator.clipboard.writeText(address)}
+			onClick={(e) => {
+				e.preventDefault();
+				navigator.clipboard.writeText(address);
+				success();
+			}}
 			className={`cursor-copy ${className}`}
 			ref={ref as any}
-		/>
+		>
+			{contextHolder}
+		</div>
 	);
 };
 

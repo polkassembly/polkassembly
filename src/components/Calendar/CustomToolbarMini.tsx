@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 function SubscribeTip() {
 	return (
-		<div className='flex cursor-pointer items-center justify-center gap-1 overflow-hidden rounded-[16px] bg-[#FCE5F2] p-[6px]'>
+		<div className='flex cursor-pointer items-center justify-center gap-1 overflow-hidden rounded-[16px] bg-[#FCE5F2] p-[6px] dark:bg-[#360B22]'>
 			<div className='inline-flex items-center justify-center'>
 				<Image
 					src={'/assets/icons/subscribe.svg'}
@@ -21,8 +21,8 @@ function SubscribeTip() {
 					height={20}
 				/>
 			</div>
-			<span className='whitespace-nowrap text-[14px] leading-[20px] text-pink_primary'>
-				<span className='font-semibold text-pink_primary underline'>Subscribe</span> on-chain events
+			<span className='whitespace-nowrap text-[14px] leading-[20px] text-pink_primary dark:text-[#FF4098]'>
+				<span className='font-semibold text-pink_primary underline dark:text-[#FF4098]'>Subscribe</span> on-chain events
 			</span>
 		</div>
 	);

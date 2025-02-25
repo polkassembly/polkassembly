@@ -134,9 +134,9 @@ const StyledCalendar: any = styled(Calendar)`
 				color: #fff;
 				border: 1px solid #e6007a;
 				border-radius: 50%;
-				height: 26px;
-				width: 26px;
-				margin-top: 2px;
+				height: 24px;
+				width: 24px;
+				margin-top: 4px;
 			}
 		}
 
@@ -146,9 +146,9 @@ const StyledCalendar: any = styled(Calendar)`
 				color: #fff;
 				border: 1px solid #e6007a;
 				border-radius: 50%;
-				height: 26px;
-				width: 26px;
-				margin-top: 2px;
+				height: 24px;
+				width: 24px;
+				margin: 4px;
 			}
 		}
 	}

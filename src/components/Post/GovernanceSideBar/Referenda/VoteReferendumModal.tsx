@@ -33,7 +33,6 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import dayjs from 'dayjs';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
-import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
@@ -785,7 +784,7 @@ const VoteReferendumModal = ({
 												}
 											/>
 										) : null}
-										{canUsePolkasafe(network) && !showMultisig && (
+										{/* {canUsePolkasafe(network) && !showMultisig && (
 											<div className='flex-col'>
 												<div className='flex w-full justify-center'>
 													<WalletButton
@@ -804,7 +803,7 @@ const VoteReferendumModal = ({
 													/>
 												</div>
 											</div>
-										)}
+										)} */}
 									</div>
 								</div>
 								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (

@@ -13,6 +13,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 const ZERO_BN = new BN(0);
 const TotalDelegationData = ({ className }: { className: string }) => {
@@ -104,7 +105,7 @@ const TotalDelegationData = ({ className }: { className: string }) => {
 						<div className='flex flex-col '>
 							<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegated Votes</span>
 							<div className='flex space-x-2'>
-								<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
+								<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{formatUSDWithUnits(String(totalStats.totalDelegatedVotes.toString()))}</span>
 							</div>
 						</div>
 					</div>

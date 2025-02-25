@@ -118,7 +118,7 @@ const MultisigAccountSelectionForm = ({
 				<div className='mb-[2px] flex items-center gap-2'>
 					{title && (
 						<>
-							<h3 className='mb-0 text-sm font-normal'>{title}</h3>
+							<h3 className='mb-0 text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>{title}</h3>
 							{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
 							{address && withBalance && (
 								<Balance

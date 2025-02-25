@@ -7,6 +7,26 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
 import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+function SubscribeTip() {
+	return (
+		<div className='flex cursor-pointer items-center justify-center gap-1 overflow-hidden rounded-[16px] bg-[#FCE5F2] p-[6px] dark:bg-[#360B22]'>
+			<div className='inline-flex items-center justify-center'>
+				<Image
+					src={'/assets/icons/subscribe.svg'}
+					alt='system-tip'
+					width={20}
+					height={20}
+				/>
+			</div>
+			<span className='whitespace-nowrap text-[14px] leading-[20px] text-pink_primary dark:text-[#FF4098]'>
+				<span className='font-semibold text-pink_primary underline dark:text-[#FF4098]'>Subscribe</span> on-chain events
+			</span>
+		</div>
+	);
+}
 
 function CustomToolbarMini(props: any) {
 	function addMonths(date: any, months: any) {
@@ -51,6 +71,12 @@ function CustomToolbarMini(props: any) {
 						className='text-md cursor-pointer font-medium hover:font-bold  hover:text-sidebarBlue dark:text-icon-dark-inactive'
 					/>
 				</div>
+				<Link
+					href='/settings?tab=notifications'
+					className='h-[32px] w-[32px] transition-all hover:w-[224px] max-md:hidden [&_span]:hidden [&_span]:hover:inline'
+				>
+					<SubscribeTip />
+				</Link>
 			</div>
 		)
 	);

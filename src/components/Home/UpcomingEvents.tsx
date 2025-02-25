@@ -7,27 +7,19 @@ import { Calendar as StyledCalendar, List, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useApiContext } from '~src/context';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { NetworkEvent } from '~src/types';
+import { ICalendarEvent } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import {
-	fetchAuctionInfo,
-	fetchCouncilElection,
-	fetchCouncilMotions,
-	fetchDemocracyDispatches,
-	fetchDemocracyLaunch,
-	fetchParachainLease,
-	fetchScheduled,
-	fetchSocietyChallenge,
-	fetchSocietyRotate,
-	fetchStakingInfo,
-	fetchTreasurySpend
-} from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
+import dateToBlockNo from '~src/util/dateToBlockNo';
+import Link from 'next/link';
+import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import getCurrentBlock from '~src/util/getCurrentBlock';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -67,305 +59,83 @@ const Calendar = styled(StyledCalendar)`
 	}
 `;
 
+const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number) => {
+	if (!events?.length) return [];
+
+	return events
+		.flatMap(
+			(item) =>
+				item.statusHistory
+					?.filter((status) => status.block >= blockNo)
+					?.map((timeline) => ({
+						...item,
+						blockNo: timeline.block,
+						createdAt: timeline.timestamp
+					}))
+		)
+		.sort((a, b) => a.blockNo - b.blockNo);
+};
+
 const UpcomingEvents = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
-	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
-	const [eventDates, setEventDates] = useState<string[]>([]);
+	const [calendarEvents, setCalendarEvents] = useState<ICalendarEvent[]>([]);
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
+	const [currentBlockStatic, setCurrentBlockStatic] = useState<BN | null>(null);
+	const [eventDates, setEventDates] = useState<string[]>([]);
+
+	const fetchCurrentBlock = useCallback(async () => {
+		if (!api || !apiReady) return;
+		const currentBlock = await getCurrentBlock({ api, apiReady });
+		setCurrentBlockStatic(currentBlock || null);
+	}, [api, apiReady]);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		(async () => {
-			setLoading(true);
-			const eventsArr: any[] = [];
-			const eventDatesArr: string[] = [];
-
-			const eventPromises = [
-				fetchStakingInfo(api, network),
-				fetchCouncilMotions(api, network),
-				fetchCouncilElection(api, network),
-				fetchScheduled(api, network),
-				fetchTreasurySpend(api, network),
-				fetchDemocracyDispatches(api, network),
-				fetchDemocracyLaunch(api, network),
-				fetchSocietyRotate(api, network),
-				fetchSocietyChallenge(api, network),
-				fetchAuctionInfo(api, network),
-				fetchParachainLease(api, network)
-			];
-
-			const eventsSettled = await Promise.allSettled(eventPromises);
-
-			for (const [index, eventSettled] of eventsSettled.entries()) {
-				if (eventSettled.status !== 'fulfilled' || !eventSettled.value) continue;
-				const currDate = dayjs();
-				switch (index) {
-					case 0:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
-								const title = type.charAt(0).toUpperCase() + type.slice(1);
-
-								eventsArr.push({
-									content:
-										eventObj.type === 'stakingEpoch'
-											? `Start of a new staking session ${eventObj?.data?.index}`
-											: eventObj.type === 'stakingEra'
-											? `Start of a new staking era ${eventObj?.data?.index}`
-											: `${eventObj.type} ${eventObj?.data?.index}`,
-									end_time: dayjs(eventObj.startDate).toDate(),
-									id: `stakingInfoEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.startDate).toDate(),
-									status: 'approved',
-									title,
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.startDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 1:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Council Motion ${String(eventObj?.data?.hash)?.substring(0, 10)}...`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `councilMotionEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Council Motion',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 2:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `councilElectionEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Start New Council Election',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 3:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: eventObj?.data?.id ? `Execute named scheduled task ${String(eventObj?.data?.id)?.substring(0, 10)}...` : 'Execute anonymous scheduled task',
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `scheduledEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Scheduled Task',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 4:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `treasurySpendEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Start Spend Period',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 5:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Democracy Dispatch ${eventObj?.data?.index}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `democracyDispatchEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Democracy Dispatch',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 6:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `democracyLaunchEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Start Referendum Voting Period',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 7:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `societyRotateEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'New Members & Bids',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 8:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `societyChallengeEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Start Membership Challenge Period',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 9:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `auctionInfoEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'End Parachain Auction',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-
-					case 10:
-						eventSettled.value.forEach((eventObj, i) => {
-							if (dayjs(eventObj.endDate).isAfter(currDate)) {
-								eventsArr.push({
-									content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
-									end_time: dayjs(eventObj.endDate).toDate(),
-									id: `parachainLeaseEvent_${i}`,
-									location: '',
-									start_time: dayjs(eventObj.endDate).toDate(),
-									status: 'approved',
-									title: 'Start Parachain Lease Period',
-									url: ''
-								});
-								const eventDateStr = dayjs(eventObj.endDate).format('L');
-								eventDatesArr.push(eventDateStr);
-							}
-						});
-						break;
-				}
-			}
-
-			setCalendarEvents(eventsArr);
-			setEventDates(eventDatesArr);
-			setLoading(false);
-		})();
-	}, [api, apiReady, network]);
+		fetchCurrentBlock();
+	}, [fetchCurrentBlock]);
 
 	const getNetworkEvents = useCallback(async () => {
-		const { data, error: fetchError } = await nextApiClientFetch<NetworkEvent[]>('api/v1/events');
+		if (!currentBlockStatic) return;
+		setLoading(true);
 
-		if (fetchError || !data) {
-			console.log('error fetching events : ', fetchError);
-			setError(fetchError || 'Error in fetching events');
+		const selectedDate = new Date();
+		const startDate = dayjs(selectedDate).startOf('month');
+		const endDate = dayjs(selectedDate).endOf('month');
+
+		const startBlockNo = dateToBlockNo({
+			currentBlockNumber: currentBlockStatic.toNumber(),
+			date: startDate.toDate(),
+			network
+		});
+		const endBlockNo = dateToBlockNo({
+			currentBlockNumber: currentBlockStatic.toNumber(),
+			date: endDate.toDate(),
+			network
+		});
+
+		if (startBlockNo && currentBlockStatic && startBlockNo > currentBlockStatic.toNumber()) {
+			setLoading(false);
+			setCalendarEvents([]);
+			return;
 		}
 
-		if (data) {
-			const eventsArr: any[] = calendarEvents;
-			const eventDatesArr: string[] = eventDates;
+		const { data, error } = await nextApiClientFetch<ICalendarEvent[]>('api/v1/calendar/getEventsByDate', { endBlockNo, startBlockNo });
 
-			data.forEach((eventObj) => {
-				const eventDate = new Date(eventObj.end_time);
-				const currDate = new Date();
-				if (eventDate.getTime() >= currDate.getTime()) {
-					eventsArr.push({
-						content: eventObj.content,
-						end_time: dayjs(eventObj.end_time).toDate(),
-						id: eventObj.id,
-						location: eventObj.location,
-						start_time: dayjs(eventObj.end_time).toDate(),
-						status: eventObj.status,
-						title: eventObj.title,
-						url: eventObj.url
-					});
-					const eventDateStr = dayjs(eventObj.end_time).format('L');
-					eventDatesArr.push(eventDateStr);
-				}
-			});
-			setCalendarEvents(eventsArr);
-			setEventDates(eventDatesArr);
+		if (error) {
+			console.error(error);
+			setError(error);
+			setLoading(false);
+			return;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+
+		const updatedEvents = updateEventsWithTimeStamps(data || [], startBlockNo || 0);
+		setCalendarEvents(updatedEvents);
+		setEventDates(updatedEvents.map((event) => dayjs(event.createdAt).format('L')));
+		setLoading(false);
+	}, [currentBlockStatic, network]);
 
 	useEffect(() => {
 		getNetworkEvents();
@@ -379,7 +149,7 @@ const UpcomingEvents = ({ className }: Props) => {
 	const getEventData = (value: Dayjs): any[] => {
 		const eventList: any[] = [];
 		calendarEvents.forEach((eventObj) => {
-			if (dayjs(eventObj.end_time).format('L') === value.format('L')) {
+			if (dayjs(eventObj.createdAt).format('L') === value.format('L')) {
 				eventList.push(eventObj);
 			}
 		});
@@ -392,17 +162,17 @@ const UpcomingEvents = ({ className }: Props) => {
 		if (hasEvent) {
 			const eventData = getEventData(value);
 			const eventList = (
-				<div>
-					{eventData.map((eventObj) => (
+				<div className='flex max-h-[200px] flex-col gap-2 overflow-y-auto'>
+					{eventData.map((eventObj: any) => (
 						<div key={eventObj.id}>
-							<a
-								className='text-white hover:text-white hover:underline'
-								href={eventObj.url}
+							<Link
+								className='capitalize text-white hover:text-pink_primary hover:text-white hover:underline'
+								href={`/${getSinglePostLinkFromProposalType(eventObj.proposalType)}/${eventObj.index}`}
 								target='_blank'
 								rel='noreferrer'
 							>
 								{eventObj.title}
-							</a>
+							</Link>
 							<span className='my-2 flex h-[1px] w-full rounded-full bg-[rgba(255,255,255,0.3)]'></span>
 						</div>
 					))}
@@ -434,26 +204,23 @@ const UpcomingEvents = ({ className }: Props) => {
 	const EventsListElement = () => (
 		<>
 			<List
-				className='h-[100%] overflow-y-auto'
+				className='h-[100%] overflow-y-auto overflow-x-hidden'
 				itemLayout='horizontal'
-				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime())).reverse()}
+				dataSource={calendarEvents
+					.sort((a, b) => dayjs(a.createdAt).diff(dayjs(b.createdAt)))
+					?.filter((event) => dayjs(event.createdAt).format('DD YYYY MM') == dayjs().format('DD YYYY MM'))}
 				renderItem={(item) => {
 					return (
-						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high`}>
-							<a
-								{...(item.url ? { href: item.url } : {})}
+						<List.Item className={'flex cursor-pointer flex-col items-start justify-start gap-1 text-blue-light-high dark:text-blue-dark-high'}>
+							<div className='mb-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>{dayjs(item.createdAt).format('MMM D, YYYY')}</div>
+							<Link
+								href={`/${getSinglePostLinkFromProposalType(item.proposalType)}/${item.index}`}
 								target='_blank'
 								rel='noreferrer'
-								className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}
+								className={'cursor-pointer text-sidebarBlue hover:text-pink_primary hover:underline'}
 							>
-								<div className='mb-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
-									{dayjs(item.end_time).format('MMM D, YYYY')}
-									<span className='mx-2 inline-block h-[4px] w-[4px] rounded-full bg-bodyBlue dark:bg-blue-dark-medium'></span>
-									{dayjs(item.end_time).format('h:mm a')}
-								</div>
-
-								<div className='text-sm text-bodyBlue dark:font-normal dark:text-blue-dark-high'>{item.content}</div>
-							</a>
+								<div className='text-sm capitalize text-bodyBlue hover:text-pink_primary dark:font-normal dark:text-blue-dark-high hover:dark:text-pink_primary'>{item.title}</div>
+							</Link>
 						</List.Item>
 					);
 				}}
@@ -469,7 +236,7 @@ const UpcomingEvents = ({ className }: Props) => {
 		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:border-[#29323C] dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
 				<h2 className='text-xl font-semibold leading-8 tracking-tight text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>
-					Upcoming Events
+					Events
 					<CalendarFilled
 						className='ml-2 inline-block scale-90 cursor-pointer lg:hidden'
 						onClick={() => setShowCalendar(!showCalendar)}

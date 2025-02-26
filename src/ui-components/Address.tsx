@@ -31,24 +31,13 @@ import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
 import { dmSans } from 'pages/_app';
-import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import copyToClipboard from '~src/util/copyToClipboard';
+import IdenticonAndProfileImage from './IdenticonAndProfileImage';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
-	ssr: false
-});
-
-const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
-	loading: () => (
-		<SkeletonAvatar
-			active
-			size='large'
-			shape='circle'
-		/>
-	),
 	ssr: false
 });
 
@@ -85,6 +74,7 @@ interface Props {
 	disableParentProxyAddressTitle?: boolean;
 	showCopyIcon?: boolean;
 	showProxyTitle?: boolean;
+	withUserProfileImage?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -174,7 +164,7 @@ const Address = (props: Props) => {
 		usernameMaxLength,
 		addressMaxLength,
 		addressOtherTextType,
-
+		withUserProfileImage = false,
 		passedUsername,
 		ethIdenticonSize,
 		isVoterAddress,
@@ -442,22 +432,13 @@ const Address = (props: Props) => {
 								address={encodedAddr}
 							/>
 						) : (
-							<button
-								className='flex items-center border-none bg-transparent p-0'
-								onClick={(e) => {
-									e.preventDefault();
-									navigator.clipboard.writeText(encodedAddr);
-									success();
-								}}
-							>
-								<Identicon
-									className='image identicon'
-									value={encodedAddr}
-									size={iconSize ? iconSize : displayInline ? 20 : 32}
-									theme={'polkadot'}
-								/>
-								{contextHolder}
-							</button>
+							<IdenticonAndProfileImage
+								address={encodedAddr}
+								withUserProfileImage={withUserProfileImage}
+								iconSize={iconSize ? iconSize : displayInline ? 20 : 32}
+								displayInline={displayInline || false}
+								imgUrl={imgUrl}
+							/>
 						))}
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>

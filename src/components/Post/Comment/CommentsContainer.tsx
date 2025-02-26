@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Anchor, Empty } from 'antd';
+import { Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -51,8 +51,6 @@ import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
-
-const { Link: AnchorLink } = Anchor;
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -108,7 +106,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const {
 		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
 	} = usePostDataContext();
-	const targetOffset = 10;
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -152,13 +149,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
 	}
-
-	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string }) => {
-		if (link.href === '#') {
-			e.preventDefault();
-			return;
-		}
-	};
 
 	const getOverallSentimentPercentage = () => {
 		const againstCount = overallSentiments?.[ESentiments.Against] || 0;
@@ -629,53 +619,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</div>
 			)}
-			<div className={classNames(!isCommentAllowed ? 'mt-6' : '', 'block grid-cols-12 xl:grid')}>
-				{!!allComments?.length && timelines.length >= 1 && (
-					<div className='sticky top-[110px] col-start-1 col-end-2 mb-[65px] ml-1 hidden h-min min-w-[100px] xl:block'>
-						<Anchor
-							targetOffset={targetOffset}
-							className='h-full min-w-[140px]'
-							onClick={handleTimelineClick}
-						>
-							{timelines.map((timeline) => {
-								return timeline.commentsCount > 0 ? (
-									<div
-										key={timeline.id}
-										className='m-0 border-none p-0 [&>.ant-card-body]:p-0'
-									>
-										{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? (
-											<AnchorLink
-												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
-												title={
-													<div className='sticky top-10 flex flex-col text-lightBlue dark:text-blue-dark-high'>
-														<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
-														<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
-														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
-													</div>
-												}
-											/>
-										) : (
-											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue dark:text-blue-dark-high'>
-												<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
-												<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
-												<div className='text-xs'>({timeline.commentsCount})</div>
-											</div>
-										)}
-									</div>
-								) : (
-									<div
-										key={timeline.id}
-										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue dark:text-blue-dark-high'
-									>
-										<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
-										<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
-										<div className='text-xs'>({timeline.commentsCount})</div>
-									</div>
-								);
-							})}
-						</Anchor>
-					</div>
-				)}
+			<div className={classNames(!isCommentAllowed ? 'mt-6' : '', '')}>
 				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
 					{!!allComments?.length && !loading && (
 						<>

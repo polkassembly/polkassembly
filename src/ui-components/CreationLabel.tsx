@@ -25,6 +25,7 @@ import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
 import Tooltip from '~src/basic-components/Tooltip';
+import classNames from 'classnames';
 
 const Styled = styled.div`
 	padding: 0;
@@ -300,13 +301,17 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				</div>
 			</div>
 			<div className='flex'>
-				{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+				{!!spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 					<div className='mr-2 flex items-center'>
 						<Tooltip
 							color='#E5007A'
+							className={classNames(dmSans.variable, dmSans.className)}
 							title={`This comment has been reported as spam by ${spam_users_count} members`}
 						>
-							<WarningMessageIcon className='scale-75 text-xl text-[#FFA012]' />
+							<div className='flex items-center gap-0.5'>
+								<WarningMessageIcon className='scale-75 text-xl text-[#FFA012]' />
+								<span className='-mt-0.5 text-xs text-[#FFA012]'>Spam</span>
+							</div>
 						</Tooltip>
 					</div>
 				) : null}

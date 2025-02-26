@@ -52,7 +52,6 @@ const getSpamUsersCount = async (network: string, proposalType: any, postId: str
 		.get();
 	const data = countQuery.data();
 	const totalUsers = data.count || 0;
-	console.log({ totalUsers: checkReportThreshold(totalUsers) }, postId);
 	return checkReportThreshold(totalUsers);
 };
 

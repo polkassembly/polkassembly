@@ -21,6 +21,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
 import ImageIcon from './ImageIcon';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 const ZERO_BN = new BN(0);
 interface IProfileData {
@@ -31,6 +32,7 @@ interface IProfileData {
 const ProfileData = ({ address, className }: IProfileData) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const isMobile = useIsMobile();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
 	const [discussionCount, setDiscussionCount] = useState(0);
@@ -39,7 +41,6 @@ const ProfileData = ({ address, className }: IProfileData) => {
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 	const userAddress = typeof address == 'string' ? address : (address as any)?.interior?.value?.id || '';
-	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -117,6 +118,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							disableIdenticon={true}
 							isProfileView
 							isTruncateUsername={isMobile}
+							usernameMaxLength={65}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'

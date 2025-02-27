@@ -11,6 +11,7 @@ import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
 import dayjs from 'dayjs';
 import { isValidNetwork } from '~src/api-utils';
+
 const createReportInFirestore = async ({
 	userId,
 	network,
@@ -21,7 +22,7 @@ const createReportInFirestore = async ({
 	network: string;
 	postType: string;
 	postIndex: number;
-}): Promise<{ success: boolean; data?: any; error?: string; isAlreadyReported: boolean }> => {
+}): Promise<{ success: boolean; message: string; error?: string; data?: any }> => {
 	try {
 		const existingReportQuery = await firestore_db
 			.collection('ai_summary_reports')
@@ -34,8 +35,8 @@ const createReportInFirestore = async ({
 		if (!existingReportQuery.empty) {
 			return {
 				success: true,
-				isAlreadyReported: true,
-				data: existingReportQuery.docs[0].data()
+				message: 'You have already reported this post.',
+				data: { isAlreadyReported: true }
 			};
 		}
 
@@ -47,22 +48,19 @@ const createReportInFirestore = async ({
 			reportedAt: dayjs().toDate()
 		};
 
-		const reportRef = await firestore_db.collection('ai_summary_reports').add(reportData);
+		await firestore_db.collection('ai_summary_reports').add(reportData);
 
 		return {
 			success: true,
-			isAlreadyReported: false,
-			data: {
-				reportId: reportRef.id,
-				reportData
-			}
+			message: 'Report successfully submitted.',
+			data: { isAlreadyReported: false }
 		};
 	} catch (error) {
 		console.error('Error creating report:', error);
 		return {
 			success: false,
-			error: error instanceof Error ? error.message : 'An unexpected error occurred.',
-			isAlreadyReported: false
+			message: 'Internal Server Error',
+			error: error instanceof Error ? error.message : 'Unexpected error occurred.'
 		};
 	}
 };
@@ -70,7 +68,9 @@ const createReportInFirestore = async ({
 const handler: NextApiHandler = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { postType, postIndex } = req.body;
+	if (req.method !== 'POST') {
+		return res.status(405).json({ message: 'Method Not Allowed. Use POST.' });
+	}
 
 	const token = getTokenFromReq(req);
 	if (!token) {
@@ -82,39 +82,32 @@ const handler: NextApiHandler = async (req, res) => {
 		return res.status(403).json({ message: messages.UNAUTHORISED });
 	}
 
+	const { postType, postIndex } = req.body;
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}
 
-	const userId = user.id;
-
-	if (!postType || !postIndex) {
-		return res.status(400).json({ message: 'Missing required fields: network, postType, postIndex' });
+	if (!postType) {
+		return res.status(400).json({ message: 'Invalid postType' });
 	}
 
-	const { success, data, error, isAlreadyReported } = await createReportInFirestore({ userId, network, postType, postIndex });
+	if (typeof postIndex !== 'number' || postIndex < 0 || !Number.isInteger(postIndex)) {
+		return res.status(400).json({ message: 'Invalid postIndex' });
+	}
 
-	if (success) {
-		if (isAlreadyReported) {
-			return res.status(200).json({
-				message: 'You have already reported this post.',
-				isAlreadyReported: true,
-				data
-			});
-		} else {
-			return res.status(201).json({
-				message: 'Report successfully submitted.',
-				reportId: data.reportId,
-				isAlreadyReported: false,
-				data: data.reportData
-			});
-		}
+	const response = await createReportInFirestore({ userId: user.id, network, postType, postIndex });
+
+	if (response.success) {
+		return res.status(200).json({
+			message: response.message,
+			data: response.data
+		});
 	} else {
 		return res.status(500).json({
-			message: error || messages.API_FETCH_ERROR,
-			isAlreadyReported: false
+			message: response.message,
+			error: response.error
 		});
 	}
 };

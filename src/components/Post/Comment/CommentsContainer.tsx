@@ -77,9 +77,12 @@ interface ICommentsContainerProps {
 }
 
 interface IReportSummaryResponse {
-	isAlreadyReported: boolean;
 	message: string;
-	data?: any;
+	data?: {
+		isAlreadyReported: boolean;
+		message?: string;
+	};
+	error?: string;
 }
 
 export interface ITimeline {
@@ -215,38 +218,45 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				postType
 			});
 
-			if (error || !data) {
-				console.log('Error While reporting AI summary data', error);
+			if (error) {
+				console.error('Error while reporting AI summary:', error);
 				setReportingAISummary(false);
 				queueNotification({
 					header: '',
-					message: 'Error While reporting AI summary.',
+					message: 'Error while reporting AI summary.',
 					status: NotificationStatus.ERROR
 				});
 				return;
 			}
 
-			if (data && data?.isAlreadyReported) {
+			if (!data) {
+				console.error('Unexpected API response: No data received.');
+				setReportingAISummary(false);
 				queueNotification({
 					header: '',
-					message: 'You have already submitted the feedback.',
-					status: NotificationStatus.INFO
+					message: 'Unexpected API response. Please try again later.',
+					status: NotificationStatus.ERROR
 				});
-				setIsAlreadyReported(data?.isAlreadyReported);
-				setReportingAISummary(false);
+				return;
 			}
-			if (data && !data?.isAlreadyReported) {
+			if (data && data?.data) {
+				const isAlreadyReported = Boolean(data.data.isAlreadyReported);
 				queueNotification({
-					header: 'Success!',
-					message: 'Your feedback has been submitted.',
-					status: NotificationStatus.SUCCESS
+					header: isAlreadyReported ? '' : 'Success!',
+					message: isAlreadyReported ? 'You have already submitted the feedback.' : 'Your feedback has been submitted.',
+					status: isAlreadyReported ? NotificationStatus.INFO : NotificationStatus.SUCCESS
 				});
-				setIsAlreadyReported(data?.isAlreadyReported);
+				setIsAlreadyReported(isAlreadyReported);
 				setReportingAISummary(false);
 			}
 		} catch (error) {
-			console.log(error);
+			console.error('Unexpected error:', error);
 			setReportingAISummary(false);
+			queueNotification({
+				header: '',
+				message: 'An unexpected error occurred. Please try again later.',
+				status: NotificationStatus.ERROR
+			});
 		}
 	};
 
@@ -260,16 +270,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				error?: string;
 			}>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
 
-			console.log('ReFetch message', { data, error });
 			if (error || !data) {
 				console.log('Error While reporting AI summary data', error);
 				setReportingAISummary(false);
 				return;
 			}
-
 			if (data && data?.message) {
 				setReportingAISummary(false);
-				window.location.reload();
+				console.log('REFETCH', { data, error });
+				// window.location.reload();
 			}
 		} catch (error) {
 			console.log(error);

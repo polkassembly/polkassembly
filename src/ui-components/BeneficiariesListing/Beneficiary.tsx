@@ -7,9 +7,9 @@ import { IBeneficiary } from '~src/types';
 import Address from '../Address';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { formatedBalance } from '~src/util/formatedBalance';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import BN from 'bn.js';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface Props {
 	className?: string;
@@ -55,7 +55,7 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 						  })
 					: disableBalanceFormatting
 					? beneficiary.amount.toString()
-					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}
+					: parseBalance(beneficiary.amount.toString(), 2, false, network)}
 				&nbsp;
 				{!assetId && chainProperties[network]?.tokenSymbol})
 			</span>

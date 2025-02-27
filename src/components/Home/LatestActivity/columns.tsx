@@ -84,7 +84,7 @@ const Status: any = {
 	dataIndex: 'status',
 	key: 'status',
 	render: (status: any, obj: any) => {
-		if (status || obj.spam_users_count)
+		if (status || !!obj.spam_users_count)
 			return (
 				<div className='flex items-center gap-x-2'>
 					{status && status !== '-' ? <StatusTag status={status} /> : null}

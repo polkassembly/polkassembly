@@ -66,12 +66,12 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
-				{post.spam_users_count && post.spam_users_count > 0 && <SpamPostBanner />}
+				{!!post.spam_users_count && post.spam_users_count > 0 && <SpamPostBanner />}
 				<div className={`${post.spam_users_count && post.spam_users_count > 0 ? 'mt-8 max-sm:mt-2' : ''}`}>
 					<BackToListingView postCategory={PostCategory.DISCUSSION} />
 				</div>
 
-				{post.spam_users_count && post.spam_users_count > 0 && (
+				{!!post.spam_users_count && post.spam_users_count > 0 && (
 					<SpamPostModal
 						open={openSpamModal}
 						setOpen={setOpenSpamModal}

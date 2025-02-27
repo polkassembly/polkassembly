@@ -20,8 +20,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const polkadotKeysPattern = 'polkadot_*';
 		const kusamaKeysPattern = 'kusama_*';
+		const acalaKeysPattern = 'acala_*';
 
-		await Promise.all([deleteKeys(polkadotKeysPattern), deleteKeys(kusamaKeysPattern)]);
+		await Promise.all([deleteKeys(polkadotKeysPattern), deleteKeys(kusamaKeysPattern), deleteKeys(acalaKeysPattern)]);
 		return res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		console.log('Error: ', error);

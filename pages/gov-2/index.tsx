@@ -13,8 +13,6 @@ import { useDispatch } from 'react-redux';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
-import UpcomingEvents from 'src/components/Home/UpcomingEvents';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -28,6 +26,11 @@ import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const UpcomingEvents = dynamic(() => import('~src/components/Home/UpcomingEvents'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

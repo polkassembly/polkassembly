@@ -31,24 +31,13 @@ import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
 import { dmSans } from 'pages/_app';
-import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import copyToClipboard from '~src/util/copyToClipboard';
+import IdenticonAndProfileImage from './IdenticonAndProfileImage';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
-	ssr: false
-});
-
-const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
-	loading: () => (
-		<SkeletonAvatar
-			active
-			size='large'
-			shape='circle'
-		/>
-	),
 	ssr: false
 });
 
@@ -85,6 +74,7 @@ interface Props {
 	disableParentProxyAddressTitle?: boolean;
 	showCopyIcon?: boolean;
 	showProxyTitle?: boolean;
+	withUserProfileImage?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -174,7 +164,7 @@ const Address = (props: Props) => {
 		usernameMaxLength,
 		addressMaxLength,
 		addressOtherTextType,
-
+		withUserProfileImage = false,
 		passedUsername,
 		ethIdenticonSize,
 		isVoterAddress,
@@ -216,7 +206,7 @@ const Address = (props: Props) => {
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState(false);
-	const [messageApi] = message.useMessage();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -403,9 +393,6 @@ const Address = (props: Props) => {
 			type: 'success'
 		});
 	};
-	const copyLink = (address: string) => {
-		copyToClipboard(address);
-	};
 
 	return (
 		<div className={classNames(addressOtherTextType ? 'w-full' : ' myAddress', identity?.parentProxyTitle?.length ? 'flex items-center' : 'items-start')}>
@@ -445,11 +432,12 @@ const Address = (props: Props) => {
 								address={encodedAddr}
 							/>
 						) : (
-							<Identicon
-								className='image identicon'
-								value={encodedAddr}
-								size={iconSize ? iconSize : displayInline ? 20 : 32}
-								theme={'polkadot'}
+							<IdenticonAndProfileImage
+								address={encodedAddr}
+								withUserProfileImage={withUserProfileImage}
+								iconSize={iconSize ? iconSize : displayInline ? 20 : 32}
+								displayInline={displayInline || false}
+								imgUrl={imgUrl}
 							/>
 						))}
 					{!isProfileView ? (
@@ -604,11 +592,13 @@ const Address = (props: Props) => {
 									{showCopyIcon && (
 										<span
 											className='flex cursor-pointer items-center text-base'
-											onClick={() => {
-												copyLink(encodedAddr || '');
+											onClick={(e) => {
+												e.preventDefault();
+												copyToClipboard(encodedAddr || '');
 												success();
 											}}
 										>
+											{contextHolder}
 											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
 										</span>
 									)}
@@ -625,11 +615,13 @@ const Address = (props: Props) => {
 									{isUsedInDelegationProfile && (
 										<span
 											className='flex cursor-pointer items-center text-base'
-											onClick={() => {
-												copyLink(encodedAddr || '');
+											onClick={(e) => {
+												e.preventDefault();
+												copyToClipboard(encodedAddr || '');
 												success();
 											}}
 										>
+											{contextHolder}
 											<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
 										</span>
 									)}

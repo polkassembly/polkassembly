@@ -31,7 +31,7 @@ const getMetamaskAccounts = async ({
 			ethereum = (window as any)?.ethereum;
 			break;
 		default:
-			ethereum = (window as any).ethereum;
+			ethereum = (window as any)?.ethereum;
 	}
 
 	if (!ethereum) {

@@ -140,8 +140,9 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 			const params = [msg, from];
 			const method = 'personal_sign';
+			const ethereum = (window as any)?.ethereum;
 
-			(window as any).ethereum.sendAsync(
+			ethereum?.sendAsync(
 				{
 					from,
 					method,

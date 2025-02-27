@@ -138,7 +138,8 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 			const params = [msg, from];
 			const method = 'personal_sign';
 
-			(window as any).ethereum.sendAsync(
+			const ethereum = (window as any)?.ethereum;
+			ethereum?.sendAsync(
 				{
 					from,
 					method,

@@ -91,7 +91,7 @@ const getAllAccounts: TGetAllAccounts = async (params) => {
 	};
 
 	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 		if (!ethereum) return [];
 
 		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });

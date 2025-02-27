@@ -180,7 +180,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 
 	const handleLogin: (values: React.BaseSyntheticEvent<object, any, any> | undefined) => void = async () => {
 		setError('');
-		if (!(window as any).ethereum.isMetaMask) {
+		if (!(window as any)?.ethereum?.isMetaMask) {
 			setError('Please install metamask');
 			return;
 		}

@@ -19,7 +19,7 @@ const getMetamaskWalletAccounts = async ({
 }: Props): Promise<{ accounts: InjectedAccountWithMeta[]; account: string; isTalismanEthereum: boolean } | null> => {
 	let isTalismanEthereum = true;
 
-	const ethereum = chosenWallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum;
+	const ethereum = chosenWallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any)?.ethereum;
 
 	if (!ethereum) {
 		return null;

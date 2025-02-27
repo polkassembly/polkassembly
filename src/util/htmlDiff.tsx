@@ -9,6 +9,11 @@ import removeMd from 'remove-markdown';
 
 export function removeSymbols(input: string | undefined): string {
 	if (!input) return '';
+	return removeMd(striptags(String(input)));
+}
+
+export function removeStylingAndSymbols(input: string | undefined): string {
+	if (!input) return '';
 	const decodedInput = String(input).replace(/&nbsp;/g, ' ');
 	return removeMd(striptags(decodedInput)).replace(/\s+/g, ' ').trim();
 }

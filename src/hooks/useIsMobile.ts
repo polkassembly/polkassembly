@@ -7,7 +7,7 @@ const useIsMobile = () => {
 	const [isMobile, setIsMobile] = useState(false);
 
 	useEffect(() => {
-        if (typeof window === 'undefined') return;
+		if (typeof window === 'undefined') return;
 
 		const checkMobile = () => {
 			setIsMobile(window.innerWidth < 640);
@@ -15,7 +15,7 @@ const useIsMobile = () => {
 
 		checkMobile();
 		window.addEventListener('resize', checkMobile);
-        
+
 		return () => window.removeEventListener('resize', checkMobile);
 	}, []);
 	return isMobile;

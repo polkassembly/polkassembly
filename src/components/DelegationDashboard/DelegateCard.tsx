@@ -20,7 +20,7 @@ import { useTheme } from 'next-themes';
 import { dmSans } from 'pages/_app';
 import classNames from 'classnames';
 import ImageComponent from '../ImageComponent';
-import { removeSymbols } from '~src/util/htmlDiff';
+import { removeStylingAndSymbols } from '~src/util/htmlDiff';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -245,7 +245,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</Button>
 				</div>
 				<div className={`${dmSans.variable} ${dmSans.className} my-[4px] h-[50px]  text-xs font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high`}>
-					<p className='inline text-xs text-blue-light-high dark:text-blue-dark-high'>{openReadMore ? delegate?.bio : getTrimmedBio(removeSymbols(delegate?.bio) || 'No bio')}</p>
+					<p className='inline text-xs text-blue-light-high dark:text-blue-dark-high'>
+						{openReadMore ? delegate?.bio : getTrimmedBio(removeStylingAndSymbols(delegate?.bio) || 'No bio')}
+					</p>
 					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(!openReadMore)}

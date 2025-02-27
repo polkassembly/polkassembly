@@ -12,7 +12,6 @@ import React, { useEffect } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
-import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
@@ -27,8 +26,12 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
-
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const UpcomingEvents = dynamic(() => import('~src/components/Home/UpcomingEvents'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

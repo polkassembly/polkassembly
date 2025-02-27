@@ -23,7 +23,6 @@ import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
-import SpamAlert from '~src/ui-components/SpamAlert';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
@@ -550,7 +549,7 @@ const Post: FC<IPostProps> = (props) => {
 					}}
 				>
 					<QuoteCommentContextProvider>
-						<SpamAlert />
+						{/* <SpamAlert /> */}
 						{!isEditing &&
 							Boolean(post.timeline?.length) &&
 							proposalType !== ProposalType.CHILD_BOUNTIES &&

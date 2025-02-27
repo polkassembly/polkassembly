@@ -6,14 +6,14 @@ import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/
 import { Divider } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
-import Tooltip from '~src/basic-components/Tooltip';
+import SpamPostTooltip from '~src/ui-components/SpamPostTooltip';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -60,13 +60,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{title}
 								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
-									<div className='ml-5 hidden items-center justify-center lg:flex'>
-										<Tooltip
-											color='#E5007A'
-											title='This post could be a spam.'
-										>
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
+									<div className='ml-2 hidden items-center justify-center lg:flex'>
+										<SpamPostTooltip />
 									</div>
 								) : null}
 							</h1>
@@ -175,23 +170,13 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='flex items-center justify-between'>
 							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 								<div className='flex items-center justify-center lg:hidden'>
-									<Tooltip
-										color='#E5007A'
-										title='This post could be a spam.'
-									>
-										<WarningMessageIcon className='text-xl text-[#FFA012]' />
-									</Tooltip>
+									<SpamPostTooltip />
 								</div>
 							) : null}
 						</div>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 							<div className='hidden items-center justify-center lg:flex'>
-								<Tooltip
-									color='#E5007A'
-									title='This post could be a spam.'
-								>
-									<WarningMessageIcon className='text-xl text-[#FFA012]' />
-								</Tooltip>
+								<SpamPostTooltip />
 							</div>
 						) : null}
 					</div>

@@ -3,16 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ColumnsType } from 'antd/es/table';
-
 import { ProposalType, getFirestoreProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-
 import { IPostsRowData } from './PostsTable';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { noTitle } from '~src/global/noTitle';
-import Tooltip from '~src/basic-components/Tooltip';
+import SpamPostTooltip from '~src/ui-components/SpamPostTooltip';
 
 const Index: any = {
 	dataIndex: 'post_id',
@@ -93,12 +90,7 @@ const Status: any = {
 					{status && status !== '-' ? <StatusTag status={status} /> : null}
 					{obj.spam_users_count ? (
 						<div className='flex items-center justify-center'>
-							<Tooltip
-								color='#E5007A'
-								title='This post could be a spam.'
-							>
-								<WarningMessageIcon className='text-lg text-[#FFA012]' />
-							</Tooltip>
+							<SpamPostTooltip />
 						</div>
 					) : null}
 				</div>

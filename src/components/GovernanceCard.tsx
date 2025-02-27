@@ -13,7 +13,6 @@ import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
@@ -50,6 +49,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import RateModal from '~src/ui-components/RateModal';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
+import SpamPostTooltip from '../ui-components/SpamPostTooltip';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -687,12 +687,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='items-center justify-between gap-x-2 xs:flex sm:hidden'>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 							<div className='flex items-center justify-center'>
-								<Tooltip
-									color='#E5007A'
-									title='This post could be a spam.'
-								>
-									<WarningMessageIcon className='text-xl text-[#FFA012]' />
-								</Tooltip>
+								<SpamPostTooltip />
 							</div>
 						) : null}
 					</div>

@@ -13,11 +13,10 @@ import NameLabel from 'src/ui-components/NameLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import { ErrorState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import Tooltip from '~src/basic-components/Tooltip';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
+import SpamPostTooltip from '~src/ui-components/SpamPostTooltip';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
 const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 	const columns: ColumnsType<IPostsRowData> = [
@@ -107,12 +106,7 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 							) : null}
 							{obj.spam_users_count ? (
 								<div className='flex items-center justify-center'>
-									<Tooltip
-										color='#E5007A'
-										title='This post could be a spam.'
-									>
-										<WarningMessageIcon className='text-lg text-[#FFA012]' />
-									</Tooltip>
+									<SpamPostTooltip />
 								</div>
 							) : null}
 						</div>

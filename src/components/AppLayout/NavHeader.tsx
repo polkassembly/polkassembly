@@ -53,6 +53,7 @@ import { GlobalActions } from '~src/redux/global';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import ProxyMain from '../createProxy';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import Address from '~src/ui-components/Address';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -495,24 +496,84 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									className='bg-white p-4 dark:bg-section-dark-overlay'
 								>
 									<div className='flex flex-col'>
-										<div>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
-											<NetworkDropdown
-												setSidedrawer={() => {}}
-												isSmallScreen={true}
-											/>
-										</div>
-										<div className='mt-6'>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
-											<RPCDropdown isSmallScreen={true} />
-										</div>
-										<div className='mt-6 w-full'>
-											<BigToggleButton />
-										</div>
-										{username ? (
-											<div>
-												<Divider className='my-6' />
-												<div className='flex flex-col gap-y-4'>
+										{id && (
+											<>
+												<AuthDropdown>
+													{!web3signup ? (
+														<div className='flex w-full items-center justify-between gap-x-2 rounded-3xl border border-solid border-section-light-container bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+															{theme === 'dark' ? <MailWhite /> : <Mail />}
+															<div className='flex items-center justify-between gap-x-1'>
+																<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
+																{theme === 'dark' ? <ArrowWhite /> : <Arrow />}
+															</div>
+														</div>
+													) : (
+														<div className='mb-3 flex h-10 items-center rounded-md border border-solid border-section-light-container bg-[#F6F7F9] px-[14px] dark:border-separatorDark dark:bg-section-light-overlay'>
+															<Address
+																displayInline
+																iconSize={18}
+																isTruncateUsername={true}
+																address={loginAddress}
+																destroyTooltipOnHide
+																disableTooltip
+															/>
+														</div>
+													)}
+												</AuthDropdown>{' '}
+												<div className='my-2 flex flex-col gap-2.5 px-[14px]'>
+													<Link
+														className='mt-1/2 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														href={`/user/${username}`}
+													>
+														<IconProfile className='userdropdown-icon text-2xl' />
+														<span>Profile</span>
+													</Link>
+													<Link
+														className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														href={'/accounts'}
+													>
+														<AccountsIcon className='userdropdown-icon text-2xl' />
+														<span>Accounts</span>
+													</Link>
+													<Link
+														className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+														href={''}
+														onClick={(e) => {
+															e.stopPropagation();
+															e.preventDefault();
+															trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+																userId: currentUser?.id || '',
+																userName: currentUser?.username || ''
+															});
+															handleIdentityButtonClick();
+														}}
+													>
+														<div className='my-0 text-2xl'>
+															<ApplayoutIdentityIcon />
+														</div>
+														<span>Set on-chain identity</span>
+														{!isIdentityExists && (
+															<span className='flex items-center text-[22px]'>
+																<IdentityCaution />
+															</span>
+														)}
+													</Link>
+													<span
+														className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														onClick={() => setOpenProxyModal(true)}
+													>
+														<ProxyIcon className='userdropdown-icon text-2xl' />
+														<span>Create Proxy</span>
+													</span>
+													<Link
+														className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														href='/settings?tab=account'
+													>
+														<IconSettings className='userdropdown-icon text-2xl' />
+														<span>Settings</span>
+													</Link>
+												</div>
+												<div className='my-2'>
 													<button
 														onClick={(e) => {
 															e.preventDefault();
@@ -520,15 +581,31 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 															handleLogout(username || '');
 															window.location.reload();
 														}}
-														className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+														className='flex h-10 w-full items-center justify-center rounded-md border border-solid border-pink_primary bg-transparent px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 													>
 														Log Out
 													</button>
-												</div>
-											</div>
-										) : (
+													<Divider className='mb-3.5 mt-5 dark:bg-separatorDark' />
+												</div>{' '}
+											</>
+										)}
+										<div>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
+											<NetworkDropdown
+												setSidedrawer={() => {}}
+												isSmallScreen={true}
+											/>
+										</div>
+										<div className='mt-4'>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
+											<RPCDropdown isSmallScreen={true} />
+										</div>
+										<div className='mt-6 w-full'>
+											<BigToggleButton />
+										</div>
+										{username ? null : (
 											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-6' />
+												<Divider className='my-6 dark:bg-separatorDark' />
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {

@@ -16,8 +16,9 @@ import { checkReportThreshold } from '../../posts/on-chain-post';
 import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
 import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
 import _sendReplyReportMail from '~src/api-utils/_sendReplyReportMail';
-import { redisGet, redisSetex } from 'src/auth/redis';
+import { deleteKeys, redisDel, redisGet, redisSetex } from 'src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { ProposalType } from '~src/global/proposalType';
 
 export interface IReportContentResponse {
 	message: string;
@@ -104,6 +105,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 				if (!postReportKey) {
 					_sendPostSpamReportMail(network, strPostType, contentId, totalUsers);
 					await redisSetex(`postReportKey-${network}_${strPostType}_${post_id}`, TTL_DURATION, 'true');
+					if (process.env.IS_CACHING_ALLOWED == '1') {
+						const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${post_id}`;
+						const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+						const latestActivityKey = `${network}_latestActivity_OpenGov`;
+						await Promise.all([redisDel(discussionDetail), redisDel(latestActivityKey), deleteKeys(discussionListingKey)]);
+					}
 				}
 			}
 			if (type == 'comment' && checkReportThreshold(totalUsers)) {

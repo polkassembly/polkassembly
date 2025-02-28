@@ -493,7 +493,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									onClick={() => {
 										isClicked.current = true;
 									}}
-									className='bg-white p-4 dark:bg-section-dark-overlay'
+									className='h-screen bg-white p-4 dark:bg-section-dark-overlay'
 								>
 									<div className='flex flex-col'>
 										{id && (
@@ -520,23 +520,23 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														</div>
 													)}
 												</AuthDropdown>{' '}
-												<div className='my-2 flex flex-col gap-2.5 px-[14px]'>
+												<div className='my-[10px] flex flex-col gap-3 px-[14px]'>
 													<Link
-														className='mt-1/2 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														className='mt-1/2 flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 														href={`/user/${username}`}
 													>
 														<IconProfile className='userdropdown-icon text-2xl' />
 														<span>Profile</span>
 													</Link>
 													<Link
-														className='mt-[2px] flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														className='mt-[2px] flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 														href={'/accounts'}
 													>
 														<AccountsIcon className='userdropdown-icon text-2xl' />
 														<span>Accounts</span>
 													</Link>
 													<Link
-														className=' flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+														className=' flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 														href={''}
 														onClick={(e) => {
 															e.stopPropagation();
@@ -558,15 +558,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 															</span>
 														)}
 													</Link>
-													<span
-														className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+													<div
+														className='-mt-1 flex cursor-pointer items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 														onClick={() => setOpenProxyModal(true)}
 													>
-														<ProxyIcon className='userdropdown-icon text-2xl' />
-														<span>Create Proxy</span>
-													</span>
+														<ProxyIcon className='userdropdown-icon -mb-[1px] text-[28px]' />
+														<span className='-ml-1'>Create Proxy</span>
+													</div>
 													<Link
-														className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+														className='flex items-center gap-x-2 bg-transparent text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 														href='/settings?tab=account'
 													>
 														<IconSettings className='userdropdown-icon text-2xl' />
@@ -583,9 +583,18 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														}}
 														className='flex h-10 w-full items-center justify-center rounded-md border border-solid border-pink_primary bg-transparent px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 													>
-														Log Out
+														<div className='flex items-center justify-center gap-[6px] '>
+															<Image
+																className=''
+																src='/assets/icons/userDropdown/logout-icon.svg'
+																alt='Logout icon'
+																height={24}
+																width={24}
+															/>
+															Log Out
+														</div>
 													</button>
-													<Divider className='mb-3.5 mt-5 dark:bg-separatorDark' />
+													<Divider className='mb-3.5 mt-5 h-[1.px] bg-[#D2D8E0] dark:bg-separatorDark' />
 												</div>{' '}
 											</>
 										)}

@@ -12,6 +12,12 @@ export function removeSymbols(input: string | undefined): string {
 	return removeMd(striptags(String(input)));
 }
 
+export function removeStylingAndSymbols(input: string | undefined): string {
+	if (!input) return '';
+	const decodedInput = String(input).replace(/&nbsp;/g, ' ');
+	return removeMd(striptags(decodedInput)).replace(/\s+/g, ' ').trim();
+}
+
 export function GenerateDiffHtml(originalHtml: string, modifiedHtml: string) {
 	const { resolvedTheme: theme } = useTheme();
 	const diff = diffWords(originalHtml, modifiedHtml);

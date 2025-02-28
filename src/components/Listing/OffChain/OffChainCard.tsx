@@ -154,7 +154,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			<div
 				className={`${
 					ownPost && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[150px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
+				} h-auto min-h-[160px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden sm:min-h-[150px] md:p-4 ${className}`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					{topic && (
@@ -166,7 +166,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 						</div>
 					)}
-					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<div className='max-xs-hidden mx-2.5 my-1.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high sm:my-2.5'>
 						#{post_id} {title}
 						<div className='flex items-center justify-between'>
 							{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
@@ -181,7 +181,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:flex xs:gap-0 sm:ml-0 sm:mt-1 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 						<div className='xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -200,7 +200,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							)}
 						</div>
 
-						<div className='items-center justify-between xs:mt-3.5 xs:flex xs:gap-x-2'>
+						<div className='items-center justify-between xs:mt-2 xs:flex xs:gap-x-2 sm:mt-3.5'>
 							{tags && tags.length > 0 && (
 								<Divider
 									type='vertical'

@@ -111,7 +111,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 			<ImageIcon
 				alt='amount breakdown identity icon'
 				src='/assets/icons/amount-breakdown-identity.svg'
-				imgClassName='h-[210px] w-[350px]'
+				imgClassName='h-[150px] sm:h-[210px] w-[250px] sm:w-[350px]'
 				imgWrapperClassName='py-10 flex items-center justify-center '
 			/>
 			<ul className='flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>

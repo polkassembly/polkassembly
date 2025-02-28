@@ -51,7 +51,7 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 		}
 	};
 	return (
-		<div className={`${className} mt-[36px] rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+		<div className={`${className} mt-5 rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:mt-9 sm:py-8`}>
 			<Tabs
 				theme={theme}
 				activeKey={activeTab}

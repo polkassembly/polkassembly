@@ -120,6 +120,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 			gov_type: gov_type,
 			history,
 			isSpam: data?.isSpam,
+			isSpamDetected: data?.isSpamDetected || false,
 			isSpamReportInvalid: data?.isSpamReportInvalid,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,

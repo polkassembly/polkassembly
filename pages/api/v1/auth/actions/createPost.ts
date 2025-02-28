@@ -142,6 +142,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const isSpam = await isSpamDetected(sanitizedContent);
 	if (isSpam) {
 		await sendSpamNotificationEmail(sanitizedContent, network, newID);
+		await postDocRef.update({
+			isSpamDetected: isSpam || false
+		});
 	}
 
 	try {

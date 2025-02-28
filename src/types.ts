@@ -405,6 +405,7 @@ export interface Post {
 	progress_report?: IProgressReport[];
 	link?: string;
 	updated_at?: Date;
+	isSpamDetected?: boolean;
 }
 
 export interface IPostTag {

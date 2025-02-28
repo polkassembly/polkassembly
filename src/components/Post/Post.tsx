@@ -514,6 +514,7 @@ const Post: FC<IPostProps> = (props) => {
 					hash: post.hash,
 					history: post?.history || [],
 					identityId: post?.identity || null,
+					isSpamDetected: post?.isSpamDetected || false,
 					last_edited_at: post?.last_edited_at,
 					marketMetadata: post?.marketMetadata || null,
 					postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,

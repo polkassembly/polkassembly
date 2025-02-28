@@ -17,7 +17,7 @@ const useIsMobile = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
+			const isMobile = typeof window !== 'undefined' && window?.screen.width < 768;
 			setIsMobile(isMobile || isMobileBrowser());
 		};
 		handleResize();

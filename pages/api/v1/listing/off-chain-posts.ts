@@ -30,19 +30,8 @@ interface IGetOffChainPostsParams {
 	proposalType: OffChainProposalType | string | string[];
 	filterBy?: string[];
 }
-const checkReportThreshold = (totalUsers?: number) => {
-	const threshold = process.env.REPORTS_THRESHOLD;
 
-	if (threshold && totalUsers) {
-		if (Number(totalUsers) >= Number(threshold)) {
-			return totalUsers;
-		}
-		return 0;
-	}
-	return totalUsers || 0;
-};
-
-const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number, type: 'post' | 'comment') => {
+export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number, type: 'post' | 'comment') => {
 	const countQuery = await networkDocRef(network)
 		.collection('reports')
 		.where('type', '==', type)
@@ -52,7 +41,20 @@ const getSpamUsersCount = async (network: string, proposalType: any, postId: str
 		.get();
 	const data = countQuery.data();
 	const totalUsers = data.count || 0;
+
 	return checkReportThreshold(totalUsers);
+};
+
+export const checkReportThreshold = (totalUsers?: number) => {
+	const threshold = process.env.REPORTS_THRESHOLD;
+
+	if (threshold && totalUsers) {
+		if (Number(totalUsers) >= Number(threshold)) {
+			return totalUsers;
+		}
+		return 0;
+	}
+	return totalUsers || 0;
 };
 
 export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
@@ -119,17 +121,17 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 						'👍': reactions['👍']?.count || 0,
 						'👎': reactions['👎']?.count || 0
 					};
-
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
-					const spam_users_count = await getSpamUsersCount(network, strProposalType, docData.id, 'post');
-
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;
+					const spam_users_count = await getSpamUsersCount(network, strProposalType, docData.id, 'post');
+
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: created_at?.toDate ? created_at?.toDate() : created_at,
 						gov_type: docData?.gov_type,
 						isSpam: docData?.isSpam || false,
+						isSpamDetected: docData?.isSpamDetected || false,
 						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 						post_id: docData.id,
 						post_reactions,

@@ -24,8 +24,8 @@ const SpamPostModal = ({ open, setOpen, className, proposalType }: { open: boole
 			onCancel={() => setOpen(false)}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			footer={false}
-			className={`${dmSans.variable} ${dmSans.className}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			wrapClassName={`${className} bg-modalOverlayDark`}
+			className={`${dmSans.variable} ${dmSans.className} [&>.ant-modal-content]:backdrop-blur-[7px]`}
+			wrapClassName={`${className} bg-modalOverlayDark backdrop-blur-[7px] [&>.ant-modal-content]:backdrop-blur-[7px]`}
 		>
 			<div className='mt-6 flex flex-col items-center justify-center gap-6 text-bodyBlue dark:text-blue-dark-high'>
 				<Image

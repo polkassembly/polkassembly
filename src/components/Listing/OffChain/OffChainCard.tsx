@@ -29,11 +29,12 @@ export interface IDiscussionProps {
 	post_id: string;
 	tags: string[] | [];
 	spam_users_count?: number;
+	isSpamDetected?: boolean;
 	className?: string;
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, className } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, isSpamDetected, className } = props;
 	const currentUser = useUserDetailsSelector();
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -59,7 +60,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='mt-3 lg:mt-1'>
 							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{title}
-								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+								{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
 									<div className='ml-2 hidden items-center justify-center lg:flex'>
 										<SpamPostTooltip />
 									</div>
@@ -168,13 +169,13 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						#{post_id} {title}
 						<div className='flex items-center justify-between'>
-							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+							{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
 								<div className='flex items-center justify-center lg:hidden'>
 									<SpamPostTooltip />
 								</div>
 							) : null}
 						</div>
-						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+						{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
 							<div className='hidden items-center justify-center lg:flex'>
 								<SpamPostTooltip />
 							</div>

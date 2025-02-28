@@ -77,6 +77,7 @@ export interface IPostData {
 	track_number?: number;
 	tags: string[] | [];
 	spam_users_count?: number;
+	isSpamDetected?: boolean;
 	history?: IPostHistory[];
 	statusHistory?: any[];
 	identityId?: string | null;

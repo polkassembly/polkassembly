@@ -9,7 +9,7 @@ interface ISpamAlertProps {}
 
 const SpamAlert: FC<ISpamAlertProps> = () => {
 	const { postData } = usePostDataContext();
-	if (!postData.spam_users_count) return null;
+	if (!postData.spam_users_count && !postData.isSpamDetected) return null;
 	return (
 		<div className='mb-[26.66px] flex flex-col gap-2 rounded-[14px] bg-[#FFFBEC] p-[24.15px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark md:flex-row md:items-center md:justify-between'>
 			<div className='flex items-center gap-x-2'>

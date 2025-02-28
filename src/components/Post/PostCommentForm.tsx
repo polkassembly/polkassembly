@@ -7,7 +7,6 @@ import { Button, Form } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
-import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
@@ -331,12 +330,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 	return (
 		<div className={className}>
-			<UserAvatar
-				className='mt-4 hidden md:inline-block'
-				username={username || ''}
-				size={'large'}
-				id={id}
-			/>
 			{isPosted ? (
 				<div className='comment-message -mt-[4px]'>
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>

@@ -135,6 +135,7 @@ const NameLabel = ({
 						isTruncateUsername={truncateUsername || false}
 						isSubVisible={false}
 						usernameMaxLength={usernameMaxLength}
+						withUserProfileImage
 					/>
 				)}
 			</div>

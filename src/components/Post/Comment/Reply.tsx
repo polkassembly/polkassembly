@@ -5,7 +5,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
 import CreationLabel from 'src/ui-components/CreationLabel';
-import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
@@ -42,14 +41,8 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 		<div
 			id={id}
 			ref={replyRef}
-			className={`${className} flex gap-x-4`}
+			className={`${className} flex gap-x-4 px-4`}
 		>
-			<UserAvatar
-				className='mt-1 hidden md:inline-block'
-				username={username}
-				size='large'
-				id={id}
-			/>
 			<div className='comment-box'>
 				<CreationLabel
 					className='reply-user-container -mt-1 rounded-t-md px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'

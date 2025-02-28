@@ -17,7 +17,8 @@ const contentBlacklist: string[] = [
 	'premyo77',
 	'bmw555',
 	'hacksavvytechrecovery',
-	'captainwebgenesis'
+	'captainwebgenesis',
+	'recuvahackersolutions'
 ];
 
 export default contentBlacklist;

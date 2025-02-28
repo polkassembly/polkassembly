@@ -4,24 +4,11 @@
 
 import { useGlobalSelector } from '~src/redux/selectors';
 import { WarningOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 const SpamPostBanner = () => {
 	const { is_sidebar_collapsed } = useGlobalSelector();
-	const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' && window?.screen.width < 1024);
-
-	useEffect(() => {
-		const handleResize = () => {
-			const isMobile = window.innerWidth < 1024;
-			setIsMobile(isMobile);
-		};
-		handleResize();
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
+	const isMobile = useIsMobile();
 
 	return (
 		<div

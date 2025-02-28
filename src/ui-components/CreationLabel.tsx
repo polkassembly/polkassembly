@@ -188,7 +188,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				<div
 					className={`details-container ${
 						inPostHeading && beneficiaries && beneficiaries?.length > 0 ? 'mt-2' : ''
-					} flex items-center text-lightBlue dark:text-blue-dark-medium max-md:pt-1 max-xs:ml-1`}
+					} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}
 				>
 					{!inPostHeading && (
 						<div>

@@ -21,6 +21,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
 import ImageIcon from './ImageIcon';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 const ZERO_BN = new BN(0);
 interface IProfileData {
@@ -31,6 +32,7 @@ interface IProfileData {
 const ProfileData = ({ address, className }: IProfileData) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const isMobile = useIsMobile();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
 	const [discussionCount, setDiscussionCount] = useState(0);
@@ -100,12 +102,12 @@ const ProfileData = ({ address, className }: IProfileData) => {
 
 	return (
 		<div className={`${className}`}>
-			<div className='flex gap-x-4'>
-				<div className='h-[60px] w-[60px]'>
+			<div className='flex gap-x-1 sm:gap-x-4'>
+				<div className=''>
 					<ImageComponent
 						src={profileData?.profile?.image}
 						alt='User Picture'
-						className='flex h-[60px] w-[60px] items-center justify-center bg-transparent'
+						className='flex h-[30px] w-[30px] items-center justify-center bg-transparent sm:h-[60px] sm:w-[60px]'
 						iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 					/>
 				</div>
@@ -115,7 +117,8 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							address={userAddress}
 							disableIdenticon={true}
 							isProfileView
-							isTruncateUsername={false}
+							isTruncateUsername={isMobile}
+							usernameMaxLength={65}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'

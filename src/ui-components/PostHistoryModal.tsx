@@ -234,6 +234,11 @@ export default styled(PostHistoryModal)`
 		}
 	}
 	@media screen and (max-width: 640px) {
+		.ant-timeline-item-head-blue {
+			display: none !important;
+		}
+	}
+	@media screen and (max-width: 640px) {
 		.post-history-timeline .ant-timeline .ant-timeline-item-tail {
 			border: none !important;
 		}

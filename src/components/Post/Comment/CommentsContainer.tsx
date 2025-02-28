@@ -419,7 +419,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const getDisplayText = (text: string, showFull: boolean) => {
 		if (!text) return '';
 		const words = text.split(' ');
-		const isLongText = words.length > 100;
+		const isLongText = words.length > 80;
 		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
 	};
 

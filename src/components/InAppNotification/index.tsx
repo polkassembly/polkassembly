@@ -56,12 +56,11 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress || !currentBlock || !isMultiassetSupportedNetwork(network)) return;
-		if (currentBlock) {
-			(async () => {
-				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
-				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!payoutsData?.length, payouts: payoutsData }));
-			})();
-		}
+		(async () => {
+			const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
+			dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!payoutsData?.length, payouts: payoutsData || [] }));
+		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginAddress, currentBlock]);
 

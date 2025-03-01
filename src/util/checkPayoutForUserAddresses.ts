@@ -22,9 +22,10 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 	if (!api || !apiReady || !network || !isMultiassetSupportedNetwork(network)) return data;
 
 	const values = await api?.query?.treasury?.spends?.entries();
+	if (!values) return [];
 	values?.map((value) => {
-		const payoutIndex = Number((value?.[0].toHuman() as any)?.[0]);
-		const payoutData = convertAnyHexToASCII(value?.[1].toHuman(), network);
+		const payoutIndex = Number((value?.[0]?.toHuman() as any)?.[0]);
+		const payoutData = convertAnyHexToASCII(value?.[1]?.toHuman(), network);
 		const beneficiary =
 			convertAnyHexToASCII(payoutData?.beneficiary?.V4?.interior?.X1?.[0]?.AccountId32?.id || payoutData?.beneficiary?.V3?.interior?.X1?.AccountId32?.id, network) || '';
 		const startedAt = Number(payoutData?.validFrom?.split(',')?.join(''));

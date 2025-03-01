@@ -22,7 +22,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, title, postId, userId, proposerAddress, tags, discussionId, proposalType, typeOfReferendum = EReferendumType.TREASURER, allowedCommentors } = req.body;
+	const { content, title, postId, userId, proposerAddress, tags, discussionId, proposalType, typeOfReferendum = EReferendumType.TREASURER, allowedCommentors, bountyId } = req.body;
 	if (!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
@@ -77,7 +77,12 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 					id: Number(discussionId),
 					type: ProposalType.DISCUSSIONS
 			  }
-			: null,
+			: isNaN(bountyId)
+			? null
+			: {
+					id: Number(bountyId),
+					type: ProposalType.BOUNTIES
+			  },
 		proposer_address: proposerAddress,
 		tags: tags,
 		title,

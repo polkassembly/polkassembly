@@ -584,7 +584,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
+			{onchainIdentitySupportedNetwork.includes(network) && (
 				<>
 					<Identity
 						open={open}

@@ -97,6 +97,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [isIdentityModalOpen, setIsIdentityModalOpen] = useState(false);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -131,15 +132,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	}, [network]);
 
 	const handleIdentityButtonClick = () => {
+		if (isMobile) return;
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			return;
+		if (address?.length) {
+			setIsIdentityModalOpen(!open);
 		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressModal(true);
-			}
+			setOpenAddressModal(true);
 		}
 	};
 
@@ -540,7 +538,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 																userId: currentUser?.id || '',
 																userName: currentUser?.username || ''
 															});
-															handleIdentityButtonClick();
+															setOpen(false);
+															setIsIdentityModalOpen(true);
 														}}
 													>
 														<div className='my-0 text-2xl'>
@@ -665,11 +664,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
+			{onchainIdentitySupportedNetwork.includes(network) && (
 				<>
 					<Identity
-						open={open}
-						setOpen={setOpen}
+						open={isIdentityModalOpen}
+						setOpen={setIsIdentityModalOpen}
 						openAddressModal={openAddressModal}
 						setOpenAddressModal={setOpenAddressModal}
 					/>

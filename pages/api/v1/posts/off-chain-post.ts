@@ -20,7 +20,7 @@ import { checkReportThreshold, getComments, getReactions, getSpamUsersCount, IPo
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getProposerAddressFromFirestorePostData } from '~src/util/getProposerAddressFromFirestorePostData';
@@ -32,6 +32,7 @@ interface IGetOffChainPostParams {
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
 }
+const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
 
 export const getUpdatedAt = (data: any) => {
 	let updated_at: Date | string | undefined;
@@ -286,7 +287,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 
 		await getContentSummary(post, network, isExternalApiCall);
 		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSet(generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS }), JSON.stringify(post));
+			await redisSetex(generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS }), TTL_DURATION, JSON.stringify(post));
 		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),

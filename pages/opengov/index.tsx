@@ -19,7 +19,7 @@ import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import styled from 'styled-components';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -41,6 +41,8 @@ interface Props {
 	network: string;
 	error: string;
 }
+
+const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const LATEST_POSTS_LIMIT = 8;
@@ -106,7 +108,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
-		await redisSet(`${network}_latestActivity_OpenGov`, JSON.stringify(props));
+		await redisSetex(`${network}_latestActivity_OpenGov`, TTL_DURATION, JSON.stringify(props));
 	}
 
 	return { props };

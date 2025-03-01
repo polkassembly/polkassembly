@@ -34,7 +34,7 @@ import { getVotesHistory } from '../votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { getSubSquareComments } from './comments/subsquare-comments';
@@ -183,6 +183,8 @@ export function getDefaultReactionObj(): IReactions {
 		}
 	};
 }
+
+const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
 
 export const getUserProfileData = async (ids: number[]) => {
 	try {
@@ -1347,7 +1349,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 		await getContentSummary(post, network, isExternalApiCall);
 		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
+			await redisSetex(
+				generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }),
+				TTL_DURATION,
+				JSON.stringify(post)
+			);
 		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),

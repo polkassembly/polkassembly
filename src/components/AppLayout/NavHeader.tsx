@@ -96,7 +96,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-	const [isIdentityModalOpen, setIsIdentityModalOpen] = useState(false);
+	// const [isIdentityModalOpen, setIsIdentityModalOpen] = useState(false);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());

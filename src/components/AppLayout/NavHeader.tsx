@@ -96,6 +96,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [isIdentityModalOpen, setIsIdentityModalOpen] = useState(false);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -135,7 +136,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			return;
 		} else {
 			if (address?.length) {
-				setOpen(!open);
+				setIsIdentityModalOpen(!open);
 			} else {
 				setOpenAddressModal(true);
 			}
@@ -584,11 +585,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
-			{onchainIdentitySupportedNetwork.includes(network) && (
+			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
 					<Identity
-						open={open}
-						setOpen={setOpen}
+						open={isIdentityModalOpen}
+						setOpen={setIsIdentityModalOpen}
 						openAddressModal={openAddressModal}
 						setOpenAddressModal={setOpenAddressModal}
 					/>

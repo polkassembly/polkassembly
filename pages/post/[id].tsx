@@ -58,6 +58,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 				isRefreshBtnVisible={!error.includes('not found')}
 			/>
 		);
+
 	if (post)
 		return (
 			<>
@@ -67,7 +68,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 					network={network}
 				/>
 				{((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && <SpamPostBanner />}
-				<div className={`${(!!post.spam_users_count && post.spam_users_count > 0) || (post?.isSpamDetected && 'mt-8 max-sm:mt-2')}`}>
+				<div className={`${((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && 'mt-8 max-sm:mt-2'}`}>
 					<BackToListingView postCategory={PostCategory.DISCUSSION} />
 				</div>
 

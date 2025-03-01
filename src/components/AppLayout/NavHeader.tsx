@@ -498,28 +498,23 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									<div className='flex flex-col'>
 										{id && (
 											<>
-												<AuthDropdown>
-													{!web3signup ? (
-														<div className='flex w-full items-center justify-between gap-x-2 rounded-3xl border border-solid border-section-light-container bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
-															{theme === 'dark' ? <MailWhite /> : <Mail />}
-															<div className='flex items-center justify-between gap-x-1'>
-																<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
-																{theme === 'dark' ? <ArrowWhite /> : <Arrow />}
-															</div>
-														</div>
-													) : (
-														<div className='mb-3 flex h-10 items-center rounded-md border border-solid border-section-light-container bg-[#F6F7F9] px-[14px] dark:border-separatorDark dark:bg-section-light-overlay'>
-															<Address
-																displayInline
-																iconSize={18}
-																isTruncateUsername={true}
-																address={loginAddress}
-																destroyTooltipOnHide
-																disableTooltip
-															/>
-														</div>
-													)}
-												</AuthDropdown>{' '}
+												{!web3signup ? (
+													<div className='flex w-full items-center gap-x-2 rounded-3xl border border-solid border-section-light-container bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+														{theme === 'dark' ? <MailWhite /> : <Mail />}
+														<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
+													</div>
+												) : (
+													<div className='mb-3 flex h-10 items-center rounded-md border border-solid border-section-light-container bg-[#F6F7F9] px-[14px] dark:border-separatorDark dark:bg-section-light-overlay'>
+														<Address
+															displayInline
+															iconSize={18}
+															isTruncateUsername={true}
+															address={loginAddress}
+															destroyTooltipOnHide
+															disableTooltip
+														/>
+													</div>
+												)}{' '}
 												<div className='my-[10px] flex flex-col gap-3 px-[14px]'>
 													<Link
 														className='mt-1/2 flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'

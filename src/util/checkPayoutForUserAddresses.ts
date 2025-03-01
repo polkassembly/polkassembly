@@ -46,7 +46,6 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 			data.push(res);
 		}
 	});
-	console.log('data', data);
 	return data.filter((item) => typeof item?.payoutIndex == 'number');
 };
 export default checkPayoutForUserAddresses;

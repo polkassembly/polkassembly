@@ -11,7 +11,7 @@ import { dmSans } from 'pages/_app';
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
-import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
@@ -24,8 +24,7 @@ import { usePostDataContext } from '~src/context';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
-import Tooltip from '~src/basic-components/Tooltip';
-import classNames from 'classnames';
+import SpamPostTooltip from './SpamPostTooltip';
 
 const Styled = styled.div`
 	padding: 0;
@@ -303,16 +302,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<div className='flex'>
 				{!!spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 					<div className='mr-2 flex items-center'>
-						<Tooltip
-							color='#E5007A'
-							className={classNames(dmSans.variable, dmSans.className)}
-							title={`This comment has been reported as spam by ${spam_users_count} members`}
-						>
-							<div className='flex items-center gap-0.5'>
-								<WarningMessageIcon className='scale-75 text-xl text-[#FFA012]' />
-								<span className='-mt-0.5 text-xs text-[#FFA012]'>Spam</span>
-							</div>
-						</Tooltip>
+						<SpamPostTooltip title={`This comment has been reported as spam by ${spam_users_count} members`} />
 					</div>
 				) : null}
 				<div>{expertComment && <p className='mx-3 rounded-md bg-[#F57B60] px-1.5 py-0.5 text-[10px] text-white'>EXPERT</p>}</div>

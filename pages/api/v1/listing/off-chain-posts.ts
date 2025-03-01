@@ -122,7 +122,6 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 						'👎': reactions['👎']?.count || 0
 					};
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
-
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;
 					const spam_users_count = await getSpamUsersCount(network, strProposalType, docData.id, 'post');

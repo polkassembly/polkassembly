@@ -5,7 +5,7 @@
 import type { GetServerSideProps } from 'next';
 import { getOffChainPost } from 'pages/api/v1/posts/off-chain-post';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
@@ -17,6 +17,8 @@ import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import SpamPostBanner from '~src/ui-components/SpamPostBanner';
+import SpamPostModal from '~src/ui-components/SpamPostModal';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -42,6 +44,7 @@ interface IDiscussionPostProps {
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
+	const [openSpamModal, setOpenSpamModal] = useState(true);
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -55,6 +58,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 				isRefreshBtnVisible={!error.includes('not found')}
 			/>
 		);
+
 	if (post)
 		return (
 			<>
@@ -63,10 +67,19 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
+				{((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && <SpamPostBanner />}
+				<div className={`${((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && 'mt-8 max-sm:mt-2'}`}>
+					<BackToListingView postCategory={PostCategory.DISCUSSION} />
+				</div>
 
-				<BackToListingView postCategory={PostCategory.DISCUSSION} />
-
-				<div className='mt-4 sm:mt-6'>
+				{((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && (
+					<SpamPostModal
+						open={openSpamModal}
+						setOpen={setOpenSpamModal}
+						proposalType={ProposalType.DISCUSSIONS}
+					/>
+				)}
+				<div className='mt-6'>
 					<Post
 						post={post}
 						proposalType={ProposalType.DISCUSSIONS}

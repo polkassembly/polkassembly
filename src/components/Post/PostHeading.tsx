@@ -15,7 +15,7 @@ import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
-import PostSummary from './PostSummary';
+// import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
@@ -114,7 +114,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			cid,
 			// history,
 			content,
-			summary,
+			// summary,
 			identityId,
 			hash,
 			preimageHash

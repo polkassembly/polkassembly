@@ -521,44 +521,49 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														<IconProfile className='userdropdown-icon text-2xl' />
 														<span>Profile</span>
 													</Link>
-													<Link
-														className='mt-[2px] flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-														href={'/accounts'}
-													>
-														<AccountsIcon className='userdropdown-icon text-2xl' />
-														<span>Accounts</span>
-													</Link>
-													<Link
-														className=' flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
-														href={''}
-														onClick={(e) => {
-															e.stopPropagation();
-															e.preventDefault();
-															trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-																userId: currentUser?.id || '',
-																userName: currentUser?.username || ''
-															});
-															setOpen(false);
-															setIsIdentityModalOpen(true);
-														}}
-													>
-														<div className='my-0 text-2xl'>
-															<ApplayoutIdentityIcon />
-														</div>
-														<span>Set on-chain identity</span>
-														{!isIdentityExists && (
-															<span className='flex items-center text-[22px]'>
-																<IdentityCaution />
-															</span>
-														)}
-													</Link>
-													<div
-														className='-mt-1 flex cursor-pointer items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-														onClick={() => setOpenProxyModal(true)}
-													>
-														<ProxyIcon className='userdropdown-icon -mb-[1px] text-[28px]' />
-														<span className='-ml-1'>Create Proxy</span>
-													</div>
+													{web3signup && (
+														<>
+															<Link
+																className='mt-[2px] flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+																href={'/accounts'}
+															>
+																<AccountsIcon className='userdropdown-icon text-2xl' />
+																<span>Accounts</span>
+															</Link>
+
+															<Link
+																className=' flex items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
+																href={''}
+																onClick={(e) => {
+																	e.stopPropagation();
+																	e.preventDefault();
+																	trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+																		userId: currentUser?.id || '',
+																		userName: currentUser?.username || ''
+																	});
+																	setOpen(false);
+																	setIsIdentityModalOpen(true);
+																}}
+															>
+																<div className='my-0 text-2xl'>
+																	<ApplayoutIdentityIcon />
+																</div>
+																<span>Set on-chain identity</span>
+																{!isIdentityExists && (
+																	<span className='flex items-center text-[22px]'>
+																		<IdentityCaution />
+																	</span>
+																)}
+															</Link>
+															<div
+																className='-mt-1 flex cursor-pointer items-center gap-x-2 text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
+																onClick={() => setOpenProxyModal(true)}
+															>
+																<ProxyIcon className='userdropdown-icon -mb-[1px] text-[28px]' />
+																<span className='-ml-1'>Create Proxy</span>
+															</div>
+														</>
+													)}
 													<Link
 														className='flex items-center gap-x-2 bg-transparent text-base font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 														href='/settings?tab=account'

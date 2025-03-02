@@ -80,7 +80,7 @@ export default function ProfileSettings() {
 				}
 				key='1'
 			>
-				<div className='flex flex-col gap-6'>
+				<div className='flex flex-col gap-2 sm:gap-6'>
 					<Row
 						label='Username'
 						data={username || ''}

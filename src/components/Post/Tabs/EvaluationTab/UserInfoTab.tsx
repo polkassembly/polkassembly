@@ -84,7 +84,6 @@ export default styled(UserInfoTab)`
 			display: block !important;
 		}
 		.verified-container {
-			margin-top: 8px !important;
 			max-width: 112px !important;
 		}
 	}

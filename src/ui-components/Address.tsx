@@ -127,12 +127,12 @@ const ParentProxyTitle = ({
 					className='border-[1px] bg-lightBlue dark:bg-separatorDark'
 				/>
 				<span
-					className='font-medium text-[#407BFF]'
+					className='hidden font-medium text-[#407BFF] sm:block'
 					title={title}
 				>
 					{title?.length > 10 || truncate ? `${title?.slice(0, 10)}...` : title}
 				</span>
-				<span className='ml-0.5 rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark'>
+				<span className='rounded-xl bg-[#f3f7ff] px-1 py-0.5 dark:bg-alertColorDark sm:ml-0.5'>
 					<Image
 						src={'/assets/icons/proxy-icon.svg'}
 						height={14}
@@ -627,7 +627,7 @@ const Address = (props: Props) => {
 									)}
 								</div>
 							)}
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center gap-1 sm:gap-1.5'>
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
 									<Tooltip
@@ -639,7 +639,7 @@ const Address = (props: Props) => {
 											alt=''
 											width={24}
 											height={24}
-											className='ml-2'
+											className='ml-[2px] sm:ml-2'
 										/>
 									</Tooltip>
 								)}

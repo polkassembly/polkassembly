@@ -6,14 +6,14 @@ import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/
 import { Divider } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
-import Tooltip from '~src/basic-components/Tooltip';
+import SpamPostTooltip from '~src/ui-components/SpamPostTooltip';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -29,11 +29,12 @@ export interface IDiscussionProps {
 	post_id: string;
 	tags: string[] | [];
 	spam_users_count?: number;
+	isSpamDetected?: boolean;
 	className?: string;
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, className } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, isSpamDetected, className } = props;
 	const currentUser = useUserDetailsSelector();
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -59,14 +60,9 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='mt-3 lg:mt-1'>
 							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{title}
-								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
-									<div className='ml-5 hidden items-center justify-center lg:flex'>
-										<Tooltip
-											color='#E5007A'
-											title='This post could be a spam.'
-										>
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
+								{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
+									<div className='ml-2 hidden items-center justify-center lg:flex'>
+										<SpamPostTooltip />
 									</div>
 								) : null}
 							</h1>
@@ -158,7 +154,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			<div
 				className={`${
 					ownPost && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[150px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
+				} h-auto min-h-[160px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden sm:min-h-[150px] md:p-4 ${className}`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					{topic && (
@@ -170,32 +166,22 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 						</div>
 					)}
-					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<div className='max-xs-hidden mx-2.5 my-1.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high sm:my-2.5'>
 						#{post_id} {title}
 						<div className='flex items-center justify-between'>
-							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+							{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
 								<div className='flex items-center justify-center lg:hidden'>
-									<Tooltip
-										color='#E5007A'
-										title='This post could be a spam.'
-									>
-										<WarningMessageIcon className='text-xl text-[#FFA012]' />
-									</Tooltip>
+									<SpamPostTooltip />
 								</div>
 							) : null}
 						</div>
-						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+						{(spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0) || isSpamDetected ? (
 							<div className='hidden items-center justify-center lg:flex'>
-								<Tooltip
-									color='#E5007A'
-									title='This post could be a spam.'
-								>
-									<WarningMessageIcon className='text-xl text-[#FFA012]' />
-								</Tooltip>
+								<SpamPostTooltip />
 							</div>
 						) : null}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:flex xs:gap-0 sm:ml-0 sm:mt-1 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 						<div className='xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -214,7 +200,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							)}
 						</div>
 
-						<div className='items-center justify-between xs:mt-3.5 xs:flex xs:gap-x-2'>
+						<div className='items-center justify-between xs:mt-2 xs:flex xs:gap-x-2 sm:mt-3.5'>
 							{tags && tags.length > 0 && (
 								<Divider
 									type='vertical'

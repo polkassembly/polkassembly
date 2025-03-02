@@ -282,7 +282,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				</div>
 			)}
 
-			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-xl font-semibold leading-7 text-bodyBlue dark:text-blue-dark-high`}>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-1 text-xl font-semibold leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')

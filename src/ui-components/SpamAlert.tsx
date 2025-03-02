@@ -2,18 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
-import { WarningMessageIcon } from './CustomIcons';
+import { WarningOutlined } from '@ant-design/icons';
 import { usePostDataContext } from '~src/context';
 
 interface ISpamAlertProps {}
 
 const SpamAlert: FC<ISpamAlertProps> = () => {
 	const { postData } = usePostDataContext();
-	if (!postData.spam_users_count) return null;
+	if (!postData.spam_users_count && !postData.isSpamDetected) return null;
 	return (
 		<div className='mb-[26.66px] flex flex-col gap-2 rounded-[14px] bg-[#FFFBEC] p-[24.15px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark md:flex-row md:items-center md:justify-between'>
 			<div className='flex items-center gap-x-2'>
-				<WarningMessageIcon className='text-xl text-[#FFA012]' />
+				<WarningOutlined className='text-xl text-[#FFA012]' />
 				<h4 className='m-0 p-0 text-lg font-medium leading-[27px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>This post could be a spam.</h4>
 			</div>
 			<p className='m-0 p-0 text-base font-medium leading-[24px] tracking-[0.01em] text-lightBlue dark:text-navBlue'>Flagged by {postData.spam_users_count} users</p>

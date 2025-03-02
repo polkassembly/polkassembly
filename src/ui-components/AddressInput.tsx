@@ -118,7 +118,7 @@ const AddressInput = ({
 	return (
 		<div className={`${className} mt-6`}>
 			{label && (
-				<label className=' mb-[2px] flex items-center truncate text-sm'>
+				<label className=' mb-[2px] flex items-center text-sm'>
 					{label}
 					{helpText && (
 						<HelperTooltip

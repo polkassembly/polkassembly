@@ -3,5 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function cleanError(text: string): string {
+	if (!text || typeof text !== 'string') return '';
 	return text?.replace(/Network error: |GraphQL error: /g, '');
 }

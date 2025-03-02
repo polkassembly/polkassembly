@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -193,15 +194,18 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 								{id === userProfile?.user_id && onchainIdentitySupportedNetwork.includes(network) && (
 									<div className='flex flex-shrink-0'>
 										{identityInfo[address] ? (
-											<div
+											<CustomButton
 												onClick={handleRemoveIdentity}
-												className='flex cursor-pointer items-center gap-1.5 text-xs text-lightBlue dark:text-blue-dark-high'
+												className='m-0 cursor-pointer border-none bg-transparent p-0'
+												height={20}
 											>
-												<span className='ml-0.5 text-base text-lightBlue dark:text-blue-dark-medium'>
-													<ClearIdentityOutlinedIcon />
-												</span>
-												<span>Remove Identity</span>
-											</div>
+												<div className='flex items-center gap-1.5 text-xs text-lightBlue dark:text-blue-dark-high'>
+													<span className='ml-0.5 text-base text-lightBlue dark:text-blue-dark-medium'>
+														<ClearIdentityOutlinedIcon />
+													</span>
+													<span>Remove Identity</span>
+												</div>
+											</CustomButton>
 										) : (
 											<div
 												className='flex cursor-pointer items-center gap-1.5 text-xs text-lightBlue dark:text-blue-dark-high'

@@ -81,6 +81,7 @@ const ReferendaPost: FC<IReferendaPostProps> = ({ post, error, network }) => {
 				/> */}
 				{/* Main content */}
 				{/* <div className={`transition-opacity duration-500 ${openNudge ? 'mt-7' : 'mt-0'}`}> */}
+
 				<div className={'mt-0 transition-opacity duration-500'}>
 					{trackName && <BackToListingView trackName={trackName} />}
 

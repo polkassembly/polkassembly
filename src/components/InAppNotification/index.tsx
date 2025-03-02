@@ -56,12 +56,11 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress || !currentBlock || !isMultiassetSupportedNetwork(network)) return;
-		if (currentBlock) {
-			(async () => {
-				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
-				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!payoutsData?.length, payouts: payoutsData }));
-			})();
-		}
+		(async () => {
+			const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
+			dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!payoutsData?.length, payouts: payoutsData || [] }));
+		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginAddress, currentBlock]);
 
@@ -190,7 +189,7 @@ const InAppNotification: FC<INotificationProps> = (props) => {
 					className={classNames(className, '')}
 					placement={isMobile ? 'bottom' : 'bottomLeft'}
 				>
-					<div className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'>
+					<div className='rounded-full px-3 py-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A] sm:px-2'>
 						<Image
 							src={!unreadNotificationsCount || !userId ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
 							height={24}

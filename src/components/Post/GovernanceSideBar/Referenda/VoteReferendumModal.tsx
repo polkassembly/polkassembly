@@ -577,11 +577,11 @@ const VoteReferendumModal = ({
 					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? (
-						<LikeWhite className='mb-[3px] mr-2 hidden msm:block ' />
+						<LikeWhite className='mb-[3px] mr-1 hidden msm:block sm:mr-2 ' />
 					) : theme === 'dark' ? (
-						<DarkLikeGray className='mb-[3px] mr-2 hidden msm:block ' />
+						<DarkLikeGray className='mb-[3px] mr-1 hidden msm:block sm:mr-2 ' />
 					) : (
-						<LikeGray className='mb-[3px] mr-2 hidden msm:block ' />
+						<LikeGray className='mb-[3px] mr-1 hidden msm:block sm:mr-2 ' />
 					)}
 					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Aye</span>
 				</div>
@@ -596,11 +596,11 @@ const VoteReferendumModal = ({
 					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
-						<DislikeWhite className='-mb-[3px] mr-2 hidden msm:block ' />
+						<DislikeWhite className='-mb-[2px] mr-1 hidden max-sm:mb-[2px] msm:block sm:mr-2 ' />
 					) : theme === 'dark' ? (
-						<DarkDislikeGray className='-mb-[3px] mr-2 hidden msm:block ' />
+						<DarkDislikeGray className='-mb-[2px] mr-1 hidden max-sm:mb-[2px] msm:block sm:mr-2 ' />
 					) : (
-						<DislikeGray className='-mb-[3px] mr-2 hidden msm:block ' />
+						<DislikeGray className='-mb-[2px] mr-1 hidden max-sm:mb-[2px] msm:block sm:mr-2 ' />
 					)}
 					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Nay</span>
 				</div>
@@ -615,16 +615,16 @@ const VoteReferendumModal = ({
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={`flex h-[32px] w-[80px] items-center justify-center rounded-[4px] text-textGreyColor sm:w-[126px] ${
 								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
 							{vote === EVoteDecisionType.SPLIT ? (
-								<SplitWhite className='mr-2  hidden msm:block ' />
+								<SplitWhite className='mb-[2px] mr-1 hidden msm:block sm:mr-2 ' />
 							) : theme === 'dark' ? (
-								<DarkSplitGray className='mr-2 hidden msm:block ' />
+								<DarkSplitGray className='mb-[2px] mr-1 hidden msm:block sm:mr-2 ' />
 							) : (
-								<SplitGray className='mr-2 hidden msm:block ' />
+								<SplitGray className='mb-[2px] mr-1 hidden msm:block sm:mr-2 ' />
 							)}
 							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Split</span>
 						</div>
@@ -634,11 +634,11 @@ const VoteReferendumModal = ({
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={` flex h-[32px] w-[120px] items-center justify-center rounded-[4px]  text-textGreyColor sm:ml-2 sm:w-[126px] ${
 								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className={`mb-[3px] mr-2 hidden msm:block ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<StopOutlined className={`mb-[2px] mr-1 hidden msm:block sm:mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
 							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Abstain</span>
 						</div>
 					),

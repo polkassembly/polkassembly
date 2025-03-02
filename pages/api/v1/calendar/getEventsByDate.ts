@@ -15,6 +15,7 @@ import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-conten
 import { getFirestoreProposalType, getProposalTypeTitle, ProposalType } from '~src/global/proposalType';
 import { redisGet, redisSetex } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
+import { chainProperties } from '~src/global/networkConstants';
 
 const chunkArray = (arr: any[], chunkSize: number) => {
 	const chunks = [];
@@ -39,6 +40,7 @@ const handler: NextApiHandler<ICalendarEvent[] | MessageType> = async (req, res)
 	try {
 		const network = String(req.headers['x-network']);
 		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+		if (!chainProperties?.[network]?.subsquidUrl) return res.status(200).json([]);
 
 		const { startBlockNo, endBlockNo } = req.body;
 

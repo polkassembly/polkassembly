@@ -23,7 +23,6 @@ import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
-import SpamAlert from '~src/ui-components/SpamAlert';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
@@ -514,6 +513,7 @@ const Post: FC<IPostProps> = (props) => {
 					hash: post.hash,
 					history: post?.history || [],
 					identityId: post?.identity || null,
+					isSpamDetected: post?.isSpamDetected || false,
 					last_edited_at: post?.last_edited_at,
 					marketMetadata: post?.marketMetadata || null,
 					postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
@@ -550,7 +550,7 @@ const Post: FC<IPostProps> = (props) => {
 					}}
 				>
 					<QuoteCommentContextProvider>
-						<SpamAlert />
+						{/* <SpamAlert /> */}
 						{!isEditing &&
 							Boolean(post.timeline?.length) &&
 							proposalType !== ProposalType.CHILD_BOUNTIES &&
@@ -586,7 +586,7 @@ const Post: FC<IPostProps> = (props) => {
 								)}
 
 								{/* Post Content */}
-								<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
+								<div className='mb-6 w-full rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 									{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 									{!isEditing && (

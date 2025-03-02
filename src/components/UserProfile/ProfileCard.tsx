@@ -80,7 +80,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 					iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 				/>
 			</div>
-			<div className='ml-[-73px] flex w-full items-start justify-between rounded-e-[14px] border-section-light-container bg-white py-2 dark:border-separatorDark dark:bg-section-dark-overlay max-md:ml-0 max-md:flex-col max-md:items-center md:border-0 md:border-b-[1px] md:border-r-[1px] md:border-t-[1px] md:border-solid md:py-4'>
+			<div className='ml-[-73px] flex w-full items-start justify-between rounded-e-[14px] border-section-light-container bg-white pb-4 pt-2 dark:border-separatorDark dark:bg-section-dark-overlay max-md:ml-0 max-md:flex-col max-md:items-center md:border-0 md:border-b-[1px] md:border-r-[1px] md:border-t-[1px] md:border-solid md:pt-4'>
 				<div className='flex w-full flex-col gap-2 max-md:items-center max-md:gap-4 max-md:border-none max-md:bg-transparent max-md:dark:bg-transparent md:h-[130px]'>
 					{addressWithIdentity ? (
 						<div className='flex items-center justify-between max-md:flex-col md:ml-[90px] md:pr-6'>
@@ -141,9 +141,9 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 						)}
 					</div>
 
-					<div className={`flex gap-1 ${!profileSince ? 'md:ml-[90px]' : ''} `}>
+					<div className={`gap-1 sm:flex ${!profileSince ? 'md:ml-[90px]' : ''} `}>
 						{profileSince && (
-							<div className='flex items-center text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium  md:ml-[90px]'>
+							<div className='flex items-center text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium md:ml-[90px]'>
 								User Since:
 								<Image
 									src={'/assets/icons/Calendar.svg'}

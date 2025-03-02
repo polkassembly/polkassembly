@@ -38,6 +38,7 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress, isNewAccount 
 							isTruncateUsername={false}
 							isProfileView
 							showCopyIcon={true}
+							disableTooltip={isMobile}
 						/>
 					) : (
 						accountData &&
@@ -51,11 +52,13 @@ const AccountInfo: React.FC<Props> = ({ accountData, loginAddress, isNewAccount 
 									isTruncateUsername={false}
 									isProfileView
 									showCopyIcon={true}
+									destroyTooltipOnHide
+									disableTooltip={isMobile}
 								/>
 							</div>
 						)
 					)}
-					<div className='mr-7 flex items-center gap-2'>
+					<div className='flex items-center gap-2 sm:mr-7'>
 						{accountData && accountData?.address && (
 							<AddressActionDropdown
 								type={null}

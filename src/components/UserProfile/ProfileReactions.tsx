@@ -77,7 +77,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-6 pb-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white p-4 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col sm:p-6'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -93,9 +93,11 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 								return (
 									<div key={index}>
 										{activity.type === EUserActivityType.REACTED && (
-											<div className='flex  items-start gap-5'>
+											<div className='flex items-start gap-3 sm:gap-5'>
 												<span
-													className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}
+													className={`mt-1 flex rounded-full border-[1px] border-solid p-1.5 sm:mt-0 sm:p-3 ${
+														activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'
+													} `}
 												>
 													{activity.reaction == '👍' ? (
 														<>
@@ -112,11 +114,11 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{activity.author}</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
 														{activity.reaction == '👍' ? (
-															<span className='flex items-center gap-2 text-pink_primary'>
+															<span className='flex items-center gap-1 text-xs text-pink_primary sm:gap-2 sm:text-base'>
 																<LikeOutlined className='text-base' /> Liked
 															</span>
 														) : (
-															<span className='flex items-center gap-2 text-[#FF3C5F]'>
+															<span className='flex items-center gap-1 text-xs text-[#FF3C5F] sm:gap-2 sm:text-base'>
 																<DislikeFilled className='mt-0.5 text-base' />
 																Disliked
 															</span>

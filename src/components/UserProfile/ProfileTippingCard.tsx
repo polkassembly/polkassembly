@@ -166,7 +166,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 						/>
 					</div>
 				</div>
-				<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium max-md:gap-2'>
+				<div className='flex w-full flex-nowrap items-center justify-between overflow-auto whitespace-nowrap text-sm font-medium text-bodyBlue dark:text-blue-dark-medium max-md:gap-2'>
 					{TIPS.map((tip) => {
 						const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 						return (

@@ -341,7 +341,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</>
 						)}
-						{content?.length > 200 && summary ? (
+						{/* {content?.length > 200 && summary ? (
 							<>
 								<Divider
 									className='ml-1 mr-2 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
@@ -353,7 +353,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 									className='flex xs:mt-2 md:mt-0'
 								/>
 							</>
-						) : null}
+						) : null} */}
 					</CreationLabel>
 					{tags && tags.length > 0 && !beneficiaries?.length && (
 						<TagsListing

@@ -108,7 +108,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		}
 	};
 	return (
-		<>
+		<div className='relative'>
 			<SEOHead
 				title='Discussions'
 				desc="Welcome to Polkassembly's discussion page! Engage in meaningful and respectful dialogue on a variety of topics relevant to our community. We look forward to hearing your thoughts and ideas about governance!"
@@ -122,7 +122,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				</div>
 				<button
 					onClick={handleClick}
-					className='flex cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none  bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:h-[40px] sm:w-[120px]'
+					className='hidden cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none bg-pink_primary  p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:flex sm:h-[40px] sm:w-[120px]'
 				>
 					+ Add Post
 				</button>
@@ -133,6 +133,14 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				<p className='m-0 mt-2 p-0 text-sm font-normal tracking-normal text-bodyBlue dark:text-blue-dark-high'>
 					A space to share insights, provide feedback, and collaborate on ideas that impact the network. Join the conversation and help shape the future of the ecosystem.
 				</p>
+			</div>
+			<div className={'fixed bottom-0 z-50 -ml-3 w-full bg-white px-3 py-5 dark:bg-section-dark-overlay sm:hidden'}>
+				<button
+					onClick={handleClick}
+					className='flex h-10 w-full cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none '
+				>
+					+ Add Post
+				</button>
 			</div>
 			{isForumSupportedNetwork(network) ? (
 				<OffChainTabs
@@ -158,7 +166,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 				theme={theme}
 			/>
-		</>
+		</div>
 	);
 };
 

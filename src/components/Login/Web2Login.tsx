@@ -178,7 +178,7 @@ const Web2Login: FC<Props> = ({
 
 	return (
 		<Container className={`flex flex-col rounded-md bg-white ${!showWeb2Option ? '' : 'shadow-md'} dark:bg-section-dark-overlay ${className} `}>
-			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
+			<div className='flex items-center justify-start px-5 pb-2 pt-4 sm:px-8'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
 				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>{showWeb2Option ? 'Login to Polkassembly' : 'Change Wallet'}</span>
 			</div>
@@ -190,7 +190,7 @@ const Web2Login: FC<Props> = ({
 				<>
 					<AuthForm
 						onSubmit={handleSubmitForm}
-						className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-24' : 'px-12'}`}
+						className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-5 sm:px-24' : 'px-12'}`}
 					>
 						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
 						<div onClick={() => setShowWalletModal?.(false)}>
@@ -211,7 +211,8 @@ const Web2Login: FC<Props> = ({
 									setWeb3Login(false);
 								}}
 							>
-								Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
+								Or <br></br>
+								<span className='font-semibold text-pink_primary'>Login with Username/Email</span>
 							</p>
 						)}
 					</AuthForm>

@@ -49,9 +49,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 	}, [userProfile]);
 
 	return (
-		<div className={classNames(className, 'wallet-info-board gap mt-[-25px] flex rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]')}>
+		<div className={classNames(className, 'wallet-info-board gap mt-[-25px] flex rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:w-[99.3vw] lg:top-[80px]')}>
 			<div className='profile-header mt-0 flex h-[192px] w-full items-end justify-end'>
-				<div className='flex w-full items-center justify-end p-8'>
+				<div className='flex w-full items-center justify-end p-4 sm:p-8'>
 					{username === userProfile.username ? (
 						<div>
 							<EditProfileModal

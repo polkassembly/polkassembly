@@ -44,7 +44,8 @@ import {
 	BatchVotingIcon,
 	BatchVotingIconDark,
 	DelegationSidebarIcon,
-	SelectedCalendar
+	SelectedCalendar,
+	LeaderboardOverviewIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -1193,9 +1194,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/batch-voting',
 				<div className='relative -ml-2'>
 					{theme == 'light' ? (
-						<BatchVotingIcon className='-mt-[4px] scale-100 pl-0 font-medium text-transparent ' />
+						<BatchVotingIcon className='-ml-[2px] -mt-[4px] scale-100 pl-0 font-medium text-transparent ' />
 					) : (
-						<BatchVotingIconDark className='-mt-[4px] scale-100 font-medium text-transparent ' />
+						<BatchVotingIconDark className='-ml-[2px] -mt-[4px]  scale-100 font-medium text-transparent ' />
 					)}
 					<div
 						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
@@ -1206,6 +1207,21 @@ const Sidebar: React.FC<SidebarProps> = ({
 					>
 						NEW
 					</div>
+				</div>
+			)
+		);
+	}
+	if (network == 'polkadot' && isMobile) {
+		gov2OverviewItems.splice(
+			6,
+			0,
+			getSiderMenuItem(
+				<div className=' flex gap-2'>
+					<span>Leaderboard</span>
+				</div>,
+				'/leaderboard',
+				<div className=' -ml-2.5 -mt-1.5'>
+					<LeaderboardOverviewIcon className='pr-[2px] font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				</div>
 			)
 		);
@@ -1925,7 +1941,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				transform: 'translateX(0px)',
 				transition: 'width 0.3s ease, transform 0.3s ease'
 			}}
-			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
+			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-16 lg:pt-0 ${
 				sidedrawer && isMobile ? ' min-w-[250px]' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 			} bg-white dark:bg-section-dark-overlay`}
 		>
@@ -1973,7 +1989,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{(onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot') && (
 						<>
 							{!sidebarCollapsed ? (
-								<div className={'flex justify-center gap-2 md:mt-7'}>
+								<div className={'hidden justify-center gap-2 md:mt-7 lg:flex'}>
 									{onchainIdentitySupportedNetwork.includes(network) && (
 										<div className='activeborderhover group relative'>
 											<div
@@ -2179,7 +2195,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'
-					} ${!sidebarCollapsed ? 'mt-2 overflow-y-auto pb-[240px] xl:pb-[154px]' : 'mt-2 overflow-y-auto pb-56'}`}
+					} ${!sidebarCollapsed ? 'overflow-y-auto pb-[240px] sm:mt-2 xl:pb-[154px]' : 'mt-2 overflow-y-auto pb-56'}`}
 				>
 					<Menu
 						theme={theme as any}

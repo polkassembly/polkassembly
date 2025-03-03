@@ -70,11 +70,11 @@ const ProfileFollows = ({ className }: { className: string }) => {
 		<div
 			className={classNames(
 				className,
-				'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white py-4 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col sm:py-6'
 			)}
 		>
 			<Spin spinning={isLoading.loading}>
-				<div className={'flex items-center justify-between gap-4 px-6 '}>
+				<div className={'flex items-center justify-between gap-4 px-4 sm:px-6 '}>
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileFollowIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 						<div className='flex items-baseline gap-1 text-bodyBlue dark:text-white'>
@@ -83,7 +83,7 @@ const ProfileFollows = ({ className }: { className: string }) => {
 					</div>
 				</div>
 
-				<div className='mt-6 px-6'>
+				<div className='mt-6 px-4 sm:px-6'>
 					{isLoading.error && <div className='text-red-500'>{isLoading.error}</div>}
 					{isLoading.loading ? (
 						<div className='flex items-center justify-center'>

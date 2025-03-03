@@ -123,7 +123,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 					className='border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 					dashed
 				/>
-				<div className='item-center flex flex-col gap-6'>
+				<div className='item-center flex flex-col gap-3 sm:gap-6'>
 					<Checkbox
 						value={false}
 						onChange={() => {
@@ -133,12 +133,12 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 							setPrimaryPreferencesModal(true);
 						}}
 						checked={primaryNetwork === network}
-						className='item-center flex text-[16px] text-pink_primary'
+						className='item-center flex text-sm text-pink_primary sm:text-[16px]'
 					>
 						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`item-center flex max-w-[300px] gap-2 text-[16px] ${
+						className={`item-center flex max-w-[300px] gap-2 text-sm sm:text-[16px] ${
 							primaryNetwork !== network ? 'cursor-pointer text-pink_primary' : 'cursor-not-allowed text-[#96A4B6]'
 						} whitespace-normal md:whitespace-nowrap`}
 					>

@@ -320,14 +320,14 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										<div className='sm:mb-2'>
 											<div className='flex items-center'>
 												<span
-													className={`${dmSans.className} ${dmSans.variable} mr-2 pt-[3px] text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
+													className={`${dmSans.className} ${dmSans.variable} mr-[5px] pt-[3px] text-sm font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}
 												>
 													Spend Period Remaining
 												</span>
 
 												<HelperTooltip
 													text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
-													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+													className='-mb-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 												/>
 											</div>
 

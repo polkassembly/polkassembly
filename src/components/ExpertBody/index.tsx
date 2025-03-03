@@ -149,7 +149,7 @@ function ExpertBodyCard() {
 	const contentText = reviewsCount > 0 ? 'Read what experts have to say about this proposal!' : 'An Expert adds their valuable review for this post!';
 
 	return (
-		<StyledCard className='mb-5 flex gap-2 p-2 dark:bg-black'>
+		<StyledCard className='mb-5 hidden gap-2 p-2 dark:bg-black sm:flex'>
 			<div className='relative'>
 				<Image
 					src='/assets/badges/expert-badge.svg'

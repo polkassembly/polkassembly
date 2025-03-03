@@ -77,7 +77,7 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 					type='info'
 					showIcon
 					message={
-						<span className={`${dmSans.variable} ${dmSans.className} text-xs text-blue-light-medium dark:text-blue-dark-high`}>
+						<div className={`${dmSans.variable} ${dmSans.className} -mt-[1px] text-xs text-blue-light-medium dark:text-blue-dark-high`}>
 							Want to learn more about delegation process before locking your tokens. Click
 							<a
 								href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
@@ -87,9 +87,9 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 							>
 								here
 							</a>
-						</span>
+						</div>
 					}
-					className='mt-4 rounded-lg border-none dark:bg-infoAlertBgDark'
+					className='mt-4 flex items-start rounded-lg border-none pt-2.5 dark:bg-infoAlertBgDark'
 				/>
 			</div>
 		</Modal>

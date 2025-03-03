@@ -27,13 +27,13 @@ export default function NetworkTags({ icon, name, selected = true, onActionClick
 	return (
 		<Tag
 			onClick={onActionClick}
-			className={`flex items-center justify-between rounded-[34px] border border-solid border-[#E5007A] px-[24px] ${
-				selected ? 'bg-[#FEF2F8] py-[8px] dark:bg-[#33071E]' : 'bg-white py-[14px] dark:border-separatorDark dark:bg-section-dark-overlay'
+			className={`flex items-center justify-between rounded-[34px] border border-solid border-[#E5007A] px-3 sm:px-[24px] ${
+				selected ? 'bg-[#FEF2F8] py-[8px] dark:bg-[#33071E]' : 'bg-white py-2 dark:border-separatorDark dark:bg-section-dark-overlay sm:py-[14px]'
 			} cursor-pointer`}
 		>
 			{icon ? (
 				<Image
-					className='h-[40px] w-[40px] rounded-full'
+					className='h-6 w-6 rounded-full sm:h-[40px] sm:w-[40px]'
 					src={icon}
 					alt='Logo'
 				/>
@@ -43,7 +43,7 @@ export default function NetworkTags({ icon, name, selected = true, onActionClick
 			<span
 				className={`ml-[9.25px] mr-[13.35px] items-center justify-center font-semibold ${
 					selected ? 'text-blue-light-high dark:text-blue-dark-high' : 'text-pink_primary'
-				} text-lg capitalize leading-[21px] tracking-[0.02em]`}
+				} text-sm capitalize leading-[21px] tracking-[0.02em] sm:text-lg`}
 			>
 				{name === 'xx' ? 'XX' : name}
 			</span>

@@ -92,7 +92,7 @@ const Settings: FC<Props> = (props) => {
 			)}
 
 			<Col className='h-full w-full'>
-				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
+				<div className='mt-6 w-full rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay sm:p-8'>
 					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
 					{!id ? (
 						<p className='m-0 mt-6 p-0 text-bodyBlue dark:text-white'>

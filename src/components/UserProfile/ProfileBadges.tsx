@@ -155,7 +155,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 								width={132}
 								height={82}
 							/>
-							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.name}</span>
+							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high max-sm:text-center'>{item.name}</span>
 						</div>
 					</Tooltip>
 				))}

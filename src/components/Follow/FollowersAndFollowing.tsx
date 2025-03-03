@@ -87,12 +87,12 @@ const FollowersAndFollowing = ({ userId, profileSince, disableTooltip }: { userI
 
 	return (
 		<>
-			<div className='flex gap-1'>
+			<div className='mt-1 flex gap-1 sm:mt-0'>
 				<>
 					{!!profileSince && (
 						<Divider
 							type='vertical'
-							className='mt-1 bg-[#e1e6eb] p-0 dark:bg-separatorDark'
+							className='mt-1 hidden bg-[#e1e6eb] p-0 dark:bg-separatorDark sm:flex'
 						/>
 					)}
 					<div className={`${dmSans.variable} ${dmSans.className} flex items-center gap-1 text-xs tracking-wide text-blue-light-medium dark:text-blue-dark-medium `}>

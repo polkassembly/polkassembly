@@ -568,7 +568,9 @@ const Address = (props: Props) => {
 											>
 												{!!addressPrefix && (
 													<span
-														className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'} ${isUsedInAccountsPage ? 'ml-3 sm:text-xl' : ''}`}
+														className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'} ${
+															isUsedInAccountsPage ? 'ml-1 sm:ml-3 sm:text-xl' : ''
+														}`}
 													>
 														{addressPrefix}
 													</span>

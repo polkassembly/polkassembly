@@ -156,7 +156,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					ownPost && 'border-l-4 border-l-pink_primary'
 				} h-auto min-h-[160px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden sm:min-h-[150px] md:p-4 ${className}`}
 			>
-				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
+				<div className='flex-1 flex-col justify-center xs:mt-1 xs:flex sm:hidden'>
 					{topic && (
 						<div className='flex justify-start'>
 							<TopicTag

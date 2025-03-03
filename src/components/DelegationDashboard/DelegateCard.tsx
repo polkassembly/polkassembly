@@ -62,7 +62,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	const getTrimmedBio = (bio: string) => {
 		if (!bio) return 'No Bio';
-		return bio.length > 100 ? `${bio.slice(0, 100)}...` : bio;
+		return bio.length > 80 ? `${bio.slice(0, 80)}...` : bio;
 	};
 
 	useEffect(() => {

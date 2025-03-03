@@ -296,7 +296,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 
 			<div className='flex items-center gap-3'>
 				{/* For small screen */}
-				<div className=' mt-1 flex w-full items-center gap-[3px] sm:hidden'>
+				<div className=' mt-1 flex w-full items-center gap-[7px] sm:hidden'>
 					<Input
 						type='search'
 						allowClear={{ clearIcon: <InputClearIcon /> }}

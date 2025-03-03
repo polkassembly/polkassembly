@@ -169,7 +169,7 @@ const TotalDelegationDataSmall = ({
 						}
 					}}
 					// disabled={!currentUser.id || !currentUser.loginAddress}
-					className={` mt-[14px] w-full border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
+					className={` mt-[14px] w-full border-pink_primary bg-pink_primary font-semibold text-white dark:text-black ${
 						(!currentUser.id || !currentUser.loginAddress) && 'opacity-60'
 					}`}
 				>

@@ -53,7 +53,8 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	}, []);
 
 	useEffect(() => {
-		const isSpam = (!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected || false;
+		if (!post) return;
+		const isSpam = (!!post?.spam_users_count && post?.spam_users_count > 0) || post?.isSpamDetected || false;
 		setIsBannerVisible(isSpam);
 		setOpenSpamModal(isSpam);
 		// eslint-disable-next-line react-hooks/exhaustive-deps

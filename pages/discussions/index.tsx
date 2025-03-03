@@ -15,7 +15,7 @@ import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { DiscussionsIcon } from '~src/ui-components/CustomIcons';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
@@ -32,6 +32,8 @@ interface IDiscussionsProps {
 	network: string;
 	page?: number;
 }
+
+const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -75,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const props = { data, error, network, page };
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
-		await redisSet(redisKey, JSON.stringify(props));
+		await redisSetex(redisKey, TTL_DURATION, JSON.stringify(props));
 	}
 
 	return { props };

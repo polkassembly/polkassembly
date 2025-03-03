@@ -44,12 +44,20 @@ interface IDiscussionPostProps {
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
-	const [openSpamModal, setOpenSpamModal] = useState(true);
+	const [openSpamModal, setOpenSpamModal] = useState(false);
+	const [isBannerVisible, setIsBannerVisible] = useState(false);
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		const isSpam = (!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected || false;
+		setIsBannerVisible(isSpam);
+		setOpenSpamModal(isSpam);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [post]);
 
 	if (error)
 		return (
@@ -67,18 +75,16 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 					desc={post.content}
 					network={network}
 				/>
-				{((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && <SpamPostBanner />}
-				<div className={`${((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && 'mt-8 max-sm:mt-2'}`}>
+				{isBannerVisible && <SpamPostBanner />}
+				<div className={`${isBannerVisible && 'mt-8 max-sm:mt-2'}`}>
 					<BackToListingView postCategory={PostCategory.DISCUSSION} />
 				</div>
 
-				{((!!post.spam_users_count && post.spam_users_count > 0) || post?.isSpamDetected) && (
-					<SpamPostModal
-						open={openSpamModal}
-						setOpen={setOpenSpamModal}
-						proposalType={ProposalType.DISCUSSIONS}
-					/>
-				)}
+				<SpamPostModal
+					open={openSpamModal}
+					setOpen={setOpenSpamModal}
+					proposalType={ProposalType.DISCUSSIONS}
+				/>
 				<div className='mt-6'>
 					<Post
 						post={post}

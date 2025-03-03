@@ -87,6 +87,15 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
 				<br/>
 				<br>
+				Or Copy link below and paste it in your browser
+				<button onclick="copyLink('https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}')">Copy Link</button>
+				<script>
+					function copyLink(link) {
+						navigator.clipboard.writeText(link);
+					}
+				</script>
+				</br>
+				<br>
 				Thank you,
 				</br>
 				<br>

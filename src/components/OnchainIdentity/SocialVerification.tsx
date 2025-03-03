@@ -74,11 +74,12 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				<SocialsLayout
 					title='Email'
 					description='Check your primary inbox or spam to verify your email address.'
-					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false)}
+					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT)}
 					value={email?.value}
 					verified={isEmailVerified.current || false}
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
+					fieldName={ESocials.EMAIL}
 				/>
 			),
 			dot: (

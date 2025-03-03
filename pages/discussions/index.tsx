@@ -134,7 +134,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					A space to share insights, provide feedback, and collaborate on ideas that impact the network. Join the conversation and help shape the future of the ecosystem.
 				</p>
 			</div>
-			<div className={`fixed bottom-0 z-50 -ml-3 w-full bg-white px-3 py-5 dark:bg-section-dark-overlay sm:hidden`}>
+			<div className={'fixed bottom-0 z-50 -ml-3 w-full bg-white px-3 py-5 dark:bg-section-dark-overlay sm:hidden'}>
 				<button
 					onClick={handleClick}
 					className='flex h-10 w-full cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none '

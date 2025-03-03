@@ -116,15 +116,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		});
 	}
 
-	if (process.env.IS_CACHING_ALLOWED == '1') {
-		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${newID}`;
-		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
-		const latestActivityKey = `${network}_latestActivity_OpenGov`;
-		await redisDel(discussionDetail);
-		await redisDel(latestActivityKey);
-		await deleteKeys(discussionListingKey);
-	}
-
 	await postDocRef
 		.set(newPost)
 		.then(async () => {
@@ -145,6 +136,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		await postDocRef.update({
 			isSpamDetected: isSpam || false
 		});
+	}
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${newID}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		const latestActivityKey = `${network}_latestActivity_OpenGov`;
+		await redisDel(discussionDetail);
+		await redisDel(latestActivityKey);
+		await deleteKeys(discussionListingKey);
 	}
 
 	try {

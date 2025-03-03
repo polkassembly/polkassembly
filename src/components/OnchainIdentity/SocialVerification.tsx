@@ -74,11 +74,12 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				<SocialsLayout
 					title='Email'
 					description='Check your primary inbox or spam to verify your email address.'
-					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false)}
+					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT)}
 					value={email?.value}
 					verified={isEmailVerified.current || false}
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
+					fieldName={ESocials.EMAIL}
 				/>
 			),
 			dot: (
@@ -311,7 +312,18 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		const { data, error } = await nextApiClientFetch<{ url?: string }>(`api/v1/verification/twitter-verification?twitterHandle=${twitterHandle}`);
 
 		if (data && data?.url) {
-			window.open(data?.url, '_blank');
+			try {
+				const newWindow = window.open();
+				if (newWindow) {
+					newWindow.location.href = data?.url;
+				} else {
+					// Fallback for mobile browsers
+					window.location.href = data?.url;
+				}
+			} catch (err) {
+				// Final fallback
+				window.location.href = data?.url;
+			}
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',

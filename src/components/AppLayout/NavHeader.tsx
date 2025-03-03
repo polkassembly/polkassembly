@@ -97,6 +97,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const [isIdentityModalOpen, setIsIdentityModalOpen] = useState(false);
+	const [isLoggingIn, setIsLoggingIn] = useState(false);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -437,13 +438,20 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									height={22}
 									width={60}
 									text='Login'
-									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[16px]'
+									disabled={isLoggingIn}
+									className={`rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[16px] ${
+										isLoggingIn ? 'cursor-not-allowed opacity-50' : ''
+									}`}
 									onClick={() => {
 										if (isMobile) {
 											dispatch(GlobalActions.setIsSidebarCollapsed(true));
 											setSidedrawer(false);
 										}
-										setLoginOpen(true);
+										setIsLoggingIn(true);
+										setTimeout(() => {
+											setLoginOpen(true);
+											setIsLoggingIn(false);
+										}, 500);
 									}}
 								/>
 							</div>

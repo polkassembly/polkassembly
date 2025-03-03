@@ -5,6 +5,7 @@ import React from 'react';
 import { usePostDataContext } from '~src/context';
 import Markdown from '~src/ui-components/Markdown';
 import { sanitizeSummary } from './PostSummary';
+import EvalutionSummary from './PostSummary/EvalutionSummary';
 
 const PostAISummary = () => {
 	const {
@@ -16,6 +17,10 @@ const PostAISummary = () => {
 				className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
 				md={sanitizeSummary(summary || '')}
 			/>
+			<div className='mt-4 border-0 border-t-[1.5px] border-dashed border-section-light-container' />
+			<div className='px-8'>
+				<EvalutionSummary />
+			</div>
 		</div>
 	);
 };

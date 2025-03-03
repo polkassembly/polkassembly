@@ -14,8 +14,8 @@ interface INewsProps {
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
 	const { resolvedTheme: theme } = useTheme();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [prevTheme, setPrevTheme] = useState(theme);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
 	let profile = 'polkadot';
 	if (twitter) {
@@ -23,14 +23,16 @@ const News: FC<INewsProps> = (props) => {
 	}
 
 	useEffect(() => {
-		setPrevTheme(theme);
-	}, [theme]);
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	useEffect(() => {
-		if (prevTheme !== theme) {
-			setIsLoading(true);
-		}
-	}, [prevTheme, theme]);
+		setIsLoading(true);
+	}, [theme, windowWidth]);
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
@@ -38,7 +40,7 @@ const News: FC<INewsProps> = (props) => {
 			<div className='overflow-hidden rounded-[10px]'>
 				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
 				<TwitterTimelineEmbed
-					key={theme}
+					key={`${theme}-${windowWidth}`}
 					onLoad={() => setIsLoading(false)}
 					sourceType='profile'
 					screenName={profile}

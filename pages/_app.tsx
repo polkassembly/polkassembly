@@ -29,6 +29,7 @@ import { ThemeProvider } from 'next-themes';
 import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
+import { Provider } from 'jotai';
 
 export const dmSans = DM_Sans({
 	adjustFontFallback: false,
@@ -124,28 +125,30 @@ function App({ Component, pageProps }: AppProps) {
 		<PersistGate persistor={store.__persistor}>
 			{() => (
 				<ThemeProvider attribute='class'>
-					<ConfigProvider theme={antdTheme}>
-						<GlobalStyleWithTheme />
-						<ModalProvider>
-							<ErrorBoundary>
-								<ApiContextProvider network={network}>
-									<PeopleChainApiContextProvider network={network}>
-										<>
-											{showSplashScreen && <SplashLoader />}
-											<main className={`${dmSans.variable} ${dmSans.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-												<NextNProgress color='#E5007A' />
-												{/* <CMDK /> */}
-												<AppLayout
-													Component={Component}
-													pageProps={pageProps}
-												/>
-											</main>
-										</>
-									</PeopleChainApiContextProvider>
-								</ApiContextProvider>
-							</ErrorBoundary>
-						</ModalProvider>
-					</ConfigProvider>
+					<Provider>
+						<ConfigProvider theme={antdTheme}>
+							<GlobalStyleWithTheme />
+							<ModalProvider>
+								<ErrorBoundary>
+									<ApiContextProvider network={network}>
+										<PeopleChainApiContextProvider network={network}>
+											<>
+												{showSplashScreen && <SplashLoader />}
+												<main className={`${dmSans.variable} ${dmSans.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+													<NextNProgress color='#E5007A' />
+													{/* <CMDK /> */}
+													<AppLayout
+														Component={Component}
+														pageProps={pageProps}
+													/>
+												</main>
+											</>
+										</PeopleChainApiContextProvider>
+									</ApiContextProvider>
+								</ErrorBoundary>
+							</ModalProvider>
+						</ConfigProvider>
+					</Provider>
 				</ThemeProvider>
 			)}
 		</PersistGate>

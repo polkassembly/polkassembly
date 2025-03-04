@@ -79,6 +79,7 @@
     "formidable": "^3.5.1",
     "hi-base32": "^0.5.1",
     "ioredis": "^5.3.0",
+    "jotai": "^2.12.1",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "next": "^13.3.1",

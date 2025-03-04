@@ -10,6 +10,7 @@ import crypto from 'crypto';
 import cors = require('cors');
 import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
 import { fetchTreasuryStats } from './utils/fetchTreasuryStats';
+import updateNewProposalsInAlgolia from './updateNewProposalsInAlgolia';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -22,7 +23,7 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
-
+// schedule fn which runs every 10 minutes and updates the algolia index for looping through all subsquid proposals ;
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
@@ -482,4 +483,16 @@ export const callUpdateTreasuryStats = functions
 				return res.status(500).json({ error: 'Internal error.' });
 			}
 		});
+	});
+
+exports.updateNewProposalsInAlgolia = functions
+	.runWith({
+		memory: '1GB',
+		timeoutSeconds: 540
+	})
+	.pubsub.schedule('every 30 minutes')
+	.onRun(async () => {
+		functions.logger.info('scheduledUpdateNewProposalsInAlgolia ran at : ', new Date());
+		await updateNewProposalsInAlgolia();
+		return;
 	});

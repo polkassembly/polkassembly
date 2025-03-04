@@ -14,17 +14,11 @@ const News: FC<INewsProps> = ({ twitter }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-	const [isIOS, setIsIOS] = useState<boolean>(false);
 
 	let profile = 'polkadot';
 	if (twitter) {
 		profile = twitter.split('/')[3];
 	}
-
-	useEffect(() => {
-		const userAgent = navigator.userAgent || navigator.vendor;
-		setIsIOS(/iPad|iPhone|iPod/.test(userAgent));
-	}, []);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -36,35 +30,24 @@ const News: FC<INewsProps> = ({ twitter }) => {
 
 	useEffect(() => {
 		setIsLoading(true);
-	}, [theme, windowWidth, isIOS]);
+	}, [theme, windowWidth]);
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
 			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>News</h2>
 			<div className='overflow-hidden rounded-[10px]'>
 				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
-				{!isIOS ? (
-					<TwitterTimelineEmbed
-						key={`${theme}-${windowWidth}`}
-						onLoad={() => setIsLoading(false)}
-						sourceType='profile'
-						screenName={profile}
-						options={{ height: 450, width: '100%' }}
-						noHeader={true}
-						noFooter={true}
-						theme={theme === 'dark' ? 'dark' : 'light'}
-						noBorders
-					/>
-				) : (
-					<iframe
-						src={`https://twitframe.com/show?url=https://twitter.com/${profile}`}
-						width='100%'
-						height='450'
-						style={{ border: 'none', overflow: 'hidden' }}
-						allow='autoplay; clipboard-write; encrypted-media; picture-in-picture'
-						onLoad={() => setIsLoading(false)}
-					></iframe>
-				)}
+				<TwitterTimelineEmbed
+					key={`${theme}-${windowWidth}`}
+					onLoad={() => setIsLoading(false)}
+					sourceType='profile'
+					screenName={profile}
+					options={{ height: 450, width: '100%' }}
+					noHeader={true}
+					noFooter={true}
+					theme={theme === 'dark' ? 'dark' : 'light'}
+					noBorders
+				/>
 			</div>
 		</div>
 	);

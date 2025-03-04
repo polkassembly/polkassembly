@@ -1,6 +1,3 @@
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
 import Loader from '~src/ui-components/Loader';
@@ -26,7 +23,9 @@ const News: FC<INewsProps> = ({ twitter }) => {
 		script.async = true;
 		script.onload = () => {
 			setIsLoading(false);
-			window.twttr?.widgets?.load(); // Ensure widgets load on re-render
+			if (window.twttr && window.twttr.widgets) {
+				window.twttr.widgets.load();
+			}
 		};
 		document.body.appendChild(script);
 
@@ -35,13 +34,20 @@ const News: FC<INewsProps> = ({ twitter }) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		// Force reload widget on theme change
+		if (window.twttr && window.twttr.widgets) {
+			window.twttr.widgets.load();
+		}
+	}, [theme]);
+
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
-			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>News {isIOS ? 'Yes' : 'NO'}</h2>
+			<h2 className='mb-6 text-xl font-semibold leading-8 tracking-tight text-blue-light-high dark:text-blue-dark-high'>News {isIOS ? 'yes' : 'no'}</h2>
 			<div className='overflow-hidden rounded-[10px]'>
 				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
 
-				{/* Use Twitter embed widget instead of TwitterTimelineEmbed */}
+				{/* Twitter Embed with Manual Load */}
 				<a
 					className='twitter-timeline'
 					data-theme={theme === 'dark' ? 'dark' : 'light'}

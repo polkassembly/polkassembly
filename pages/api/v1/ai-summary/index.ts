@@ -162,7 +162,7 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		const commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
+		let commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
 
 		if (!apiUrl) {
 			return {
@@ -172,7 +172,7 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		const response = await fetch(apiUrl, {
+		let response = await fetch(apiUrl, {
 			body: JSON.stringify({
 				text: commentsData
 			}),
@@ -181,6 +181,18 @@ export const getCommentsAISummaryByPost = async ({
 			},
 			method: 'POST'
 		});
+
+		if (!response.ok) {
+			console.error('Initial API call failed:', response.statusText);
+			if (postData?.content) {
+				commentsData[0].postContent = postData?.content;
+				response = await fetch(apiUrl, {
+					body: JSON.stringify({ text: commentsData }),
+					headers: { 'Content-Type': 'application/json' },
+					method: 'POST'
+				});
+			}
+		}
 
 		if (!response.ok) {
 			console.error('Error occurred:', response.statusText.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, '[REDACTED]'));

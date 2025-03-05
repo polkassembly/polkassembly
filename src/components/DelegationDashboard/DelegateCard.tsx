@@ -62,7 +62,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	const getTrimmedBio = (bio: string) => {
 		if (!bio) return 'No Bio';
-		return bio.length > 100 ? `${bio.slice(0, 100)}...` : bio;
+		return bio.length > 80 ? `${bio.slice(0, 80)}...` : bio;
 	};
 
 	useEffect(() => {
@@ -266,17 +266,25 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						boxSize={18}
 					/>
 				</div>
-				<div className='mb-2 flex justify-between'>
+				<div className='mb-2 flex items-center justify-between'>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
 						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
-						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
+						<span className='mb-[3px] ml-[2px] text-[10px] font-normal text-blue-light-high dark:text-blue-dark-high'>{unit}</span>
 					</div>
+					<Divider
+						type='vertical'
+						className='mt-2 h-7 bg-section-light-container dark:bg-separatorDark'
+					/>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
-						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv&apos;d Delegation</div>
+						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Received Delegation</div>
 
 						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>
 					</div>
+					<Divider
+						type='vertical'
+						className='mt-2 h-7 bg-section-light-container dark:bg-separatorDark'
+					/>
 					<div className={`${dmSans.variable} ${dmSans.className}`}>
 						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals</div>
 						<span className='font-semibold text-blue-light-high dark:text-blue-dark-high'>{delegate?.receivedDelegationsCount}</span>

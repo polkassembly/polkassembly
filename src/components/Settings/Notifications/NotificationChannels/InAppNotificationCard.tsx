@@ -32,7 +32,7 @@ export default function InAppNotificationsCard({ handleEnableDisabled, notificat
 						alt='notific...'
 						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 					/>{' '}
-					<p className='m-0 ml-1 mr-1 p-0'>In App Notifications</p>
+					<p className='m-0 ml-1 mr-1 p-0 text-sm sm:text-base'>In App Notifications</p>
 				</span>
 				{
 					<span className='flex items-center gap-1'>

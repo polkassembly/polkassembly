@@ -121,7 +121,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+					<p className='mb-3 text-sm font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high sm:mb-[22px] sm:text-[16px]'>
 						Please select the socials where you would like to receive notifications:
 					</p>
 					<InAppNotificationsCard
@@ -129,7 +129,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
+						className='my-3 border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark sm:my-[30px]'
 						dashed
 					/>
 					<EmailNotificationCard
@@ -139,7 +139,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
+						className='my-3 border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark sm:my-[30px]'
 						dashed
 					/>
 					{botsArr.map((bot, i) => (
@@ -154,7 +154,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 							/>
 							{botsArr.length - 1 > i && (
 								<Divider
-									className='my-[30px] border-[2px] border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
+									className='my-3 border-[2px] border-section-light-container dark:border-[#3B444F] dark:border-separatorDark sm:my-[30px]'
 									dashed
 								/>
 							)}

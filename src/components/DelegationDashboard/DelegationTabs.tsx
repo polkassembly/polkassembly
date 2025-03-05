@@ -8,7 +8,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import BecomeDelegate from './BecomeDelegate';
 import TotalDelegationData from './TotalDelegationData';
 import TrendingDelegates from './TrendingDelegates';
-import { TabsProps } from 'antd';
+import { Button, TabsProps } from 'antd';
 import DelegationProfile from '~src/components/DelegationDashboard/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -21,6 +21,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 interface Props {
 	className?: string;
@@ -32,6 +33,7 @@ interface Props {
 const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const isMobile = useIsMobile();
 	const { delegationDashboardAddress } = userProfile;
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
@@ -141,7 +143,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	];
 
 	return (
-		<div className={classNames(className, 'mt-8 rounded-[18px]')}>
+		<div className={classNames(className, 'relative mt-8 rounded-[18px]')}>
 			<Tabs
 				defaultActiveKey='2'
 				theme={theme}
@@ -149,6 +151,17 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 				className={`ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high ${isLoggedOut ? '' : 'max-lg:mt-28 max-sm:mt-16'}`}
 				items={tabItems}
 			/>
+			{userProfile.id && isMobile && (
+				<div className={'z-100 fixed bottom-0 -ml-3 w-full bg-white px-3 py-5 dark:bg-section-dark-overlay'}>
+					<Button
+						onClick={() => setOpenBecomeDelegateModal?.(true)}
+						disabled={!userProfile.id || !userProfile.loginAddress}
+						className={` w-full border-pink_primary bg-pink_primary font-semibold text-white dark:text-black ${(!userProfile.id || !userProfile.loginAddress) && 'opacity-60'} `}
+					>
+						Become a Delegate
+					</Button>
+				</div>
+			)}
 			<BecomeDelegateModal
 				isModalOpen={openBecomeDelegateModal as boolean}
 				setIsModalOpen={setOpenBecomeDelegateModal as any}

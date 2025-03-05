@@ -15,8 +15,8 @@ const BecomeDelegateSmall = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	return (
 		<>
-			<div className={`${dmSans.className} ${dmSans.variable} mb-4 flex items-center justify-between sm:hidden`}>
-				<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Delegation on Polkassembly</span>
+			<div className={`${dmSans.className} ${dmSans.variable} mb-3 flex items-center justify-between sm:hidden`}>
+				<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Delegation</span>
 				<span
 					onClick={() => setOpenModal(true)}
 					className='text-[10px] font-medium text-pink_primary underline'

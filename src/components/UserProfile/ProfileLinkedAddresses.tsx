@@ -56,13 +56,19 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		<div className='flex w-[160px] flex-col gap-2'>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => setOpenAddressLinkModal(true)}
+				onClick={() => {
+					setOpenAddressLinkModal(true);
+					setOpenLinkExpand(false);
+				}}
 			>
 				Link Address
 			</span>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => setOpenProxyLinkModal(true)}
+				onClick={() => {
+					setOpenProxyLinkModal(true);
+					setOpenLinkExpand(false);
+				}}
 			>
 				Link Proxy Address
 			</span>
@@ -134,7 +140,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			)}
 		>
 			<div className='flex justify-between'>
-				<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
+				<span className='flex items-center gap-1.5 text-lg font-semibold dark:text-blue-dark-high sm:text-xl'>
 					<Image
 						src='/assets/profile/linked-addresses.svg'
 						alt=''
@@ -150,7 +156,8 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 						zIndex={1056}
 						content={govTypeContent}
 						placement='bottom'
-						onOpenChange={() => setOpenLinkExpand(!openLinkExpand)}
+						open={openLinkExpand}
+						onOpenChange={(visible) => setOpenLinkExpand(visible)}
 					>
 						<div className='flex h-9 w-[160px] items-center justify-between rounded-md border-[1px] border-solid border-pink_primary p-2 text-sm font-medium capitalize text-pink_primary dark:text-pink_primary'>
 							<span>

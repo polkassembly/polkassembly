@@ -24,7 +24,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 		<div className='mb-2 flex flex-col'>
 			<h3 className='m-0 flex items-center gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
 				<span className='flex '>
-					<MailFilledIcon className='mt-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> <p className='m-0 ml-1 mr-1 p-0'>Email Notifications</p>
+					<MailFilledIcon className='mt-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> <p className='m-0 ml-1 mr-1 p-0 text-sm sm:text-base '>Email Notifications</p>
 					{!verified && (
 						<span className='rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[red] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>
 							{' '}

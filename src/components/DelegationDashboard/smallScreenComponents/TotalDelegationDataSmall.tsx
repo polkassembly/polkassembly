@@ -3,11 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { formatBalance } from '@polkadot/util';
-import { Button, Divider, Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
@@ -17,16 +17,7 @@ import Image from 'next/image';
 
 const ZERO_BN = new BN(0);
 
-const TotalDelegationDataSmall = ({
-	className,
-	setOpenBecomeDelegateModal,
-	setOpenLoginModal
-}: {
-	className: string;
-	setOpenBecomeDelegateModal?: (pre: boolean) => void;
-	setOpenLoginModal?: (pre: boolean) => void;
-}) => {
-	const currentUser = useUserDetailsSelector();
+const TotalDelegationDataSmall = ({ className }: { className: string; setOpenBecomeDelegateModal?: (pre: boolean) => void; setOpenLoginModal?: (pre: boolean) => void }) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -160,21 +151,6 @@ const TotalDelegationDataSmall = ({
 						</div>
 					</div>
 				</div>
-				<Button
-					onClick={() => {
-						if (!currentUser.id) {
-							setOpenLoginModal?.(true);
-						} else {
-							setOpenBecomeDelegateModal?.(true);
-						}
-					}}
-					// disabled={!currentUser.id || !currentUser.loginAddress}
-					className={` mt-[14px] w-full border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
-						(!currentUser.id || !currentUser.loginAddress) && 'opacity-60'
-					}`}
-				>
-					Become a Delegate
-				</Button>
 			</Spin>
 		</section>
 	);

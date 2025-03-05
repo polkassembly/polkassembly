@@ -37,7 +37,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 				<div className={'relative mt-[2px] [&>svg]:mt-0'}>{Icon}</div>
 				<div>
 					<h3 className='m-0 flex gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
-						{title} Notifications{' '}
+						<span className='text-sm sm:text-base '>{title} Notifications </span>
 						{!description && (
 							<div>
 								<span className='whitespace-nowrap rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[#407BFF] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>
@@ -59,7 +59,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 								</span>
 								{isBotSetup && (
 									<span
-										className='flex cursor-pointer items-center gap-1 text-[16px] font-medium text-pink_primary underline md:hidden'
+										className='flex cursor-pointer items-center gap-1 text-sm font-medium text-pink_primary underline sm:text-[16px] md:hidden'
 										onClick={handleResetClick}
 									>
 										<ResetIcon /> Reset
@@ -101,7 +101,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 			</div>
 			{isBotSetup && (
 				<span
-					className='hidden cursor-pointer items-center gap-1 text-[16px] font-medium text-pink_primary underline md:flex'
+					className='hidden cursor-pointer items-center gap-1 text-sm font-medium text-pink_primary underline sm:text-[16px] md:flex'
 					onClick={handleResetClick}
 				>
 					<ResetIcon /> Reset

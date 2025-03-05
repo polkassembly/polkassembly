@@ -50,7 +50,7 @@ const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, n
 					disabled={!isAvailable}
 				>
 					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
-					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
+					{text && isOptionalLogin && <p className={`ml-3 mt-3 p-0 sm:ml-4 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
 					{isOptionalLogin && !isAvailable && text !== 'Polkasafe (Multisig)' && (
 						<p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor'>Not Installed</p>
 					)}

@@ -22,6 +22,7 @@ import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import BecomeDelegateSmall from './smallScreenComponents/BecomeDelegateSmall';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 interface Props {
 	className?: string;
@@ -42,12 +43,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-	const [isMobile, setIsMobile] = useState<boolean>(false);
+	const isMobile = useIsMobile();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 
 	useEffect(() => {
 		if (!window) return;
-		setIsMobile(window.innerWidth < 768);
 		if (!isLoggedOut) {
 			setOpenLoginModal(false);
 		}
@@ -71,9 +71,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [api, apiReady, network, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
-		if (window.innerWidth < 768) {
-			setIsMobile(true);
-		}
 		if (!userDetails.delegationDashboardAddress && !!userDetails.loginAddress) {
 			dispatch(userDetailsActions.updateDelegationDashboardAddress(userDetails.loginAddress));
 		}
@@ -81,7 +78,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);
 
 	return (
-		<div className={`${className} delegation-dashboard`}>
+		<div className={`${className} delegation-dashboard relative`}>
 			{isLoggedOut || !userDetails.loginAddress ? (
 				<div className='wallet-info-board min-sm:absolute min-sm:left-0 min-sm:top-20 mt-[-25px] hidden h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-6 sm:flex'>
 					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
@@ -89,7 +86,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 						onClick={() => {
 							setOpenLoginModal(true);
 						}}
-						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium font-semibold text-white'
+						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-semibold text-white'
 					>
 						Connect wallet
 					</Button>
@@ -117,6 +114,16 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					/>
 					<TrendingDelegates theme={theme} />
 				</>
+			)}
+			{!userDetails.id && isMobile && (
+				<div className={`z-100 ${isMobile ? 'fixed' : 'hidden'}  bottom-0 -ml-3 w-full bg-white px-3 py-6 dark:bg-section-dark-overlay`}>
+					<Button
+						onClick={() => setOpenLoginModal(true)}
+						className={' w-full border-pink_primary bg-pink_primary font-semibold text-white opacity-60 dark:text-black '}
+					>
+						Become a Delegate
+					</Button>
+				</div>
 			)}
 
 			{!isLoggedOut && userDetails.loginAddress && (

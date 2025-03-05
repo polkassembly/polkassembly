@@ -199,7 +199,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				</div>
 			) : isSmallScreen ? (
 				<a
-					className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] px-[18px] dark:border-[#3B444F] dark:bg-section-dark-overlay'
+					className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] px-[14px] dark:border-separatorDark dark:bg-section-dark-overlay'
 					onClick={(e) => {
 						e.preventDefault();
 						if (isMobile) {

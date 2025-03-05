@@ -162,7 +162,7 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		let commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
+		const commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
 
 		if (!apiUrl) {
 			return {

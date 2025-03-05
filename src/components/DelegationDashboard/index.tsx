@@ -22,6 +22,7 @@ import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import BecomeDelegateSmall from './smallScreenComponents/BecomeDelegateSmall';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 interface Props {
 	className?: string;
@@ -42,7 +43,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-	const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+	const isMobile = useIsMobile();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 
 	useEffect(() => {

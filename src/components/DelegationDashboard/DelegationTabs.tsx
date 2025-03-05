@@ -21,6 +21,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 interface Props {
 	className?: string;
@@ -32,7 +33,7 @@ interface Props {
 const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+	const isMobile = useIsMobile();
 	const { delegationDashboardAddress } = userProfile;
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({

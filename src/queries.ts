@@ -2021,7 +2021,17 @@ query ConvictionDelegatedVotesCountAndBalance(
 
 export const GET_VOTE_HISTORY_IN_PROFILE = `
 query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!] , $limit: Int = 25, $offset: Int = 0, $orderBy: [FlattenedConvictionVotesOrderByInput!]) {
-  flattenedConvictionVotes(where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}, limit: $limit, offset: $offset, orderBy: $orderBy) {
+  flattenedConvictionVotes(
+    where: {
+      type_eq: $type_eq, 
+      voter_in: $voter_in, 
+      removedAtBlock_isNull: true, 
+      proposal_isNull: false
+    }, 
+    limit: $limit, 
+    offset: $offset, 
+    orderBy: $orderBy
+  ) {
     type
     voter
     lockPeriod
@@ -2078,7 +2088,15 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
       }
     }
   }
-  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}) {
+  flattenedConvictionVotesConnection(
+    orderBy: id_ASC, 
+    where: {
+      type_eq: $type_eq, 
+      voter_in: $voter_in, 
+      removedAtBlock_isNull: true, 
+      proposal_isNull: false
+    }
+  ) {
     totalCount
   }
 }

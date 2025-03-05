@@ -277,8 +277,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 			if (data && data?.message) {
 				setReportingAISummary(false);
-				console.log('REFETCH', { data, error });
-				// window.location.reload();
+				window.location.reload();
 			}
 		} catch (error) {
 			console.log(error);

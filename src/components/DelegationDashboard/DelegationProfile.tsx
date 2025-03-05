@@ -16,6 +16,7 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Image from 'next/image';
 import ExpandableMarkdown from '../Post/Tabs/ExpandableMarkdown';
 import { useTheme } from 'next-themes';
+import useIsMobile from '~src/hooks/useIsMobile';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -45,6 +46,7 @@ interface Props {
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
 	const { theme } = useTheme();
 	const userProfile = useUserDetailsSelector();
+	const isMobile = useIsMobile();
 	const { delegationDashboardAddress: address } = userProfile;
 	const { image, social_links, username, bio } = profileDetails;
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -132,7 +134,11 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 								/>
 							</div>
 							{userBio || bio ? (
-								<h2 className={'mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high sm:ml-1 sm:mt-1.5'}>
+								<h2
+									className={`mt-2.5 ${
+										isMobile ? 'text-center' : ''
+									} cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high sm:ml-1 sm:mt-1.5`}
+								>
 									<ExpandableMarkdown
 										md={userBio || bio}
 										theme={theme}

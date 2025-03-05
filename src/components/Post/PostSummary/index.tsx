@@ -17,7 +17,7 @@ interface IPostSummaryProps {
 	theme?: string;
 }
 
-const sanitizeSummary = (md: string) => {
+export const sanitizeSummary = (md: string) => {
 	const newMd = (md || '').trim();
 	return newMd;
 };

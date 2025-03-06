@@ -455,7 +455,7 @@ export default styled(CalendarView)`
 			justify-content: center;
 			align-items: center;
 			margin-left: -3px;
-			margin-top: -2px;
+			margin-top: -4px;
 
 			.rbc-event {
 				background: #e6007a;

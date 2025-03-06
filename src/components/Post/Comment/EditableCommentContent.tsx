@@ -654,7 +654,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, [canEditComment]);
 
 	useEffect(() => {
-		if (isUsedInBounty) {
+		if (isUsedInBounty || Boolean(id && [23290, 8057].includes(id))) {
 			setCommentAllowed(true);
 		} else {
 			setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors as EAllowedCommentor, !!loginAddress && isUserOnchainVerified));

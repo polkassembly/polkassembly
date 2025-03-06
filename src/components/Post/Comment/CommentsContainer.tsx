@@ -345,7 +345,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	];
 
 	useEffect(() => {
-		const allowed = isUserOnchainVerified || loggedInUserId === 8057;
+		const allowed = isUserOnchainVerified || Boolean(loggedInUserId && [23290, 8057].includes(loggedInUserId));
 		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!addresses?.length && allowed));
 		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!addresses?.length && allowed));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

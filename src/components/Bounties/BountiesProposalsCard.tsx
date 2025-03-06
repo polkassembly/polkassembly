@@ -154,11 +154,11 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	}, [post_id, user_id, network]);
 
 	return (
-		<section className='w-full md:w-[383px]'>
+		<section className='w-full'>
 			{loading ? (
 				<Skeleton />
 			) : (
-				<div className='w-full cursor-pointer md:w-[383px]'>
+				<div className='w-full cursor-pointer max-sm:ml-[10px]'>
 					<Link
 						key={post_id}
 						href={`/referenda/${post_id}`}
@@ -167,7 +167,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 						<div className='flex'>
 							<CardHeader
 								theme={theme as any}
-								className='relative flex h-[56px] w-full items-center justify-start gap-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
+								className='relative flex h-[56px] w-[185px] items-center justify-start gap-1 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay sm:w-full sm:gap-3'
 							>
 								<div className='flex items-baseline gap-x-2'>
 									<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
@@ -215,8 +215,8 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							</Link>
 						</div>
 						<div
-							className={`rounded-b-3xl rounded-tr-2xl border-b border-l border-r border-t-0 
-                     border-solid border-section-light-container bg-white px-3 py-1 dark:border-section-dark-container dark:bg-section-light-overlay`}
+							className={`w-[310px] rounded-b-3xl rounded-tr-2xl border-b border-l border-r border-t-0 border-solid 
+                     border-section-light-container bg-white px-3 py-1 dark:border-section-dark-container dark:bg-section-light-overlay sm:w-full`}
 						>
 							<Link
 								href={`/referenda/${post_id}`}
@@ -225,7 +225,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								<ImageIcon
 									src='/assets/bounty-icons/bounty-image.svg'
 									alt='bounty icon'
-									imgClassName='mt-5 mb-3 w-full md:w-auto'
+									imgClassName='mt-5 mb-3 w-[290px] sm:w-full'
 									imgWrapperClassName=''
 								/>
 							</Link>

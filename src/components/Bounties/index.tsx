@@ -80,7 +80,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							<span
 								onClick={() => carouselRef1?.current?.prev()}
 								className='rotate-180 cursor-pointer'
-								style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
+								style={{ left: -45, position: 'absolute', top: '30%', zIndex: 10, ...(isMobile ? { left: -25 } : {}) }}
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
@@ -121,9 +121,9 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 								style={{
 									position: 'absolute',
 									right: -46,
-									top: '35%',
+									top: '30%',
 									zIndex: 10,
-									...(isMobile ? { right: 10 } : {})
+									...(isMobile ? { right: -25 } : {})
 								}}
 							>
 								<ImageIcon
@@ -156,7 +156,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							<span
 								onClick={() => carouselRef2?.current?.prev()}
 								className='rotate-180 cursor-pointer'
-								style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
+								style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10, ...(isMobile ? { left: -25 } : {}) }}
 							>
 								<ImageIcon
 									src='/assets/bounty-icons/carousel-icon.svg'
@@ -174,7 +174,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 							afterChange={handleBeforeChange2}
 						>
 							{activeDataChunks.map((chunk, index) => {
-								const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4' : 'mx-3 flex justify-start space-x-4';
+								const chunkClass = chunk.length % 3 === 0 ? ' flex justify-between space-x-4' : ' flex justify-start space-x-4';
 								return (
 									<div
 										key={index}
@@ -199,7 +199,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 									right: -46,
 									top: '40%',
 									zIndex: 10,
-									...(isMobile ? { right: 10 } : {})
+									...(isMobile ? { right: -25 } : {})
 								}}
 							>
 								<ImageIcon

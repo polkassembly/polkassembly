@@ -299,13 +299,7 @@ const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => 
 	<img
 		src={src}
 		alt={alt || 'Image'}
-		style={{
-			display: 'block',
-			maxHeight: '80vh',
-			width: 'auto',
-			maxWidth: '100%',
-			objectFit: 'contain'
-		}}
+		style={{ height: 'auto', objectFit: 'contain', width: '100%' }}
 	/>
 );
 

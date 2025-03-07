@@ -155,7 +155,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		try {
 			const resolve = await Promise.all(promiseArr);
 			const isVerified = !!resolve.find((info: any) => {
-				return info?.isVerified;
+				return info?.isVerified || !!info.parentProxyTitle || !!info.parentProxyAddress;
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified));
 			const displayNameInfo = resolve?.find((info: any) => {

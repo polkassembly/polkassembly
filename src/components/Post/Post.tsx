@@ -43,7 +43,6 @@ import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import { useRouter } from 'next/router';
-import PostAISummary from './PostAISummary';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -494,15 +493,6 @@ const Post: FC<IPostProps> = (props) => {
 			key: 'description',
 			label: 'Description'
 		},
-		...(post?.content?.length > 200 && post?.summary
-			? [
-					{
-						children: <PostAISummary />,
-						key: 'ai-summary',
-						label: 'AI Summary'
-					}
-			  ]
-			: []),
 		...getOnChainTabs()
 	];
 

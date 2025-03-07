@@ -302,9 +302,9 @@ const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => 
 		style={{
 			display: 'block',
 			maxHeight: '80vh',
-			width: 'auto',
 			maxWidth: '100%',
-			objectFit: 'contain'
+			objectFit: 'contain',
+			width: 'auto'
 		}}
 	/>
 );

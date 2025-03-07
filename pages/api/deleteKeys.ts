@@ -18,11 +18,15 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(401).json({ message: 'Unauthorized' });
 		}
 
-		const polkadotKeysPattern = 'polkadot_*';
-		const kusamaKeysPattern = 'kusama_*';
-		const acalaKeysPattern = 'acala_*';
+		const networks = ['polkadot', 'kusama', 'acala', 'integritee', 'moonbeam'];
 
-		await Promise.all([deleteKeys(polkadotKeysPattern), deleteKeys(kusamaKeysPattern), deleteKeys(acalaKeysPattern)]);
+		await Promise.all(
+			networks.map((network) => {
+				const keysPattern = `${network}_*`;
+				return deleteKeys(keysPattern);
+			})
+		);
+
 		return res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		console.log('Error: ', error);

@@ -35,7 +35,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
+import { ESentiments, ICommentsSummary, ISentimentsPercentage, NotificationStatus } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -50,6 +50,7 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -76,9 +77,12 @@ interface ICommentsContainerProps {
 }
 
 interface IReportSummaryResponse {
-	isAlreadyReported: boolean;
 	message: string;
-	data?: any;
+	data?: {
+		isAlreadyReported: boolean;
+		message?: string;
+	};
+	error?: string;
 }
 
 export interface ITimeline {
@@ -214,17 +218,67 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				postType
 			});
 
+			if (error) {
+				console.error('Error while reporting AI summary:', error);
+				setReportingAISummary(false);
+				queueNotification({
+					header: '',
+					message: 'Error while reporting AI summary.',
+					status: NotificationStatus.ERROR
+				});
+				return;
+			}
+
+			if (!data) {
+				console.error('Unexpected API response: No data received.');
+				setReportingAISummary(false);
+				queueNotification({
+					header: '',
+					message: 'Unexpected API response. Please try again later.',
+					status: NotificationStatus.ERROR
+				});
+				return;
+			}
+			if (data && data?.data) {
+				const isAlreadyReported = Boolean(data.data.isAlreadyReported);
+				queueNotification({
+					header: isAlreadyReported ? '' : 'Success!',
+					message: isAlreadyReported ? 'You have already submitted the feedback.' : 'Your feedback has been submitted.',
+					status: isAlreadyReported ? NotificationStatus.INFO : NotificationStatus.SUCCESS
+				});
+				setIsAlreadyReported(isAlreadyReported);
+				setReportingAISummary(false);
+			}
+		} catch (error) {
+			console.error('Unexpected error:', error);
+			setReportingAISummary(false);
+			queueNotification({
+				header: '',
+				message: 'An unexpected error occurred. Please try again later.',
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
+	const refetchAISummary = async () => {
+		setReportingAISummary(true);
+		try {
+			const { data, error } = await nextApiClientFetch<{
+				success: boolean;
+				message: string;
+				data?: any;
+				error?: string;
+			}>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
+
 			if (error || !data) {
 				console.log('Error While reporting AI summary data', error);
 				setReportingAISummary(false);
 				return;
 			}
-
-			if (data && data?.isAlreadyReported) {
-				setIsAlreadyReported(data?.isAlreadyReported);
+			if (data && data?.message) {
 				setReportingAISummary(false);
+				window.location.reload();
 			}
-			await nextApiClientFetch('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
 		} catch (error) {
 			console.log(error);
 			setReportingAISummary(false);
@@ -364,7 +418,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const getDisplayText = (text: string, showFull: boolean) => {
 		if (!text) return '';
 		const words = text.split(' ');
-		const isLongText = words.length > 100;
+		const isLongText = words.length > 80;
 		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
 	};
 
@@ -500,14 +554,34 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							) : isAlreadyReported === false ? (
 								<div className='text-xs text-pink_primary'>Thanks for reporting the review.</div>
 							) : (
-								<div className='text-xs text-pink_primary'>
-									Was this review helpful?
-									<span
-										className='ml-1 cursor-pointer text-xs font-medium underline'
-										onClick={() => reportSummary()}
-									>
-										No
-									</span>
+								<div className='flex items-center gap-1 text-xs text-pink_primary'>
+									Was this summary helpful?
+									<div className='flex items-center gap-1'>
+										<div
+											onClick={() => {
+												reportSummary();
+												refetchAISummary();
+											}}
+											className='cursor-pointer bg-transparent transition-transform duration-200 hover:scale-110'
+										>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={18}
+												height={18}
+												className='rotate-180 scale-x-[-1] bg-transparent'
+											/>
+										</div>
+										<div className='cursor-pointer transition-transform duration-200 hover:scale-110'>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={18}
+												height={18}
+												className=''
+											/>
+										</div>
+									</div>
 								</div>
 							)}
 						</div>

@@ -86,14 +86,31 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		let novaWalletDelegates;
 		let parityDelegates;
 		let W3fDelegates;
-		if (network === 'polkadot') {
-			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json').then((res) => res.json());
-			parityDelegates = await fetch('https://paritytech.github.io/governance-ui/data/polkadot/delegates.json').then((res) => res.json());
-			W3fDelegates = w3fDelegatesPolkadot;
-		} else {
-			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json').then((res) => res.json());
-			parityDelegates = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
-			W3fDelegates = w3fDelegatesKusama;
+
+		const DELEGATE_URLS = {
+			kusama: {
+				novaWallet: 'https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json',
+				parity: 'https://paritytech.github.io/governance-ui/data/kusama/delegates.json'
+			},
+			polkadot: {
+				novaWallet: 'https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json',
+				parity: 'https://paritytech.github.io/governance-ui/data/polkadot/delegates.json'
+			}
+		};
+
+		switch (network) {
+			case 'polkadot':
+				parityDelegates = await fetch(DELEGATE_URLS.polkadot.parity).then((res) => res.json());
+				novaWalletDelegates = await fetch(DELEGATE_URLS.polkadot.novaWallet).then((res) => res.json());
+				W3fDelegates = w3fDelegatesPolkadot;
+				break;
+			case 'kusama':
+				parityDelegates = await fetch(DELEGATE_URLS.kusama.parity).then((res) => res.json());
+				novaWalletDelegates = await fetch(DELEGATE_URLS.kusama.novaWallet).then((res) => res.json());
+				W3fDelegates = w3fDelegatesKusama;
+				break;
+			default:
+				throw new Error(`Unsupported network: ${network}`);
 		}
 		let data;
 

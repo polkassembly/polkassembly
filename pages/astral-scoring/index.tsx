@@ -57,7 +57,7 @@ const AstralScoring = (props: { network: string; className: string }) => {
 						backgroundSize: 'cover'
 					}}
 				></div>
-				<article className='flex h-full w-full flex-col gap-y-2 rounded-[14px] bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
+				<article className='flex h-full w-full flex-col gap-y-2 rounded-[14px] bg-white px-3 py-2 shadow-md dark:bg-section-dark-overlay sm:px-6 sm:py-4'>
 					<div className='mt-3 flex items-center justify-start gap-x-2 '>
 						<ImageIcon
 							src='/assets/icons/astral-star-icon.svg'

@@ -13,6 +13,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
 import Tooltip from '~src/basic-components/Tooltip';
 import classNames from 'classnames';
+import ImageComponent from '~src/components/ImageComponent';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -63,7 +64,7 @@ const NameLabel = ({
 				setAddress(data?.addresses[0]);
 			}
 			setLeaderboardAstrals(data?.profile_score);
-			setUserImage(data?.image);
+			setUserImage(data?.profile?.image || '');
 		} else {
 			setProposerUserId(null);
 		}
@@ -107,10 +108,10 @@ const NameLabel = ({
 							setOpen(e);
 						}}
 					>
-						<span
+						<div
 							className={`username mr-1.5 ${isUsedInLeadership ? 'font-normal' : 'font-semibold'} text-bodyBlue dark:text-blue-dark-high ${
 								!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'
-							} ${className}`}
+							} ${className} flex items-center gap-1`}
 							onClick={(e) => {
 								e.stopPropagation();
 								e.preventDefault();
@@ -120,8 +121,13 @@ const NameLabel = ({
 								}
 							}}
 						>
+							<ImageComponent
+								src={userImage ? userImage : ''}
+								alt='user-profile-image'
+								className='h-5 w-5 cursor-copy rounded-full'
+							/>
 							{username}
-						</span>
+						</div>
 					</Tooltip>
 				) : (
 					<Address

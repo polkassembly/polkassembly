@@ -114,13 +114,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				ref={commentScrollRef}
 				className='invisible absolute mt-[-100px]'
 			></div>
-			{/* <UserAvatar
-				className='mt-1 hidden flex-none md:inline-block'
-				username={comment.username}
-				size='large'
-				id={user_id}
-				profile={profile}
-			/> */}
+
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
 					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'

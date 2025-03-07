@@ -186,7 +186,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse
 	}
 
 	const response = await getCombinedBalances(network);
-	res.status(response.error ? 500 : 200).json(response);
+	res.status(response.error ? 400 : 200).json(response);
 };
 
 export default withErrorHandling(handler);

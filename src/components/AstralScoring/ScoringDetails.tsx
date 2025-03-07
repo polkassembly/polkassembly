@@ -44,12 +44,14 @@ const ScoringDetails = (props: { scoringData: IScoringSection[] }) => {
 								{section.items.map((item, idx) => (
 									<div
 										key={idx}
-										className='flex items-center justify-between rounded-lg bg-[#F7F7F7] px-3 py-2 dark:bg-inactiveIconDark'
+										className='flex items-center justify-between rounded-lg bg-[#F7F7F7] px-2 py-2 dark:bg-inactiveIconDark sm:px-3'
 									>
-										<div className='flex items-center gap-x-2'>
-											<p className='m-0 w-[150px] p-0 text-[12px] font-normal text-bodyBlue dark:text-white md:w-[300px] md:text-sm'>{item.label}</p>
+										<div className='flex w-[130px] items-center gap-x-2 whitespace-normal break-words md:w-[300px]'>
+											<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue dark:text-white md:text-sm'>{item.label}</p>
+										</div>
+										<div className='ml-auto flex w-[155px] items-center justify-end gap-x-0.5 whitespace-normal break-words md:w-[250px]'>
 											{item?.type && (
-												<span className='m-0 flex h-5 items-center gap-x-1 whitespace-nowrap rounded bg-white p-0 px-2 text-[10px] text-sidebarBlue dark:bg-black  dark:text-blue-dark-medium'>
+												<span className='m-0 flex h-5 items-center gap-x-1 whitespace-nowrap rounded bg-white p-0 px-2 text-[10px] text-sidebarBlue dark:bg-black dark:text-blue-dark-medium'>
 													<Image
 														src={`/assets/astral-scoring-page/${item.type}-icon.svg`}
 														alt={`${item?.type}-icon`}
@@ -60,9 +62,7 @@ const ScoringDetails = (props: { scoringData: IScoringSection[] }) => {
 													{item.type.charAt(0).toUpperCase() + item.type.slice(1).replace('-', ' ')}
 												</span>
 											)}
-										</div>
-										<div className='flex items-center gap-x-0.5'>
-											<p className='m-0 p-0 text-base font-semibold text-[#FFBA03]'>{item.points}</p>
+											<p className='my-0 ml-1 mr-0 p-0 text-base font-semibold text-[#FFBA03] sm:ml-[6px]'>{item.points}</p>
 											<ImageIcon
 												src='/assets/icons/astral-star-icon.svg'
 												alt='astral-star-icon'

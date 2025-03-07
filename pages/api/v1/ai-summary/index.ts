@@ -24,23 +24,17 @@ interface GetCommentsAISummaryResponse {
 const cleanContentForSummary = (content: string): string => {
 	const htmlTagRegex = /<\/?[^>]+(>|$)/g;
 	const imgTagRegex = /<img[^>]*>/g;
-	const codeBlockRegex = /```[\s\S]*?```|`[^`]*`/g;
-	const hyphenListRegex = /^\s*-\s*/gm;
-	const apostropheFixRegex = /(\w+)'s/g;
 
 	return removeSymbols(
 		content
 			.replace(imgTagRegex, '')
 			.replace(htmlTagRegex, '')
-			.replace(codeBlockRegex, '')
-			.replace(hyphenListRegex, '')
-			.replace(apostropheFixRegex, '$1s')
+			.replace(/```[\s\S]*?```|`[^`]*`/g, '') // Removes code blocks and inline code
 			.replace(/&nbsp;/g, ' ')
 			.replace(/\n/g, ' ')
 			.replace(/\+/g, ' ')
 			.replace(/"/g, '')
 			.replace(/\s\s+/g, ' ')
-			.trim()
 	);
 };
 
@@ -58,15 +52,9 @@ export const getCommentsAISummaryByPost = async ({
 	try {
 		let linkedPostCommentsSnapshot: QuerySnapshot<DocumentData, DocumentData> | null = null;
 
+		// get post link comments
 		const postData = (await postRef.get()).data() as Post;
 
-		let postContent = postData?.content ? cleanContentForSummary(postData.content) : '';
-
-		const restrictedText = 'Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.';
-
-		if (postContent.includes(restrictedText)) {
-			postContent = '';
-		}
 		if (postData.post_link) {
 			const postLinkRef = postsByTypeRef(network, postData.post_link.type).doc(String(postData.post_link.id));
 			// get post link comments
@@ -99,8 +87,7 @@ export const getCommentsAISummaryByPost = async ({
 
 			const commentObj = {
 				content: cleanContentForSummary(commentData.content),
-				id: commentData.user_id || 'unknown',
-				username: commentData?.username || 'unknown'
+				id: commentData.user_id || 'unknown'
 			};
 
 			if (unwantedContents.some((unwanted) => commentObj.content.includes(unwanted.content) && commentObj.id === unwanted.id)) {
@@ -115,8 +102,7 @@ export const getCommentsAISummaryByPost = async ({
 				if (replyData && replyData.content) {
 					const replyObj = {
 						content: cleanContentForSummary(replyData.content),
-						id: replyData.user_id || 'unknown',
-						username: replyData?.username || 'unknown'
+						id: replyData.user_id || 'unknown'
 					};
 
 					if (unwantedContents.some((unwanted) => replyObj.content.includes(unwanted.content) && replyObj.id === unwanted.id)) {
@@ -132,7 +118,7 @@ export const getCommentsAISummaryByPost = async ({
 
 			const repliesObjects = repliesResults
 				.filter((result) => result.status === 'fulfilled' && result.value)
-				.map((result) => (result as PromiseFulfilledResult<{ id: string; content: string; username: string }>).value)
+				.map((result) => (result as PromiseFulfilledResult<{ id: string; content: string }>).value)
 				.filter((replyObj) => replyObj.content !== '');
 
 			return [commentObj, ...repliesObjects].filter((comment) => comment.content !== '');
@@ -151,18 +137,10 @@ export const getCommentsAISummaryByPost = async ({
 				status: 404
 			};
 		}
+
+		const commentsData = [{ network, postId }, ...allCommentsAndReplies];
+
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
-		const safeKey: string | undefined = process.env.AI_COMMENT_SUMMARY_SAFE_KEY;
-
-		if (!safeKey) {
-			return {
-				data: null,
-				error: 'Unauthorized access: Safe key is missing',
-				status: 401
-			};
-		}
-
-		const commentsData = [{ network, postContent, postId, safeKey }, ...allCommentsAndReplies];
 
 		if (!apiUrl) {
 			return {
@@ -172,7 +150,7 @@ export const getCommentsAISummaryByPost = async ({
 			};
 		}
 
-		let response = await fetch(apiUrl, {
+		const response = await fetch(apiUrl, {
 			body: JSON.stringify({
 				text: commentsData
 			}),
@@ -181,18 +159,6 @@ export const getCommentsAISummaryByPost = async ({
 			},
 			method: 'POST'
 		});
-
-		if (!response.ok) {
-			console.error('Initial API call failed:', response.statusText);
-			if (postData?.content) {
-				commentsData[0].postContent = postData?.content;
-				response = await fetch(apiUrl, {
-					body: JSON.stringify({ text: commentsData }),
-					headers: { 'Content-Type': 'application/json' },
-					method: 'POST'
-				});
-			}
-		}
 
 		if (!response.ok) {
 			console.error('Error occurred:', response.statusText.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, '[REDACTED]'));

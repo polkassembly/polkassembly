@@ -26,38 +26,35 @@ const handleReportCheckAndRefresh = async ({
 		const reportQuery = await firestore_db.collection('ai_summary_reports').where('postType', '==', postType).where('postIndex', '==', postIndex).get();
 
 		const reportCount = reportQuery.size;
-		if (reportCount % 3 !== 0) {
+
+		if (reportCount >= 3) {
+			const { data, error } = await fetchCommentsSummaryFromPost({
+				network,
+				postId: String(postIndex),
+				postType,
+				forceRefresh: true
+			});
+
+			if (error) {
+				return {
+					success: false,
+					message: 'Failed to refresh comments summary.',
+					error
+				};
+			}
+
+			return {
+				success: true,
+				message: 'Comments summary refreshed successfully.',
+				data
+			};
+		} else {
 			return {
 				success: true,
 				message: `Total reports: ${reportCount}. Refresh not triggered.`,
 				data: { reportCount }
 			};
 		}
-
-		const { data, error } = await fetchCommentsSummaryFromPost({
-			network,
-			postId: String(postIndex),
-			postType,
-			forceRefresh: true
-		});
-
-		if (error) {
-			return {
-				success: false,
-				message: 'Failed to refresh comments summary.',
-				error
-			};
-		}
-
-		const batch = firestore_db.batch();
-		reportQuery.forEach((doc) => batch.delete(doc.ref));
-		await batch.commit();
-
-		return {
-			success: true,
-			message: 'Comments summary refreshed successfully and reports deleted successfully.',
-			data
-		};
 	} catch (error) {
 		console.error('Error processing request:', error);
 		return {

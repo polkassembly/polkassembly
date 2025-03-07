@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable no-tabs */
 import { Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
@@ -35,7 +36,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary, ISentimentsPercentage, NotificationStatus } from '~src/types';
+import { ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -50,7 +51,6 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import queueNotification from '~src/ui-components/QueueNotification';
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -76,14 +76,14 @@ interface ICommentsContainerProps {
 	id: number | null | undefined;
 }
 
-interface IReportSummaryResponse {
-	message: string;
-	data?: {
-		isAlreadyReported: boolean;
-		message?: string;
-	};
-	error?: string;
-}
+// interface IReportSummaryResponse {
+// 	message: string;
+// 	data?: {
+// 	isAlreadyReported: boolean;
+//  message?: string;
+// 	};
+// 	error?: string;
+// }
 
 export interface ITimeline {
 	date: Dayjs;
@@ -131,8 +131,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
-	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
-	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
+	// const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
+	// const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -212,80 +212,80 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
-	const reportSummary = async () => {
-		setReportingAISummary(true);
-		try {
-			const { data, error } = await nextApiClientFetch<IReportSummaryResponse>('/api/v1/ai-summary/reportAISummary', {
-				postIndex,
-				postType
-			});
+	// const reportSummary = async () => {
+	// 	setReportingAISummary(true);
+	// 	try {
+	// 	const { data, error } = await nextApiClientFetch<IReportSummaryResponse>('/api/v1/ai-summary/reportAISummary', {
+	// 	postIndex,
+	// 	postType
+	// 	});
 
-			if (error) {
-				console.error('Error while reporting AI summary:', error);
-				setReportingAISummary(false);
-				queueNotification({
-					header: '',
-					message: 'Error while reporting AI summary.',
-					status: NotificationStatus.ERROR
-				});
-				return;
-			}
+	// 	if (error) {
+	// 	console.error('Error while reporting AI summary:', error);
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'Error while reporting AI summary.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	return;
+	// 	}
 
-			if (!data) {
-				console.error('Unexpected API response: No data received.');
-				setReportingAISummary(false);
-				queueNotification({
-					header: '',
-					message: 'Unexpected API response. Please try again later.',
-					status: NotificationStatus.ERROR
-				});
-				return;
-			}
-			if (data && data?.data) {
-				const isAlreadyReported = Boolean(data.data.isAlreadyReported);
-				queueNotification({
-					header: isAlreadyReported ? '' : 'Success!',
-					message: isAlreadyReported ? 'You have already submitted the feedback.' : 'Your feedback has been submitted.',
-					status: isAlreadyReported ? NotificationStatus.INFO : NotificationStatus.SUCCESS
-				});
-				setIsAlreadyReported(isAlreadyReported);
-				setReportingAISummary(false);
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-			setReportingAISummary(false);
-			queueNotification({
-				header: '',
-				message: 'An unexpected error occurred. Please try again later.',
-				status: NotificationStatus.ERROR
-			});
-		}
-	};
+	// 	if (!data) {
+	//  console.error('Unexpected API response: No data received.');
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'Unexpected API response. Please try again later.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	return;
+	// 	}
+	// 	if (data && data?.data) {
+	// 	const isAlreadyReported = Boolean(data.data.isAlreadyReported);
+	// 	queueNotification({
+	// 	header: isAlreadyReported ? '' : 'Success!',
+	// 	message: isAlreadyReported ? 'You have already submitted the feedback.' : 'Your feedback has been submitted.',
+	// 	status: isAlreadyReported ? NotificationStatus.INFO : NotificationStatus.SUCCESS
+	// 	});
+	// 	setIsAlreadyReported(isAlreadyReported);
+	// 	setReportingAISummary(false);
+	// 	}
+	// 	} catch (error) {
+	// 	console.error('Unexpected error:', error);
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'An unexpected error occurred. Please try again later.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	}
+	// };
 
-	const refetchAISummary = async () => {
-		setReportingAISummary(true);
-		try {
-			const { data, error } = await nextApiClientFetch<{
-				success: boolean;
-				message: string;
-				data?: any;
-				error?: string;
-			}>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
+	// const refetchAISummary = async () => {
+	// setReportingAISummary(true);
+	// try {
+	// const { data, error } = await nextApiClientFetch<{
+	// success: boolean;
+	// message: string;
+	// data?: any;
+	// error?: string;
+	// }>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
 
-			if (error || !data) {
-				console.log('Error While reporting AI summary data', error);
-				setReportingAISummary(false);
-				return;
-			}
-			if (data && data?.message) {
-				setReportingAISummary(false);
-				window.location.reload();
-			}
-		} catch (error) {
-			console.log(error);
-			setReportingAISummary(false);
-		}
-	};
+	// if (error || !data) {
+	// console.log('Error While reporting AI summary data', error);
+	// setReportingAISummary(false);
+	// return;
+	// }
+	// if (data && data?.message) {
+	// setReportingAISummary(false);
+	// window.location.reload();
+	// }
+	// } catch (error) {
+	// console.log(error);
+	// setReportingAISummary(false);
+	// }
+	// };
 
 	useEffect(() => {
 		if (forceRefresh) {
@@ -549,7 +549,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<h3 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
 								<AiStarIcon className='text-base' /> AI-generated from comments
 							</h3>
-							{reportingAISummary ? (
+							{/* {reportingAISummary ? (
 								<Loader />
 							) : isAlreadyReported === true ? (
 								<div className='text-xs text-pink_primary'>You have already reported this review.</div>
@@ -585,7 +585,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 										</div>
 									</div>
 								</div>
-							)}
+							)} */}
 						</div>
 					</div>
 				) : null}

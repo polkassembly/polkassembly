@@ -87,11 +87,11 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		let parityDelegates;
 		let W3fDelegates;
 		if (network === 'polkadot') {
-			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json').then((res) => res.json());
+			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json').then((res) => res.json());
 			parityDelegates = await fetch('https://paritytech.github.io/governance-ui/data/polkadot/delegates.json').then((res) => res.json());
 			W3fDelegates = w3fDelegatesPolkadot;
 		} else {
-			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json').then((res) => res.json());
+			novaWalletDelegates = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json').then((res) => res.json());
 			parityDelegates = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 			W3fDelegates = w3fDelegatesKusama;
 		}

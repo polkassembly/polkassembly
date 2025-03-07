@@ -296,11 +296,24 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 /* eslint-disable @next/next/no-img-element */
 const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => (
-	<img
-		src={src}
-		alt={alt || 'Image'}
-		style={{ height: 'auto', objectFit: 'contain', width: '100%' }}
-	/>
+	<a
+		href={src}
+		target='_blank'
+		rel='noopener noreferrer'
+	>
+		<img
+			src={src}
+			alt={alt || 'Image'}
+			style={{
+				cursor: 'pointer',
+				display: 'block',
+				maxHeight: '70vh',
+				maxWidth: '100%',
+				objectFit: 'contain',
+				width: 'auto'
+			}}
+		/>
+	</a>
 );
 
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {

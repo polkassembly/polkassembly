@@ -12,7 +12,8 @@ const subsquidUrlMap = {
 	rococo: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
 	picasso: 'https://squid.subsquid.io/picasso-polkassembly/graphql',
 	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
-	westend: 'https://polkassembly.squids.live/westend-polkassembly/graphql'
+	westend: 'https://polkassembly.squids.live/westend-polkassembly/graphql',
+	cere: 'https://polkassembly.squids.live/cere-polkassembly/graphql'
 };
 
 interface Args {

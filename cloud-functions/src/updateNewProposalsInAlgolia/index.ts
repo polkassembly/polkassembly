@@ -161,33 +161,49 @@ async function processProposal(network: string, proposal: any) {
 }
 
 const updateNewProposalsInAlgolia = async () => {
-	logger.info('Starting updateNewProposalsInAlgolia function');
+    logger.info('Starting updateNewProposalsInAlgolia function');
 
-	try {
-		const proposalsPromises = algoliaSupportedNetworks.map(async (network: string) => {
-			logger.info(`Processing network: ${network}`);
+    try {
+        const proposalsPromises = algoliaSupportedNetworks.map(async (network: string) => {
+            logger.info(`Processing network: ${network}`);
 
-			const timeThreshold = dayjs().subtract(30, 'minutes').toISOString();
-			const subsquidRes = await fetchSubsquid({
-				network,
-				query: GET_NEW_OPENGOV_PROPOSALS,
-				variables: {
-					createdAt_gte: timeThreshold
-				}
-			});
+            const latestIndexDoc = await firestoreDB
+                .collection('networks')
+                .doc(network)
+                .collection('post_types')
+                .doc('referendums_v2')
+                .collection('posts')
+                .orderBy('id', 'desc') // Get the latest index
+                .limit(1)
+                .get();
 
-			const proposals = subsquidRes?.data?.proposals || [];
-			logger.info(`Found ${proposals.length} new proposals for ${network}`);
+            let latestIndex = 0;
+            if (!latestIndexDoc.empty) {
+                latestIndex = Number(latestIndexDoc.docs[0].data().id) || 0;
+            }
 
-			return Promise.all(proposals.map((proposal: any) => processProposal(network, proposal)));
-		});
+            logger.info(`Latest stored index for ${network}: ${latestIndex}`);
 
-		await Promise.all(proposalsPromises);
-		logger.info('Successfully completed updateNewProposalsInAlgolia function');
-	} catch (error) {
-		logger.error('Error in updateNewProposalsInAlgolia:', error);
-		throw error;
-	}
+            const subsquidRes = await fetchSubsquid({
+                network,
+                query: GET_NEW_OPENGOV_PROPOSALS,
+                variables: {
+                    index_gt: latestIndex
+                }
+            });
+
+            const proposals = subsquidRes?.data?.proposals || [];
+            logger.info(`Found ${proposals.length} new proposals for ${network}`);
+
+            return Promise.all(proposals.map((proposal: any) => processProposal(network, proposal)));
+        });
+
+        await Promise.all(proposalsPromises);
+        logger.info('Successfully completed updateNewProposalsInAlgolia function');
+    } catch (error) {
+        logger.error('Error in updateNewProposalsInAlgolia:', error);
+        throw error;
+    }
 };
 
 export default updateNewProposalsInAlgolia;

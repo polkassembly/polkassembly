@@ -23,7 +23,6 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
-// schedule fn which runs every 10 minutes and updates the algolia index for looping through all subsquid proposals ;
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
@@ -485,6 +484,7 @@ export const callUpdateTreasuryStats = functions
 		});
 	});
 
+// schedule fn which runs every 10 minutes and updates the algolia index for looping through all subsquid proposals ;
 exports.updateNewProposalsInAlgolia = functions
 	.runWith({
 		memory: '1GB',

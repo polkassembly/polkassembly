@@ -490,7 +490,7 @@ exports.updateNewProposalsInAlgolia = functions
 		memory: '1GB',
 		timeoutSeconds: 540
 	})
-	.pubsub.schedule('every 30 minutes')
+	.pubsub.schedule('every 2 minutes')
 	.onRun(async () => {
 		functions.logger.info('scheduledUpdateNewProposalsInAlgolia ran at : ', new Date());
 		await updateNewProposalsInAlgolia();

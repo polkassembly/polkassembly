@@ -18,7 +18,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(401).json({ message: 'Unauthorized' });
 		}
 
-		const networks = ['polkadot', 'kusama', 'acala', 'integritee', 'moonbeam'];
+		const networks = ['polkadot', 'kusama', 'acala', 'integritee', 'moonbeam', 'mythos'];
 
 		await Promise.all(
 			networks.map((network) => {

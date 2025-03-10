@@ -49,3 +49,16 @@ export const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int
     index
   }
 }`;
+
+export const GET_NEW_OPENGOV_PROPOSALS = `query GetNewOpenGovProposals($index_gt: Int) {
+  proposals(where: { index_gt: $index_gt, type_eq: ReferendumV2 }) {
+    index
+    type
+    proposer
+    createdAt
+    trackNumber
+    status
+  }
+}
+`;
+

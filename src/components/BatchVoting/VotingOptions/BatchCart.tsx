@@ -47,6 +47,25 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [totalVotingAmount, setTotalVotingAmount] = useState<BN>(ZERO_BN);
+	const [hasInsufficientBalance, setHasInsufficientBalance] = useState(false);
+
+	useEffect(() => {
+		let totalAmount = ZERO_BN;
+
+		vote_cart_data.forEach((vote) => {
+			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
+				totalAmount = totalAmount.add(new BN(vote?.ayeBalance || '0')).add(new BN(vote?.nayBalance || '0'));
+			} else if (vote?.decision === EVoteDecisionType.ABSTAIN) {
+				totalAmount = totalAmount
+					.add(new BN(vote?.ayeBalance || '0'))
+					.add(new BN(vote?.nayBalance || '0'))
+					.add(new BN(vote?.abstainBalance || '0'));
+			}
+		});
+
+		setTotalVotingAmount(totalAmount);
+		setHasInsufficientBalance(availableBalance.lte(totalAmount));
+	}, [vote_cart_data, availableBalance]);
 
 	const getVoteCartData = async () => {
 		setIsLoading(true);
@@ -246,6 +265,15 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					</Spin>
 				</div>
 			</article>
+			{hasInsufficientBalance && (
+				<Alert
+					message='Insufficient Balance'
+					description={<div className='text-sm dark:text-white'>You do not have enough balance to vote.</div>}
+					type='error'
+					showIcon
+					className='my-2'
+				/>
+			)}
 
 			{vote_cart_data.length > 0 && (
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>

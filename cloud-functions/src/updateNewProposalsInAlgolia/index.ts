@@ -179,10 +179,10 @@ const updateNewProposalsInAlgolia = async () => {
 
 			let latestIndex: null | number = null;
 			if (!latestIndexDoc.empty) {
-				latestIndex = Number(latestIndexDoc.docs[0].data().id) || 0;
+				latestIndex = Number(latestIndexDoc.docs[0].data().id) || null;
 			}
 
-			if (latestIndex === null) return null;
+			if (latestIndex === null) return;
 
 			logger.info(`Latest stored index for ${network}: ${latestIndex}`);
 

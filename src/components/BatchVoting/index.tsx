@@ -36,6 +36,7 @@ const BatchVotingWeb = () => {
 				<ImageIcon
 					src={theme === 'dark' ? '/assets/icons/star-icon-white.svg' : '/assets/icons/star-icon.svg'}
 					alt='batch-voting'
+					imgWrapperClassName='-mt-3'
 				/>
 				<h1 className='flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Batch Voting</h1>
 			</header>

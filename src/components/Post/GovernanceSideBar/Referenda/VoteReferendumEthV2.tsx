@@ -8,7 +8,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { chainProperties } from 'src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -550,7 +550,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									}
 								/>
 							)}
-							{isMetamaskWallet && (
+							{isMetamaskWallet && network != AllNetworks.MYTHOS && (
 								<WalletButton
 									className={`${wallet === Wallet.METAMASK ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
 									disabled={!apiReady || !api}

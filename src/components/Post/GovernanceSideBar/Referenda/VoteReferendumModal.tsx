@@ -701,7 +701,7 @@ const VoteReferendumModal = ({
 								<div className='my-6'>
 									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
 									<div className='mt-1 flex items-center justify-center gap-x-2'>
-										{availableWallets[Wallet.POLKADOT] && (
+										{availableWallets[Wallet.POLKADOT] && network != AllNetworks.MYTHOS && (
 											<WalletButton
 												className={`${wallet === Wallet.POLKADOT ? 'h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}
@@ -743,7 +743,7 @@ const VoteReferendumModal = ({
 												}
 											/>
 										)}
-										{availableWallets[Wallet.POLKAGATE] && (
+										{availableWallets[Wallet.POLKAGATE] && network != AllNetworks.MYTHOS && (
 											<WalletButton
 												className={`${wallet === Wallet.POLKAGATE ? 'h-[48px] w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
 												disabled={!apiReady}

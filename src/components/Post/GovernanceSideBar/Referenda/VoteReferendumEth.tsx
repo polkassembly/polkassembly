@@ -8,7 +8,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { chainProperties } from 'src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -415,6 +415,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					>
 						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
+							{availableWallets[Wallet.SUBWALLET] && (
+								<WalletButton
+									className={`${wallet === Wallet.SUBWALLET ? 'h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-12 w-16'}`}
+									disabled={!apiReady}
+									onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
+									name='Subwallet'
+									icon={
+										<WalletIcon
+											which={Wallet.SUBWALLET}
+											className='h-6 w-6'
+										/>
+									}
+								/>
+							)}
 							{availableWallets[Wallet.TALISMAN] && (
 								<WalletButton
 									className={`${wallet === Wallet.TALISMAN ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
@@ -429,7 +443,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									}
 								/>
 							)}
-							{isMetamaskWallet && (
+							{isMetamaskWallet && network != AllNetworks.MYTHOS && (
 								<WalletButton
 									className={`${wallet === Wallet.METAMASK ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
 									disabled={!apiReady || !api}

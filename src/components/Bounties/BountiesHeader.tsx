@@ -155,7 +155,7 @@ const BountiesHeader = () => {
 						<div>
 							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
 							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
-							<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
+							<div className='grid grid-cols-2 gap-y-8  py-7 sm:pr-4'>
 								<StatItem
 									label='Active Bounties'
 									value={statsData.activeBounties}
@@ -173,7 +173,7 @@ const BountiesHeader = () => {
 									value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
 								/>
 							</div>
-							<div className='items-between relative -ml-6 flex items-center justify-between'>
+							<div className='items-between relative -mx-5 flex items-center justify-between sm:-ml-6'>
 								<div className='left-0 h-20 w-10 rounded-r-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 								<ImageIcon
 									src='/assets/bounty-icons/dashed-horizontal-line.svg'
@@ -182,7 +182,7 @@ const BountiesHeader = () => {
 								/>
 								<div className='first-letter  right-0 h-20 w-10 rounded-l-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 							</div>
-							<div className='-ml-4 mt-12 flex w-full flex-col items-center gap-x-4'>
+							<div className='-ml-1 mt-8 flex w-full flex-col items-center gap-x-4 max-sm:pb-8 sm:-ml-4 sm:mt-12'>
 								<ImageIcon
 									src={theme == 'dark' ? '/assets/bounty-icons/create-mb-white.svg' : '/assets/bounty-icons/create-mb.svg'}
 									alt='bounty icon'
@@ -196,18 +196,18 @@ const BountiesHeader = () => {
 									imgWrapperClassName=''
 								/>
 							</div>
-							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
-								<div className='mb-8 flex items-end gap-3'>
+							<div className='-mb-5 -ml-5 mt-2 flex h-[185px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary sm:-mb-6 sm:-ml-6 sm:mt-4'>
+								<div className='mb-20 flex items-end gap-3 sm:mb-8'>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-icon.svg'
 										alt='bounty icon'
 										className='scale-90'
-										imgWrapperClassName='w-[308px] h-[113px]'
+										imgWrapperClassName='w-[100px] ml-1 h-[37px] sm:w-[308px] sm:h-[113px]'
 									/>
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-arrow-icon.svg'
 										alt='arrow icon'
-										className='pr-2'
+										className='pr-2 max-sm:hidden'
 									/>
 								</div>
 							</div>

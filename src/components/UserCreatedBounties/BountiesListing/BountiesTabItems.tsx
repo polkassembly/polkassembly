@@ -100,9 +100,11 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 
 	return (
 		<div className='relative mt-5 md:mt-0'>
-			<div className='absolute -top-2 right-5 z-50 md:top-8'>
-				<FilterByTags isUsedInBountyPage={true} />
-			</div>
+			{props.bounties?.length > 0 && (
+				<div className='absolute -top-2 right-5 z-50 md:top-8'>
+					<FilterByTags isUsedInBountyPage={true} />
+				</div>
+			)}
 
 			<div>
 				<Tabs
@@ -110,7 +112,7 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 					type='card'
 					activeKey={activeTab}
 					onChange={handleTabChange}
-					className='ant-tabs-tab-bg-white pt-5 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
+					className='ant-tabs-tab-bg-white pt-2 font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high sm:pt-5'
 					items={tabItems}
 				/>
 			</div>

@@ -64,7 +64,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		});
 
 		setTotalVotingAmount(totalAmount);
-		setHasInsufficientBalance(availableBalance.lte(totalAmount));
+		setHasInsufficientBalance(availableBalance?.lte(totalAmount));
 	}, [vote_cart_data, availableBalance]);
 
 	const getVoteCartData = async () => {

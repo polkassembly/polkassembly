@@ -25,13 +25,13 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 			<div className='flex h-[76px] items-center justify-center gap-x-6 p-4'>
 				<Button
 					className={`${
-						isLoading || trackPosts.length <= 0 ? 'opacity-60' : ''
+						isLoading || trackPosts?.length <= 0 ? 'opacity-60' : ''
 					} flex h-8 w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#F53C3C] bg-transparent font-semibold`}
 					onClick={() => {
 						handleAction('left');
 					}}
 					loading={decision === 'nay' ? isLoading : false}
-					disabled={isLoading || trackPosts.length <= 0}
+					disabled={isLoading || trackPosts?.length <= 0}
 				>
 					<ImageIcon
 						src='/assets/icons/red-dislike-icon.svg'
@@ -41,22 +41,22 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 				</Button>
 				<Button
 					className={`${
-						isLoading || trackPosts.length <= 0 ? 'opacity-60' : ''
+						isLoading || trackPosts?.length <= 0 ? 'opacity-60' : ''
 					} flex h-8 w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#407BFF] bg-transparent font-semibold`}
 					onClick={() => handleAction('up')}
 					loading={decision === 'abstain' ? isLoading : false}
-					disabled={isLoading || trackPosts.length <= 0}
+					disabled={isLoading || trackPosts?.length <= 0}
 				>
 					<StopOutlined className={'text-base text-[#407BFF]'} />
 					<p className='m-0 p-0 text-[#407BFF]'>Abstain</p>
 				</Button>
 				<Button
 					className={`${
-						isLoading || trackPosts.length <= 0 ? 'opacity-60' : ''
+						isLoading || trackPosts?.length <= 0 ? 'opacity-60' : ''
 					} flex h-8 w-[209px] items-center justify-center gap-x-1 rounded-md border border-solid border-[#2ED47A] bg-transparent font-semibold`}
 					onClick={() => handleAction('right')}
 					loading={decision === 'aye' ? isLoading : false}
-					disabled={isLoading || trackPosts.length <= 0}
+					disabled={isLoading || trackPosts?.length <= 0}
 				>
 					<ImageIcon
 						src='/assets/icons/green-like-icon.svg'

@@ -141,7 +141,7 @@ const SwipableVotingCards = () => {
 						<PostEmptyState
 							description={
 								<div className='p-5'>
-									<p>Currently no active proposals found</p>
+									<p>{total_proposals_added_in_Cart >= total_active_posts ? 'No new referenda left to vote' : 'Currently no active proposals found'}</p>
 								</div>
 							}
 						/>

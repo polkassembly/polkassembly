@@ -52,6 +52,12 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	useEffect(() => {
 		let totalAmount = ZERO_BN;
 
+		if (!Array.isArray(vote_cart_data) || vote_cart_data.length === 0) {
+			setTotalVotingAmount(totalAmount);
+			setHasInsufficientBalance(false);
+			return;
+		}
+
 		vote_cart_data.forEach((vote) => {
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				totalAmount = totalAmount.add(new BN(vote?.ayeBalance || '0')).add(new BN(vote?.nayBalance || '0'));

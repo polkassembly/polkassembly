@@ -1400,27 +1400,25 @@ export const updatePostTimeline = (post: any, postData: any) => {
 		const isStatus = {
 			swap: false
 		};
-		if (postData.group && postData.group.proposals) {
-			// Timeline
-			const timelineProposals = postData?.group?.proposals || [];
-			post.timeline = getTimeline(timelineProposals, isStatus);
-			// Proposer and Curator address
-			if (timelineProposals && Array.isArray(timelineProposals)) {
-				for (let i = 0; i < timelineProposals.length; i++) {
-					if (post.proposer && post.curator) {
-						break;
+		// Timeline
+		const timelineProposals = postData?.group?.proposals || [postData];
+		post.timeline = getTimeline(timelineProposals, isStatus);
+		// Proposer and Curator address
+		if (timelineProposals && Array.isArray(timelineProposals)) {
+			for (let i = 0; i < timelineProposals.length; i++) {
+				if (post.proposer && post.curator) {
+					break;
+				}
+				const obj = timelineProposals[i];
+				if (!post.proposer) {
+					if (obj.proposer) {
+						post.proposer = obj.proposer;
+					} else if (obj?.preimage?.proposer) {
+						post.proposer = obj.preimage.proposer;
 					}
-					const obj = timelineProposals[i];
-					if (!post.proposer) {
-						if (obj.proposer) {
-							post.proposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							post.proposer = obj.preimage.proposer;
-						}
-					}
-					if (!post.curator && obj.curator) {
-						post.curator = obj.curator;
-					}
+				}
+				if (!post.curator && obj.curator) {
+					post.curator = obj.curator;
 				}
 			}
 		}

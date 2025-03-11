@@ -2,14 +2,11 @@ import fetchSubsquid from '../utils/fetchSubsquid';
 import { GET_NEW_OPENGOV_PROPOSALS } from '../queries';
 import dayjs from 'dayjs';
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import { htmlOrMarkdownToText } from '../utils/htmlOrMarkdownToText';
 import algoliasearch from 'algoliasearch';
 import getSubstrateAddress from '../utils/getSubstrateAddress';
+import { firestoreDB } from '..';
 
-admin.initializeApp();
-
-const firestoreDB = admin.firestore();
 const logger = functions.logger;
 const algoliaSupportedNetworks = ['kusama', 'polkadot', 'polkadex', 'cere', 'moonbeam', 'moonriver', 'moonbase'];
 
@@ -125,7 +122,7 @@ async function processProposal(network: string, proposal: any) {
 			.collection('post_types')
 			.doc('referendums_v2')
 			.collection('posts')
-			.doc(proposal.index)
+			.doc(String(proposal.index))
 			.get();
 
 		if (firebaseDoc.exists) {

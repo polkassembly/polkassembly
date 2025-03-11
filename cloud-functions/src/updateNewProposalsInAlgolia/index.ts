@@ -7,8 +7,6 @@ import { htmlOrMarkdownToText } from '../utils/htmlOrMarkdownToText';
 import algoliasearch from 'algoliasearch';
 import getSubstrateAddress from '../utils/getSubstrateAddress';
 
-admin.initializeApp();
-
 const firestoreDB = admin.firestore();
 const logger = functions.logger;
 const algoliaSupportedNetworks = ['kusama', 'polkadot', 'polkadex', 'cere', 'moonbeam', 'moonriver', 'moonbase'];
@@ -125,7 +123,7 @@ async function processProposal(network: string, proposal: any) {
 			.collection('post_types')
 			.doc('referendums_v2')
 			.collection('posts')
-			.doc(proposal.index)
+			.doc(String(proposal.index))
 			.get();
 
 		if (firebaseDoc.exists) {

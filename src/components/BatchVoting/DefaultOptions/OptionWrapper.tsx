@@ -135,9 +135,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			dispatch(
 				editCartPostValueChanged({
 					values: {
+						abstainVoteBalance: balanceStr,
 						ayeVoteBalance: balanceStr,
-						nyeVoteBalance: balanceStr,
-						abstainVoteBalance: balanceStr
+						nyeVoteBalance: balanceStr
 					}
 				})
 			);

@@ -44,7 +44,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const { batch_vote_details } = useBatchVotesSelector();
-	console.log('batch_vote_details', batch_vote_details);
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);

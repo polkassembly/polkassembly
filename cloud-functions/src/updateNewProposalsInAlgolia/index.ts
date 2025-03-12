@@ -59,7 +59,7 @@ async function updateFirestoreProposal(network: string, proposalIndex: string, d
 			.collection('post_types')
 			.doc('referendums_v2')
 			.collection('posts')
-			.doc(proposalIndex);
+			.doc(String(proposalIndex));
 
 		await docRef.update({
 			title: data.title || '',
@@ -105,11 +105,15 @@ async function processProposal(network: string, proposal: any) {
 	try {
 		logger.info(`Processing proposal for ${network} #${proposal.index}`);
 
+		const post_type = proposal.type === 'ReferendumV2' ? 'referendums_v2' : null;
+
+		if (!post_type) return;
+
 		const payload: ProposalPayload = {
-			objectID: `${network}_${proposal.type}_${proposal.index}`,
+			objectID: `${network}_${post_type}_${proposal.index}`,
 			network,
 			created_at: dayjs(proposal?.createdAt?.toDate?.() || new Date()).unix(),
-			post_type: proposal.type,
+			post_type: post_type,
 			id: proposal.index,
 			proposer: proposal.proposer,
 			track_number: proposal.trackNumber
@@ -120,7 +124,7 @@ async function processProposal(network: string, proposal: any) {
 			.collection('networks')
 			.doc(network)
 			.collection('post_types')
-			.doc('referendums_v2')
+			.doc(post_type)
 			.collection('posts')
 			.doc(String(proposal.index))
 			.get();
@@ -142,7 +146,7 @@ async function processProposal(network: string, proposal: any) {
 			if (subsquareData) {
 				payload.title = subsquareData.title;
 				payload.content = subsquareData.content;
-				payload.parsed_content = subsquareData.parsed_content;
+				payload.parsed_content = htmlOrMarkdownToText(subsquareData.content || '');
 				await updateFirestoreProposal(network, proposal.index, {
 					...subsquareData,
 					proposer: proposal.proposer

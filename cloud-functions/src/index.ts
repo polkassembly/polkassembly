@@ -484,7 +484,7 @@ export const callUpdateTreasuryStats = functions
 		});
 	});
 
-// schedule fn which runs every 10 minutes and updates the algolia index for looping through all subsquid proposals ;
+// schedule fn which runs every 2 minutes and updates the algolia index for looping through all subsquid proposals ;
 exports.updateNewProposalsInAlgolia = functions
 	.runWith({
 		memory: '1GB',

@@ -302,9 +302,11 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							</p>
 						</div>
 						<Button
-							className='flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
+							className={` ${
+								isDisable || hasInsufficientBalance ? 'opacity-60' : ''
+							} flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white`}
 							onClick={voteProposals}
-							disabled={isDisable}
+							disabled={isDisable || hasInsufficientBalance}
 						>
 							Confirm Batch Voting
 						</Button>

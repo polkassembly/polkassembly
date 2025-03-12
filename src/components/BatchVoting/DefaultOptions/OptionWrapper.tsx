@@ -35,7 +35,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const dispatch = useAppDispatch();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const [ayeNayForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
@@ -61,15 +60,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		83.33: '5x',
 		// eslint-disable-next-line sort-keys
 		100: '6x'
-	};
-
-	const handleModalReset = () => {
-		ayeNayForm.setFieldValue('balance', '');
-		splitForm.setFieldValue('ayeVote', '');
-		splitForm.setFieldValue('nayVote', '');
-		abstainFrom.setFieldValue('ayeVote', '');
-		abstainFrom.setFieldValue('nayVote', '');
-		abstainFrom.setFieldValue('abstainVote', '');
 	};
 
 	const calculateLockingPeriod = (convictionValue: number) => {

@@ -26,6 +26,7 @@ import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
 import userProfileBalances from '~src/util/userProfileBalances';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface IBatchCartProps {
 	className?: string;
@@ -283,13 +284,19 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 
 			{vote_cart_data.length > 0 && (
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
-					<div className='flex flex-col gap-y-2'>
+					<div className='flex flex-col '>
+						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Availale balance</p>
+							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>
+								{formatBnBalance(String(availableBalance), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network)}
+							</p>
+						</div>
 						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 						</div>
 						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Transaction Fees</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>

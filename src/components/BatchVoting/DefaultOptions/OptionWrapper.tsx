@@ -18,7 +18,7 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
@@ -29,6 +29,7 @@ import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const dispatch = useAppDispatch();
@@ -43,6 +44,8 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+	const { batch_vote_details } = useBatchVotesSelector();
+	console.log('batch_vote_details', batch_vote_details);
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
@@ -111,7 +114,37 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				})
 			);
 		}
-		handleModalReset();
+		if (value === EVoteDecisionType.AYE) {
+			ayeNayForm.setFieldsValue({ balance: formatBnBalance(String(batch_vote_details.ayeVoteBalance), { numberAfterComma: 1, withThousandDelimitor: false }, network) || '' });
+		} else if (value === EVoteDecisionType.NAY) {
+			ayeNayForm.setFieldsValue({ balance: formatBnBalance(String(batch_vote_details.nyeVoteBalance), { numberAfterComma: 1, withThousandDelimitor: false }, network) || '' });
+		} else if (value === EVoteDecisionType.ABSTAIN) {
+			abstainFrom.setFieldsValue({ balance: formatBnBalance(String(batch_vote_details.abstainVoteBalance), { numberAfterComma: 1, withThousandDelimitor: false }, network) || '' });
+		}
+	};
+
+	const handleBalanceChange = (balance: BN) => {
+		if (!forSpecificPost) {
+			dispatch(
+				editBatchValueChanged({
+					values: {
+						...(vote === EVoteDecisionType.AYE && { ayeVoteBalance: balance.toString() }),
+						...(vote === EVoteDecisionType.NAY && { nyeVoteBalance: balance.toString() }),
+						...(vote === EVoteDecisionType.ABSTAIN && { abstainVoteBalance: balance.toString() })
+					}
+				})
+			);
+		} else {
+			dispatch(
+				editCartPostValueChanged({
+					values: {
+						...(vote === EVoteDecisionType.AYE && { ayeVoteBalance: balance.toString() }),
+						...(vote === EVoteDecisionType.NAY && { nyeVoteBalance: balance.toString() }),
+						...(vote === EVoteDecisionType.ABSTAIN && { abstainVoteBalance: balance.toString() })
+					}
+				})
+			);
+		}
 	};
 
 	const getMarkValue = (value: number): string => {
@@ -217,25 +250,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						form={ayeNayForm}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											ayeVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											ayeVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						onBalanceChange={handleBalanceChange}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -246,25 +261,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						form={ayeNayForm}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											nyeVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											nyeVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						onBalanceChange={handleBalanceChange}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -277,25 +274,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						isUsedInTinderWebView={true}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.ABSTAIN_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						onBalanceChange={handleBalanceChange}
 						onAyeValueChange={(balance: BN) => {
 							if (!forSpecificPost) {
 								dispatch(

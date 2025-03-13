@@ -103,13 +103,18 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			);
 		}
 	};
+	const currentAye = ayeNayForm.getFieldValue('ayeVote');
+	const currentNye = ayeNayForm.getFieldValue('nayVote');
+	const currentAbstain = abstainFrom.getFieldValue('abstainVote');
 
-	const handleBalanceChange = (balance: BN) => {
+	const isEmptyForm = !currentAye && !currentNye && !currentAbstain;
+
+	const handleBalanceChange = (balance: BN, fieldType: 'ayeVoteBalance' | 'nyeVoteBalance' | 'abstainVoteBalance') => {
 		const balanceStr = balance.toString();
-		ayeNayForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
-		abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
 
-		if (!forSpecificPost) {
+		if (isEmptyForm) {
+			ayeNayForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+			abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
 			dispatch(
 				editBatchValueChanged({
 					values: {
@@ -132,15 +137,21 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				})
 			);
 		} else {
-			dispatch(
-				editCartPostValueChanged({
-					values: {
-						abstainVoteBalance: balanceStr,
-						ayeVoteBalance: balanceStr,
-						nyeVoteBalance: balanceStr
-					}
-				})
-			);
+			const updatedValues: Record<string, string> = {
+				...(fieldType === 'ayeVoteBalance' && { ayeVoteBalance: balanceStr }),
+				...(fieldType === 'nyeVoteBalance' && { nyeVoteBalance: balanceStr }),
+				...(fieldType === 'abstainVoteBalance' && { abstainVoteBalance: balanceStr })
+			};
+
+			if (fieldType === 'ayeVoteBalance') {
+				ayeNayForm.setFieldsValue({ ayeVoteBalance: balanceStr });
+			} else if (fieldType === 'nyeVoteBalance') {
+				ayeNayForm.setFieldsValue({ nyeVoteBalance: balanceStr });
+			} else if (fieldType === 'abstainVoteBalance') {
+				abstainFrom.setFieldsValue({ abstainVoteBalance: balanceStr });
+			}
+
+			dispatch(editBatchValueChanged({ values: updatedValues }));
 		}
 	};
 
@@ -247,7 +258,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						form={ayeNayForm}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={handleBalanceChange}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'ayeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -258,7 +269,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						form={ayeNayForm}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={handleBalanceChange}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'nyeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -271,7 +282,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						isUsedInTinderWebView={true}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.ABSTAIN_FORM}
-						onBalanceChange={handleBalanceChange}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'abstainVoteBalance')}
 						onAyeValueChange={(balance: BN) => {
 							if (!forSpecificPost) {
 								dispatch(
@@ -310,7 +321,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 								);
 							}
 						}}
-						onAbstainValueChange={handleBalanceChange}
+						onAbstainValueChange={(balance) => handleBalanceChange(balance, 'abstainVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}

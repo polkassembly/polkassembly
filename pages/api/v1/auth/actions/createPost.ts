@@ -24,6 +24,7 @@ import { isSpamDetected } from '~src/util/getPostContentAiSummary';
 import { sendSpamNotificationEmail } from '~src/auth/email';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 import { sanitizeHTML } from '~src/util/sanitizeHTML';
+import console_pretty from '~src/api-utils/console_pretty';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -36,9 +37,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address, allowedCommentors } = req.body;
 	if (!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
+	console_pretty({
+		body: req.body
+	});
+
 	// Sanitize the content before validation and processing
 	const sanitizedContent = content ? sanitizeHTML(content) : '';
 	const sanitizedTitle = title ? sanitizeHTML(title) : '';
+
+	console_pretty({
+		sanitizedContent,
+		sanitizedTitle
+	});
 
 	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(sanitizedTitle) || isContentBlacklisted(sanitizedContent)) {
 		return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
@@ -115,6 +125,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 			}
 		});
 	}
+
+	console_pretty({
+		newPost
+	});
 
 	await postDocRef
 		.set(newPost)

@@ -47,6 +47,8 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
+
+const EMAIL_MAX_LENGTH = 31;
 const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -836,8 +838,9 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									validator(rule, value, callback) {
 										if (
 											callback &&
-											value.length > 0 &&
-											!checkIdentityFieldsValidity(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])
+											(value.trim()?.length > EMAIL_MAX_LENGTH ||
+												(value.length > 0 &&
+													!checkIdentityFieldsValidity(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])))
 										) {
 											callback(rule?.message?.toString());
 										} else {

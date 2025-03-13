@@ -16,7 +16,8 @@ import { useApiContext } from '~src/context';
 import blockToDays from '~src/util/blockToDays';
 
 export enum EFormType {
-	AYE_NAY_FORM = 'aye-nay-form',
+	AYE_FORM = 'aye-form',
+	NAYE_FORM = 'naye-form',
 	SPLIT_FORM = 'split-form',
 	ABSTAIN_FORM = 'abstain-form'
 }
@@ -129,7 +130,8 @@ const VotingFormCard = ({
 				</div>
 			)}
 
-			{formName === EFormType.AYE_NAY_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
+			{formName === EFormType.AYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
+			{formName === EFormType.NAYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
 
 			{showConvictionBar && (
 				<div>

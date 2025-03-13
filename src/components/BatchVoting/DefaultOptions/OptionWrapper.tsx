@@ -36,7 +36,8 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [abstainFrom] = Form.useForm();
-	const [ayeNayForm] = Form.useForm();
+	const [ayeForm] = Form.useForm();
+	const [nayeForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -103,17 +104,18 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			);
 		}
 	};
-	const currentAye = ayeNayForm.getFieldValue('ayeVote');
-	const currentNye = ayeNayForm.getFieldValue('nayVote');
-	const currentAbstain = abstainFrom.getFieldValue('abstainVote');
 
+	const currentAye = ayeForm.getFieldValue('balance');
+	const currentNye = nayeForm.getFieldValue('balance');
+	const currentAbstain = abstainFrom.getFieldValue('balance');
 	const isEmptyForm = !currentAye && !currentNye && !currentAbstain;
 
 	const handleBalanceChange = (balance: BN, fieldType: 'ayeVoteBalance' | 'nyeVoteBalance' | 'abstainVoteBalance') => {
 		const balanceStr = balance.toString();
 
 		if (isEmptyForm) {
-			ayeNayForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+			ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+			nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
 			abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
 			dispatch(
 				editBatchValueChanged({
@@ -137,21 +139,34 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				})
 			);
 		} else {
-			const updatedValues: Record<string, string> = {
-				...(fieldType === 'ayeVoteBalance' && { ayeVoteBalance: balanceStr }),
-				...(fieldType === 'nyeVoteBalance' && { nyeVoteBalance: balanceStr }),
-				...(fieldType === 'abstainVoteBalance' && { abstainVoteBalance: balanceStr })
-			};
-
 			if (fieldType === 'ayeVoteBalance') {
-				ayeNayForm.setFieldsValue({ ayeVoteBalance: balanceStr });
+				ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							ayeVoteBalance: balanceStr
+						}
+					})
+				);
 			} else if (fieldType === 'nyeVoteBalance') {
-				ayeNayForm.setFieldsValue({ nyeVoteBalance: balanceStr });
+				nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							nyeVoteBalance: balanceStr
+						}
+					})
+				);
 			} else if (fieldType === 'abstainVoteBalance') {
-				abstainFrom.setFieldsValue({ abstainVoteBalance: balanceStr });
+				abstainFrom.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							abstainVoteBalance: balanceStr
+						}
+					})
+				);
 			}
-
-			dispatch(editBatchValueChanged({ values: updatedValues }));
 		}
 	};
 
@@ -255,9 +270,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				/>
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 					<VotingFormCard
-						form={ayeNayForm}
+						form={ayeForm}
 						className='-mt-5 w-[48%]'
-						formName={EFormType.AYE_NAY_FORM}
+						formName={EFormType.AYE_FORM}
 						onBalanceChange={(balance) => handleBalanceChange(balance, 'ayeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
@@ -266,9 +281,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 					<VotingFormCard
-						form={ayeNayForm}
+						form={nayeForm}
 						className='-mt-5 w-[48%]'
-						formName={EFormType.AYE_NAY_FORM}
+						formName={EFormType.AYE_FORM}
 						onBalanceChange={(balance) => handleBalanceChange(balance, 'nyeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}

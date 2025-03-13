@@ -7,7 +7,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { ILastVote } from '~src/types';
 
 export enum EFormType {
-	AYE_NAY_FORM = 'aye-nay-form',
+	AYE_FORM = 'aye-form',
+	NAYE_FORM = 'naye-form',
 	SPLIT_FORM = 'split-form',
 	ABSTAIN_FORM = 'abstain-form'
 }

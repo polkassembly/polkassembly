@@ -288,22 +288,22 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						</div>
 
 						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Txn Fees</p>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Transaction Fee</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
 								{formatedBalance((totalVotingAmount || new BN(0)).add(gasFees || new BN(0)).toString(), unit, 2)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
 
-						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Vote Amount</p>
-							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
+						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 py-1 dark:bg-modalOverlayDark'>
+							<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Vote Amount</p>
+							<p className='m-0 p-0 text-sm font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(String(totalVotingAmount), unit, 2)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
 
-						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
-							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
+						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 pb-3 pt-1 dark:bg-modalOverlayDark'>
+							<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
+							<p className='m-0 p-0 text-sm font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>

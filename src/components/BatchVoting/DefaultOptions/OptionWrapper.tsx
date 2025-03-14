@@ -140,7 +140,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			);
 		} else {
 			if (fieldType === 'ayeVoteBalance') {
-				ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -149,7 +149,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'nyeVoteBalance') {
-				nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -158,7 +158,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'abstainVoteBalance') {
-				abstainFrom.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+				abstainFrom.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {

@@ -14,7 +14,7 @@ const VotingOptions = () => {
 	return (
 		<section className='mb-[200px] flex w-full gap-x-4'>
 			<article className='h-[557px] w-[70%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
-				<div className='h-[557px] w-full rounded-xl bg-white p-3 drop-shadow-none  dark:bg-black'>
+				<div className='h-[600px] w-full rounded-xl bg-white p-3 drop-shadow-none  dark:bg-black'>
 					<SwipableVotingCards />
 				</div>
 			</article>

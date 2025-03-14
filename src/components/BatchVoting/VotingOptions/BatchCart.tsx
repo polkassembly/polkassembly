@@ -295,15 +295,15 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 						</div>
 
 						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 py-1 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Vote Amount</p>
-							<p className='m-0 p-0 text-sm font-medium text-bodyBlue dark:text-white'>
+							<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Vote Amount</p>
+							<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(String(totalVotingAmount), unit, 2)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
 
 						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 pb-3 pt-1 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
-							<p className='m-0 p-0 text-sm font-medium text-bodyBlue dark:text-white'>
+							<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
+							<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>

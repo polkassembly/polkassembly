@@ -114,9 +114,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		const balanceStr = balance.toString();
 
 		if (isEmptyForm) {
-			ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
-			nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
-			abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: false }, network) });
+			ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
+			nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
+			abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 			dispatch(
 				editBatchValueChanged({
 					values: {

@@ -283,7 +283,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					<VotingFormCard
 						form={nayeForm}
 						className='-mt-5 w-[48%]'
-						formName={EFormType.AYE_FORM}
+						formName={EFormType.NAYE_FORM}
 						onBalanceChange={(balance) => handleBalanceChange(balance, 'nyeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}

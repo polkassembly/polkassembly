@@ -18,7 +18,7 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
@@ -44,6 +44,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+	const {
+		batch_vote_details: { ayeVoteBalance, nyeVoteBalance }
+	} = useBatchVotesSelector();
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
@@ -140,7 +143,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			);
 		} else {
 			if (fieldType === 'ayeVoteBalance') {
-				ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -149,7 +151,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'nyeVoteBalance') {
-				nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -158,7 +159,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'abstainVoteBalance') {
-				abstainFrom.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -277,6 +277,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
+						balance={ayeVoteBalance}
 					/>
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
@@ -288,6 +289,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
+						balance={nyeVoteBalance}
 					/>
 				)}
 

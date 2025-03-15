@@ -34,6 +34,7 @@ interface Props {
 	forSpecificPost?: boolean;
 	showConvictionBar?: boolean;
 	isUsedInTinderWebView?: boolean;
+	balance?: BN;
 }
 
 const VotingFormCard = ({
@@ -47,7 +48,8 @@ const VotingFormCard = ({
 	className,
 	forSpecificPost,
 	showConvictionBar,
-	isUsedInTinderWebView
+	isUsedInTinderWebView,
+	balance
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
@@ -102,10 +104,11 @@ const VotingFormCard = ({
 		throw new Error(`Invalid mark value: ${markValue}`);
 	};
 
-	const renderBalanceInput = (label: string, placeholder: string, onChange: (balance: BN) => void, formItemName: string) => (
+	const renderBalanceInput = (label: string, placeholder: string, onChange: (balance: BN) => void, formItemName: string, balance?: BN) => (
 		<BalanceInput
 			label={label}
 			placeholder={placeholder}
+			balance={balance}
 			onChange={onChange}
 			className='text-sm font-medium'
 			formItemName={formItemName}
@@ -130,8 +133,8 @@ const VotingFormCard = ({
 				</div>
 			)}
 
-			{formName === EFormType.AYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
-			{formName === EFormType.NAYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
+			{formName === EFormType.AYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance', balance)}
+			{formName === EFormType.NAYE_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance', balance)}
 
 			{showConvictionBar && (
 				<div>

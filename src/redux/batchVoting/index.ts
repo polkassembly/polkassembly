@@ -6,15 +6,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IBatchVotesDetails, IBatchVoteStore, IVoteCardInfo } from './@types';
 import { HYDRATE } from 'next-redux-wrapper';
 import { EVoteDecisionType } from '~src/types';
+import BN from 'bn.js';
+
+const ZERO_BN = new BN(0);
 
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
 		abstainVoteBalance: '',
-		ayeVoteBalance: '',
+		ayeVoteBalance: ZERO_BN,
 		conviction: 0.1,
-		nyeVoteBalance: '',
+		nyeVoteBalance: ZERO_BN,
 		voteOption: 'aye'
 	},
 	batch_voting_address: '',
@@ -22,9 +25,9 @@ const initialState: IBatchVoteStore = {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
 		abstainVoteBalance: '0',
-		ayeVoteBalance: '0',
+		ayeVoteBalance: ZERO_BN,
 		conviction: 0.1,
-		nyeVoteBalance: '0',
+		nyeVoteBalance: ZERO_BN,
 		voteOption: 'aye'
 	},
 	is_cancel_button_clicked: false,

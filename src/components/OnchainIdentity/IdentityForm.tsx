@@ -838,9 +838,8 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									validator(rule, value, callback) {
 										if (
 											callback &&
-											(value.trim()?.length > EMAIL_MAX_LENGTH ||
-												(value.length > 0 &&
-													!checkIdentityFieldsValidity(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])))
+											value.length > 0 &&
+											!checkIdentityFieldsValidity(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])
 										) {
 											callback(rule?.message?.toString());
 										} else {
@@ -854,6 +853,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 								onBlur={() => getGasFee()}
 								addonAfter={!!identityInfo?.email && !!identityInfo.alreadyVerified && identityInfo?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
+								maxLength={EMAIL_MAX_LENGTH}
 								value={email?.value}
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}

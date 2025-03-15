@@ -26,6 +26,7 @@ import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
 import userProfileBalances from '~src/util/userProfileBalances';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface IBatchCartProps {
 	className?: string;
@@ -129,7 +130,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const voteProposals = async () => {
 		if (!api || !apiReady) return;
 
-		if (availableBalance.lte(totalVotingAmount)) {
+		if (availableBalance.lte(totalVotingAmount) || hasInsufficientBalance) {
 			queueNotification({
 				header: 'Error!',
 				message: 'Insufficient balance to vote',
@@ -271,31 +272,44 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					</Spin>
 				</div>
 			</article>
-			{hasInsufficientBalance && (
-				<Alert
-					message='Insufficient Balance'
-					description={<div className='text-sm dark:text-white'>You do not have enough balance to vote.</div>}
-					type='error'
-					showIcon
-					className='my-2'
-				/>
-			)}
 
 			{vote_cart_data.length > 0 && (
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
-					<div className='flex flex-col gap-y-2'>
+					<div className='flex flex-col '>
+						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Available Balance</p>
+							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>
+								{formatBnBalance(String(availableBalance), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network)}
+							</p>
+						</div>
 						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 						</div>
+
 						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Transaction Fee</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
+								{formatedBalance((totalVotingAmount || new BN(0)).add(gasFees || new BN(0)).toString(), unit, 2)} {chainProperties?.[network]?.tokenSymbol}
+							</p>
+						</div>
+
+						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 py-1 dark:bg-modalOverlayDark'>
+							<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Vote Amount</p>
+							<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
+								{formatedBalance(String(totalVotingAmount), unit, 2)} {chainProperties?.[network]?.tokenSymbol}
+							</p>
+						</div>
+
+						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 pb-3 pt-1 dark:bg-modalOverlayDark'>
+							<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
+							<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
+
 						<Button
-							className='flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
+							className={` ${isDisable ? 'opacity-60' : ''} flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white`}
 							onClick={voteProposals}
 							disabled={isDisable}
 						>

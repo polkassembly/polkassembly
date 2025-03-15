@@ -83,7 +83,7 @@ const HighlightMenu = ({ markdownRef, isUsedInComments }: IHiglightMenuProps) =>
 
 	const handleQuote = () => {
 		setQuotedText(selectedText);
-		const commentForm = document.getElementById('comment-form');
+		const commentForm = document.getElementById(isUsedInComments ? 'reply-content-form' : 'comment-form');
 
 		const commentLogin = document.getElementById('comment-login-prompt');
 

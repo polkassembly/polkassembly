@@ -138,8 +138,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		});
 	}
 
-	const getFacetFileters = (filterBy?: EFilterBy) => {
-		const postTypeFilter = [[`id:-${finalSearchInput}`]];
+	const getFacetFilters = (filterBy?: EFilterBy) => {
+		const postTypeFilter = [];
 		if (filterBy === EFilterBy.Referenda) {
 			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`], [`post_type:-${ProposalType.GRANTS}`]);
 			if (selectedGov1Tracks.length > 0) {
@@ -241,7 +241,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 		//onchain data
 		await postIndex
-			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Referenda), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
+			.search(finalSearchInput, { facetFilters: getFacetFilters(EFilterBy.Referenda), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
 			.then(({ hits, nbHits }) => {
 				setOnchainPostResults({ data: filterByIndex(hits), total: nbHits });
 			})
@@ -252,7 +252,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 		//ofchain data
 		await postIndex
-			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Discussions), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
+			.search(finalSearchInput, { facetFilters: getFacetFilters(EFilterBy.Discussions), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
 			.then(({ hits, nbHits }) => {
 				setOffchainPostResults({ data: filterByIndex(hits), total: nbHits });
 			})
@@ -266,7 +266,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: peoplePage.page - 1 })
 			.then(({ hits, nbHits }) => {
 				setPeoplePage({ ...peoplePage, totalPeople: nbHits });
-				setPeopleResults(filterByIndex(hits));
+				setPeopleResults(hits);
 				getDefaultAddress(hits);
 			})
 			.catch((error) => {
@@ -334,7 +334,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 		const postResults = await postIndex
 			.search(queryStr, {
-				facetFilters: getFacetFileters(filterBy),
+				facetFilters: getFacetFilters(filterBy),
 				hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
 				highlightPreTag: '<mark>',
 				highlightPostTag: '</mark>',

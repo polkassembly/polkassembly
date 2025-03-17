@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { network } from '~src/global/networkConstants';
 
-const SUPPORTED_POLKASAFE_NETWORK = [network.KUSAMA, network.POLKADOT, network.WESTEND, network.ASTAR, network.ROCOCO];
+const SUPPORTED_POLKASAFE_NETWORK = [network.ROCOCO];
 export const canUsePolkasafe = (network: string) => {
 	return SUPPORTED_POLKASAFE_NETWORK.includes(network);
 };

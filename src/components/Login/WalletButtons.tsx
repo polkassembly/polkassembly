@@ -185,9 +185,9 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						/>
 					)}
 				</div>
-				{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) || isPolymesh(network) ? (
+				{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) || isPolymesh(network) ? (
 					<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-						{['moonbase', 'moonbeam', 'moonriver', 'mythos', 'laossigma'].includes(network) ? (
+						{['moonbase', 'moonbeam', 'moonriver', 'laossigma'].includes(network) ? (
 							<WalletButton
 								className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
 								// disabled={!isMetamaskWallet}

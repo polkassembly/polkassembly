@@ -19,7 +19,7 @@ const VotingOptions = () => {
 				</div>
 			</article>
 
-			<article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white py-2 dark:bg-black'>
+			<article className='min-h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white pb-4 pt-2 dark:bg-black'>
 				<BatchCart />
 			</article>
 		</section>

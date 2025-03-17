@@ -2003,7 +2003,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: mythicalLogo,
 		rpcEndpoint: 'wss://polkadot-mythos-rpc.polkadot.io',
 		ss58Format: 42,
-		subsquidUrl: '',
+		subsquidUrl: 'https://polkassembly.squids.live/mythos-polkassembly@v1/api/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.MYTH,
 		treasuryProposalBondPercent: null,

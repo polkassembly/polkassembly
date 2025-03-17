@@ -95,7 +95,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({
 			return;
 		}
 		const referendumInfoOf = await api.query?.referenda?.referendumInfoFor(post?.id);
-		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+		const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
 			setTallyData({
 				ayes:

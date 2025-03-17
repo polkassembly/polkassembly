@@ -439,7 +439,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									{ start: '-', replacement: '—' },
 									{ start: '(c)', replacement: '©' }
 								],
-								skin: theme === 'dark' ? 'oxide-dark' : 'oxide'
+								skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
+								relative_urls: false,
+								remove_script_host: false
 							}}
 						/>
 					</div>

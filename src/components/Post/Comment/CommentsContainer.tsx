@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable no-tabs */
 import { Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
@@ -75,11 +76,14 @@ interface ICommentsContainerProps {
 	id: number | null | undefined;
 }
 
-interface IReportSummaryResponse {
-	isAlreadyReported: boolean;
-	message: string;
-	data?: any;
-}
+// interface IReportSummaryResponse {
+// 	message: string;
+// 	data?: {
+// 	isAlreadyReported: boolean;
+//  message?: string;
+// 	};
+// 	error?: string;
+// }
 
 export interface ITimeline {
 	date: Dayjs;
@@ -94,7 +98,9 @@ export interface ITimeline {
 export const getSortedComments = (comments: { [index: string]: Array<IComment> }) => {
 	const commentResponse: any = {};
 	for (const key in comments) {
-		commentResponse[key] = comments[key].sort((a, b) => dayjs(a.created_at).diff(dayjs(b.created_at)));
+		commentResponse[key] = comments[key]
+			.filter((comment, index, self) => index === self.findIndex((c) => c.id === comment.id))
+			.sort((a, b) => dayjs(a.created_at).diff(dayjs(b.created_at)));
 	}
 	return commentResponse;
 };
@@ -125,8 +131,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showNeutralSummary, setNeutralSummary] = useState(false);
 	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
-	const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
-	const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
+	// const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
+	// const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -206,30 +212,80 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
-	const reportSummary = async () => {
-		setReportingAISummary(true);
-		try {
-			const { data, error } = await nextApiClientFetch<IReportSummaryResponse>('/api/v1/ai-summary/reportAISummary', {
-				postIndex,
-				postType
-			});
+	// const reportSummary = async () => {
+	// 	setReportingAISummary(true);
+	// 	try {
+	// 	const { data, error } = await nextApiClientFetch<IReportSummaryResponse>('/api/v1/ai-summary/reportAISummary', {
+	// 	postIndex,
+	// 	postType
+	// 	});
 
-			if (error || !data) {
-				console.log('Error While reporting AI summary data', error);
-				setReportingAISummary(false);
-				return;
-			}
+	// 	if (error) {
+	// 	console.error('Error while reporting AI summary:', error);
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'Error while reporting AI summary.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	return;
+	// 	}
 
-			if (data && data?.isAlreadyReported) {
-				setIsAlreadyReported(data?.isAlreadyReported);
-				setReportingAISummary(false);
-			}
-			await nextApiClientFetch('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
-		} catch (error) {
-			console.log(error);
-			setReportingAISummary(false);
-		}
-	};
+	// 	if (!data) {
+	//  console.error('Unexpected API response: No data received.');
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'Unexpected API response. Please try again later.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	return;
+	// 	}
+	// 	if (data && data?.data) {
+	// 	const isAlreadyReported = Boolean(data.data.isAlreadyReported);
+	// 	queueNotification({
+	// 	header: isAlreadyReported ? '' : 'Success!',
+	// 	message: isAlreadyReported ? 'You have already submitted the feedback.' : 'Your feedback has been submitted.',
+	// 	status: isAlreadyReported ? NotificationStatus.INFO : NotificationStatus.SUCCESS
+	// 	});
+	// 	setIsAlreadyReported(isAlreadyReported);
+	// 	setReportingAISummary(false);
+	// 	}
+	// 	} catch (error) {
+	// 	console.error('Unexpected error:', error);
+	// 	setReportingAISummary(false);
+	// 	queueNotification({
+	// 	header: '',
+	// 	message: 'An unexpected error occurred. Please try again later.',
+	// 	status: NotificationStatus.ERROR
+	// 	});
+	// 	}
+	// };
+
+	// const refetchAISummary = async () => {
+	// setReportingAISummary(true);
+	// try {
+	// const { data, error } = await nextApiClientFetch<{
+	// success: boolean;
+	// message: string;
+	// data?: any;
+	// error?: string;
+	// }>('/api/v1/ai-summary/refreshAISummaryOnReports', { postIndex, postType });
+
+	// if (error || !data) {
+	// console.log('Error While reporting AI summary data', error);
+	// setReportingAISummary(false);
+	// return;
+	// }
+	// if (data && data?.message) {
+	// setReportingAISummary(false);
+	// window.location.reload();
+	// }
+	// } catch (error) {
+	// console.log(error);
+	// setReportingAISummary(false);
+	// }
+	// };
 
 	useEffect(() => {
 		if (forceRefresh) {
@@ -364,7 +420,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const getDisplayText = (text: string, showFull: boolean) => {
 		if (!text) return '';
 		const words = text.split(' ');
-		const isLongText = words.length > 100;
+		const isLongText = words.length > 80;
 		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
 	};
 
@@ -433,7 +489,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mr-1 '>Based on all comments and replies</span>
 							</span>
 						</div>
-						{aiContentSummary?.summary_positive && aiContentSummary.summary_positive.split(' ').length > 20 && (
+						{aiContentSummary?.summary_positive && (
 							<div className='mt-2 flex items-start gap-4'>
 								<span className='mt-2'>
 									<GreenTickIcon />
@@ -452,7 +508,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</div>
 						)}
 
-						{aiContentSummary?.summary_neutral && aiContentSummary.summary_neutral.split(' ').length > 20 && (
+						{aiContentSummary?.summary_neutral && (
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<MinusSignIcon />
@@ -471,7 +527,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</div>
 						)}
 
-						{aiContentSummary?.summary_negative && aiContentSummary.summary_negative.split(' ').length > 20 && (
+						{aiContentSummary?.summary_negative && (
 							<div className='flex items-start gap-4'>
 								<span className='mt-2'>
 									<CrossSignIcon />
@@ -493,23 +549,43 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<h3 className={`${dmSans.variable} ${dmSans.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
 								<AiStarIcon className='text-base' /> AI-generated from comments
 							</h3>
-							{reportingAISummary ? (
+							{/* {reportingAISummary ? (
 								<Loader />
 							) : isAlreadyReported === true ? (
 								<div className='text-xs text-pink_primary'>You have already reported this review.</div>
 							) : isAlreadyReported === false ? (
 								<div className='text-xs text-pink_primary'>Thanks for reporting the review.</div>
 							) : (
-								<div className='text-xs text-pink_primary'>
-									Was this review helpful?
-									<span
-										className='ml-1 cursor-pointer text-xs font-medium underline'
-										onClick={() => reportSummary()}
-									>
-										No
-									</span>
+								<div className='flex items-center gap-1 text-xs text-pink_primary'>
+									Was this summary helpful?
+									<div className='flex items-center gap-1'>
+										<div
+											onClick={() => {
+												reportSummary();
+												refetchAISummary();
+											}}
+											className='cursor-pointer bg-transparent transition-transform duration-200 hover:scale-110'
+										>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={18}
+												height={18}
+												className='rotate-180 scale-x-[-1] bg-transparent'
+											/>
+										</div>
+										<div className='cursor-pointer transition-transform duration-200 hover:scale-110'>
+											<Image
+												alt='like-icon'
+												src='/assets/like-ai-icon.svg'
+												width={18}
+												height={18}
+												className=''
+											/>
+										</div>
+									</div>
 								</div>
-							)}
+							)} */}
 						</div>
 					</div>
 				) : null}

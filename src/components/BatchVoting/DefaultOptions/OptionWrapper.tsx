@@ -266,7 +266,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleOnVoteChange(value);
 					}}
 					options={decisionOptions}
-					disabled={!api || !apiReady}
+					// disabled={!api || !apiReady}
 				/>
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 					<VotingFormCard

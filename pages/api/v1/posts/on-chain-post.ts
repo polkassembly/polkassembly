@@ -186,7 +186,7 @@ export function getDefaultReactionObj(): IReactions {
 }
 
 const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
-const TTL_DURATION_ACTIVE = 3600 * 4; // 4 Hours or 14400 seconds
+const TTL_DURATION_ACTIVE = 3600 * 1; // 1 Hour or 3600 seconds
 export const getUserProfileData = async (ids: number[]) => {
 	try {
 		const querySnapshot = await firestore_db.collection('users').where('id', 'array-contains', ids).get();

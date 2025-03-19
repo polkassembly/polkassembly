@@ -5,7 +5,7 @@ import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
-import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import {
 	GET_PROPOSAL_BY_INDEX_AND_TYPE,
 	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
@@ -15,6 +15,7 @@ import {
 	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -184,8 +185,8 @@ export function getDefaultReactionObj(): IReactions {
 	};
 }
 
-const TTL_DURATION = 3600 * 4; // 4 Hours or 14400 seconds
-
+const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
+const TTL_DURATION_ACTIVE = 3600 * 4; // 4 Hours or 14400 seconds
 export const getUserProfileData = async (ids: number[]) => {
 	try {
 		const querySnapshot = await firestore_db.collection('users').where('id', 'array-contains', ids).get();
@@ -1350,7 +1351,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
 			await redisSetex(
 				generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }),
-				TTL_DURATION,
+				getStatusesFromCustomStatus(CustomStatus.Active).includes(post?.status || '') ? TTL_DURATION_ACTIVE : TTL_DURATION,
 				JSON.stringify(post)
 			);
 		}

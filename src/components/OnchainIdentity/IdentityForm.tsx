@@ -47,6 +47,8 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
+
+const EMAIL_MAX_LENGTH = 31;
 const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStartLoading, setTxFee, txFee, className, form, setOpenIdentitySuccessModal }: IIdentityForm) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
@@ -851,6 +853,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 								onBlur={() => getGasFee()}
 								addonAfter={!!identityInfo?.email && !!identityInfo.alreadyVerified && identityInfo?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
+								maxLength={EMAIL_MAX_LENGTH}
 								value={email?.value}
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}

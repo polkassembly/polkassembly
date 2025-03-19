@@ -184,7 +184,7 @@ export function getDefaultReactionObj(): IReactions {
 	};
 }
 
-const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
+const TTL_DURATION = 3600 * 4; // 4 Hours or 14400 seconds
 
 export const getUserProfileData = async (ids: number[]) => {
 	try {

@@ -5,7 +5,7 @@ import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
-import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import {
 	GET_PROPOSAL_BY_INDEX_AND_TYPE,
 	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
@@ -15,6 +15,7 @@ import {
 	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory, IProgressReport } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -185,7 +186,7 @@ export function getDefaultReactionObj(): IReactions {
 }
 
 const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
-
+const TTL_DURATION_ACTIVE = 3600 * 4; // 4 Hours or 14400 seconds
 export const getUserProfileData = async (ids: number[]) => {
 	try {
 		const querySnapshot = await firestore_db.collection('users').where('id', 'array-contains', ids).get();
@@ -1179,12 +1180,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
 				post.subscribers = data?.subscribers || [];
-				post.progress_report = {
-					...data?.progress_report?.map((report: any) => {
-						return { ...report, created_at: report?.created_at?.toDate ? report?.created_at?.toDate() : report?.created_at };
-					}),
-					created_at: data?.progress_report?.created_at?.toDate?.()
-				};
+				post.progress_report = Array.isArray(data?.progress_report)
+					? data.progress_report.map((report: any) => {
+							return { ...report, created_at: report?.created_at?.toDate ? report?.created_at?.toDate() : report?.created_at };
+					  })
+					: data?.progress_report || [];
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -1351,7 +1351,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
 			await redisSetex(
 				generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }),
-				TTL_DURATION,
+				getStatusesFromCustomStatus(CustomStatus.Active).includes(post?.status || '') ? TTL_DURATION_ACTIVE : TTL_DURATION,
 				JSON.stringify(post)
 			);
 		}
@@ -1400,27 +1400,25 @@ export const updatePostTimeline = (post: any, postData: any) => {
 		const isStatus = {
 			swap: false
 		};
-		if (postData.group && postData.group.proposals) {
-			// Timeline
-			const timelineProposals = postData?.group?.proposals || [];
-			post.timeline = getTimeline(timelineProposals, isStatus);
-			// Proposer and Curator address
-			if (timelineProposals && Array.isArray(timelineProposals)) {
-				for (let i = 0; i < timelineProposals.length; i++) {
-					if (post.proposer && post.curator) {
-						break;
+		// Timeline
+		const timelineProposals = postData?.group?.proposals || [postData];
+		post.timeline = getTimeline(timelineProposals, isStatus);
+		// Proposer and Curator address
+		if (timelineProposals && Array.isArray(timelineProposals)) {
+			for (let i = 0; i < timelineProposals.length; i++) {
+				if (post.proposer && post.curator) {
+					break;
+				}
+				const obj = timelineProposals[i];
+				if (!post.proposer) {
+					if (obj.proposer) {
+						post.proposer = obj.proposer;
+					} else if (obj?.preimage?.proposer) {
+						post.proposer = obj.preimage.proposer;
 					}
-					const obj = timelineProposals[i];
-					if (!post.proposer) {
-						if (obj.proposer) {
-							post.proposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							post.proposer = obj.preimage.proposer;
-						}
-					}
-					if (!post.curator && obj.curator) {
-						post.curator = obj.curator;
-					}
+				}
+				if (!post.curator && obj.curator) {
+					post.curator = obj.curator;
 				}
 			}
 		}

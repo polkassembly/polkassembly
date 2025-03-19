@@ -29,7 +29,6 @@ import { IOptionsWrapper } from '../types';
 import Image from 'next/image';
 import { SegmentedValue } from 'antd/es/segmented';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
-import formatBnBalance from '~src/util/formatBnBalance';
 
 const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost }: IOptionsWrapper) => {
 	const dispatch = useAppDispatch();
@@ -108,18 +107,28 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		}
 	};
 
-	const currentAye = ayeForm.getFieldValue('balance');
-	const currentNye = nayeForm.getFieldValue('balance');
-	const currentAbstain = abstainFrom.getFieldValue('balance');
-	const isEmptyForm = !currentAye && !currentNye && !currentAbstain;
-
 	const handleBalanceChange = (balance: BN, fieldType: 'ayeVoteBalance' | 'nyeVoteBalance' | 'abstainVoteBalance') => {
 		const balanceStr = balance.toString();
 
+		const currentAye = ayeForm.getFieldValue('balance');
+		const currentNye = nayeForm.getFieldValue('balance');
+		const currentAbstain = abstainFrom.getFieldValue('abstainVote');
+		const isEmptyForm = !currentAye || !currentNye || !currentAbstain;
+
 		if (isEmptyForm) {
-			ayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
-			nayeForm.setFieldsValue({ balance: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
-			abstainFrom.setFieldsValue({ abstainVote: formatBnBalance(balanceStr, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network) });
+			if (currentAye) {
+				nayeForm.setFieldsValue({ balance: currentAye });
+				abstainFrom.setFieldsValue({ abstainVote: currentAye });
+			}
+			if (currentNye) {
+				ayeForm.setFieldsValue({ balance: currentNye });
+				abstainFrom.setFieldsValue({ abstainVote: currentNye });
+			}
+			if (currentAbstain) {
+				ayeForm.setFieldsValue({ balance: currentAbstain });
+				nayeForm.setFieldsValue({ balance: currentAbstain });
+			}
+
 			dispatch(
 				editBatchValueChanged({
 					values: {
@@ -277,7 +286,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={ayeVoteBalance}
+						balance={new BN(ayeVoteBalance || '0')}
 					/>
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
@@ -289,7 +298,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={nyeVoteBalance}
+						balance={new BN(nyeVoteBalance || '0')}
 					/>
 				)}
 

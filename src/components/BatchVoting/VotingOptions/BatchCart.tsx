@@ -60,13 +60,14 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		}
 
 		vote_cart_data.forEach((vote) => {
+			const ayeBalance = new BN(isNaN(Number(vote?.ayeBalance)) ? '0' : vote?.ayeBalance);
+			const nayBalance = new BN(isNaN(Number(vote?.nayBalance)) ? '0' : vote?.nayBalance);
+
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
-				totalAmount = totalAmount.add(new BN(vote?.ayeBalance || '0')).add(new BN(vote?.nayBalance || '0'));
+				totalAmount = totalAmount.add(ayeBalance).add(nayBalance);
 			} else if (vote?.decision === EVoteDecisionType.ABSTAIN) {
-				totalAmount = totalAmount
-					.add(new BN(vote?.ayeBalance || '0'))
-					.add(new BN(vote?.nayBalance || '0'))
-					.add(new BN(vote?.abstainBalance || '0'));
+				const abstainBalance = new BN(vote?.abstainBalance || '0');
+				totalAmount = totalAmount.add(ayeBalance).add(nayBalance).add(abstainBalance);
 			}
 		});
 
@@ -143,8 +144,9 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
+				const parsedBalance = new BN(balance?.toString() || '0');
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
-					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
+					Standard: { balance: parsedBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
 				});
 			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.ayeBalance && vote?.nayBalance) {
 				try {
@@ -185,8 +187,18 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					console.log(e);
 				}
 			}
-			batchCall.push(voteTx);
+			if (voteTx) {
+				batchCall.push(voteTx);
+			}
 		});
+		if (batchCall.length === 0) {
+			queueNotification({
+				header: 'Error!',
+				message: 'No valid transactions to send.',
+				status: NotificationStatus.ERROR
+			});
+			return;
+		}
 
 		setTotalVotingAmount(amount || ZERO_BN);
 		api?.tx?.utility
@@ -301,12 +313,14 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 							</p>
 						</div>
 
-						<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 pb-3 pt-1 dark:bg-modalOverlayDark'>
-							<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
-							<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
-								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-							</p>
-						</div>
+						{gasFees && (
+							<div className='flex items-center justify-between rounded-sm bg-[#F6F7F9] px-2 pb-3 pt-1 dark:bg-modalOverlayDark'>
+								<p className='m-0 ml-1 p-0 text-xs text-lightBlue dark:text-blue-dark-medium'>- Gas Fees</p>
+								<p className='m-0 p-0 text-xs font-medium text-bodyBlue dark:text-white'>
+									{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+								</p>
+							</div>
+						)}
 
 						<Button
 							className={` ${isDisable ? 'opacity-60' : ''} flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white`}

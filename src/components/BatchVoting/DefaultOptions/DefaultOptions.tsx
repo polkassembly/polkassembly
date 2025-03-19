@@ -1,10 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+/* eslint-disable sort-keys */
+
+import React, { FC, useEffect, useState } from 'react';
 import OptionWrapper from './OptionWrapper';
 import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILastVote } from '~src/types';
+import Image from 'next/image';
 import Alert from '~src/basic-components/Alert';
 import { ProposalType } from '~src/global/proposalType';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -27,7 +30,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [open, setOpen] = useState(false);
 	const {
-		batch_vote_details: { ayeVoteBalance, nyeVoteBalance, abstainVoteBalance }
+		batch_vote_details: { ayeVoteBalance, nyeVoteBalance, abstainVoteBalance, voteOption }
 	} = useBatchVotesSelector();
 
 	const onAccountChange = (address: string) => {
@@ -35,6 +38,8 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	};
 	const { api, apiReady } = useApiContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+	const [saveStatus, setSaveStatus] = useState<{ message: string; icon: string }>({ message: '', icon: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 
 	const handleOnAvailableBalanceChange = async (balanceStr: string) => {
@@ -51,11 +56,49 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 		}
 	};
 
+	useEffect(() => {
+		const isValidBalanceChange =
+			(ayeVoteBalance && ayeVoteBalance !== '0' && ayeVoteBalance !== undefined) ||
+			(nyeVoteBalance && nyeVoteBalance !== '0' && nyeVoteBalance !== undefined) ||
+			(abstainVoteBalance && abstainVoteBalance !== '0' && abstainVoteBalance !== undefined);
+
+		if (isValidBalanceChange) {
+			setSaveStatus({ message: 'Saving...', icon: '/assets/icons/saving-icon.svg' });
+
+			const saveTimeout = setTimeout(() => {
+				setSaveStatus({ message: 'Changes Saved', icon: '/assets/icons/saved-icon.svg' });
+			}, 2000);
+
+			const resetTimeout = setTimeout(() => {
+				setSaveStatus({ message: '', icon: '' });
+			}, 4000);
+
+			return () => {
+				clearTimeout(saveTimeout);
+				clearTimeout(resetTimeout);
+			};
+		}
+	}, [ayeVoteBalance, nyeVoteBalance, abstainVoteBalance, voteOption]);
+
 	return (
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
 			<header>
-				<div className='mb-4 mt-4 h-[48px] border-0 border-b-[1px] border-solid border-section-light-container px-6 text-lg font-semibold tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-					Set Defaults
+				<div className='mb-4 mt-4 h-[48px] border-0 border-b-[1px] border-solid border-section-light-container px-6 tracking-wide dark:border-separatorDark '>
+					<div className='flex items-center justify-between'>
+						<span className='text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>Set Defaults</span>
+						{saveStatus.message && (
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>
+								<Image
+									width={20}
+									className='-mt-[2.5px] mr-[2px]'
+									height={20}
+									src={saveStatus.icon}
+									alt={saveStatus.message}
+								/>
+								{saveStatus.message}
+							</span>
+						)}
+					</div>
 				</div>
 			</header>
 			<article className='items-center justify-start gap-x-3 px-6'>

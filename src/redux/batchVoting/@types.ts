@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import BN from 'bn.js';
 import { EVoteDecisionType } from '~src/types';
 export interface IBatchVoteStore {
 	batch_voting_address: string;
@@ -38,8 +37,8 @@ export type IVoteCardInfo = {
 
 export interface IBatchVotesDetails {
 	voteOption?: string;
-	ayeVoteBalance?: BN;
-	nyeVoteBalance?: BN;
+	ayeVoteBalance?: string;
+	nyeVoteBalance?: string;
 	abstainAyeVoteBalance?: string;
 	abstainNyeVoteBalance?: string;
 	abstainVoteBalance?: string;

@@ -5,7 +5,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batchVotesActions } from '.';
 import { EVoteDecisionType } from '~src/types';
-import BN from 'bn.js';
 
 interface IBatchVotingDefaults {
 	values: {
@@ -32,14 +31,14 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'ayeVoteBalance',
-				value: new BN(values?.ayeVoteBalance || '0')
+				value: values?.ayeVoteBalance || '0'
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'nyeVoteBalance',
-				value: new BN(values?.nyeVoteBalance || '0')
+				value: values?.nyeVoteBalance || '0'
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {
@@ -86,14 +85,14 @@ export const editCartPostValueChanged = createAsyncThunk('house/editProfileField
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'ayeVoteBalance',
-				value: new BN(values?.ayeVoteBalance || '0')
+				value: values?.ayeVoteBalance || '0'
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'nyeVoteBalance',
-				value: new BN(values?.nyeVoteBalance || '0.1')
+				value: values?.nyeVoteBalance || '0'
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {

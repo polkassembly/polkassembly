@@ -36,7 +36,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [open, setOpen] = useState(false);
 	const {
-		batch_vote_details: { ayeVoteBalance, nyeVoteBalance, abstainVoteBalance, voteOption }
+		batch_vote_details: { ayeVoteBalance, nyeVoteBalance, abstainVoteBalance }
 	} = useBatchVotesSelector();
 
 	const onAccountChange = (address: string) => {
@@ -63,7 +63,10 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	};
 
 	useEffect(() => {
-		const isValidBalanceChange = !!ayeVoteBalance || !!nyeVoteBalance || !!abstainVoteBalance;
+		const isValidBalanceChange =
+			(ayeVoteBalance && ayeVoteBalance !== '0' && ayeVoteBalance !== undefined) ||
+			(nyeVoteBalance && nyeVoteBalance !== '0' && nyeVoteBalance !== undefined) ||
+			(abstainVoteBalance && abstainVoteBalance !== '0' && abstainVoteBalance !== undefined);
 
 		if (isValidBalanceChange) {
 			setSaveStatus(SAVE_MESSAGES.saving);
@@ -75,7 +78,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 
 			return () => clearTimeout(timeout);
 		}
-	}, [ayeVoteBalance, nyeVoteBalance, abstainVoteBalance, voteOption]);
+	}, [ayeVoteBalance, nyeVoteBalance, abstainVoteBalance]);
 
 	return (
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>

@@ -53,10 +53,10 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 	};
 
 	return (
-		<div className={`h-[500px] w-full ${className}`}>
+		<div className={`h-[300px] w-full md:h-[500px] ${className}`}>
 			<ResponsiveCirclePacking
 				data={chartData}
-				margin={{ bottom: 20, left: 20, right: 20, top: 20 }}
+				margin={{ bottom: 10, left: 10, right: 10, top: 10 }}
 				id='voter'
 				value='balance'
 				colors={(circle) => circle.data.color}
@@ -80,12 +80,12 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 				labelsSkipRadius={30}
 				labelTextColor={{
 					from: 'color',
-					modifiers: [['darker', 2.5]]
+					modifiers: [['darker', 10]]
 				}}
 				borderWidth={1}
 				borderColor={{
 					from: 'color',
-					modifiers: [['darker', 0.5]]
+					modifiers: [['darker', 2]]
 				}}
 				tooltip={({ id }) => {
 					const item = data.find((item) => item.voter === id);

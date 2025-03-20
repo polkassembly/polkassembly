@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useMemo } from 'react';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { LoadingStatusType } from '~src/types';
 import { useTheme } from 'next-themes';
@@ -30,85 +30,82 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 	const [formattedVotesData, setFormattedVotesData] = useState<any[]>([]);
 	const [noVotes, setNoVotes] = useState<boolean>(false);
 
+	const colors = useMemo(
+		() => ({
+			abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
+			aye: theme === 'dark' ? '#64A057' : '#2ED47A',
+			nay: theme === 'dark' ? '#BD2020' : '#E84865'
+		}),
+		[theme]
+	);
+
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
 	const getTotalVotes = async () => {
-		const { data, error } = await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
-			postId: postId,
-			voteType: voteType
-		});
-		if (error || !data) {
-			console.log(error);
-		} else {
-			const votesRes = data;
-			if (votesRes?.totalCount === 0) {
-				setNoVotes(true);
-			}
-
-			const colors: { [key: string]: string } = {
-				abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
-				aye: theme === 'dark' ? '#64A057' : '#2ED47A',
-				nay: theme === 'dark' ? '#BD2020' : '#E84865'
-			};
-
-			const formattedVotesData = votesRes?.data?.map((vote) => {
-				const balance = bnToIntBalance(new BN(vote?.balance || '0'));
-				const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
-
-				if (vote.decision === 'yes') {
-					return {
-						balance: balance,
-						color: colors.aye,
-						decision: vote.decision,
-						lockPeriod: vote.lockPeriod,
-						voter: vote.voter,
-						votingPower: votingPower
-					};
-				} else if (vote.decision === 'no') {
-					return {
-						balance: balance,
-						color: colors.nay,
-						decision: vote.decision,
-						lockPeriod: vote.lockPeriod,
-						voter: vote.voter,
-						votingPower: votingPower
-					};
-				} else {
-					return {
-						balance: balance,
-						color: colors.abstain,
-						decision: vote.decision,
-						lockPeriod: vote.lockPeriod,
-						voter: vote.voter,
-						votingPower: votingPower
-					};
-				}
-			});
-
-			if (formattedVotesData) {
-				setFormattedVotesData(formattedVotesData);
-			}
-
-			setLoadingStatus({
-				isLoading: false,
-				message: ''
-			});
-		}
-	};
-
-	useEffect(() => {
 		setLoadingStatus({
 			isLoading: true,
 			message: 'Loading votes'
 		});
 
+		try {
+			const { data, error } = await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
+				postId: postId,
+				voteType: voteType
+			});
+
+			if (error || !data) {
+				throw new Error(error || 'Failed to fetch votes');
+			}
+
+			const votesRes = data;
+			if (votesRes?.totalCount === 0) {
+				setNoVotes(true);
+				setLoadingStatus({ isLoading: false, message: '' });
+				return;
+			}
+
+			// Process data in a single iteration
+			const formattedVotesData = votesRes?.data?.map((vote) => {
+				const balance = bnToIntBalance(new BN(vote?.balance || '0'));
+				const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
+				let color;
+
+				switch (vote.decision) {
+					case 'yes':
+						color = colors.aye;
+						break;
+					case 'no':
+						color = colors.nay;
+						break;
+					default:
+						color = colors.abstain;
+				}
+
+				return {
+					balance,
+					color,
+					decision: vote.decision,
+					lockPeriod: vote.lockPeriod,
+					voter: vote.voter,
+					votingPower
+				};
+			});
+
+			setFormattedVotesData(formattedVotesData || []);
+			setLoadingStatus({ isLoading: false, message: '' });
+		} catch (err) {
+			console.error('Error fetching votes:', err);
+			setNoVotes(true);
+			setLoadingStatus({ isLoading: false, message: '' });
+		}
+	};
+
+	useEffect(() => {
 		getTotalVotes();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postId, voteType]);
-
-	console.log(formattedVotesData);
 
 	if (noVotes) {
 		return (

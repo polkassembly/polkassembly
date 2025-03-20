@@ -97,6 +97,8 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 					}
 				]}
 				tooltip={({ id }) => {
+					const item = data.find((item) => item.voter === id);
+
 					return (
 						<div className={`flex flex-col gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${isDarkMode ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
 							<span className='text-xs font-semibold'>
@@ -107,12 +109,12 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 							</span>
 							<span className='text-xs font-semibold'>
 								{'Capital: '}
-								{formatUSDWithUnits(data.find((item) => item.voter === id)?.balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}{' '}
-								<span className='lowercase'>{data.find((item) => item.voter === id)?.lockPeriod ? `(${data.find((item) => item.voter === id)?.lockPeriod}x/d)` : ''}</span>
+								{formatUSDWithUnits(item?.balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}{' '}
+								<span className='lowercase'>{item?.lockPeriod ? `(${item.lockPeriod}x/d)` : ''}</span>
 							</span>
 							<span className='text-xs font-semibold'>
 								{'Votes: '}
-								{formatUSDWithUnits(data.find((item) => item.voter === id)?.votingPower.toString(), 1)} {chainProperties[network]?.tokenSymbol}
+								{formatUSDWithUnits(item?.votingPower.toString(), 1)} {chainProperties[network]?.tokenSymbol}
 							</span>
 						</div>
 					);

@@ -21,7 +21,13 @@ import { Tooltip } from 'antd';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { dmSans } from 'pages/_app';
+
 const ZERO_BN = new BN(0);
+const SAVE_MESSAGES = {
+	saving: { message: 'Saving...', icon: '/assets/icons/saving-icon.svg' },
+	saved: { message: 'Changes Saved', icon: '/assets/icons/saved-icon.svg' },
+	none: { message: '', icon: '' }
+};
 
 const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const dispatch = useAppDispatch();
@@ -39,7 +45,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	const { api, apiReady } = useApiContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-	const [saveStatus, setSaveStatus] = useState<{ message: string; icon: string }>({ message: '', icon: '' });
+	const [saveStatus, setSaveStatus] = useState<{ message: string; icon: string }>(SAVE_MESSAGES.none);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 
 	const handleOnAvailableBalanceChange = async (balanceStr: string) => {
@@ -57,26 +63,17 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 	};
 
 	useEffect(() => {
-		const isValidBalanceChange =
-			(ayeVoteBalance && ayeVoteBalance !== '0' && ayeVoteBalance !== undefined) ||
-			(nyeVoteBalance && nyeVoteBalance !== '0' && nyeVoteBalance !== undefined) ||
-			(abstainVoteBalance && abstainVoteBalance !== '0' && abstainVoteBalance !== undefined);
+		const isValidBalanceChange = !!ayeVoteBalance || !!nyeVoteBalance || !!abstainVoteBalance;
 
 		if (isValidBalanceChange) {
-			setSaveStatus({ message: 'Saving...', icon: '/assets/icons/saving-icon.svg' });
+			setSaveStatus(SAVE_MESSAGES.saving);
 
-			const saveTimeout = setTimeout(() => {
-				setSaveStatus({ message: 'Changes Saved', icon: '/assets/icons/saved-icon.svg' });
+			const timeout = setTimeout(() => {
+				setSaveStatus(SAVE_MESSAGES.saved);
+				setTimeout(() => setSaveStatus(SAVE_MESSAGES.none), 2000);
 			}, 2000);
 
-			const resetTimeout = setTimeout(() => {
-				setSaveStatus({ message: '', icon: '' });
-			}, 4000);
-
-			return () => {
-				clearTimeout(saveTimeout);
-				clearTimeout(resetTimeout);
-			};
+			return () => clearTimeout(timeout);
 		}
 	}, [ayeVoteBalance, nyeVoteBalance, abstainVoteBalance, voteOption]);
 

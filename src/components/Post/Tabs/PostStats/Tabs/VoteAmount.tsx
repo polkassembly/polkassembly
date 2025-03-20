@@ -86,7 +86,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 		const votesByDelegation = allVotes?.data.reduce(
 			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const voteBalance = new BN(vote.balance) || '0';
+				const voteBalance = new BN(vote.balance || '0');
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {

@@ -11,10 +11,10 @@ const initialState: IBatchVoteStore = {
 	batch_vote_details: {
 		abstainAyeVoteBalance: '0',
 		abstainNyeVoteBalance: '0',
-		abstainVoteBalance: '0',
-		ayeVoteBalance: '0',
+		abstainVoteBalance: '',
+		ayeVoteBalance: '',
 		conviction: 0.1,
-		nyeVoteBalance: '0',
+		nyeVoteBalance: '',
 		voteOption: 'aye'
 	},
 	batch_voting_address: '',

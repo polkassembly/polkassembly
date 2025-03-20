@@ -286,7 +286,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={new BN(ayeVoteBalance || '0')}
+						balance={ayeVoteBalance ? new BN(ayeVoteBalance) : undefined}
 					/>
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
@@ -298,7 +298,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={new BN(nyeVoteBalance || '0')}
+						balance={nyeVoteBalance ? new BN(nyeVoteBalance) : undefined}
 					/>
 				)}
 

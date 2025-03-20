@@ -62,7 +62,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 				colors={(circle) => circle.data.color}
 				childColor={{
 					from: 'color',
-					modifiers: [['brighter', 0.4]]
+					modifiers: [['opacity', 0.5]]
 				}}
 				padding={4}
 				leavesOnly={true}
@@ -87,25 +87,6 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 					from: 'color',
 					modifiers: [['darker', 0.5]]
 				}}
-				defs={[
-					{
-						background: 'none',
-						color: 'inherit',
-						id: 'lines',
-						lineWidth: 5,
-						rotation: -45,
-						spacing: 8,
-						type: 'solid'
-					}
-				]}
-				fill={[
-					{
-						id: 'lines',
-						match: {
-							depth: 1
-						}
-					}
-				]}
 				tooltip={({ id }) => {
 					const item = data.find((item) => item.voter === id);
 

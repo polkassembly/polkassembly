@@ -71,7 +71,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		}
 
 		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
-		const num = res?.toJSON();
+		const num = res?.toJSON() ?? 0;
 		const days = blockToDays(num, network);
 
 		if (days && !isNaN(Number(days)) && lockPeriod) {

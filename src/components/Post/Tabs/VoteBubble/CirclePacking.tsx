@@ -27,15 +27,17 @@ interface IVoteData {
 	color: string;
 	lockPeriod?: string;
 	decision: string;
+	delegations?: number;
 }
 
 interface ICirclePackingProps {
 	className?: string;
 	data: IVoteData[];
 	name: string;
+	selectedTab: 'flattened' | 'nested';
 }
 
-const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
+const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selectedTab }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	if (data.length === 0) {
@@ -58,7 +60,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 				data={chartData}
 				margin={{ bottom: 10, left: 10, right: 10, top: 10 }}
 				id='voter'
-				value='balance'
+				value={selectedTab === 'flattened' ? 'balance' : 'votingPower'}
 				colors={(circle) => circle.data.color}
 				childColor={{
 					from: 'color',
@@ -90,7 +92,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 				tooltip={({ id }) => {
 					const item = data.find((item) => item.voter === id);
 
-					return (
+					return selectedTab === 'flattened' ? (
 						<div className={`flex flex-col gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
 							<span className='text-xs font-semibold'>
 								<Address
@@ -106,6 +108,23 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 							<span className='text-xs font-semibold'>
 								{'Votes: '}
 								{formatUSDWithUnits(item?.votingPower?.toString() || '0', 1)} {chainProperties[network]?.tokenSymbol}
+							</span>
+						</div>
+					) : (
+						<div className={`flex flex-col gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
+							<span className='text-xs font-semibold'>
+								<Address
+									address={id}
+									iconSize={16}
+								/>
+							</span>
+							<span className='text-xs font-semibold'>
+								{'Votes: '}
+								{formatUSDWithUnits(item?.votingPower?.toString() || '0', 1)} {chainProperties[network]?.tokenSymbol}
+							</span>
+							<span className='text-xs font-semibold'>
+								{'Delegators: '}
+								{item?.delegations}
 							</span>
 						</div>
 					);

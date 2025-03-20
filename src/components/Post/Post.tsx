@@ -390,7 +390,7 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		];
 
-		if (!isOffChainProposalTypeValid(proposalType) && isAnalyticsSupportedNetwork(network) && [ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType)) {
+		if (!isOffChainProposalTypeValid(proposalType) && isAnalyticsSupportedNetwork(network) && [ProposalType.OPEN_GOV].includes(proposalType)) {
 			tabs.unshift({
 				children: (
 					<VoteBubble

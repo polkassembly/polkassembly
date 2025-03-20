@@ -85,6 +85,11 @@ const PostStats = dynamic(() => import('./Tabs/PostStats'), {
 	ssr: false
 });
 
+const VoteBubble = dynamic(() => import('./Tabs/VoteBubble'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
@@ -384,6 +389,19 @@ const Post: FC<IPostProps> = (props) => {
 				label: 'Timeline'
 			}
 		];
+
+		if (!isOffChainProposalTypeValid(proposalType) && isAnalyticsSupportedNetwork(network) && [ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType)) {
+			tabs.unshift({
+				children: (
+					<VoteBubble
+						postId={post?.post_id}
+						postType={proposalType}
+					/>
+				),
+				key: 'votesBubble',
+				label: <div className='flex items-center gap-2'>Votes Bubble</div>
+			});
+		}
 
 		if (!isOffChainProposalTypeValid(proposalType)) {
 			tabs.push(

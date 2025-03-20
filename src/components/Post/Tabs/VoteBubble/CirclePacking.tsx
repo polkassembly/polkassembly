@@ -5,20 +5,39 @@
 import React, { FC } from 'react';
 import { ResponsiveCirclePacking } from '@nivo/circle-packing';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { theme as antdTheme } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
+import { useTheme } from 'next-themes';
+
+const LABEL_CONFIG = [
+	{ charCount: 10, minRadius: 60 },
+	{ charCount: 8, minRadius: 50 },
+	{ charCount: 7, minRadius: 40 },
+	{ charCount: 6, minRadius: 30 },
+	{ charCount: 5, minRadius: 20 },
+	{ charCount: 4, minRadius: 10 },
+	{ charCount: 3, minRadius: 0 }
+];
+
+interface IVoteData {
+	voter: string;
+	balance: number;
+	votingPower: number;
+	color: string;
+	lockPeriod?: string;
+	decision: string;
+}
 
 interface ICirclePackingProps {
 	className?: string;
-	data: any[];
+	data: IVoteData[];
 	name: string;
 }
 
 const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 	const { network } = useNetworkSelector();
-
+	const { resolvedTheme: theme } = useTheme();
 	if (data.length === 0) {
 		return (
 			<div className='flex h-[500px] w-full items-center justify-center'>
@@ -32,10 +51,6 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 		color: 'transparent',
 		name: name
 	};
-
-	// Get the current theme mode
-	const { token } = antdTheme.useToken();
-	const isDarkMode = token.colorBgContainer === '#000' || token.colorBgContainer === '#1E2126';
 
 	return (
 		<div className={`h-[500px] w-full ${className}`}>
@@ -56,14 +71,9 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 					const { id, radius } = datum;
 					if (typeof id !== 'string') return String(id);
 
-					let charCount = 3; // minimum characters to show
-
-					if (radius > 60) charCount = 10;
-					else if (radius > 50) charCount = 8;
-					else if (radius > 40) charCount = 7;
-					else if (radius > 30) charCount = 6;
-					else if (radius > 20) charCount = 5;
-					else if (radius > 10) charCount = 4;
+					// Find the appropriate character count based on radius
+					const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
+					const charCount = config ? config.charCount : 3;
 
 					return id.slice(0, charCount) + (id.length > charCount ? '...' : '');
 				}}
@@ -100,7 +110,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 					const item = data.find((item) => item.voter === id);
 
 					return (
-						<div className={`flex flex-col gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${isDarkMode ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
+						<div className={`flex flex-col gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
 							<span className='text-xs font-semibold'>
 								<Address
 									address={id}
@@ -109,12 +119,12 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name }) => {
 							</span>
 							<span className='text-xs font-semibold'>
 								{'Capital: '}
-								{formatUSDWithUnits(item?.balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}{' '}
+								{formatUSDWithUnits(item?.balance?.toString() || '0', 1)} {chainProperties[network]?.tokenSymbol}{' '}
 								<span className='lowercase'>{item?.lockPeriod ? `(${item.lockPeriod}x/d)` : ''}</span>
 							</span>
 							<span className='text-xs font-semibold'>
 								{'Votes: '}
-								{formatUSDWithUnits(item?.votingPower.toString(), 1)} {chainProperties[network]?.tokenSymbol}
+								{formatUSDWithUnits(item?.votingPower?.toString() || '0', 1)} {chainProperties[network]?.tokenSymbol}
 							</span>
 						</div>
 					);

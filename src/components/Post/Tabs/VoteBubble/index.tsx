@@ -21,6 +21,12 @@ interface IVoteBubbleProps {
 	postType: ProposalType;
 }
 
+const createBnToIntBalance =
+	(network: string) =>
+	(bn: BN): number => {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
+
 const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -39,9 +45,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 		[theme]
 	);
 
-	const bnToIntBalance = function (bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
+	const bnToIntBalance = useMemo(() => createBnToIntBalance(network), [network]);
 
 	const getTotalVotes = async () => {
 		setLoadingStatus({

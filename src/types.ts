@@ -1347,5 +1347,5 @@ export interface INestedVote {
 		lockPeriod: number;
 		selfVotingPower: string;
 		voter: string;
-	};
+	}[];
 }

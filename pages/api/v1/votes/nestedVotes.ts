@@ -48,24 +48,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		const result: INestedVote = {
 			totalCount: totalCount || 0,
-			votes: allVotes?.map((vote: any) => ({
-				balance: vote?.balance?.value || vote?.balance?.abstain || '0',
-				createdAt: vote?.createdAt,
-				decision: vote?.decision || null,
-				delegatedTo: vote?.delegatedTo || '',
-				delegatedVotes:
-					vote?.delegatedVotes?.map((delegatedVote: any) => ({
-						voter: delegatedVote?.voter,
-						votingPower: delegatedVote?.votingPower || '0'
-					})) || [],
-				delegatedVotingPower: vote?.delegatedVotingPower || '0',
-				delegatorsCount: vote?.delegatedVotes?.length || 0,
-				extrinsicIndex: vote?.extrinsicIndex,
-				isDelegatedVote: false,
-				lockPeriod: Number(vote?.lockPeriod) || 0.1,
-				selfVotingPower: vote?.selfVotingPower || '0',
-				voter: vote?.voter
-			}))
+			votes:
+				allVotes?.map((vote: any) => ({
+					balance: vote?.balance?.value || vote?.balance?.abstain || '0',
+					createdAt: vote?.createdAt,
+					decision: vote?.decision || null,
+					delegatedTo: vote?.delegatedTo || '',
+					delegatedVotes:
+						vote?.delegatedVotes?.map((delegatedVote: any) => ({
+							voter: delegatedVote?.voter,
+							votingPower: delegatedVote?.votingPower || '0'
+						})) || [],
+					delegatedVotingPower: vote?.delegatedVotingPower || '0',
+					delegatorsCount: vote?.delegatedVotes?.length || 0,
+					extrinsicIndex: vote?.extrinsicIndex,
+					isDelegatedVote: false,
+					lockPeriod: Number(vote?.lockPeriod) || 0.1,
+					selfVotingPower: vote?.selfVotingPower || '0',
+					voter: vote?.voter
+				})) || []
 		};
 
 		return res.status(200).json(result);

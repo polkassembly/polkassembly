@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState, useMemo, useCallback } from 'react';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
-import { LoadingStatusType, INestedVotesResponse } from '~src/types';
+import { LoadingStatusType, INestedVotesRes } from '~src/types';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
@@ -93,7 +93,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 					postId: postId,
 					voteType: voteType
 				}),
-				nextApiClientFetch<INestedVotesResponse>(`api/v1/votes/nestedVotes?postId=${postId}&voteType=${voteType}`, undefined, 'GET')
+				nextApiClientFetch<INestedVotesRes>(`api/v1/votes/nestedVotes?postId=${postId}&voteType=${voteType}`, undefined, 'GET')
 			]);
 
 			if ((totalVotesResponse.error || !totalVotesResponse.data) && (nestedVotesResponse.error || !nestedVotesResponse.data)) {

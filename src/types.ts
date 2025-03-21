@@ -1332,3 +1332,20 @@ export interface TreasuryData {
 		usdc: string;
 	};
 }
+
+export interface INestedVote {
+	totalCount: number;
+	votes: {
+		balance: string;
+		createdAt: Date;
+		decision: string;
+		delegatedTo: string;
+		delegatedVotes: { voter: string; votingPower: string }[];
+		delegatorsCount: number;
+		extrinsicIndex: string;
+		isDelegatedVote: boolean;
+		lockPeriod: number;
+		selfVotingPower: string;
+		voter: string;
+	};
+}

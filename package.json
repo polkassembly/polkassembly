@@ -21,6 +21,7 @@
     "@kiltprotocol/type-definitions": "^0.32.1",
     "@metamask/jazzicon": "^2.0.0",
     "@nivo/bar": "^0.84.0",
+    "@nivo/circle-packing": "^0.88.0",
     "@nivo/line": "^0.84.0",
     "@nivo/pie": "^0.84.0",
     "@nivo/treemap": "^0.84.0",

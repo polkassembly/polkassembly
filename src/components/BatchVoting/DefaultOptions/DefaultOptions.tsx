@@ -85,7 +85,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 			<header>
 				<div className='mb-4 mt-4 h-[48px] border-0 border-b-[1px] border-solid border-section-light-container px-6 tracking-wide dark:border-separatorDark '>
 					<div className='flex items-center justify-between'>
-						<span className='text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>Set Defaults</span>
+						<span className='text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>{id ? 'Set Defaults' : 'Login/Signup'}</span>
 						{saveStatus.message && (
 							<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>
 								<Image
@@ -102,29 +102,43 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 				</div>
 			</header>
 			<article className='items-center justify-start gap-x-3 px-6'>
-				<Alert
-					type='info'
-					showIcon
-					className='mt-8 h-10 max-w-[650px] px-4'
-					message={
-						<p className='m-0 text-[13px] dark:text-white'>
-							You can adjust for delegated voting power from edit button on each proposal.
-							<Tooltip
-								color='#363636'
-								title={
-									<div className={`${dmSans.className} ${dmSans.variable} flex flex-col gap-y-2`}>
-										<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
-										<p className='m-0 p-0 text-white'>
-											2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.
-										</p>
-									</div>
-								}
-							>
-								<span className='ml-2 font-semibold text-pink_primary'>Know more</span>
-							</Tooltip>
-						</p>
-					}
-				/>
+				{id ? (
+					<Alert
+						type='info'
+						showIcon
+						className='mt-8 h-10 max-w-[650px] px-4'
+						message={
+							<p className='m-0 text-[13px] dark:text-white'>
+								You can adjust for delegated voting power from edit button on each proposal.
+								<Tooltip
+									color='#363636'
+									title={
+										<div className={`${dmSans.className} ${dmSans.variable} flex flex-col gap-y-2`}>
+											<p className='m-0 p-0 text-white'>1. Add proposal to cart by choosing your vote : aye , nay or abstain.</p>
+											<p className='m-0 p-0 text-white'>
+												2. Click on edit button on the proposal, you will now be able to see and adjust delegated votes based on the proposal track.
+											</p>
+										</div>
+									}
+								>
+									<span className='ml-2 font-semibold text-pink_primary'>Know more</span>
+								</Tooltip>
+							</p>
+						}
+					/>
+				) : (
+					<div className='flex flex-col items-center justify-center'>
+						<Image
+							width={350}
+							className='-mt-10 mr-[2px]'
+							height={350}
+							src='/assets/Gifs/login-vote.gif'
+							alt='Login Image'
+						/>
+
+						<p className='-mt-6 mb-8 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>Join Polkassembly to use batch voting</p>
+					</div>
+				)}
 
 				{availableBalance &&
 					(availableBalance.lte(new BN(ayeVoteBalance || '0')) ||
@@ -167,7 +181,6 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 						</div>
 					</div>
 				)}
-
 				<OptionWrapper
 					address={String(address)}
 					onAccountChange={onAccountChange}

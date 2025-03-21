@@ -42,9 +42,9 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	const colors = useMemo(
 		() => ({
-			abstain: theme === 'dark' ? '#407BFF80' : '#407BFF80',
-			aye: theme === 'dark' ? '#64A05780' : '#2ED47A80',
-			nay: theme === 'dark' ? '#BD202080' : '#E8486580'
+			abstain: theme === 'dark' ? '#407BFFBF' : '#407BFF80',
+			aye: theme === 'dark' ? '#64A057BF' : '#2ED47A80',
+			nay: theme === 'dark' ? '#BD2020BF' : '#E8486580'
 		}),
 		[theme]
 	);
@@ -150,7 +150,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				style={{ marginBottom: 8 }}
 				onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
 				options={['nested', 'flattened']}
-				className='ml-auto capitalize'
+				className='ml-auto capitalize dark:bg-gray-800'
 			/>
 			<CirclePacking
 				data={selectedTab === 'flattened' ? flattenedVotesData : nestedVotesData}

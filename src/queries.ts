@@ -3435,47 +3435,33 @@ query MyQuery ($index_in: [Int!] , $type: ProposalType ){
 }
 `;
 
-export const GET_ALL_NESTED_VOTES = `query GET_ALL_NESTED_VOTES($index_eq: Int , $type_eq: VoteType = ReferendumV2) {
-    convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
-        totalCount
+export const GET_ALL_NESTED_VOTES = `query GET_ALL_NESTED_VOTES($index_eq: Int, $type_eq: VoteType = ReferendumV2) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  convictionVotes(orderBy: createdAtBlock_DESC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    id
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
     }
-    convictionVotes(orderBy: createdAtBlock_DESC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
-        id
-        decision
-        voter
-        balance {
-            ... on StandardVoteBalance {
-                value
-            }
-            ... on SplitVoteBalance {
-                aye
-                nay
-                abstain
-            }
-        }
-        createdAt
-        lockPeriod
-        selfVotingPower
-        totalVotingPower
-        delegatedVotingPower
-        delegatedVotes(orderBy: votingPower_DESC, where: {
-            removedAtBlock_isNull: true
-        }) {
-            decision
-            lockPeriod
-            voter
-            votingPower
-            balance {
-                ... on StandardVoteBalance {
-                    value
-                }
-                ... on SplitVoteBalance {
-                    aye
-                    nay
-                    abstain
-                }
-            }
-        }
+    createdAt
+    lockPeriod
+    selfVotingPower
+    totalVotingPower
+    delegatedVotingPower
+    delegatedVotes(orderBy: votingPower_DESC, where: {removedAtBlock_isNull: true}) {
+      voter
+      votingPower
     }
+  }
 }
 `;

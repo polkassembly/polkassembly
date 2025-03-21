@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState, useMemo, useCallback } from 'react';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
-import { LoadingStatusType } from '~src/types';
+import { LoadingStatusType, INestedVotesResponse } from '~src/types';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
@@ -15,7 +15,6 @@ import { BN } from '@polkadot/util';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CirclePacking from './CirclePacking';
-import { IProfileVoteHistoryRespose } from 'pages/api/v1/votesHistory/getVotesByVoter';
 import { Segmented } from 'antd';
 
 interface IVoteBubbleProps {
@@ -52,7 +51,6 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	const bnToIntBalance = useMemo(() => createBnToIntBalance(network), [network]);
 
-	// Helper function to process vote data
 	const processVoteData = useCallback(
 		(vote: any) => {
 			const balance = bnToIntBalance(new BN(vote?.balance || '0'));
@@ -74,7 +72,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				balance,
 				color,
 				decision: vote.decision,
-				delegations: vote.delegatedVotes?.length || 0,
+				delegators: vote.delegatorsCount,
 				lockPeriod: vote.lockPeriod,
 				voter: vote.voter,
 				votingPower
@@ -90,24 +88,18 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 		});
 
 		try {
-			// Fetch both datasets in parallel
 			const [totalVotesResponse, nestedVotesResponse] = await Promise.all([
 				nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
 					postId: postId,
 					voteType: voteType
 				}),
-				nextApiClientFetch<{
-					votes: IProfileVoteHistoryRespose[];
-					totalCount: number;
-				}>(`api/v1/votes/nestedVotes?postId=${postId}&voteType=${voteType}`, undefined, 'GET')
+				nextApiClientFetch<INestedVotesResponse>(`api/v1/votes/nestedVotes?postId=${postId}&voteType=${voteType}`, undefined, 'GET')
 			]);
 
-			// Check if both requests succeeded
 			if ((totalVotesResponse.error || !totalVotesResponse.data) && (nestedVotesResponse.error || !nestedVotesResponse.data)) {
 				throw new Error('Failed to fetch votes data');
 			}
 
-			// Handle no votes case
 			if ((totalVotesResponse.data?.totalCount === 0 && nestedVotesResponse.data?.totalCount === 0) || (!totalVotesResponse.data && !nestedVotesResponse.data)) {
 				setNoVotes(true);
 				setLoadingStatus({ isLoading: false, message: '' });

@@ -27,7 +27,7 @@ interface IVoteData {
 	color: string;
 	lockPeriod?: string;
 	decision: string;
-	delegations?: number;
+	delegators?: number;
 }
 
 interface ICirclePackingProps {
@@ -124,7 +124,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selecte
 							</span>
 							<span className='text-xs font-semibold'>
 								{'Delegators: '}
-								{item?.delegations}
+								{item?.delegators}
 							</span>
 						</div>
 					);

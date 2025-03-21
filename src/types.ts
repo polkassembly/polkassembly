@@ -1333,7 +1333,7 @@ export interface TreasuryData {
 	};
 }
 
-export interface INestedVote {
+export interface INestedVotesResponse {
 	totalCount: number;
 	votes: {
 		balance: string;
@@ -1347,5 +1347,5 @@ export interface INestedVote {
 		lockPeriod: number;
 		selfVotingPower: string;
 		voter: string;
-	};
+	}[];
 }

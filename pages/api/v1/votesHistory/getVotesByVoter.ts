@@ -53,7 +53,6 @@ export interface IProfileVoteHistoryRespose {
 		trackNumber?: number;
 	};
 	selfVotingPower?: string;
-	delegatedVotes?: any[];
 }
 export interface IVotesData extends IProfileVoteHistoryRespose {
 	delegatorsCount?: number;

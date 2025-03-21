@@ -1334,18 +1334,20 @@ export interface TreasuryData {
 }
 
 export interface INestedVotes {
+	balance: string;
+	createdAt: Date;
+	decision: string;
+	delegatedTo: string;
+	delegatedVotes: { voter: string; votingPower: string }[];
+	delegatorsCount: number;
+	extrinsicIndex: string;
+	isDelegatedVote: boolean;
+	lockPeriod: number;
+	selfVotingPower: string;
+	voter: string;
+	delegatedVotingPower: string;
+}
+export interface INestedVotesRes {
 	totalCount: number;
-	votes: {
-		balance: string;
-		createdAt: Date;
-		decision: string;
-		delegatedTo: string;
-		delegatedVotes: { voter: string; votingPower: string }[];
-		delegatorsCount: number;
-		extrinsicIndex: string;
-		isDelegatedVote: boolean;
-		lockPeriod: number;
-		selfVotingPower: string;
-		voter: string;
-	}[];
+	votes: INestedVotes[];
 }

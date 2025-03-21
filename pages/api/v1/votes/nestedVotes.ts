@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { GET_ALL_NESTED_VOTES } from '~src/queries';
-import { INestedVotes } from '~src/types';
+import { INestedVotesRes } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const allVotes = subsqidResponse?.data?.convictionVotes || [];
 		const totalCount = subsqidResponse?.data?.convictionVotesConnection?.totalCount || 0;
 
-		const result: INestedVotes = {
+		const result: INestedVotesRes = {
 			totalCount: totalCount || 0,
 			votes:
 				allVotes?.map((vote: any) => ({

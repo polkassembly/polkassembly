@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { GET_ALL_NESTED_VOTES } from '~src/queries';
-import { INestedVotesResponse } from '~src/types';
+import { INestedVotesRes } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -46,26 +46,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		const allVotes = subsqidResponse?.data?.convictionVotes || [];
 		const totalCount = subsqidResponse?.data?.convictionVotesConnection?.totalCount || 0;
 
-		const result: INestedVotesResponse = {
+		const result: INestedVotesRes = {
 			totalCount: totalCount || 0,
-			votes: allVotes?.map((vote: any) => ({
-				balance: vote?.balance?.value || vote?.balance?.abstain || '0',
-				createdAt: vote?.createdAt,
-				decision: vote?.decision || null,
-				delegatedTo: vote?.delegatedTo || '',
-				delegatedVotes:
-					vote?.delegatedVotes?.map((delegatedVote: any) => ({
-						voter: delegatedVote?.voter,
-						votingPower: delegatedVote?.votingPower || '0'
-					})) || [],
-				delegatedVotingPower: vote?.delegatedVotingPower || '0',
-				delegatorsCount: vote?.delegatedVotes?.length || 0,
-				extrinsicIndex: vote?.extrinsicIndex,
-				isDelegatedVote: false,
-				lockPeriod: Number(vote?.lockPeriod) || 0.1,
-				selfVotingPower: vote?.selfVotingPower || '0',
-				voter: vote?.voter
-			}))
+			votes:
+				allVotes?.map((vote: any) => ({
+					balance: vote?.balance?.value || vote?.balance?.abstain || '0',
+					createdAt: vote?.createdAt,
+					decision: vote?.decision || null,
+					delegatedTo: vote?.delegatedTo || '',
+					delegatedVotes:
+						vote?.delegatedVotes?.map((delegatedVote: any) => ({
+							voter: delegatedVote?.voter,
+							votingPower: delegatedVote?.votingPower || '0'
+						})) || [],
+					delegatedVotingPower: vote?.delegatedVotingPower || '0',
+					delegatorsCount: vote?.delegatedVotes?.length || 0,
+					extrinsicIndex: vote?.extrinsicIndex,
+					isDelegatedVote: false,
+					lockPeriod: Number(vote?.lockPeriod) || 0.1,
+					selfVotingPower: vote?.selfVotingPower || '0',
+					voter: vote?.voter
+				})) || []
 		};
 
 		return res.status(200).json(result);

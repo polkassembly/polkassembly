@@ -18,7 +18,7 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import blockToDays from '~src/util/blockToDays';
-import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
@@ -43,9 +43,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [lockingPeriodMessage, setLockingPeriodMessage] = useState<string>('No lockup period');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
-	const {
-		batch_vote_details: { ayeVoteBalance, nyeVoteBalance }
-	} = useBatchVotesSelector();
 
 	const calculateLock = (convictionValue: number): number => {
 		const conviction = CONVICTIONS.find(([value]) => value === convictionValue);
@@ -108,23 +105,23 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	};
 
 	const handleBalanceChange = (balance: BN, fieldType: 'ayeVoteBalance' | 'nyeVoteBalance' | 'abstainVoteBalance') => {
-		const balanceStr = balance.toString();
+		const balanceStr = balance ? balance.toString() : '0';
 
 		const currentAye = ayeForm.getFieldValue('balance');
 		const currentNye = nayeForm.getFieldValue('balance');
 		const currentAbstain = abstainFrom.getFieldValue('abstainVote');
-		const isEmptyForm = !currentAye || !currentNye || !currentAbstain;
+		const isEmptyForm = currentAye == null || currentNye == null || currentAbstain == null;
 
 		if (isEmptyForm) {
-			if (currentAye) {
+			if (currentAye !== null && currentAye !== undefined) {
 				nayeForm.setFieldsValue({ balance: currentAye });
 				abstainFrom.setFieldsValue({ abstainVote: currentAye });
 			}
-			if (currentNye) {
+			if (currentNye !== null && currentNye !== undefined) {
 				ayeForm.setFieldsValue({ balance: currentNye });
 				abstainFrom.setFieldsValue({ abstainVote: currentNye });
 			}
-			if (currentAbstain) {
+			if (currentAbstain !== null && currentAbstain !== undefined) {
 				ayeForm.setFieldsValue({ balance: currentAbstain });
 				nayeForm.setFieldsValue({ balance: currentAbstain });
 			}
@@ -152,6 +149,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 			);
 		} else {
 			if (fieldType === 'ayeVoteBalance') {
+				ayeForm.setFieldsValue({ balance: currentAye });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -160,6 +158,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'nyeVoteBalance') {
+				nayeForm.setFieldsValue({ balance: currentNye });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -168,6 +167,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					})
 				);
 			} else if (fieldType === 'abstainVoteBalance') {
+				abstainFrom.setFieldsValue({ abstainVote: currentAbstain });
 				dispatch(
 					editBatchValueChanged({
 						values: {
@@ -286,7 +286,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={ayeVoteBalance ? new BN(ayeVoteBalance) : undefined}
 					/>
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
@@ -298,7 +297,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
-						balance={nyeVoteBalance ? new BN(nyeVoteBalance) : undefined}
 					/>
 				)}
 

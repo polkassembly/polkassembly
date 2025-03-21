@@ -1333,7 +1333,7 @@ export interface TreasuryData {
 	};
 }
 
-export interface INestedVote {
+export interface INestedVotes {
 	totalCount: number;
 	votes: {
 		balance: string;

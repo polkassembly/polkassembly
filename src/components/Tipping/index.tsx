@@ -463,7 +463,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 											name='remark'
 											value={remark}
 											onChange={(e) => setRemark(e.target.value)}
-											className='ml-4 h-[40px] w-[524px] rounded-[4px] bg-transparent dark:border-separatorDark max-sm:w-full'
+											className='ml-4 h-[40px] w-[524px] rounded-[4px] bg-transparent dark:border-separatorDark dark:text-blue-dark-medium max-sm:w-full'
 											placeholder='Say something nice with your tip(optional)'
 										/>
 										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />

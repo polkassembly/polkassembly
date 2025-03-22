@@ -16,7 +16,7 @@ interface ProposalPayload {
 	created_at: number;
 	post_type: string;
 	id: string;
-	proposer: string;
+	proposer_address: string;
 	track_number: number;
 	title?: string;
 	parsed_content?: string;
@@ -51,7 +51,7 @@ async function fetchSubsquareData(network: string, proposalIndex: string) {
 	}
 }
 
-async function updateFirestoreProposal(network: string, proposalIndex: string, data: any) {
+async function updateFirestoreProposal(network: string, proposalIndex: string, data: {title: string, content: string, proposer: string}) {
 	try {
 		const docRef = firestoreDB
 			.collection('networks')
@@ -65,8 +65,7 @@ async function updateFirestoreProposal(network: string, proposalIndex: string, d
 			title: data.title || '',
 			content: data.content || '',
 			id: proposalIndex,
-			proposer: getSubstrateAddress(data.proposer) || '',
-			updated_at: new Date()
+			proposer: getSubstrateAddress(data.proposer) || ''
 		});
 
 		logger.info(`Successfully updated Firestore for ${network} proposal #${proposalIndex}`);
@@ -112,10 +111,10 @@ async function processProposal(network: string, proposal: any) {
 		const payload: ProposalPayload = {
 			objectID: `${network}_${post_type}_${proposal.index}`,
 			network,
-			created_at: dayjs(proposal?.createdAt?.toDate?.() || new Date()).unix(),
+			created_at: dayjs(proposal?.createdAt?.toDate ? proposal?.createdAt?.toDate?.() : proposal?.createdAt || new Date() ).unix(),
 			post_type: post_type,
 			id: proposal.index,
-			proposer: proposal.proposer,
+			proposer_address: proposal.proposer,
 			track_number: proposal.trackNumber
 		};
 

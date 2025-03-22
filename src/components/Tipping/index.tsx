@@ -456,19 +456,17 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 									/>
 								) : null}
 
-								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
-									<div className='mt-12'>
-										{/* Input component */}
-										<Input
-											name='remark'
-											value={remark}
-											onChange={(e) => setRemark(e.target.value)}
-											className='ml-4 h-[40px] w-[524px] rounded-[4px] bg-transparent dark:border-separatorDark max-sm:w-full'
-											placeholder='Say something nice with your tip(optional)'
-										/>
-										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
-									</div>
-								)}
+								<div className='mt-12'>
+									{/* Input component */}
+									<Input
+										name='remark'
+										value={remark}
+										onChange={(e) => setRemark(e.target.value)}
+										className='ml-4 h-[40px] w-[524px] rounded-[4px] bg-transparent dark:border-separatorDark dark:text-blue-dark-medium max-sm:w-full'
+										placeholder='Say something nice with your tip(optional)'
+									/>
+									<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
+								</div>
 							</div>
 						</Form>
 						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) && !!existentialDeposit && (

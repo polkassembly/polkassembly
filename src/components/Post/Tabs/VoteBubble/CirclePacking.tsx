@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { ApiPromise } from '@polkadot/api';
 
 const LABEL_CONFIG = [
 	{ charCount: 10, minRadius: 60 },
@@ -38,14 +39,14 @@ const useVoterDisplayNames = (voters: string[]) => {
 		if (!voters.length) return;
 
 		// Set up API
-		let api = null;
+		let api: ApiPromise | null = null;
 		let apiReady = false;
 
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			api = apiContext.relayApi;
 			apiReady = apiContext.relayApiReady;
 		} else if (isPeopleChainSupportedNetwork(network)) {
-			api = peopleChainApi;
+			api = peopleChainApi || null;
 			apiReady = peopleChainApiReady;
 		} else {
 			if (!apiContext.api || !apiContext.apiReady) return;
@@ -64,7 +65,7 @@ const useVoterDisplayNames = (voters: string[]) => {
 					try {
 						const info = await getIdentityInformation({
 							address: voter,
-							api: peopleChainApi ?? (api || undefined),
+							api: peopleChainApi || api,
 							network: network
 						});
 

@@ -2,13 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC } from 'react';
+import React, { FC, useState, useEffect, useMemo } from 'react';
 import { ResponsiveCirclePacking } from '@nivo/circle-packing';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { usePeopleChainApiContext } from '~src/context';
+import { useContext } from 'react';
+import { ApiContext } from '~src/context/ApiContext';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const LABEL_CONFIG = [
 	{ charCount: 10, minRadius: 60 },
@@ -19,6 +25,83 @@ const LABEL_CONFIG = [
 	{ charCount: 4, minRadius: 10 },
 	{ charCount: 3, minRadius: 0 }
 ];
+
+// Custom hook to get identity display names
+const useVoterDisplayNames = (voters: string[]) => {
+	const { network } = useNetworkSelector();
+	const apiContext = useContext(ApiContext);
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const [displayInfo, setDisplayInfo] = useState<Record<string, { name: string; isVerified: boolean; isGood: boolean }>>({});
+
+	useEffect(() => {
+		// Skip if no voters
+		if (!voters.length) return;
+
+		// Set up API
+		let api = null;
+		let apiReady = false;
+
+		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
+			api = apiContext.relayApi;
+			apiReady = apiContext.relayApiReady;
+		} else if (isPeopleChainSupportedNetwork(network)) {
+			api = peopleChainApi;
+			apiReady = peopleChainApiReady;
+		} else {
+			if (!apiContext.api || !apiContext.apiReady) return;
+			api = apiContext.api;
+			apiReady = apiContext.apiReady;
+		}
+
+		if (!api || !apiReady) return;
+
+		// Fetch identity info for all voters
+		const fetchIdentities = async () => {
+			const results: Record<string, { name: string; isVerified: boolean; isGood: boolean }> = {};
+
+			await Promise.all(
+				voters.map(async (voter) => {
+					try {
+						const info = await getIdentityInformation({
+							address: voter,
+							api: peopleChainApi ?? (api || undefined),
+							network: network
+						});
+
+						// Use display name if available, otherwise use shortened address
+						if (info.display || info.displayParent) {
+							results[voter] = {
+								isGood: info.isGood || false,
+								isVerified: info.isVerified || false,
+								name: info.displayParent || info.display
+							};
+						} else {
+							// Fallback to shortened address if no identity
+							results[voter] = {
+								isGood: false,
+								isVerified: false,
+								name: voter.slice(0, 5) + '...' + voter.slice(-5)
+							};
+						}
+					} catch (err) {
+						console.error(`Error fetching identity for ${voter}:`, err);
+						results[voter] = {
+							isGood: false,
+							isVerified: false,
+							name: voter.slice(0, 5) + '...' + voter.slice(-5)
+						};
+					}
+				})
+			);
+
+			setDisplayInfo(results);
+		};
+
+		fetchIdentities();
+	}, [voters, network, apiContext, peopleChainApi, peopleChainApiReady]);
+
+	return displayInfo;
+};
 
 interface IVoteData {
 	voter: string;
@@ -40,6 +123,15 @@ interface ICirclePackingProps {
 const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selectedTab }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+
+	// Get all unique voter addresses
+	const voterAddresses = useMemo(() => {
+		return [...new Set(data.map((item) => item.voter))];
+	}, [data]);
+
+	// Get display names for all voters
+	const displayInfo = useVoterDisplayNames(voterAddresses);
+
 	if (data.length === 0) {
 		return (
 			<div className='flex h-[500px] w-full items-center justify-center'>
@@ -73,17 +165,45 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selecte
 					const { id, radius } = datum;
 					if (typeof id !== 'string') return String(id);
 
-					// Find the appropriate character count based on radius
+					// Use identity display name if available
+					if (displayInfo[id] && selectedTab === 'nested') {
+						// Find the appropriate character count based on radius
+						const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
+						const charCount = config ? config.charCount : 3;
+
+						const info = displayInfo[id];
+						const displayName = info.name;
+
+						// Add verification badge symbols
+						let prefix = '';
+						if (info.isVerified && info.isGood) {
+							prefix = '✅ '; // Verified and good (green checkmark)
+						} else if (info.isVerified) {
+							prefix = '✓ '; // Just verified (checkmark)
+						} else if (info.name.length > 10) {
+							// Likely has some identity but not verified
+							prefix = ''; // Information symbol
+						}
+
+						// Format the final label with prefix and name
+						const nameWithPrefix = prefix + displayName;
+						return nameWithPrefix.length > charCount + prefix.length ? nameWithPrefix.slice(0, charCount + prefix.length) + '...' : nameWithPrefix;
+					}
+
+					// Fallback to address truncation
 					const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
 					const charCount = config ? config.charCount : 3;
-
 					return id.slice(0, charCount) + (id.length > charCount ? '...' : '');
 				}}
 				labelsSkipRadius={30}
-				labelTextColor={{
-					from: 'color',
-					modifiers: [['darker', 10]]
-				}}
+				labelTextColor={
+					theme === 'dark'
+						? '#FFFFFF' // White text for dark mode
+						: {
+								from: 'color',
+								modifiers: [['darker', 10]] // Keep existing style for light mode
+						  }
+				}
 				borderWidth={1}
 				borderColor={{
 					from: 'color',

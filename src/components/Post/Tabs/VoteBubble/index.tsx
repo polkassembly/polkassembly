@@ -42,9 +42,9 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	const colors = useMemo(
 		() => ({
-			abstain: theme === 'dark' ? '#407BFFBF' : '#407BFF80',
+			abstain: theme === 'dark' ? '#407BFFBF' : '#407BFFBF',
 			aye: theme === 'dark' ? '#64A057BF' : '#2ED47A80',
-			nay: theme === 'dark' ? '#BD2020BF' : '#E8486580'
+			nay: theme === 'dark' ? '#BD2020BF' : '#E84865BF'
 		}),
 		[theme]
 	);
@@ -163,11 +163,11 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 					<span className='text-sm'>Aye</span>
 				</div>
 				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-red-500/50' />
+					<span className='h-2 w-2 rounded-full bg-red-500/75' />
 					<span className='text-sm'>Nay</span>
 				</div>
 				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-blue-500/50' />
+					<span className='h-2 w-2 rounded-full bg-blue-500/75' />
 					<span className='text-sm'>Abstain</span>
 				</div>
 			</div>

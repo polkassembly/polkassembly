@@ -27,6 +27,95 @@ const LABEL_CONFIG = [
 	{ charCount: 3, minRadius: 0 }
 ];
 
+// Cache for storing identity information to prevent redundant API calls
+const IDENTITY_CACHE: Record<string, { name: string; isVerified: boolean; isGood: boolean; network: string; timestamp: number }> = {};
+const CACHE_EXPIRY = 30 * 60 * 1000; // 30 minutes in milliseconds
+const BATCH_SIZE = 25; // Process identities in batches of 25
+
+// Helper function to get identities in batches
+const fetchIdentitiesInBatches = async (
+	voters: string[],
+	api: ApiPromise | undefined,
+	peopleChainApi: ApiPromise | undefined,
+	network: string
+): Promise<Record<string, { name: string; isVerified: boolean; isGood: boolean }>> => {
+	const results: Record<string, { name: string; isVerified: boolean; isGood: boolean }> = {};
+	const now = Date.now();
+
+	// Filter out voters that are already in cache and still valid
+	const votersToFetch = voters.filter((voter) => {
+		const cacheKey = `${voter}_${network}`;
+		const cached = IDENTITY_CACHE[cacheKey];
+		if (cached && now - cached.timestamp < CACHE_EXPIRY) {
+			results[voter] = {
+				isGood: cached.isGood,
+				isVerified: cached.isVerified,
+				name: cached.name
+			};
+			return false;
+		}
+		return true;
+	});
+
+	// Process voters in batches
+	for (let i = 0; i < votersToFetch.length; i += BATCH_SIZE) {
+		const batch = votersToFetch.slice(i, i + BATCH_SIZE);
+
+		// Process batch in parallel
+		await Promise.all(
+			batch.map(async (voter) => {
+				try {
+					const info = await getIdentityInformation({
+						address: voter,
+						api: peopleChainApi || api,
+						network: network
+					});
+
+					// Prepare result
+					let result;
+					if (info.display || info.displayParent) {
+						result = {
+							isGood: info.isGood || false,
+							isVerified: info.isVerified || false,
+							name: info.displayParent || info.display
+						};
+					} else {
+						// Fallback to shortened address if no identity
+						result = {
+							isGood: false,
+							isVerified: false,
+							name: voter.slice(0, 5) + '...' + voter.slice(-5)
+						};
+					}
+
+					// Save to results and cache
+					results[voter] = result;
+					IDENTITY_CACHE[`${voter}_${network}`] = {
+						...result,
+						network,
+						timestamp: Date.now()
+					};
+				} catch (err) {
+					console.error(`Error fetching identity for ${voter}:`, err);
+					const result = {
+						isGood: false,
+						isVerified: false,
+						name: voter.slice(0, 5) + '...' + voter.slice(-5)
+					};
+					results[voter] = result;
+					IDENTITY_CACHE[`${voter}_${network}`] = {
+						...result,
+						network,
+						timestamp: Date.now()
+					};
+				}
+			})
+		);
+	}
+
+	return results;
+};
+
 // Custom hook to get identity display names
 const useVoterDisplayNames = (voters: string[]) => {
 	const { network } = useNetworkSelector();
@@ -56,45 +145,9 @@ const useVoterDisplayNames = (voters: string[]) => {
 
 		if (!api || !apiReady) return;
 
-		// Fetch identity info for all voters
+		// Fetch identity info for all voters using batched function
 		const fetchIdentities = async () => {
-			const results: Record<string, { name: string; isVerified: boolean; isGood: boolean }> = {};
-
-			await Promise.all(
-				voters.map(async (voter) => {
-					try {
-						const info = await getIdentityInformation({
-							address: voter,
-							api: peopleChainApi || api,
-							network: network
-						});
-
-						// Use display name if available, otherwise use shortened address
-						if (info.display || info.displayParent) {
-							results[voter] = {
-								isGood: info.isGood || false,
-								isVerified: info.isVerified || false,
-								name: info.displayParent || info.display
-							};
-						} else {
-							// Fallback to shortened address if no identity
-							results[voter] = {
-								isGood: false,
-								isVerified: false,
-								name: voter.slice(0, 5) + '...' + voter.slice(-5)
-							};
-						}
-					} catch (err) {
-						console.error(`Error fetching identity for ${voter}:`, err);
-						results[voter] = {
-							isGood: false,
-							isVerified: false,
-							name: voter.slice(0, 5) + '...' + voter.slice(-5)
-						};
-					}
-				})
-			);
-
+			const results = await fetchIdentitiesInBatches(voters, api, peopleChainApi, network);
 			setDisplayInfo(results);
 		};
 
@@ -120,6 +173,41 @@ interface ICirclePackingProps {
 	name: string;
 	selectedTab: 'flattened' | 'nested';
 }
+
+// Helper function to generate node labels
+const generateNodeLabel = (id: string | number, radius: number, displayInfo: Record<string, { name: string; isVerified: boolean; isGood: boolean }>, isNested: boolean): string => {
+	if (typeof id !== 'string') return String(id);
+
+	// Use identity display name if available for nested view
+	if (displayInfo[id] && isNested) {
+		// Find the appropriate character count based on radius
+		const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
+		const charCount = config ? config.charCount : 3;
+
+		const info = displayInfo[id];
+		const displayName = info.name;
+
+		// Add verification badge symbols
+		let prefix = '';
+		if (info.isVerified && info.isGood) {
+			prefix = '✅ '; // Verified and good (green checkmark)
+		} else if (info.isVerified) {
+			prefix = '✓ '; // Just verified (checkmark)
+		} else if (info.name.length > 10) {
+			// Likely has some identity but not verified
+			prefix = ''; // Information symbol
+		}
+
+		// Format the final label with prefix and name
+		const nameWithPrefix = prefix + displayName;
+		return nameWithPrefix.length > charCount + prefix.length ? nameWithPrefix.slice(0, charCount + prefix.length) + '...' : nameWithPrefix;
+	}
+
+	// Fallback to address truncation
+	const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
+	const charCount = config ? config.charCount : 3;
+	return id.slice(0, charCount) + (id.length > charCount ? '...' : '');
+};
 
 const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selectedTab }) => {
 	const { network } = useNetworkSelector();
@@ -162,40 +250,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selecte
 				padding={4}
 				leavesOnly={true}
 				enableLabels={true}
-				label={(datum) => {
-					const { id, radius } = datum;
-					if (typeof id !== 'string') return String(id);
-
-					// Use identity display name if available
-					if (displayInfo[id] && selectedTab === 'nested') {
-						// Find the appropriate character count based on radius
-						const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
-						const charCount = config ? config.charCount : 3;
-
-						const info = displayInfo[id];
-						const displayName = info.name;
-
-						// Add verification badge symbols
-						let prefix = '';
-						if (info.isVerified && info.isGood) {
-							prefix = '✅ '; // Verified and good (green checkmark)
-						} else if (info.isVerified) {
-							prefix = '✓ '; // Just verified (checkmark)
-						} else if (info.name.length > 10) {
-							// Likely has some identity but not verified
-							prefix = ''; // Information symbol
-						}
-
-						// Format the final label with prefix and name
-						const nameWithPrefix = prefix + displayName;
-						return nameWithPrefix.length > charCount + prefix.length ? nameWithPrefix.slice(0, charCount + prefix.length) + '...' : nameWithPrefix;
-					}
-
-					// Fallback to address truncation
-					const config = LABEL_CONFIG.find((config) => radius > config.minRadius);
-					const charCount = config ? config.charCount : 3;
-					return id.slice(0, charCount) + (id.length > charCount ? '...' : '');
-				}}
+				label={(datum) => generateNodeLabel(datum.id, datum.radius, displayInfo, selectedTab === 'nested')}
 				labelsSkipRadius={30}
 				labelTextColor={
 					theme === 'dark'

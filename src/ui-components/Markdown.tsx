@@ -316,6 +316,41 @@ const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => 
 	</a>
 );
 
+// Custom link component to handle special URL format
+const CustomLink = (props: any) => {
+	const { href, children, ...rest } = props;
+
+	// Check if the URL matches the pattern https://../something
+	if (href && href.match(/^https:\/\/\.\.\/(.+)$/)) {
+		// Extract the path part after the ../
+		const path = href.replace(/^https:\/\/\.\.\//, '');
+		// Use window.location to get current host and protocol
+		const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+		const newHref = `${currentOrigin}/${path}`;
+
+		return (
+			<a
+				href={newHref}
+				{...rest}
+			>
+				{children}
+			</a>
+		);
+	}
+
+	// Default link behavior for other URLs
+	return (
+		<a
+			href={href}
+			target='_blank'
+			rel='noopener noreferrer'
+			{...rest}
+		>
+			{children}
+		</a>
+	);
+};
+
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
@@ -348,7 +383,10 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}
-				components={isSmallScreen || isUsedInComments ? { img: CustomImage } : {}}
+				components={{
+					a: CustomLink,
+					...(isSmallScreen || isUsedInComments ? { img: CustomImage } : {})
+				}}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

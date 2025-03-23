@@ -39,14 +39,14 @@ const useVoterDisplayNames = (voters: string[]) => {
 		if (!voters.length) return;
 
 		// Set up API
-		let api: ApiPromise | null = null;
+		let api: ApiPromise | undefined = undefined;
 		let apiReady = false;
 
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			api = apiContext.relayApi;
 			apiReady = apiContext.relayApiReady;
 		} else if (isPeopleChainSupportedNetwork(network)) {
-			api = peopleChainApi || null;
+			api = peopleChainApi;
 			apiReady = peopleChainApiReady;
 		} else {
 			if (!apiContext.api || !apiContext.apiReady) return;

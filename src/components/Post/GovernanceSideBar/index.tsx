@@ -577,9 +577,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 								const currentSupport = currentSupportData[currentSupportData.length - 1];
 								progress = {
-									approval: approval ? approval.toFormat(2) : (currentApproval?.y?.toFixed(1) as any),
+									approval: approval ? Number(approval.toFormat(2)) : Number(currentApproval?.y?.toFixed(1) as any),
 									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
-									support: support ? support.toFormat(2) : (currentSupport?.y?.toFixed(1) as any),
+									support: support ? Number(support.toFormat(2)) : Number(currentSupport?.y?.toFixed(1) as any),
 									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
 								};
 								setProgress(progress);

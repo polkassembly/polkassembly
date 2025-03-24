@@ -1348,7 +1348,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
-		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1' && post?.dataSource !== 'subsquare') {
 			await redisSetex(
 				generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }),
 				getStatusesFromCustomStatus(CustomStatus.Active).includes(post?.status || '') ? TTL_DURATION_ACTIVE : TTL_DURATION,

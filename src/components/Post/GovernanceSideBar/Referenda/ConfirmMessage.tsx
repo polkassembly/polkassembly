@@ -46,15 +46,36 @@ const ConfirmMessage = () => {
 	const [estimateHour, setEstimateHour] = useState(0);
 
 	const handleEstimatedTime = () => {
-		if (!network) return;
+		if (!network) {
+			setEstimateHour(0);
+			return;
+		}
 		const trackInfo = getTrackData(network, track_name, track_number);
 		const statusObj = statusHistory?.find((s) => s?.status === 'Deciding');
 		const confirmedStartedStatus = statusHistory?.find((s) => s?.status === 'ConfirmStarted');
 		const blockVisibleStatus = (statusHistory || [])?.find((v: any) => ['Deciding', 'ConfirmStarted', 'ConfirmAborted'].includes(v?.status || ''));
 		if (!statusObj || !blockVisibleStatus) {
+			setEstimateHour(0);
 			return;
 		}
 		if (support >= supportThreshold && approval >= approvalThreshold) {
+			if (trackInfo?.confirmPeriod) {
+				let estimateHour = 0;
+				const timeStr = blocksToRelevantTime(network, Number(trackInfo?.confirmPeriod));
+				const time = timeStr.split(' ')[0];
+				const units = timeStr.split(' ')[1];
+				const confirmedStartedHour = confirmedStartedStatus && confirmedStartedStatus?.timestamp ? dayjs().diff(confirmedStartedStatus?.timestamp, 'hour') : 0;
+				if (units === 'days') {
+					estimateHour = estimateHour + Number(time) * 24 - confirmedStartedHour;
+				} else if (units === 'hrs') {
+					estimateHour = estimateHour + Number(time) - confirmedStartedHour;
+				}
+				if (estimateHour > 0) {
+					setEstimateHour(estimateHour);
+					return;
+				}
+			}
+			setEstimateHour(0);
 			return;
 		}
 		const futureSupport = futurePoint(supportData, support);
@@ -87,6 +108,7 @@ const ConfirmMessage = () => {
 			}
 		}
 		if (estimateHour < 0) {
+			setEstimateHour(0);
 			return;
 		}
 		setEstimateHour(estimateHour);

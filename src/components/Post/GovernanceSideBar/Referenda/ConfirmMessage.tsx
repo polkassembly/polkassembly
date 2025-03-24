@@ -59,7 +59,7 @@ const ConfirmMessage = () => {
 			return;
 		}
 		if (support >= supportThreshold && approval >= approvalThreshold) {
-			if (trackInfo?.confirmPeriod) {
+			if (trackInfo?.confirmPeriod && confirmedStartedStatus) {
 				let estimateHour = 0;
 				const timeStr = blocksToRelevantTime(network, Number(trackInfo?.confirmPeriod));
 				const time = timeStr.split(' ')[0];

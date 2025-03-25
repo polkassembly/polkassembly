@@ -54,7 +54,7 @@ interface IPostDescriptionProps {
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar } = props;
 	const {
-		postData: { content, postType, postIndex, title, post_reactions }
+		postData: { content, postType, postIndex, title, post_reactions, userId }
 	} = usePostDataContext();
 	const currentUser = useUserDetailsSelector();
 	const { allowed_roles } = useUserDetailsSelector();
@@ -131,7 +131,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			key: 4,
 			label: (
 				<div>
-					{allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama', 'picasso', 'composable'].includes(network) && (
+					{((allowed_roles && allowed_roles.includes('moderator')) || canEdit) && isOffchainPost && ['polkadot', 'kusama', 'picasso', 'composable'].includes(network) && (
 						<ReportButton
 							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className}`}
 							proposalType={postType}
@@ -140,6 +140,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 							type={EReportType.POST}
 							postId={`${postIndex}`}
 							isUsedInDescription={true}
+							canEdit={Boolean(canEdit)}
+							proposerId={Number(userId)}
 						/>
 					)}
 				</div>

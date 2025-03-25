@@ -26,6 +26,12 @@ import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 // import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import { useTheme } from 'next-themes';
 
+interface DeletePostResponse {
+	data: {
+		message: string;
+		error: string;
+	};
+}
 interface IReportButtonProps {
 	type: string;
 	postId?: number | string;
@@ -37,12 +43,14 @@ interface IReportButtonProps {
 	onSuccess?: () => void;
 	isButtonOnComment?: boolean;
 	isUsedInDescription?: boolean;
+	canEdit?: boolean;
+	proposerId?: number;
 }
 
 const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription, canEdit, proposerId } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
@@ -164,19 +172,60 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
+
+	const deletePost = async (postId: number | string | undefined, proposalType?: ProposalType) => {
+		try {
+			const { data, error } = await nextApiClientFetch<{ data: DeletePostResponse | null; error: string | null }>('/api/v1/auth/actions/deletePost', {
+				proposerId,
+				postId,
+				postType: proposalType
+			});
+
+			if (error) {
+				queueNotification({
+					header: 'Error!',
+					message: 'Error deleting post',
+					status: NotificationStatus.ERROR
+				});
+			}
+
+			if (data && data?.message) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Post successfully deleted.',
+					status: NotificationStatus.SUCCESS
+				});
+				setShowModal(false);
+			}
+		} catch (err) {
+			console.error('Error while deleting post: ', err);
+			queueNotification({
+				header: 'Error!',
+				message: `An error occurred while deleting post: ${err instanceof Error ? err.message : 'Unknown error'}`,
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
 	const handleDelete = async () => {
-		if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
+		if ((!allowed_roles?.includes('moderator') && !canEdit) || isNaN(Number(postId))) return;
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
-		if (validationErrors.length > 0) return;
+		if (!canEdit && validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
 		setLoading(true);
-		if (allowed_roles?.includes('moderator') && reason) {
-			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
-			setLoading(false);
-			setShowModal(false);
+
+		if (canEdit) {
+			await deletePost(postId, proposalType);
+		} else {
+			if (allowed_roles?.includes('moderator') && reason) {
+				await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
+				setLoading(false);
+				setShowModal(false);
+			}
 		}
+		setLoading(false);
 	};
 	return (
 		<>

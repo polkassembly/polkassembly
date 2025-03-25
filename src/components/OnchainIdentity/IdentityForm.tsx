@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Checkbox, Form } from 'antd';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
@@ -77,6 +77,10 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
 	const [isBalanceUpdatedForSignatory, setIsBalanceUpdatedForSignatory] = useState<boolean>(false);
 	const [isBalanceUpdatedLoadingForSignatory, setIsBalanceUpdatedLoadingForSignatory] = useState<boolean>(false);
+
+	const isSocialFieldsAlreadyAvailable: boolean = useMemo(() => {
+		return !!identityInfo?.email || !!identityInfo?.twitter || !!identityInfo?.matrix;
+	}, [identityInfo]);
 
 	const getDefaultChainBalance = async () => {
 		if (!api || !apiReady) return;
@@ -160,7 +164,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 			}
 		};
 
-		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) {
+		if (isSocialFieldsAlreadyAvailable && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter })) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -329,10 +333,14 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 	const getGasFee = async (initialLoading?: boolean, txFeeVal?: ITxFee) => {
 		setIsBalanceUpdated(false);
 
+		const isSocialFieldsAvailable = () => {
+			return !!form.getFieldValue('email') || !!form.getFieldValue('twitter') || !!form.getFieldValue('matrix');
+		};
+
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
-		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !identityAddress) {
+		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !isSocialFieldsAvailable || !identityAddress) {
 			setTxFee({ ...txFeeVal, gasFee: ZERO_BN });
 			return;
 		}
@@ -415,7 +423,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 				okTwitter &&
 				okMatrix &&
 				displayNameVal?.length > 1 &&
-				!!emailVal &&
+				(emailVal?.length ? !!emailVal : true) &&
 				(twitterVal?.length ? !!twitterVal : true) &&
 				(matrixVal?.length ? !!matrixVal : true)
 		});
@@ -573,7 +581,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Congratulations, you have been successfully verified by polkassembly!</p>}
 					/>
 				)}
-				{!!identityInfo?.email &&
+				{!!isSocialFieldsAlreadyAvailable &&
 					!!identityInfo?.displayName &&
 					!identityInfo.verifiedByPolkassembly &&
 					allowSetIdentity({ displayName, email, identityInfo, legalName, matrix, twitter }) &&
@@ -598,14 +606,6 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						/>
 					)}
 
-				{!identityInfo.email && identityInfo.isIdentitySet && !email.value && (
-					<Alert
-						className='mb-6 rounded-[4px]'
-						type='warning'
-						showIcon
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Please provide your email for request judgement. </p>}
-					/>
-				)}
 				{isCurrentlyLoggedInUsingMultisig(currentUser) ? (
 					<>
 						<div>
@@ -822,12 +822,10 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 						/>
 					</label>
 
-					<div className='mt-1 flex items-center  '>
+					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
-								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
-							</span>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Email</span>
 						</span>
 						<Form.Item
 							name='email'

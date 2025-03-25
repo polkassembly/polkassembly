@@ -25,6 +25,9 @@ const IdentityFormActionButtons = ({
 	const { identityInfo, displayName, legalName, socials } = useOnchainIdentitySelector();
 	const { registerarFee, minDeposite, gasFee } = txFee;
 	const { email, twitter, matrix } = socials;
+	const isSocialFieldsAvailable = useMemo(() => {
+		return !!identityInfo?.email || !!identityInfo?.twitter || !!identityInfo?.matrix;
+	}, [identityInfo]);
 
 	const totalFee = useMemo(() => {
 		return gasFee.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite));
@@ -43,7 +46,7 @@ const IdentityFormActionButtons = ({
 				variant='default'
 				buttonsize='xs'
 			/>
-			{!!identityInfo?.email && !!identityInfo?.displayName && handleAllowSetIdentity() && !identityInfo?.alreadyVerified ? (
+			{!!identityInfo?.displayName && isSocialFieldsAvailable && handleAllowSetIdentity() && !identityInfo?.alreadyVerified ? (
 				<CustomButton
 					onClick={() => handleSetIdentity(true)}
 					loading={loading}

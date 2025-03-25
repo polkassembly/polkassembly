@@ -27,12 +27,6 @@ import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 
-interface DeletePostResponse {
-	data: {
-		message: string;
-		error: string;
-	};
-}
 interface IReportButtonProps {
 	type: string;
 	postId?: number | string;
@@ -177,9 +171,9 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const deletePost = async (postId: number | string | undefined, proposalType?: ProposalType) => {
 		try {
 			const { data, error } = await nextApiClientFetch('/api/v1/auth/actions/deletePost', {
-				proposerId,
 				postId,
-				postType: proposalType
+				postType: proposalType,
+				proposerId
 			});
 
 			if (error) {

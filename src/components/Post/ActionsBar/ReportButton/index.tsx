@@ -25,6 +25,7 @@ import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 // import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 
 interface DeletePostResponse {
 	data: {
@@ -53,12 +54,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription, canEdit, proposerId } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
+	const router = useRouter();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [error, setError] = useState('');
-
 	const [form] = Form.useForm();
 
 	const handleReport = async () => {
@@ -175,7 +176,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 	const deletePost = async (postId: number | string | undefined, proposalType?: ProposalType) => {
 		try {
-			const { data, error } = await nextApiClientFetch<{ data: DeletePostResponse | null; error: string | null }>('/api/v1/auth/actions/deletePost', {
+			const { data, error } = await nextApiClientFetch('/api/v1/auth/actions/deletePost', {
 				proposerId,
 				postId,
 				postType: proposalType
@@ -189,13 +190,20 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				});
 			}
 
-			if (data && data?.message) {
+			if (data) {
 				queueNotification({
 					header: 'Success!',
 					message: 'Post successfully deleted.',
 					status: NotificationStatus.SUCCESS
 				});
 				setShowModal(false);
+				router.push('/discussions');
+			} else {
+				queueNotification({
+					header: 'Error!',
+					message: 'Unexpected response from server.',
+					status: NotificationStatus.ERROR
+				});
 			}
 		} catch (err) {
 			console.error('Error while deleting post: ', err);
@@ -208,7 +216,9 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 
 	const handleDelete = async () => {
-		if ((!allowed_roles?.includes('moderator') && !canEdit) || isNaN(Number(postId))) return;
+		if (!canEdit) {
+			if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
+		}
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
 		if (!canEdit && validationErrors.length > 0) return;

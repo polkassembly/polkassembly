@@ -145,13 +145,15 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	return (
 		<div className='flex w-full flex-col items-center justify-center gap-2'>
-			<Segmented
-				value={selectedTab}
-				style={{ marginBottom: 8 }}
-				onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
-				options={['nested', 'flattened']}
-				className='ml-auto capitalize dark:bg-gray-800'
-			/>
+			<div className='flex w-full items-center justify-between gap-5 border'>
+				<h2 className='text-base font-semibold'>Votes Bubble</h2>
+				<Segmented
+					value={selectedTab}
+					onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
+					options={['nested', 'flattened']}
+					className='ml-auto capitalize dark:bg-gray-800'
+				/>
+			</div>
 			<CirclePacking
 				data={selectedTab === 'flattened' ? flattenedVotesData : nestedVotesData}
 				name='votes'

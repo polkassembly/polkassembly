@@ -6,7 +6,7 @@ import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Form, Modal } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
-import { NotificationStatus } from 'src/types';
+import { NotificationStatus, Role } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
@@ -25,6 +25,7 @@ import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 // import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 
 interface IReportButtonProps {
 	type: string;
@@ -37,20 +38,22 @@ interface IReportButtonProps {
 	onSuccess?: () => void;
 	isButtonOnComment?: boolean;
 	isUsedInDescription?: boolean;
+	canEdit?: boolean;
+	proposerId?: number;
 }
 
 const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription, canEdit, proposerId } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
+	const router = useRouter();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [error, setError] = useState('');
-
 	const [form] = Form.useForm();
 
 	const handleReport = async () => {
@@ -164,19 +167,65 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
+
+	const deletePost = async (postId: number | string | undefined, proposalType?: ProposalType) => {
+		try {
+			const { data, error } = await nextApiClientFetch('/api/v1/auth/actions/deletePost', {
+				authorId: proposerId,
+				postId,
+				postType: proposalType
+			});
+
+			if (error) {
+				queueNotification({
+					header: 'Error!',
+					message: 'Error deleting post',
+					status: NotificationStatus.ERROR
+				});
+			}
+
+			if (data) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Post successfully deleted.',
+					status: NotificationStatus.SUCCESS
+				});
+				setShowModal(false);
+				router.push('/discussions');
+			} else {
+				queueNotification({
+					header: 'Error!',
+					message: 'Unexpected response from server.',
+					status: NotificationStatus.ERROR
+				});
+			}
+		} catch (err) {
+			console.error('Error while deleting post: ', err);
+			queueNotification({
+				header: 'Error!',
+				message: `An error occurred while deleting post: ${err instanceof Error ? err.message : 'Unknown error'}`,
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
 	const handleDelete = async () => {
-		if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
-		if (validationErrors.length > 0) return;
+		if (!canEdit && validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
 		setLoading(true);
-		if (allowed_roles?.includes('moderator') && reason) {
-			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
-			setLoading(false);
-			setShowModal(false);
+
+		if (canEdit) {
+			await deletePost(postId, proposalType);
+		} else {
+			if (allowed_roles?.includes(Role.MODERATOR) && reason) {
+				await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
+			}
 		}
+		setLoading(false);
+		setShowModal(false);
 	};
 	return (
 		<>

@@ -6,7 +6,7 @@ import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Form, Modal } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
-import { NotificationStatus } from 'src/types';
+import { NotificationStatus, Role } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
@@ -171,9 +171,9 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const deletePost = async (postId: number | string | undefined, proposalType?: ProposalType) => {
 		try {
 			const { data, error } = await nextApiClientFetch('/api/v1/auth/actions/deletePost', {
+				authorId: proposerId,
 				postId,
-				postType: proposalType,
-				proposerId
+				postType: proposalType
 			});
 
 			if (error) {
@@ -210,9 +210,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 
 	const handleDelete = async () => {
-		if (!canEdit) {
-			if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
-		}
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
 		if (!canEdit && validationErrors.length > 0) return;
@@ -223,13 +220,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		if (canEdit) {
 			await deletePost(postId, proposalType);
 		} else {
-			if (allowed_roles?.includes('moderator') && reason) {
+			if (allowed_roles?.includes(Role.MODERATOR) && reason) {
 				await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
-				setLoading(false);
-				setShowModal(false);
 			}
 		}
 		setLoading(false);
+		setShowModal(false);
 	};
 	return (
 		<>

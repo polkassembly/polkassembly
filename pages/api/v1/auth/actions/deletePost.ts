@@ -13,20 +13,20 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 
 const deletePostIfAuthorized = async ({
-	proposerId,
+	authorId,
 	postId,
 	network,
 	postType,
 	userId
 }: {
-	proposerId: number;
+	authorId: number;
 	postId: number;
 	network: string;
 	postType: OffChainProposalType;
 	userId: number;
 }): Promise<{ success: boolean; message: string; error?: string }> => {
 	try {
-		if (proposerId !== userId) {
+		if (authorId !== userId) {
 			return {
 				success: false,
 				message: 'You are not authorized to delete this post'
@@ -35,7 +35,9 @@ const deletePostIfAuthorized = async ({
 
 		const postRef = firestore_db.collection('networks').doc(network).collection('post_types').doc(postType).collection('posts').doc(String(postId));
 
-		await postRef.delete();
+		await postRef.update({
+			isDeleted: true
+		});
 
 		return {
 			success: true,
@@ -69,9 +71,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(403).json({ message: 'Unauthorized' });
 		}
 
-		const { proposerId, postId, postType } = req.body;
+		const { authorId, postId, postType } = req.body;
 
-		if (!proposerId || !postId || !network || !postType) {
+		if (!authorId || !postId || !network || !postType) {
 			return;
 		}
 
@@ -80,7 +82,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 
 		const response = await deletePostIfAuthorized({
-			proposerId,
+			authorId,
 			postId,
 			network,
 			postType,

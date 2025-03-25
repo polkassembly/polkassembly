@@ -887,7 +887,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.TREASURER]: {
 			trackId: 11,
-			description: 'Origin for spending (any amount of) funds until the upper limit of  10,000,000 DOT',
+			description: 'Origin able to spend up to 10,000,000 DOT from the treasury at once ',
 			group: 'Treasury',
 			name: 'treasurer',
 			maxSpend: 10000000,
@@ -2450,7 +2450,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionDeposit: 10000000000000,
 			preparePeriod: 1200,
 			decisionPeriod: 403200,
-			confirmPeriod: 100800,
+			confirmPeriod: 1800,
 			minEnactmentPeriod: 14400,
 			minApproval: {
 				reciprocal: {
@@ -3000,9 +3000,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			maxDeciding: 50,
 			decisionDeposit: 3000000000000,
 			preparePeriod: 100,
-			decisionPeriod: 201600,
-			confirmPeriod: 7200,
-			minEnactmentPeriod: 14400,
+			decisionPeriod: 200,
+			confirmPeriod: 100,
+			minEnactmentPeriod: 50,
 			maxSpend: 333,
 			minApproval: {
 				linearDecreasing: {

@@ -211,7 +211,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionDeposit: 33333333333000,
 			preparePeriod: 1200,
 			decisionPeriod: 201600,
-			confirmPeriod: 1800,
+			confirmPeriod: 28800,
 			minEnactmentPeriod: 14400,
 			minApproval: {
 				reciprocal: {
@@ -726,6 +726,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.WISH_FOR_CHANGE]: {
 			trackId: 2,
+			maxDeciding: 10,
 			description: 'Origin for signaling that the network wishes for some change.',
 			group: 'Main',
 			name: 'wish_for_change',
@@ -759,7 +760,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionDeposit: 4000000000000,
 			preparePeriod: 2400,
 			decisionPeriod: 403200,
-			confirmPeriod: 28800,
+			confirmPeriod: 100800,
 			minEnactmentPeriod: 14400,
 			minApproval: {
 				linearDecreasing: {
@@ -786,7 +787,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionDeposit: 2000000000000,
 			preparePeriod: 2400,
 			decisionPeriod: 403200,
-			confirmPeriod: 14400,
+			confirmPeriod: 57600,
 			minEnactmentPeriod: 14400,
 			minApproval: {
 				linearDecreasing: {
@@ -886,7 +887,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.TREASURER]: {
 			trackId: 11,
-			description: 'Origin for spending (any amount of) funds until the upper limit of  10,000,000 DOT',
+			description: 'Origin able to spend up to 10,000,000 DOT from the treasury at once ',
 			group: 'Treasury',
 			name: 'treasurer',
 			maxSpend: 10000000,
@@ -894,7 +895,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionDeposit: 10000000000000,
 			preparePeriod: 1200,
 			decisionPeriod: 403200,
-			confirmPeriod: 1800,
+			confirmPeriod: 100800,
 			minEnactmentPeriod: 14400,
 			minApproval: {
 				reciprocal: {

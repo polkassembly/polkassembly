@@ -23,7 +23,7 @@ const NextBurn = ({ nextBurn }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<>
-			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && (
+			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polymesh-test', 'polimec', 'rolimec', 'mythos'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>

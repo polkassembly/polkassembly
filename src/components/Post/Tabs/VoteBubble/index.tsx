@@ -42,9 +42,9 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	const colors = useMemo(
 		() => ({
-			abstain: theme === 'dark' ? '#407BFFBF' : '#407BFFBF',
-			aye: theme === 'dark' ? '#64A057BF' : '#2ED47A80',
-			nay: theme === 'dark' ? '#BD2020BF' : '#E84865BF'
+			abstain: { primary: theme === 'dark' ? '#407BFFBF' : '#407BFFBF', secondary: theme === 'dark' ? '#407BFF' : '#407BFF' },
+			aye: { primary: theme === 'dark' ? '#1B4931' : '#BAF1D3', secondary: theme === 'dark' ? '#6DE1A2' : '#009B46' },
+			nay: { primary: theme === 'dark' ? '#4F2028' : '#FFCAD3', secondary: theme === 'dark' ? '#FF778F' : '#E84865' }
 		}),
 		[theme]
 	);
@@ -57,21 +57,25 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 			const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
 
 			let color;
+			let decision;
 			switch (vote.decision) {
 				case 'yes':
-					color = colors.aye;
+					color = colors.aye.primary;
+					decision = 'aye';
 					break;
 				case 'no':
-					color = colors.nay;
+					color = colors.nay.primary;
+					decision = 'nay';
 					break;
 				default:
-					color = colors.abstain;
+					color = colors.abstain.primary;
+					decision = 'abstain';
 			}
 
 			return {
 				balance,
 				color,
-				decision: vote.decision,
+				decision,
 				delegators: vote.delegatorsCount,
 				lockPeriod: vote.lockPeriod,
 				voter: vote.voter,
@@ -158,6 +162,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				data={selectedTab === 'flattened' ? flattenedVotesData : nestedVotesData}
 				name='votes'
 				selectedTab={selectedTab}
+				colors={colors}
 			/>
 			<div className='flex items-center justify-center gap-5'>
 				<div className='flex items-center gap-2'>

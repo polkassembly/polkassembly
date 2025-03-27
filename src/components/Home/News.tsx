@@ -20,7 +20,9 @@ const isIOSDevice = (): boolean => {
 const isMozillaOrSafari = (): boolean => {
 	if (typeof navigator === 'undefined') return false;
 	const userAgent = navigator.userAgent.toLowerCase();
-	return /mozilla|safari/.test(userAgent) && !/chrome|edge|opera/.test(userAgent);
+	const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+	const isFirefox = userAgent.indexOf('firefox') > -1;
+	return isSafari || isFirefox;
 };
 
 const News: FC<INewsProps> = (props) => {

@@ -150,13 +150,26 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 	return (
 		<div className='flex w-full flex-col items-center justify-center gap-2'>
 			<div className='flex w-full items-center justify-between gap-5 border'>
-				<h2 className='text-base font-semibold'>Votes Bubble</h2>
 				<Segmented
 					value={selectedTab}
 					onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
 					options={['nested', 'flattened']}
-					className='ml-auto capitalize dark:bg-gray-800'
+					className='bg-[#F6F8FB] capitalize dark:bg-[#353535]'
 				/>
+				<div className='ml-auto flex items-center justify-center gap-5'>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-green-500/50' />
+						<span className='text-sm'>Aye</span>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-red-500/50' />
+						<span className='text-sm'>Nay</span>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-blue-500/50' />
+						<span className='text-sm'>Abstain</span>
+					</div>
+				</div>
 			</div>
 			<CirclePacking
 				data={selectedTab === 'flattened' ? flattenedVotesData : nestedVotesData}
@@ -164,20 +177,6 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				selectedTab={selectedTab}
 				colors={colors}
 			/>
-			<div className='flex items-center justify-center gap-5'>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-green-500/50' />
-					<span className='text-sm'>Aye</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-red-500/75' />
-					<span className='text-sm'>Nay</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-blue-500/75' />
-					<span className='text-sm'>Abstain</span>
-				</div>
-			</div>
 		</div>
 	);
 };

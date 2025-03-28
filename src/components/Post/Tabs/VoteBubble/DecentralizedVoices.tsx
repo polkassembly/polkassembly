@@ -121,14 +121,15 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 				</div>
 				<button
 					onClick={() => setOpenModal(true)}
-					className='border-none bg-transparent p-0 outline-none'
+					className='relative flex items-center justify-center border-none bg-transparent p-0 outline-none'
 				>
+					<span className='block h-6 w-6 rounded-md bg-white p-0 dark:bg-[#353535]' />
 					<Image
 						src='/assets/icons/decentralized-voices-menu-icon.svg'
 						alt='menu icon'
-						width={24}
-						height={24}
-						className='filter dark:grayscale dark:invert'
+						width={26}
+						height={26}
+						className='absolute inset-0 -left-[1px] filter dark:grayscale dark:invert'
 					/>
 				</button>
 			</div>

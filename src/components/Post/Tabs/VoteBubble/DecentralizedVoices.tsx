@@ -19,6 +19,39 @@ interface IVoteData {
 	delegators?: number;
 }
 
+interface IVoteStats {
+	totalPower: number;
+	decentralizedPower: number;
+	ayePower: number;
+	nayPower: number;
+	percentages: {
+		total: number;
+		aye: number;
+		nay: number;
+	};
+}
+
+const calculateVoteStats = (votes: IVoteData[], delegates: any[]): IVoteStats => {
+	const decentralizedVotes = votes.filter((vote) => delegates.some((delegate) => delegate.address === vote.voter));
+
+	const totalPower = votes.reduce((acc, vote) => acc + vote.votingPower, 0);
+	const decentralizedPower = decentralizedVotes.reduce((acc, vote) => acc + vote.votingPower, 0);
+	const ayePower = decentralizedVotes.filter((vote) => vote.decision === 'aye').reduce((acc, vote) => acc + vote.votingPower, 0);
+	const nayPower = decentralizedVotes.filter((vote) => vote.decision === 'nay').reduce((acc, vote) => acc + vote.votingPower, 0);
+
+	return {
+		ayePower,
+		decentralizedPower,
+		nayPower,
+		percentages: {
+			aye: Number(((ayePower / totalPower) * 100).toFixed(2)),
+			nay: Number(((nayPower / totalPower) * 100).toFixed(2)),
+			total: Number(((decentralizedPower / totalPower) * 100).toFixed(2))
+		},
+		totalPower
+	};
+};
+
 interface IDecentralizedVoicesProps {
 	votes: IVoteData[];
 }
@@ -26,51 +59,46 @@ interface IDecentralizedVoicesProps {
 const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 	const { network } = useNetworkSelector();
 	const [delegates, setDelegates] = useState<any[]>([]);
-
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [totalVotingPower, setTotalVotingPower] = useState<number>(0);
-	const [decentralizedVotingPower, setDecentralizedVotingPower] = useState<number>(0);
-	const [decentralizedAyeVotes, setDecentralizedAyeVotes] = useState<number>(0);
-	const [decentralizedNayVotes, setDecentralizedNayVotes] = useState<number>(0);
-	const [decentralizedVotes, setDecentralizedVotes] = useState<any[]>([]);
-	const [decentralizedAyeVotesPercentage, setDecentralizedAyeVotesPercentage] = useState<number>(0);
-	const [decentralizedNayVotesPercentage, setDecentralizedNayVotesPercentage] = useState<number>(0);
-	const [decentralizedVotingPowerPercentage, setDecentralizedVotingPowerPercentage] = useState<number>(0);
+	const [voteStats, setVoteStats] = useState<IVoteStats>({
+		ayePower: 0,
+		decentralizedPower: 0,
+		nayPower: 0,
+		percentages: { aye: 0, nay: 0, total: 0 },
+		totalPower: 0
+	});
+	const [decentralizedVotes, setDecentralizedVotes] = useState<IVoteData[]>([]);
 
 	useEffect(() => {
 		const loadDelegates = async () => {
-			const delegatesModule = await import(`pages/api/v1/delegations/w3f-delegates-${network}.json`);
-			setDelegates(delegatesModule.default || []);
+			try {
+				const delegatesModule = await import(`pages/api/v1/delegations/w3f-delegates-${network}.json`);
+				setDelegates(delegatesModule.default || []);
+			} catch (error) {
+				console.error('Failed to load delegates:', error);
+				setDelegates([]);
+			}
 		};
 		loadDelegates();
 	}, [network]);
 
 	useEffect(() => {
-		const decentralizedVotes = votes.filter((vote) => {
-			const delegate = delegates.find((delegate) => delegate.address === vote.voter);
-			return delegate;
-		});
-		setDecentralizedVotes(decentralizedVotes);
-		setTotalVotingPower(votes.reduce((acc, vote) => acc + vote.votingPower, 0));
-		setDecentralizedVotingPower(decentralizedVotes.reduce((acc, vote) => acc + vote.votingPower, 0));
-		setDecentralizedAyeVotes(decentralizedVotes.filter((vote) => vote.decision === 'aye').reduce((acc, vote) => acc + vote.votingPower, 0));
-		setDecentralizedNayVotes(decentralizedVotes.filter((vote) => vote.decision === 'nay').reduce((acc, vote) => acc + vote.votingPower, 0));
+		if (!delegates.length) return;
+
+		const filteredVotes = votes.filter((vote) => delegates.some((delegate) => delegate.address === vote.voter));
+		const stats = calculateVoteStats(votes, delegates);
+
+		setDecentralizedVotes(filteredVotes);
+		setVoteStats(stats);
 	}, [delegates, votes]);
 
-	useEffect(() => {
-		setDecentralizedAyeVotesPercentage(Number(((decentralizedAyeVotes / totalVotingPower) * 100).toFixed(2)));
-		setDecentralizedNayVotesPercentage(Number(((decentralizedNayVotes / totalVotingPower) * 100).toFixed(2)));
-		setDecentralizedVotingPowerPercentage(Number(((decentralizedVotingPower / totalVotingPower) * 100).toFixed(2)));
-	}, [decentralizedAyeVotes, decentralizedNayVotes, decentralizedVotingPower, totalVotingPower]);
-
-	console.log(decentralizedVotes);
 	return (
 		<div>
 			<div className='flex items-center gap-2'>
 				<div className='flex w-full items-center justify-between gap-2 rounded-md bg-[#F6F8FB] px-2 py-1 text-xs dark:bg-[#353535]'>
 					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Decentralized Voices </span>
 					<span>
-						{decentralizedVotingPowerPercentage}% (~{formatUSDWithUnits(decentralizedVotingPower.toString() || '0', 2)})
+						{voteStats.percentages.total}% (~{formatUSDWithUnits(voteStats.decentralizedPower.toString(), 2)})
 					</span>
 					<Divider
 						className='bg-section-light-container dark:bg-blue-dark-medium'
@@ -79,8 +107,7 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 					/>
 					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Aye </span>
 					<span>
-						{decentralizedAyeVotesPercentage}% (~
-						{formatUSDWithUnits(decentralizedAyeVotes.toString() || '0', 2)})
+						{voteStats.percentages.aye}% (~{formatUSDWithUnits(voteStats.ayePower.toString(), 2)})
 					</span>
 					<Divider
 						className='bg-section-light-container dark:bg-blue-dark-medium'
@@ -89,8 +116,7 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 					/>
 					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Nay </span>
 					<span>
-						{decentralizedNayVotesPercentage}% (~
-						{formatUSDWithUnits(decentralizedNayVotes.toString() || '0', 2)})
+						{voteStats.percentages.nay}% (~{formatUSDWithUnits(voteStats.nayPower.toString(), 2)})
 					</span>
 				</div>
 				<button
@@ -109,14 +135,14 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 			<DecentralizedVoicesModal
 				open={openModal}
 				setOpen={setOpenModal}
-				totalVotingPower={totalVotingPower}
+				totalVotingPower={voteStats.totalPower}
 				decentralizedVotes={decentralizedVotes}
-				decentralizedVotingPower={decentralizedVotingPower}
-				decentralizedAyeVotes={decentralizedAyeVotes}
-				decentralizedNayVotes={decentralizedNayVotes}
-				decentralizedVotingPowerPercentage={decentralizedVotingPowerPercentage}
-				decentralizedAyeVotesPercentage={decentralizedAyeVotesPercentage}
-				decentralizedNayVotesPercentage={decentralizedNayVotesPercentage}
+				decentralizedVotingPower={voteStats.decentralizedPower}
+				decentralizedAyeVotes={voteStats.ayePower}
+				decentralizedNayVotes={voteStats.nayPower}
+				decentralizedVotingPowerPercentage={voteStats.percentages.total}
+				decentralizedAyeVotesPercentage={voteStats.percentages.aye}
+				decentralizedNayVotesPercentage={voteStats.percentages.nay}
 			/>
 		</div>
 	);

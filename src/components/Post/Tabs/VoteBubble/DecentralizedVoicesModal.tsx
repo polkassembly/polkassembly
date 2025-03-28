@@ -102,6 +102,7 @@ const DecentralizedVoicesModal = ({
 									displayInline
 									disableAddressClick
 									showProxyTitle={false}
+									usernameClassName={`${vote.decision === 'abstain' ? '' : 'dark:text-[#243A57]'}`}
 								/>
 								<div>
 									{vote.decision} {((vote.votingPower / totalVotingPower) * 100).toFixed(2)}%

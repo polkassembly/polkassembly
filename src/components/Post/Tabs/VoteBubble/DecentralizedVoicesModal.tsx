@@ -65,7 +65,7 @@ const DecentralizedVoicesModal = ({
 			className={`${dmSans.variable} ${dmSans.className} [&>.ant-modal-content]:backdrop-blur-[7px]`}
 			wrapClassName={'bg-modalOverlayDark backdrop-blur-[7px] [&>.ant-modal-content]:backdrop-blur-[7px]'}
 		>
-			<div className='mt-6 flex w-full flex-col items-center justify-center gap-5 text-sm font-semibold capitalize text-bodyBlue dark:text-blue-dark-high'>
+			<div className='mt-6 flex w-full flex-col items-center justify-center gap-5 text-xs font-semibold capitalize text-bodyBlue dark:text-blue-dark-high md:text-sm'>
 				<div className='flex w-full items-center justify-between gap-2 rounded-md bg-[#F6F8FB] px-2 py-1 dark:bg-[#353535]'>
 					<span>Decentralized Voices</span> <span>{decentralizedVotingPowerPercentage}%</span>
 					<span>(~{formatUSDWithUnits(decentralizedVotingPower.toString() || '0', 2)})</span>

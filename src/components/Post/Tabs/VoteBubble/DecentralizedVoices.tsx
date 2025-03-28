@@ -95,29 +95,33 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 	return (
 		<div>
 			<div className='flex items-center gap-2'>
-				<div className='flex w-full items-center justify-between gap-2 rounded-md bg-[#F6F8FB] px-2 py-1 text-xs dark:bg-[#353535]'>
-					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Decentralized Voices </span>
-					<span>
-						{voteStats.percentages.total}% (~{formatUSDWithUnits(voteStats.decentralizedPower.toString(), 2)})
-					</span>
+				<div className='flex w-full flex-col items-center justify-between gap-2 rounded-md bg-[#F6F8FB] px-2 py-1 text-xs dark:bg-[#353535] md:flex-row'>
+					<div className='flex items-center gap-2'>
+						<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Decentralized Voices </span>
+						<span>
+							{voteStats.percentages.total}% (~{formatUSDWithUnits(voteStats.decentralizedPower.toString(), 2)})
+						</span>
+					</div>
 					<Divider
-						className='bg-section-light-container dark:bg-blue-dark-medium'
+						className='hidden bg-section-light-container dark:bg-blue-dark-medium md:block'
 						orientation='right'
 						type='vertical'
 					/>
-					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Aye </span>
-					<span>
-						{voteStats.percentages.aye}% (~{formatUSDWithUnits(voteStats.ayePower.toString(), 2)})
-					</span>
-					<Divider
-						className='bg-section-light-container dark:bg-blue-dark-medium'
-						orientation='right'
-						type='vertical'
-					/>
-					<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Nay </span>
-					<span>
-						{voteStats.percentages.nay}% (~{formatUSDWithUnits(voteStats.nayPower.toString(), 2)})
-					</span>
+					<div className='flex items-center gap-2'>
+						<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Aye </span>
+						<span>
+							{voteStats.percentages.aye}% (~{formatUSDWithUnits(voteStats.ayePower.toString(), 2)})
+						</span>
+						<Divider
+							className='bg-section-light-container dark:bg-blue-dark-medium'
+							orientation='right'
+							type='vertical'
+						/>
+						<span className='text text-[#576D8B] dark:text-icon-dark-inactive'>Nay </span>
+						<span>
+							{voteStats.percentages.nay}% (~{formatUSDWithUnits(voteStats.nayPower.toString(), 2)})
+						</span>
+					</div>
 				</div>
 				<button
 					onClick={() => setOpenModal(true)}

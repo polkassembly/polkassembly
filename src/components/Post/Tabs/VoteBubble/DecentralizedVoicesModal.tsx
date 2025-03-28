@@ -92,8 +92,8 @@ const DecentralizedVoicesModal = ({
 						{decentralizedVotes.map((vote) => (
 							<div
 								key={vote.voter}
-								className={`flex w-full items-center justify-between rounded-md bg-[#F6F8FB] px-2 py-1 ${
-									vote.decision === 'aye' ? 'bg-[#E1F9EC] text-[#009B46]' : vote.decision === 'nay' ? 'bg-[#FFE0E5] text-[#E84865]' : 'dark:bg-[#353535]'
+								className={`flex w-full items-center justify-between rounded-md  px-2 py-1 ${
+									vote.decision === 'aye' ? 'bg-[#E1F9EC] text-[#009B46]' : vote.decision === 'nay' ? 'bg-[#FFE0E5] text-[#E84865]' : 'bg-[#F6F8FB] dark:bg-[#353535]'
 								}`}
 							>
 								<Address

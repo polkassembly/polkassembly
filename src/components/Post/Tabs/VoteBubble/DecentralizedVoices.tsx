@@ -72,7 +72,12 @@ const DecentralizedVoices: FC<IDecentralizedVoicesProps> = ({ votes }) => {
 	useEffect(() => {
 		const loadDelegates = async () => {
 			try {
-				const delegatesModule = await import(`pages/api/v1/delegations/w3f-delegates-${network}.json`);
+				const delegatesModuleMap = {
+					kusama: await import('pages/api/v1/delegations/w3f-delegates-kusama.json'),
+					polkadot: await import('pages/api/v1/delegations/w3f-delegates-polkadot.json')
+				};
+
+				const delegatesModule = delegatesModuleMap[network as keyof typeof delegatesModuleMap];
 				setDelegates(delegatesModule.default || []);
 			} catch (error) {
 				console.error('Failed to load delegates:', error);

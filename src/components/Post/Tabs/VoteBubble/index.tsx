@@ -159,15 +159,15 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				/>
 				<div className='ml-auto flex items-center justify-center gap-5'>
 					<div className='flex items-center gap-2'>
-						<span className='h-2 w-2 rounded-full bg-green-500/50' />
+						<span className='h-2 w-2 rounded-full bg-green-500/60' />
 						<span className='text-sm'>Aye</span>
 					</div>
 					<div className='flex items-center gap-2'>
-						<span className='h-2 w-2 rounded-full bg-red-500/50' />
+						<span className='h-2 w-2 rounded-full bg-red-500/60' />
 						<span className='text-sm'>Nay</span>
 					</div>
 					<div className='flex items-center gap-2'>
-						<span className='h-2 w-2 rounded-full bg-blue-500/50' />
+						<span className='h-2 w-2 rounded-full bg-blue-500/60' />
 						<span className='text-sm'>Abstain</span>
 					</div>
 				</div>

@@ -17,6 +17,14 @@ const isIOSDevice = (): boolean => {
 	return /iphone|ipod|ipad/.test(userAgent);
 };
 
+const isMozillaOrSafari = (): boolean => {
+	if (typeof navigator === 'undefined') return false;
+	const userAgent = navigator.userAgent.toLowerCase();
+	const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+	const isFirefox = userAgent.indexOf('firefox') > -1;
+	return isSafari || isFirefox;
+};
+
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
 	const { resolvedTheme: theme } = useTheme();
@@ -49,7 +57,7 @@ const News: FC<INewsProps> = (props) => {
 		checkIOSMobile();
 	}, [isMobile]);
 
-	if (isIOSMobile) return null;
+	if (isIOSMobile || isMozillaOrSafari()) return null;
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>

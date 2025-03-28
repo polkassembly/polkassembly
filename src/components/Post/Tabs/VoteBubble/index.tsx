@@ -16,6 +16,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CirclePacking from './CirclePacking';
 import { Segmented } from 'antd';
+import DecentralizedVoices from './DecentralizedVoices';
 
 interface IVoteBubbleProps {
 	postId: string;
@@ -177,6 +178,7 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 				selectedTab={selectedTab}
 				colors={colors}
 			/>
+			{selectedTab === 'nested' && ['kusama', 'polkadot'].includes(network) ? <DecentralizedVoices votes={nestedVotesData} /> : null}
 		</div>
 	);
 };

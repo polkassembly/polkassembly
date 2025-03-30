@@ -150,25 +150,25 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	return (
 		<div className='flex w-full flex-col items-center justify-center gap-2'>
-			<div className='flex w-full items-center justify-between gap-5 border'>
+			<div className='flex w-full items-start justify-between gap-5 border md:items-center'>
 				<Segmented
 					value={selectedTab}
 					onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
 					options={['nested', 'flattened']}
 					className='bg-[#F6F8FB] capitalize dark:bg-[#353535]'
 				/>
-				<div className='ml-auto flex items-center justify-center gap-5'>
+				<div className='ml-auto flex flex-col items-start justify-center gap-2 text-xs md:flex-row md:items-center md:gap-5 md:text-sm'>
 					<div className='flex items-center gap-2'>
 						<span className='h-2 w-2 rounded-full bg-green-500/60' />
-						<span className='text-sm'>Aye</span>
+						<span>Aye</span>
 					</div>
 					<div className='flex items-center gap-2'>
 						<span className='h-2 w-2 rounded-full bg-red-500/60' />
-						<span className='text-sm'>Nay</span>
+						<span>Nay</span>
 					</div>
 					<div className='flex items-center gap-2'>
 						<span className='h-2 w-2 rounded-full bg-blue-500/60' />
-						<span className='text-sm'>Abstain</span>
+						<span>Abstain</span>
 					</div>
 				</div>
 			</div>

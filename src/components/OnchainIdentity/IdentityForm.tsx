@@ -271,10 +271,10 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
-		const onFailed = () => {
+		const onFailed = (error: string) => {
 			queueNotification({
 				header: 'failed!',
-				message: 'Transaction failed!',
+				message: error || 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
@@ -423,6 +423,9 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 				okTwitter &&
 				okMatrix &&
 				displayNameVal?.length > 1 &&
+				// At least one social media field is required
+				(emailVal?.length > 0 || twitterVal?.length > 0 || matrixVal?.length > 0) &&
+				// If any field has a value, it must be valid
 				(emailVal?.length ? !!emailVal : true) &&
 				(twitterVal?.length ? !!twitterVal : true) &&
 				(matrixVal?.length ? !!matrixVal : true)

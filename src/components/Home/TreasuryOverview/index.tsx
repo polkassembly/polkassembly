@@ -387,7 +387,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			) : (
 				<div
 					className={`${className} grid ${
-						!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
+						!['polymesh', 'polymesh-test', 'polimec', 'rolimec', 'mythos'].includes(network) && 'grid-rows-2'
 					} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}
 				>
 					<AvailableTreasuryBalance available={available} />

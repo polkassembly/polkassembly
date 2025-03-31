@@ -1,21 +1,37 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useState } from 'react';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
+import useIsMobile from '~src/hooks/useIsMobile';
 import Loader from '~src/ui-components/Loader';
 
 interface INewsProps {
 	twitter: string;
 }
 
+const isIOSDevice = (): boolean => {
+	if (typeof navigator === 'undefined') return false;
+	const userAgent = navigator.userAgent.toLowerCase();
+	return /iphone|ipod|ipad/.test(userAgent);
+};
+
+const isMozillaOrSafari = (): boolean => {
+	if (typeof navigator === 'undefined') return false;
+	const userAgent = navigator.userAgent.toLowerCase();
+	const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+	const isFirefox = userAgent.indexOf('firefox') > -1;
+	return isSafari || isFirefox;
+};
+
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [prevTheme, setPrevTheme] = useState(theme);
+	const [isIOSMobile, setIsIOSMobile] = useState(false);
+	const isMobile = useIsMobile();
 
 	let profile = 'polkadot';
 	if (twitter) {
@@ -31,6 +47,17 @@ const News: FC<INewsProps> = (props) => {
 			setIsLoading(true);
 		}
 	}, [prevTheme, theme]);
+
+	useEffect(() => {
+		const checkIOSMobile = () => {
+			const isIOS = isIOSDevice();
+			setIsIOSMobile(isIOS && isMobile);
+		};
+
+		checkIOSMobile();
+	}, [isMobile]);
+
+	if (isIOSMobile || isMozillaOrSafari()) return null;
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>

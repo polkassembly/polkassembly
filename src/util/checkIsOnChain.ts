@@ -27,7 +27,7 @@ export async function checkIsOnChain(id: number | string, postType: ProposalType
 			dataFromChain = ((await api.query.council.proposals()).toJSON() as any[]) || [];
 			return Boolean(dataFromChain.filter(([id]) => id === id).length);
 		case ProposalType.REFERENDUMS:
-			return Boolean((await api.query.democracy.referendumInfoOf(Number(id))).toJSON());
+			return Boolean((await api?.query?.democracy?.referendumInfoOf(Number(id)))?.toJSON());
 		case ProposalType.TIPS:
 			return Boolean(await api.query.tips.tips(String(id)));
 	}

@@ -140,12 +140,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filteredComments, setFilteredComments] = useState<IComment[]>([]);
 
 	const getAllFilteredComments = useCallback(async () => {
-		if (allowedCommentors !== EAllowedCommentor.ONCHAIN_VERIFIED) {
+		if (allowedCommentors !== EAllowedCommentor.ONCHAIN_VERIFIED || !allComments.filter((comment) => comment?.comment_source === 'subsquare')?.length) {
 			setFilteredComments(allComments);
 			return;
 		}
 		if (!network || !api || !apiReady) {
-			setFilteredComments(allComments);
+			setFilteredComments([]);
 			return;
 		}
 		const identityPromises = allComments.map(async (comment) => {

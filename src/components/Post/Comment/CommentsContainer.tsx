@@ -4,9 +4,9 @@
 /* eslint-disable no-tabs */
 import { Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { useCommentDataContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { AiStarIcon } from '~src/ui-components/CustomIcons';
 import PostCommentForm from '../PostCommentForm';
@@ -36,7 +36,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
+import { EAllowedCommentor, ESentiments, ICommentsSummary, ISentimentsPercentage } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -51,6 +51,7 @@ import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -111,6 +112,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const {
 		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
 	} = usePostDataContext();
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi } = usePeopleChainApiContext();
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -120,6 +123,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	let allComments = Object.values(comments)?.flat() || [];
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
@@ -133,6 +137,41 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [forceRefresh, setForceRefresh] = useState<boolean>(false);
 	// const [reportingAISummary, setReportingAISummary] = useState<boolean>(false);
 	// const [isAlreadyReported, setIsAlreadyReported] = useState<boolean | null>(null);
+	const [filteredComments, setFilteredComments] = useState<IComment[]>([]);
+
+	const getAllFilteredComments = useCallback(async () => {
+		if (allowedCommentors !== EAllowedCommentor.ONCHAIN_VERIFIED) {
+			setFilteredComments(allComments);
+			return;
+		}
+		if (!network || !api || !apiReady) {
+			setFilteredComments(allComments);
+			return;
+		}
+		const identityPromises = allComments.map(async (comment) => {
+			if (comment?.proposer && comment?.comment_source === 'subsquare') {
+				const identityInfo = await getIdentityInformation({ address: comment?.proposer, api: peopleChainApi ?? api, network: network });
+				return { comment, isVerified: identityInfo?.isVerified || false };
+			} else {
+				return { comment, isVerified: true };
+			}
+		});
+
+		const allCommentsWithIdentity = await Promise.allSettled(identityPromises);
+		const commentsWithIdentity: IComment[] = [];
+
+		allCommentsWithIdentity.filter((promise) => {
+			if (promise.status === 'fulfilled' && promise.value?.isVerified) {
+				commentsWithIdentity.push(promise.value?.comment);
+			}
+		});
+		setFilteredComments(commentsWithIdentity || []);
+	}, [allowedCommentors, network, api, apiReady, allComments, peopleChainApi]);
+
+	useEffect(() => {
+		getAllFilteredComments();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [getAllFilteredComments]);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -590,13 +629,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				) : null}
 			</div>
-			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
+			{Boolean(filteredComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'
 					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1')}
 				>
 					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
-						{allComments.length || 0}
+						{filteredComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
 					{showOverallSentiment && (
@@ -631,16 +670,16 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			<div className={classNames(!isCommentAllowed ? 'mt-6' : '', '')}>
 				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
-					{!!allComments?.length && !loading && (
+					{!!filteredComments?.length && !loading && (
 						<>
 							<Comments
 								disableEdit={isGrantClosed}
-								comments={allComments}
+								comments={filteredComments}
 							/>
 						</>
 					)}
 					{loading && <Loader />}
-					{allComments.length === 0 && allComments.length > 0 && (
+					{filteredComments.length === 0 && filteredComments.length > 0 && (
 						<div className='mb-4 mt-4'>
 							<Empty description='No comments available' />
 						</div>

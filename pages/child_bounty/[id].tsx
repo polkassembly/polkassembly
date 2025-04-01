@@ -65,10 +65,17 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 			return;
 		}
 		(async () => {
-			setIsUnFinalized(Boolean(await checkIsOnChain([Number(post?.parent_bounty_index), Number(id)], proposalType, api)));
+			const parentIndex = post?.parent_bounty_index !== undefined ? Number(post.parent_bounty_index) : null;
+			if (parentIndex === null) {
+				setIsUnFinalized(false);
+			} else {
+				setIsUnFinalized(Boolean(await checkIsOnChain([parentIndex, Number(id)], proposalType, api)));
+			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, error, status, id]);
+
+	console.log('isUnfinalized', isUnfinalized);
 
 	if (isUnfinalized) {
 		return (

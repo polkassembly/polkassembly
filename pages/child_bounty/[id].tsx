@@ -54,6 +54,7 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,8 +65,9 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 			return;
 		}
 		(async () => {
-			setIsUnFinalized(Boolean(await checkIsOnChain(String(id), proposalType, api)));
+			setIsUnFinalized(Boolean(await checkIsOnChain([Number(post?.parent_bounty_index), Number(id)], proposalType, api)));
 		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, error, status, id]);
 
 	if (isUnfinalized) {

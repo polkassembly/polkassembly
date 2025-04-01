@@ -75,8 +75,6 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, error, status, id]);
 
-	console.log('isUnfinalized', isUnfinalized);
-
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState

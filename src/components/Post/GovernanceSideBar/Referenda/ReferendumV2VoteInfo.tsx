@@ -104,7 +104,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 				return;
 			}
 
-
 			if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
 				const { data, error } = await nextApiClientFetch<{
 					tally: {
@@ -139,7 +138,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 
 			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
-
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({
 					ayes:
@@ -165,7 +163,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 
 	useEffect(() => {
 		fetchSummaryData().then();
-	}, [fetchSummaryData, api, apiReady]);
+	}, [fetchSummaryData]);
 
 	useEffect(() => {
 		fetchAyeNayCountData().then();

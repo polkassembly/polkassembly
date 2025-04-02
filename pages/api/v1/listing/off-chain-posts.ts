@@ -91,6 +91,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 		const postsSnapshotArr =
 			filterBy && filterBy.length > 0
 				? await offChainCollRef
+						.where('isSpamDetected', '!=', true)
 						.where('tags', 'array-contains-any', filterBy)
 						.where('isDeleted', '==', false)
 						.orderBy(orderedField, order)
@@ -98,6 +99,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 						.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 						.get()
 				: await offChainCollRef
+						.where('isSpamDetected', '!=', true)
 						.where('isDeleted', '==', false)
 						.orderBy(orderedField, order)
 						.limit(Number(listingLimit) || LISTING_LIMIT)

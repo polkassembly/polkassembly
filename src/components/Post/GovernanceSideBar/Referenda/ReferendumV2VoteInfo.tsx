@@ -96,9 +96,16 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
 
+	console.log('status', postIndex);
+
 	const fetchSummaryData = useCallback(async () => {
 		try {
 			setIsLoading(true);
+
+			if (!postIndex) {
+				setIsLoading(false);
+				return;
+			}
 			if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
 				const { data, error } = await nextApiClientFetch<{
 					tally: {
@@ -133,6 +140,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 
 			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
+
+			console.log('parsedReferendumInfo', parsedReferendumInfo);
+
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({
 					ayes:
@@ -161,9 +171,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 	}, [fetchAyeNayCountData]);
 
 	useEffect(() => {
-		if (api && apiReady) {
-			fetchSummaryData().then();
-		}
+		fetchSummaryData().then();
 	}, [fetchSummaryData, api, apiReady]);
 
 	return (

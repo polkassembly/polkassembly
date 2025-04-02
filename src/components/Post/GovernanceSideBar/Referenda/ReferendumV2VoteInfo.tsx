@@ -157,12 +157,18 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 	}, [api, apiReady, postIndex, postType, status]);
 
 	useEffect(() => {
+		fetchAyeNayCountData().then();
+	}, [fetchAyeNayCountData]);
+
+	useEffect(() => {
 		fetchSummaryData().then();
 	}, [fetchSummaryData]);
 
 	useEffect(() => {
-		fetchAyeNayCountData().then();
-	}, [fetchAyeNayCountData]);
+		if (api && apiReady) {
+			fetchSummaryData().then();
+		}
+	}, [fetchSummaryData, api, apiReady]);
 
 	return (
 		<>

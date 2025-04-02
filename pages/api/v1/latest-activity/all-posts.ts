@@ -307,7 +307,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);
 		const postsSnapshotArr = await discussionsPostsColRef
 			.where('isDeleted', '==', false)
-			.where('isSpamDetected', '==', false)
+			.where('isSpamDetected', '!=', true)
 			.orderBy('created_at', 'desc')
 			.limit(numListingLimit)
 			.get();

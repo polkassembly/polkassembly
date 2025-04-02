@@ -108,8 +108,8 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 
 		const count =
 			filterBy && filterBy.length > 0
-				? (await offChainCollRef.where('tags', 'array-contains-any', filterBy).where('isDeleted', '==', false).count().get()).data().count
-				: (await offChainCollRef.where('isDeleted', '==', false).count().get()).data().count;
+				? (await offChainCollRef.where('tags', 'array-contains-any', filterBy).where('isDeleted', '==', false).where('isSpamDetected', '!=', true).count().get()).data().count
+				: (await offChainCollRef.where('isDeleted', '==', false).where('isSpamDetected', '!=', true).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {

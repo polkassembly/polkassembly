@@ -313,7 +313,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			.get();
 
 		let offChainPosts: any[] = [];
-		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).count().get()).data().count;
+		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).where('isSpamDetected', '!=', true).count().get()).data().count;
 
 		const idsSet = new Set<number>();
 		postsSnapshotArr.docs.forEach((doc) => {

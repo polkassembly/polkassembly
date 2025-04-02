@@ -41,7 +41,7 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 
 		const postsColRef = postsByTypeRef(network, strProposalType as ProposalType);
 		const postsSnapshotArr = await postsColRef.where('isSpamDetected', '==', false).where('isDeleted', '==', false).orderBy('created_at', 'desc').limit(numListingLimit).get();
-		const count = (await postsColRef.where('isDeleted', '==', false).count().get()).data().count;
+		const count = (await postsColRef.where('isDeleted', '==', false).where('isSpamDetected', '!=', true).count().get()).data().count;
 
 		let posts: any[] = [];
 		const idsSet = new Set<number>();

@@ -4,13 +4,23 @@
 import { ApiPromise } from '@polkadot/api';
 import { ProposalType } from '~src/global/proposalType';
 
-export async function checkIsOnChain(id: number | string, postType: ProposalType, api: ApiPromise) {
+type ProposalId = number | string | [number, number];
+
+function isChildBountyId(id: ProposalId): id is [number, number] {
+	return Array.isArray(id) && id.length === 2 && id.every((v) => typeof v === 'number');
+}
+
+export async function checkIsOnChain(id: ProposalId, postType: ProposalType, api: ApiPromise) {
 	let dataFromChain: any[] = [];
 	switch (postType) {
 		case ProposalType.BOUNTIES:
 			return Boolean(await api.query.bounties.bounties(Number(id)));
 		case ProposalType.CHILD_BOUNTIES:
-			return Boolean(await api.query.childBounties.childBounties(Number(id)));
+			if (isChildBountyId(id)) {
+				const [parentBountyId, childBountyId] = id;
+				return Boolean(await api.query.childBounties.childBounties(parentBountyId, childBountyId));
+			}
+			return false;
 		case ProposalType.DEMOCRACY_PROPOSALS:
 			dataFromChain = ((await api.query.democracy.publicProps()).toJSON() as any[]) || [];
 			return Boolean(dataFromChain.filter(([id]) => id === id).length);

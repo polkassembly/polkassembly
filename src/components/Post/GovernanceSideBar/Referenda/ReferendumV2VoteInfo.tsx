@@ -100,7 +100,10 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 		try {
 			setIsLoading(true);
 
-			if (!postIndex) return;
+			if (postIndex === null || postIndex === undefined || (typeof postIndex === 'string' && postIndex.trim() === '') || (typeof postIndex === 'number' && postIndex < 0)) {
+				return;
+			}
+
 
 			if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
 				const { data, error } = await nextApiClientFetch<{

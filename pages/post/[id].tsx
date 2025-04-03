@@ -63,8 +63,9 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	if (error || (!!post?.spam_users_count && post?.spam_users_count > 0) || post?.isSpamDetected)
 		return (
 			<ErrorState
-				errorMessage={error || 'This post has been flagged as spam and is currently hidden.'}
-				isRefreshBtnVisible={!error?.includes('not found') || (!!post?.spam_users_count && post?.spam_users_count > 0)}
+				errorMessage={error || 'This post is spam and has been deleted .'}
+				isRefreshBtnVisible={!error?.includes('not found') && !post?.isSpamDetected}
+				showMoreDiscussions
 			/>
 		);
 

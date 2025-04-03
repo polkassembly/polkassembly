@@ -23,6 +23,12 @@ import createUserActivity from '../../utils/create-activity';
 import { isSpamDetected } from '~src/util/getPostContentAiSummary';
 import { sendSpamNotificationEmail } from '~src/auth/email';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
+import { reportSpamContent } from './reportContent';
+
+const SPAM_REASON = "It's suspicious or spam";
+const SPAM_TYPE = 'post';
+const SPAM_COMMENTS = 'Spam';
+const SPAM_REPORTING_USER_ID = 24224;
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -86,6 +92,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		id: newID,
 		inductee_address: substrate_inductee_address || '',
 		isDeleted: false,
+		isSpamDetected: false,
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: null,
@@ -127,10 +134,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const isSpam = await isSpamDetected(content);
 	if (isSpam) {
-		await sendSpamNotificationEmail(content, network, newID);
-		await postDocRef.update({
-			isSpamDetected: isSpam || false
-		});
+		await sendSpamNotificationEmail(content || '', network, newID);
+		await reportSpamContent({ comments: SPAM_COMMENTS, network, post_id: String(newID), proposalType, reason: SPAM_REASON, type: SPAM_TYPE, userId: SPAM_REPORTING_USER_ID });
 	}
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {

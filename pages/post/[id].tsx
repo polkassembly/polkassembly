@@ -60,15 +60,16 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
-	if (error)
+	if (error || (!!post?.spam_users_count && post?.spam_users_count > 0) || post?.isSpamDetected)
 		return (
 			<ErrorState
-				errorMessage={error}
-				isRefreshBtnVisible={!error.includes('not found')}
+				errorMessage={error || 'This post is spam and has been deleted .'}
+				isRefreshBtnVisible={!error?.includes('not found') && !post?.isSpamDetected}
+				showMoreDiscussions
 			/>
 		);
 
-	if (post)
+	if (post && !post?.spam_users_count && !post?.isSpamDetected)
 		return (
 			<>
 				<SEOHead

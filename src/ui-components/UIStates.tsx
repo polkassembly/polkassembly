@@ -10,6 +10,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import ImageIcon from './ImageIcon';
+import Link from 'next/link';
 
 export const LoadingState = () => {
 	return (
@@ -23,25 +24,44 @@ export const LoadingState = () => {
 interface IErrorStateProps {
 	errorMessage: string;
 	isRefreshBtnVisible?: boolean;
+	showMoreDiscussions?: boolean;
 }
 
-export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true }) => {
+export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true, showMoreDiscussions = false }) => {
 	return (
 		<Result
 			icon={<FrownOutlined className='text-pink_primary dark:text-blue-dark-high' />}
 			title={<span className='dark:text-blue-dark-high'>{cleanError(errorMessage)}</span>}
 			className='flex flex-col items-center gap-1'
 			extra={
-				isRefreshBtnVisible ? (
-					<div className='flex justify-center'>
-						<CustomButton
-							onClick={() => window.location.reload()}
-							variant='primary'
-							text='Refresh'
-							className='transition-colors duration-300'
-						/>
-					</div>
-				) : null
+				<div className='flex flex-col gap-2'>
+					{isRefreshBtnVisible ? (
+						<div className='flex justify-center'>
+							<CustomButton
+								onClick={() => window.location.reload()}
+								variant='primary'
+								text='Refresh'
+								className='transition-colors duration-300'
+							/>
+						</div>
+					) : null}
+					{showMoreDiscussions ? (
+						<div className='flex justify-center'>
+							<CustomButton
+								variant='primary'
+								text='Show More Discussions'
+								className='transition-colors duration-300'
+							>
+								<Link
+									href='/discussions'
+									className='hover:text-white'
+								>
+									Explore Discussions
+								</Link>
+							</CustomButton>
+						</div>
+					) : null}
+				</div>
 			}
 		/>
 	);

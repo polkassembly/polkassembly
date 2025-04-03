@@ -19,6 +19,7 @@
   "dependencies": {
     "@giphy/js-fetch-api": "^5.1.0",
     "@kiltprotocol/type-definitions": "^0.32.1",
+    "@mdxeditor/editor": "^3.29.1",
     "@metamask/jazzicon": "^2.0.0",
     "@nivo/bar": "^0.84.0",
     "@nivo/circle-packing": "^0.88.0",

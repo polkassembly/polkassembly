@@ -375,8 +375,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							{!isUsedInSuccessModal && (
 								<MarkdownEditor
 									onChange={(content: any) => onContentChange(content)}
-									height={200}
+									height={250}
 									value={content}
+									autofocus
 								/>
 							)}
 							<Form.Item>

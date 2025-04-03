@@ -305,10 +305,15 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);
-		const postsSnapshotArr = await discussionsPostsColRef.where('isDeleted', '==', false).orderBy('created_at', 'desc').limit(numListingLimit).get();
+		const postsSnapshotArr = await discussionsPostsColRef
+			.where('isDeleted', '==', false)
+			.where('isSpamDetected', '!=', true)
+			.orderBy('created_at', 'desc')
+			.limit(numListingLimit)
+			.get();
 
 		let offChainPosts: any[] = [];
-		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).count().get()).data().count;
+		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).where('isSpamDetected', '!=', true).count().get()).data().count;
 
 		const idsSet = new Set<number>();
 		postsSnapshotArr.docs.forEach((doc) => {

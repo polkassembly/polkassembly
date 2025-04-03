@@ -13,7 +13,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { EMembersType } from 'pages/members';
 import React, { useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
 import CouncilVotes from 'src/components/Profile/CouncilVotes';
 import TitleForm from 'src/components/TitleForm';
 import { APPNAME } from 'src/global/appName';
@@ -36,6 +35,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 interface Props {
 	className?: string;
@@ -129,7 +129,6 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	};
 	const onDescriptionChange = (data: string) => {
 		setDescription(data);
-		return data.length ? data : null;
 	};
 
 	const handleEdit = () => {
@@ -247,7 +246,11 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 				<Form>
 					<h3>Update Profile</h3>
 					<TitleForm onChange={onTitleChange} />
-					<ContentForm onChange={onDescriptionChange} />
+					<MarkdownEditor
+						height={200}
+						onChange={onDescriptionChange}
+						value={description}
+					/>
 
 					<div className={'mt-[3rem] flex flex-col items-center justify-center'}>
 						<CustomButton

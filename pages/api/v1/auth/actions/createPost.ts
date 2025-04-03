@@ -23,7 +23,6 @@ import createUserActivity from '../../utils/create-activity';
 import { isSpamDetected } from '~src/util/getPostContentAiSummary';
 import { sendSpamNotificationEmail } from '~src/auth/email';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
-import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -36,11 +35,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address, allowedCommentors } = req.body;
 	if (!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	// Sanitize the content before validation and processing
-	const sanitizedContent = content ? sanitizeHTML(content) : '';
-	const sanitizedTitle = title ? sanitizeHTML(title) : '';
-
-	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(sanitizedTitle) || isContentBlacklisted(sanitizedContent)) {
+	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(title || '') || isContentBlacklisted(content || '')) {
 		return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 	}
 
@@ -84,7 +79,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const last_comment_at = new Date();
 	const newPost: Post = {
 		allowedCommentors: allowedCommentors || [EAllowedCommentor.ALL],
-		content: sanitizedContent,
+		content: content,
 		created_at: new Date(),
 		gov_type: gov_type,
 		history: [],
@@ -96,7 +91,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		post_link: null,
 		proposer_address: userDefaultAddress?.address || '',
 		tags: tags ? tags : [],
-		title: sanitizedTitle,
+		title: title,
 		topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
 		user_id: user.id,
 		username: user.username
@@ -130,9 +125,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 			return res.status(500).json({ message: 'Error saving post' });
 		});
 
-	const isSpam = await isSpamDetected(sanitizedContent);
+	const isSpam = await isSpamDetected(content);
 	if (isSpam) {
-		await sendSpamNotificationEmail(sanitizedContent, network, newID);
+		await sendSpamNotificationEmail(content, network, newID);
 		await postDocRef.update({
 			isSpamDetected: isSpam || false
 		});
@@ -150,7 +145,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	try {
 		await createUserActivity({
 			action: EActivityAction.CREATE,
-			content: sanitizedContent,
+			content: content,
 			network,
 			postAuthorId: userId,
 			postId: newID,

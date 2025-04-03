@@ -12,19 +12,18 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { EGovType } from 'src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
-
 import { usePostDataContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
 import TopicsRadio from '../CreatePost/TopicsRadio';
-import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import Input from '~src/basic-components/Input';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 interface Props {
 	className?: string;
@@ -40,6 +39,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic, proposalHashBlock, allowedCommentors },
 		setPostData
 	} = usePostDataContext();
+	const [editableContent, setEditableContent] = useState<string>(getMarkdownContent(content) || '');
 
 	const [modifiedAllowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(allowedCommentors);
 
@@ -48,15 +48,15 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 
 	const [tags, setTags] = useState<string[]>(oldTags);
 
-	const onFinish = async ({ title, content }: any) => {
+	const onFinish = async ({ title }: any) => {
 		await form.validateFields();
-		if (!title || !content) return;
+		if (!title || !editableContent) return;
 
 		setFormDisabled(true);
 		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
-			allowedCommentors: [modifiedAllowedCommentors] || [allowedCommentors] || [EAllowedCommentor.ALL],
-			content,
+			allowedCommentors: modifiedAllowedCommentors ? [modifiedAllowedCommentors] : [allowedCommentors || EAllowedCommentor.ALL],
+			content: editableContent || '',
 			postId: proposalType === ProposalType.ADVISORY_COMMITTEE ? proposalHashBlock : postIndex || postIndex === 0 ? postIndex : cid,
 			proposalType,
 			tags,
@@ -83,17 +83,17 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 				status: NotificationStatus.SUCCESS
 			});
 
-			const { content, proposer, title, topic, last_edited_at, summary } = data;
+			const { content: editedContent, proposer, title: editedTitle, topic, last_edited_at, summary } = data;
 			setPostData((prev) => ({
 				...prev,
 				allowedCommentors: modifiedAllowedCommentors,
-				content,
+				content: editedContent,
 				history: [{ content: prev?.content, created_at: prev?.last_edited_at || '', title: prev?.title }, ...(prev?.history || [])],
 				last_edited_at,
 				proposer,
 				summary: summary,
 				tags,
-				title,
+				title: editedTitle,
 				topic
 			}));
 			setFormDisabled(false);
@@ -116,7 +116,6 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 				onFinish={onFinish}
 				layout='vertical'
 				initialValues={{
-					content,
 					title: title || noTitle
 				}}
 				disabled={formDisabled || loading}
@@ -133,7 +132,14 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 						className='text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 				</Form.Item>
-				<ContentForm />
+				<MarkdownEditor
+					height={250}
+					value={editableContent}
+					autofocus
+					onChange={(content: string) => {
+						setEditableContent(content);
+					}}
+				/>
 				{currentTopic && currentTopic.id && (
 					<Form.Item
 						className='mt-8'

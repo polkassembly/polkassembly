@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import ContentForm from '~src/components/ContentForm';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';
@@ -26,6 +26,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
+	const [content, setContent] = useState<string>('');
 
 	const {
 		postData: { postType: proposalType, postIndex, timeline, tags: oldTags },
@@ -34,7 +35,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 
 	const [tags, setTags] = useState<string[]>(oldTags);
 
-	const onFinish = async ({ title, content }: any) => {
+	const onFinish = async ({ title }: any) => {
 		setError('');
 		await form.validateFields();
 		if (!title || !content) return;
@@ -135,7 +136,13 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					</Form.Item>
 					<div className='mt-[30px]'>
 						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
-						<ContentForm />
+						<MarkdownEditor
+							height={200}
+							value={content}
+							onChange={(value) => {
+								setContent(value);
+							}}
+						/>
 					</div>
 					<div className='mt-[30px]'>
 						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>

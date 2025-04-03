@@ -7,7 +7,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { EAllowedCommentor, ILoading, NotificationStatus } from '~src/types';
-import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import { useApiContext } from '~src/context';
@@ -21,6 +20,7 @@ import { EAmbassadorActions, IAmbassadorProposalCreation } from './types';
 import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
@@ -86,7 +86,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 
 	const handleSaveProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
-			allowedCommentors: [allowedCommentor] || [EAllowedCommentor.ALL],
+			allowedCommentors: allowedCommentor ? [allowedCommentor] : [EAllowedCommentor.ALL],
 			content: discussion.discussionContent,
 			discussionId: null,
 			postId,
@@ -202,16 +202,13 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 							<label className='mb-0.5'>
 								Description <span className='text-nay_red'>*</span>
 							</label>
-
-							<Form.Item name='content'>
-								<ContentForm
-									value={discussion.discussionContent}
-									height={250}
-									onChange={(content: string) => {
-										handleAmbassadorDiscussionContentChange(content || '');
-									}}
-								/>
-							</Form.Item>
+							<MarkdownEditor
+								value={discussion.discussionContent}
+								height={250}
+								onChange={(content: string) => {
+									handleAmbassadorDiscussionContentChange(content || '');
+								}}
+							/>
 						</div>
 					</div>
 					{/* who can comment */}

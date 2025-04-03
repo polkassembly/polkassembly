@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
@@ -32,6 +31,8 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import { useQuoteCommentContext } from '~src/context';
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -81,7 +82,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const postType = isUsedInBounty ? ProposalType.USER_CREATED_BOUNTIES : postData?.postType;
 	const track_number = isUsedInBounty ? null : postData?.track_number;
 
-	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
+	const [content, setContent] = useState(getMarkdownContent(global.window.localStorage.getItem(commentKey()) || '') || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -182,8 +183,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	// };
 
 	const handleModalOpen = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if (!content) return;
 
 		// To directly post the comment without openning the slider modal
@@ -197,15 +196,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	};
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		setFormContent(content);
 		if (!content) return;
 		setError('');
 		setIsPosted(voteReason);
-		setContent('');
 		form.resetFields();
-		form.setFieldValue('content', '');
 		!isUsedInBounty && setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
 		// postIndex && createSubscription(postIndex);
@@ -318,6 +313,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			setIsComment(false);
 			setIsSentimentPost(false);
 			setSentiment(3);
+			setContent('');
+			global.window.localStorage.removeItem(commentKey());
 		}
 	};
 
@@ -376,13 +373,14 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 								</Form.Item>
 							)}
 							{!isUsedInSuccessModal && (
-								<ContentForm
+								<MarkdownEditor
 									onChange={(content: any) => onContentChange(content)}
 									height={200}
+									value={content}
 								/>
 							)}
 							<Form.Item>
-								<div className={isUsedInSuccessModal ? 'ml-2' : 'mt-[-40px] flex items-center justify-end'}>
+								<div className={isUsedInSuccessModal ? 'ml-2' : 'mt-6 flex items-center justify-end'}>
 									{isUsedInSuccessModal ? (
 										<div className='relative'>
 											<div className='flex'>
@@ -487,7 +485,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											disabled={!content || (typeof content === 'string' && content.trim() === '')}
 											loading={loading}
 											htmlType='submit'
-											className={`my-0 mt-3 flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
+											className={`my-0 flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
 										>
 											<CheckOutlined /> Comment
 										</Button>

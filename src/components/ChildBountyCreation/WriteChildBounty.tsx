@@ -6,12 +6,12 @@ import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import { useChildBountyCreationSelector } from '~src/redux/selectors';
-import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import { EChildBountySteps } from './types';
 import Alert from '~src/basic-components/Alert';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 interface Props {
 	className?: string;
@@ -105,7 +105,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 						</label>
 
 						<Form.Item name='content'>
-							<ContentForm
+							<MarkdownEditor
 								value={content}
 								height={250}
 								onChange={(content: string) => {

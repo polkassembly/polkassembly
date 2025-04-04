@@ -170,13 +170,14 @@ const VoterRow: FC<IVoterRow> = ({
 								className={`w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}
 							>
 								<Address
+									key={voteData?.voter}
+									address={voteData?.voter}
 									isVoterAddress
 									usernameClassName=' sm:w-[250px]'
 									isSubVisible={false}
 									displayInline
 									showFullAddress
 									showProxyTitle={false}
-									address={voteData?.voter}
 								/>
 							</a>
 						) : (

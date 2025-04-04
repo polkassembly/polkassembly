@@ -62,6 +62,7 @@ interface EditorProps {
 	autofocus?: boolean;
 	isUsedInCreatePost?: boolean;
 }
+const MAX_MENTION_SUGGESTIONS = 6;
 
 const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, className, autofocus = false, isUsedInCreatePost = false }: EditorProps) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -119,111 +120,26 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		}
 	};
 
-	const ExtraTools = () => (
-		<div className='flex items-center gap-1'>
-			<ListsToggle options={['bullet', 'number']} />
-			<Separator />
-
-			<InsertTable />
-			<StrikeThroughSupSubToggles options={['Strikethrough']} />
-			<CodeToggle />
-			<InsertThematicBreak />
-			<Separator />
-			<DiffSourceToggleWrapper>
-				<UndoRedo />
-			</DiffSourceToggleWrapper>
-		</div>
-	);
-
-	const toolbarContents = () => (
-		<div className='flex items-center gap-1 md:gap-1'>
-			<BoldItalicUnderlineToggles />
-			<Separator />
-			<BlockTypeSelect />
-			<Separator />
-
-			<CreateLink />
-			<InsertImage />
-			<ButtonWithTooltip
-				onClick={() => setIsModalVisible(true)}
-				title='Select GIF'
-			>
-				<FileGifOutlined className='mt-0.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
-			</ButtonWithTooltip>
-			{!isUsedInCreatePost ? (
-				<Popover
-					content={<ExtraTools />}
-					trigger='click'
-					placement='bottom'
-					arrow={false}
-					className={classNames(className)}
-					overlayClassName={className}
-				>
-					<ButtonWithTooltip title='More options'>
-						<EllipsisOutlined className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
-					</ButtonWithTooltip>
-				</Popover>
-			) : (
-				<ExtraTools />
-			)}
-		</div>
-	);
-
-	const plugins = [
-		headingsPlugin(),
-		listsPlugin(),
-		thematicBreakPlugin(),
-		markdownShortcutPlugin(),
-		linkPlugin(),
-		linkDialogPlugin(),
-		quotePlugin(),
-		imagePlugin({
-			imageUploadHandler: imageUploadHandler
-		}),
-		tablePlugin(),
-		codeBlockPlugin(),
-		codeMirrorPlugin(),
-		diffSourcePlugin()
-	];
-
-	if (!readOnly) {
-		plugins.push(
-			toolbarPlugin({
-				toolbarClassName: classNames(dmSans.className, dmSans.variable, 'toolbar '),
-				toolbarContents: toolbarContents
-			})
-		);
-	}
-
-	// Add autocomplete functionality
-	const handleChange = (newMarkdown: string) => {
-		onChange(newMarkdown);
-		const editor = ref.current;
-		if (!editor) return;
-
-		// Get the current selection from the editor
-		const editorElement = document.querySelector('.mdxeditor');
-		if (!editorElement) return;
-
-		const selection = window.getSelection();
-		if (!selection || !selection.rangeCount) return;
-
-		const range = selection.getRangeAt(0);
-		const container = range.startContainer;
-
-		// Only process if we're in a text node
-		if (container.nodeType !== Node.TEXT_NODE) return;
-
-		const textContent = container.textContent || '';
-		const cursorPosition = range.startOffset;
+	const handleMentionSuggestions = (editor: MDXEditorMethods, textContent: string, cursorPosition: number, theme: string) => {
 		const textBeforeCursor = textContent.substring(0, cursorPosition);
 		const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
 
 		// Remove any existing suggestion popover
-		const existingPopover = document.querySelector('.mention-suggestions');
-		if (existingPopover) {
-			existingPopover.remove();
-		}
+		const existingPopover = document.querySelectorAll('.mention-suggestions');
+		existingPopover.forEach((popover) => {
+			if (popover) {
+				popover.remove();
+			}
+		});
+
+		// Remove any existing mention items
+		const existingMentionItems = document.querySelectorAll('.mention-item');
+		existingMentionItems.forEach((item) => {
+			const popover = item.closest('.mention-suggestions');
+			if (popover) {
+				popover.remove();
+			}
+		});
 
 		if (lastAtSymbol !== -1) {
 			const searchText = textBeforeCursor.substring(lastAtSymbol + 1);
@@ -232,7 +148,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 					{
 						indexName: 'polkassembly_users',
 						params: {
-							hitsPerPage: 6,
+							hitsPerPage: MAX_MENTION_SUGGESTIONS,
 							restrictSearchableAttributes: ['username']
 						},
 						query: searchText
@@ -240,7 +156,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 					{
 						indexName: 'polkassembly_addresses',
 						params: {
-							hitsPerPage: 4,
+							hitsPerPage: MAX_MENTION_SUGGESTIONS,
 							restrictSearchableAttributes: ['address']
 						},
 						query: searchText
@@ -324,27 +240,130 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 						});
 
 						// Position the popover relative to the cursor
-						const rect = range.getBoundingClientRect();
-						popover.style.top = `${rect.bottom + window.scrollY + 5}px`;
-						popover.style.left = `${rect.left + window.scrollX}px`;
+						const selection = window.getSelection();
+						if (selection && selection.rangeCount > 0) {
+							const range = selection.getRangeAt(0);
+							const rect = range.getBoundingClientRect();
+							popover.style.top = `${rect.bottom + window.scrollY + 5}px`;
+							popover.style.left = `${rect.left + window.scrollX}px`;
 
-						// Add click outside handler
-						const handleClickOutside = (e: MouseEvent) => {
-							if (!popover.contains(e.target as Node)) {
-								popover.remove();
-								document.removeEventListener('click', handleClickOutside);
-							}
-						};
-						popover.remove();
+							// Add click outside handler
+							const handleClickOutside = (e: MouseEvent) => {
+								if (!popover.contains(e.target as Node)) {
+									popover.remove();
+									document.removeEventListener('click', handleClickOutside);
+								}
+							};
 
-						document.addEventListener('click', handleClickOutside);
-
-						document.body.appendChild(popover);
+							document.addEventListener('click', handleClickOutside);
+							document.body.appendChild(popover);
+						}
 					}
 				});
 			}
 		}
 	};
+
+	// Add autocomplete functionality
+	const handleChange = (newMarkdown: string) => {
+		onChange(newMarkdown);
+		const editor = ref.current;
+		if (!editor) return;
+
+		// Get the current selection from the editor
+		const editorElement = document.querySelector('.mdxeditor');
+		if (!editorElement) return;
+
+		const selection = window.getSelection();
+		if (!selection || !selection.rangeCount) return;
+
+		const range = selection.getRangeAt(0);
+		const container = range.startContainer;
+
+		// Only process if we're in a text node
+		if (container.nodeType !== Node.TEXT_NODE) return;
+
+		const textContent = container.textContent || '';
+		const cursorPosition = range.startOffset;
+
+		handleMentionSuggestions(editor, textContent, cursorPosition, theme as string);
+	};
+
+	const ExtraTools = () => (
+		<div className='flex items-center gap-1'>
+			<ListsToggle options={['bullet', 'number']} />
+			<Separator />
+
+			<InsertTable />
+			<StrikeThroughSupSubToggles options={['Strikethrough']} />
+			<CodeToggle />
+			<InsertThematicBreak />
+			<Separator />
+			<DiffSourceToggleWrapper>
+				<UndoRedo />
+			</DiffSourceToggleWrapper>
+		</div>
+	);
+
+	const toolbarContents = () => (
+		<div className='flex items-center gap-1 md:gap-1'>
+			<BoldItalicUnderlineToggles />
+			<Separator />
+			<BlockTypeSelect />
+			<Separator />
+
+			<CreateLink />
+			<InsertImage />
+			<ButtonWithTooltip
+				onClick={() => setIsModalVisible(true)}
+				title='Select GIF'
+			>
+				<FileGifOutlined className='mt-0.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
+			</ButtonWithTooltip>
+			{!isUsedInCreatePost ? (
+				<Popover
+					content={<ExtraTools />}
+					trigger='click'
+					placement='bottom'
+					arrow={false}
+					className={classNames(className)}
+					overlayClassName={className}
+				>
+					<ButtonWithTooltip title='More options'>
+						<EllipsisOutlined className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+					</ButtonWithTooltip>
+				</Popover>
+			) : (
+				<ExtraTools />
+			)}
+		</div>
+	);
+
+	const plugins = [
+		headingsPlugin(),
+		listsPlugin(),
+		thematicBreakPlugin(),
+		markdownShortcutPlugin(),
+		linkPlugin(),
+		linkDialogPlugin(),
+		quotePlugin(),
+		imagePlugin({
+			imageUploadHandler: imageUploadHandler
+		}),
+		tablePlugin(),
+		codeBlockPlugin(),
+		codeMirrorPlugin(),
+		diffSourcePlugin()
+	];
+
+	if (!readOnly) {
+		plugins.push(
+			toolbarPlugin({
+				toolbarClassName: classNames(dmSans.className, dmSans.variable, 'toolbar '),
+				toolbarContents: toolbarContents
+			})
+		);
+	}
 
 	return (
 		<div className={classNames(theme === 'dark' ? 'dark-theme' : 'light-theme', className)}>
@@ -562,9 +581,9 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 					border-radius: 0.25rem;
 					width: 100px;
 					padding: 4px 0rem 4px 8px;
-					font-size: 13px;
+					font-size: 12px;
 					span {
-						color: ${({ theme }) => (theme === 'dark' ? '#F5F6F8' : 'var(--lightBlue)')};
+						color: ${({ theme }) => (theme === 'dark' ? '#F5F6F8' : 'white')};
 					}
 				}
 
@@ -651,20 +670,20 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 	[class*='_linkDialogPopoverContent_uazmk_600'],
 	[class*='_dialogContent_uazmk_602'] {
 		background-color: ${({ theme }) => (theme === 'dark' ? '#1C1D1F' : '#F5F6F8')};
-		color: white;
+		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 
 		h2 {
-			color: white;
+			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 		}
 
 		label {
-			color: white;
+			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 		}
 
 		input {
 			background-color: transparent;
 			border: 1px solid ${({ theme }) => (theme === 'dark' ? 'var(--separatorDark)' : '#D2D8E0')};
-			color: white;
+			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 		}
 
 		button {
@@ -674,7 +693,7 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		}
 		[class*='_secondaryButton'] {
 			background-color: transparent;
-			color: white;
+			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 			border: 1px solid ${({ theme }) => (theme === 'dark' ? 'var(--separatorDark)' : '#D2D8E0')};
 		}
 	}
@@ -713,13 +732,13 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 
 	.ant-popover-content {
 		background-color: ${({ theme }) => (theme === 'dark' ? '#1C1D1F' : '#F5F6F8')};
-		color: white;
+		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 
 		button {
 			justify-content: flex-start;
 			padding: 0.25rem;
 			border-radius: 0px;
-			color: white;
+			color: ${({ theme }) => (theme === 'dark' ? '#9E9E9E' : 'var(--lightBlue)')};
 
 			&:hover {
 				background-color: ${({ theme }) => (theme === 'dark' ? '#2a2a2a' : '#f3f4f6')};

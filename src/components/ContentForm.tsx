@@ -2,10 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form } from 'antd';
+import { Button, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import TextEditor from '~src/ui-components/TextEditor';
+import dynamic from 'next/dynamic';
+
+const BlockEditor = dynamic(() => import('./BlockEditor'), { ssr: false });
 
 interface Props {
 	className?: string;
@@ -42,6 +45,9 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 		validateStatus: 'success'
 	});
 
+	const [isBlockEditor, setIsBlockEditor] = useState(false);
+	const [content, setContent] = useState('');
+
 	const onChangeWrapper = (content: string) => {
 		const validationStatus = validateContent(content);
 		setValidation(validationStatus);
@@ -49,6 +55,7 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 			onChange(content);
 		}
 
+		setContent(content);
 		return content;
 	};
 
@@ -62,15 +69,33 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 				validateStatus={validationStatus.validateStatus}
 				help={validationStatus.errorMsg}
 			>
-				<TextEditor
-					name='content'
-					value={value}
-					theme={theme}
-					height={height}
-					onChange={onChangeWrapper}
-					autofocus={autofocus}
-				/>
+				{isBlockEditor ? (
+					<BlockEditor
+						data={content}
+						onChange={onChangeWrapper}
+					/>
+				) : (
+					<TextEditor
+						name='content'
+						value={value}
+						theme={theme}
+						height={height}
+						onChange={onChangeWrapper}
+						autofocus={autofocus}
+					/>
+				)}
 			</Form.Item>
+
+			<div className='flex justify-end'>
+				<Button
+					size='small'
+					className='mb-6 text-xs'
+					onClick={() => setIsBlockEditor(!isBlockEditor)}
+				>
+					<span className='mr-2'>&#8644;</span>
+					Switch to {isBlockEditor ? 'Old' : 'New'} Editor
+				</Button>
+			</div>
 		</div>
 	);
 };

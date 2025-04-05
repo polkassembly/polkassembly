@@ -18,17 +18,20 @@ export const getDelegationMandate = async (network: string, address: number) => 
 			const data = paDelegatesSnapshot?.docs?.[0]?.data();
 			return {
 				data: { delegationMandate: data?.bio || '' },
-				error: null
+				error: null,
+				status: 200
 			};
 		}
 		return {
 			data: null,
-			error: `User with address ${address} is not a Polkassembly delegate`
+			error: `User with address ${address} is not a Polkassembly delegate`,
+			status: 200
 		};
 	} catch (err) {
 		return {
 			data: null,
-			error: `User with address ${address} is not a Polkassembly delegate`
+			error: messages.API_FETCH_ERROR,
+			status: 500
 		};
 	}
 };
@@ -43,11 +46,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ delegationMan
 
 	if (!address) return res.status(500).json({ message: messages.INVALID_PARAMS });
 
-	const { data, error } = await getDelegationMandate(network, address);
+	const { data, error, status } = await getDelegationMandate(network, address);
 	if (data) {
-		return res.status(200).json(data);
+		return res.status(status).json(data);
 	}
-	return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
+	return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 }
 
 export default withErrorHandling(handler);

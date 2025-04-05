@@ -13,12 +13,12 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EAllowedCommentor, NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
-import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -321,17 +321,15 @@ const WriteProposal = ({
 										md={`${content?.slice(0, 300)}...` || content}
 									/>
 								) : (
-									<Form.Item name='content'>
-										<ContentForm
-											value={content}
-											height={250}
-											onChange={(content: string) => {
-												setContent(content);
-												onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
-												setSteps({ percent: title.length === 0 ? 83.33 : 100, step: 0 });
-											}}
-										/>
-									</Form.Item>
+									<MarkdownEditor
+										value={content}
+										height={250}
+										onChange={(content: string) => {
+											setContent(content);
+											onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
+											setSteps({ percent: title.length === 0 ? 83.33 : 100, step: 0 });
+										}}
+									/>
 								)}
 							</div>
 						</div>
@@ -339,7 +337,7 @@ const WriteProposal = ({
 
 					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
-						className={isDiscussionLinked ? 'mt-6 ' : '-mt-4'}
+						className={isDiscussionLinked ? 'mt-6 ' : 'mt-4'}
 						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
 						isLoading={loading}
 						allowedCommentors={allowedCommentors || EAllowedCommentor.ALL}

@@ -4,10 +4,10 @@
 import { Button, Divider, Modal } from 'antd';
 import Image from 'next/image';
 import React from 'react';
-import ContentForm from '../ContentForm';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import classNames from 'classnames';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 const ExpertPostModal = ({
 	isModalVisible,
@@ -49,7 +49,7 @@ const ExpertPostModal = ({
 				/>
 				<div className='my-3'>
 					<p className='text-sm font-medium text-[#243A57] dark:text-lightWhite'>Please write your views about the proposal below</p>
-					<ContentForm
+					<MarkdownEditor
 						onChange={(content: string) => setReview(content)}
 						value={review}
 						height={150}

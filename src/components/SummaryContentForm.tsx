@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { message } from 'antd';
-import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
-import TextEditor from '~src/ui-components/TextEditor';
+import MarkdownEditor from './Editor/MarkdownEditor';
 
 interface Props {
 	className?: string;
@@ -17,7 +16,6 @@ interface Props {
 
 const SummaryContentForm = ({ className, height, onChange, autofocus = false, value: passedContent }: Props): JSX.Element => {
 	const [value, setValue] = useState<string | undefined>(passedContent);
-	const { resolvedTheme: theme } = useTheme();
 
 	const onChangeWrapper = (content: string) => {
 		if (content.length > 400) {
@@ -34,10 +32,9 @@ const SummaryContentForm = ({ className, height, onChange, autofocus = false, va
 
 	return (
 		<div className={className}>
-			<TextEditor
-				name='content'
+			<MarkdownEditor
+				key='content'
 				value={value}
-				theme={theme}
 				height={height}
 				onChange={onChangeWrapper}
 				autofocus={autofocus}

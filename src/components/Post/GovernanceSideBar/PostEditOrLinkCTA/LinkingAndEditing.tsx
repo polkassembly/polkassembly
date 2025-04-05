@@ -5,7 +5,6 @@
 import { Form, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import React, { FC, useEffect, useState } from 'react';
-import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -19,6 +18,7 @@ import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -293,14 +293,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					</Form.Item>
 					<div className='mt-[30px]'>
 						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
-						<ContentForm
+						<MarkdownEditor
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
 									...prev,
 									content: content
 								}));
-								return content.length ? content : null;
 							}}
+							height={200}
+							value={editPostValue.content}
 						/>
 					</div>
 					<div className='mt-[30px]'>

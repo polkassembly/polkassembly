@@ -6,7 +6,6 @@ import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutl
 import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useCallback, useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
 import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -38,6 +37,8 @@ import Tooltip from '~src/basic-components/Tooltip';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import { ProposalType } from '~src/global/proposalType';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 
 interface Props {
 	userId: number;
@@ -82,7 +83,6 @@ const EditableReplyContent = ({
 	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
-	const [form] = Form.useForm();
 	const [replyToreplyForm] = Form.useForm();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -92,6 +92,8 @@ const EditableReplyContent = ({
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
 	const [isEditable, setIsEditable] = useState(false);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
+	const [editableReplyContent, setEditableReplyContent] = useState<string>(getMarkdownContent(content || ''));
+	const [replyToReplyContent, setReplyToReplyContent] = useState<string>('');
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
@@ -114,9 +116,9 @@ const EditableReplyContent = ({
 	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	useEffect(() => {
-		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
-		form.setFieldValue('content', localContent || content || '');
-	}, [content, form, replyId]);
+		const localContent = getMarkdownContent(global.window.localStorage.getItem(editReplyKey(replyId)) || '') || '';
+		setEditableReplyContent(localContent || content || '');
+	}, [content, replyId]);
 
 	useEffect(() => {
 		(async () => {
@@ -136,13 +138,13 @@ const EditableReplyContent = ({
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
 
-		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
+		setReplyToReplyContent(`${usernameContent}&nbsp;`);
 	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName, username]);
 
 	const handleCancel = () => {
 		toggleEdit();
 		global.window.localStorage.removeItem(editReplyKey(replyId));
-		form.setFieldValue('content', '');
+		setEditableReplyContent('');
 	};
 	const handleReplyCancel = () => {
 		global.window.localStorage.removeItem(newReplyKey(commentId));
@@ -167,12 +169,10 @@ const EditableReplyContent = ({
 	}, [addresses, id, loginAddress, proposer, userId]);
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const newContent = form.getFieldValue('content');
+		const newContent = editableReplyContent;
 		if (!newContent) return;
 		setError('');
 		global.window.localStorage.removeItem(editReplyKey(replyId));
-		form.setFieldValue('content', '');
 		let oldContent: any;
 		const keys = Object.keys(comments);
 
@@ -266,16 +266,14 @@ const EditableReplyContent = ({
 			});
 		}
 		setLoading(false);
+		global.window.localStorage.setItem(editReplyKey(replyId), newContent);
 	};
 
 	const handleRetry = async () => {
-		await replyToreplyForm.validateFields();
-		const newContent = form.getFieldValue('content');
-		const replyContent = replyToreplyForm.getFieldValue('content');
-		if (!replyContent) return;
+		if (!replyToReplyContent) return;
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 			commentId: commentId,
-			content: replyContent,
+			content: replyToReplyContent,
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			trackNumber: track_number,
@@ -302,7 +300,7 @@ const EditableReplyContent = ({
 								if (comment?.replies && Array.isArray(comment.replies)) {
 									comment.replies = comment.replies.map((reply: any) => {
 										if (reply.id === replyId) {
-											reply.content = newContent;
+											reply.content = editableReplyContent;
 											reply.updated_at = new Date();
 										}
 										return {
@@ -327,9 +325,7 @@ const EditableReplyContent = ({
 	};
 
 	const handleReplySave = async () => {
-		await replyToreplyForm.validateFields();
-		const replyContent = replyToreplyForm.getFieldValue('content');
-		if (!replyContent) return;
+		if (!replyToReplyContent) return;
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		const keys = Object.keys(comments);
 		const replyId = v4();
@@ -344,7 +340,7 @@ const EditableReplyContent = ({
 								comment.replies = [
 									...comment.replies,
 									{
-										content: replyContent,
+										content: replyToReplyContent,
 										created_at: new Date(),
 										id: replyId,
 										proposer: loginAddress,
@@ -379,7 +375,6 @@ const EditableReplyContent = ({
 			return comments;
 		});
 
-		replyToreplyForm.resetFields();
 		setIsReplying(false);
 		queueNotification({
 			header: 'Success!',
@@ -390,7 +385,7 @@ const EditableReplyContent = ({
 		if (id) {
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
-				content: replyContent,
+				content: replyToReplyContent,
 				postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 				postType: reply.post_type || postType,
 				trackNumber: track_number,
@@ -642,22 +637,23 @@ const EditableReplyContent = ({
 				{error && <div>{error}</div>}
 				{isEditing ? (
 					<Form
-						form={form}
 						name='reply-content-form'
 						onFinish={handleSave}
 						layout='vertical'
 						// disabled={formDisabled}
 						validateMessages={{ required: "Please add the '${name}'" }}
 					>
-						<ContentForm
+						<MarkdownEditor
 							autofocus={true}
+							height={200}
 							onChange={(content: string) => {
 								global.window.localStorage.setItem(editReplyKey(replyId), content);
-								return content.length ? content : null;
+								setEditableReplyContent(content);
 							}}
+							value={editableReplyContent}
 						/>
 						<Form.Item>
-							<div className='flex items-center justify-end'>
+							<div className='mt-4 flex items-center justify-end'>
 								<Button
 									htmlType='button'
 									onClick={handleCancel}
@@ -759,16 +755,17 @@ const EditableReplyContent = ({
 								disabled={loading}
 								validateMessages={{ required: "Please add the '${name}'" }}
 							>
-								<ContentForm
-									height={250}
+								<MarkdownEditor
+									height={200}
 									autofocus={true}
 									onChange={(content: string) => {
 										global.window.localStorage.setItem(newReplyKey(commentId), content);
-										return content.length ? content : null;
+										setReplyToReplyContent(content);
 									}}
+									value={replyToReplyContent}
 								/>
 								<Form.Item>
-									<div className='flex items-center justify-end '>
+									<div className='mt-4 flex items-center justify-end'>
 										<Button
 											htmlType='button'
 											onClick={() => handleReplyCancel()}

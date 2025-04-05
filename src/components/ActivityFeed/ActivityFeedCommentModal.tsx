@@ -11,11 +11,11 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import queueNotification from '~src/ui-components/QueueNotification';
 import TopicTag from '~src/ui-components/TopicTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import ContentForm from '../ContentForm';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageComponent from '../ImageComponent';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -29,8 +29,6 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		return content.length ? content : null;
 	};
 	const handleModalOpen = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if (!content) return;
 		handleSave();
 	};
@@ -43,12 +41,9 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 	// };
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if (!content) return;
 		setLoading(true);
 
-		setContent('');
 		form.resetFields();
 		global.window.localStorage.removeItem(commentKey());
 
@@ -83,6 +78,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		} finally {
 			setLoading(false);
 			onCloseHandler();
+			setContent('');
 		}
 	};
 
@@ -152,18 +148,19 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='font-dmSans text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
-						<div className='w-[250px] md:w-[500px]  md:flex-1'>
-							<ContentForm
+						<p className='font-dmSans text-xs font-medium text-pink_primary'>Commenting on proposal</p>
+						<div className='w-[250px] md:w-[500px] md:flex-1'>
+							<MarkdownEditor
 								onChange={(content: any) => onContentChange(content)}
 								height={200}
+								value={content}
 							/>
 						</div>
 					</div>
 				</div>
 
 				<Form.Item>
-					<div className=' flex items-center justify-end '>
+					<div className='mt-4 flex items-center justify-end'>
 						<div className='relative'>
 							<div className='flex'>
 								<Button

@@ -19,6 +19,7 @@
   "dependencies": {
     "@giphy/js-fetch-api": "^5.1.0",
     "@kiltprotocol/type-definitions": "^0.32.1",
+    "@mdxeditor/editor": "^3.29.1",
     "@metamask/jazzicon": "^2.0.0",
     "@nivo/bar": "^0.84.0",
     "@nivo/circle-packing": "^0.88.0",
@@ -37,7 +38,6 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@sendgrid/mail": "^7.7.0",
     "@sentry/nextjs": "^8",
-    "@tinymce/tinymce-react": "^4.3.0",
     "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "18.11.17",

@@ -11,13 +11,13 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EAllowedCommentor, NotificationStatus } from '~src/types';
-import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import { gov1TreasuryProposalActions, updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 interface Props {
 	className?: string;
@@ -239,7 +239,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 									/>
 								) : (
 									<Form.Item name='content'>
-										<ContentForm
+										<MarkdownEditor
 											value={content}
 											height={250}
 											onChange={(content: string) => {

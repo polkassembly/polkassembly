@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
@@ -34,6 +34,10 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [buttonLoading, setButtonLoading] = useState(false);
 
+	const isSocialFieldsAvailable = useMemo(() => {
+		return !!identityInfo?.email || !!identityInfo?.twitter || !!identityInfo?.matrix;
+	}, [identityInfo]);
+
 	const handleRequestJudgement = async () => {
 		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
@@ -43,7 +47,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 				userId: currentUser?.id || '',
 				userName: currentUser?.username || ''
 			});
-			if (identityInfo.isIdentitySet && !!identityInfo?.email) {
+			if (identityInfo.isIdentitySet && isSocialFieldsAvailable) {
 				const registrarIndex = getIdentityRegistrarIndex({ network });
 
 				if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
@@ -91,7 +95,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 
 	return (
 		<div className={className}>
-			{(!identityInfo.isIdentitySet || identityInfo?.verifiedByPolkassembly) && showAlert && !identityInfo?.email && (
+			{(!identityInfo.isIdentitySet || identityInfo?.verifiedByPolkassembly) && showAlert && !isSocialFieldsAvailable && (
 				<Alert
 					showIcon
 					type='info'
@@ -100,7 +104,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 				/>
 			)}
 
-			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
+			{identityInfo.isIdentitySet && showAlert && !isSocialFieldsAvailable && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
 					type='info'

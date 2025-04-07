@@ -10,7 +10,7 @@ import { Collapse } from '~src/components/Settings/Notifications/common-ui/Colla
 import CollapseDownIcon from '~assets/icons/keyboard_arrow_down.svg';
 import CollapseUpIcon from '~assets/icons/keyboard_arrow_up.svg';
 import styled from 'styled-components';
-import { Divider } from 'antd';
+import { Divider, Tooltip } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
@@ -233,7 +233,20 @@ const VoterRow: FC<IVoterRow> = ({
 									isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''
 								} hidden w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:flex`}
 							>
-								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
+								{voteData.lockPeriod === 0 ? '0.1' : voteData?.lockPeriod === null ? '' : voteData.lockPeriod}
+								{voteData?.lockPeriod != null ? 'x' : ''}
+								{voteData?.lockPeriod === null ? (
+									<Tooltip
+										color='#363636'
+										title={<p className='m-0 whitespace-nowrap p-0 text-xs font-normal text-white'>Split Abstain</p>}
+									>
+										sa
+									</Tooltip>
+								) : voteData?.delegatedVotes?.length > 0 ? (
+									'/d'
+								) : (
+									''
+								)}
 							</div>
 						)}
 					</>
@@ -250,7 +263,11 @@ const VoterRow: FC<IVoterRow> = ({
 						} mr-4 w-full overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:mr-0 sm:w-[90px]`}
 					>
 						{parseBalance(
-							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
+							voteData?.decision !== 'abstain'
+								? voteData.lockPeriod == null
+									? voteData?.balance?.value
+									: (voteData.totalVotingPower || voteData.votingPower).toString()
+								: (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,
 							true,
 							network
@@ -262,7 +279,7 @@ const VoterRow: FC<IVoterRow> = ({
 		</div>
 	);
 
-	return voteData?.decision !== 'abstain' ? (
+	return voteData?.decision !== 'abstain' && voteData?.lockPeriod !== null ? (
 		<StyledCollapse
 			className={`${
 				active && !isSmallScreen ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'

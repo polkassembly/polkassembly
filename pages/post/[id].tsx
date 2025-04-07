@@ -83,7 +83,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 						height={200}
 					/>
 					<h1 className='mt-8 text-lg font-bold text-bodyBlue dark:text-blue-dark-high'>This post has been deleted.</h1>
-					<p className='text-center text-sm text-lightBlue dark:text-blue-dark-medium'>
+					<p className='text-center text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 						This post was flagged as spam by users, if you think there is an error,{' '}
 						<Link
 							href='https://polkassembly.featureos.app/'

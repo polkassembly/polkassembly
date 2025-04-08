@@ -389,7 +389,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												referendumId={referendumId}
 											/>
 										))}
-									{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+									{decision && !votesRes?.[decision]?.votes?.length && (
+										<div className='flex w-full items-center justify-center'>
+											<PostEmptyState />
+										</div>
+									)}
 								</div>
 							</VoteContainer>
 						</div>

@@ -1809,7 +1809,7 @@ query ConvictionVotesForAddressWithTxnHashListingByTypeAndIndex($orderBy: [Convi
   }
 }`;
 
-export const GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int=1504, $type_eq: VoteType = ReferendumV2, $limit: Int = 25, $offset: Int = 0, $voter_eq: String) {
+export const GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int, $type_eq: VoteType = ReferendumV2, $limit: Int = 25, $offset: Int = 0, $voter_eq: String) {
   yes: convictionVotes(orderBy: $orderBy, where: {AND:{balance:{aye_not_eq: "0"},OR:{balance:{value_isNull:false}}},type_eq: $type_eq, decision_in: [yes, abstain], proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
     id
     decision
@@ -1922,7 +1922,7 @@ export const GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `query Conv
         }
 }
   
-  yesCount:     convictionVotesConnection(orderBy: id_ASC, where: {AND:{balance:{aye_not_eq: "0"},OR:{balance:{value_isNull:false}}},type_eq: $type_eq, decision_in: [yes, abstain], proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true,voter_eq:$voter_eq }) {
+  yesCount: convictionVotesConnection(orderBy: id_ASC, where: {AND:{balance:{aye_not_eq: "0"},OR:{balance:{value_isNull:false}}},type_eq: $type_eq, decision_in: [yes, abstain], proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true,voter_eq:$voter_eq }) {
     totalCount
   }
   noCount: convictionVotesConnection(orderBy: id_ASC, where: {AND:{balance:{nay_not_eq: "0"},OR:{balance:{value_isNull:false}}},type_eq: $type_eq, decision_in: [no, abstain], proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true,voter_eq: $voter_eq }) {

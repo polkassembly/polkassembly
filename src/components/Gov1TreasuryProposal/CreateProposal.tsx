@@ -474,8 +474,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${(!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading?.isLoading ) && 'opacity-50'} `}
-						disabled={!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading.isLoading}
+						className={`${(!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading?.isLoading || gasFee.gte(availableBalance)) && 'opacity-50'} `}
+						disabled={!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading.isLoading || gasFee.gte(availableBalance)}
 					/>
 				</div>
 			</div>

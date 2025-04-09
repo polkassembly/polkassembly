@@ -16,10 +16,11 @@ import { useTheme } from 'next-themes';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { chainProperties } from '~src/global/networkConstants';
 import formatBnBalance from '~src/util/formatBnBalance';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 const ZERO_BN = new BN(0);
 
@@ -49,6 +50,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [errorStatus, setErrorStatus] = useState<{ isError: boolean; message: string }>({ isError: false, message: '' });
 	const baseDecimals = chainProperties?.[network]?.tokenDecimals;
+	const [content, setContent] = useState<string>(getMarkdownContent(submission?.content || '') || '');
 
 	useEffect(() => {
 		if (isUsedForEditing && submission) {
@@ -105,7 +107,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	}, [api, apiReady, loginAddress]);
 
 	const handleSubmit = async () => {
-		if (!api || !apiReady) {
+		if (!api || !apiReady || !content) {
 			return;
 		}
 
@@ -313,17 +315,13 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 							{' '}
 							Description<span className='text-lg font-medium text-[#FF3C5F]'>*</span>
 						</span>
-						<Form.Item
-							name='description'
-							rules={[{ required: true, message: 'Please input the description of your request!' }]}
-							className='mb-0 h-min pb-0'
-						>
-							<ContentForm
-								className=' h-min text-blue-light-high dark:text-blue-dark-high'
-								height={200}
-								value={submission?.content || ''}
-							/>
-						</Form.Item>
+
+						<MarkdownEditor
+							className=' h-min text-blue-light-high dark:text-blue-dark-high'
+							height={200}
+							value={content}
+							onChange={(value: string) => setContent(value)}
+						/>
 
 						{showBalanceAlert && availableBalance.lt(ZERO_BN) && (
 							<Alert

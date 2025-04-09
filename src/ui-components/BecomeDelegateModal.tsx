@@ -15,7 +15,7 @@ import Address from './Address';
 import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
-import ContentForm from '~src/components/ContentForm';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 
 interface IDetailsState {
 	userId: number | null;
@@ -120,7 +120,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							{isEditMode ? 'Edit Delegation Mandate' : 'Your Delegation Mandate'}
 							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
-						<ContentForm
+						<MarkdownEditor
 							value={newBio}
 							height={250}
 							onChange={(content: string) => {

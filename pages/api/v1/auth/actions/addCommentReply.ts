@@ -22,7 +22,6 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { firestore_db } from '~src/services/firebaseInit';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
-import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -39,10 +38,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const { userId, commentId, content, postId, postType } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	// Sanitize the content before validation and processing
-	const sanitizedContent = content ? sanitizeHTML(content) : '';
-
-	if (typeof content !== 'string' || isContentBlacklisted(sanitizedContent)) {
+	if (typeof content !== 'string' || isContentBlacklisted(content || '')) {
 		return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 	}
 
@@ -85,7 +81,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const newReplyRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc();
 
 	const newReply: CommentReply = {
-		content: sanitizedContent,
+		content: content || '',
 		created_at: new Date(),
 		id: newReplyRef.id,
 		isDeleted: false,
@@ -140,7 +136,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 				action: EActivityAction.CREATE,
 				commentAuthorId: commentAuthorId,
 				commentId,
-				content: sanitizedContent,
+				content: content || '',
 				network,
 				postAuthorId: postAuthorId,
 				postId,

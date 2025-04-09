@@ -15,7 +15,6 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/es/date-picker';
 import styled from 'styled-components';
-import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
@@ -31,6 +30,8 @@ import { inputToBn } from '~src/util/inputToBn';
 import { useRouter } from 'next/router';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { BountyResponseType } from 'pages/api/v1/user-created-bounties/createBounty';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 
 interface ICreateBountyForm {
 	className?: string;
@@ -60,6 +61,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [twitterUrl, setTwitterUrl] = useState<string>('');
 	const [newBountyAmount, setNewBountyAmount] = useState<BN>(ZERO_BN);
 	const [clickedVerifyBtn, setClickedVerifiedBtn] = useState<boolean>(false);
+	const [content, setContent] = useState<string>('');
 
 	useEffect(() => {
 		form.setFieldsValue({
@@ -68,7 +70,6 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				(postInfo?.reward && Number(formatBnBalance(String(postInfo?.reward), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))) ||
 				createBountyFormState.balance ||
 				'0',
-			content: postInfo?.content || createBountyFormState.content || '',
 			claims: postInfo?.max_claim || createBountyFormState.claims,
 			deadline: createBountyFormState.deadline ? dayjs(createBountyFormState.deadline) : null,
 			guidelines: postInfo?.submission_guidelines || createBountyFormState.guidelines,
@@ -76,6 +77,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 			twitter: postInfo?.twitter_handle || createBountyFormState.twitter,
 			categories: createBountyFormState.categories
 		});
+		setContent(getMarkdownContent(postInfo?.content || createBountyFormState.content || ''));
 		setSelectedAddress(createBountyFormState.address || selectedAddress || loginAddress);
 
 		if (createBountyFormState?.twitter) {
@@ -99,7 +101,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					(postInfo?.reward && Number(formatBnBalance(String(postInfo?.reward), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))) ||
 					createBountyFormState.balance ||
 					'0',
-				content: postInfo?.content || createBountyFormState.content || '',
+
 				claims: postInfo?.max_claim || createBountyFormState.claims,
 				deadline: postInfo?.deadline_date ? dayjs(postInfo.deadline_date) : null,
 				guidelines: postInfo?.submission_guidelines || createBountyFormState.guidelines,
@@ -107,6 +109,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 				twitter: postInfo?.twitter_handle || createBountyFormState.twitter,
 				categories: createBountyFormState.categories
 			});
+			setContent(getMarkdownContent(postInfo?.content || createBountyFormState.content || ''));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postInfo, form]);
@@ -124,11 +127,11 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	};
 	const allowCreateBounty = () => {
 		form.validateFields();
-		const formValues = form?.getFieldsValue(['title', 'content', 'address', 'claims', 'deadline', 'twitter']);
+		const formValues = form?.getFieldsValue(['title', 'address', 'claims', 'deadline', 'twitter']);
 
 		const allow =
 			!!(formValues?.title as string)?.length &&
-			!!(formValues?.content as string)?.length &&
+			!!content?.length &&
 			!!(formValues?.address as string)?.length &&
 			!!formValues?.claims &&
 			!!dayjs(formValues?.deadline)?.isValid() &&
@@ -206,6 +209,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const handleReset = () => {
 		dispatch(resetForm() as any);
 		form.resetFields();
+		setContent('');
 	};
 
 	const handleFormSubmit = async (values: any) => {
@@ -539,9 +543,12 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 								<p className={`m-0 flex items-center gap-1 p-0 text-sm font-normal text-lightBlue dark:text-blue-dark-medium ${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
 									Description<span className='text-[#FF3C5F]'>*</span>
 								</p>
-								<ContentForm
-									value={form.getFieldValue('content')}
+								<MarkdownEditor
+									value={content}
 									height={250}
+									onChange={(value) => {
+										setContent(value);
+									}}
 								/>
 							</div>
 						</div>

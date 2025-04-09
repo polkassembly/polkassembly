@@ -13,7 +13,6 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Balance from '~src/components/Balance';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
-import ContentForm from '~src/components/ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import BN from 'bn.js';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -21,6 +20,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { IChildBountySubmission, NotificationStatus } from '~src/types';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -218,7 +218,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 								Description <span className='text-nay_red'>*</span>
 							</label>
 							<Form.Item name='content'>
-								<ContentForm
+								<MarkdownEditor
 									value={content}
 									height={250}
 									onChange={(content: string) => {

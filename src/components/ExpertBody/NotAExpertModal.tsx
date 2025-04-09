@@ -20,9 +20,9 @@ import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import TextEditor from '~src/ui-components/TextEditor';
 import classNames from 'classnames';
 import queueNotification from '~src/ui-components/QueueNotification';
+import MarkdownEditor from '../Editor/MarkdownEditor';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -277,8 +277,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							name='reason'
 							rules={[{ message: 'Please provide a reason', required: true }]}
 						>
-							<TextEditor
-								name='reason'
+							<MarkdownEditor
+								key='reason'
 								value={reason}
 								onChange={(content: any) => setReason(content)}
 								height={150}
@@ -291,8 +291,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							name='contribution'
 							rules={[{ message: 'Please provide a contribution', required: true }]}
 						>
-							<TextEditor
-								name='contribution'
+							<MarkdownEditor
+								key='contribution'
 								value={contribution}
 								onChange={(content: any) => setContribution(content)}
 								height={150}

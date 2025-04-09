@@ -18,7 +18,6 @@ import createUserActivity from '../../utils/create-activity';
 import { EActivityAction } from '~src/types';
 import { getCommentsAISummaryByPost } from '../../ai-summary';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
-import { sanitizeHTML } from '~src/util/sanitizeHTML';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -30,9 +29,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const { commentId, content, postId, postType, replyId } = req.body;
 	if (!commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
-
-	// Sanitize the content before processing
-	const sanitizedContent = content ? sanitizeHTML(content) : '';
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
@@ -71,7 +67,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	replyRef
 		.update({
-			content: sanitizedContent,
+			content: content || '',
 			isDeleted: false,
 			updated_at: last_comment_at
 		})
@@ -99,7 +95,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			action: EActivityAction.EDIT,
 			commentAuthorId,
 			commentId,
-			content: sanitizedContent,
+			content: content || '',
 			network,
 			postAuthorId,
 			postId,

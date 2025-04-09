@@ -14,7 +14,7 @@
     "test:cypress": "cypress run --spec 'cypress/e2e/test/*.js'"
   },
   "engines": {
-    "node": "18"
+    "node": ">=18"
   },
   "dependencies": {
     "@giphy/js-fetch-api": "^5.1.0",

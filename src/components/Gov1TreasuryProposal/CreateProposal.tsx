@@ -45,7 +45,7 @@ interface Props {
 const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId, loginAddress, username } = useUserDetailsSelector();
+	const { id: userId, loginAddress, username, web3signup } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -474,8 +474,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${(!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading?.isLoading || gasFee.gte(availableBalance)) && 'opacity-50'} `}
-						disabled={!beneficiary?.length || !loginAddress?.length || fundingAmount == '0' || loading.isLoading || gasFee.gte(availableBalance)}
+						className={`${(!beneficiary?.length || (web3signup && !loginAddress?.length) || fundingAmount == '0' || loading?.isLoading || gasFee.gte(availableBalance)) && 'opacity-50'} `}
+						disabled={!beneficiary?.length || (web3signup && !loginAddress?.length) || fundingAmount == '0' || loading.isLoading || gasFee.gte(availableBalance)}
 					/>
 				</div>
 			</div>

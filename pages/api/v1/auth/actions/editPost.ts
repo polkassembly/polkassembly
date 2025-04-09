@@ -39,6 +39,7 @@ import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
 import { sanitizeHTML } from '~src/util/sanitizeHTML';
+import { WebHooks } from '../../utils/webHook';
 
 export interface IEditPostResponse {
 	content: string;
@@ -413,6 +414,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 		await batch.commit();
 	}
+
+	// Update P2 DB
+	await WebHooks.editPost({
+		allowedCommentor: allowedCommentorsArr,
+		authorId: proposer_address,
+		content: sanitizedContent,
+		indexOrHash: postId,
+		proposalType: strProposalType,
+		title
+	});
+
 	try {
 		await createUserActivity({
 			action: EActivityAction.EDIT,

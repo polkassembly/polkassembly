@@ -252,7 +252,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	useEffect(() => {
 		getGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [gasFee]);
+	}, [getGasFee]);
 
 	return (
 		<Spin

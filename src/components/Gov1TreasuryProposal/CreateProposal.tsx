@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import AddressInput from '~src/ui-components/AddressInput';
 import Balance from '../Balance';
@@ -66,12 +66,12 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
 
-	const getGasFee = async () => {
-		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || fundingAmount == '0' || !proposer) return;
+	const getGasFee = useCallback(async () => {
+		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || !proposer || new BN(fundingAmount || '0').eq(ZERO_BN)) return;
 		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
 		const gasFee = await tx.paymentInfo(proposer);
 		setGasFee(new BN(gasFee.partialFee || '0'));
-	};
+	}, [api, apiReady, beneficiary, fundingAmount, network, proposer]);
 
 	const handleOnchange = (obj: any) => {
 		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, ...obj }));
@@ -246,10 +246,13 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 			percentage = 100;
 		}
 		handleOnchange({ ...gov1proposalData, secondStepPercentage: percentage });
-
-		getGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [beneficiary, proposer, fundingAmount]);
+
+	useEffect(() => {
+		getGasFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [getGasFee]);
 
 	return (
 		<Spin
@@ -333,7 +336,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						<div>
 							<div className=' flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-									Beneficary Address{' '}
+									Beneficiary Address{' '}
 									<HelperTooltip
 										className='ml-1'
 										text='The amount requested in the proposal will be received in this address.'
@@ -346,7 +349,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 									className='-mt-6 w-full'
 									defaultAddress={beneficiary}
 									name='beneficiary'
-									placeholder='Enter Beneficary Address'
+									placeholder='Enter Beneficiary Address'
 									iconClassName={'ml-[10px]'}
 									identiconSize={26}
 									onChange={(address: string) => handleBeneficiaryChange(address)}

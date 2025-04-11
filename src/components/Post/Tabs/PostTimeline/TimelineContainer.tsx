@@ -29,6 +29,12 @@ import styled from 'styled-components';
 import StatusTag from '~src/ui-components/StatusTag';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import NameLabel from '~src/ui-components/NameLabel';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import formatBnBalance from '~src/util/formatBnBalance';
+import BN from 'bn.js';
+import { gov2ReferendumStatus } from '~src/global/statuses';
 
 interface BlockStatus {
 	block: number;
@@ -55,13 +61,14 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { timeline, className } = props;
 	const {
-		postData: { postType }
+		postData: { postType, proposer, hash, track_name }
 	} = usePostDataContext();
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
 	let activeColor;
 	PostType === timeline.type ? (activeColor = '#485F7D') : (activeColor = '#E5007A');
 	const { network } = useNetworkSelector();
 	if (!timeline) return null;
+	const trackMetaData = track_name && networkTrackInfo[network][track_name];
 	const { statuses, type } = timeline;
 
 	if (statuses?.length === 0) return null;
@@ -107,7 +114,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	const StatusDiv = ({ status }: { status: string }) => {
 		return (
-			<div className='status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white'>
+			<div className={`${isCollapsed ? 'hidden' : ''} status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white`}>
 				<StatusTag
 					theme={theme}
 					className='max-w-[86px] overflow-hidden text-ellipsis text-white md:max-w-full'
@@ -131,7 +138,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 							style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}
 						>
 							<div className='content-container'>
-								<article className='py-[8px]'>
+								<article className='pb-2 pt-1'>
 									<div className='flex items-center'>
 										<div className='flex items-center'>
 											<p className='info-container mb-0 whitespace-nowrap text-xs font-normal text-sidebarBlue dark:text-white'>{blockDate.format("Do MMM 'YY, h:mm a")}</p>
@@ -153,6 +160,53 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 											<StatusDiv status={status} />
 										</div>
 									</div>
+
+									{status === gov2ReferendumStatus.SUBMITTED && (
+										<div className='flex flex-col gap-[3px]'>
+											<div className='items-center justify-between text-xs sm:flex'>
+												<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>
+												<NameLabel
+													defaultAddress={proposer}
+													truncateUsername={true}
+													usernameClassName='text-xs text-ellipsis overflow-hidden'
+												/>
+											</div>
+											{hash && (
+												<div className=' items-center justify-between text-xs sm:flex'>
+													<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposal Hash:</span>{' '}
+													<span className='font-medium text-blue-light-high dark:text-blue-dark-high'>{`${hash.slice(0, 5)}....${hash.slice(-5)}`}</span>
+												</div>
+											)}
+										</div>
+									)}
+									{status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED && (
+										<div className='flex flex-col gap-[3px]'>
+											<div className='items-center justify-between text-xs sm:flex'>
+												<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Depositor:</span>
+												<NameLabel
+													defaultAddress={proposer}
+													truncateUsername={true}
+													usernameClassName='text-xs text-ellipsis overflow-hidden'
+												/>
+											</div>
+											<div className=' items-center justify-between text-xs sm:flex'>
+												<span className='text-xs text-blue-light-medium dark:text-blue-dark-medium'>Deposit:</span>{' '}
+												{trackMetaData && trackMetaData?.decisionDeposit && (
+													<span className='font-medium text-blue-light-high dark:text-blue-dark-high'>
+														{trackMetaData?.decisionDeposit &&
+															formatUSDWithUnits(
+																formatBnBalance(
+																	`${trackMetaData?.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit,
+																	{ numberAfterComma: 2, withThousandDelimitor: false, withUnit: true },
+																	network
+																),
+																1
+															)}
+													</span>
+												)}
+											</div>
+										</div>
+									)}
 								</article>
 							</div>
 						</div>

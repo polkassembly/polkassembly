@@ -404,6 +404,7 @@ const AddressConnectModal = ({
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`${dmSans.className} ${dmSans.variable} radius w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
+			maskClosable={true}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{showMultisig && (

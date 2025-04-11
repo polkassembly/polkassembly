@@ -25,7 +25,6 @@ import { formatBalance, stringToHex } from '@polkadot/util';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
-import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -422,23 +421,11 @@ const AddressConnectModal = ({
 			footer={
 				<CustomButton
 					onClick={handleSubmit}
-					disabled={
-						!accounts ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lt(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false)
-					}
+					disabled={!accounts || (showMultisig && !multisig)}
 					width={155}
 					height={40}
 					variant='primary'
-					className={`mt-4 ${
-						accounts.length === 0 ||
-						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lt(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false) ||
-							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
-							'opacity-50')
-					}`}
+					className={`mt-4 ${accounts.length === 0 || (showMultisig && !multisig) || (Object.keys(availableWallets || {}).length === 0 && !loading) ? 'opacity-50' : ''}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
 				</CustomButton>
@@ -504,7 +491,7 @@ const AddressConnectModal = ({
 									</div>
 								)}
 
-								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
+								{/* {showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
 									<Alert
 										message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
 											totalDeposit,
@@ -514,7 +501,7 @@ const AddressConnectModal = ({
 										showIcon
 										className='mb-6'
 									/>
-								)}
+								)} */}
 							</div>
 						)}
 						{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (

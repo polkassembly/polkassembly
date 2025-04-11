@@ -827,8 +827,8 @@ export default function CreateReferendaForm({
 						htmlType='submit'
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
-						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={Boolean(((!methodCall || !selectedTrack) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
+						className={`w-min ${!methodCall ? 'opacity-60' : ''}`}
+						disabled={Boolean((!methodCall && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
 					>
 						Create Referendum
 					</CustomButton>

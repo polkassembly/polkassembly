@@ -796,7 +796,7 @@ export default function CreateReferendaForm({
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
 						className='w-min'
-						// disabled={Boolean(((!methodCall || (isOpenGovSupported(network) && !selectedTrack)) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
+						disabled={Boolean(((!methodCall || (isOpenGovSupported(network) && !selectedTrack)) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
 					>
 						Create Referendum
 					</CustomButton>

@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	try {
     const profileUsername = userProfile?.data?.username;
-		if (username) {
+		if (profileUsername) {
 			await updateUserBadges(profileUsername, network);
 		}
 	} catch (error) {

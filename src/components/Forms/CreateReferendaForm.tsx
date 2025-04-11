@@ -551,27 +551,29 @@ export default function CreateReferendaForm({
 								disabled
 							/>
 						</div>
-						<div className='mt-4'>
-							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Select Track{' '}
-								<span>
-									<HelperTooltip
-										text='Track selection is done based on the amount requested.'
-										className='ml-1'
-									/>
-								</span>
-							</label>
-							<SelectTracks
-								tracksArr={trackArr}
-								onTrackChange={(track) => {
-									setSelectedTrack(track);
-									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
-									// getPreimageTxFee();
-									// setSteps({ percent: 100, step: 1 });
-								}}
-								selectedTrack={selectedTrack}
-							/>
-						</div>
+						{isOpenGovSupported(network) && (
+							<div className='mt-4'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+									Select Track{' '}
+									<span>
+										<HelperTooltip
+											text='Track selection is done based on the amount requested.'
+											className='ml-1'
+										/>
+									</span>
+								</label>
+								<SelectTracks
+									tracksArr={trackArr}
+									onTrackChange={(track) => {
+										setSelectedTrack(track);
+										// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+										// getPreimageTxFee();
+										// setSteps({ percent: 100, step: 1 });
+									}}
+									selectedTrack={selectedTrack}
+								/>
+							</div>
+						)}
 					</>
 				)}
 				{isPreimage === false && (
@@ -827,8 +829,8 @@ export default function CreateReferendaForm({
 						htmlType='submit'
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
-						className={`w-min ${!methodCall ? 'opacity-60' : ''}`}
-						disabled={Boolean((!methodCall && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
+						className={`w-min ${!methodCall || (isOpenGovSupported(network) && !selectedTrack) ? 'opacity-60' : ''}`}
+						disabled={Boolean(((!methodCall || (isOpenGovSupported(network) && !selectedTrack)) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
 					>
 						Create Referendum
 					</CustomButton>

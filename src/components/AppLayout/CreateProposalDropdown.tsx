@@ -125,7 +125,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 		);
 
 		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
-			items.push({
+			items.unshift({
 				label: <Gov1TreasuryProposal isUsedInSidebar />,
 				key: '3'
 			});

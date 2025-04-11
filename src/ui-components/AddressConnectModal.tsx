@@ -422,22 +422,14 @@ const AddressConnectModal = ({
 			footer={
 				<CustomButton
 					onClick={handleSubmit}
-					disabled={
-						!accounts ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lt(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false)
-					}
+					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lt(totalDeposit))}
 					width={155}
 					height={40}
 					variant='primary'
 					className={`mt-4 ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lt(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false) ||
-							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
-							'opacity-50')
+						(((showMultisig && initiatorBalance.lt(totalDeposit)) || (Object.keys(availableWallets || {}).length === 0 && !loading)) && 'opacity-50')
 					}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}

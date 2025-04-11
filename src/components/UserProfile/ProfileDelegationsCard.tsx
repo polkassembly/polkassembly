@@ -215,7 +215,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 
 	const handleDelegationMandate = async () => {
 		setDelegationMandate('');
-		if (!checkedAddress.length) return;
+		if (!checkedAddress?.length) return;
 		const { data, error } = await nextApiClientFetch<{ delegationMandate: string }>('api/v1/delegations/getPADelegationMandates', { address: checkedAddress });
 		if (data) {
 			setDelegationMandate(data?.delegationMandate);
@@ -248,7 +248,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 						/>
 						Delegations
 					</span>
-					{userProfile?.user_id !== loginId && !!(username || '').length && (
+					{userProfile?.user_id !== loginId && !!(username || '')?.length && (
 						<CustomButton
 							className='delegation-buttons border-none shadow-none'
 							variant='default'
@@ -296,7 +296,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 						</CustomButton>
 					)}
 				</div>
-				{addresses.length > 1 && (
+				{addresses?.length > 1 && (
 					<div className=''>
 						<Popover
 							zIndex={1056}
@@ -314,7 +314,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 					</div>
 				)}
 				{/*TODO delegation bio */}
-				{!!delegationMandate.length && (
+				{!!delegationMandate?.length && (
 					<div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
 						<span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
 						<span className='flex flex-wrap items-center justify-start font-normal'>
@@ -357,14 +357,14 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 										/>
 										<div className='mt-0.5 flex flex-col justify-center gap-0 text-xs font-semibold tracking-wide'>
 											<span className='text-lightBlue dark:text-blue-dark-medium'>{item?.label}</span>
-											<span className='text-base text-bodyBlue dark:text-blue-dark-high'>{Object.keys(item?.data || {}).length || 0}</span>
+											<span className='text-base text-bodyBlue dark:text-blue-dark-high'>{Object.keys(item?.data || {})?.length || 0}</span>
 										</div>
 									</div>
 								}
 								key={index}
 							>
 								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
-									{!!Object.keys(item?.data || {}).length && (
+									{!!Object.keys(item?.data || {})?.length && (
 										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-section-light-container px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
 											<span className='flex items-center justify-center gap-1'>
 												index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
@@ -379,7 +379,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 											<span className='w-[10%] max-lg:w-[5%]' />
 										</div>
 									)}
-									{!!Object.keys(item?.data || {}).length &&
+									{!!Object.keys(item?.data || {})?.length &&
 										item?.data &&
 										Object.entries(item?.data)?.map(([address, value], idx) => {
 											return (
@@ -389,10 +389,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 												>
 													<div
 														className={`flex justify-between border-0 border-y-[1px] border-solid border-section-light-container px-3 py-4 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${
-															(value?.expand || idx === value?.delegations.length - 1) && 'border-b-0 border-t-[1px]'
+															(value?.expand || idx === value?.delegations?.length - 1) && 'border-b-0 border-t-[1px]'
 														}`}
 														onClick={() => {
-															if (!value?.delegations.length) return;
+															if (!value?.delegations?.length) return;
 															handleExpand(address, item?.status);
 														}}
 													>
@@ -492,14 +492,14 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
 																						.join(' ')}{' '}
-																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
+																					{value?.delegations?.length !== 1 && !getIsSingleDelegation(value?.delegations)
 																						? `(VP: ${parseBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), 2, true, network)}, Ca: ${parseBalance(
 																								String(delegate?.balance),
 																								2,
 																								true,
 																								network
 																						  )}, Co: ${delegate?.lockPeriod || 0.1}x)`
-																						: trackIndex !== value.delegations.length - 1
+																						: trackIndex !== value?.delegations?.length - 1
 																						? ', '
 																						: ''}
 																				</span>
@@ -528,7 +528,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 				<DelegateModal
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}
-					defaultTarget={getEncodedAddress(addresses.length > 0 ? addressWithIdentity : addresses?.[0], network) || ''}
+					defaultTarget={getEncodedAddress(addresses?.length > 0 ? addressWithIdentity : addresses?.[0], network) || ''}
 				/>
 			)}
 			{delegationSupportedNetworks.includes(network) && (

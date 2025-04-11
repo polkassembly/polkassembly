@@ -92,8 +92,8 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 			key: '2'
 		});
 	} else {
-		items.push(
-			{
+		if (isOpenGovSupported(network)) {
+			items.push({
 				label: (
 					<div className='pb-[3px] pt-[7.5px]'>
 						<OpenGovTreasuryProposal
@@ -103,7 +103,9 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 					</div>
 				),
 				key: '0'
-			},
+			});
+		}
+		items.push(
 			{
 				label: <ProposalActionButtons isUsedInFAB={true} />,
 				key: '1'
@@ -124,7 +126,7 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 
 		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 			items.unshift({
-				label: <Gov1TreasuryProposal />,
+				label: <Gov1TreasuryProposal isUsedInSidebar />,
 				key: '3'
 			});
 		}

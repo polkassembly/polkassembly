@@ -105,6 +105,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage, isUsedInSidebar
 					setOpen(false);
 					setStep(0);
 				}}
+				maskClosable={true}
 				className={classNames(dmSans.className, dmSans.variable, theme, 'antSteps', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} antSteps`}

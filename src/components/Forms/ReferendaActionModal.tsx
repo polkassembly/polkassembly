@@ -220,7 +220,7 @@ const ReferendaActionModal = ({
 			</Modal>
 			<Modal
 				open={openModal}
-				maskClosable={false}
+				maskClosable={true}
 				onCancel={() => {
 					setCloseConfirm(true);
 					setOpenModal(false);

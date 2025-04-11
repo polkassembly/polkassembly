@@ -421,7 +421,7 @@ const AddressConnectModal = ({
 			footer={
 				<CustomButton
 					onClick={handleSubmit}
-					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lt(totalDeposit))}
+					disabled={!accounts || (showMultisig && !multisig)}
 					width={155}
 					height={40}
 					variant='primary'

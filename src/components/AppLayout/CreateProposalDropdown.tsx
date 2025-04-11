@@ -92,6 +92,13 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 			key: '2'
 		});
 	} else {
+		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+			items.push({
+				label: <Gov1TreasuryProposal isUsedInSidebar />,
+				key: '3'
+			});
+		}
+
 		if (isOpenGovSupported(network)) {
 			items.push({
 				label: (
@@ -123,13 +130,6 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 				key: '2'
 			}
 		);
-
-		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
-			items.unshift({
-				label: <Gov1TreasuryProposal isUsedInSidebar />,
-				key: '3'
-			});
-		}
 	}
 
 	return (

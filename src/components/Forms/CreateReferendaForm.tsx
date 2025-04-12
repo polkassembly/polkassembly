@@ -4,7 +4,7 @@
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
-import { Alert, Button, Form, Input, Radio, Spin } from 'antd';
+import { Button, Form, Input, Radio, Spin } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
@@ -17,9 +17,7 @@ import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } 
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus, PostOrigin } from '~src/types';
 import executeTx from '~src/util/executeTx';
-import { formatedBalance } from '~src/util/formatedBalance';
 import { BN, BN_HUNDRED, BN_ONE, isHex } from '@polkadot/util';
-import { chainProperties } from '~src/global/networkConstants';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SelectTracks from '../OpenGovTreasuryProposal/SelectTracks';
 import { EEnactment, IEnactment, ISteps } from '../OpenGovTreasuryProposal';
@@ -123,12 +121,10 @@ export default function CreateReferendaForm({
 	setPreimageLength: (pre: number | null) => void;
 }) {
 	const { api, apiReady } = useApiContext();
-	const { address, availableBalance } = useInitialConnectAddress();
-	const availableBalanceBN = new BN(availableBalance);
+	const { address } = useInitialConnectAddress();
 	const { loginWallet } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [palletRPCs, setPalletRPCs] = useState<ItemType[]>([]);
 	const [callables, setCallables] = useState<ItemType[]>([]);
 	const [paramFields, setParamFields] = useState<ParamField[] | null>(null);
@@ -141,8 +137,6 @@ export default function CreateReferendaForm({
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
-
-	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
 	const handleSubmit = async () => {
 		if (!methodCall) return;
@@ -482,12 +476,6 @@ export default function CreateReferendaForm({
 		}
 	}, [api, areAllParamsFilled, callable, apiReady, palletRpc, transformedParams]);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
-		const submissionDeposite = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
-		setSubmissionDeposite(submissionDeposite);
-	}, [api, apiReady]);
-
 	return (
 		<Spin
 			spinning={loadingStatus.isLoading}
@@ -551,53 +539,33 @@ export default function CreateReferendaForm({
 								disabled
 							/>
 						</div>
-						<div className='mt-4'>
-							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Select Track{' '}
-								<span>
-									<HelperTooltip
-										text='Track selection is done based on the amount requested.'
-										className='ml-1'
-									/>
-								</span>
-							</label>
-							<SelectTracks
-								tracksArr={trackArr}
-								onTrackChange={(track) => {
-									setSelectedTrack(track);
-									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
-									// getPreimageTxFee();
-									// setSteps({ percent: 100, step: 1 });
-								}}
-								selectedTrack={selectedTrack}
-							/>
-						</div>
+						{isOpenGovSupported(network) && (
+							<div className='mt-4'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+									Select Track{' '}
+									<span>
+										<HelperTooltip
+											text='Track selection is done based on the amount requested.'
+											className='ml-1'
+										/>
+									</span>
+								</label>
+								<SelectTracks
+									tracksArr={trackArr}
+									onTrackChange={(track) => {
+										setSelectedTrack(track);
+										// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+										// getPreimageTxFee();
+										// setSteps({ percent: 100, step: 1 });
+									}}
+									selectedTrack={selectedTrack}
+								/>
+							</div>
+						)}
 					</>
 				)}
 				{isPreimage === false && (
 					<div>
-						{availableBalanceBN.lte(submissionDeposite) && (
-							<Alert
-								className='my-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-								type='info'
-								showIcon
-								message={
-									<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-										Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
-									</span>
-								}
-								description={
-									<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-										<li className='mt-0 flex w-full justify-between'>
-											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-												{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-											</span>
-										</li>
-									</div>
-								}
-							/>
-						)}
 						{loadingStatus.isLoading && (
 							<div className='flex flex-col items-center justify-center'>
 								{/* <Loader /> */}
@@ -678,27 +646,29 @@ export default function CreateReferendaForm({
 								</div>
 							);
 						})}
-						<div className='mt-4'>
-							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-								Select Track{' '}
-								<span>
-									<HelperTooltip
-										text='Track selection is done based on the amount requested.'
-										className='ml-1'
-									/>
-								</span>
-							</label>
-							<SelectTracks
-								tracksArr={trackArr}
-								onTrackChange={(track) => {
-									setSelectedTrack(track);
-									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
-									// getPreimageTxFee();
-									// setSteps({ percent: 100, step: 1 });
-								}}
-								selectedTrack={selectedTrack}
-							/>
-						</div>
+						{isOpenGovSupported(network) && (
+							<div className='mt-4'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+									Select Track{' '}
+									<span>
+										<HelperTooltip
+											text='Track selection is done based on the amount requested.'
+											className='ml-1'
+										/>
+									</span>
+								</label>
+								<SelectTracks
+									tracksArr={trackArr}
+									onTrackChange={(track) => {
+										setSelectedTrack(track);
+										// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+										// getPreimageTxFee();
+										// setSteps({ percent: 100, step: 1 });
+									}}
+									selectedTrack={selectedTrack}
+								/>
+							</div>
+						)}
 					</div>
 				)}
 
@@ -827,8 +797,8 @@ export default function CreateReferendaForm({
 						htmlType='submit'
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
-						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={Boolean(((!methodCall || !selectedTrack) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
+						className='w-min'
+						disabled={Boolean(((!methodCall || (isOpenGovSupported(network) && !selectedTrack)) && !isPreimage) || (isPreimage && (!preimageHash || !preimageLength)))}
 					>
 						Create Referendum
 					</CustomButton>

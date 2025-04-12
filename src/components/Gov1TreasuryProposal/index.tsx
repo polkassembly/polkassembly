@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Steps } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -20,13 +20,15 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import CreateProposal from './CreateProposal';
 import Gov1TreasuryProposalSuccess from './Gov1TreasuryProposalSuccess';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
+import CreateProposalGrayIcon from '~assets/icons/create-proposal-gray.svg';
 
 interface Props {
 	className?: string;
 	isUsedInTreasuryPage?: boolean;
+	isUsedInSidebar?: boolean;
 }
 
-const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
+const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage, isUsedInSidebar }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
@@ -39,35 +41,45 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	const handleClick = () => {
-		if (userId) {
+		if (!userId) {
+			setOpenLoginPrompt(true);
+		} else {
 			if (loginAddress.length) {
 				setOpen(!open);
 			} else {
 				setOpenAddressLinkedModal(true);
 				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: loginAddress }));
 			}
-		} else {
-			setOpenLoginPrompt(true);
 		}
 	};
+
+	useEffect(() => {
+		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: loginAddress }));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
 
 	return (
 		<div className={theme}>
 			<CustomButton
 				variant={isUsedInTreasuryPage ? 'primary' : 'text'}
 				onClick={handleClick}
-				className={`${
-					isUsedInTreasuryPage
+				height={isUsedInSidebar ? 32 : 40}
+				className={classNames(
+					isUsedInSidebar
+						? 'flex h-6 gap-2 border-none bg-none p-0 font-normal text-lightBlue dark:text-blue-dark-medium'
+						: isUsedInTreasuryPage
 						? 'flex gap-1'
 						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center gap-2 rounded-[8px] border-none bg-none align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
-				}`}
+				)}
 			>
 				{isUsedInTreasuryPage ? (
 					<CreateProposalWhiteIcon className='mr-2' />
+				) : isUsedInSidebar ? (
+					<CreateProposalGrayIcon className={theme === 'dark' ? 'dark-icons' : ''} />
 				) : (
 					<CreatePropoosalIcon className={`${isUsedInTreasuryPage ? 'scale-200' : 'ml-[-31px] cursor-pointer'} text-3xl`} />
 				)}
-				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
+				<div className={isUsedInTreasuryPage || isUsedInSidebar ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
 			</CustomButton>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
@@ -93,6 +105,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					setOpen(false);
 					setStep(0);
 				}}
+				maskClosable={true}
 				className={classNames(dmSans.className, dmSans.variable, theme, 'antSteps', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} antSteps`}

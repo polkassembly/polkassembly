@@ -83,7 +83,14 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 			label: (
 				<div
 					className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
-					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
+					onClick={() => {
+						if (id) {
+							router.push('/post/create');
+						} else {
+							setOpenDiscussionLoginPrompt(true);
+						}
+						setDropdownVisible(false);
+					}}
 				>
 					{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
 					<span className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
@@ -92,10 +99,13 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 			key: '2'
 		});
 	} else {
-		items.push(
-			{
+		if (isOpenGovSupported(network)) {
+			items.push({
 				label: (
-					<div className='pb-[3px] pt-[7.5px]'>
+					<div
+						onClick={() => setDropdownVisible(false)}
+						className='pb-[3px] pt-[7.5px]'
+					>
 						<OpenGovTreasuryProposal
 							theme={theme}
 							isUsedInSidebar={true}
@@ -103,16 +113,29 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 					</div>
 				),
 				key: '0'
-			},
+			});
+		}
+		items.push(
 			{
-				label: <ProposalActionButtons isUsedInFAB={true} />,
+				label: (
+					<div onClick={() => setDropdownVisible(false)}>
+						<ProposalActionButtons isUsedInFAB={true} />
+					</div>
+				),
 				key: '1'
 			},
 			{
 				label: (
 					<div
 						className='flex cursor-pointer gap-2 pb-[6px] pt-[3px]'
-						onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
+						onClick={() => {
+							if (id) {
+								router.push('/post/create');
+							} else {
+								setOpenDiscussionLoginPrompt(true);
+							}
+							setDropdownVisible(false);
+						}}
 					>
 						{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}
 						<span className={`${dmSans.className} ${dmSans.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Discussion Post</span>
@@ -124,7 +147,11 @@ const CreateProposalDropdown: FC<Props> = ({ sidebarCollapsed }: Props) => {
 
 		if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.POLYMESHTEST, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 			items.unshift({
-				label: <Gov1TreasuryProposal />,
+				label: (
+					<div onClick={() => setDropdownVisible(false)}>
+						<Gov1TreasuryProposal isUsedInSidebar />
+					</div>
+				),
 				key: '3'
 			});
 		}

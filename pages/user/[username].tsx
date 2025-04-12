@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const userProfile = await getUserProfileWithUsername(username.toString());
 	const userPosts = await getUserPosts({
-		addresses: userProfile?.data?.addresses || [],
+		addresses: (userProfile?.data?.addresses || []).filter((address) => !!address?.trim()?.length),
 		network,
 		userId: userProfile?.data?.user_id
 	});

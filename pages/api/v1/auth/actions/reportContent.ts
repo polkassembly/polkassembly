@@ -88,80 +88,68 @@ export const reportSpamContent = async ({ type, reason, comments, proposalType, 
 		data.post_id = post_id;
 		data.comment_id = comment_id;
 	}
+	try {
+		await networkDocRef(network).collection('reports').doc(`${userId}_${contentId}_${strPostType}`).set(data, { merge: true });
+		const countQuery = await networkDocRef(network)
+			.collection('reports')
+			.where('type', '==', type)
+			.where('proposal_type', '==', strPostType)
+			.where('content_id', '==', contentId)
+			.count()
+			.get();
 
-	await networkDocRef(network)
-		.collection('reports')
-		.doc(`${userId}_${contentId}_${strPostType}`)
-		.set(data, { merge: true })
-		.then(async () => {
-			const countQuery = await networkDocRef(network)
-				.collection('reports')
-				.where('type', '==', type)
-				.where('proposal_type', '==', strPostType)
-				.where('content_id', '==', contentId)
-				.count()
-				.get();
+		const totalUsers = countQuery.data()?.count || 0;
 
-			const data = countQuery.data();
-			const totalUsers = data.count || 0;
-
-			if (type == 'post' && checkReportThreshold(totalUsers)) {
-				const postReportKey = await redisGet(`postReportKey-${network}_${strPostType}_${post_id}`);
-				if (!postReportKey) {
-					const postRef = await postsByTypeRef(network, strPostType as ProposalType)
-						.doc(post_id)
-						.get();
-					if (postRef.exists) {
-						await postRef.ref.update({
-							isSpamDetected: true
-						});
-					}
-					_sendPostSpamReportMail(network, strPostType, contentId, totalUsers);
-					await redisSetex(`postReportKey-${network}_${strPostType}_${post_id}`, TTL_DURATION, 'true');
-					if (process.env.IS_CACHING_ALLOWED == '1') {
-						const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${post_id}`;
-						const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
-						const latestActivityKey = `${network}_latestActivity_OpenGov`;
-						await Promise.all([redisDel(discussionDetail), redisDel(latestActivityKey), deleteKeys(discussionListingKey)]);
-					}
+		if (type == 'post' && checkReportThreshold(totalUsers)) {
+			const postReportKey = await redisGet(`postReportKey-${network}_${strPostType}_${post_id}`);
+			if (!postReportKey) {
+				const postRef = await postsByTypeRef(network, strPostType as ProposalType)
+					.doc(post_id)
+					.get();
+				if (postRef.exists) {
+					await postRef.ref.update({
+						isSpamDetected: true
+					});
+				}
+				_sendPostSpamReportMail(network, strPostType, contentId, totalUsers);
+				await redisSetex(`postReportKey-${network}_${strPostType}_${post_id}`, TTL_DURATION, 'true');
+				if (process.env.IS_CACHING_ALLOWED == '1') {
+					const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${post_id}`;
+					const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+					const latestActivityKey = `${network}_latestActivity_OpenGov`;
+					await Promise.all([redisDel(discussionDetail), redisDel(latestActivityKey), deleteKeys(discussionListingKey)]);
 				}
 			}
-			if (type == 'comment' && checkReportThreshold(totalUsers) && comment_id) {
-				const commentReportKey = await redisGet(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`);
-				if (!commentReportKey) {
-					_sendCommentReportMail(network, strPostType, post_id, comment_id, totalUsers);
-					await redisSetex(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`, TTL_DURATION, 'true');
-				}
+		}
+		if (type == 'comment' && checkReportThreshold(totalUsers) && comment_id) {
+			const commentReportKey = await redisGet(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`);
+			if (!commentReportKey) {
+				_sendCommentReportMail(network, strPostType, post_id, comment_id, totalUsers);
+				await redisSetex(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`, TTL_DURATION, 'true');
 			}
-			if (type == 'reply' && checkReportThreshold(totalUsers) && reply_id && comment_id) {
-				const replyReportKey = await redisGet(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`);
-				if (!replyReportKey) {
-					_sendReplyReportMail(network, strPostType, post_id, comment_id, reply_id, totalUsers);
-					await redisSetex(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`, TTL_DURATION, 'true');
-				}
+		}
+		if (type == 'reply' && checkReportThreshold(totalUsers) && reply_id && comment_id) {
+			const replyReportKey = await redisGet(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`);
+			if (!replyReportKey) {
+				_sendReplyReportMail(network, strPostType, post_id, comment_id, reply_id, totalUsers);
+				await redisSetex(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`, TTL_DURATION, 'true');
 			}
-			return {
-				data: {
-					message: messages.CONTENT_REPORT_SUCCESSFUL,
-					spam_users_count: checkReportThreshold(totalUsers)
-				},
-				error: null,
-				status: 200
-			};
-		})
-		.catch((error) => {
-			return {
-				data: null,
-				error: error.message || 'Error while reporting content',
-				status: Number(error.name) || 500
-			};
-		});
-
-	return {
-		data: null,
-		error: messages.API_FETCH_ERROR,
-		status: 500
-	};
+		}
+		return {
+			data: {
+				message: messages.CONTENT_REPORT_SUCCESSFUL,
+				spam_users_count: checkReportThreshold(totalUsers)
+			},
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: messages.API_FETCH_ERROR,
+			status: 500
+		};
+	}
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentResponse | MessageType>) {

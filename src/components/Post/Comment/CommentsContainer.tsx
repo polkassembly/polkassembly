@@ -4,7 +4,7 @@
 /* eslint-disable no-tabs */
 import { Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { FC, useEffect, useState, useCallback } from 'react';
+import React, { FC, useEffect, useState, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
@@ -123,8 +123,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	let allComments = Object.values(comments)?.flat() || [];
+	let allComments = useMemo(() => Object.values(comments)?.flat() || [], [comments]);
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);

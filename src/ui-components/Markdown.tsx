@@ -284,8 +284,8 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		font-weight: 700;
 
 		mark {
-			margin-top: -3px;
 			margin-right: -2px;
+			padding-bottom: 0 !important;
 			font-weight: 500;
 			color: #485f7d !important;
 			background: none !important;

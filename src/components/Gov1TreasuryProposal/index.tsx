@@ -79,7 +79,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage, isUsedInSidebar
 				) : (
 					<CreatePropoosalIcon className={`${isUsedInTreasuryPage ? 'scale-200' : 'ml-[-31px] cursor-pointer'} text-3xl`} />
 				)}
-				<div className={isUsedInTreasuryPage || isUsedInSidebar ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
+				<div className={classNames(isUsedInTreasuryPage || isUsedInSidebar ? 'ml-0' : 'ml-2.5', 'text-lightBlue dark:text-blue-dark-medium')}>Create Treasury Proposal</div>
 			</CustomButton>
 			{openAddressLinkedModal && (
 				<AddressConnectModal

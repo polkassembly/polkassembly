@@ -39,8 +39,6 @@ import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
 import { sanitizeHTML } from '~src/util/sanitizeHTML';
-import { WebHooks } from '../../utils/webHook';
-
 export interface IEditPostResponse {
 	content: string;
 	proposer: string;

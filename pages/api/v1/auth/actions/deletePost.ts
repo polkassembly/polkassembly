@@ -11,7 +11,6 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { OffChainProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { WebHooks } from '../../utils/webHook';
 
 const deletePostIfAuthorized = async ({
 	authorId,

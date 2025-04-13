@@ -415,16 +415,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		await batch.commit();
 	}
 
-	// Update P2 DB
-	await WebHooks.editPost({
-		allowedCommentor: allowedCommentorsArr,
-		authorId: proposer_address,
-		content: sanitizedContent,
-		indexOrHash: postId,
-		proposalType: strProposalType,
-		title
-	});
-
 	try {
 		await createUserActivity({
 			action: EActivityAction.EDIT,

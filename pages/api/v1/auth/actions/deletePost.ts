@@ -91,11 +91,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		});
 
 		if (response.success) {
-			// Update P2 DB
-			await WebHooks.deletePost({
-				indexOrHash: String(postId),
-				proposalType: postType
-			});
 			return res.status(200).json({ message: response.message });
 		} else {
 			return res.status(403).json({ message: response.message });

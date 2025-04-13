@@ -11,6 +11,8 @@ import cors = require('cors');
 import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
 import { fetchTreasuryStats } from './utils/fetchTreasuryStats';
 import updateNewProposalsInAlgolia from './updateNewProposalsInAlgolia';
+import { WebHooks } from './utils/webHook';
+import { convertProposalTypeToV2, ProposalType } from './utils/proposalTypes';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -82,6 +84,22 @@ exports.onPostWritten = functions
 		if (post?.summary) delete post?.summary;
 
 		postRecord = postType === 'ReferendumV2' ? { ...postRecord, track_number: subsquidData?.trackNumber } : postRecord;
+
+		const isCreated = context.change.before.exist();
+		WebHooks[isCreated ? 'editPost' : 'createPost']({
+			allowedCommentor: post?.allowedCommentors?.[0],
+			authorId: post?.user_id,
+			content: post?.content,
+			indexOrHash: post?.id,
+			proposalType: convertProposalTypeToV2(postType as ProposalType),
+			title: post?.title
+		})
+			.then((res: any) => {
+				console.log('Data saved on P2', res);
+			})
+			.catch((err: any) => {
+				console.error('Error in saving data', err);
+			});
 
 		// Update the Algolia index
 		await index
@@ -495,4 +513,22 @@ exports.updateNewProposalsInAlgolia = functions
 		functions.logger.info('scheduledUpdateNewProposalsInAlgolia ran at : ', new Date());
 		await updateNewProposalsInAlgolia();
 		return;
+	});
+
+exports.onPostDelete = functions
+	.region('europe-west1')
+	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
+	.onDelete(async (change, context) => {
+		const { postType, postId } = context.params;
+
+		WebHooks.deletePost({
+			indexOrHash: postId,
+			proposalType: convertProposalTypeToV2(postType as ProposalType)
+		})
+			.then((res: any) => {
+				console.log('Data saved on P2', res);
+			})
+			.catch((err: any) => {
+				console.error('Error in saving data', err);
+			});
 	});

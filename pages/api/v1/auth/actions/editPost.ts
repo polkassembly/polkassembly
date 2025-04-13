@@ -39,7 +39,6 @@ import { isSubscanSupport } from '~src/util/subscanCheck';
 import { BLACKLISTED_USER_IDS } from '~src/global/userIdBlacklist';
 import { isPolymesh } from '~src/util/isPolymeshNetwork';
 import { sanitizeHTML } from '~src/util/sanitizeHTML';
-
 export interface IEditPostResponse {
 	content: string;
 	proposer: string;
@@ -413,6 +412,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 		await batch.commit();
 	}
+
 	try {
 		await createUserActivity({
 			action: EActivityAction.EDIT,

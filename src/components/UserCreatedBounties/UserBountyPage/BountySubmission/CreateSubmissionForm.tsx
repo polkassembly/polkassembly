@@ -59,7 +59,6 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				requestAmount: submission.reqAmount
 					? Number(formatBnBalance(String(submission.reqAmount), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))
 					: '',
-				description: submission?.content || '',
 				links: submission.link || '',
 				loginAddress: submission.proposer || loginAddress
 			});
@@ -114,7 +113,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 		setLoadingStatus({ isLoading: true, message: 'Submitting' });
 		const values = form.getFieldsValue();
 
-		const hasValidationErrors = !form.getFieldValue('title') || !form.getFieldValue('requestAmount') || !form.getFieldValue('description');
+		const hasValidationErrors = !form.getFieldValue('title') || !form.getFieldValue('requestAmount') || !content;
 
 		if (hasValidationErrors) {
 			setErrorStatus({ isError: true, message: 'Please ensure all required fields are filled out correctly.' });
@@ -127,7 +126,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 
 		const requestBody = {
 			title: values.title,
-			content: values.description,
+			content,
 			tags: [],
 			link: values.links || '',
 			reqAmount: String(adjustedRequestAmount),
@@ -169,7 +168,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				onEditSuccess({
 					...submission,
 					title: values.title,
-					content: values.description,
+					content,
 					reqAmount: values.requestAmount,
 					link: values.links || '',
 					createdAt: submission.createdAt ?? new Date()

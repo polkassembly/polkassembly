@@ -67,6 +67,7 @@ const nextConfig = {
 			]
 		};
 	},
+	transpilePackages: ['@mdxeditor/editor'],
 	images: {
 		domains: ['parachains.info']
 	},
@@ -79,7 +80,7 @@ const nextConfig = {
 			test: /\.svg$/,
 			use: ['@svgr/webpack']
 		});
-
+		config.experiments = { ...config.experiments, topLevelAwait: true };
 		return config;
 	}
 };

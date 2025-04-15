@@ -247,6 +247,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						}}
 						className='mb-4'
 						value={content}
+						isUsedInCreatePost
 					/>
 					<div className='flex items-center'>
 						<Switch

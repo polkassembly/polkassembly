@@ -1011,21 +1011,19 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 }
 
 .mdxeditor-popup-container {
-  .popupContainer {
-    z-index: 1000 !important;
-    --basePageBg: #1c1d1f;
-  }
-
   z-index: 1000 !important;
 
+}
+.mdxeditor-popup-container .popupContainer {
+    z-index: 1000 !important;
+    --basePageBg: #1c1d1f;
+} */
   /* Style dialog elements with theme colors */
-  [role='dialog'] {
-    background-color: var(--baseBase); /* Use theme-based background */
+.mdxeditor-popup-container [role='dialog'] {
+    background-color: var(--baseBase); 
     border-color: var(--baseBorder);
     color: var(--baseText);
 
-    /* Additional dialog styling */
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
-}

@@ -19,7 +19,6 @@ import {
 	BoldItalicUnderlineToggles,
 	BlockTypeSelect,
 	CreateLink,
-	InsertImage,
 	InsertTable,
 	InsertThematicBreak,
 	ListsToggle,
@@ -32,20 +31,19 @@ import {
 	quotePlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import { Modal } from 'antd';
 import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import Gif from '~src/ui-components/Gif';
-import { FileGifOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { FileGifOutlined, EllipsisOutlined, FileImageOutlined } from '@ant-design/icons';
 import Popover from '~src/basic-components/Popover';
 import { useQuoteCommentContext } from '~src/context';
 import algoliasearch from 'algoliasearch/lite';
 import { useTheme } from 'next-themes';
+import ImageUploadModal from './ImageUploadModal';
+import GifUploadModal from './GifUploadModal';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -68,7 +66,8 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 	const { resolvedTheme: theme } = useTheme();
 	const { username } = useUserDetailsSelector();
 	const { quotedText } = useQuoteCommentContext();
-	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isGifModalVisible, setIsGifModalVisible] = useState(false);
+	const [isImageModalVisible, setIsImageModalVisible] = useState(false);
 	const ref = useRef<MDXEditorMethods | null>(null);
 
 	useEffect(() => {
@@ -77,6 +76,13 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [quotedText]);
+
+	// Reset editor content when markdown is empty
+	useEffect(() => {
+		if (markdown === '' && ref.current) {
+			ref.current.setMarkdown('');
+		}
+	}, [markdown]);
 
 	const imageUploadHandler = async (image: File): Promise<string> => {
 		try {
@@ -99,24 +105,6 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		} catch (error) {
 			console.error('Error in uploading image: ', error);
 			return '';
-		}
-	};
-
-	const handleGifInsertion = (url: string, title: string) => {
-		try {
-			const imageMarkdown = `![${title}](${url})`;
-
-			const editor = ref.current;
-
-			if (editor) {
-				editor.insertMarkdown(imageMarkdown);
-
-				setIsModalVisible(false);
-			} else {
-				console.error('Editor reference not available');
-			}
-		} catch (error) {
-			console.error('Error inserting GIF:', error);
 		}
 	};
 
@@ -313,9 +301,14 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 			<Separator />
 
 			<CreateLink />
-			<InsertImage />
 			<ButtonWithTooltip
-				onClick={() => setIsModalVisible(true)}
+				onClick={() => setIsImageModalVisible(true)}
+				title='Select Image'
+			>
+				<FileImageOutlined className='mt-0.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
+			</ButtonWithTooltip>
+			<ButtonWithTooltip
+				onClick={() => setIsGifModalVisible(true)}
 				title='Select GIF'
 			>
 				<FileGifOutlined className='mt-0.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
@@ -348,6 +341,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		linkDialogPlugin(),
 		quotePlugin(),
 		imagePlugin({
+			disableImageResize: true,
 			imageUploadHandler: imageUploadHandler
 		}),
 		tablePlugin(),
@@ -367,20 +361,19 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 
 	return (
 		<div className={classNames(theme === 'dark' ? 'dark-theme' : 'light-theme', className)}>
-			<Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				open={isModalVisible}
-				onCancel={() => setIsModalVisible(false)}
-				title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
-				footer={null}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={classNames('dark:[&>.ant-modal-content]:bg-section-dark-overlay', dmSans.className, dmSans.variable)}
-			>
-				<Gif
-					onClick={handleGifInsertion}
-					theme={theme}
-				/>
-			</Modal>
+			<GifUploadModal
+				className={className}
+				editorRef={ref}
+				setOpen={setIsGifModalVisible}
+				isGifModalVisible={isGifModalVisible}
+			/>
+			<ImageUploadModal
+				className={className}
+				editorRef={ref}
+				setOpen={setIsImageModalVisible}
+				isImageModalVisible={isImageModalVisible}
+				imageUploadHandler={imageUploadHandler}
+			/>
 			<MDXEditor
 				markdown={markdown || ''}
 				ref={ref}
@@ -518,10 +511,6 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		li p {
 			margin-bottom: 0px;
 		}
-		img {
-			margin-bottom: 16px;
-			margin-top: 16px;
-		}
 
 		.mdxeditor-diff-source-wrapper {
 			padding: 0px 1rem;
@@ -622,8 +611,10 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		}
 
 		img {
-			max-width: 100%;
-			height: auto;
+			max-width: 90%;
+			max-height: none !important;
+			height: auto !important;
+			resize: none !important;
 		}
 
 		table {
@@ -724,10 +715,12 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		background-color: ${({ theme }) => (theme === 'dark' ? '#1C1D1F' : '#F5F6F8')};
 		border-color: ${({ theme }) => (theme === 'dark' ? 'var(--separatorDark)' : '#D2D8E0')};
 		padding: 4px 8px;
+		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 	}
 
 	.ant-popover-arrow-content {
 		background-color: ${({ theme }) => (theme === 'dark' ? '#1C1D1F' : '#F5F6F8')};
+		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 	}
 
 	.ant-popover-content {

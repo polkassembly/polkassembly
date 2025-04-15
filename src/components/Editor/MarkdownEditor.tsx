@@ -4,7 +4,7 @@
 
 import { useTheme } from 'next-themes';
 import React from 'react';
-import InitializedMDXEditor from './InitMarkdownEditor';
+import InitializedMDXEditor from './InitializedMDXEditor';
 interface Props {
 	className?: string;
 	height?: number;
@@ -21,7 +21,7 @@ const MarkdownEditor = ({ className, height, onChange: handleOnChange, value, au
 	return (
 		<div className={className}>
 			<InitializedMDXEditor
-				id='content'
+				id='mdxEditor'
 				markdown={value || ''}
 				theme={theme as any}
 				height={height}

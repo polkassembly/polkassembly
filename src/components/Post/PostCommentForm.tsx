@@ -83,7 +83,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const track_number = isUsedInBounty ? null : postData?.track_number;
 
 	const [content, setContent] = useState(getMarkdownContent(global.window.localStorage.getItem(commentKey()) || '') || '');
-	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [openModal, setModalOpen] = useState(false);
@@ -170,10 +169,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		[ESentiment.For]: theme === 'dark' ? <DarkSentiment5 style={{ border: 'none' }} /> : <SmileDizzyIcon style={{ border: 'none' }} />
 	};
 
-	const onContentChange = (content: string) => {
-		setContent(content);
-		global.window.localStorage.setItem(commentKey(), content);
-		return content.length ? content : null;
+	const onContentChange = (value: string) => {
+		setContent(value);
+		global.window.localStorage.setItem(commentKey(), value);
 	};
 
 	// const createSubscription = async (postId: number | string) => {
@@ -200,8 +198,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if (!content) return;
 		setError('');
 		setIsPosted(voteReason);
-		form.resetFields();
-		!isUsedInBounty && setQuotedText('');
+		if (!isUsedInBounty) {
+			setQuotedText('');
+		}
 		global.window.localStorage.removeItem(commentKey());
 		// postIndex && createSubscription(postIndex);
 		const commentId = v4();
@@ -304,6 +303,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					return comments;
 				});
 				comment.id = data.id || '';
+				onContentChange('');
 			}
 		} catch (error) {
 			console.error('Error while saving comment:', error);
@@ -343,13 +343,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						/>
 					)}
 					<Form
-						form={form}
 						name='comment-content-form'
 						layout='vertical'
 						onFinish={handleModalOpen}
-						initialValues={{
-							content
-						}}
 						disabled={loading}
 						validateMessages={{ required: "Please add the  '${name}'" }}
 					>
@@ -374,7 +370,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							)}
 							{!isUsedInSuccessModal && (
 								<MarkdownEditor
-									onChange={(content: any) => onContentChange(content)}
+									onChange={(value: any) => onContentChange(value)}
 									height={250}
 									value={content}
 									autofocus

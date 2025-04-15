@@ -96,7 +96,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
-	const [editedContent, setEditedContent] = useState<string>(getMarkdownContent(content || ''));
+	const [editedContent, setEditedContent] = useState<string>();
 	const [replyContent, setReplyContent] = useState<string>('');
 
 	const currentContent = useRef<string>(getMarkdownContent(content || ''));
@@ -125,8 +125,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		const localContent = getMarkdownContent(global.window.localStorage.getItem(editCommentKey(commentId)) || '') || '';
-		console.log('localContent', localContent);
-		setEditedContent(localContent || content || '');
+		setEditedContent(localContent || getMarkdownContent(content) || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -166,9 +165,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const handleSave = async () => {
-		if (!editedContent) return;
+		if (!editedContent) {
+			setLoading(false);
+			return;
+		}
 		setError('');
-		global.window.localStorage.removeItem(editCommentKey(commentId));
 		const keys = Object.keys(comments);
 		!isUsedInBounty &&
 			setComments((prev) => {
@@ -204,11 +205,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				});
 				return comments;
 			});
-		setEditedContent(currentContent.current || '');
 		if (currentContent.current !== editedContent) {
 			currentContent.current = editedContent;
 		}
-		global.window.localStorage.setItem(editCommentKey(commentId), editedContent);
 
 		setIsEditing(false);
 		setLoading(true);
@@ -236,6 +235,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				payload[key] = prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
 				return payload;
 			});
+			global.window.localStorage.removeItem(editCommentKey(commentId));
+			setLoading(false);
 		}
 		if (data) {
 			setComments((prev) => {
@@ -243,9 +244,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
 				return prev;
 			});
+			global.window.localStorage.setItem(editCommentKey(commentId), editedContent);
+			setLoading(false);
 		}
-
-		setLoading(false);
 	};
 
 	const handleRetry = async () => {
@@ -434,6 +435,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			}
 			setLoadingReply(false);
 		}
+
 		isUsedInBounty && window.location.reload();
 	};
 
@@ -683,9 +685,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					>
 						<MarkdownEditor
 							autofocus={true}
-							onChange={(content: string) => {
-								global.window.localStorage.setItem(editCommentKey(commentId), content);
-								setEditedContent(content);
+							onChange={(value: string) => {
+								global.window.localStorage.setItem(editCommentKey(commentId), value);
+								setEditedContent(value);
 							}}
 							className='mb-0'
 							value={editedContent}

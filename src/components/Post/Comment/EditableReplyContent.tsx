@@ -5,7 +5,7 @@
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -39,6 +39,7 @@ import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import { ProposalType } from '~src/global/proposalType';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	userId: number;
@@ -96,6 +97,8 @@ const EditableReplyContent = ({
 	const [replyToReplyContent, setReplyToReplyContent] = useState<string>('');
 
 	const toggleEdit = () => setIsEditing(!isEditing);
+	const markdownEditorReplyRef = useRef<MDXEditorMethods | null>(null);
+	const markdownEditorReplyToReplyRef = useRef<MDXEditorMethods | null>(null);
 
 	const postDataContext = usePostDataContext();
 	const postData = postDataContext?.postData || {};
@@ -644,6 +647,8 @@ const EditableReplyContent = ({
 						validateMessages={{ required: "Please add the '${name}'" }}
 					>
 						<MarkdownEditor
+							key={'edit-reply-content-editor'}
+							editorRef={markdownEditorReplyRef}
 							autofocus={true}
 							height={200}
 							onChange={(content: string) => {
@@ -756,6 +761,8 @@ const EditableReplyContent = ({
 								validateMessages={{ required: "Please add the '${name}'" }}
 							>
 								<MarkdownEditor
+									key={'add-reply-to-reply-content-editor'}
+									editorRef={markdownEditorReplyToReplyRef}
 									height={200}
 									autofocus={true}
 									onChange={(content: string) => {

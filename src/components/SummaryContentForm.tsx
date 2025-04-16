@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { message } from 'antd';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import MarkdownEditor from './Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -16,6 +17,7 @@ interface Props {
 
 const SummaryContentForm = ({ className, height, onChange, autofocus = false, value: passedContent }: Props): JSX.Element => {
 	const [value, setValue] = useState<string | undefined>(passedContent);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const onChangeWrapper = (content: string) => {
 		if (content.length > 400) {
@@ -33,6 +35,7 @@ const SummaryContentForm = ({ className, height, onChange, autofocus = false, va
 	return (
 		<div className={className}>
 			<MarkdownEditor
+				editorRef={editorRef}
 				key='content'
 				value={value}
 				height={height}

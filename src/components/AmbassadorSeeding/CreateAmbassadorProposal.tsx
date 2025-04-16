@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Spin } from 'antd';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -21,6 +21,7 @@ import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [allowedCommentor, setAllowedCommentor] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
-
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 	const handleAmbassadorProposalIndexChange = (proposalIndex: number) => {
 		switch (action) {
 			case EAmbassadorActions.ADD_AMBASSADOR:
@@ -203,6 +204,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 								Description <span className='text-nay_red'>*</span>
 							</label>
 							<MarkdownEditor
+								editorRef={editorRef}
 								value={discussion.discussionContent}
 								height={250}
 								onChange={(content: string) => {

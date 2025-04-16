@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Modal, Form, Spin } from 'antd';
 import Input from '~src/basic-components/Input';
 import BalanceInput from '~src/ui-components/BalanceInput';
@@ -21,7 +21,7 @@ import { MessageType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { IChildBountySubmission, NotificationStatus } from '~src/types';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
-
+import { MDXEditorMethods } from '@mdxeditor/editor';
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
 	ModalTitle?: string;
@@ -44,6 +44,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 	const [tags, setTags] = useState<string[]>([]);
 	const [reqAmount, setReqAmount] = useState<string>('0');
 	const [loading, setLoading] = useState(false);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleSubmit = async () => {
 		setLoading(true);
@@ -219,6 +220,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 							</label>
 							<Form.Item name='content'>
 								<MarkdownEditor
+									editorRef={editorRef}
 									value={content}
 									height={250}
 									onChange={(content: string) => {

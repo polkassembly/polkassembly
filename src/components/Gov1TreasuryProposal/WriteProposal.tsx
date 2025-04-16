@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Radio, Spin } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import MarkdownEditor from '../Editor/MarkdownEditor';
-
+import { MDXEditorMethods } from '@mdxeditor/editor';
 interface Props {
 	className?: string;
 	setStep: (pre: number) => void;
@@ -31,6 +31,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	const { isDiscussionLinked: discussionLinked, discussionLink, title, content, tags, allowedCommentors } = gov1ProposalData;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(discussionLinked);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleOnchange = (obj: any) => {
 		dispatch(updateGov1TreasuryProposal({ ...gov1ProposalData, ...obj }));
@@ -240,6 +241,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								) : (
 									<Form.Item name='content'>
 										<MarkdownEditor
+											editorRef={editorRef}
 											value={content}
 											height={250}
 											onChange={(content: string) => {

@@ -4,7 +4,7 @@
 import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -16,6 +16,7 @@ import NameLabel from '~src/ui-components/NameLabel';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageComponent from '../ImageComponent';
 import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -33,6 +34,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		handleSave();
 	};
 	const [loading, setLoading] = useState(false);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	// const createSubscription = async (postId: number | string) => {
 	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
@@ -151,6 +153,7 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<p className='font-dmSans text-xs font-medium text-pink_primary'>Commenting on proposal</p>
 						<div className='w-[250px] md:w-[500px] md:flex-1'>
 							<MarkdownEditor
+								editorRef={editorRef}
 								onChange={(content: any) => onContentChange(content)}
 								height={200}
 								value={content}

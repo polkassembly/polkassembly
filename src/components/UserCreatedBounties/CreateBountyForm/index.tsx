@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
-import React, { useState, useEffect, FC, useCallback } from 'react';
+import React, { useRef, useState, useEffect, FC, useCallback } from 'react';
 import { spaceGrotesk } from 'pages/_app';
 import { Form, DatePicker, Spin } from 'antd';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -32,7 +32,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import { BountyResponseType } from 'pages/api/v1/user-created-bounties/createBounty';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
-
+import { MDXEditorMethods } from '@mdxeditor/editor';
 interface ICreateBountyForm {
 	className?: string;
 	theme?: string;
@@ -62,6 +62,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 	const [newBountyAmount, setNewBountyAmount] = useState<BN>(ZERO_BN);
 	const [clickedVerifyBtn, setClickedVerifiedBtn] = useState<boolean>(false);
 	const [content, setContent] = useState<string>('');
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	useEffect(() => {
 		form.setFieldsValue({
@@ -544,6 +545,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 									Description<span className='text-[#FF3C5F]'>*</span>
 								</p>
 								<MarkdownEditor
+									editorRef={editorRef}
 									value={content}
 									height={250}
 									onChange={(value) => {

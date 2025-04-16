@@ -7,7 +7,7 @@ import { dmSans } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
@@ -16,6 +16,7 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface IDetailsState {
 	userId: number | null;
@@ -41,6 +42,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [newBio, setNewBio] = useState<string>(userBio || '');
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleSubmit = async () => {
 		setLoading(true);
@@ -121,6 +123,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
 						<MarkdownEditor
+							editorRef={editorRef}
 							value={newBio}
 							height={250}
 							onChange={(content: string) => {

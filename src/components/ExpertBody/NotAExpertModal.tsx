@@ -4,7 +4,7 @@
 
 import { Button, Divider, Form, message, Modal, Spin } from 'antd';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -23,6 +23,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import classNames from 'classnames';
 import queueNotification from '~src/ui-components/QueueNotification';
 import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -44,6 +45,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	const [successSubmission, setSuccessSubmission] = useState(false);
 	const [contribution, setContribution] = useState('');
 	const [reason, setReason] = useState('');
+	const reasonEditorRef = useRef<MDXEditorMethods | null>(null);
+	const contributionEditorRef = useRef<MDXEditorMethods | null>(null);
+
 	const { resolvedTheme: theme } = useTheme();
 	const [isInitial, setIsInitial] = useState(true);
 	const [socialsData, setSocialsData] = useState<NetworkSocials>({
@@ -278,6 +282,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							rules={[{ message: 'Please provide a reason', required: true }]}
 						>
 							<MarkdownEditor
+								editorRef={reasonEditorRef}
 								key='reason'
 								value={reason}
 								onChange={(content: any) => setReason(content)}
@@ -292,6 +297,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							rules={[{ message: 'Please provide a contribution', required: true }]}
 						>
 							<MarkdownEditor
+								editorRef={contributionEditorRef}
 								key='contribution'
 								value={contribution}
 								onChange={(content: any) => setContribution(content)}

@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Modal } from 'antd';
 import Image from 'next/image';
-import React from 'react';
+import React, { useRef } from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import classNames from 'classnames';
 import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const ExpertPostModal = ({
 	isModalVisible,
@@ -23,6 +24,7 @@ const ExpertPostModal = ({
 	setReview: (content: string) => void;
 }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 	return (
 		<div>
 			<Modal
@@ -50,6 +52,7 @@ const ExpertPostModal = ({
 				<div className='my-3'>
 					<p className='text-sm font-medium text-[#243A57] dark:text-lightWhite'>Please write your views about the proposal below</p>
 					<MarkdownEditor
+						editorRef={editorRef}
 						onChange={(content: string) => setReview(content)}
 						value={review}
 						height={150}

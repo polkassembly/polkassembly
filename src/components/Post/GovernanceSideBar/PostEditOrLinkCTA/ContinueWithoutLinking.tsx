@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Modal } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -27,6 +28,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [content, setContent] = useState<string>('');
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const {
 		postData: { postType: proposalType, postIndex, timeline, tags: oldTags },
@@ -137,6 +139,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					<div className='mt-[30px]'>
 						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<MarkdownEditor
+							editorRef={editorRef}
 							height={200}
 							value={content}
 							onChange={(value) => {

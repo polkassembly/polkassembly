@@ -61,6 +61,7 @@ import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import classNames from 'classnames';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -98,7 +99,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [editedContent, setEditedContent] = useState<string>();
 	const [replyContent, setReplyContent] = useState<string>('');
-
+	const markdownEditorCommentRef = useRef<MDXEditorMethods | null>(null);
+	const markdownEditorReplyRef = useRef<MDXEditorMethods | null>(null);
 	const currentContent = useRef<string>(getMarkdownContent(content || ''));
 
 	// Extract values conditionally
@@ -684,6 +686,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						validateMessages={{ required: "Please add the '${name}'" }}
 					>
 						<MarkdownEditor
+							key={'edit-comment-editor'}
+							editorRef={markdownEditorCommentRef}
 							autofocus={true}
 							onChange={(value: string) => {
 								global.window.localStorage.setItem(editCommentKey(commentId), value);
@@ -751,6 +755,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				) : (
 					<>
 						<Markdown
+							key={'comment-content-editor'}
 							theme={theme}
 							md={content}
 							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
@@ -817,6 +822,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								className='mt-4'
 							>
 								<MarkdownEditor
+									key={'add-reply-content-editor'}
+									editorRef={markdownEditorReplyRef}
 									autofocus={true}
 									height={200}
 									onChange={(content: string) => {

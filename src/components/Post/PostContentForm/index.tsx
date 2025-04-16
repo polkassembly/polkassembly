@@ -5,7 +5,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Form } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { EAllowedCommentor, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -24,6 +24,7 @@ import Input from '~src/basic-components/Input';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -47,6 +48,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const { network } = useNetworkSelector();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
+	const markdownEditorRef = useRef<MDXEditorMethods | null>(null);
 
 	const onFinish = async ({ title }: any) => {
 		await form.validateFields();
@@ -133,6 +135,8 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					/>
 				</Form.Item>
 				<MarkdownEditor
+					key={'edit-post-content-editor'}
+					editorRef={markdownEditorRef}
 					height={250}
 					value={editableContent}
 					autofocus

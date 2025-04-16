@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { useTheme } from 'next-themes';
-import React from 'react';
+import React, { MutableRefObject, useRef } from 'react';
 import InitializedMDXEditor from './InitializedMDXEditor';
+import { type MDXEditorMethods } from '@mdxeditor/editor';
 interface Props {
 	className?: string;
 	height?: number;
@@ -13,13 +14,18 @@ interface Props {
 	autofocus?: boolean;
 	readOnly?: boolean;
 	isUsedInCreatePost?: boolean;
+	editorRef: MutableRefObject<MDXEditorMethods | null>;
 }
 
-const MarkdownEditor = ({ className, height, onChange: handleOnChange, value, autofocus = false, readOnly, isUsedInCreatePost = false }: Props): JSX.Element => {
+const MarkdownEditor = ({ className, height, onChange: handleOnChange, value, autofocus = false, readOnly, isUsedInCreatePost = false, editorRef }: Props): JSX.Element => {
 	const { resolvedTheme: theme } = useTheme();
+	const ref = useRef<HTMLDivElement>(null);
 
 	return (
-		<div className={className}>
+		<div
+			className={className}
+			ref={ref}
+		>
 			<InitializedMDXEditor
 				id='mdxEditor'
 				markdown={value || ''}
@@ -29,6 +35,7 @@ const MarkdownEditor = ({ className, height, onChange: handleOnChange, value, au
 				autofocus={autofocus}
 				readOnly={readOnly}
 				isUsedInCreatePost={isUsedInCreatePost}
+				editorRef={editorRef}
 			/>
 		</div>
 	);

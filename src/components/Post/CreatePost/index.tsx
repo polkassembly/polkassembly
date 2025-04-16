@@ -4,7 +4,7 @@
 
 import { Form, Switch } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
 import { EAllowedCommentor, EGovType, NotificationStatus } from 'src/types';
@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -52,6 +53,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 	const [tags, setTags] = useState<string[]>([]);
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 	const [content, setContent] = useState<string>('');
+	const markdownEditorRef = useRef<MDXEditorMethods | null>(null);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -240,6 +242,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						/>
 					</Form.Item>
 					<MarkdownEditor
+						editorRef={markdownEditorRef}
 						height={300}
 						onChange={(v) => {
 							setContent(v);

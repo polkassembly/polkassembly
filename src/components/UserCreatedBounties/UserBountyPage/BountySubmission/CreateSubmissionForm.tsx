@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Form, Input, Spin, Alert, Divider } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
@@ -21,6 +21,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import formatBnBalance from '~src/util/formatBnBalance';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const ZERO_BN = new BN(0);
 
@@ -51,7 +52,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	const [errorStatus, setErrorStatus] = useState<{ isError: boolean; message: string }>({ isError: false, message: '' });
 	const baseDecimals = chainProperties?.[network]?.tokenDecimals;
 	const [content, setContent] = useState<string>(getMarkdownContent(submission?.content || '') || '');
-
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 	useEffect(() => {
 		if (isUsedForEditing && submission) {
 			form.setFieldsValue({
@@ -316,6 +317,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 						</span>
 
 						<MarkdownEditor
+							editorRef={editorRef}
 							className=' h-min text-blue-light-high dark:text-blue-dark-high'
 							height={200}
 							value={content}

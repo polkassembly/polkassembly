@@ -12,7 +12,7 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { EMembersType } from 'pages/members';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CouncilVotes from 'src/components/Profile/CouncilVotes';
 import TitleForm from 'src/components/TitleForm';
 import { APPNAME } from 'src/global/appName';
@@ -36,6 +36,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -70,6 +71,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string>('');
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const noDescription = `This page belongs to address (${address}). Only this user can edit this description and the title. If you own this address, edit this page and tell us more about yourself.`;
 
@@ -247,6 +249,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 					<h3>Update Profile</h3>
 					<TitleForm onChange={onTitleChange} />
 					<MarkdownEditor
+						editorRef={editorRef}
 						height={200}
 						onChange={onDescriptionChange}
 						value={description}

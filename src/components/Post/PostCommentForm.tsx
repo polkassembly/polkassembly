@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import styled from 'styled-components';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
@@ -33,6 +33,7 @@ import Tooltip from '~src/basic-components/Tooltip';
 import { useQuoteCommentContext } from '~src/context';
 import MarkdownEditor from '../Editor/MarkdownEditor';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -93,6 +94,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [selectedIcon, setSelectedIcon] = useState(null);
 	const [isPosted, setIsPosted] = useState(false);
 	const [formContent, setFormContent] = useState('');
+	const markdownEditorRef = useRef<MDXEditorMethods | null>(null);
 
 	const { setQuotedText } = useQuoteCommentContext();
 
@@ -314,6 +316,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			setIsSentimentPost(false);
 			setSentiment(3);
 			setContent('');
+			markdownEditorRef.current?.setMarkdown('');
 			global.window.localStorage.removeItem(commentKey());
 		}
 	};
@@ -370,6 +373,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							)}
 							{!isUsedInSuccessModal && (
 								<MarkdownEditor
+									key={'create-comment-editor'}
+									editorRef={markdownEditorRef}
 									onChange={(value: any) => onContentChange(value)}
 									height={250}
 									value={content}

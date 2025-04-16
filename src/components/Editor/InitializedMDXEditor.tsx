@@ -33,7 +33,7 @@ import {
 import '@mdxeditor/editor/style.css';
 import classNames from 'classnames';
 import { dmSans } from 'pages/_app';
-import { useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -59,16 +59,16 @@ interface EditorProps {
 	height?: number;
 	autofocus?: boolean;
 	isUsedInCreatePost?: boolean;
+	editorRef: MutableRefObject<MDXEditorMethods | null>;
 }
 const MAX_MENTION_SUGGESTIONS = 6;
 
-const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, className, autofocus = false, isUsedInCreatePost = false }: EditorProps) => {
+const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, className, autofocus = false, isUsedInCreatePost = false, editorRef: ref }: EditorProps) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { username } = useUserDetailsSelector();
 	const { quotedText } = useQuoteCommentContext();
 	const [isGifModalVisible, setIsGifModalVisible] = useState(false);
 	const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-	const ref = useRef<MDXEditorMethods | null>(null);
 
 	useEffect(() => {
 		if (quotedText) {
@@ -76,13 +76,6 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [quotedText]);
-
-	// Reset editor content when markdown is empty
-	useEffect(() => {
-		if (markdown === '' && ref.current) {
-			ref.current.setMarkdown('');
-		}
-	}, [markdown]);
 
 	const imageUploadHandler = async (image: File): Promise<string> => {
 		try {
@@ -387,7 +380,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 						? 'rounded-md border-[1px] border-solid border-section-light-container bg-transparent text-bodyBlue dark:border-separatorDark dark:bg-[#0d0d0d] dark:text-white'
 						: ''
 				)}
-				key={id}
+				// key={id}
 				autoFocus={autofocus}
 				contentEditableClassName={classNames('max-w-full p-0', dmSans.className, dmSans.variable, theme === 'dark' ? 'prose-invert' : '', 'focus:outline-none')}
 				plugins={plugins}

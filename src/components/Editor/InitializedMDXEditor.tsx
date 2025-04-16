@@ -87,7 +87,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 			});
 
 			const result = await response.json();
-			const url = result?.data?.display_url;
+			const url = result?.data?.url;
 
 			if (!url) {
 				throw new Error('Failed to upload image');
@@ -276,8 +276,6 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 				<ListsToggle options={['bullet', 'number']} />
 				<Separator />
 				<InsertTable />
-				<StrikeThroughSupSubToggles options={['Strikethrough']} />
-				<CodeToggle />
 				<InsertThematicBreak />
 				<Separator />
 			</div>
@@ -287,6 +285,8 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 	const toolbarContents = () => (
 		<div className='flex items-center gap-1 md:gap-1'>
 			<BoldItalicUnderlineToggles />
+			<StrikeThroughSupSubToggles options={['Strikethrough']} />
+			<CodeToggle />
 			<Separator />
 			<BlockTypeSelect />
 			<Separator />
@@ -336,7 +336,6 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		linkPlugin({ disableAutoLink: true }),
 		quotePlugin(),
 		imagePlugin({
-			disableImageResize: true,
 			disableImageSettingsButton: true
 		}),
 		tablePlugin(),
@@ -626,13 +625,6 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 			border: 1px solid ${({ theme }) => (theme === 'dark' ? '#404040' : '#e5e7eb')};
 		}
 
-		img {
-			max-width: 90%;
-			max-height: none !important;
-			height: auto !important;
-			resize: none !important;
-		}
-
 		table {
 			border-collapse: collapse;
 			width: 100%;
@@ -674,6 +666,18 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 			}
 		}
 	}
+
+	[class*='_imageWrapper_uazmk_922'] {
+		max-width: 90% !important;
+		max-height: none !important;
+		height: auto !important;
+		resize: none !important;
+
+		img {
+			max-width: 90% !important;
+		}
+	}
+
 	[class*='_linkDialogPopoverContent_uazmk_600'],
 	[class*='_dialogContent_uazmk_602'] {
 		// display: none;

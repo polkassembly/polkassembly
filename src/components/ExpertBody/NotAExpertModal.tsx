@@ -4,7 +4,7 @@
 
 import { Button, Divider, Form, message, Modal, Spin } from 'antd';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -20,9 +20,10 @@ import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import TextEditor from '~src/ui-components/TextEditor';
 import classNames from 'classnames';
 import queueNotification from '~src/ui-components/QueueNotification';
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -44,6 +45,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	const [successSubmission, setSuccessSubmission] = useState(false);
 	const [contribution, setContribution] = useState('');
 	const [reason, setReason] = useState('');
+	const reasonEditorRef = useRef<MDXEditorMethods | null>(null);
+	const contributionEditorRef = useRef<MDXEditorMethods | null>(null);
+
 	const { resolvedTheme: theme } = useTheme();
 	const [isInitial, setIsInitial] = useState(true);
 	const [socialsData, setSocialsData] = useState<NetworkSocials>({
@@ -97,6 +101,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				setSuccessSubmission(true);
 				setContribution('');
 				setReason('');
+				reasonEditorRef.current?.setMarkdown('');
+				contributionEditorRef.current?.setMarkdown('');
 			}
 			if (error) {
 				queueNotification({
@@ -277,8 +283,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							name='reason'
 							rules={[{ message: 'Please provide a reason', required: true }]}
 						>
-							<TextEditor
-								name='reason'
+							<MarkdownEditor
+								editorRef={reasonEditorRef}
+								key='reason'
 								value={reason}
 								onChange={(content: any) => setReason(content)}
 								height={150}
@@ -291,8 +298,9 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 							name='contribution'
 							rules={[{ message: 'Please provide a contribution', required: true }]}
 						>
-							<TextEditor
-								name='contribution'
+							<MarkdownEditor
+								editorRef={contributionEditorRef}
+								key='contribution'
 								value={contribution}
 								onChange={(content: any) => setContribution(content)}
 								height={150}

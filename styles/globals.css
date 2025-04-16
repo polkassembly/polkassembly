@@ -1009,3 +1009,20 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
 .ant-popover {
   --antd-arrow-background-color: #363636 !important;
 }
+
+.mdxeditor-popup-container {
+  z-index: 1000 !important;
+
+}
+.mdxeditor-popup-container .popupContainer {
+    z-index: 1000 !important;
+    --basePageBg: #1c1d1f;
+}
+.mdxeditor-popup-container [role='dialog'] {
+    background-color: var(--baseBase); 
+    border-color: var(--baseBorder);
+    color: var(--baseText);
+
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Form, Input, Spin, Alert, Divider } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
@@ -16,10 +16,12 @@ import { useTheme } from 'next-themes';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import ContentForm from '~src/components/ContentForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { chainProperties } from '~src/global/networkConstants';
 import formatBnBalance from '~src/util/formatBnBalance';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 const ZERO_BN = new BN(0);
 
@@ -49,7 +51,8 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	const [showBalanceAlert, setShowBalanceAlert] = useState<boolean>(false);
 	const [errorStatus, setErrorStatus] = useState<{ isError: boolean; message: string }>({ isError: false, message: '' });
 	const baseDecimals = chainProperties?.[network]?.tokenDecimals;
-
+	const [content, setContent] = useState<string>(getMarkdownContent(submission?.content || '') || '');
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 	useEffect(() => {
 		if (isUsedForEditing && submission) {
 			form.setFieldsValue({
@@ -57,7 +60,6 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				requestAmount: submission.reqAmount
 					? Number(formatBnBalance(String(submission.reqAmount), { numberAfterComma: 6, withThousandDelimitor: false, withUnit: false }, network))
 					: '',
-				description: submission?.content || '',
 				links: submission.link || '',
 				loginAddress: submission.proposer || loginAddress
 			});
@@ -105,14 +107,14 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 	}, [api, apiReady, loginAddress]);
 
 	const handleSubmit = async () => {
-		if (!api || !apiReady) {
+		if (!api || !apiReady || !content) {
 			return;
 		}
 
 		setLoadingStatus({ isLoading: true, message: 'Submitting' });
 		const values = form.getFieldsValue();
 
-		const hasValidationErrors = !form.getFieldValue('title') || !form.getFieldValue('requestAmount') || !form.getFieldValue('description');
+		const hasValidationErrors = !form.getFieldValue('title') || !form.getFieldValue('requestAmount') || !content;
 
 		if (hasValidationErrors) {
 			setErrorStatus({ isError: true, message: 'Please ensure all required fields are filled out correctly.' });
@@ -125,7 +127,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 
 		const requestBody = {
 			title: values.title,
-			content: values.description,
+			content,
 			tags: [],
 			link: values.links || '',
 			reqAmount: String(adjustedRequestAmount),
@@ -167,7 +169,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				onEditSuccess({
 					...submission,
 					title: values.title,
-					content: values.description,
+					content,
 					reqAmount: values.requestAmount,
 					link: values.links || '',
 					createdAt: submission.createdAt ?? new Date()
@@ -313,17 +315,14 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 							{' '}
 							Description<span className='text-lg font-medium text-[#FF3C5F]'>*</span>
 						</span>
-						<Form.Item
-							name='description'
-							rules={[{ required: true, message: 'Please input the description of your request!' }]}
-							className='mb-0 h-min pb-0'
-						>
-							<ContentForm
-								className=' h-min text-blue-light-high dark:text-blue-dark-high'
-								height={200}
-								value={submission?.content || ''}
-							/>
-						</Form.Item>
+
+						<MarkdownEditor
+							editorRef={editorRef}
+							className=' h-min text-blue-light-high dark:text-blue-dark-high'
+							height={200}
+							value={content}
+							onChange={(value: string) => setContent(value)}
+						/>
 
 						{showBalanceAlert && availableBalance.lt(ZERO_BN) && (
 							<Alert

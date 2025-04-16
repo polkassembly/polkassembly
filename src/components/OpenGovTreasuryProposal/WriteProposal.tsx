@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Form, FormInstance, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
@@ -13,12 +13,13 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EAllowedCommentor, NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
-import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -56,6 +57,7 @@ const WriteProposal = ({
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleSubmit = async () => {
 		await form.validateFields();
@@ -157,6 +159,7 @@ const WriteProposal = ({
 		setContent('');
 		form.resetFields(['content', 'tags', 'title']);
 		setIsDiscussionFound(true);
+		editorRef.current?.setMarkdown('');
 	};
 
 	const handleIsDiscussionLinkedChange = (value: boolean) => {
@@ -321,17 +324,16 @@ const WriteProposal = ({
 										md={`${content?.slice(0, 300)}...` || content}
 									/>
 								) : (
-									<Form.Item name='content'>
-										<ContentForm
-											value={content}
-											height={250}
-											onChange={(content: string) => {
-												setContent(content);
-												onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
-												setSteps({ percent: title.length === 0 ? 83.33 : 100, step: 0 });
-											}}
-										/>
-									</Form.Item>
+									<MarkdownEditor
+										editorRef={editorRef}
+										value={content}
+										height={250}
+										onChange={(content: string) => {
+											setContent(content);
+											onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
+											setSteps({ percent: title.length === 0 ? 83.33 : 100, step: 0 });
+										}}
+									/>
 								)}
 							</div>
 						</div>
@@ -339,7 +341,7 @@ const WriteProposal = ({
 
 					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
-						className={isDiscussionLinked ? 'mt-6 ' : '-mt-4'}
+						className={isDiscussionLinked ? 'mt-6 ' : 'mt-4'}
 						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
 						isLoading={loading}
 						allowedCommentors={allowedCommentors || EAllowedCommentor.ALL}

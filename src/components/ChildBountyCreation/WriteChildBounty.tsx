@@ -2,16 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input } from 'antd';
-import React from 'react';
+import React, { useRef } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import { useChildBountyCreationSelector } from '~src/redux/selectors';
-import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 import { childBountyCreationActions } from '~src/redux/childBountyCreation';
 import { EChildBountySteps } from './types';
 import Alert from '~src/basic-components/Alert';
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -22,6 +23,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 	const dispatch = useDispatch();
 	const [form] = Form.useForm();
 	const { title, content, categories, allowedCommentors, link } = useChildBountyStore;
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleSubmit = async () => {
 		dispatch(childBountyCreationActions.updateFirstStepPercentage(100));
@@ -105,7 +107,8 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 						</label>
 
 						<Form.Item name='content'>
-							<ContentForm
+							<MarkdownEditor
+								editorRef={editorRef}
 								value={content}
 								height={250}
 								onChange={(content: string) => {

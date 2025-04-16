@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Radio, Spin } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
@@ -11,14 +11,14 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EAllowedCommentor, NotificationStatus } from '~src/types';
-import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import { gov1TreasuryProposalActions, updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Alert from '~src/basic-components/Alert';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
-
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 interface Props {
 	className?: string;
 	setStep: (pre: number) => void;
@@ -31,6 +31,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	const { isDiscussionLinked: discussionLinked, discussionLink, title, content, tags, allowedCommentors } = gov1ProposalData;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(discussionLinked);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const handleOnchange = (obj: any) => {
 		dispatch(updateGov1TreasuryProposal({ ...gov1ProposalData, ...obj }));
@@ -101,6 +102,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 						onChange={(e) => {
 							setIsDiscussionLinked(e.target.value);
 							handleOnchange({ content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
+							editorRef.current?.setMarkdown('');
 							form.setFieldValue('content', '');
 							form.setFieldValue('title', '');
 							form.setFieldValue('tags', []);
@@ -128,7 +130,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					form={form}
 					onFinish={handleSubmit}
 					disabled={loading}
-					initialValues={{ content, discussion_link: discussionLink, tags, title }}
+					initialValues={{ discussion_link: discussionLink, tags, title }}
 					validateMessages={{ required: "Please add the '${name}'" }}
 				>
 					{isDiscussionLinked && (
@@ -239,7 +241,8 @@ const WriteProposal = ({ setStep, className }: Props) => {
 									/>
 								) : (
 									<Form.Item name='content'>
-										<ContentForm
+										<MarkdownEditor
+											editorRef={editorRef}
 											value={content}
 											height={250}
 											onChange={(content: string) => {

@@ -8,7 +8,6 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
 import { EAllowedCommentor, EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
@@ -60,6 +59,9 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import classNames from 'classnames';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -95,10 +97,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
-	const [replyForm] = Form.useForm();
-	const [form] = Form.useForm();
-
-	const currentContent = useRef<string>(content);
+	const [editedContent, setEditedContent] = useState<string>();
+	const [replyContent, setReplyContent] = useState<string>('');
+	const markdownEditorCommentRef = useRef<MDXEditorMethods | null>(null);
+	const markdownEditorReplyRef = useRef<MDXEditorMethods | null>(null);
+	const currentContent = useRef<string>(getMarkdownContent(content || ''));
 
 	// Extract values conditionally
 	const postIndex = isUsedInBounty ? BountyPostIndex : postData?.postIndex || null;
@@ -123,8 +126,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 
 	useEffect(() => {
-		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
+		const localContent = getMarkdownContent(global.window.localStorage.getItem(editCommentKey(commentId)) || '') || '';
+		setEditedContent(localContent || getMarkdownContent(content) || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -145,7 +148,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyForm.setFieldValue('content', `${usernameContent}&nbsp;`);
+		setReplyContent(`${usernameContent}&nbsp;`);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);
 	};
@@ -154,21 +157,22 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		setSentiment(prevSentiment);
 		toggleEdit();
 		global.window.localStorage.removeItem(editCommentKey(commentId));
-		form.setFieldValue('content', currentContent.current);
+		setEditedContent(getMarkdownContent(currentContent.current || ''));
 	};
 
 	const handleReplyCancel = () => {
 		toggleReply();
 		global.window.localStorage.removeItem(replyKey(commentId));
-		replyForm.setFieldValue('content', '');
+		setReplyContent('');
+		markdownEditorReplyRef.current?.setMarkdown('');
 	};
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const newContent = form.getFieldValue('content');
-		if (!newContent) return;
+		if (!editedContent) {
+			setLoading(false);
+			return;
+		}
 		setError('');
-		global.window.localStorage.removeItem(editCommentKey(commentId));
 		const keys = Object.keys(comments);
 		!isUsedInBounty &&
 			setComments((prev) => {
@@ -183,7 +187,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 },
 									...(newComment?.history || [])
 								]),
-									(newComment.content = newContent);
+									(newComment.content = editedContent);
 								newComment.updated_at = new Date();
 								newComment.sentiment = sentiment || 0;
 								flag = true;
@@ -204,15 +208,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				});
 				return comments;
 			});
-		form.setFieldValue('content', currentContent.current);
-		if (currentContent.current !== newContent) {
-			currentContent.current = newContent;
+		if (currentContent.current !== editedContent) {
+			currentContent.current = editedContent;
 		}
+
 		setIsEditing(false);
 		setLoading(true);
 		const { data, error: editPostCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editPostComment', {
 			commentId,
-			content: newContent,
+			content: editedContent,
 			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props?.postId,
 			postType: comment.post_type || props?.proposalType,
 			sentiment: sentiment,
@@ -234,6 +238,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				payload[key] = prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
 				return payload;
 			});
+			global.window.localStorage.removeItem(editCommentKey(commentId));
+			setLoading(false);
 		}
 		if (data) {
 			setComments((prev) => {
@@ -241,9 +247,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				prev[key]?.map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
 				return prev;
 			});
+			global.window.localStorage.setItem(editCommentKey(commentId), editedContent);
+			setLoading(false);
 		}
-
-		setLoading(false);
 	};
 
 	const handleRetry = async () => {
@@ -291,8 +297,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const handleReplySave = async () => {
-		await replyForm.validateFields();
-		const replyContent = replyForm.getFieldValue('content');
 		if (!replyContent) return;
 		setErrorReply('');
 		global.window.localStorage.removeItem(replyKey(commentId));
@@ -346,7 +350,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				}
 				return comments;
 			});
-		replyForm.setFieldValue('content', '');
+		setReplyContent('');
+		markdownEditorReplyRef.current?.setMarkdown('');
 		queueNotification({
 			header: 'Success!',
 			message: 'Your reply was added.',
@@ -434,6 +439,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			}
 			setLoadingReply(false);
 		}
+
 		isUsedInBounty && window.location.reload();
 	};
 
@@ -675,22 +681,25 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				)}
 				{isEditing ? (
 					<Form
-						form={form}
 						name='comment-content-form'
 						onFinish={handleSave}
 						layout='vertical'
 						disabled={loading}
 						validateMessages={{ required: "Please add the '${name}'" }}
 					>
-						<ContentForm
+						<MarkdownEditor
+							key={'edit-comment-editor'}
+							editorRef={markdownEditorCommentRef}
 							autofocus={true}
-							onChange={(content: string) => {
-								global.window.localStorage.setItem(editCommentKey(commentId), content);
-								return content.length ? content : null;
+							onChange={(value: string) => {
+								global.window.localStorage.setItem(editCommentKey(commentId), value);
+								setEditedContent(value);
 							}}
 							className='mb-0'
+							value={editedContent}
+							height={200}
 						/>
-						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-md rounded-e-md border-0 border-solid bg-gray-100 p-2 dark:border dark:border-[#3B444F] dark:bg-transparent'>
+						<div className='background mb-[10px] h-[70px] rounded-md rounded-e-md border-0 border-solid bg-gray-100 p-2 dark:border dark:border-[#3B444F] dark:bg-transparent'>
 							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
 								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
 							</div>
@@ -748,6 +757,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				) : (
 					<>
 						<Markdown
+							key={'comment-content-editor'}
 							theme={theme}
 							md={content}
 							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
@@ -806,7 +816,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						{errorReply && <div>{errorReply}</div>}
 						{!props.disableEdit && isReplying && (
 							<Form
-								form={replyForm}
 								name='reply-content-form'
 								onFinish={handleReplySave}
 								layout='vertical'
@@ -814,16 +823,19 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								validateMessages={{ required: "Please add the '${name}'" }}
 								className='mt-4'
 							>
-								<ContentForm
+								<MarkdownEditor
+									key={'add-reply-content-editor'}
+									editorRef={markdownEditorReplyRef}
 									autofocus={true}
-									height={250}
+									height={200}
 									onChange={(content: string) => {
 										global.window.localStorage.setItem(replyKey(commentId), content);
-										return content.length ? content : null;
+										setReplyContent(content);
 									}}
+									value={replyContent}
 								/>
 								<Form.Item>
-									<div className='flex items-center justify-end'>
+									<div className='mt-4 flex items-center justify-end'>
 										<Button
 											htmlType='button'
 											disabled={loadingReply}

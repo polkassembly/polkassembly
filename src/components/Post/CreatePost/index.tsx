@@ -4,8 +4,7 @@
 
 import { Form, Switch } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
+import React, { useEffect, useRef, useState } from 'react';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
 import { EAllowedCommentor, EGovType, NotificationStatus } from 'src/types';
@@ -27,6 +26,9 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import dayjs from 'dayjs';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
+import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
+import getMarkdownContent from '~src/api-utils/getMarkdownContent';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 interface Props {
 	className?: string;
@@ -50,6 +52,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 	const [govType, setGovType] = useState<EGovType>(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [tags, setTags] = useState<string[]>([]);
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
+	const [content, setContent] = useState<string>('');
+	const markdownEditorRef = useRef<MDXEditorMethods | null>(null);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -95,7 +99,6 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		try {
 			await form.validateFields();
 			// Validation is successful
-			const content = form.getFieldValue('content');
 			const title = form.getFieldValue('title');
 
 			// GAEvent for create post
@@ -191,9 +194,9 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		const cacheObj = JSON.parse(localStorage.getItem(postFormKey) || '{}');
 
 		form.setFieldsValue({
-			content: cacheObj.content || '',
 			title: cacheObj.title || ''
 		});
+		setContent(getMarkdownContent(cacheObj.content || '') || '');
 
 		setHasPoll(cacheObj.hasPoll === 'true');
 		setGovType(cacheObj.govType || 'gov_1');
@@ -238,7 +241,17 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							className='text-bodyBlue dark:border-[#4b4b4b] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
-					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />
+					<MarkdownEditor
+						editorRef={markdownEditorRef}
+						height={300}
+						onChange={(v) => {
+							setContent(v);
+							savePostFormCacheValue('content', v);
+						}}
+						className='mb-4'
+						value={content}
+						isUsedInCreatePost
+					/>
 					<div className='flex items-center'>
 						<Switch
 							size='small'

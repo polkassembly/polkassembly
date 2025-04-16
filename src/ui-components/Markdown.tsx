@@ -51,7 +51,6 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 		p,
 		span,
-		blockquote,
 		ul,
 		ol,
 		dl,
@@ -136,12 +135,22 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 		blockquote {
 			margin: 1rem 0;
+			line-height: 160%;
+			margin: 0 0 0.5rem 0;
+			color: ${(props: any) => (props.theme == 'dark' ? '#fff' : '#243A57')} !important;
+			font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
 			padding: 0 1em;
-			color: grey_primary;
+			color: var(--pink_primary);
 			border-left-style: solid;
-			border-left-width: 0.25rem;
-			border-left-color: grey_primary;
+			border-left-width: 3px;
+			padding: 4px 8px;
+			font-style: italic;
+			border-left-color: var(--pink_primary);
 			font-size: 0.9rem;
+			p {
+				display: flex;
+				align-items: center;
+			}
 			& > :first-child {
 				margin-top: 0;
 			}

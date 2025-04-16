@@ -4,18 +4,19 @@
 import { Button, Divider, Form } from 'antd';
 import { useTheme } from 'next-themes';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import queueNotification from '~src/ui-components/QueueNotification';
 import TopicTag from '~src/ui-components/TopicTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import ContentForm from '../ContentForm';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageComponent from '../ImageComponent';
+import MarkdownEditor from '../Editor/MarkdownEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void }> = ({ post, onclose }: { post: any; onclose: () => void }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -29,12 +30,11 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		return content.length ? content : null;
 	};
 	const handleModalOpen = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if (!content) return;
 		handleSave();
 	};
 	const [loading, setLoading] = useState(false);
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	// const createSubscription = async (postId: number | string) => {
 	// const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: ProposalType.REFERENDUM_V2 });
@@ -43,12 +43,9 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 	// };
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if (!content) return;
 		setLoading(true);
 
-		setContent('');
 		form.resetFields();
 		global.window.localStorage.removeItem(commentKey());
 
@@ -83,12 +80,15 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 		} finally {
 			setLoading(false);
 			onCloseHandler();
+			setContent('');
+			editorRef.current?.setMarkdown('');
 		}
 	};
 
 	const onCloseHandler = () => {
 		form.resetFields();
 		setContent('');
+		editorRef.current?.setMarkdown('');
 		global.window.localStorage.removeItem(commentKey());
 		onclose();
 	};
@@ -152,18 +152,20 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 						<span className='text-[16px] font-medium text-[#243A57] dark:text-white'>
 							#{post?.post_id} {post?.title || 'Untitled Post'}
 						</span>
-						<p className='font-dmSans text-[12px]  font-medium text-pink_primary'>Commenting on proposal</p>
-						<div className='w-[250px] md:w-[500px]  md:flex-1'>
-							<ContentForm
+						<p className='font-dmSans text-xs font-medium text-pink_primary'>Commenting on proposal</p>
+						<div className='w-[250px] md:w-[500px] md:flex-1'>
+							<MarkdownEditor
+								editorRef={editorRef}
 								onChange={(content: any) => onContentChange(content)}
 								height={200}
+								value={content}
 							/>
 						</div>
 					</div>
 				</div>
 
 				<Form.Item>
-					<div className=' flex items-center justify-end '>
+					<div className='mt-4 flex items-center justify-end'>
 						<div className='relative'>
 							<div className='flex'>
 								<Button
